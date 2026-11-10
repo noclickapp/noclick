@@ -977,6 +977,31 @@ class CredentialsRepo:
         return result != 'UPDATE 0'
 
 
+# Why a credential stopped working, when a provider's definitive word is what stopped it (a key it turned down, a
+# sign-in it wouldn't refresh): the ``revoked_reason`` NoClick stamps, which a reconnect clears with ``revoked_at``.
+KEY_REFUSED = "key_refused"
+SIGN_IN_REFUSED = "sign_in_refused"
+REFUSED_REASONS = (KEY_REFUSED, SIGN_IN_REFUSED)
+
+
+async def mark_credential_refused(pool, credential_id: str, reason: str) -> bool:
+    """Stamp a credential as refused by its provider (``REFUSED_REASONS``): it reads as disconnected until it's
+    reconnected. Idempotent: an earlier mark stays."""
+    tag = await pool.execute(
+        "UPDATE credentials SET revoked_at = now(), revoked_reason = $2 WHERE id = $1::uuid AND revoked_at IS NULL",
+        credential_id, reason)
+    return tag.endswith(" 1")
+
+
+async def clear_credential_refused(pool, credential_id: str) -> bool:
+    """Lift a refusal NoClick stamped (``mark_credential_refused``) once the provider accepts the credential again;
+    any other revocation stays."""
+    tag = await pool.execute(
+        "UPDATE credentials SET revoked_at = NULL, revoked_reason = NULL WHERE id = $1::uuid "
+        "AND revoked_reason = ANY($2::text[])", credential_id, list(REFUSED_REASONS))
+    return tag.endswith(" 1")
+
+
 async def merge_credential_metadata(pool, credential_id: str, patch: Dict[str, Any]) -> None:
     """Merge ``patch`` into a credential's metadata alone: its blob, token
     version and timestamps are left as they are, so no token write races it."""

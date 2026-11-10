@@ -191,6 +191,47 @@ async def _probe_wahooks(key: str) -> Optional["Rejection"]:
     return None
 
 
+# A check that never spends: a provider's own key or model listing, which answers a good key 2xx and a bad one 401.
+# (The connect-time probes above may run one tiny completion; a check run whenever someone asks never does.)
+_FREE_CHECKS = {
+    "OPENROUTER_API_KEY": ("openrouter", "GET", "https://openrouter.ai/api/v1/key", lambda key: {
+        "Authorization": f"Bearer {key}"}),
+    "OPENAI_API_KEY": ("openai", "GET", "https://api.openai.com/v1/models", lambda key: {
+        "Authorization": f"Bearer {key}"}),
+    "ANTHROPIC_API_KEY": ("anthropic", "GET", "https://api.anthropic.com/v1/models", lambda key: {
+        "x-api-key": key, "anthropic-version": "2023-06-01"}),
+    "XAI_API_KEY": ("xai", "GET", "https://api.x.ai/v1/models", lambda key: {"Authorization": f"Bearer {key}"}),
+}
+
+
+@dataclass(frozen=True)
+class KeyCheck:
+    """A free check's verdict on a key: ``ok`` (the provider accepted it), ``refused`` (it turned it down, with its
+    ``rejection``) or ``unknown`` (no free check for it, or a timeout, a 5xx, a rate limit: never a verdict)."""
+
+    verdict: str
+    rejection: Optional[Rejection] = None
+
+
+async def check_provider_key(env_var: str, key: str) -> KeyCheck:
+    """Judge ``key`` for ``env_var`` with a call that costs nothing (``_FREE_CHECKS``); only a provider's own 401
+    refuses it."""
+    check = _FREE_CHECKS.get(env_var)
+    key = (key or "").strip()
+    if check is None or not key:
+        return KeyCheck("unknown")
+    provider, method, url, headers = check
+    try:
+        async with httpx.AsyncClient(timeout=_PROBE_TIMEOUT_S) as client:
+            resp = await client.request(method, url, headers=headers(key))
+    except httpx.HTTPError as e:
+        logger.warning("[key_validation] %s check inconclusive: %s", env_var, e)
+        return KeyCheck("unknown")
+    if resp.status_code == 401:
+        return KeyCheck("refused", Rejection(provider, "invalid_key", resp.text))
+    return KeyCheck("ok" if 200 <= resp.status_code < 300 else "unknown")
+
+
 _PROBES = {
     "APIFY_API_TOKEN": _probe_apify,
     "WAHOOKS_API_KEY": _probe_wahooks,

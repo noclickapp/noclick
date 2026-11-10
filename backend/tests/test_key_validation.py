@@ -252,3 +252,49 @@ async def test_opencode_key_zen_cannot_judge_is_saved_unverified(monkeypatch, an
     assert await validate_agent_api_key(
         "agent_opencode", _blob({"OPENCODE_API_KEY": "zen-x"})
     ) is None
+
+
+# A check run whenever someone asks (before a message is sent, a connection's verify) never spends: it reads the
+# provider's own key or model listing, never a completion, and only the provider's 401 refuses the key.
+class _Requests(_Client):
+    seen: list = []
+
+    async def request(self, method, url, **k):
+        _Requests.seen.append((method, url))
+        answer = _Client.responses.pop(0)
+        if isinstance(answer, Exception):
+            raise answer
+        return answer
+
+
+def _patch_requests(monkeypatch, *responses):
+    _Client.responses = list(responses)
+    _Requests.seen = []
+    monkeypatch.setattr(key_validation.httpx, "AsyncClient", _Requests)
+
+
+@pytest.mark.parametrize("env_var, url", [
+    ("OPENROUTER_API_KEY", "https://openrouter.ai/api/v1/key"),
+    ("OPENAI_API_KEY", "https://api.openai.com/v1/models"),
+    ("ANTHROPIC_API_KEY", "https://api.anthropic.com/v1/models"),
+    ("XAI_API_KEY", "https://api.x.ai/v1/models"),
+])
+async def test_a_check_reads_a_free_listing_and_only_a_401_refuses(monkeypatch, env_var, url):
+    from nodes.agent.key_validation import check_provider_key
+
+    _patch_requests(monkeypatch, _Resp(200, {}), _Resp(401, {"error": {"message": "User not found."}}),
+                    _Resp(503, "busy"), httpx.ConnectTimeout("slow"))
+    assert (await check_provider_key(env_var, "k")).verdict == "ok"
+    refused = await check_provider_key(env_var, "k")
+    assert refused.verdict == "refused" and refused.rejection.kind == "invalid_key"
+    assert (await check_provider_key(env_var, "k")).verdict == "unknown"  # a 5xx is no verdict
+    assert (await check_provider_key(env_var, "k")).verdict == "unknown"  # nor is a timeout
+    assert _Requests.seen == [("GET", url)] * 4  # never a completion: nothing spent
+
+
+async def test_a_key_with_no_free_check_is_unknown(monkeypatch):
+    from nodes.agent.key_validation import check_provider_key
+
+    _patch_requests(monkeypatch)  # any request would raise IndexError
+    assert (await check_provider_key("GEMINI_API_KEY", "k")).verdict == "unknown"
+    assert (await check_provider_key("OPENROUTER_API_KEY", "")).verdict == "unknown"
