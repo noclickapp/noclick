@@ -10,7 +10,7 @@
     "stripped editor metadata"
   ],
   "variant": "light mode",
-  "notes": "Answers the reviewer's question: Brightcove's current mark is monochrome (near-black on light, white on dark: homepage header, favicon and sign-in page all agree). The blue B in the current file is not used anywhere on Brightcove's current sites. Wikimedia Commons' files are the 2020 BRIGHTCOVE wordmark and the retired coloured logo, neither of which is the app mark.",
+  "notes": "Answers the reviewer's question: Brightcove's current mark is monochrome (near-black on light, white on dark: homepage header, favicon and sign-in page all agree). The blue B in the current file is not used anywhere on Brightcove's current sites. Wikimedia Commons' files are the 2020 BRIGHTCOVE wordmark and the retired coloured logo, neither of which is the app mark. Colour verified 2026-11-10: brightcove.com's header draws the B in white on its black header and its favicon (www.brightcove.com/favicon.ico) is a black B on white, so the mark is monochrome; the blue B is not used on Brightcove's current sites.",
   "license": "Brightcove brand mark, used nominatively to identify the connected service; trademark rights remain with Brightcove.",
   "sha256": "3d720d978154da6adcd2c5ad45c3a822ccda95cc371dd587fd117ca90261f6c3"
 }

@@ -11,7 +11,7 @@
     "cleaned"
   ],
   "variant": "light mode",
-  "notes": "REVIEWER: Clio has rebranded. The current file (blue check in a circle, from an aggregator) is the retired mark; it still appears only in Clio's BIMI record (themis_solutions_inc__dba_clio_435336175.svg). www.clio.com itself returns 403 to scripted fetches, so the rebrand was confirmed on account.clio.com, app.clio.com and the developer docs. The new logo is monochrome (#383838 light / white dark). If the app-icon form is preferred, account.clio.com/favicon.svg (downloads/clio/src3/favicon.svg) is the gem in a black circle.",
+  "notes": "REVIEWER: Clio has rebranded. The current file (blue check in a circle, from an aggregator) is the retired mark; it still appears only in Clio's BIMI record (themis_solutions_inc__dba_clio_435336175.svg). www.clio.com itself returns 403 to scripted fetches, so the rebrand was confirmed on account.clio.com, app.clio.com and the developer docs. The new logo is monochrome (#383838 light / white dark). If the app-icon form is preferred, account.clio.com/favicon.svg (downloads/clio/src3/favicon.svg) is the gem in a black circle. Verified 2026-11-10 against www.clio.com itself (rendered in a browser): its header logo is this eight-dot ring beside the 'Clio' wordmark, and its favicon (www.clio.com/favicons/production.svg) is the same ring in a black circle. The blue check is Clio's retired mark.",
   "license": "Clio brand mark, used nominatively to identify the connected service; trademark rights remain with Clio.",
   "sha256": "56d1aa9ec6b9cb7494dd7f7cd3cc5b94927287f52f65bff42ce9ef5db22b7dc7"
 }
