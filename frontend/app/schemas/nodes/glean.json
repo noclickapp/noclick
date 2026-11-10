@@ -1,0 +1,1034 @@
+{
+  "$defs": {
+    "GleanAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "glean_api_token",
+          "default": "glean_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "backend_url": {
+          "description": "https://yourcompany-be.glean.com",
+          "title": "Instance backend URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_token",
+        "backend_url"
+      ],
+      "title": "Glean API Token",
+      "type": "object",
+      "x-credential-instructions": "In Glean Admin Console \u2192 Platform \u2192 Client API Tokens, create a Glean-issued USER token for your email. Enable COLLECTIONS to verify the connection, plus SEARCH, DOCUMENTS, ANSWERS and SHORTCUTS for the actions you need, and TRIGGERS for preset events. Paste the token with your instance backend URL (https://yourcompany-be.glean.com). This connection accepts user-scoped Client API tokens; global and Indexing API tokens need a different setup.",
+      "x-credential-url": "https://developers.glean.com/api-info/client/authentication/glean-issued"
+    },
+    "GleanAddCollectionItemsConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_collection_items",
+          "default": "add_collection_items",
+          "title": "Add Collection Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Add Collection Items",
+          "x-is-trigger": false
+        },
+        "collectionId": {
+          "title": "Collection ID",
+          "type": "integer"
+        },
+        "addedCollectionItemDescriptors": {
+          "items": {
+            "$ref": "#/$defs/GleanCollectionItem"
+          },
+          "minItems": 1,
+          "placeholder": "[]",
+          "title": "Items",
+          "type": "array",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "collectionId",
+        "addedCollectionItemDescriptors"
+      ],
+      "title": "GleanAddCollectionItemsConfig",
+      "type": "object"
+    },
+    "GleanCollectionItem": {
+      "properties": {
+        "url": {
+          "minLength": 1,
+          "title": "Document URL",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "itemType": {
+          "const": "URL",
+          "default": "URL",
+          "title": "Itemtype",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "GleanCollectionItem",
+      "type": "object"
+    },
+    "GleanCreateAnswerConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_answer",
+          "default": "create_answer",
+          "title": "Create Answer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Answer",
+          "x-is-trigger": false
+        },
+        "question": {
+          "minLength": 1,
+          "title": "Question",
+          "type": "string"
+        },
+        "bodyText": {
+          "minLength": 1,
+          "title": "Answer text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "question",
+        "bodyText"
+      ],
+      "title": "GleanCreateAnswerConfig",
+      "type": "object"
+    },
+    "GleanCreateCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_collection",
+          "default": "create_collection",
+          "title": "Create Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Collection",
+          "x-is-trigger": false
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Collection name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent collection ID"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GleanCreateCollectionConfig",
+      "type": "object"
+    },
+    "GleanCreateShortcutConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_shortcut",
+          "default": "create_shortcut",
+          "title": "Create Go Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Go Link",
+          "x-is-trigger": false
+        },
+        "inputAlias": {
+          "minLength": 1,
+          "title": "Go Link alias",
+          "type": "string"
+        },
+        "destinationUrl": {
+          "minLength": 1,
+          "title": "Destination URL",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "inputAlias",
+        "destinationUrl"
+      ],
+      "title": "GleanCreateShortcutConfig",
+      "type": "object"
+    },
+    "GleanDeleteAnswerConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_answer",
+          "default": "delete_answer",
+          "title": "Delete Answer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Answer",
+          "x-is-trigger": false
+        },
+        "id": {
+          "title": "Answer ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GleanDeleteAnswerConfig",
+      "type": "object"
+    },
+    "GleanDeleteCollectionItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_collection_item",
+          "default": "delete_collection_item",
+          "title": "Remove Collection Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Remove Collection Item",
+          "x-is-trigger": false
+        },
+        "collectionId": {
+          "title": "Collection ID",
+          "type": "integer"
+        },
+        "itemId": {
+          "minLength": 1,
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collectionId",
+        "itemId"
+      ],
+      "title": "GleanDeleteCollectionItemConfig",
+      "type": "object"
+    },
+    "GleanDeleteCollectionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_collections",
+          "default": "delete_collections",
+          "title": "Delete Collections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Collections",
+          "x-is-trigger": false
+        },
+        "ids": {
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "placeholder": "[]",
+          "title": "Collection IDs",
+          "type": "array",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "GleanDeleteCollectionsConfig",
+      "type": "object"
+    },
+    "GleanDeleteShortcutConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_shortcut",
+          "default": "delete_shortcut",
+          "title": "Delete Go Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Go Link",
+          "x-is-trigger": false
+        },
+        "id": {
+          "title": "Go Link ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GleanDeleteShortcutConfig",
+      "type": "object"
+    },
+    "GleanDocumentSpec": {
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Glean document ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GleanDocumentSpec",
+      "type": "object"
+    },
+    "GleanGetAnswerConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_answer",
+          "default": "get_answer",
+          "title": "Get Answer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Answer",
+          "x-is-trigger": false
+        },
+        "id": {
+          "title": "Answer ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GleanGetAnswerConfig",
+      "type": "object"
+    },
+    "GleanGetCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_collection",
+          "default": "get_collection",
+          "title": "Get Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Collection",
+          "x-is-trigger": false
+        },
+        "id": {
+          "title": "Collection ID",
+          "type": "integer"
+        },
+        "withItems": {
+          "default": false,
+          "title": "Include items",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GleanGetCollectionConfig",
+      "type": "object"
+    },
+    "GleanGetDocumentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_documents",
+          "default": "get_documents",
+          "title": "Get Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Documents",
+          "x-is-trigger": false
+        },
+        "documentSpecs": {
+          "items": {
+            "$ref": "#/$defs/GleanDocumentSpec"
+          },
+          "minItems": 1,
+          "placeholder": "[]",
+          "title": "Documents",
+          "type": "array",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "documentSpecs"
+      ],
+      "title": "GleanGetDocumentsConfig",
+      "type": "object"
+    },
+    "GleanGetShortcutConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_shortcut",
+          "default": "get_shortcut",
+          "title": "Get Go Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Go Link",
+          "x-is-trigger": false
+        },
+        "id": {
+          "title": "Go Link ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GleanGetShortcutConfig",
+      "type": "object"
+    },
+    "GleanGetTriggerPresetConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_trigger_preset",
+          "default": "get_trigger_preset",
+          "title": "Get Trigger Preset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Trigger Preset",
+          "x-is-trigger": false
+        },
+        "preset_id": {
+          "minLength": 1,
+          "title": "Preset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "preset_id"
+      ],
+      "title": "GleanGetTriggerPresetConfig",
+      "type": "object"
+    },
+    "GleanListAnswersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_answers",
+          "default": "list_answers",
+          "title": "List Answers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Answers",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GleanListAnswersConfig",
+      "type": "object"
+    },
+    "GleanListCollectionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "List Collections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Collections",
+          "x-is-trigger": false
+        },
+        "query": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Collection name contains"
+        }
+      },
+      "title": "GleanListCollectionsConfig",
+      "type": "object"
+    },
+    "GleanListShortcutsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_shortcuts",
+          "default": "list_shortcuts",
+          "title": "List Go Links",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Go Links",
+          "x-is-trigger": false
+        },
+        "pageSize": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next cursor"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Go Links"
+        }
+      },
+      "title": "GleanListShortcutsConfig",
+      "type": "object"
+    },
+    "GleanListTriggerPresetsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_trigger_presets",
+          "default": "list_trigger_presets",
+          "title": "List Trigger Presets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Trigger Presets",
+          "x-is-trigger": false
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next cursor"
+        }
+      },
+      "title": "GleanListTriggerPresetsConfig",
+      "type": "object"
+    },
+    "GleanOnEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On Glean Preset Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Glean Preset Event",
+          "x-is-trigger": true
+        },
+        "preset_id": {
+          "description": "Use List Trigger Presets and Get Trigger Preset to find a preset and its required inputs.",
+          "minLength": 1,
+          "title": "Preset ID",
+          "type": "string"
+        },
+        "inputs": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Input names and values from Get Trigger Preset.",
+          "placeholder": "{}",
+          "title": "Preset inputs",
+          "type": "object",
+          "ui:widget": "state_editor"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "preset_id"
+      ],
+      "title": "GleanOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GleanSearchConfig": {
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Search",
+          "x-is-trigger": false
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Search query",
+          "type": "string"
+        },
+        "pageSize": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next cursor"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "GleanSearchConfig",
+      "type": "object"
+    },
+    "GleanUpdateAnswerConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_answer",
+          "default": "update_answer",
+          "title": "Update Answer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Answer",
+          "x-is-trigger": false
+        },
+        "id": {
+          "title": "Answer ID",
+          "type": "integer"
+        },
+        "question": {
+          "minLength": 1,
+          "title": "Question",
+          "type": "string"
+        },
+        "bodyText": {
+          "minLength": 1,
+          "title": "Answer text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "question",
+        "bodyText"
+      ],
+      "title": "GleanUpdateAnswerConfig",
+      "type": "object"
+    },
+    "GleanUpdateCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_collection",
+          "default": "update_collection",
+          "title": "Update Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Collection",
+          "x-is-trigger": false
+        },
+        "id": {
+          "title": "Collection ID",
+          "type": "integer"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Collection name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent collection ID"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "GleanUpdateCollectionConfig",
+      "type": "object"
+    },
+    "GleanUpdateShortcutConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_shortcut",
+          "default": "update_shortcut",
+          "title": "Update Go Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Go Link",
+          "x-is-trigger": false
+        },
+        "id": {
+          "title": "Go Link ID",
+          "type": "integer"
+        },
+        "inputAlias": {
+          "minLength": 1,
+          "title": "Go Link alias",
+          "type": "string"
+        },
+        "destinationUrl": {
+          "minLength": 1,
+          "title": "Destination URL",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "id",
+        "inputAlias",
+        "destinationUrl"
+      ],
+      "title": "GleanUpdateShortcutConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_collection_items": "#/$defs/GleanAddCollectionItemsConfig",
+          "create_answer": "#/$defs/GleanCreateAnswerConfig",
+          "create_collection": "#/$defs/GleanCreateCollectionConfig",
+          "create_shortcut": "#/$defs/GleanCreateShortcutConfig",
+          "delete_answer": "#/$defs/GleanDeleteAnswerConfig",
+          "delete_collection_item": "#/$defs/GleanDeleteCollectionItemConfig",
+          "delete_collections": "#/$defs/GleanDeleteCollectionsConfig",
+          "delete_shortcut": "#/$defs/GleanDeleteShortcutConfig",
+          "get_answer": "#/$defs/GleanGetAnswerConfig",
+          "get_collection": "#/$defs/GleanGetCollectionConfig",
+          "get_documents": "#/$defs/GleanGetDocumentsConfig",
+          "get_shortcut": "#/$defs/GleanGetShortcutConfig",
+          "get_trigger_preset": "#/$defs/GleanGetTriggerPresetConfig",
+          "list_answers": "#/$defs/GleanListAnswersConfig",
+          "list_collections": "#/$defs/GleanListCollectionsConfig",
+          "list_shortcuts": "#/$defs/GleanListShortcutsConfig",
+          "list_trigger_presets": "#/$defs/GleanListTriggerPresetsConfig",
+          "on_event": "#/$defs/GleanOnEventConfig",
+          "search": "#/$defs/GleanSearchConfig",
+          "update_answer": "#/$defs/GleanUpdateAnswerConfig",
+          "update_collection": "#/$defs/GleanUpdateCollectionConfig",
+          "update_shortcut": "#/$defs/GleanUpdateShortcutConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GleanSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanGetDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanGetCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanCreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanUpdateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanDeleteCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanAddCollectionItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanDeleteCollectionItemConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanListAnswersConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanGetAnswerConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanCreateAnswerConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanUpdateAnswerConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanDeleteAnswerConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanListShortcutsConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanGetShortcutConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanCreateShortcutConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanUpdateShortcutConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanDeleteShortcutConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanListTriggerPresetsConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanGetTriggerPresetConfig"
+        },
+        {
+          "$ref": "#/$defs/GleanOnEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GleanAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Glean Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
