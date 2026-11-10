@@ -253,3 +253,91 @@ async def test_documented_examples_cannot_authorize_inconsistent_reads_or_draft_
     if fixture == "space-detail":
         assert calls[0].url.path == "/v1/spaces/15"
         assert example["body"]["data"]["id"] == 1
+
+
+def poll_fixture(resource):
+    return json.loads((Path(__file__).parent / 'fixtures' / 'workvivo' / f'{resource}-poll.json').read_text())['body']
+
+
+def poll_state(instance, state):
+    async def update(mutator, **kwargs):
+        replacement, result = mutator(deepcopy(state))
+        if replacement is not None:
+            state.clear()
+            state.update(replacement)
+        return result
+    instance._update_node_state = update
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('operation,resource', [('on_new_update', 'updates'), ('on_new_event', 'events')])
+async def test_poll_documented_payload_baselines_then_emits_once(monkeypatch, operation, resource):
+    fixture = poll_fixture(resource)
+    instance, state = node(operation), {}
+    poll_state(instance, state)
+    # The empty list is the documented no-results envelope; subsequent bodies are unmodified OpenAPI examples.
+    with transport(monkeypatch, [httpx.Response(200, json=collection([], size=10)),
+        httpx.Response(200, json=fixture), httpx.Response(200, json=fixture)]) as calls:
+        baseline = await instance.execute({})
+        assert baseline['new_item_count'] == 0
+        assert not instance.should_propagate_output(baseline, {'operation': operation})
+        fresh = await instance.execute({})
+        assert fresh['new_item_count'] == len(fixture['data'])
+        assert instance.should_propagate_output(fresh, {'operation': operation})
+        event = instance.resolve_agent_event(fresh)
+        for item in fixture['data']:
+            assert str(item['id']) in event['text'] and item['creator']['name'] in event['text']
+        assert 'email' not in json.dumps(fresh) and 'mobile_phone' not in json.dumps(fresh)
+        again = await instance.execute({})
+        assert again['items'] == [] and instance.resolve_agent_event(again) is None
+        assert calls[0].url.params['take'] == '10'
+        if resource == 'events':
+            assert calls[0].url.params['upcoming_only'] == '0'
+
+
+@pytest.mark.asyncio
+async def test_poll_scope_rebaselines_and_cosmetic_changes_do_not(monkeypatch):
+    from nodes.core.poll_trigger import poll_scope
+    instance, state = node('on_new_update', space_id='108'), {}
+    poll_state(instance, state)
+    fixture = poll_fixture('updates')
+    with transport(monkeypatch, [httpx.Response(200, json=fixture), httpx.Response(200, json=fixture)]) as calls:
+        assert (await instance.execute({}))['items'] == []
+        assert calls[0].url.params['in_spaces'] == '108'
+        before = state.copy()
+        assert (await instance.execute({}))['items'] == []
+        assert state == before
+    original = {'operation': 'on_new_update', 'space_id': '108'}
+    assert poll_scope(s.WorkvivoNode, original) == poll_scope(s.WorkvivoNode, {**original, 'label': 'New label'})
+    assert poll_scope(s.WorkvivoNode, original) != poll_scope(s.WorkvivoNode, {**original, 'space_id': '3'})
+    moved = node('on_new_update', space_id='3')
+    poll_state(moved, state)
+    with transport(monkeypatch, [httpx.Response(200, json=fixture)]):
+        assert (await moved.execute({}))['items'] == []
+        assert state['scope'] != before['scope']
+
+
+@pytest.mark.asyncio
+async def test_poll_failure_does_not_consume_seen_state(monkeypatch):
+    instance, state = node('on_new_update'), {'seen_ids': []}
+    poll_state(instance, state)
+    fixture = poll_fixture('updates')
+    fixture['meta']['pagination']['next_page'] = 'https://evil.example/steal'
+    with transport(monkeypatch, [httpx.Response(200, json=fixture)]):
+        assert (await instance.execute({}))['status'] == 'error'
+    assert state == {'seen_ids': []}
+    assert instance.resolve_agent_event({'status': 'error', 'new_item_count': 1}) is None
+
+
+@pytest.mark.asyncio
+async def test_poll_follows_bound_filtered_pagination_before_dedup(monkeypatch):
+    instance, state = node('on_new_update', from_timestamp=1696150800, space_id='108'), {'seen_ids': []}
+    poll_state(instance, state)
+    rows = poll_fixture('updates')['data']
+    href = BASE + '/updates?skip=10&take=10&from=1696150800&in_spaces=108'
+    with transport(monkeypatch, [httpx.Response(200, json=collection(rows[:1], size=10, next_url=href)),
+        httpx.Response(200, json=collection(rows[1:], size=10, skip=10))]) as calls:
+        result = await instance.execute({})
+        assert result['new_item_count'] == 2
+        assert str(calls[1].url) == href
+        assert calls[0].url.params['from'] == '1696150800'

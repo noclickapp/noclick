@@ -15,6 +15,7 @@ from urllib.parse import parse_qsl, urlencode, urlsplit
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 from utils.ssrf import guarded_async_client
 
@@ -203,8 +204,28 @@ class GetEvent(Config):
     event_id: ID = Field(..., title="Event", json_schema_extra=_pick("event_id"))
 
 
+class NewContentPoll(PollTriggerConfigBase):
+    model_config = ConfigDict(hide_input_in_errors=True)
+    from_timestamp: int | None = Field(None, strict=True, ge=0, title="Created From (Unix Seconds)",
+        description="Optional earliest creation time. Existing items are baselined when the trigger is armed. Each poll scans at most 1,000 matching items; narrow this filter for larger collections.")
+
+
+class OnNewUpdate(NewContentPoll):
+    operation: Literal["on_new_update"] = Field("on_new_update", json_schema_extra={
+        "const": "on_new_update", "ui:hidden": True, "x-display-name": "On New Update",
+        "x-category": "Triggers", "x-is-trigger": True, "x-read-only": True})
+    space_id: ID | None = Field(None, title="Space", json_schema_extra=_pick("space_id"))
+
+
+class OnNewEvent(NewContentPoll):
+    operation: Literal["on_new_event"] = Field("on_new_event", json_schema_extra={
+        "const": "on_new_event", "ui:hidden": True, "x-display-name": "On New Event",
+        "x-category": "Triggers", "x-is-trigger": True, "x-read-only": True})
+    space_id: ID | None = Field(None, title="Space", json_schema_extra=_pick("space_id"))
+
+
 OperationConfig = Annotated[Union[ListUsers, GetUser, ListSpaces, GetSpace, ListPages, FindPage,
-    CreateDraftPage, UpdateDraftPage, DeleteDraftPage, ListArticles, GetArticle, ListEvents, GetEvent],
+    CreateDraftPage, UpdateDraftPage, DeleteDraftPage, ListArticles, GetArticle, ListEvents, GetEvent, OnNewUpdate, OnNewEvent],
     Field(discriminator="operation")]
 
 
@@ -283,16 +304,17 @@ class WorkvivoSession:
             if not isinstance(row, dict):
                 raise ValueError
             ident = _response_id(row.get("id"))
-            label = row.get("name" if resource in {"users", "spaces"} else "title")
-            if not isinstance(label, str) or not label or len(label) > 1000:
+            label = row.get("text" if resource == "updates" else "name" if resource in {"users", "spaces"} else "title")
+            if not isinstance(label, str) or not label or len(label) > (100000 if resource == "updates" else 1000):
                 raise ValueError
-            result = {"id": ident, "name" if resource in {"users", "spaces"} else "title": label}
+            result = {"id": ident, "text" if resource == "updates" else "name" if resource in {"users", "spaces"} else "title": label}
             # Deliberately omit employee email/phones/DOB, HTML, media and nested creator identities.
             allowed = {"users": ("display_name", "job_title", "timezone", "locale", "has_access", "is_frontline"),
                 "spaces": ("visibility", "is_external", "is_corporate", "is_mandatory", "is_read_only"),
                 "pages": ("slug", "subtitle", "space_id", "is_draft", "is_standalone", "is_sidebar_enabled"),
                 "articles": ("slug", "subtitle", "is_archived", "published_at", "archive_at"),
-                "events": ("scheduled_at", "ends_at", "all_day_event")}[resource]
+                "events": ("scheduled_at", "ends_at", "all_day_event"),
+                "updates": ("permalink",)}[resource]
             for key in (*allowed, "created_at", "updated_at"):
                 if key not in row:
                     continue
@@ -413,10 +435,10 @@ class WorkvivoSession:
 
 
 OPERATIONS = ("list_users", "get_user", "list_spaces", "get_space", "list_pages", "find_page",
-    "create_draft_page", "update_draft_page", "delete_draft_page", "list_articles", "get_article", "list_events", "get_event")
+    "create_draft_page", "update_draft_page", "delete_draft_page", "list_articles", "get_article", "list_events", "get_event", "on_new_update", "on_new_event")
 
 
-class WorkvivoNode(WorkflowNode):
+class WorkvivoNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-workvivo"
     scope_registry = ScopeRegistry("workvivo", {name: ScopeRequirement(credential_types=(FAMILY,),
         note="Workvivo app endpoint and visibility permissions are tenant-managed; the static key requests no OAuth scopes.") for name in OPERATIONS})
@@ -425,6 +447,80 @@ class WorkvivoNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return WorkvivoNodeConfig
+
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in {"on_new_update", "on_new_event"}:
+            return output.get("status") == "success" and bool(output.get("new_item_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or "new_item_count" not in output:
+            return super().resolve_agent_event(output)
+        items = output.get("items")
+        if output.get("status") != "success" or not items:
+            return None
+        lines = []
+        for item in items[:10]:
+            creator = item.get("creator", {})
+            who = creator.get("name") or "Workvivo"
+            where = f" in space {output['space_id']}" if output.get("space_id") else ""
+            content = item.get("title") or ""
+            if item.get("text"):
+                content += (": " if content else "") + item["text"]
+            details = f" (id {item['id']}"
+            if creator.get("id"):
+                details += f", creator {creator['id']}"
+            details += ")"
+            if item.get("scheduled_at"):
+                details += f" scheduled {item['scheduled_at']}"
+            if item.get("permalink"):
+                details += f" {item['permalink']}"
+            lines.append(f"- {who}{where}: {content}{details}")
+        if len(items) > 10:
+            lines.append(f"- … and {len(items) - 10} more")
+        return {"text": f"Workvivo: {len(items)} new {output['resource']}:\n" + "\n".join(lines),
+            "conversation_key": None}
+
+    async def _poll_content(self, session, config):
+        resource = "updates" if isinstance(config, OnNewUpdate) else "events"
+        filters = {}
+        if config.from_timestamp is not None:
+            filters["from"] = str(config.from_timestamp)
+        if config.space_id is not None:
+            filters["in_spaces"] = config.space_id
+        if resource == "events":
+            # Include past events too: an event becoming past must not change the baseline.
+            filters["upcoming_only"] = "0"
+        items, href = [], None
+        for _ in range(100):
+            page, _ = await session.page(resource, 10, href, filters, raw=True)
+            for row in page["items"]:
+                item = session.record(row, resource)
+                # Only the documented public author identity and content link reach the agent.
+                creator = row.get("creator")
+                if creator is not None:
+                    if not isinstance(creator, dict) or not isinstance(creator.get("name"), str):
+                        raise WorkvivoError("Workvivo returned unverified creator metadata")
+                    item["creator"] = {"id": _response_id(creator.get("id")), "name": creator["name"]}
+                if resource == "events":
+                    for key in ("text", "permalink"):
+                        if key in row:
+                            if not isinstance(row[key], str):
+                                raise WorkvivoError("Workvivo returned unverified event content")
+                            item[key] = row[key]
+                items.append(item)
+            href = page["next_page_url"]
+            if href is None:
+                break
+        else:
+            raise WorkvivoError("More than 1,000 matching Workvivo items; narrow Created From or Space")
+        if len({item["id"] for item in items}) != len(items):
+            raise WorkvivoError("Workvivo collection changed during polling; retry the poll")
+        fresh = await self._filter_unseen(items, lambda item: item["id"])
+        return session.redact({"status": "success", "items": fresh, "new_item_count": len(fresh),
+            "resource": resource, "space_id": config.space_id})
 
     @classmethod
     def parse_config(cls, config_data):
@@ -478,6 +574,8 @@ class WorkvivoNode(WorkflowNode):
             config = self.config.config
             self.scope_registry.require(config.operation)
             session = WorkvivoSession(self.config.credentials)
+            if isinstance(config, NewContentPoll):
+                return await self._poll_content(session, config)
             filters = {}
             if isinstance(config, PageScope) and config.space_id:
                 filters["space_id"] = config.space_id

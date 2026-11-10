@@ -1,0 +1,81 @@
+{
+  "body": {
+    "data": [
+      {
+        "id": 100,
+        "external_id": null,
+        "title": "Health & Safety Meeting",
+        "location": "HQ",
+        "text": "Join us for our next  Health & Safety Training Session.",
+        "language_code": "en",
+        "html_content": "<p>This is the event description</p>",
+        "scheduled_at": "2023-12-08T15:00:00Z",
+        "ends_at": "2023-12-08T16:00:00Z",
+        "book_button_text": "Click Me",
+        "book_button_url": "https://example.com",
+        "image": null,
+        "spaces": [
+          {
+            "id": 3,
+            "parent_space_id": null,
+            "name": "New Hires",
+            "description": "Are you a new hire? You are not alone! Join in the discussion as new hires and seasoned veterans share knowledge!",
+            "visibility": "public",
+            "is_external": false,
+            "is_corporate": false,
+            "is_mandatory": false,
+            "is_read_only": false,
+            "created_at": "2024-02-19T12:27:15Z",
+            "updated_at": "2024-04-24T11:04:30Z",
+            "permalink": "https://workvivo.com,/spaces/3"
+          }
+        ],
+        "audience": {
+          "is_global": false,
+          "spaces": [
+            {
+              "id": 3,
+              "name": "New Hires",
+              "permalink": "https://webinar.server.test/spaces/3"
+            }
+          ],
+          "teams": []
+        },
+        "creator": {
+          "id": 240,
+          "external_id": "ja-001",
+          "email": "ja@example.com",
+          "name": "James Ashton",
+          "first_name": "James",
+          "last_name": "Ashton",
+          "display_name": "James Ashton",
+          "avatar_url": "https://example.com/img/users/james-ashton",
+          "job_title": "Marketing Executive",
+          "timezone": "Europe/Dublin",
+          "locale": null,
+          "hire_date": null,
+          "manager_id": null,
+          "date_of_birth": null,
+          "mobile_phone": null,
+          "direct_dial": null,
+          "has_logged_in": true,
+          "is_frontline": true,
+          "has_access": false,
+          "created_at": "2025-01-01T00:00:00Z",
+          "permalink": "https://workvivo.com/people/240"
+        },
+        "permalink": "https://workvivo.com/events/100"
+      }
+    ],
+    "status": "success",
+    "meta": {
+      "pagination": {
+        "skip": 0,
+        "take": 10,
+        "total_records": 1,
+        "next_page": null
+      }
+    }
+  },
+  "source": "https://developer.workvivo.com/openapi/api-reference.json"
+}

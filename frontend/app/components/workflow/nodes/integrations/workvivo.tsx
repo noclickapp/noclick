@@ -15,7 +15,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: C
 export const WorkvivoNode: NodeDefinition = {
     type: 'automation-workvivo',
     label: 'Workvivo',
-    description: 'User, space, content and event metadata with draft page management',
+    description: 'New update and event triggers, metadata and draft page management',
     category: 'communication',
     Icon: OfficialBrandIcon,
     iconColor: '',

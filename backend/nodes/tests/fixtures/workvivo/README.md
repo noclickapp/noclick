@@ -27,3 +27,18 @@ The six conformance failures are contradictions in these fixed response examples
 
 The regression tests assert rejection and no mutation for these exact examples.
 They do not rewrite provider responses or relax tenant, pagination or draft checks.
+
+The `updates-poll.json` and `events-poll.json` bodies are also copied verbatim
+from the GET /v1/updates and GET /v1/events OpenAPI examples. Poll tests feed
+these complete bodies through the guarded transport, shared baseline/dedup
+mechanism and agent event resolver. The poll emits newly observed IDs, not
+updates to existing records. Creation-time and optional space filters bound
+the collection. It follows every returned next_page within the exact tenant
+and filter set, refusing a partial scan after 100 pages (1,000 items).
+
+Workvivo documents manual webhook setup, and the public Customer API only
+lists/inspects webhook configurations; it cannot register/unregister them:
+https://developer.workvivo.com/guides/webhooks-fundamentals
+Consequently these triggers use the scheduled poll family. Offset pagination
+is not a snapshot; subsequent polls repeat the scan to catch shifted items,
+as described at https://developer.workvivo.com/guides/reading-data.
