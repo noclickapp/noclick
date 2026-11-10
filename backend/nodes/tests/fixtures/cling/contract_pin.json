@@ -1,0 +1,12 @@
+{
+  "evidence": "openapi",
+  "file": "openapi.json",
+  "version": "1.0.0",
+  "source_url": "https://api.cling.se/openApiSpec",
+  "sha256": "abf6e1dd1f4f21e346472451dbd04084811911bae5c81a036e4382e65747322e",
+  "node_type": "automation-cling",
+  "live_recorded": false,
+  "event_example_source": "https://developer.cling.se/api/partner/webhooks.html",
+  "event_envelope_source": "https://developer.cling.se/api/document/webhooks.html",
+  "authentication_source": "https://developer.cling.se/api/introduction/getting-started.html"
+}

@@ -1,0 +1,1071 @@
+{
+  "$defs": {
+    "ClingAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "cling_api_key",
+          "default": "cling_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Cling API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing company API key from Cling. It inherits the permissions of the company user who created it. NoClick sends it in the apiKey header to api.cling.se.",
+      "x-credential-url": "https://developer.cling.se/api/introduction/getting-started.html"
+    },
+    "ClingCreateCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Create Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Create Customer",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "customer_type": {
+          "default": "individual",
+          "enum": [
+            "individual",
+            "company"
+          ],
+          "title": "Customer Type",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Email"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ClingCreateCustomerConfig",
+      "type": "object"
+    },
+    "ClingCreateDocumentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_document",
+          "default": "create_document",
+          "title": "Create Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Create Document",
+          "x-is-trigger": false
+        },
+        "template_id": {
+          "description": "",
+          "minLength": 1,
+          "title": "Template ID",
+          "type": "string"
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer ID",
+          "type": "integer"
+        },
+        "name": {
+          "description": "",
+          "minLength": 1,
+          "title": "Document Title",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Language"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Currency"
+        }
+      },
+      "required": [
+        "template_id",
+        "customer_id",
+        "name"
+      ],
+      "title": "ClingCreateDocumentConfig",
+      "type": "object"
+    },
+    "ClingCreateProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Create Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Create Project",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ClingCreateProjectConfig",
+      "type": "object"
+    },
+    "ClingDeleteCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_customer",
+          "default": "delete_customer",
+          "title": "Delete Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Delete Customer",
+          "x-is-trigger": false
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ClingDeleteCustomerConfig",
+      "type": "object"
+    },
+    "ClingDeleteDocumentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_document",
+          "default": "delete_document",
+          "title": "Delete Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Delete Document",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Document ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "ClingDeleteDocumentConfig",
+      "type": "object"
+    },
+    "ClingDeleteProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Delete Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Delete Project",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "minimum": 1,
+          "title": "Project ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ClingDeleteProjectConfig",
+      "type": "object"
+    },
+    "ClingGetCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Get Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Get Customer",
+          "x-is-trigger": false
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ClingGetCustomerConfig",
+      "type": "object"
+    },
+    "ClingGetDocumentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_document",
+          "default": "get_document",
+          "title": "Get Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Get Document",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Document ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "ClingGetDocumentConfig",
+      "type": "object"
+    },
+    "ClingGetProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "minimum": 1,
+          "title": "Project ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ClingGetProjectConfig",
+      "type": "object"
+    },
+    "ClingGetTemplateConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Get Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Get Template",
+          "x-is-trigger": false
+        },
+        "template_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Template ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "ClingGetTemplateConfig",
+      "type": "object"
+    },
+    "ClingListCustomersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "List Customers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "List Customers",
+          "x-is-trigger": false
+        },
+        "start": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "end": {
+          "default": 20,
+          "description": "Exclusive end offset; must exceed start.",
+          "minimum": 1,
+          "title": "End",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Sort Property"
+        },
+        "order": {
+          "default": "ASC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "where": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cling expression, for example or(status=active,status=completed).",
+          "title": "Filter"
+        }
+      },
+      "title": "ClingListCustomersConfig",
+      "type": "object"
+    },
+    "ClingListDocumentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "List Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "List Documents",
+          "x-is-trigger": false
+        },
+        "skip": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Property to sort on, prefixed with - for descending.",
+          "title": "Sort"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Status"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON filter, e.g. {\"status\":{\"$in\":[\"draft\",\"sent\"]}}",
+          "title": "Advanced Filter"
+        }
+      },
+      "title": "ClingListDocumentsConfig",
+      "type": "object"
+    },
+    "ClingListProjectsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Projects",
+          "x-is-trigger": false
+        },
+        "start": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "end": {
+          "default": 20,
+          "description": "Exclusive end offset; must exceed start.",
+          "minimum": 1,
+          "title": "End",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Sort Property"
+        },
+        "order": {
+          "default": "ASC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "where": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cling expression, for example or(status=active,status=completed).",
+          "title": "Filter"
+        }
+      },
+      "title": "ClingListProjectsConfig",
+      "type": "object"
+    },
+    "ClingListTemplatesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "List Templates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "List Templates",
+          "x-is-trigger": false
+        },
+        "skip": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Property to sort on, prefixed with - for descending.",
+          "title": "Sort"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Language"
+        }
+      },
+      "title": "ClingListTemplatesConfig",
+      "type": "object"
+    },
+    "ClingOnDocumentAcceptedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_document_accepted",
+          "default": "on_document_accepted",
+          "title": "On Document Accepted",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Document Accepted",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cling delivers document.accepted events here automatically. Cling's default deliveries are unsigned; keep this URL private.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "ClingOnDocumentAcceptedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ClingRestoreCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "restore_customer",
+          "default": "restore_customer",
+          "title": "Restore Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Restore Customer",
+          "x-is-trigger": false
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ClingRestoreCustomerConfig",
+      "type": "object"
+    },
+    "ClingRestoreDocumentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "restore_document",
+          "default": "restore_document",
+          "title": "Restore Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Restore Document",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Document ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "ClingRestoreDocumentConfig",
+      "type": "object"
+    },
+    "ClingRestoreProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "restore_project",
+          "default": "restore_project",
+          "title": "Restore Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Restore Project",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "minimum": 1,
+          "title": "Project ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ClingRestoreProjectConfig",
+      "type": "object"
+    },
+    "ClingSendDocumentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_document",
+          "default": "send_document",
+          "title": "Send Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Send Document",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Document ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "ClingSendDocumentConfig",
+      "type": "object"
+    },
+    "ClingUpdateCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Update Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Update Customer",
+          "x-is-trigger": false
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer ID",
+          "type": "integer"
+        },
+        "street": {
+          "description": "",
+          "minLength": 1,
+          "title": "Street",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id",
+        "street"
+      ],
+      "title": "ClingUpdateCustomerConfig",
+      "type": "object"
+    },
+    "ClingUpdateDocumentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_document",
+          "default": "update_document",
+          "title": "Update Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Update Document",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Document ID",
+          "type": "string"
+        },
+        "status": {
+          "description": "",
+          "minLength": 1,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id",
+        "status"
+      ],
+      "title": "ClingUpdateDocumentConfig",
+      "type": "object"
+    },
+    "ClingUpdateProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Update Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Update Project",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "minimum": 1,
+          "title": "Project ID",
+          "type": "integer"
+        },
+        "status": {
+          "description": "",
+          "minLength": 1,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "status"
+      ],
+      "title": "ClingUpdateProjectConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_customer": "#/$defs/ClingCreateCustomerConfig",
+          "create_document": "#/$defs/ClingCreateDocumentConfig",
+          "create_project": "#/$defs/ClingCreateProjectConfig",
+          "delete_customer": "#/$defs/ClingDeleteCustomerConfig",
+          "delete_document": "#/$defs/ClingDeleteDocumentConfig",
+          "delete_project": "#/$defs/ClingDeleteProjectConfig",
+          "get_customer": "#/$defs/ClingGetCustomerConfig",
+          "get_document": "#/$defs/ClingGetDocumentConfig",
+          "get_project": "#/$defs/ClingGetProjectConfig",
+          "get_template": "#/$defs/ClingGetTemplateConfig",
+          "list_customers": "#/$defs/ClingListCustomersConfig",
+          "list_documents": "#/$defs/ClingListDocumentsConfig",
+          "list_projects": "#/$defs/ClingListProjectsConfig",
+          "list_templates": "#/$defs/ClingListTemplatesConfig",
+          "on_document_accepted": "#/$defs/ClingOnDocumentAcceptedConfig",
+          "restore_customer": "#/$defs/ClingRestoreCustomerConfig",
+          "restore_document": "#/$defs/ClingRestoreDocumentConfig",
+          "restore_project": "#/$defs/ClingRestoreProjectConfig",
+          "send_document": "#/$defs/ClingSendDocumentConfig",
+          "update_customer": "#/$defs/ClingUpdateCustomerConfig",
+          "update_document": "#/$defs/ClingUpdateDocumentConfig",
+          "update_project": "#/$defs/ClingUpdateProjectConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ClingListDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingGetDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingCreateDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingUpdateDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingDeleteDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingRestoreDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingSendDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingGetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingCreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingUpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingDeleteCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingRestoreCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingCreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingUpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingDeleteProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingRestoreProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingGetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/ClingOnDocumentAcceptedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ClingAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Cling Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a Cling document from a template",
+    "Send a Cling document",
+    "When a Cling document is accepted",
+    "Create a Cling customer"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

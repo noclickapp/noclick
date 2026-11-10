@@ -1,0 +1,16 @@
+{
+  "type": "document.accepted",
+  "typeId": "6374e2d7047992fe71a6acce",
+  "source": "webhookSubscription",
+  "sourceId": 3,
+  "companyId": 25,
+  "createdAt": "2022-11-17T09:32:22Z",
+  "data": {
+    "id": "6374e2d7047992fe71a6acce",
+    "status": "accepted",
+    "companyId": 25,
+    "data": {
+      "name": "Document name"
+    }
+  }
+}
