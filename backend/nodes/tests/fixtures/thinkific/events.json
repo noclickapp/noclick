@@ -1,0 +1,271 @@
+{
+  "order.created": {
+    "body": {
+      "id": "20180126172320940835610",
+      "resource": "order",
+      "action": "created",
+      "tenant_id": "3",
+      "created_at": "2018-01-26T22:23:20.808Z",
+      "payload": {
+        "affiliate_referral_code": null,
+        "amount_cents": 5000,
+        "amount_dollars": 50,
+        "billing_name": "Robert Smith",
+        "coupon": {
+          "id": 12345678,
+          "code": "discount123",
+          "promotion_id": 1234567
+        },
+        "created_at": "2018-01-26T22:23:18.400Z",
+        "id": 19796,
+        "order_number": 1010,
+        "payment_type": "one-time",
+        "product_id": 1,
+        "product_name": "Introduction to Webhooks",
+        "status": "Complete",
+        "items": [
+          {
+            "product_id": 1,
+            "product_name": "Introduction to Webhooks",
+            "amount_dollars": 50,
+            "amount_cents": 5000
+          }
+        ],
+        "net_amount": 1234,
+        "presentment_amount": 15896,
+        "presentment_currency": "cad",
+        "client_reference_id": "cart-order-99",
+        "user": {
+          "email": "ninjas@thinkific.com",
+          "first_name": "Robert",
+          "id": 123456,
+          "last_name": "Smith"
+        }
+      }
+    },
+    "source": "https://support.thinkific.dev/api/v2/help_center/en-us/articles/4422658311703.json"
+  },
+  "user.signup": {
+    "body": {
+      "id": "20180123170248040678392",
+      "resource": "user",
+      "action": "signup",
+      "tenant_id": "73394",
+      "created_at": "2018-01-23T22:02:45.001Z",
+      "payload": {
+        "administered_course_ids": null,
+        "affiliate_code": null,
+        "affiliate_commission": null,
+        "affiliate_commission_type": "%",
+        "affiliate_payout_email": null,
+        "avatar_url": null,
+        "bio": null,
+        "company": null,
+        "created_at": "2018-01-23T22:02:44.987Z",
+        "custom_profile_fields": [],
+        "email": "ninjas@thinkific.com",
+        "external_source": null,
+        "first_name": "Robert",
+        "headline": null,
+        "id": 123456,
+        "last_name": "Smith",
+        "roles": []
+      }
+    },
+    "source": "https://support.thinkific.dev/api/v2/help_center/en-us/articles/4422658311703.json"
+  },
+  "user.updated": {
+    "body": {
+      "id": "01G2RB8T432BGTQ7J7S8JQJS3X",
+      "resource": "user",
+      "action": "updated",
+      "tenant_id": "73394",
+      "tenant_global_id": "507a2dd6-0c09-4452-b8cd-69c9adaf2a24",
+      "created_at": "2022-05-11T01:20:54.000Z",
+      "timestamp": 1652232054,
+      "payload": {
+        "id": 2017237,
+        "first_name": "John",
+        "last_name": "Doo",
+        "email": "john@doo.com",
+        "roles": [],
+        "custom_profile_fields": [],
+        "site": {
+          "id": "507a2dd6-0c09-4452-b8cd-69c9adaf2a24"
+        }
+      }
+    },
+    "source": "https://support.thinkific.dev/api/v2/help_center/en-us/articles/4422658311703.json"
+  },
+  "enrollment.created": {
+    "body": {
+      "id": "20180126171756020665195",
+      "resource": "enrollment",
+      "action": "created",
+      "tenant_id": "3",
+      "created_at": "2018-01-26T22:17:01.924Z",
+      "payload": {
+        "activated_at": "2018-01-26T22:16:52.255Z",
+        "completed_at": null,
+        "course": {
+          "id": 4,
+          "name": "Introduction to Webhooks"
+        },
+        "course_id": 4,
+        "created_at": "2018-01-26T22:16:52.285Z",
+        "expiry_date": null,
+        "free_trial": false,
+        "id": 97472,
+        "percentage_completed": "0.0",
+        "started_at": "2018-01-26T22:17:01.891Z",
+        "updated_at": "2018-01-26T22:17:01.924Z",
+        "user": {
+          "email": "ninjas@thinkific.com",
+          "first_name": "Robert",
+          "id": 123456,
+          "last_name": "Smith"
+        }
+      }
+    },
+    "source": "https://support.thinkific.dev/api/v2/help_center/en-us/articles/4422658311703.json"
+  },
+  "enrollment.trial": {
+    "body": {
+      "id": "20180116184610563698247",
+      "resource": "enrollment",
+      "action": "trial",
+      "tenant_id": "1008",
+      "created_at": "2018-01-16T23:45:06.466Z",
+      "payload": {
+        "activated_at": null,
+        "completed_at": null,
+        "course": {
+          "id": 2692,
+          "name": "Introduction to Webhooks"
+        },
+        "course_id": 2692,
+        "created_at": "2018-01-16T23:45:03.227Z",
+        "expiry_date": null,
+        "free_trial": true,
+        "id": 97197,
+        "percentage_completed": "0.0",
+        "started_at": "2018-01-16T23:45:06.436Z",
+        "updated_at": "2018-01-16T23:45:06.466Z",
+        "user": {
+          "email": "ninjas@thinkific.com",
+          "first_name": "Robert",
+          "id": 123456,
+          "last_name": "Smith"
+        }
+      }
+    },
+    "source": "https://support.thinkific.dev/api/v2/help_center/en-us/articles/4422658311703.json"
+  },
+  "enrollment.completed": {
+    "body": {
+      "id": "01JTVB3ZXNK1M928X2MMZ5CJ2X",
+      "resource": "enrollment",
+      "action": "completed",
+      "tenant_id": "445230",
+      "tenant_global_id": "f4a345bd-c9e2-4487-95c3-d85b1977d2fe",
+      "created_at": "2025-05-09T20:17:20.000Z",
+      "timestamp": 1746821840,
+      "payload": {
+        "id": 652268044,
+        "created_at": "2025-05-09T20:16:37.082Z",
+        "expiry_date": null,
+        "course_id": 3093805,
+        "percentage_completed": "1.0",
+        "completed_at": "2025-05-09T20:17:20.571Z",
+        "free_trial": false,
+        "started_at": "2025-05-09T20:17:08.833Z",
+        "activated_at": "2025-05-09T20:16:37.073Z",
+        "updated_at": "2025-05-09T20:17:20.739Z",
+        "credential_id": null,
+        "certificate_url": null,
+        "certificate_expiry_date": null,
+        "last_percentage_completed": "0.75",
+        "user": {
+          "id": 222244858,
+          "first_name": "Webhook",
+          "last_name": "User",
+          "email": "webhook@user.com"
+        },
+        "course": {
+          "id": 3093805,
+          "name": "Introduction to Webhooks"
+        }
+      }
+    },
+    "source": "https://support.thinkific.dev/api/v2/help_center/en-us/articles/4422658311703.json"
+  },
+  "enrollment.progress": {
+    "body": {
+      "id": "20180118171806111886309",
+      "resource": "enrollment",
+      "action": "progress",
+      "tenant_id": "987",
+      "created_at": "2018-01-18T22:18:05.984Z",
+      "payload": {
+        "activated_at": "2018-01-18T22:17:52.380Z",
+        "completed_at": null,
+        "course": {
+          "id": 3035,
+          "name": "Introduction to Webhooks"
+        },
+        "course_id": 3035,
+        "created_at": "2018-01-18T22:17:52.459Z",
+        "expiry_date": null,
+        "free_trial": false,
+        "id": 97254,
+        "last_percentage_completed": "0.0",
+        "percentage_completed": "0.333333333333333",
+        "started_at": "2018-01-18T22:17:58.569Z",
+        "updated_at": "2018-01-18T22:18:05.984Z",
+        "user": {
+          "email": "ninjas@thinkific.com",
+          "first_name": "Robert",
+          "id": 123456,
+          "last_name": "Smith"
+        }
+      }
+    },
+    "source": "https://support.thinkific.dev/api/v2/help_center/en-us/articles/4422658311703.json"
+  },
+  "lesson.completed": {
+    "body": {
+      "id": "20191029145629636106318",
+      "resource": "lesson",
+      "action": "completed",
+      "tenant_id": "12345",
+      "tenant_global_id": "feb8d00d-8040-4382-afee-491a6c8013af",
+      "created_at": "2019-10-29T18:56:29.474Z",
+      "payload": {
+        "chapter": {
+          "id": 123,
+          "name": "Chapter 1"
+        },
+        "course": {
+          "id": 123,
+          "name": "Introduction to Webhooks"
+        },
+        "enrollment": {
+          "id": 1084282
+        },
+        "lesson": {
+          "id": 24220,
+          "name": "Getting started with Webhooks",
+          "position": 0,
+          "type": "Video"
+        },
+        "user": {
+          "email": "ninjas@thinkific.com",
+          "first_name": "Robert",
+          "id": 123456,
+          "last_name": "Smith"
+        }
+      }
+    },
+    "source": "https://support.thinkific.dev/api/v2/help_center/en-us/articles/4422658311703.json"
+  }
+}

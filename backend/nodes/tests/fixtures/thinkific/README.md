@@ -16,3 +16,6 @@ spec nor these documented null values have been modified to make validation pass
 
 Authentication follows the provider's [API Access Token guide](https://support.thinkific.dev/hc/en-us/articles/38357676036887-Authorization-using-API-Access-Token):
 `Authorization: Bearer <token>`, with no subdomain or additional API key.
+
+`events.json` copies eight event payloads from Thinkific's [Webhooks Documentation](https://support.thinkific.dev/hc/en-us/articles/4422658311703-Webhooks-Documentation), retrieved through its [public article endpoint](https://support.thinkific.dev/api/v2/help_center/en-us/articles/4422658311703.json) because the HTML page challenges automated requests. These cover signup/update, enrollment creation/trial/completion/progress, orders and lesson completion.
+Registration and generated-secret responses follow the [Webhooks API v2.0.1](https://developers.thinkific.com/openapi/thinkific-webhooks-v2.yaml); verification follows [Using Webhooks](https://support.thinkific.dev/hc/en-us/articles/4422685850775-Using-Webhooks). Sites still awaiting the signing-secret rollout are refused and the unusable subscription is removed.

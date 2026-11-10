@@ -50,7 +50,7 @@ export const ThinkificNode: NodeDefinition = {
     category: 'courses',
     label: 'Thinkific',
     description:
-        'Create and update students, enroll in courses and bundles, and sync orders and purchases',
+        'Create and update students, enroll in courses and bundles, sync orders and purchases, and trigger workflows from student activity',
     keywords: [
         'students',
         'learners',
@@ -60,6 +60,9 @@ export const ThinkificNode: NodeDefinition = {
         'orders',
         'purchases',
         'learning management',
+        'webhooks',
+        'course completion',
+        'triggers',
     ],
     Icon: ThinkificIcon,
     iconColor: '',

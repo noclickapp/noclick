@@ -4,16 +4,24 @@ Contract: https://developers.thinkific.com/openapi/thinkific-admin-api-v1.yaml
 Token auth: https://support.thinkific.dev/hc/en-us/articles/38357676036887
 Each operation performs one documented API request; lists return one page and
 preserve meta.pagination for subsequent sync runs. External orders are stored by
-Thinkific but do not appear in its orders report/dashboard. Webhook subscription
-management is outside this node's request/response operations.
+Thinkific but do not appear in its orders report/dashboard. Signed triggers use
+the Webhooks API v2 and documented event examples:
+https://developers.thinkific.com/openapi/thinkific-webhooks-v2.yaml
+https://support.thinkific.dev/hc/en-us/articles/4422658311703-Webhooks-Documentation
+https://support.thinkific.dev/hc/en-us/articles/4422685850775-Using-Webhooks
 """
 from typing import Annotated, Any, Literal, Union
 from urllib.parse import quote
 import time
+import hashlib
+import hmac
 import httpx
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, create_model
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
+
+THINKIFIC_WEBHOOK_BASE = "https://platform.thinkific.com/api/v2"
 
 THINKIFIC_API_BASE = "https://api.thinkific.com/api/public/v1"
 
@@ -467,6 +475,40 @@ class ThinkificRecordPurchaseConfig(BaseModel):
     )
 
 
+# Event names and payloads: Thinkific's Webhooks Documentation linked above.
+THINKIFIC_TRIGGERS = {
+    "on_student_signup": ("user.signup", "New Student"),
+    "on_student_updated": ("user.updated", "Student Updated"),
+    "on_enrollment_created": ("enrollment.created", "New Enrollment"),
+    "on_enrollment_trial": ("enrollment.trial", "New Trial Enrollment"),
+    "on_enrollment_completed": ("enrollment.completed", "Course Completed"),
+    "on_enrollment_progress": ("enrollment.progress", "Course Progress Updated"),
+    "on_order_created": ("order.created", "New Order"),
+    "on_lesson_completed": ("lesson.completed", "Lesson Completed"),
+}
+
+
+class ThinkificWebhookConfig(WebhookTriggerConfigBase):
+    webhook_url: str | None = Field(
+        None, title="Webhook URL", description="Registered with Thinkific automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True},
+    )
+
+
+THINKIFIC_TRIGGER_MODELS = tuple(
+    create_model(
+        "Thinkific" + "".join(part.title() for part in operation.split("_")) + "Config",
+        __base__=ThinkificWebhookConfig, __module__=__name__,
+        operation=(Literal[operation], Field(operation, json_schema_extra={
+            "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+            "x-display-name": label,
+        })),
+    )
+    for operation, (_, label) in THINKIFIC_TRIGGERS.items()
+)
+globals().update({model.__name__: model for model in THINKIFIC_TRIGGER_MODELS})
+
+
 ThinkificConfig = Annotated[
     Union[
         ThinkificListStudentsConfig,
@@ -489,6 +531,7 @@ ThinkificConfig = Annotated[
         ThinkificGetProductConfig,
         ThinkificCreateExternalOrderConfig,
         ThinkificRecordPurchaseConfig,
+        *THINKIFIC_TRIGGER_MODELS,
     ],
     Field(discriminator="operation"),
 ]
@@ -664,7 +707,7 @@ OPERATIONS = {
 }
 
 
-class ThinkificNode(WorkflowNode):
+class ThinkificNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-thinkific"
     connection_evidence = ConnectionEvidence(operation="list_courses", noun="courses")
     edit_examples = [
@@ -678,6 +721,96 @@ class ThinkificNode(WorkflowNode):
     def get_config_model(cls):
         return ThinkificNodeConfig
 
+    @staticmethod
+    async def _webhook_request(token, method, path, body=None):
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.request(
+                method, THINKIFIC_WEBHOOK_BASE + path, json=body,
+                headers={"Authorization": f"Bearer {token}", "Accept": "application/json"},
+            )
+        # A deleted subscription already satisfies cleanup.
+        if method == "DELETE" and response.status_code == 404:
+            return {}
+        if not 200 <= response.status_code < 300:
+            raise ValueError(f"Thinkific webhook request failed (HTTP {response.status_code})")
+        return response.json() if response.content else {}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        operation = (config or {}).get("operation")
+        if operation not in THINKIFIC_TRIGGERS:
+            raise ValueError("Choose a Thinkific trigger")
+        token = credential.get("access_token")
+        if not token:
+            raise ValueError("Connect a Thinkific API access token")
+        data = await cls._webhook_request(token, "POST", "/webhooks", {
+            "topic": THINKIFIC_TRIGGERS[operation][0], "target_url": webhook_url,
+            "generate_signing_secret": True,
+        })
+        endpoint_id = data.get("id")
+        secret = data.get("signing_secret")
+        if not endpoint_id:
+            raise ValueError("Thinkific did not return a webhook ID")
+        if not secret:
+            # Signing secrets are rolling out. Never leave an unverifiable subscription behind.
+            await cls._webhook_request(token, "DELETE", f"/webhooks/{quote(str(endpoint_id), safe='')}")
+            raise ValueError("Thinkific has not enabled webhook signing secrets for this site; contact Thinkific support")
+        return {"external_webhook_id": str(endpoint_id), "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = (config or {}).get("external_webhook_id")
+        if endpoint_id and credential and credential.get("access_token"):
+            await cls._webhook_request(
+                credential["access_token"], "DELETE", f"/webhooks/{quote(str(endpoint_id), safe='')}")
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        secret = (config or {}).get("signing_secret")
+        signature = next((v for k, v in headers.items() if k.lower() == "x-thinkific-hmac-sha256"), "")
+        if not isinstance(secret, str) or not secret or not isinstance(signature, str):
+            return False
+        expected = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
+        return len(signature) == 64 and signature.isascii() and hmac.compare_digest(expected, signature)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        expected = THINKIFIC_TRIGGERS.get((config or {}).get("operation"))
+        return bool(expected and isinstance(payload, dict)
+                    and f"{payload.get('resource')}.{payload.get('action')}" == expected[0]
+                    and isinstance(payload.get("payload"), dict))
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        resource, action = output.get("resource"), output.get("action")
+        topic = f"{resource}.{action}"
+        if topic not in {event for event, _ in THINKIFIC_TRIGGERS.values()}:
+            return super().resolve_agent_event(output)
+        record = output["payload"]
+        user = record if resource == "user" else record["user"]
+        name = " ".join(str(user.get(key) or "") for key in ("first_name", "last_name")).strip()
+        lines = [f"Thinkific {topic}: {name} ({user.get('email')})",
+                 f"Site ID: {output.get('tenant_id')}; student_id: {user.get('id')}",
+                 f"At: {output.get('created_at')}; event_id: {output.get('id')}"]
+        if resource == "enrollment":
+            course = record["course"]
+            lines += [f"Course: {course.get('name')} (course_id: {course.get('id')})",
+                      f"enrollment_id: {record.get('id')}; progress: {record.get('percentage_completed')}"]
+        elif resource == "lesson":
+            course, lesson = record["course"], record["lesson"]
+            lines += [f"Course: {course.get('name')} (course_id: {course.get('id')})",
+                      f"Lesson: {lesson.get('name')} (lesson_id: {lesson.get('id')})",
+                      f"enrollment_id: {record['enrollment'].get('id')}"]
+        elif resource == "order":
+            lines += [f"Order #{record.get('order_number')} (order_id: {record.get('id')}): {record.get('status')}",
+                      f"Product: {record.get('product_name')} (product_id: {record.get('product_id')})",
+                      f"Amount: {record.get('amount_cents')} cents; payment type: {record.get('payment_type')}"]
+        title = lines[0]
+        return {"text": "\n".join(lines), "title": title,
+                "conversation_key": f"{output.get('tenant_id')}:student:{user.get('id')}"}
+
     async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(self.config, ThinkificNodeConfig):
             raise ValueError("A valid Thinkific configuration is required")
@@ -685,6 +818,9 @@ class ThinkificNode(WorkflowNode):
         if credentials is None:
             raise ValueError("Connect a Thinkific API access token")
         op = self.config.config
+        if isinstance(op, ThinkificWebhookConfig):
+            payload = (self.node_data or {}).get("config", {}).get("_triggerPayload") or inputs
+            return self.resolve_trigger_payload(payload, op.model_dump())
         method, path, id_field, query_fields, body_fields, is_list = OPERATIONS[
             op.operation
         ]

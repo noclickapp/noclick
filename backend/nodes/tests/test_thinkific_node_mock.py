@@ -9,12 +9,13 @@ from pathlib import Path
 from unittest.mock import Mock
 import httpx
 import pytest
-from nodes.thinkific_node import ThinkificNode, ThinkificNodeConfig
+from nodes.thinkific_node import ThinkificNode, ThinkificNodeConfig, THINKIFIC_TRIGGERS
 
 FIXTURES = Path(__file__).parent / "fixtures" / "thinkific"
 RESPONSES = json.loads((FIXTURES / "responses.json").read_text())
 REQUESTS = json.loads((FIXTURES / "requests.json").read_text())
 TOKEN = "thinkific-test-token"
+EVENTS = json.loads((FIXTURES / "events.json").read_text())
 
 
 def make_node(config):
@@ -183,3 +184,96 @@ async def test_transport_failure(monkeypatch, exception):
     assert (await make_node({"operation": "list_courses"}).execute({}))[
         "status"
     ] == "error"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", THINKIFIC_TRIGGERS)
+async def test_signed_trigger_lifecycle(monkeypatch, operation):
+    import hashlib
+    import hmac
+    topic = THINKIFIC_TRIGGERS[operation][0]
+    event = EVENTS[topic]["body"]
+    secret = "documented-signing-secret"
+    seen = []
+
+    def handler(request):
+        seen.append(request)
+        assert request.url.host == "platform.thinkific.com"
+        assert request.headers["authorization"] == "Bearer " + TOKEN
+        if request.method == "POST":
+            assert request.url.path == "/api/v2/webhooks"
+            assert json.loads(request.content) == {
+                "topic": topic, "target_url": "https://workflow.hooks.example.test/hook",
+                "generate_signing_secret": True,
+            }
+            return httpx.Response(201, json={"id": "20200227213233625839530", "signing_secret": secret})
+        assert request.method == "DELETE"
+        assert request.url.path == "/api/v2/webhooks/20200227213233625839530"
+        return httpx.Response(204)
+
+    mock_transport(monkeypatch, handler)
+    config = {"operation": operation}
+    node = make_node(config)
+    registration = await ThinkificNode._register_external_webhook(
+        webhook_url="https://workflow.hooks.example.test/hook", credential={"access_token": TOKEN}, config=config, node_id="thinkific")
+    config.update(registration)
+    assert make_node(config).config.config.signing_secret == secret
+    raw = json.dumps(event).encode()
+    signature = hmac.new(secret.encode(), raw, hashlib.sha256).hexdigest()
+    headers = {"X-Thinkific-Hmac-Sha256": signature}
+    assert ThinkificNode.verify_webhook_signature(raw, headers, config)
+    assert not ThinkificNode.verify_webhook_signature(raw + b" ", headers, config)
+    assert not ThinkificNode.verify_webhook_signature(raw, {}, config)
+    assert not ThinkificNode.verify_webhook_signature(raw, headers, {})
+    assert not ThinkificNode.verify_webhook_signature(raw, {"x-thinkific-hmac-sha256": "é" * 64}, config)
+    for other, fixture in EVENTS.items():
+        assert ThinkificNode.filter_trigger_payload(fixture["body"], config) == (other == topic)
+    output = ThinkificNode.resolve_trigger_payload(event, config)
+    assert output == event
+    turn = ThinkificNode.resolve_agent_event(output)
+    user = event["payload"] if event["resource"] == "user" else event["payload"]["user"]
+    assert topic in turn["text"]
+    assert user["email"] in turn["text"]
+    assert str(user["id"]) in turn["text"]
+    assert event["tenant_id"] in turn["conversation_key"]
+    assert str(event["id"]) in turn["text"]
+    if event["resource"] in {"enrollment", "lesson"}:
+        assert event["payload"]["course"]["name"] in turn["text"]
+    if event["resource"] == "order":
+        assert event["payload"]["product_name"] in turn["text"]
+        assert str(event["payload"]["amount_cents"]) in turn["text"]
+    assert await node.execute(event) == event
+    await ThinkificNode._unregister_external_webhook(
+        credential={"access_token": TOKEN}, config=config, node_id="thinkific")
+    assert len(seen) == 2
+
+
+@pytest.mark.asyncio
+async def test_trigger_rollout_without_signing_secret_cleans_up(monkeypatch):
+    seen = []
+
+    def handler(request):
+        seen.append(request.method)
+        if request.method == "POST":
+            return httpx.Response(201, json={"id": "20200227213233625839530"})
+        return httpx.Response(204)
+
+    mock_transport(monkeypatch, handler)
+    with pytest.raises(ValueError, match="has not enabled webhook signing secrets"):
+        await ThinkificNode._register_external_webhook(
+            webhook_url="https://workflow.hooks.example.test/hook", credential={"access_token": TOKEN},
+            config={"operation": "on_order_created"}, node_id="thinkific")
+    assert seen == ["POST", "DELETE"]
+
+
+@pytest.mark.asyncio
+async def test_trigger_registration_rejection_and_deleted_cleanup(monkeypatch):
+    status = 401
+    mock_transport(monkeypatch, lambda request: httpx.Response(status))
+    with pytest.raises(ValueError, match="HTTP 401"):
+        await ThinkificNode._register_external_webhook(
+            webhook_url="https://workflow.hooks.example.test/hook", credential={"access_token": TOKEN},
+            config={"operation": "on_student_signup"}, node_id="thinkific")
+    status = 404
+    await ThinkificNode._unregister_external_webhook(
+        credential={"access_token": TOKEN}, config={"external_webhook_id": "1"}, node_id="thinkific")
