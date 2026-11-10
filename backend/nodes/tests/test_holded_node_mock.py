@@ -90,3 +90,70 @@ async def test_explicit_null_clears_a_field_while_unset_fields_stay_absent(monke
     requests=wire(monkeypatch,body={'id':ID})
     await node({'operation':'update_project','projectId':ID,'description':None}).execute({})
     assert json.loads(requests[0].content)=={'description':None}
+
+
+# Payloads copied from the provider's event reference; each fixture carries its source URL.
+from pathlib import Path
+import hashlib
+import hmac
+
+EVENTS = json.loads((Path(__file__).parent / "fixtures/holded/events.json").read_text())
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("event", native.HOLDED_WEBHOOK_EVENTS)
+async def test_documented_event_lifecycle_and_agent_turn(monkeypatch, event):
+    example = EVENTS[event]
+    body = json.dumps(example["body"]).encode()
+    secret = "whsec_abc123"  # POST /api/v2/webhooks's published example.
+    requests = wire(monkeypatch, 201, {"id": ID, "secret": secret})
+    config = {"operation": "on_event", "event_type": event}
+    registration = await native.HoldedNode._register_external_webhook(
+        webhook_url="https://example.com/webhook", credential={"api_key": TOKEN}, config=config, node_id="test")
+    assert registration == {"external_webhook_id": ID, "signing_secret": secret}
+    assert requests[0].url.path == "/api/v2/webhooks" and requests[0].method == "POST"
+    assert json.loads(requests[0].content) == {"url": "https://example.com/webhook", "events": [event],
+        "version": "v1", "description": "NoClick test"}
+    headers = {"X-Holded-Webhook-Event": event, "X-Holded-Webhook-Id": "delivery-id",
+        "X-Holded-Webhook-Account-Id": "account-id", "X-Holded-Webhook-Date": "2026-06-18T11:10:35Z",
+        "X-Holded-Webhook-Signature": "sha256=" + hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()}
+    config.update(registration)
+    assert native.HoldedNode.verify_webhook_signature(body, headers, config)
+    assert not native.HoldedNode.verify_webhook_signature(body + b" ", headers, config)
+    payload = {**example["body"], "_webhook": {"headers": headers}}
+    assert native.HoldedNode.filter_trigger_payload(payload, config)
+    assert not native.HoldedNode.filter_trigger_payload(payload, {**config, "event_type": "other.event"})
+    output = native.HoldedNode.resolve_trigger_payload(payload, config)
+    assert output == payload
+    turn = native.HoldedNode.resolve_agent_event(output)
+    assert "Holded" in turn["text"] and "delivery-id" in turn["text"] and "account-id" in turn["text"]
+    assert str(example["body"].get("id", example["body"].get("productId"))) in turn["text"]
+    assert "sha256=" not in turn["text"] and secret not in turn["text"]
+    assert native.HoldedNode.registration_fingerprint_fields(config) == {"event_type": event}
+    requests = wire(monkeypatch, 204)
+    await native.HoldedNode._unregister_external_webhook(credential={"api_key": TOKEN}, config=config, node_id="test")
+    assert len(requests) == 1 and requests[0].method == "DELETE"
+    assert requests[0].url.path == "/api/v2/webhooks/" + ID
+
+
+@pytest.mark.parametrize("headers,config", [({}, {}), ({}, {"signing_secret": "secret"}),
+    ({"x-holded-webhook-signature": "sha256=é"}, {"signing_secret": "secret"}),
+    ({"x-holded-webhook-signature": "bad"}, {"signing_secret": "secret"})])
+def test_holded_webhook_rejects_missing_or_malformed_signature(headers, config):
+    assert not native.HoldedNode.verify_webhook_signature(b"{}", headers, config)
+
+
+@pytest.mark.asyncio
+async def test_holded_trigger_manual_run_emits_no_event(monkeypatch):
+    requests = wire(monkeypatch)
+    output = await node({"operation": "on_event"}).execute({"other_step": {"private": "data"}})
+    assert output["status"] == "no_event" and output["data"] == {} and requests == []
+    assert native.HoldedNode.resolve_agent_event(output) is None
+
+
+@pytest.mark.asyncio
+async def test_holded_registration_requires_returned_secret(monkeypatch):
+    wire(monkeypatch, 201, {"id": ID})
+    with pytest.raises(ValueError, match="signing secret"):
+        await native.HoldedNode._register_external_webhook(webhook_url="https://example.com/webhook",
+            credential={"api_key": TOKEN}, config={"event_type": "invoice.create"}, node_id="test")

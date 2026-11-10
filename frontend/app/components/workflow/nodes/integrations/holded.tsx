@@ -15,7 +15,7 @@ HoldedIcon.displayName = 'HoldedIcon';
 export const HoldedNode: NodeDefinition = {
     type: 'automation-holded',
     label: 'Holded',
-    description: 'Contacts, invoices, products, projects and tasks',
+    description: 'Contacts, invoices, products, projects, tasks and real-time event triggers',
     category: 'finance-accounting',
     Icon: HoldedIcon,
     iconColor: '',

@@ -4,12 +4,15 @@ Contract: https://api.holded.com/openapi/api2.json (1.0.0).
 """
 from __future__ import annotations
 from datetime import date as Date, datetime as DateTime
-from typing import Annotated, Literal, Union
+from typing import Annotated, Any, Literal, Union
 from urllib.parse import quote
+import hashlib
+import hmac
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -562,7 +565,27 @@ class HoldedDeleteTaskConfig(_Input):
     operation: Literal['delete_task'] = Field('delete_task', json_schema_extra={"ui:hidden": True})
     taskId: str = Field(..., pattern='^[a-f0-9]{24}$', min_length=1, description='Task ID')
 
-HoldedOperation = Annotated[Union[HoldedListContactsConfig, HoldedCreateContactConfig, HoldedGetContactConfig, HoldedUpdateContactConfig, HoldedDeleteContactConfig, HoldedListInvoicesConfig, HoldedCreateInvoiceConfig, HoldedGetInvoiceConfig, HoldedUpdateInvoiceConfig, HoldedDeleteInvoiceConfig, HoldedListProductsConfig, HoldedCreateProductConfig, HoldedGetProductConfig, HoldedUpdateProductConfig, HoldedDeleteProductConfig, HoldedListProjectsConfig, HoldedCreateProjectConfig, HoldedGetProjectConfig, HoldedUpdateProjectConfig, HoldedDeleteProjectConfig, HoldedListTasksConfig, HoldedCreateTaskConfig, HoldedGetTaskConfig, HoldedUpdateTaskConfig, HoldedDeleteTaskConfig], Field(discriminator="operation")]
+HOLDED_WEBHOOK_EVENTS = (
+    "invoice.create", "invoice.update", "invoice.approve", "invoice.delete",
+    "contact.create", "contact.update", "contact.delete",
+    "product.create", "product.update", "stock.update",
+)
+
+
+class HoldedOnEventConfig(WebhookTriggerConfigBase):
+    """Receive the documented Holded v1 webhook payload for the selected event."""
+
+    operation: Literal["on_event"] = Field("on_event", title="On Holded Event", json_schema_extra={
+        "const": "on_event", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On Holded Event",
+    })
+    event_type: Literal[*HOLDED_WEBHOOK_EVENTS] = Field(
+        "invoice.create", title="Event", description="The Holded event that starts this workflow. Requires developers:webhooks.write permission on the API key.")
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with Holded automatically",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+HoldedOperation = Annotated[Union[HoldedOnEventConfig, HoldedListContactsConfig, HoldedCreateContactConfig, HoldedGetContactConfig, HoldedUpdateContactConfig, HoldedDeleteContactConfig, HoldedListInvoicesConfig, HoldedCreateInvoiceConfig, HoldedGetInvoiceConfig, HoldedUpdateInvoiceConfig, HoldedDeleteInvoiceConfig, HoldedListProductsConfig, HoldedCreateProductConfig, HoldedGetProductConfig, HoldedUpdateProductConfig, HoldedDeleteProductConfig, HoldedListProjectsConfig, HoldedCreateProjectConfig, HoldedGetProjectConfig, HoldedUpdateProjectConfig, HoldedDeleteProjectConfig, HoldedListTasksConfig, HoldedCreateTaskConfig, HoldedGetTaskConfig, HoldedUpdateTaskConfig, HoldedDeleteTaskConfig], Field(discriminator="operation")]
 
 class HoldedFullConfig(NodeConfig[HoldedOperation, HoldedAPIKey]):
     pass
@@ -575,27 +598,98 @@ def _redact(value, token):
     if isinstance(value, dict): return {k: _redact(v, token) for k, v in value.items() if k.lower() not in {"authorization", "api_key", "access_token"}}
     return value
 
-class HoldedNode(WorkflowNode):
+class HoldedNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-holded"
     connection_evidence = ConnectionEvidence(noun="contacts", operation="list_contacts")
 
     @classmethod
     def get_config_model(cls): return HoldedFullConfig
 
-    async def execute(self, inputs):
-        if self.config is None or self.config.credentials is None:
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event = (config or {}).get("event_type", "invoice.create")
+        if event not in HOLDED_WEBHOOK_EVENTS:
+            raise ValueError("Choose a supported Holded event")
+        result = await cls._request(credential.get("api_key"), "POST", "/api/v2/webhooks", body={
+            "url": webhook_url, "events": [event], "version": "v1", "description": f"NoClick {node_id}"})
+        if not isinstance(result, dict) or not result.get("id") or not result.get("secret"):
+            raise ValueError("Holded did not return a webhook ID and signing secret")
+        return {"external_webhook_id": result["id"], "signing_secret": result["secret"]}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = (config or {}).get("external_webhook_id")
+        if endpoint_id:
+            await cls._request((credential or {}).get("api_key"), "DELETE",
+                "/api/v2/webhooks/" + quote(str(endpoint_id), safe=""))
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"event_type": (config or {}).get("event_type", "invoice.create")}
+
+    @classmethod
+    def verify_webhook_signature(cls, body: bytes, headers: dict[str, str], config: dict[str, Any]) -> bool:
+        # https://www.holded.com/developers/webhooks: raw body, literal whsec_ secret.
+        secret = (config or {}).get("signing_secret")
+        received = next((v for k, v in headers.items() if k.lower() == "x-holded-webhook-signature"), "")
+        if not secret or not isinstance(received, str) or not received.startswith("sha256="):
+            return False
+        expected = "sha256=" + hmac.new(str(secret).encode(), body, hashlib.sha256).hexdigest()
+        return received.isascii() and hmac.compare_digest(expected, received)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        headers = (payload.get("_webhook") or {}).get("headers") or {}
+        event = next((v for k, v in headers.items() if k.lower() == "x-holded-webhook-event"), None)
+        return (config or {}).get("operation") == "on_event" and event == (config or {}).get("event_type", "invoice.create")
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict):
+            return None
+        headers = {k.lower(): v for k, v in (output.get("_webhook", {}).get("headers") or {}).items()}
+        event = headers.get("x-holded-webhook-event")
+        if event not in HOLDED_WEBHOOK_EVENTS:
+            return None
+        resource, action = event.split(".")
+        verb = {"create": "created", "update": "updated", "approve": "approved", "delete": "deleted"}[action]
+        if resource == "stock":
+            record_id = output.get("productId")
+            facts = [("Product ID", record_id), ("Variant ID", output.get("variantId")),
+                     ("Warehouse ID", output.get("warehouseId")), ("SKU", output.get("sku")),
+                     ("Stock change", output.get("stockVariation"))]
+            heading = f"Holded stock updated: {output.get('sku') or record_id}"
+        else:
+            record_id = output.get("id")
+            facts = [(f"{resource.title()} ID", record_id)]
+            if resource == "invoice":
+                heading = f"Holded invoice {verb}: {output.get('documentNumber') or record_id}"
+                facts.append(("Contact ID", output.get("contactId")))
+                if action != "delete":
+                    facts += [("Contact", output.get("contactName")), ("Total", output.get("total")),
+                              ("Date", output.get("date")), ("Due date", output.get("dueDate"))]
+            elif resource == "contact":
+                heading = f"Holded contact {verb}: {record_id if action == 'delete' else output.get('name') or record_id}"
+                if action != "delete":
+                    facts += [("Email", output.get("email")), ("Phone", output.get("phoneNumber"))]
+            else:
+                heading = f"Holded product {verb}: {output.get('name') or record_id}"
+                facts += [("SKU", output.get("sku")), ("Price", output.get("price")), ("Stock", output.get("stock"))]
+        facts += [("Holded account", headers.get("x-holded-webhook-account-id")),
+                  ("Event ID", headers.get("x-holded-webhook-id")), ("Sent at", headers.get("x-holded-webhook-date"))]
+        text = "\n".join([heading] + [f"{key}: {value}" for key, value in facts if value is not None])
+        return {"text": text, "conversation_key": f"holded:{headers.get('x-holded-webhook-account-id', '')}:{resource}:{record_id}",
+                "title": heading}
+
+    @staticmethod
+    async def _request(token, method, path, *, query=None, body=None):
+        if not token:
             raise ValueError("Connect a Holded API key")
-        op = self.config.config
-        token = self.config.credentials.api_key
-        method, path, path_fields, query_fields = ROUTES[op.operation]
-        values = op.model_dump(mode="json", exclude_unset=True, exclude={"operation"})
-        for field in path_fields: path = path.replace("{" + field + "}", quote(str(values.pop(field)), safe=""))
-        query = {key: values.pop(key) for key in query_fields if key in values and values[key] is not None}
         try:
             async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
                 response = await client.request(method, "https://api.holded.com" + path,
                     headers={"Authorization": "Bearer " + token, "Accept": "application/json"},
-                    params=query, **({"json": values} if method in {"POST", "PUT", "PATCH"} else {}))
+                    params=query, **({"json": body} if method in {"POST", "PUT", "PATCH"} else {}))
         except (httpx.TimeoutException, httpx.TransportError):
             raise ValueError("Holded request did not complete; inspect the account before retrying a write") from None
         if not 200 <= response.status_code < 300:
@@ -610,3 +704,16 @@ class HoldedNode(WorkflowNode):
         except ValueError: raise ValueError("Holded returned invalid JSON") from None
         if not isinstance(body, (dict, list)): raise ValueError("Holded returned an unexpected response")
         return _redact(body, token)
+
+    async def execute(self, inputs):
+        if self.config is None or self.config.credentials is None:
+            raise ValueError("Connect a Holded API key")
+        op = self.config.config
+        if isinstance(op, HoldedOnEventConfig):
+            return self.no_event_output(op.operation, "Waiting for a Holded webhook event")
+        token = self.config.credentials.api_key
+        method, path, path_fields, query_fields = ROUTES[op.operation]
+        values = op.model_dump(mode="json", exclude_unset=True, exclude={"operation"})
+        for field in path_fields: path = path.replace("{" + field + "}", quote(str(values.pop(field)), safe=""))
+        query = {key: values.pop(key) for key in query_fields if key in values and values[key] is not None}
+        return await self._request(token, method, path, query=query, body=values)

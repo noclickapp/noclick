@@ -3127,6 +3127,152 @@
       "title": "HoldedListTasksConfig",
       "type": "object"
     },
+    "HoldedOnEventConfig": {
+      "description": "Receive the documented Holded v1 webhook payload for the selected event.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On Holded Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Holded Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "invoice.create",
+          "description": "The Holded event that starts this workflow. Requires developers:webhooks.write permission on the API key.",
+          "enum": [
+            "invoice.create",
+            "invoice.update",
+            "invoice.approve",
+            "invoice.delete",
+            "contact.create",
+            "contact.update",
+            "contact.delete",
+            "product.create",
+            "product.update",
+            "stock.update"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Holded automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "HoldedOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "HoldedUpdateContactConfig": {
       "additionalProperties": false,
       "description": "Update a contact",
@@ -5720,6 +5866,7 @@
           "list_products": "#/$defs/HoldedListProductsConfig",
           "list_projects": "#/$defs/HoldedListProjectsConfig",
           "list_tasks": "#/$defs/HoldedListTasksConfig",
+          "on_event": "#/$defs/HoldedOnEventConfig",
           "update_contact": "#/$defs/HoldedUpdateContactConfig",
           "update_invoice": "#/$defs/HoldedUpdateInvoiceConfig",
           "update_product": "#/$defs/HoldedUpdateProductConfig",
@@ -5729,6 +5876,9 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/HoldedOnEventConfig"
+        },
         {
           "$ref": "#/$defs/HoldedListContactsConfig"
         },
