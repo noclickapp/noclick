@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { useDraggable } from '@dnd-kit/core';
 import { Loader2, X } from 'lucide-react';
 import OpenAI from '@lobehub/icons/es/OpenAI';
@@ -284,7 +285,7 @@ function PaletteNodes({
         : 'Available Nodes';
 
     return (
-        <div>
+        <div className="flex h-full min-h-0 flex-col">
             <div className="flex items-center gap-2 mb-4">
                 <div className="text-xs text-muted-foreground dark:text-zinc-500">
                     {title}
@@ -297,30 +298,96 @@ function PaletteNodes({
                     to add
                 </span>
             </div>
-            <div
-                className="flex flex-wrap"
-                style={{ rowGap: `${ROW_GAP}px` }}
-            >
-                {displayMatches.map((match, i) => (
-                    <DraggableNodePreview
-                        key={match.node.type}
-                        match={match}
-                        models={models}
-                        isHighlighted={i === highlight}
-                    />
-                ))}
-                {/* Phantom spacer — absorbs extra space on the trailing
-                    partial row so its tiles don't stretch wildly. Full
-                    rows before it still stretch to fill because the
-                    phantom only lives on the final row. */}
-                <div
-                    aria-hidden
-                    style={{
-                        flex: '99999 0 auto',
-                        height: 0,
-                        pointerEvents: 'none',
-                    }}
-                />
+            <PaletteRows matches={displayMatches} models={models} highlight={highlight} />
+        </div>
+    );
+}
+
+/** The tile's height: taller with a seed line under its name. */
+function tileHeightOf(match: NodeSearchMatch, models: Model[]): number {
+    return seedLabelOf(match, models) ? TILE_HEIGHT + 26 : TILE_HEIGHT;
+}
+
+function seedLabelOf(match: NodeSearchMatch, models: Model[]): string | null {
+    return match.seedLabel ?? describeAgentSeed(match.initialConfig ?? null, models);
+}
+
+/** The tiles in rows as a wrapping flex line breaks them (each tile asks for its preview's width), so each row can be
+ *  drawn on its own. */
+function packRows(matches: NodeSearchMatch[], width: number, models: Model[]): Array<{ matches: NodeSearchMatch[]; height: number }> {
+    const rows: Array<{ matches: NodeSearchMatch[]; height: number }> = [];
+    let used = 0;
+    for (const match of matches) {
+        const basis = previewSizeForNode(match.node).width + 8;
+        const row = rows[rows.length - 1];
+        if (!row || used + basis > width) {
+            rows.push({ matches: [match], height: tileHeightOf(match, models) + ROW_GAP });
+            used = basis;
+        } else {
+            row.matches.push(match);
+            row.height = Math.max(row.height, tileHeightOf(match, models) + ROW_GAP);
+            used += basis;
+        }
+    }
+    return rows;
+}
+
+/** A thousand-odd tiles, drawn as only the rows in view of the palette's own scroll. */
+function PaletteRows({ matches, models, highlight }: { matches: NodeSearchMatch[]; models: Model[]; highlight: number }) {
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const [width, setWidth] = useState(0);
+    useLayoutEffect(() => {
+        const element = scrollRef.current;
+        if (!element) return;
+        const measure = () => setWidth(element.clientWidth);
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(element);
+        return () => observer.disconnect();
+    }, []);
+    const rows = useMemo(() => (width ? packRows(matches, width, models) : []), [matches, width, models]);
+    const virtualizer = useVirtualizer({
+        count: rows.length,
+        getScrollElement: () => scrollRef.current,
+        estimateSize: (index) => rows[index].height,
+        overscan: 2,
+    });
+    // Heights are known, not measured: a new search re-reads them.
+    useLayoutEffect(() => virtualizer.measure(), [rows, virtualizer]);
+    const indexOf = useMemo(() => new Map(matches.map((match, i) => [match, i])), [matches]);
+
+    return (
+        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto scrollbar-subtle">
+            <div className="relative" style={{ height: virtualizer.getTotalSize() }}>
+                {virtualizer.getVirtualItems().map(({ index, key, start }) => {
+                    const row = rows[index];
+                    return (
+                        <div key={key} className="absolute inset-x-0 top-0 flex" style={{ transform: `translateY(${start}px)` }}>
+                            {row.matches.map((match) => (
+                                <DraggableNodePreview
+                                    key={match.node.type}
+                                    match={match}
+                                    models={models}
+                                    isHighlighted={indexOf.get(match) === highlight}
+                                />
+                            ))}
+                            {/* Phantom spacer — absorbs extra space on the trailing
+                                partial row so its tiles don't stretch wildly. Full
+                                rows before it still stretch to fill because the
+                                phantom only lives on the final row. */}
+                            {index === rows.length - 1 && (
+                                <div
+                                    aria-hidden
+                                    style={{
+                                        flex: '99999 0 auto',
+                                        height: 0,
+                                        pointerEvents: 'none',
+                                    }}
+                                />
+                            )}
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
@@ -346,10 +413,7 @@ function DraggableNodePreview({
         () => match.initialConfig ?? null,
         [match.initialConfig]
     );
-    const seedLabel = useMemo(
-        () => match.seedLabel ?? describeAgentSeed(initialConfig, models),
-        [match.seedLabel, initialConfig, models]
-    );
+    const seedLabel = useMemo(() => seedLabelOf(match, models), [match, models]);
 
     const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
         id: `workflow-node-${node.type}`,
@@ -373,7 +437,7 @@ function DraggableNodePreview({
     // doesn't squeeze the preview. Catalog matches can have longer names
     // (e.g. "DeepSeek V3 Chat") — allow two wrapped lines so the tile shows
     // the full name instead of clamping to an ellipsis.
-    const tileHeight = seedLabel ? TILE_HEIGHT + 26 : TILE_HEIGHT;
+    const tileHeight = tileHeightOf(match, models);
     const addNode = () => {
         document.dispatchEvent(
             new CustomEvent('noclick:add-connected-node', {
@@ -388,16 +452,9 @@ function DraggableNodePreview({
 
     return (
         <div
-            // content-visibility lets the browser skip layout + paint for the
-            // ~120 tiles scrolled out of view, so opening the palette only pays
-            // for the visible rows (the tiles are gradient/blur-heavy). The
-            // intrinsic-size hint keeps the scroll height correct before an
-            // off-screen tile is rendered.
             style={{
                 flex: `1 0 ${basis}px`,
                 height: tileHeight,
-                contentVisibility: 'auto',
-                containIntrinsicSize: `${Math.round(basis)}px ${tileHeight}px`,
             }}
             role="button"
             tabIndex={0}

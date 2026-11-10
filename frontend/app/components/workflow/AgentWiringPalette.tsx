@@ -8,6 +8,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { ArrowLeft, CornerDownLeft, Loader2, Search, Wrench, Zap } from 'lucide-react';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { useNodeSchemas } from '~/hooks/useNodeSchemas';
@@ -89,6 +90,9 @@ export function buildWiringServices(role: 'trigger' | 'tool', catalog: NodeSearc
         })
         .sort((a, b) => a.label.localeCompare(b.label));
 }
+
+/** A row's height: a 36px row, the list's gap included. */
+const ROW_HEIGHT = 36;
 
 function PaletteRow({
     index,
@@ -245,6 +249,15 @@ export function AgentWiringPalette({
             onCommit: commitIndex,
         });
 
+    // A thousand-odd services: only the rows in view are drawn (keyboard steps stay inside the overscan, so the
+    // highlighted row is always drawn to scroll into view).
+    const virtualizer = useVirtualizer({
+        count: rows.length,
+        getScrollElement: () => listRef.current,
+        estimateSize: () => ROW_HEIGHT,
+        overscan: 8,
+    });
+
     const goBack = () => {
         setOpsService(null);
         setSearch('');
@@ -289,6 +302,37 @@ export function AgentWiringPalette({
     }, [open, opsService, onClose]);
 
     if (!open || typeof document === 'undefined') return null;
+
+    const rowAt = (idx: number) => {
+        const select = { index: idx, active: idx === highlightedIndex, onHover: () => setHighlightedIndex(idx), onSelect: () => commitIndex(idx) };
+        if (step === 'trigger-ops') {
+            const op = (rows as TriggerOperation[])[idx];
+            return (
+                <PaletteRow
+                    {...select}
+                    icon={<Zap className="h-[18px] w-[18px] shrink-0 p-0.5 text-amber-600 dark:text-amber-400" fill="currentColor" />}
+                    label={op.displayName}
+                    detail={op.description}
+                />
+            );
+        }
+        const service = (rows as ServiceEntry[])[idx];
+        const meta = getNodeIconMeta(service.nodeType);
+        return (
+            <PaletteRow
+                {...select}
+                icon={
+                    meta?.iconHtml ? (
+                        <SerializedIcon html={meta.iconHtml} iconColor={meta.iconColor} className="h-[18px] w-[18px] shrink-0" />
+                    ) : (
+                        <span className="h-[18px] w-[18px] shrink-0" />
+                    )
+                }
+                label={service.label}
+                badge={wiringRole === 'trigger' && service.triggerOps.length > 1 ? `${service.triggerOps.length} triggers` : undefined}
+            />
+        );
+    };
 
     const headerIcon =
         wiringRole === 'trigger' ? (
@@ -544,45 +588,13 @@ export function AgentWiringPalette({
                             ) : rows.length === 0 && (
                                 <div className="px-3 py-8 text-center text-sm text-muted-foreground dark:text-zinc-500">No matches.</div>
                             )}
-                            {step === 'list' &&
-                                (rows as ServiceEntry[]).map((s, idx) => {
-                                    const meta = getNodeIconMeta(s.nodeType);
-                                    return (
-                                        <PaletteRow
-                                            key={s.nodeType}
-                                            index={idx}
-                                            active={idx === highlightedIndex}
-                                            onHover={() => setHighlightedIndex(idx)}
-                                            onSelect={() => commitIndex(idx)}
-                                            icon={
-                                                meta?.iconHtml ? (
-                                                    <SerializedIcon html={meta.iconHtml} iconColor={meta.iconColor} className="h-[18px] w-[18px] shrink-0" />
-                                                ) : (
-                                                    <span className="h-[18px] w-[18px] shrink-0" />
-                                                )
-                                            }
-                                            label={s.label}
-                                            badge={
-                                                wiringRole === 'trigger' && s.triggerOps.length > 1
-                                                    ? `${s.triggerOps.length} triggers`
-                                                    : undefined
-                                            }
-                                        />
-                                    );
-                                })}
-                            {step === 'trigger-ops' &&
-                                (rows as TriggerOperation[]).map((op, idx) => (
-                                    <PaletteRow
-                                        key={op.operation}
-                                        index={idx}
-                                        active={idx === highlightedIndex}
-                                        onHover={() => setHighlightedIndex(idx)}
-                                        onSelect={() => commitIndex(idx)}
-                                        icon={<Zap className="h-[18px] w-[18px] shrink-0 p-0.5 text-amber-600 dark:text-amber-400" fill="currentColor" />}
-                                        label={op.displayName}
-                                        detail={op.description}
-                                    />
+                            <div className="relative" style={{ height: virtualizer.getTotalSize() }}>
+                                {virtualizer.getVirtualItems().map(({ index: idx, key, start }) => (
+                                    <div key={key} data-index={idx} ref={virtualizer.measureElement} className="absolute inset-x-0 top-0" style={{ transform: `translateY(${start}px)` }}>
+                                        {rowAt(idx)}
+                                    </div>
                                 ))}
+                            </div>
                         </div>
                         <div className="flex items-center gap-4 border-t border-border dark:border-white/[0.06] px-4 py-2.5 text-[11px] text-muted-foreground dark:text-zinc-500">
                             <span className="flex items-center gap-1.5">
