@@ -1,0 +1,147 @@
+{
+  "data": {
+    "id": 1,
+    "created_at": "2013-06-19T20:41:47+03:00",
+    "updated_at": "2013-06-19T20:41:47+03:00",
+    "archived_at": "2016-02-25T11:31:39+02:00",
+    "external_id": "5",
+    "version_id": 3,
+    "customer_id": 65,
+    "language": "fi",
+    "customer_external_id": "CUSTOMER123",
+    "different_shipping_address": true,
+    "subtotal": 14,
+    "discount": {
+      "type": "CAMPAIGN",
+      "coupon_id": 6,
+      "campaign_id": 4,
+      "code": "ALE25",
+      "value": 12
+    },
+    "total": 49.99,
+    "status": "COMPLETED",
+    "details": "Please deliver ASAP, it is an emergency",
+    "receipt_url": "https://example.mycashflow.fi/orderstatus/1/receipt/afcc120905e10bb56e63c30d6d7653c4",
+    "return_document_url": "https://example.mycashflow.fi/orderstatus/1/returndocument/afcc120905e10bb56e63c30d6d7653c4",
+    "dispatch_note_url": "https://example.mycashflow.fi/orderstatus/1/dispatchnote/afcc120905e10bb56e63c30d6d7653c4",
+    "custom_data": {},
+    "source": "WEB",
+    "referral_code": "REF123",
+    "shipping_method_id": 5,
+    "shipping_costs": 5.9,
+    "payment_method_id": 6,
+    "payment_costs": 2.5,
+    "customer_information": {
+      "email": "mail@example.com",
+      "company": "Pulse247 Oy",
+      "first_name": "Example",
+      "last_name": "Customer",
+      "street_address": "Kaivokatu 12",
+      "street_name": "Moussaouistraat",
+      "street_number": "22",
+      "house_extension": "b",
+      "postal_code": "00100",
+      "city": "Helsinki",
+      "country": "fi",
+      "phone": "+3585012312312"
+    },
+    "shipping_address": {
+      "id": 1,
+      "created_at": "2013-06-19T20:41:47+03:00",
+      "updated_at": "2013-06-19T20:41:47+03:00",
+      "customer_id": 2,
+      "primary": false,
+      "email": "mail@example.com",
+      "company": "Pulse247 Oy",
+      "first_name": "Example",
+      "last_name": "Customer",
+      "street_address": "Kaivokatu 12",
+      "street_name": "Moussaouistraat",
+      "street_number": "22",
+      "house_extension": "b",
+      "postal_code": "00100",
+      "city": "Helsinki",
+      "country": "fi",
+      "phone": "+3585012312312"
+    },
+    "comments": [
+      {
+        "order_id": 1,
+        "created_at": null,
+        "user_id": 2,
+        "visibility": "PUBLIC",
+        "text": "There will be a slight delay with your order's delivery."
+      },
+      {
+        "order_id": 1,
+        "created_at": null,
+        "user_id": null,
+        "visibility": "PRIVATE",
+        "text": "I didn't find a suitable pickup point for my order."
+      }
+    ],
+    "tax_summary": {
+      "subtotal": {
+        "tax_rate": 24,
+        "total": 10,
+        "total_tax": 1.94,
+        "total_without_tax": 8.06
+      },
+      "discount": {
+        "tax_rate": 24,
+        "total": -2.54,
+        "total_tax": -0.49,
+        "total_without_tax": -2.05
+      },
+      "shipping_costs": {
+        "tax_rate": 24,
+        "total": 6.9,
+        "total_tax": 1.34,
+        "total_without_tax": 5.56
+      },
+      "payment_costs": {
+        "tax_rate": 24,
+        "total": 5,
+        "total_tax": 0.97,
+        "total_without_tax": 4.03
+      },
+      "total": {
+        "tax_rate": 24,
+        "total": 19.36,
+        "total_tax": 3.76,
+        "total_without_tax": 15.6
+      }
+    },
+    "events": {
+      "created_at": "2013-06-19T20:41:47+03:00",
+      "code": "PAYMENT_CHANGED_TO_PAID",
+      "message": "Payment transaction 144 (9,60\u20ac) status was changed as paid.",
+      "data": {
+        "TRANSACTION_ID": "144",
+        "TRANSACTION_TOTAL": "9,60"
+      }
+    },
+    "products": [
+      {
+        "product_id": 3,
+        "variation_id": 15,
+        "quantity": 1
+      },
+      {
+        "product_id": 4,
+        "quantity": 1,
+        "unit_price": 12.95
+      }
+    ],
+    "shipments": null,
+    "payments": null
+  },
+  "meta": {
+    "expands": [
+      "shipments",
+      "products"
+    ],
+    "item_count": 1,
+    "webhook_topic": "order.unarchived"
+  }
+}

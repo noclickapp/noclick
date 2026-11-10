@@ -1,0 +1,91 @@
+{
+  "data": {
+    "id": 1,
+    "created_at": "2013-06-19T20:41:47+03:00",
+    "updated_at": "2013-06-19T20:41:47+03:00",
+    "name": "Winter sale -10%",
+    "published": true,
+    "conditions": {
+      "time": {
+        "from": null,
+        "to": "2020-11-30T23:59:59+02:00"
+      },
+      "code": "ALE123",
+      "customers": {
+        "group_ids": [
+          1,
+          4,
+          5
+        ]
+      }
+    },
+    "discounts": {
+      "products": {
+        "enabled": true,
+        "quantity_discounts": true
+      },
+      "free_shipping": {
+        "enabled": true
+      },
+      "discount_row": {
+        "enabled": false
+      }
+    },
+    "page": {
+      "description": "<p>All product -25 % for the summer. Act now, don't miss out!</p>",
+      "enabled": true,
+      "image": "image.png",
+      "link": "/category/6",
+      "pinned": false,
+      "template": "campaign/campaign-alternative"
+    },
+    "translations": [
+      {
+        "language": "fi",
+        "name": "Macbook-ale",
+        "description": "Kaikki Macbookit nyt -50 %",
+        "seo_title": "P\u00e4ivin putiikin Macbook-ale",
+        "seo_page_title": "Kaikki Macbookit nyt -50 %",
+        "seo_meta_description": "Osta Macbook puoleen hintaan"
+      },
+      {
+        "language": "en",
+        "name": "Macbook sale!",
+        "description": "All Macbooks now at -50 %",
+        "seo_title": "Macbook sale at P\u00e4ivi's boutique\n",
+        "seo_page_title": "All Macbooks now -50 %\n",
+        "seo_meta_description": "Get your Macbook at half the price.\n"
+      }
+    ],
+    "prices": [
+      {
+        "product_id": 4,
+        "price": 39.99
+      },
+      {
+        "product_id": 5,
+        "variation_id": 3,
+        "price": 39.99,
+        "order_limit": 3
+      }
+    ],
+    "visibilities": [
+      {
+        "version_id": 4,
+        "is_visible": false
+      },
+      {
+        "version_id": 3,
+        "is_visible": true
+      }
+    ]
+  },
+  "meta": {
+    "expands": [
+      "translations",
+      "prices"
+    ],
+    "item_count": 1,
+    "webhook_topic": "campaign.updated"
+  }
+}

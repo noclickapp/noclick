@@ -1,0 +1,12 @@
+{
+  "data": {
+    "created_at": "2013-06-19T20:41:47+03:00",
+    "text": "Some disturbances with your order...",
+    "visibility": "PUBLIC",
+    "update_timestamp": true
+  },
+  "meta": {
+    "item_count": 1,
+    "webhook_topic": "order.comment.created"
+  }
+}

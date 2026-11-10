@@ -1,0 +1,15 @@
+{
+  "data": {
+    "id": 1,
+    "email": "mail@example.com",
+    "country": "fi",
+    "language": "fi",
+    "version_id": 5,
+    "subscribed_at": "2016-02-25T11:31:39+02:00",
+    "unsubscribed_at": "2016-02-25T11:31:39+02:00"
+  },
+  "meta": {
+    "item_count": 1,
+    "webhook_topic": "marketing.newsletter.updated"
+  }
+}
