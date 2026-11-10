@@ -1,0 +1,1324 @@
+{
+  "$defs": {
+    "ApacheBasicCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "apache_basic",
+          "default": "apache_basic",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_base_url": {
+          "description": "HTTPS API root, for example https://airflow.example.com/api/v1. An origin alone is expanded to /api/v1.",
+          "title": "API Root",
+          "type": "string"
+        },
+        "username": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Username",
+          "type": "string"
+        },
+        "password": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_base_url",
+        "username",
+        "password"
+      ],
+      "title": "Apache Airflow Username and Password",
+      "type": "object",
+      "x-credential-instructions": "Connect an Airflow 2.x deployment with Basic API authentication enabled. Enter its HTTPS API root, username and password. Ask your Airflow administrator to enable the Basic authentication backend and grant the DAG, run, variable or pool permissions your workflow needs.",
+      "x-credential-url": "https://airflow.apache.org/docs/apache-airflow/2.10.0/security/api.html"
+    },
+    "ClearDAGRun": {
+      "properties": {
+        "dag_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "DAG ID",
+          "type": "string"
+        },
+        "dag_run_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Run ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "clear_dag_run",
+          "default": "clear_dag_run",
+          "description": "Preview affected task instances or clear them to rerun the DAG.",
+          "title": "Clear DAG Run",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dry_run": {
+          "default": true,
+          "description": "False clears task instances and permits the run to execute again.",
+          "title": "Preview Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "dag_id",
+        "dag_run_id"
+      ],
+      "title": "ClearDAGRun",
+      "type": "object"
+    },
+    "CreateDAGRun": {
+      "properties": {
+        "dag_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "DAG ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_dag_run",
+          "default": "create_dag_run",
+          "description": "Creates a run. A paused DAG keeps it queued until scheduling resumes.",
+          "title": "Trigger DAG Run",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dag_run_id": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run ID"
+        },
+        "conf_json": {
+          "default": "{}",
+          "title": "Run Configuration",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "dag_id"
+      ],
+      "title": "CreateDAGRun",
+      "type": "object"
+    },
+    "CreatePool": {
+      "properties": {
+        "operation": {
+          "const": "create_pool",
+          "default": "create_pool",
+          "title": "Create Pool",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Pool Name",
+          "type": "string"
+        },
+        "slots": {
+          "description": "-1 means unlimited slots.",
+          "minimum": -1,
+          "title": "Slots",
+          "type": "integer"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "slots"
+      ],
+      "title": "CreatePool",
+      "type": "object"
+    },
+    "CreateVariable": {
+      "properties": {
+        "operation": {
+          "const": "create_variable",
+          "default": "create_variable",
+          "title": "Create Variable",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "value"
+      ],
+      "title": "CreateVariable",
+      "type": "object"
+    },
+    "DeleteDAGRun": {
+      "properties": {
+        "dag_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "DAG ID",
+          "type": "string"
+        },
+        "dag_run_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Run ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_dag_run",
+          "default": "delete_dag_run",
+          "description": "Permanently deletes this run's metadata.",
+          "title": "Delete DAG Run",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "dag_id",
+        "dag_run_id"
+      ],
+      "title": "DeleteDAGRun",
+      "type": "object"
+    },
+    "DeleteVariable": {
+      "properties": {
+        "variable_key": {
+          "minLength": 1,
+          "title": "Variable Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_variable",
+          "default": "delete_variable",
+          "title": "Delete Variable",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "variable_key"
+      ],
+      "title": "DeleteVariable",
+      "type": "object"
+    },
+    "GetDAG": {
+      "properties": {
+        "dag_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "DAG ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_dag",
+          "default": "get_dag",
+          "title": "Get DAG",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "dag_id"
+      ],
+      "title": "GetDAG",
+      "type": "object"
+    },
+    "GetDAGRun": {
+      "properties": {
+        "dag_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "DAG ID",
+          "type": "string"
+        },
+        "dag_run_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Run ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_dag_run",
+          "default": "get_dag_run",
+          "title": "Get DAG Run",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "dag_id",
+        "dag_run_id"
+      ],
+      "title": "GetDAGRun",
+      "type": "object"
+    },
+    "GetPool": {
+      "properties": {
+        "pool_name": {
+          "minLength": 1,
+          "title": "Pool Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_pool",
+          "default": "get_pool",
+          "title": "Get Pool",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pool_name"
+      ],
+      "title": "GetPool",
+      "type": "object"
+    },
+    "GetTask": {
+      "properties": {
+        "dag_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "DAG ID",
+          "type": "string"
+        },
+        "task_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Task ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get DAG Task",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "dag_id",
+        "task_id"
+      ],
+      "title": "GetTask",
+      "type": "object"
+    },
+    "GetTaskInstance": {
+      "properties": {
+        "dag_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "DAG ID",
+          "type": "string"
+        },
+        "task_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Task ID",
+          "type": "string"
+        },
+        "dag_run_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Run ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_task_instance",
+          "default": "get_task_instance",
+          "title": "Get Task Instance",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "dag_id",
+        "task_id",
+        "dag_run_id"
+      ],
+      "title": "GetTaskInstance",
+      "type": "object"
+    },
+    "GetVariable": {
+      "properties": {
+        "variable_key": {
+          "minLength": 1,
+          "title": "Variable Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_variable",
+          "default": "get_variable",
+          "title": "Get Variable",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "variable_key"
+      ],
+      "title": "GetVariable",
+      "type": "object"
+    },
+    "ListDAGRuns": {
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the previous response to continue.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "dag_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "DAG ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_dag_runs",
+          "default": "list_dag_runs",
+          "title": "List DAG Runs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_by": {
+          "default": "-start_date",
+          "enum": [
+            "start_date",
+            "-start_date",
+            "execution_date",
+            "-execution_date"
+          ],
+          "title": "Order By",
+          "type": "string"
+        },
+        "start_date_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp with timezone.",
+          "format": "date-time",
+          "title": "Started At or After"
+        },
+        "start_date_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp with timezone.",
+          "format": "date-time",
+          "title": "Started At or Before"
+        }
+      },
+      "required": [
+        "dag_id"
+      ],
+      "title": "ListDAGRuns",
+      "type": "object"
+    },
+    "ListDAGs": {
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the previous response to continue.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_dags",
+          "default": "list_dags",
+          "title": "List DAGs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dag_id_pattern": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "DAG ID Pattern"
+        },
+        "only_active": {
+          "default": true,
+          "title": "Only Active DAGs",
+          "type": "boolean"
+        },
+        "paused": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Paused"
+        }
+      },
+      "title": "ListDAGs",
+      "type": "object"
+    },
+    "ListPools": {
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the previous response to continue.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_pools",
+          "default": "list_pools",
+          "title": "List Pools",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListPools",
+      "type": "object"
+    },
+    "ListTaskInstances": {
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the previous response to continue.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "dag_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "DAG ID",
+          "type": "string"
+        },
+        "dag_run_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Run ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_task_instances",
+          "default": "list_task_instances",
+          "title": "List Task Instances",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "dag_id",
+        "dag_run_id"
+      ],
+      "title": "ListTaskInstances",
+      "type": "object"
+    },
+    "ListTasks": {
+      "properties": {
+        "dag_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "DAG ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List DAG Tasks",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "dag_id"
+      ],
+      "title": "ListTasks",
+      "type": "object"
+    },
+    "ListVariables": {
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the previous response to continue.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_variables",
+          "default": "list_variables",
+          "title": "List Variables",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListVariables",
+      "type": "object"
+    },
+    "OnNewDAGRun": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_dag_run",
+          "default": "on_new_dag_run",
+          "title": "On New DAG Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New DAG Run",
+          "x-is-trigger": true
+        },
+        "dag_id": {
+          "description": "DAG to monitor. Use ~ for all visible DAGs. Polls up to 2,000 runs; narrow the DAG if the limit is exceeded.",
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "DAG ID",
+          "type": "string"
+        },
+        "start_date_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional RFC 3339 lower bound to exclude older history from this poll scope.",
+          "format": "date-time",
+          "title": "Started At or After"
+        }
+      },
+      "required": [
+        "dag_id"
+      ],
+      "title": "OnNewDAGRun",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "SetDAGRunNote": {
+      "properties": {
+        "dag_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "DAG ID",
+          "type": "string"
+        },
+        "dag_run_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Run ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_dag_run_note",
+          "default": "set_dag_run_note",
+          "title": "Set DAG Run Note",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dag_id",
+        "dag_run_id",
+        "note"
+      ],
+      "title": "SetDAGRunNote",
+      "type": "object"
+    },
+    "UpdateDAG": {
+      "properties": {
+        "dag_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "DAG ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_dag",
+          "default": "update_dag",
+          "title": "Pause or Resume DAG",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "is_paused": {
+          "description": "True pauses scheduling; false resumes it.",
+          "title": "Paused",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "dag_id",
+        "is_paused"
+      ],
+      "title": "UpdateDAG",
+      "type": "object"
+    },
+    "UpdateDAGRunState": {
+      "properties": {
+        "dag_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "DAG ID",
+          "type": "string"
+        },
+        "dag_run_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Run ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_dag_run_state",
+          "default": "update_dag_run_state",
+          "title": "Set DAG Run State",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "state": {
+          "enum": [
+            "success",
+            "failed",
+            "queued"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dag_id",
+        "dag_run_id",
+        "state"
+      ],
+      "title": "UpdateDAGRunState",
+      "type": "object"
+    },
+    "UpdatePool": {
+      "properties": {
+        "pool_name": {
+          "minLength": 1,
+          "title": "Pool Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_pool",
+          "default": "update_pool",
+          "title": "Update Pool Slots",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "slots": {
+          "description": "-1 means unlimited slots.",
+          "minimum": -1,
+          "title": "Slots",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "pool_name",
+        "slots"
+      ],
+      "title": "UpdatePool",
+      "type": "object"
+    },
+    "UpdateVariable": {
+      "properties": {
+        "variable_key": {
+          "minLength": 1,
+          "title": "Variable Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_variable",
+          "default": "update_variable",
+          "title": "Update Variable",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "variable_key",
+        "value"
+      ],
+      "title": "UpdateVariable",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "clear_dag_run": "#/$defs/ClearDAGRun",
+          "create_dag_run": "#/$defs/CreateDAGRun",
+          "create_pool": "#/$defs/CreatePool",
+          "create_variable": "#/$defs/CreateVariable",
+          "delete_dag_run": "#/$defs/DeleteDAGRun",
+          "delete_variable": "#/$defs/DeleteVariable",
+          "get_dag": "#/$defs/GetDAG",
+          "get_dag_run": "#/$defs/GetDAGRun",
+          "get_pool": "#/$defs/GetPool",
+          "get_task": "#/$defs/GetTask",
+          "get_task_instance": "#/$defs/GetTaskInstance",
+          "get_variable": "#/$defs/GetVariable",
+          "list_dag_runs": "#/$defs/ListDAGRuns",
+          "list_dags": "#/$defs/ListDAGs",
+          "list_pools": "#/$defs/ListPools",
+          "list_task_instances": "#/$defs/ListTaskInstances",
+          "list_tasks": "#/$defs/ListTasks",
+          "list_variables": "#/$defs/ListVariables",
+          "on_new_dag_run": "#/$defs/OnNewDAGRun",
+          "set_dag_run_note": "#/$defs/SetDAGRunNote",
+          "update_dag": "#/$defs/UpdateDAG",
+          "update_dag_run_state": "#/$defs/UpdateDAGRunState",
+          "update_pool": "#/$defs/UpdatePool",
+          "update_variable": "#/$defs/UpdateVariable"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListDAGs"
+        },
+        {
+          "$ref": "#/$defs/GetDAG"
+        },
+        {
+          "$ref": "#/$defs/UpdateDAG"
+        },
+        {
+          "$ref": "#/$defs/ListDAGRuns"
+        },
+        {
+          "$ref": "#/$defs/CreateDAGRun"
+        },
+        {
+          "$ref": "#/$defs/GetDAGRun"
+        },
+        {
+          "$ref": "#/$defs/UpdateDAGRunState"
+        },
+        {
+          "$ref": "#/$defs/ClearDAGRun"
+        },
+        {
+          "$ref": "#/$defs/SetDAGRunNote"
+        },
+        {
+          "$ref": "#/$defs/DeleteDAGRun"
+        },
+        {
+          "$ref": "#/$defs/ListTaskInstances"
+        },
+        {
+          "$ref": "#/$defs/GetTaskInstance"
+        },
+        {
+          "$ref": "#/$defs/ListTasks"
+        },
+        {
+          "$ref": "#/$defs/GetTask"
+        },
+        {
+          "$ref": "#/$defs/ListVariables"
+        },
+        {
+          "$ref": "#/$defs/GetVariable"
+        },
+        {
+          "$ref": "#/$defs/CreateVariable"
+        },
+        {
+          "$ref": "#/$defs/UpdateVariable"
+        },
+        {
+          "$ref": "#/$defs/DeleteVariable"
+        },
+        {
+          "$ref": "#/$defs/ListPools"
+        },
+        {
+          "$ref": "#/$defs/GetPool"
+        },
+        {
+          "$ref": "#/$defs/CreatePool"
+        },
+        {
+          "$ref": "#/$defs/UpdatePool"
+        },
+        {
+          "$ref": "#/$defs/OnNewDAGRun"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ApacheBasicCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Apache Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
