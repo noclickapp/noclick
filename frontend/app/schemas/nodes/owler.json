@@ -1,0 +1,1187 @@
+{
+  "$defs": {
+    "GetAcquisitionNews": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "const": "ACQUISITION",
+          "default": "ACQUISITION",
+          "title": "Category",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Result Limit",
+          "type": "integer"
+        },
+        "pagination_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank for the latest feeds; use the returned ID for the next page.",
+          "title": "Pagination ID"
+        },
+        "company_id": {
+          "description": "One to ten comma-separated Owler company IDs.",
+          "minLength": 1,
+          "title": "Company IDs",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_acquisition_news",
+          "default": "get_acquisition_news",
+          "title": "Get Acquisition News",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "GetAcquisitionNews",
+      "type": "object"
+    },
+    "GetCompanyByID": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "Owler company ID, for example 100486.",
+          "minLength": 1,
+          "title": "Company ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_company_by_id",
+          "default": "get_company_by_id",
+          "title": "Get Company by ID",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "GetCompanyByID",
+      "type": "object"
+    },
+    "GetCompanyByWebsite": {
+      "additionalProperties": false,
+      "properties": {
+        "website": {
+          "description": "Company domain, without a URL scheme or path.",
+          "minLength": 1,
+          "title": "Company Domain",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_company_by_website",
+          "default": "get_company_by_website",
+          "title": "Get Company by Domain",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "website"
+      ],
+      "title": "GetCompanyByWebsite",
+      "type": "object"
+    },
+    "GetCompetitorsByID": {
+      "additionalProperties": false,
+      "properties": {
+        "pagination_id": {
+          "default": "*",
+          "description": "Use * for the first page, then the returned pagination_id. A blank returned ID means the end. At most 50 competitors per page.",
+          "title": "Pagination ID",
+          "type": "string"
+        },
+        "company_id": {
+          "description": "Owler company ID, for example 100486.",
+          "minLength": 1,
+          "title": "Company ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_competitors_by_id",
+          "default": "get_competitors_by_id",
+          "title": "Get Competitors by ID",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "GetCompetitorsByID",
+      "type": "object"
+    },
+    "GetCompetitorsByWebsite": {
+      "additionalProperties": false,
+      "properties": {
+        "pagination_id": {
+          "default": "*",
+          "description": "Use * for the first page, then the returned pagination_id. A blank returned ID means the end. At most 50 competitors per page.",
+          "title": "Pagination ID",
+          "type": "string"
+        },
+        "website": {
+          "description": "Company domain, without a URL scheme or path.",
+          "minLength": 1,
+          "title": "Company Domain",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_competitors_by_website",
+          "default": "get_competitors_by_website",
+          "title": "Get Competitors by Domain",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "website"
+      ],
+      "title": "GetCompetitorsByWebsite",
+      "type": "object"
+    },
+    "GetFeedsByID": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "NEWS",
+                "PRESS",
+                "FUNDING",
+                "ACQUISITION",
+                "PEOPLE",
+                "BLOG",
+                "VIDEOS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty for all categories.",
+          "title": "News Category",
+          "enum": [
+            "NEWS",
+            "PRESS",
+            "FUNDING",
+            "ACQUISITION",
+            "PEOPLE",
+            "BLOG",
+            "VIDEOS"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Result Limit",
+          "type": "integer"
+        },
+        "pagination_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank for the latest feeds; use the returned ID for the next page.",
+          "title": "Pagination ID"
+        },
+        "company_id": {
+          "description": "One to ten comma-separated Owler company IDs.",
+          "minLength": 1,
+          "title": "Company IDs",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_feeds_by_id",
+          "default": "get_feeds_by_id",
+          "title": "Get Company News by IDs",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "GetFeedsByID",
+      "type": "object"
+    },
+    "GetFeedsByWebsite": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "NEWS",
+                "PRESS",
+                "FUNDING",
+                "ACQUISITION",
+                "PEOPLE",
+                "BLOG",
+                "VIDEOS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty for all categories.",
+          "title": "News Category",
+          "enum": [
+            "NEWS",
+            "PRESS",
+            "FUNDING",
+            "ACQUISITION",
+            "PEOPLE",
+            "BLOG",
+            "VIDEOS"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Result Limit",
+          "type": "integer"
+        },
+        "pagination_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank for the latest feeds; use the returned ID for the next page.",
+          "title": "Pagination ID"
+        },
+        "domain": {
+          "description": "One to ten comma-separated company domains.",
+          "minLength": 1,
+          "title": "Company Domains",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_feeds_by_website",
+          "default": "get_feeds_by_website",
+          "title": "Get Company News by Domains",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "GetFeedsByWebsite",
+      "type": "object"
+    },
+    "GetFundingNews": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "const": "FUNDING",
+          "default": "FUNDING",
+          "title": "Category",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Result Limit",
+          "type": "integer"
+        },
+        "pagination_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank for the latest feeds; use the returned ID for the next page.",
+          "title": "Pagination ID"
+        },
+        "company_id": {
+          "description": "One to ten comma-separated Owler company IDs.",
+          "minLength": 1,
+          "title": "Company IDs",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_funding_news",
+          "default": "get_funding_news",
+          "title": "Get Funding News",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "GetFundingNews",
+      "type": "object"
+    },
+    "GetPeopleNews": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "const": "PEOPLE",
+          "default": "PEOPLE",
+          "title": "Category",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Result Limit",
+          "type": "integer"
+        },
+        "pagination_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank for the latest feeds; use the returned ID for the next page.",
+          "title": "Pagination ID"
+        },
+        "company_id": {
+          "description": "One to ten comma-separated Owler company IDs.",
+          "minLength": 1,
+          "title": "Company IDs",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_people_news",
+          "default": "get_people_news",
+          "title": "Get Leadership and People News",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "GetPeopleNews",
+      "type": "object"
+    },
+    "GetPressReleases": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "const": "PRESS",
+          "default": "PRESS",
+          "title": "Category",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Result Limit",
+          "type": "integer"
+        },
+        "pagination_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank for the latest feeds; use the returned ID for the next page.",
+          "title": "Pagination ID"
+        },
+        "company_id": {
+          "description": "One to ten comma-separated Owler company IDs.",
+          "minLength": 1,
+          "title": "Company IDs",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_press_releases",
+          "default": "get_press_releases",
+          "title": "Get Press Releases",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "GetPressReleases",
+      "type": "object"
+    },
+    "OnNewFeedByID": {
+      "additionalProperties": false,
+      "description": "Watch the latest 100 feeds in this scope; poll often enough to keep up.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "NEWS",
+                "PRESS",
+                "FUNDING",
+                "ACQUISITION",
+                "PEOPLE",
+                "BLOG",
+                "VIDEOS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty for all categories.",
+          "title": "News Category",
+          "enum": [
+            "NEWS",
+            "PRESS",
+            "FUNDING",
+            "ACQUISITION",
+            "PEOPLE",
+            "BLOG",
+            "VIDEOS"
+          ],
+          "x-enum-searchable": true
+        },
+        "company_id": {
+          "description": "One to ten comma-separated Owler company IDs.",
+          "minLength": 1,
+          "title": "Company IDs",
+          "type": "string"
+        },
+        "operation": {
+          "const": "on_new_feed_by_id",
+          "default": "on_new_feed_by_id",
+          "title": "On New Company News by IDs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "OnNewFeedByID",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OnNewFeedByWebsite": {
+      "additionalProperties": false,
+      "description": "Watch the latest 100 feeds in this scope; poll often enough to keep up.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "NEWS",
+                "PRESS",
+                "FUNDING",
+                "ACQUISITION",
+                "PEOPLE",
+                "BLOG",
+                "VIDEOS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty for all categories.",
+          "title": "News Category",
+          "enum": [
+            "NEWS",
+            "PRESS",
+            "FUNDING",
+            "ACQUISITION",
+            "PEOPLE",
+            "BLOG",
+            "VIDEOS"
+          ],
+          "x-enum-searchable": true
+        },
+        "domain": {
+          "description": "One to ten comma-separated company domains.",
+          "minLength": 1,
+          "title": "Company Domains",
+          "type": "string"
+        },
+        "operation": {
+          "const": "on_new_feed_by_website",
+          "default": "on_new_feed_by_website",
+          "title": "On New Company News by Domains",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "OnNewFeedByWebsite",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OwlerAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "owler_api_key",
+          "default": "owler_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Owler API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Owler Enterprise API key. NoClick sends it in the x-api-key header. Connecting reads the documented sample company (100486) to verify key acceptance; shared company data does not prove your account identity. Your API plan must include the selected endpoints.",
+      "x-credential-url": "https://developers-v3.owler.com/"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_acquisition_news": "#/$defs/GetAcquisitionNews",
+          "get_company_by_id": "#/$defs/GetCompanyByID",
+          "get_company_by_website": "#/$defs/GetCompanyByWebsite",
+          "get_competitors_by_id": "#/$defs/GetCompetitorsByID",
+          "get_competitors_by_website": "#/$defs/GetCompetitorsByWebsite",
+          "get_feeds_by_id": "#/$defs/GetFeedsByID",
+          "get_feeds_by_website": "#/$defs/GetFeedsByWebsite",
+          "get_funding_news": "#/$defs/GetFundingNews",
+          "get_people_news": "#/$defs/GetPeopleNews",
+          "get_press_releases": "#/$defs/GetPressReleases",
+          "on_new_feed_by_id": "#/$defs/OnNewFeedByID",
+          "on_new_feed_by_website": "#/$defs/OnNewFeedByWebsite"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCompanyByID"
+        },
+        {
+          "$ref": "#/$defs/GetCompanyByWebsite"
+        },
+        {
+          "$ref": "#/$defs/GetCompetitorsByID"
+        },
+        {
+          "$ref": "#/$defs/GetCompetitorsByWebsite"
+        },
+        {
+          "$ref": "#/$defs/GetFeedsByID"
+        },
+        {
+          "$ref": "#/$defs/GetFeedsByWebsite"
+        },
+        {
+          "$ref": "#/$defs/GetFundingNews"
+        },
+        {
+          "$ref": "#/$defs/GetAcquisitionNews"
+        },
+        {
+          "$ref": "#/$defs/GetPeopleNews"
+        },
+        {
+          "$ref": "#/$defs/GetPressReleases"
+        },
+        {
+          "$ref": "#/$defs/OnNewFeedByID"
+        },
+        {
+          "$ref": "#/$defs/OnNewFeedByWebsite"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OwlerAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Owler Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

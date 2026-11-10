@@ -1,0 +1,45 @@
+{
+  "source": "https://developers-v3.owler.com/apis/api3-swagger.json",
+  "note": "Synthetic test values using only properties in companyPremium, competitors and feedresults; not a live or provider-authored example.",
+  "companyPremium": {
+    "company_id": 100486,
+    "logo_url": "https://example.com/logo.png",
+    "name": "Schema fixture company",
+    "profile_url": "https://example.com/company",
+    "website": "https://example.com"
+  },
+  "competitors": {
+    "competitor": [
+      {
+        "company_id": 100486,
+        "logo_url": "https://example.com/logo.png",
+        "name": "Schema fixture company",
+        "profile_url": "https://example.com/company",
+        "website": "https://example.com",
+        "score": 90
+      }
+    ],
+    "pagination_id": ""
+  },
+  "feedresults": {
+    "feed": [
+      {
+        "id": "news-1",
+        "category": "NEWS",
+        "company": {
+          "company_id": 100486,
+          "logo_url": "https://example.com/logo.png",
+          "name": "Schema fixture company",
+          "profile_url": "https://example.com/company",
+          "website": "https://example.com"
+        },
+        "title": "Schema fixture news",
+        "description": "A company news item.",
+        "feed_date": "2026-11-10",
+        "source_url": "https://example.com/news",
+        "owler_feed_url": "https://example.com/feed"
+      }
+    ],
+    "pagination_id": ""
+  }
+}
