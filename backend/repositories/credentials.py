@@ -977,6 +977,15 @@ class CredentialsRepo:
         return result != 'UPDATE 0'
 
 
+async def merge_credential_metadata(pool, credential_id: str, patch: Dict[str, Any]) -> None:
+    """Merge ``patch`` into a credential's metadata alone: its blob, token
+    version and timestamps are left as they are, so no token write races it."""
+    await pool.execute(
+        "UPDATE credentials SET metadata = COALESCE(metadata, '{}'::jsonb) || $2::jsonb WHERE id = $1::uuid",
+        credential_id, patch,
+    )
+
+
 async def resolve_provided_credential_owner(conn, target_email: str, requester_id: str) -> str:
     """A registered provider owns their grant; otherwise the requester does."""
     if not target_email:

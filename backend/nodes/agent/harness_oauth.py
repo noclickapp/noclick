@@ -30,6 +30,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import httpx
 
+from utils.async_helpers import spawn
 from nodes.core.oauth_refresh import (
     CredentialsTableStore,
     ensure_fresh_oauth_token,
@@ -180,13 +181,11 @@ async def _refresh_claude_code(refresh_token: str) -> HarnessTokens:
     )
 
 
-def _make_codex_refresh(env: Dict[str, str], metadata: Dict[str, Any]):
+def _make_codex_refresh(env: Dict[str, str]):
     """Codex refresh closure over the flat env dict: the response's rotated
     ``id_token`` must ride along into the persisted blob, but the shared
     ``_adopt_keys`` only carries access/refresh/expires — so the closure writes
-    it into ``env`` directly (``env`` IS the dict the store persists). The
-    models ChatGPT lists for the sign-in go into ``metadata``, persisted with
-    the tokens."""
+    it into ``env`` directly (``env`` IS the dict the store persists)."""
 
     async def _refresh(refresh_token: str) -> HarnessTokens:
         async with httpx.AsyncClient(timeout=_TOKEN_TIMEOUT_S) as client:
@@ -207,9 +206,6 @@ def _make_codex_refresh(env: Dict[str, str], metadata: Dict[str, Any]):
             raise ValueError("codex_chatgpt token refresh response had no access_token")
         if tokens.get("id_token"):
             env["CODEX_ID_TOKEN"] = tokens["id_token"]
-        models = await chatgpt_plan_models({**env, "CODEX_ACCESS_TOKEN": access})
-        if models is not None:
-            metadata.update(plan_models_metadata(models))
         return HarnessTokens(
             access_token=access,
             refresh_token=tokens.get("refresh_token"),
@@ -228,11 +224,6 @@ class HarnessCredentialsStore(CredentialsTableStore):
     injected (mirroring ``load_credential``'s row-level extras); ``persist()``
     re-nests the env keys and submits the CAS guard from the flat view.
     """
-
-    def __init__(self, pool, user_id: str, credential_id: str, metadata: Optional[Dict[str, Any]] = None):
-        super().__init__(pool, user_id, credential_id)
-        # Written beside each refresh's own (a ChatGPT sign-in's models, ``_make_codex_refresh``).
-        self.metadata = metadata if metadata is not None else {}
 
     async def load(self) -> Optional[Dict[str, Any]]:
         blob = await super().load()
@@ -260,7 +251,7 @@ class HarnessCredentialsStore(CredentialsTableStore):
             credential_id=self.credential_id,
             user_id=self.user_id,
             new_data={"credentials": env},
-            metadata_updates={**(metadata_updates or {}), **self.metadata} or None,
+            metadata_updates=metadata_updates,
             pool=self.pool,
             expected_token_version=new_data.get("token_version"),
         )
@@ -275,10 +266,10 @@ class _HarnessOAuthSpec:
     # Token fields a refresh rotates alongside access/refresh/expires.
     companion_keys: Tuple[str, ...] = ()
 
-    def build_refresh(self, env: Dict[str, str], metadata: Dict[str, Any]):
+    def build_refresh(self, env: Dict[str, str]):
         if self.provider == "claude_code":
             return lambda token: _refresh_claude_code(token)
-        return _make_codex_refresh(env, metadata)
+        return _make_codex_refresh(env)
 
     def stale(self, row: Dict[str, Any]) -> bool:
         """Refresh even though the access token is fine: a legacy blob with no
@@ -334,18 +325,18 @@ async def ensure_fresh_harness_tokens(
     for spec in HARNESS_OAUTH_SPECS:
         if not env.get(spec.access_key) or not env.get(spec.refresh_key):
             continue
-        metadata: Dict[str, Any] = {}
         store = (
-            HarnessCredentialsStore(pool, user_id, credential_id, metadata)
+            HarnessCredentialsStore(pool, user_id, credential_id)
             if user_id and credential_id
             else None
         )
+        before = env.get(spec.access_key)
         await ensure_fresh_oauth_token(
             pool=pool,
             credential_id=credential_id,
             user_id=user_id,
             credential=env,
-            refresh=spec.build_refresh(env, metadata),
+            refresh=spec.build_refresh(env),
             access_token_key=spec.access_key,
             refresh_token_key=spec.refresh_key,
             expires_at_key=spec.expires_at_key,
@@ -361,6 +352,10 @@ async def ensure_fresh_harness_tokens(
             caller_path=caller_path,
             store=store,
         )
+        if spec.provider == "codex_chatgpt" and store is not None and env.get(spec.access_key) != before:
+            # After the refresh, never inside it: the refresh attempt is bounded, and the rotated token it minted
+            # must persist whatever ChatGPT's list takes. Off the dispatch too: nothing waits on it.
+            spawn(store_plan_models(pool, credential_id, dict(env)), name="harness_oauth.plan_models")
     for key in _BOOKKEEPING_KEYS:
         env.pop(key, None)
     env.pop("credential_type", None)
@@ -443,6 +438,20 @@ async def chatgpt_plan_models(env: Dict[str, Any]) -> Optional[List[str]]:
 def plan_models_metadata(models: List[str]) -> Dict[str, Any]:
     """The credential metadata recording the models ChatGPT listed for a sign-in."""
     return {PLAN_MODELS_KEY: models, PLAN_MODELS_AT_KEY: datetime.now(timezone.utc).isoformat()}
+
+
+async def store_plan_models(pool, credential_id: str, env: Dict[str, Any]) -> None:
+    """Read the models ChatGPT lists for a sign-in with its fresh token and keep
+    them in its credential's metadata, never its blob or token version. A list
+    that can't be read changes nothing."""
+    from repositories.credentials import merge_credential_metadata
+    from utils import database_pool
+
+    models = await chatgpt_plan_models(env)
+    if models is None:
+        return
+    await merge_credential_metadata(pool or database_pool.get_native_pool(), credential_id,
+                                    plan_models_metadata(models))
 
 
 def chatgpt_account_of(env: Dict[str, Any]) -> Optional[str]:
