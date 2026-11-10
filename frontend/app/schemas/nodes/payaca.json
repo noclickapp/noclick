@@ -1,0 +1,1063 @@
+{
+  "$defs": {
+    "Contact": {
+      "additionalProperties": false,
+      "properties": {
+        "fullName": {
+          "minLength": 1,
+          "title": "Full name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phoneNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phonenumber"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "isPrimaryContact": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isprimarycontact"
+        }
+      },
+      "required": [
+        "fullName"
+      ],
+      "title": "Contact",
+      "type": "object"
+    },
+    "InvoiceAction": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "description": "Send emails the invoice; mark-as-sent does not send an email.",
+          "enum": [
+            "send",
+            "mark-as-sent"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "InvoiceAction",
+      "type": "object"
+    },
+    "PayacaAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "payaca_api_key",
+          "default": "payaca_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "minLength": 1,
+          "title": "Client ID",
+          "type": "string"
+        },
+        "client_secret": {
+          "minLength": 1,
+          "title": "Client Secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "client_id",
+        "client_secret"
+      ],
+      "title": "Payaca API Key",
+      "type": "object",
+      "x-credential-instructions": "In Payaca, open Settings \u2192 Integrations & data \u2192 Developer, select Create API key, and paste the generated Client ID and Client Secret. Record the secret when it is created; Payaca cannot show it again.",
+      "x-credential-url": "https://web.payaca.com/companySettings/integrations-data/developer"
+    },
+    "PayacaAddCustomerAddressConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_customer_address",
+          "default": "add_customer_address",
+          "title": "Add Customer Address",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "customer_id": {
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "address": {
+          "description": "Full address, including postcode",
+          "minLength": 1,
+          "title": "Address",
+          "type": "string"
+        },
+        "is_billing_address": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Billing Address"
+        }
+      },
+      "required": [
+        "customer_id",
+        "address"
+      ],
+      "title": "PayacaAddCustomerAddressConfig",
+      "type": "object"
+    },
+    "PayacaAddProjectTagsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_project_tags",
+          "default": "add_project_tags",
+          "title": "Add Project Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "tag_names": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Tag names",
+          "type": "array"
+        }
+      },
+      "required": [
+        "project_id",
+        "tag_names"
+      ],
+      "title": "PayacaAddProjectTagsConfig",
+      "type": "object"
+    },
+    "PayacaChangeProjectPipelineConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "change_project_pipeline",
+          "default": "change_project_pipeline",
+          "title": "Change Project Pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "pipeline_id": {
+          "minLength": 1,
+          "title": "Pipeline Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "pipeline_id"
+      ],
+      "title": "PayacaChangeProjectPipelineConfig",
+      "type": "object"
+    },
+    "PayacaChangeProjectStageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "change_project_stage",
+          "default": "change_project_stage",
+          "title": "Change Project Stage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "pipeline_stage_id": {
+          "minLength": 1,
+          "title": "Pipeline Stage Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "pipeline_stage_id"
+      ],
+      "title": "PayacaChangeProjectStageConfig",
+      "type": "object"
+    },
+    "PayacaCreateCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Create Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "contacts": {
+          "items": {
+            "$ref": "#/$defs/Contact"
+          },
+          "minItems": 1,
+          "title": "Contacts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contacts"
+      ],
+      "title": "PayacaCreateCustomerConfig",
+      "type": "object"
+    },
+    "PayacaCreateNextInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_next_invoice",
+          "default": "create_next_invoice",
+          "title": "Create Next Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "due_in_days": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due In Days"
+        },
+        "action": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InvoiceAction"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to create without sending. Select send to email the customer."
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "PayacaCreateNextInvoiceConfig",
+      "type": "object"
+    },
+    "PayacaCreateProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Create Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "customer_id": {
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "site_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Address"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "PayacaCreateProjectConfig",
+      "type": "object"
+    },
+    "PayacaCreateTagConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 30,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PayacaCreateTagConfig",
+      "type": "object"
+    },
+    "PayacaGetCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Get Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "customer_id": {
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "PayacaGetCustomerConfig",
+      "type": "object"
+    },
+    "PayacaGetInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Get Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "minLength": 1,
+          "title": "Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "PayacaGetInvoiceConfig",
+      "type": "object"
+    },
+    "PayacaGetProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "PayacaGetProjectConfig",
+      "type": "object"
+    },
+    "PayacaGetScheduledEventConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_scheduled_event",
+          "default": "get_scheduled_event",
+          "title": "Get Scheduled Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "scheduled_event_id": {
+          "minLength": 1,
+          "title": "Scheduled Event Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scheduled_event_id"
+      ],
+      "title": "PayacaGetScheduledEventConfig",
+      "type": "object"
+    },
+    "PayacaListCustomersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Skip this many records; use the returned page metadata for subsequent pages.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "List Customers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "contact_email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Email"
+        },
+        "contact_phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Phone Number"
+        }
+      },
+      "title": "PayacaListCustomersConfig",
+      "type": "object"
+    },
+    "PayacaListItemsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Skip this many records; use the returned page metadata for subsequent pages.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_items",
+          "default": "list_items",
+          "title": "List Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "PayacaListItemsConfig",
+      "type": "object"
+    },
+    "PayacaListPipelinesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Skip this many records; use the returned page metadata for subsequent pages.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_pipelines",
+          "default": "list_pipelines",
+          "title": "List Pipelines",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "title": "PayacaListPipelinesConfig",
+      "type": "object"
+    },
+    "PayacaListProjectsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Skip this many records; use the returned page metadata for subsequent pages.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        }
+      },
+      "title": "PayacaListProjectsConfig",
+      "type": "object"
+    },
+    "PayacaListTagsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Skip this many records; use the returned page metadata for subsequent pages.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "title": "PayacaListTagsConfig",
+      "type": "object"
+    },
+    "PayacaOnEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On Payaca Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Payaca Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "project.created",
+          "enum": [
+            "changeProposal.accepted",
+            "changeProposal.sent",
+            "invoice.fullyPaid",
+            "invoice.voided",
+            "project.created",
+            "project.pipelineChanged",
+            "project.pipelineStageChanged",
+            "proposal.accepted",
+            "proposal.markedAsSent",
+            "proposal.sent",
+            "scheduledEvent.archived",
+            "scheduledEvent.assigned",
+            "scheduledEvent.created",
+            "scheduledEvent.edited",
+            "scheduledEvent.rescheduled",
+            "scheduledEvent.unassigned"
+          ],
+          "title": "Event type",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Payaca automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "PayacaOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PayacaRemoveProjectTagsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "remove_project_tags",
+          "default": "remove_project_tags",
+          "title": "Remove Project Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "tag_names": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Tag names",
+          "type": "array"
+        }
+      },
+      "required": [
+        "project_id",
+        "tag_names"
+      ],
+      "title": "PayacaRemoveProjectTagsConfig",
+      "type": "object"
+    },
+    "PayacaUpdateCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Update Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "customer_id": {
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "custom_fields": {
+          "additionalProperties": true,
+          "title": "Custom fields",
+          "type": "object"
+        }
+      },
+      "required": [
+        "customer_id",
+        "custom_fields"
+      ],
+      "title": "PayacaUpdateCustomerConfig",
+      "type": "object"
+    },
+    "PayacaUpdateProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Update Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "custom_fields": {
+          "additionalProperties": true,
+          "title": "Custom fields",
+          "type": "object"
+        }
+      },
+      "required": [
+        "project_id",
+        "custom_fields"
+      ],
+      "title": "PayacaUpdateProjectConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_customer_address": "#/$defs/PayacaAddCustomerAddressConfig",
+          "add_project_tags": "#/$defs/PayacaAddProjectTagsConfig",
+          "change_project_pipeline": "#/$defs/PayacaChangeProjectPipelineConfig",
+          "change_project_stage": "#/$defs/PayacaChangeProjectStageConfig",
+          "create_customer": "#/$defs/PayacaCreateCustomerConfig",
+          "create_next_invoice": "#/$defs/PayacaCreateNextInvoiceConfig",
+          "create_project": "#/$defs/PayacaCreateProjectConfig",
+          "create_tag": "#/$defs/PayacaCreateTagConfig",
+          "get_customer": "#/$defs/PayacaGetCustomerConfig",
+          "get_invoice": "#/$defs/PayacaGetInvoiceConfig",
+          "get_project": "#/$defs/PayacaGetProjectConfig",
+          "get_scheduled_event": "#/$defs/PayacaGetScheduledEventConfig",
+          "list_customers": "#/$defs/PayacaListCustomersConfig",
+          "list_items": "#/$defs/PayacaListItemsConfig",
+          "list_pipelines": "#/$defs/PayacaListPipelinesConfig",
+          "list_projects": "#/$defs/PayacaListProjectsConfig",
+          "list_tags": "#/$defs/PayacaListTagsConfig",
+          "on_event": "#/$defs/PayacaOnEventConfig",
+          "remove_project_tags": "#/$defs/PayacaRemoveProjectTagsConfig",
+          "update_customer": "#/$defs/PayacaUpdateCustomerConfig",
+          "update_project": "#/$defs/PayacaUpdateProjectConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PayacaListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaGetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaCreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaUpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaAddCustomerAddressConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaCreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaUpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaChangeProjectPipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaChangeProjectStageConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaAddProjectTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaRemoveProjectTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaListPipelinesConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaListItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaGetInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaCreateNextInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaGetScheduledEventConfig"
+        },
+        {
+          "$ref": "#/$defs/PayacaOnEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PayacaAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Payaca Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
