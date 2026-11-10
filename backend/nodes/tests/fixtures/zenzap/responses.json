@@ -1,0 +1,299 @@
+{
+  "source": "https://docs.zenzap.co/openapi.yaml",
+  "responses": {
+    "send_message": {
+      "status": 201,
+      "body": {
+        "id": "660e8400-e29b-41d4-a716-446655440001",
+        "topicId": "550e8400-e29b-41d4-a716-446655440000",
+        "createdAt": 1699564800000
+      }
+    },
+    "list_topics": {
+      "status": 200,
+      "body": {
+        "topics": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "name": "Project Updates",
+            "description": "Discussion for project milestones",
+            "type": "topic",
+            "properties": [],
+            "members": [
+              "550e8400-e29b-41d4-a716-446655440001",
+              "550e8400-e29b-41d4-a716-446655440002",
+              "b@660e8400-e29b-41d4-a716-446655440003"
+            ],
+            "createdAt": 1699564800000,
+            "updatedAt": 1699564800000,
+            "externalId": "project-alpha"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440010",
+            "name": "Company Announcements",
+            "type": "topic",
+            "properties": [
+              "announcement"
+            ],
+            "members": [
+              "550e8400-e29b-41d4-a716-446655440001",
+              "b@660e8400-e29b-41d4-a716-446655440003"
+            ],
+            "createdAt": 1699564900000,
+            "updatedAt": 1699564900000
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440020",
+            "name": "John Doe",
+            "type": "dm",
+            "properties": [],
+            "members": [
+              "550e8400-e29b-41d4-a716-446655440001",
+              "b@660e8400-e29b-41d4-a716-446655440003"
+            ],
+            "createdAt": 1699565000000,
+            "updatedAt": 1699565000000
+          }
+        ],
+        "nextCursor": "eyJ0IjoxNjk5NTY1MDAwMDAwLCJpZCI6IjU1MGU4NDAwLWUyOWItNDFkNC1hNzE2LTQ0NjY1NTQ0MDAyMCJ9.abc123",
+        "hasMore": true
+      }
+    },
+    "create_topic": {
+      "status": 201,
+      "body": {
+        "id": "770e8400-e29b-41d4-a716-446655440002",
+        "name": "Project Updates",
+        "members": [
+          "550e8400-e29b-41d4-a716-446655440001",
+          "550e8400-e29b-41d4-a716-446655440002",
+          "b@660e8400-e29b-41d4-a716-446655440003"
+        ],
+        "externalId": "b@660e8400-e29b-41d4-a716-446655440003:campaign-q4-2024",
+        "createdAt": 1699564800000
+      }
+    },
+    "get_topic": {
+      "status": 200,
+      "body": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "Project Updates",
+        "description": "Discussion for project milestones",
+        "memberIds": [
+          "550e8400-e29b-41d4-a716-446655440001",
+          "550e8400-e29b-41d4-a716-446655440002",
+          "b@660e8400-e29b-41d4-a716-446655440003"
+        ]
+      }
+    },
+    "get_topic_by_external_id": {
+      "status": 200,
+      "body": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "Project Updates",
+        "description": "Discussion for project milestones",
+        "memberIds": [
+          "550e8400-e29b-41d4-a716-446655440001",
+          "550e8400-e29b-41d4-a716-446655440002",
+          "b@660e8400-e29b-41d4-a716-446655440003"
+        ]
+      }
+    },
+    "list_messages": {
+      "status": 200,
+      "body": {
+        "messages": [
+          {
+            "id": "660e8400-e29b-41d4-a716-446655440001",
+            "topicId": "550e8400-e29b-41d4-a716-446655440000",
+            "senderId": "550e8400-e29b-41d4-a716-446655440001",
+            "senderName": "Alice Johnson",
+            "senderType": "user",
+            "type": "poll",
+            "text": "Hello <@550e8400-e29b-41d4-a716-446655440042>, see the poll below",
+            "createdAt": 1699564800000,
+            "updatedAt": 1699564800000,
+            "isEdited": false,
+            "isSystem": false,
+            "truncated": false,
+            "attachments": [
+              "770e8400-e29b-41d4-a716-446655440010"
+            ],
+            "mentions": [
+              "550e8400-e29b-41d4-a716-446655440042"
+            ],
+            "mentionDetails": [
+              {
+                "id": "550e8400-e29b-41d4-a716-446655440042",
+                "name": "Bob"
+              }
+            ],
+            "mentionedProfiles": [
+              "550e8400-e29b-41d4-a716-446655440042"
+            ],
+            "poll": {
+              "id": "770e8400-e29b-41d4-a716-446655440010",
+              "title": "Lunch spot?",
+              "selectionType": "single",
+              "status": "active",
+              "options": [
+                {
+                  "id": "opt-1",
+                  "text": "Tacos"
+                },
+                {
+                  "id": "opt-2",
+                  "text": "Sushi"
+                }
+              ]
+            },
+            "reactions": []
+          },
+          {
+            "id": "660e8400-e29b-41d4-a716-446655440002",
+            "topicId": "550e8400-e29b-41d4-a716-446655440000",
+            "senderId": "b@660e8400-e29b-41d4-a716-446655440003",
+            "senderName": "API Bot",
+            "senderType": "bot",
+            "type": "audio",
+            "text": "",
+            "createdAt": 1699564700000,
+            "updatedAt": 1699564700000,
+            "isEdited": false,
+            "isSystem": false,
+            "truncated": false,
+            "attachments": [
+              "550e8400-e29b-41d4-a716-446655440088"
+            ],
+            "mentions": [],
+            "attachmentDetails": [
+              {
+                "id": "550e8400-e29b-41d4-a716-446655440088",
+                "type": "audio",
+                "name": "voice-note.mp3",
+                "url": "https://storage.zenzap.co/attachments/...",
+                "transcription": {
+                  "status": "Done",
+                  "text": "Hey team, quick update on the project..."
+                }
+              }
+            ],
+            "reactions": []
+          },
+          {
+            "id": "660e8400-e29b-41d4-a716-446655440004",
+            "topicId": "550e8400-e29b-41d4-a716-446655440000",
+            "senderId": "550e8400-e29b-41d4-a716-446655440001",
+            "senderName": "Alice Johnson",
+            "senderType": "user",
+            "type": "call",
+            "text": "",
+            "createdAt": 1699564600000,
+            "updatedAt": 1699564660000,
+            "isEdited": false,
+            "isSystem": false,
+            "truncated": false,
+            "attachments": [
+              "550e8400-e29b-41d4-a716-446655440089"
+            ],
+            "mentions": [],
+            "call": {
+              "id": "880e8400-e29b-41d4-a716-446655440090",
+              "initiatorId": "550e8400-e29b-41d4-a716-446655440001",
+              "callType": "video",
+              "status": "ended",
+              "startedAt": 1699564600000,
+              "endedAt": 1699564660000,
+              "endReason": "finished",
+              "duration": 60000,
+              "participantCount": 3
+            },
+            "reactions": []
+          }
+        ],
+        "nextCursor": "eyJ0IjoxNjk5NTY0NjAwMDAwLCJpZCI6IjY2MGU4NDAwLWUyOWItNDFkNC1hNzE2LTQ0NjY1NTQ0MDAwNCIsIm8iOiJkZXNjIn0=",
+        "hasMore": true
+      }
+    },
+    "add_topic_members": {
+      "status": 200,
+      "body": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "memberIds": [
+          "550e8400-e29b-41d4-a716-446655440001",
+          "550e8400-e29b-41d4-a716-446655440002",
+          "550e8400-e29b-41d4-a716-446655440003",
+          "b@660e8400-e29b-41d4-a716-446655440003"
+        ],
+        "updatedAt": 1699564800000
+      }
+    },
+    "remove_topic_members": {
+      "status": 200,
+      "body": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "memberIds": [
+          "550e8400-e29b-41d4-a716-446655440001",
+          "b@660e8400-e29b-41d4-a716-446655440003"
+        ],
+        "updatedAt": 1699564800000
+      }
+    },
+    "create_task": {
+      "status": 201,
+      "body": {
+        "id": "880e8400-e29b-41d4-a716-446655440003",
+        "topicId": "550e8400-e29b-41d4-a716-446655440000",
+        "title": "Review documentation",
+        "createdAt": 1699564800000
+      }
+    },
+    "update_task": {
+      "status": 200,
+      "body": {
+        "id": "880e8400-e29b-41d4-a716-446655440003",
+        "updatedAt": 1699564800000
+      }
+    },
+    "list_members": {
+      "status": 200,
+      "body": {
+        "members": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440001",
+            "name": "John Doe",
+            "email": "john@example.com",
+            "phone": "+1234567890",
+            "externalId": "emp-001",
+            "createdAt": 1699564800000,
+            "updatedAt": 1699564800000,
+            "status": "Active"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440002",
+            "name": "Jane Smith",
+            "email": "jane@example.com",
+            "phone": "+1234567891",
+            "createdAt": 1699564800000,
+            "updatedAt": 1699564800000,
+            "status": "Active"
+          }
+        ],
+        "nextCursor": "eyJ0IjoxNjk5NTY0ODAwMDAwLCJpZCI6InVANTUwZTg0MDAtZTI5Yi00MWQ0LWE3MTYtNDQ2NjU1NDQwMDAyIn0.abc123",
+        "hasMore": true
+      }
+    },
+    "get_current_member": {
+      "status": 200,
+      "body": {
+        "id": "b@660e8400-e29b-41d4-a716-446655440003",
+        "name": "API Bot",
+        "email": "bot@example.com",
+        "phone": "",
+        "createdAt": 1699564800000,
+        "updatedAt": 1699564800000,
+        "status": "Active"
+      }
+    }
+  }
+}

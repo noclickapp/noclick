@@ -1,0 +1,1735 @@
+{
+  "$defs": {
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "ZenzapAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "zenzap_api_key",
+          "default": "zenzap_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_secret": {
+          "minLength": 1,
+          "title": "API secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key",
+        "api_secret"
+      ],
+      "title": "Zenzap API Key",
+      "type": "object",
+      "x-credential-instructions": "In the Zenzap admin console, create a static API key bot with permissions for your operations. Paste its API key and API secret. Actions run as that bot; add it to the topics you want to automate.",
+      "x-credential-url": "https://app.zenzap.co/console"
+    },
+    "ZenzapAddReactionConfig": {
+      "description": "Add a reaction to a message.",
+      "properties": {
+        "operation": {
+          "const": "add_reaction",
+          "default": "add_reaction",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Add a reaction to a message",
+          "x-is-trigger": false
+        },
+        "message_id": {
+          "description": "The message ID to react to",
+          "format": "uuid",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "reaction": {
+          "description": "Emoji reaction to add",
+          "minLength": 1,
+          "title": "Reaction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "reaction"
+      ],
+      "title": "ZenzapAddReactionConfig",
+      "type": "object"
+    },
+    "ZenzapAddTopicMembersConfig": {
+      "description": "Add members to a topic.",
+      "properties": {
+        "operation": {
+          "const": "add_topic_members",
+          "default": "add_topic_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Add members to a topic",
+          "x-is-trigger": false
+        },
+        "topic_id": {
+          "description": "The ID of the topic to add members to",
+          "format": "uuid",
+          "title": "Topic ID",
+          "type": "string"
+        },
+        "member_ids": {
+          "description": "Array of member IDs to add to the topic (max 5). All members must be from the same organization as the bot and must not already be members of the topic. Duplicate IDs in the request are automatically removed.",
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Member ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "topic_id",
+        "member_ids"
+      ],
+      "title": "ZenzapAddTopicMembersConfig",
+      "type": "object"
+    },
+    "ZenzapCreateTaskConfig": {
+      "description": "Create a task.",
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create a task",
+          "x-is-trigger": false
+        },
+        "topic_id": {
+          "description": "The ID of the topic where the task should be created",
+          "format": "uuid",
+          "title": "Topic ID",
+          "type": "string"
+        },
+        "title": {
+          "description": "The task title",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional task description",
+          "title": "Description"
+        },
+        "assignee": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional user ID to assign the task to",
+          "title": "Assignee"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional due date as Unix timestamp in milliseconds",
+          "title": "Due date"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional external identifier for tracking purposes",
+          "title": "External id"
+        }
+      },
+      "required": [
+        "topic_id",
+        "title"
+      ],
+      "title": "ZenzapCreateTaskConfig",
+      "type": "object"
+    },
+    "ZenzapCreateTopicConfig": {
+      "description": "Create a topic.",
+      "properties": {
+        "operation": {
+          "const": "create_topic",
+          "default": "create_topic",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create a topic",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The topic name",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional topic description",
+          "title": "Description"
+        },
+        "members": {
+          "description": "Array of user IDs to add as topic members (max 100). Your bot will automatically be added as a member.",
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Members",
+          "type": "array"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional external identifier for tracking purposes. Must be unique per bot - you cannot reuse the same external ID for multiple topics.",
+          "title": "External id"
+        }
+      },
+      "required": [
+        "name",
+        "members"
+      ],
+      "title": "ZenzapCreateTopicConfig",
+      "type": "object"
+    },
+    "ZenzapDeleteMessageConfig": {
+      "description": "Delete a message.",
+      "properties": {
+        "operation": {
+          "const": "delete_message",
+          "default": "delete_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete a message",
+          "x-is-trigger": false
+        },
+        "message_id": {
+          "description": "The message ID to delete",
+          "format": "uuid",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "ZenzapDeleteMessageConfig",
+      "type": "object"
+    },
+    "ZenzapDeleteTaskConfig": {
+      "description": "Delete a task.",
+      "properties": {
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete a task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "The task ID to delete",
+          "format": "uuid",
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ZenzapDeleteTaskConfig",
+      "type": "object"
+    },
+    "ZenzapEditMessageConfig": {
+      "description": "Edit a message.",
+      "properties": {
+        "operation": {
+          "const": "edit_message",
+          "default": "edit_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Edit a message",
+          "x-is-trigger": false
+        },
+        "message_id": {
+          "description": "The message ID to edit",
+          "format": "uuid",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "Updated message text (max 10000 characters)",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "text"
+      ],
+      "title": "ZenzapEditMessageConfig",
+      "type": "object"
+    },
+    "ZenzapGetCurrentMemberConfig": {
+      "description": "Get current member.",
+      "properties": {
+        "operation": {
+          "const": "get_current_member",
+          "default": "get_current_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get current member",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ZenzapGetCurrentMemberConfig",
+      "type": "object"
+    },
+    "ZenzapGetTaskConfig": {
+      "description": "Get task details.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get task details",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "The task ID",
+          "format": "uuid",
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ZenzapGetTaskConfig",
+      "type": "object"
+    },
+    "ZenzapGetTopicByExternalIdConfig": {
+      "description": "Get topic by external ID.",
+      "properties": {
+        "operation": {
+          "const": "get_topic_by_external_id",
+          "default": "get_topic_by_external_id",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get topic by external ID",
+          "x-is-trigger": false
+        },
+        "external_id": {
+          "description": "The external ID of the topic to retrieve",
+          "maxLength": 100,
+          "title": "External id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "external_id"
+      ],
+      "title": "ZenzapGetTopicByExternalIdConfig",
+      "type": "object"
+    },
+    "ZenzapGetTopicConfig": {
+      "description": "Get topic details.",
+      "properties": {
+        "operation": {
+          "const": "get_topic",
+          "default": "get_topic",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get topic details",
+          "x-is-trigger": false
+        },
+        "topic_id": {
+          "description": "The ID of the topic to retrieve",
+          "format": "uuid",
+          "title": "Topic ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "topic_id"
+      ],
+      "title": "ZenzapGetTopicConfig",
+      "type": "object"
+    },
+    "ZenzapListMembersConfig": {
+      "description": "List members.",
+      "properties": {
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List members",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum number of members to return (default: 50, max: 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from a previous `nextCursor` value.",
+          "title": "Cursor"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of email addresses to filter members (e.g., john@example.com,jane@example.com)",
+          "title": "Emails"
+        }
+      },
+      "title": "ZenzapListMembersConfig",
+      "type": "object"
+    },
+    "ZenzapListMessagesConfig": {
+      "description": "Get topic messages.",
+      "properties": {
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get topic messages",
+          "x-is-trigger": false
+        },
+        "topic_id": {
+          "description": "The ID of the topic to get messages from",
+          "format": "uuid",
+          "title": "Topic ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum number of messages to return (default: 50, max: 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor for pagination. Use the value from `nextCursor` in the response. Cursors are cryptographically signed and validated server-side to prevent tampering.",
+          "title": "Cursor"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return messages created before this timestamp (Unix milliseconds). Mutually exclusive with `after`.",
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return messages created after this timestamp (Unix milliseconds). Mutually exclusive with `before`.",
+          "title": "After"
+        },
+        "sender_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter messages by sender ID",
+          "title": "Sender id"
+        },
+        "order": {
+          "default": "desc",
+          "description": "Sort order for messages (default: desc - newest first)",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "include_system": {
+          "default": true,
+          "description": "Include system messages (default: true)",
+          "title": "Include system",
+          "type": "boolean"
+        },
+        "thread_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to messages within a specific thread (replies to a parent message)",
+          "title": "Thread id"
+        },
+        "include_reaction_users": {
+          "default": false,
+          "description": "Include user IDs in reaction data (default: false, heavier payload)",
+          "title": "Include reaction users",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "topic_id"
+      ],
+      "title": "ZenzapListMessagesConfig",
+      "type": "object"
+    },
+    "ZenzapListTasksConfig": {
+      "description": "List tasks.",
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List tasks",
+          "x-is-trigger": false
+        },
+        "topic_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter tasks by topic ID",
+          "title": "Topic ID"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "Open",
+                "Done"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by task status",
+          "title": "Status",
+          "enum": [
+            "Open",
+            "Done"
+          ],
+          "x-enum-searchable": true
+        },
+        "assignee": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by assignee profile ID (empty value filters unassigned tasks)",
+          "title": "Assignee"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum tasks to return (default 50, max 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from a previous `nextCursor` value.",
+          "title": "Cursor"
+        }
+      },
+      "title": "ZenzapListTasksConfig",
+      "type": "object"
+    },
+    "ZenzapListTopicsConfig": {
+      "description": "List topics.",
+      "properties": {
+        "operation": {
+          "const": "list_topics",
+          "default": "list_topics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List topics",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum number of topics to return (default: 50, max: 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from a previous `nextCursor` value.",
+          "title": "Cursor"
+        }
+      },
+      "title": "ZenzapListTopicsConfig",
+      "type": "object"
+    },
+    "ZenzapMarkMessageReadConfig": {
+      "description": "Mark a message as read.",
+      "properties": {
+        "operation": {
+          "const": "mark_message_read",
+          "default": "mark_message_read",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Mark a message as read",
+          "x-is-trigger": false
+        },
+        "message_id": {
+          "description": "The message ID to mark as read",
+          "format": "uuid",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "ZenzapMarkMessageReadConfig",
+      "type": "object"
+    },
+    "ZenzapOnNewMessageConfig": {
+      "description": "Watch the newest 100 messages in a topic on each scheduled poll.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_message",
+          "default": "on_new_message",
+          "description": "Poll the newest 100 messages in a topic. Use an interval with fewer than 100 new messages.",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "New message",
+          "x-is-trigger": true
+        },
+        "topic_id": {
+          "description": "Watch messages in this topic. The bot must be a member.",
+          "format": "uuid",
+          "title": "Topic ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "topic_id"
+      ],
+      "title": "ZenzapOnNewMessageConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ZenzapOnNewTopicConfig": {
+      "description": "Watch the newest 100 topics; choose a polling interval that fits traffic.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_topic",
+          "default": "on_new_topic",
+          "description": "Poll the newest 100 topics. Use an interval with fewer than 100 new topics.",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "New topic",
+          "x-is-trigger": true
+        }
+      },
+      "title": "ZenzapOnNewTopicConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ZenzapRemoveReactionConfig": {
+      "description": "Remove a reaction from a message.",
+      "properties": {
+        "operation": {
+          "const": "remove_reaction",
+          "default": "remove_reaction",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Remove a reaction from a message",
+          "x-is-trigger": false
+        },
+        "message_id": {
+          "description": "The message ID the reaction belongs to",
+          "format": "uuid",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "reaction_id": {
+          "description": "The reaction ID to remove",
+          "format": "uuid",
+          "title": "Reaction id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "reaction_id"
+      ],
+      "title": "ZenzapRemoveReactionConfig",
+      "type": "object"
+    },
+    "ZenzapRemoveTopicMembersConfig": {
+      "description": "Remove members from a topic.",
+      "properties": {
+        "operation": {
+          "const": "remove_topic_members",
+          "default": "remove_topic_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Remove members from a topic",
+          "x-is-trigger": false
+        },
+        "topic_id": {
+          "description": "The ID of the topic to remove members from",
+          "format": "uuid",
+          "title": "Topic ID",
+          "type": "string"
+        },
+        "member_ids": {
+          "description": "Array of member IDs to remove from the topic (max 5). Members not in the topic are silently ignored. Duplicates are automatically removed.",
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Member ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "topic_id",
+        "member_ids"
+      ],
+      "title": "ZenzapRemoveTopicMembersConfig",
+      "type": "object"
+    },
+    "ZenzapSendMessageConfig": {
+      "description": "Send a message.",
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Send a message",
+          "x-is-trigger": false
+        },
+        "topic_id": {
+          "description": "The ID of the topic to send the message to",
+          "format": "uuid",
+          "title": "Topic ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "The message text content. To mention a member, use `<@profileId>` inside the text. Example: `Hello <@550e8400-e29b-41d4-a716-446655440001>` ",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 61,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional external identifier for tracking purposes",
+          "title": "External id"
+        }
+      },
+      "required": [
+        "topic_id",
+        "text"
+      ],
+      "title": "ZenzapSendMessageConfig",
+      "type": "object"
+    },
+    "ZenzapUpdateTaskConfig": {
+      "description": "Update a task.",
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update a task",
+          "x-is-trigger": false
+        },
+        "unassign": {
+          "default": false,
+          "description": "Send an empty assignee to unassign the task. Leave the assignee field unset.",
+          "title": "Remove assignee",
+          "type": "boolean"
+        },
+        "task_id": {
+          "description": "The task ID to update",
+          "format": "uuid",
+          "title": "Task ID",
+          "type": "string"
+        },
+        "topic_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when `status` is provided.",
+          "title": "Topic ID"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task title (alias of `title`). Provide either `name` or `title`.",
+          "title": "Name"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task title. Provide either `title` or `name`.",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task description",
+          "title": "Description"
+        },
+        "assignee": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Assignee profile ID. Empty string removes assignee.",
+          "title": "Assignee"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date as Unix timestamp in milliseconds. Set to `0` to clear.",
+          "title": "Due date"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "Open",
+                "Done"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task status",
+          "title": "Status",
+          "enum": [
+            "Open",
+            "Done"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ZenzapUpdateTaskConfig",
+      "type": "object"
+    },
+    "ZenzapUpdateTopicConfig": {
+      "description": "Update a topic.",
+      "properties": {
+        "operation": {
+          "const": "update_topic",
+          "default": "update_topic",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update a topic",
+          "x-is-trigger": false
+        },
+        "topic_id": {
+          "description": "The ID of the topic to update",
+          "format": "uuid",
+          "title": "Topic ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The new topic name",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The new topic description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "topic_id"
+      ],
+      "title": "ZenzapUpdateTopicConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_reaction": "#/$defs/ZenzapAddReactionConfig",
+          "add_topic_members": "#/$defs/ZenzapAddTopicMembersConfig",
+          "create_task": "#/$defs/ZenzapCreateTaskConfig",
+          "create_topic": "#/$defs/ZenzapCreateTopicConfig",
+          "delete_message": "#/$defs/ZenzapDeleteMessageConfig",
+          "delete_task": "#/$defs/ZenzapDeleteTaskConfig",
+          "edit_message": "#/$defs/ZenzapEditMessageConfig",
+          "get_current_member": "#/$defs/ZenzapGetCurrentMemberConfig",
+          "get_task": "#/$defs/ZenzapGetTaskConfig",
+          "get_topic": "#/$defs/ZenzapGetTopicConfig",
+          "get_topic_by_external_id": "#/$defs/ZenzapGetTopicByExternalIdConfig",
+          "list_members": "#/$defs/ZenzapListMembersConfig",
+          "list_messages": "#/$defs/ZenzapListMessagesConfig",
+          "list_tasks": "#/$defs/ZenzapListTasksConfig",
+          "list_topics": "#/$defs/ZenzapListTopicsConfig",
+          "mark_message_read": "#/$defs/ZenzapMarkMessageReadConfig",
+          "on_new_message": "#/$defs/ZenzapOnNewMessageConfig",
+          "on_new_topic": "#/$defs/ZenzapOnNewTopicConfig",
+          "remove_reaction": "#/$defs/ZenzapRemoveReactionConfig",
+          "remove_topic_members": "#/$defs/ZenzapRemoveTopicMembersConfig",
+          "send_message": "#/$defs/ZenzapSendMessageConfig",
+          "update_task": "#/$defs/ZenzapUpdateTaskConfig",
+          "update_topic": "#/$defs/ZenzapUpdateTopicConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ZenzapSendMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapEditMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapDeleteMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapAddReactionConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapRemoveReactionConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapMarkMessageReadConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapListTopicsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapCreateTopicConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapGetTopicConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapGetTopicByExternalIdConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapUpdateTopicConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapAddTopicMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapRemoveTopicMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapDeleteTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapListMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapGetCurrentMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapOnNewTopicConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenzapOnNewMessageConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ZenzapAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Zenzap Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
