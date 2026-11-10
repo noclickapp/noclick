@@ -3,6 +3,6 @@
   <ellipse fill="#FFFFFF" cx="210.1" cy="38.6" rx="35.4" ry="34.4"/>
   <ellipse fill="#FFFFFF" cx="99.9" cy="156.3" rx="35.4" ry="34.4"/>
   <ellipse fill="#FFFFFF" cx="99.9" cy="273.9" rx="35.4" ry="34.4"/>
-</svg><style>@media (prefers-color-scheme: light) { :root { filter: none; } }
-@media (prefers-color-scheme: dark) { :root { filter: invert(100%); } }
+</svg><style> :root { filter: none; } 
+
 </style></svg>

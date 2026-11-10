@@ -4,9 +4,7 @@
 	 viewBox="0 0 80 80" enable-background="new 0 0 80 80" xml:space="preserve">
 	 <style>
 	 path { fill: #161110; color: #161110; }
-	 @media (prefers-color-scheme: dark) {
-		path { fill: #ffffff; color: #ffffff; }
-	}
+	 
 	 </style>
 <g>
 	<path class="bar" fill="#161110" d="M14.8,50.2V35.7c0-2.8,1.5-5.4,4-6.8L65.7,1.9v14.7c0,2.8-1.5,5.4-4,6.9L14.8,50.2z"/>

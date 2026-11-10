@@ -4,9 +4,10 @@
   "source_kind": "the current official file (edited)",
   "retrieved": "2026-11-10",
   "edits": [
-    "added viewBox=\"0 0 310 310\" from the width/height it already had"
+    "added viewBox=\"0 0 310 310\" from the width/height it already had",
+    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
   ],
   "variant": "light mode",
   "license": "TidyHQ trademark; official publisher favicon used to identify the integration.",
-  "sha256": "12f583954b7a41d42deb9cac4ef05506cf690ca6a639c0652e7ef4bf2ae2f6ae"
+  "sha256": "46bc8504176011b1648a244b1f8466afdc128b1160e63291a5f532ad76826608"
 }

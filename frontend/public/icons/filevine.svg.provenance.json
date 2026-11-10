@@ -4,9 +4,10 @@
   "source_kind": "the current official file (edited)",
   "retrieved": "2026-11-10",
   "edits": [
-    "none: the source file as published"
+    "none: the source file as published",
+    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
   ],
   "variant": "light mode",
   "license": "Filevine trademark; used to identify the Filevine integration. Official favicon linked from https://www.filevine.com/",
-  "sha256": "db29da981dfc4c933b66377e2163e1ff49fd606a026442a2c0b32f09c4d6b026"
+  "sha256": "a3627bd5222edb9bc4bf70fbba7c7c604c10a882c5d4614506d8e4780f01d8cf"
 }

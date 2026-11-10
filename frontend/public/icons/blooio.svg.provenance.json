@@ -4,9 +4,10 @@
   "source_kind": "the current official file (edited)",
   "retrieved": "2026-11-10",
   "edits": [
-    "none: the source file as published"
+    "none: the source file as published",
+    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
   ],
   "variant": "light mode",
   "license": "Blooio trademark; official asset used to identify the Blooio integration. Brand resources: https://blooio.com/brand",
-  "sha256": "e4c9c1b5aed6cf1c6a525d047408a638da114c5a527c312dd2e9569207ccc4bc"
+  "sha256": "357fb41a5d11fd6482da182c08ea565b04e8941e4c60e54a56d63075f3401a85"
 }

@@ -8,15 +8,7 @@
       fill: #05BDBA;
     }
 
-    @media (prefers-color-scheme: dark) {
-      .favicon-center-dot {
-        fill: #fff;
-      }
-
-      .favicon-lines {
-        fill: #05BDBA;
-      }
-    }
+    
   </style>
   <path class="favicon-center-dot" stroke="none" d="M17.9922 18.3225H14.005L13.6746 17.9921V14.005L14.005 13.6746H17.9922L18.3226 14.005V17.9921L17.9922 18.3225Z" />
   <g class="favicon-lines" stroke="none">

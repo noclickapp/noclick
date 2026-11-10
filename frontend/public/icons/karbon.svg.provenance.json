@@ -4,9 +4,10 @@
   "source_kind": "the current official file (edited)",
   "retrieved": "2026-11-10",
   "edits": [
-    "none: the source file as published"
+    "none: the source file as published",
+    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
   ],
   "variant": "light mode",
   "license": "Karbon brand mark used nominatively to identify the service. Trademark rights remain with Karbon.",
-  "sha256": "56919b1f6ba9bc5408a26742b0149820347a3f760dec39d9efdf1359dcb56ced"
+  "sha256": "beffabc073a7f2950d2e246c06e0c09af013e514b56ea714d06ec45ce89ffc4b"
 }

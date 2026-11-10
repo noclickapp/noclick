@@ -4,9 +4,10 @@
   "source_kind": "the current official file (edited)",
   "retrieved": "2026-11-10",
   "edits": [
-    "none: the source file as published"
+    "none: the source file as published",
+    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
   ],
   "variant": "light mode",
   "license": "Browserless trademark; official website asset used to identify the Browserless integration.",
-  "sha256": "d3f571eafcfda91391d30db32dcb107de74f84827049f01e1ae967647deef1a7"
+  "sha256": "bbca9b0476a2e00fc387c1ae8442476ca476a640903554f1762ed4a209cf5994"
 }

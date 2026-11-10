@@ -4,9 +4,10 @@
   "source_kind": "the current official file (edited)",
   "retrieved": "2026-11-10",
   "edits": [
-    "dark mode: #272735 -> #FFFFFF (and unpainted default-black shapes)"
+    "dark mode: #272735 -> #FFFFFF (and unpainted default-black shapes)",
+    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
   ],
   "variant": "dark mode",
   "license": "Mercury trademark; official website icon used to identify the Mercury integration.",
-  "sha256": "5d4749bd1205516794cc37b89767d58419a7c74947511882b5aeef23704a66e4"
+  "sha256": "16880aa70d5bf63cd85b6306ce9fd8af53a8ef473dc002730c632b442de77420"
 }

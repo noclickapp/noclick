@@ -4,9 +4,7 @@
        prefers-color-scheme media query below. -->
   <style>
     .vd-slash { fill: #262626; }
-    @media (prefers-color-scheme: dark) {
-      .vd-slash { fill: #ffffff; }
-    }
+    
   </style>
   <polygon fill="#F24E1E" points="12,86 628,86 320,688" />
   <polygon class="vd-slash" points="802,86 1046,86 582,942 338,942" />

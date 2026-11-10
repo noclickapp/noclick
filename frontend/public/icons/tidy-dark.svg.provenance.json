@@ -5,9 +5,10 @@
   "retrieved": "2026-11-10",
   "edits": [
     "added viewBox=\"0 0 310 310\" from the width/height it already had",
-    "dark mode: #302f2f -> #FFFFFF (and unpainted default-black shapes)"
+    "dark mode: #302f2f -> #FFFFFF (and unpainted default-black shapes)",
+    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
   ],
   "variant": "dark mode",
   "license": "TidyHQ trademark; official publisher favicon used to identify the integration.",
-  "sha256": "cb0d646e0754627a5646b1693a158e00fe555d8bb52f4d51d0eb93b20b6e50f5"
+  "sha256": "17a805df789205ffcc0064dbed30528a8e4c89068676d01df09a88a49bb1146e"
 }

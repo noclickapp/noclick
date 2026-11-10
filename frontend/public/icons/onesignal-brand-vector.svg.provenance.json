@@ -4,9 +4,10 @@
   "source_kind": "the current official file (edited)",
   "retrieved": "2026-11-10",
   "edits": [
-    "none: the source file as published"
+    "none: the source file as published",
+    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
   ],
   "variant": "light mode",
   "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "6b9b761093b927e1020990e4a63c120ca2306c567ab653269d70f56d757447f2"
+  "sha256": "7e084efe8e241c1d988a824d339c3cc3456f5a2f81c80076bc2d9f1f35398114"
 }

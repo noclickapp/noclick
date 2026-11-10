@@ -2,5 +2,8 @@
   "path": "frontend/public/icons/neon-brand.svg",
   "source": "https://neon.com/favicon/favicon.svg",
   "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "0f1688d9a785d4c6f1b2657a797126fa83bd69c8f5ecceee6d4446ab6fbbf062"
+  "sha256": "728e69fd477e141fcfe6c0e7106ea74777d65d8ccd42d891ce5097a3ef17571e",
+  "edits": [
+    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
+  ]
 }

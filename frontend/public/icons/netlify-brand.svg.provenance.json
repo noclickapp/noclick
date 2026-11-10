@@ -2,5 +2,8 @@
   "path": "frontend/public/icons/netlify-brand.svg",
   "source": "https://www.netlify.com/favicon.svg",
   "license": "Netlify vendor brand mark; trademark rights retained by Netlify",
-  "sha256": "74373229623eef16a6c0b2aa14ac7abf1a93116ca5d449f1d030eca536c9c842"
+  "sha256": "80a1cf195ff572c8097183b94ebb79fd7d3210b4540283728c4d6b8cd21fc41b",
+  "edits": [
+    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
+  ]
 }

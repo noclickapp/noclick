@@ -3,11 +3,7 @@
     path {
       fill: #101111;
     }
-    @media (prefers-color-scheme: dark) {
-      path {
-        fill: #f8f8f8;
-      }
-    }
+    
   </style>
   <path d="M110.5 104H58.5V156H110.5V104Z" />
   <path d="M201.5 104.002H149.5V156.002H201.5V104.002Z" />

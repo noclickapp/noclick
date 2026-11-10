@@ -1,0 +1,9 @@
+{
+  "path": "frontend/public/icons/fellow.svg",
+  "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+  "edits": [
+    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
+  ],
+  "sha256": "975d7bc307f35c4954262ef5e77b0f08c47db277a61b84cf7bfb1223ae9aef1c"
+}

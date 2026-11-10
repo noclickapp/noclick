@@ -2,10 +2,7 @@
   <style>
     #light-icon { display: inline; }
     #dark-icon { display: none; }
-    @media (prefers-color-scheme: dark) {
-      #light-icon { display: none; }
-      #dark-icon { display: inline; }
-    }
+    
   </style>
   <g id="light-icon">
 <path d="M303.054 106.757C342.491 106.757 374.316 138.999 373.803 178.432L373.26 220.261H292.924C280.712 220.261 270.812 230.161 270.812 242.372V270.379H119.719V177.513C119.719 138.436 151.398 106.757 190.475 106.757H303.054Z" fill="#0C0C0D"/>
