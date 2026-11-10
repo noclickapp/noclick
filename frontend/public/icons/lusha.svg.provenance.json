@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/lusha.svg",
+  "source": "https://www.lusha.com/wp-content/uploads/2026/10/lusha.svg",
+  "found_at": "https://www.lusha.com/ (linked image in the homepage body)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the head (2% pad)",
+    "cleaned"
+  ],
+  "notes": "DECISION: Lusha draws this head in three ways on lusha.com: purple #863FFF on clear (this file, 2026/10/lusha.svg), white on a #863FFF square (2026/05/lusha.svg, used in its integration grids) and black #141414 beside the wordmark (2026/08/lusha_icon.svg). Shipped the purple one: it reads on both themes and matches the favicon (whose 2020 purple is a deeper #6F00FF). source_kind: an image file on the company site, not strictly the header.",
+  "license": "Lusha brand mark, used nominatively to identify the connected service; trademark rights remain with Lusha.",
+  "sha256": "ed40c49d2dc7bb8d0a9a59e3ebfb2a100ed9c7fc8ec1385cb45cf1c52c5005af"
+}

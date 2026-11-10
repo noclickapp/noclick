@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/matillion-dark.svg",
+  "source": "https://mintcdn.com/matillion/GyuNBHAx-GXnVlKX/images/maia-by-matillion-light.svg",
+  "found_at": "https://docs.maia.ai/ (Maia docs header logo, light-theme version)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the Maia hexagon-face mark (elements 0-5), removed the 'Maia by matillion' wordmark and the small Matillion badge",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "dark file is the same six mark elements (18-23) from the company's own dark-theme logo, whose eyes, antennae and sparkle are white instead of dark teal"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: the reviewer note asked for Matillion's own mark, but the integration is labelled 'Maia (Matillion)' and its docs/site favicon is the Maia face, so I shipped the Maia mark. If Matillion's corporate mark is preferred: matillion.com's favicon is a green hexagon with chevrons (PNG only there); an official SVG of it is at https://cdn.prod.website-files.com/696fa0d9f6edc18f352bbb01/697caa577aebc32e456c2670_Matilion-Icon.svg (saved as downloads/matillion/src2/Matilion-Icon.svg, teal on a pale #D5EBE8 tile, which is a site illustration tile, not the app icon).",
+  "license": "Matillion (Maia) brand mark, used nominatively to identify the connected service; trademark rights remain with Matillion (Maia).",
+  "sha256": "2dbdffa6daa88110527f5fbd52a01e3a82df554396181a30ece7b838ad73f3e7"
+}

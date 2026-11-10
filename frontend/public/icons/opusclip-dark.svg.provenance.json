@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/opusclip-dark.svg",
+  "source": "https://www.opus.pro/",
+  "found_at": "https://www.opus.pro/ (inline <svg class=\"_0625_navbar_menu_mobile_logo\">: the navbar's mobile logo, the mark alone)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML width=\"100%\" and class on the root svg",
+    "currentColor -> #000000 on both paths (the page draws it in its black text colour)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "#000000 -> #FFFFFF on both paths of the mark (elements 0-1)"
+  ],
+  "variant": "dark mode",
+  "notes": "OpusClip's app icon is this P in white on a black square; no SVG of that tile exists, so the bare mark ships in black (light) and white (dark).",
+  "license": "OpusClip brand mark, used nominatively to identify the connected service; trademark rights remain with OpusClip.",
+  "sha256": "54e54940fe6e1ee916bdb363c088acf984b90c82a71f8b673e0f7c2280ae9fe4"
+}

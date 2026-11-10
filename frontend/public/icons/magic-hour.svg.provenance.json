@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/magic-hour.svg",
+  "source": "https://magichour.ai/ (inline <svg aria-label=\"Magic Hour logo\" viewBox=\"0 0 29 26\"> in the header home link, copied verbatim)",
+  "found_at": "https://magichour.ai/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "fill currentColor -> #12122D (the navy Magic Hour's own logo-light.svg uses, magichourhq/docs icons/logo-light.svg)",
+    "cropped the viewBox to the mark (2% pad)",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: the app icon is this mark in white on a navy square; no vector of that tile exists, so the mark ships bare in Magic Hour's navy on light and white on dark (the colours of its own light/dark docs logos). Those docs logos (magichourhq/docs icons/logo-*.svg) look auto-traced, so the clean header SVG was used instead; safari-pinned-tab.svg is a potrace trace.",
+  "license": "Magic Hour brand mark, used nominatively to identify the connected service; trademark rights remain with Magic Hour.",
+  "sha256": "2cffb5f3b751f783d7b9bd884bfad2d6dc5f100b3d0cd7523aec3752dbd0d79b"
+}

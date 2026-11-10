@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/paddle-brand-vector.svg",
-  "source": "https://www.paddle.com (official Paddle brand artwork)",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "40aa751b8a5232fa440539bc9eae57a115aaa51fb078f07b0663d06ce8024ebe"
+  "source": "https://www.paddle.com/_next/static/media/paddle-logo-inverted.02kelud1d95as.svg",
+  "found_at": "https://www.paddle.com/ and https://www.paddle.com/press (header logo <img>, dark version for light sections)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the four-point sparkle (element 5, #04060A); removed the 'paddle' letters (elements 0-4, 6)",
+    "cropped the viewBox to the sparkle",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: the reviewer's flag was right: the yellow 'P' is a retired logo. Paddle's current symbol is the sparkle, shown on paddle.com as a black sparkle on a yellow tile, but that tile exists only as PNG. Shipped: the bare sparkle in Paddle's own black (#04060A, light) and cream (#FBF9F5, dark) from its two header logos. Alternative: developer.paddle.com/favicon.svg (downloads/paddle/src7/favicon.svg), Paddle's own tile icon, a cream sparkle of a slightly different, straighter cut on a near-black #1C1A15 rounded square; that tile disappears into the dark theme.",
+  "license": "Paddle brand mark, used nominatively to identify the connected service; trademark rights remain with Paddle.",
+  "sha256": "0d586c7e18e5cfb455e7a56be3cb10f5f0f3679daa85ac3c4a63c10837fba50b"
 }

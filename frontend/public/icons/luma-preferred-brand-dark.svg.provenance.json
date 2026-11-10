@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/luma-preferred-brand-dark.svg",
+  "source": "https://luma.com/ (inline <svg viewBox=\"0 0 133 134\"> inside <div class=\"logo\"> in <header class=\"landing-topnav\">, copied verbatim)",
+  "found_at": "https://luma.com/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "fill currentColor -> #000000",
+    "cropped the viewBox to the star (2% pad)",
+    "cleaned",
+    "#000000 -> #FFFFFF on the star (element 0)"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: Luma's app icon (apple-touch-icon.png) shows this star with an iridescent, raster-only finish on white; no vector of that finish exists, so this is the flat star Luma draws in its own header. The current file is an auto-trace of that PNG (Composio CDN, hundreds of stroked paths) and must go.",
+  "license": "Luma brand mark, used nominatively to identify the connected service; trademark rights remain with Luma.",
+  "sha256": "df72f804283b700c5c94132449cb8eabc53e60cd6e2aa8edf6566d764fc64d57"
+}

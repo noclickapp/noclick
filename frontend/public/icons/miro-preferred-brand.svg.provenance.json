@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/miro-preferred-brand.svg",
-  "source": "https://logos.composio.dev/api/miro",
-  "license": "Miro vendor trademark; use subject to https://brandkit.miro.com/",
-  "sha256": "7b8d88ecdca5fcc4ec0376671d701acec4a7f9b8bb5d4a31b18c1828a90e1bbc"
+  "source": "https://files.readme.io/4ea65b9-Miro_Developers_logo_black.svg",
+  "found_at": "https://developers.miro.com/ (header logo of Miro's developer docs)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the yellow rounded tile (element 0) and the dark mark (element 1); removed the 'miro | DEVELOPERS' wordmark (elements 2-6)",
+    "cropped the viewBox to the tile (no pad: it is the app-icon tile)",
+    "cleaned"
+  ],
+  "notes": "Re-sourced: the old file came from logos.composio.dev. The yellow rounded square is Miro's own app icon, so the coloured-tile note from icon_check is expected; the triage 'vanishes-light' flag is the yellow tile on white and is not a real loss (icon_check now reports 0).",
+  "license": "Miro brand mark, used nominatively to identify the connected service; trademark rights remain with Miro.",
+  "sha256": "fc91db8b9843f55d4c7023d79b6214e82b3a0acff00375964131b87f5d515076"
 }

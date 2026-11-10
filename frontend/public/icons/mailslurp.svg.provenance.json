@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/mailslurp.svg",
+  "source": "https://www.mailslurp.com/logo-sm.svg",
+  "found_at": "https://www.mailslurp.com/ (header <img alt=\"MailSlurp logo\" src=\"/logo-sm.svg\">; /logo.svg is the same file)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the M (2% pad)",
+    "cleaned"
+  ],
+  "notes": "The header SVG's gradients are a slightly yellower green than the favicon's teal; it is the site's own current vector. Reads on both themes, so one file.",
+  "license": "MailSlurp brand mark, used nominatively to identify the connected service; trademark rights remain with MailSlurp.",
+  "sha256": "80874f105f214b222e50a2f7555735ece03658a56311dc6ce175d921284d0656"
+}

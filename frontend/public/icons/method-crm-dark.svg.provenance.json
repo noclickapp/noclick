@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/method-crm-dark.svg",
+  "source": "https://www.method.me/wp-content/uploads/2025/02/method-logo.svg",
+  "found_at": "https://rest.method.me/ (the REST API spec's info.x-logo, the current file's own source)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the 'm' of the 'method:API' lockup (element 2, navy #15304D), removed the rest of the wordmark and ':API'",
+    "cropped the viewBox to the m",
+    "cleaned",
+    "dark file is the same 'm' (subpath 0 of the single compound path) from Method's own white header logo, cropped and cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: Method's app icon is the wordmark's own 'm' in white on a navy tile, published only as PNG. The vector 'm' here is the first letter of Method's own wordmark files (navy from the API logo, white from the site header logo), shown bare without the tile.",
+  "license": "Method (Method CRM) brand mark, used nominatively to identify the connected service; trademark rights remain with Method (Method CRM).",
+  "sha256": "29c93148028a2ad8fec86b0a0ea2134df05f3aeedf7bbe6ebc2d8c44021970d1"
+}

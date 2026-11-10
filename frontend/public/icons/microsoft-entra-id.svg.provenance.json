@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/microsoft-entra-id.svg",
+  "source": "https://download.microsoft.com/download/3/1/a/31a56038-856a-4489-88e4-ee5a1c4352be/Microsoft%20Entra%20architecture%20icons%20-%20Oct%202023.zip (entry 'Microsoft Entra color icons SVG/Microsoft Entra ID color icon.svg')",
+  "found_at": "https://learn.microsoft.com/en-us/entra/architecture/architecture-icons",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the icon",
+    "cleaned"
+  ],
+  "notes": "Microsoft's own Entra icon kit (zip saved in src4). Not the retired Azure AD pyramid-with-base icon (Azure icon set V18, src3) and not the Entra product-family leaf icon (MicrosoftDocs microsoft-entra.svg, src2). Colours read on both themes, so one file.",
+  "license": "Microsoft (Microsoft Entra ID) brand mark, used nominatively to identify the connected service; trademark rights remain with Microsoft (Microsoft Entra ID).",
+  "sha256": "15f6b599d1c9e2b08e84402fcc27ffd4a70af72e5419f29cc5d6a8e6439935c4"
+}

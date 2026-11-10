@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/pinata.svg",
-  "source": "https://mintcdn.com/pinata/1l40stvCFLGKMlbm/logo/light.svg (official logo linked from https://docs.pinata.cloud/api-reference/endpoint/ipfs/test-authentication)",
-  "license": "Pinata brand mark used nominatively to identify the connected service; trademark rights remain with Pinata.",
-  "sha256": "667ee080bf99f7a66fd43fa28c9cb92508f800c89cf777b6c0244058600ee89f"
+  "source": "https://pinata.cloud/ (inline <svg> of the llama, viewBox 0 0 77 111)",
+  "found_at": "https://pinata.cloud/ (the pi\u00f1ata llama drawn on its own on the homepage)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML id/width/height from the root",
+    "cleaned",
+    "cropped the viewBox to the llama"
+  ],
+  "notes": "Replaces the 'Pinata' wordmark lockup with the llama mark alone. The docs favicon (mintcdn.com/pinata/.../favicon.svg) is a flat green llama silhouette in the docs theme colour, not the brand's multicolour mark, so I did not use it. The llama's colours read on both themes (one file).",
+  "license": "Pinata brand mark, used nominatively to identify the connected service; trademark rights remain with Pinata.",
+  "sha256": "d137774034c7999207dd9fa740004bbe796a056a07e33752aedd449f9de945a8"
 }

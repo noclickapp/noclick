@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/maildroppa.svg",
+  "source": "https://maildroppa.com/assets/svg/homepage-maildroppa-mark.svg",
+  "found_at": "https://maildroppa.com/ (<img src=\"/assets/svg/homepage-maildroppa-mark.svg\"> on the homepage)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned (stripped the C2PA metadata blob)",
+    "cropped the viewBox to the plane (2% pad)"
+  ],
+  "notes": "DECISION: the site's mark and header logo draw the plane's fold as a navy #2B3254 sliver; the old favicons (apple-touch-icon.png, the current PNG) show a plain gap there instead. Shipped the site's current SVG. The navy sliver sits inside the plane, so one file works on both themes; safari-pinned-tab.svg is a potrace trace and was not used.",
+  "license": "Maildroppa brand mark, used nominatively to identify the connected service; trademark rights remain with Maildroppa.",
+  "sha256": "7298449b0fbbd76235a995df9ab0317208d8ed42a7a1b8a6c4f75d40bd64a8b2"
+}

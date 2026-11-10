@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/namsor.svg",
+  "source": "https://namsor.app/compressed_images/namsor_small.svg",
+  "found_at": "https://namsor.app/ (used as a CSS background logo on the page)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "no elements removed (standalone 'N' mark file)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "icon_check reports nothing lost on either theme, so no dark variant. The SVG keeps four invisible fill:none helper paths from the source.",
+  "license": "Namsor brand mark, used nominatively to identify the connected service; trademark rights remain with Namsor.",
+  "sha256": "0d5f7eeba8efd0ea916a4f43502dbe412102f2f7b710200f1fffc00cbad4c9be"
+}

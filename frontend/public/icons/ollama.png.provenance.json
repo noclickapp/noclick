@@ -1,6 +1,0 @@
-{
-  "path": "frontend/public/icons/ollama.png",
-  "source": "https://raw.githubusercontent.com/ollama/ollama/main/docs/ollama.png",
-  "license": "Ollama publisher asset (MIT repository); trademark used to identify Ollama. https://github.com/ollama/ollama/blob/main/LICENSE",
-  "sha256": "5c5528504c307d34af504f39bc4e7007d2f6f31ee00dab699cc91584d1af8aca"
-}

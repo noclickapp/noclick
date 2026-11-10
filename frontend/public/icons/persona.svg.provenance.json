@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/persona.svg",
+  "source": "https://status.withpersona.com/favicon.svg",
+  "found_at": "https://status.withpersona.com/ (<link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned, removed width/height from the root (viewBox already the tile; kept the #7379FD rounded tile as Persona's own icon tile)"
+  ],
+  "notes": "DECISION: Persona uses the mark two ways: the purple tile with a white mark (docs and status favicons, shipped here) and a purple mark on white (withpersona.com favicon.ico). I kept the tile because the company's SVG has it and the docs use it as the icon. If the reviewer prefers the bare purple mark, it is this same file with the rect dropped and #FFFFFF -> #7379FD, which reads on both themes. withpersona.com, /brand and the dashboard are behind a Cloudflare challenge (403); the docs logo is WebP.",
+  "license": "Persona brand mark, used nominatively to identify the connected service; trademark rights remain with Persona.",
+  "sha256": "2b83022ce73354fc80b9f0e4e6a19125eed1e289e6657b7abb76cd224df7da32"
+}

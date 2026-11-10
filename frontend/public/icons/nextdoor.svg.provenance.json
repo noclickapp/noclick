@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/nextdoor.svg",
+  "source": "https://about.nextdoor.com/hubfs/next-door-logo-color.svg",
+  "found_at": "https://about.nextdoor.com/ and https://about.nextdoor.com/nextdoor-brand-use-guidelines/ (header logo <img>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the house mark (element 8); removed the 'Nextdoor' wordmark paths (elements 0-7)",
+    "cropped the viewBox to the house",
+    "cleaned"
+  ],
+  "notes": "Nextdoor's favicon is this house in white on a green square, but no SVG of that tile is published (the brand guidelines page offers assets only by emailing brandassets@nextdoor.com), so the green house ships on its own, as the current icon does.",
+  "license": "Nextdoor brand mark, used nominatively to identify the connected service; trademark rights remain with Nextdoor.",
+  "sha256": "5c72f6b2b3d702080b57cb0a067e89e5e869c07b434fa3be6eb22bf33bb2efbb"
+}

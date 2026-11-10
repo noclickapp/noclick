@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/neutrino.svg",
+  "source": "https://www.neutrinoapi.com/ (inline <svg id=\"logo-svg\"> in the header)",
+  "found_at": "https://www.neutrinoapi.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "no elements removed (the header SVG is the mark alone)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The favicon's black square is a favicon backing and is not in the vector; it was dropped as the triage asked.",
+  "license": "Neutrino API brand mark, used nominatively to identify the connected service; trademark rights remain with Neutrino API.",
+  "sha256": "ff4f0a319238bba1154cc4bb44c1aca4c58d9c168a1d84748912d11b493cde58"
+}

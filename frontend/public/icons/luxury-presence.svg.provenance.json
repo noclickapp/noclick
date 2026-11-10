@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/luxury-presence.svg",
+  "source": "https://www.luxurypresence.com/ (inline <svg viewBox=\"0 0 136 48\"> in the header link with class logo_\u2026, copied verbatim)",
+  "found_at": "https://www.luxurypresence.com/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the mark (elements 0-1), removed the 'LUXURY PRESENCE' wordmark (elements 2-15)",
+    "fill currentColor -> #000000",
+    "cropped the viewBox to the mark (2% pad)",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: the favicon puts the mark in white on a black square; that square is a favicon tile, not a vector we have, so the mark ships bare (black on light, white on dark). The site's safari-pinned-tab.svg is a potrace auto-trace and was not used.",
+  "license": "Luxury Presence brand mark, used nominatively to identify the connected service; trademark rights remain with Luxury Presence.",
+  "sha256": "7d4fb2c093a37343aedc259be9648a0b3f8d9eee39a164212480aa2a78137495"
+}

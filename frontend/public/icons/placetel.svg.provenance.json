@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/placetel.svg",
+  "source": "https://www.placetel.de/assets/dist/placetel-webex/sprites/sprite.svg?1793371242 (<symbol id=\"svg-placetel-gamma-logo\">)",
+  "found_at": "https://www.placetel.de/ (header logo: <svg class=\"svg svg-placetel-gamma-logo\"><use xlink:href=\"\u2026sprite.svg#svg-placetel-gamma-logo\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "copied the header's <symbol id=\"svg-placetel-gamma-logo\"> out of the site's sprite into a standalone <svg> (its children and viewBox verbatim; the file also derives against the whole sprite, downloads/placetel/src2/sprite.svg)",
+    "removed the 'PLACETEL' lettering and the 'A Gamma company' line (elements 0-7, 10-22)",
+    "cleaned",
+    "cropped the viewBox to the blue-and-green P"
+  ],
+  "notes": "The site's safari-pinned-tab.svg is an auto-traced silhouette (realfavicongenerator-style stepped path), so I did not use it. The P's colours read on both themes (one file).",
+  "license": "Placetel brand mark, used nominatively to identify the connected service; trademark rights remain with Placetel.",
+  "sha256": "468b84c6fc1e27207ab4935901c5febf46203c5ff13712dadf5d002d5339340e"
+}

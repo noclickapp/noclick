@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/mirakl-brand-dark.svg",
+  "source": "https://www.mirakl.com/media/logos/mirakl/mirakl-logo-white.svg",
+  "found_at": "https://www.mirakl.com/ (header logo; page also links mirakl-logo-white.svg)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the ribbon-triangle mark (element 0); removed the 'mirakl' wordmark (element 1)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "same edits applied to Mirakl's own white logo (mirakl-logo-white.svg): mark element 0 kept, wordmark element 1 removed"
+  ],
+  "variant": "dark mode",
+  "notes": "The current file (a white disc with a dark shield) is not Mirakl's current mark; the reviewer note 'verify Mirakl's mark' was right. Light file is #0E0E0E, dark file is Mirakl's own white version.",
+  "license": "Mirakl brand mark, used nominatively to identify the connected service; trademark rights remain with Mirakl.",
+  "sha256": "4ecc94b3ae1ce083ceed9a9efc3277f982f5e146015c81c814c4e6fffbb7ba4f"
+}

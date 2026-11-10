@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/olostep.svg",
-  "source": "https://www.olostep.com/images/olostep-logo-cropped.svg",
-  "license": "Olostep trademark; official publisher asset used to identify the Olostep integration",
-  "sha256": "0192640344101889c9b0681e92ddd2cfdbb79d3b3d12567b9024204fcb16e90f"
+  "source": "https://www.olostep.com/brand/olostep-brand-kit.zip",
+  "found_at": "https://www.olostep.com/brand (Brand page, 'olostep-brand-kit.zip' -> olostep_icon.svg)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the white square under the purple tile (element 0, fully covered)",
+    "fixed the viewBox to the tile's own edges (0.4375 0 193.8867 194.0039) so no hairline shows",
+    "cleaned"
+  ],
+  "notes": "Replaces the 'olostep' wordmark with Olostep's app icon (the triage was right). The purple tile is Olostep's own icon tile, so it is kept. The brand page also offers the bare 'O' in navy (/light.svg) and white (/dark.svg) if the reviewer prefers a tile-less mark.",
+  "license": "Olostep brand mark, used nominatively to identify the connected service; trademark rights remain with Olostep.",
+  "sha256": "96ac8edcbdb8dd4e44a502cab292679ff481aa659d7a33b4c3fb416435695eab"
 }

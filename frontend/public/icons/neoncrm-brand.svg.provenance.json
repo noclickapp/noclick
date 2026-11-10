@@ -1,6 +1,17 @@
 {
   "path": "frontend/public/icons/neoncrm-brand.svg",
-  "source": "https://neonone.com/solutions/neon-crm-overview/",
-  "license": "Proprietary brand asset; used to identify Neon CRM.",
-  "sha256": "eb9279ddccc2cd6a12e8f0cc9bdfa23a492e6abb9781fc1a0de54774d6fefe6a"
+  "source": "https://neonone.com/wp-content/themes/neonone/img/logo.svg",
+  "found_at": "https://neonone.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the 'N1' mark (elements 0-2)",
+    "removed the 'NEON ONE' wordmark (elements 3-9)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "Replaces the black, CSS-inverted mark with the brand colours (#282968 navy, #008BF4 blue). The navy passes icon_check on dark, but Neon One publishes its own white version, which is used for dark mode.",
+  "license": "Neon One (Neon CRM) brand mark, used nominatively to identify the connected service; trademark rights remain with Neon One (Neon CRM).",
+  "sha256": "60ec413005fa097aa5f8e2216eb1ec682f738910bcf384b118c88aadaad14d04"
 }

@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/onepage-crm.svg",
+  "source": "https://www.onepagecrm.com/",
+  "found_at": "https://www.onepagecrm.com/ (inline <svg class=\"logo\"> header logo, link 'OnePageCRM home')",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML class/aria/data attributes on the root svg",
+    "kept the orange squircle (element 0) and its white open-book glyph (element 1); removed the 'OnePageCRM' wordmark paths (elements 2-11)",
+    "cropped the viewBox to the squircle (no pad: it is the app-icon tile)",
+    "cleaned"
+  ],
+  "notes": "The orange squircle is part of OnePageCRM's own mark (the header draws it as the logo's symbol and the favicons are the same tile), so it is kept.",
+  "license": "OnePageCRM brand mark, used nominatively to identify the connected service; trademark rights remain with OnePageCRM.",
+  "sha256": "9db1b99b3d9c56912cb7248068f78cf90c5f5bf4c58682dbb7743e25dcd41df7"
+}

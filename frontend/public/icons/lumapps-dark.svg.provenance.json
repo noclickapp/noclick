@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/lumapps-dark.svg",
+  "source": "https://cdn.prod.website-files.com/694159454607d4764c350591/69aed5347350fb1cd46af449_favicon-large.svg",
+  "found_at": "https://www.lumapps.com/ (<link rel=\"icon\"> favicon-large.svg)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the hexagon mark (2% pad)",
+    "cleaned",
+    "#32312F -> #FFFFFF on the mark (element 0)"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: lumapps.com now draws its mark in one dark colour (#32312F favicon, monochrome header); the multicolour hexagon in the current file comes from developer.lumapps.com (logo-H-color.svg) and looks like the earlier look. Shipped the current monochrome mark, white in dark mode.",
+  "license": "LumApps brand mark, used nominatively to identify the connected service; trademark rights remain with LumApps.",
+  "sha256": "d5134cf97258a6639b5a558dc6352a903bd195f2700a37cb0186a1dfc04cd422"
+}

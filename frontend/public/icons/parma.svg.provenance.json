@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/parma.svg",
+  "source": "https://app.parma.ai/favicon.svg",
+  "found_at": "https://app.parma.ai/users/sign_in (<link rel=\"icon\" href=\"/favicon.svg\">; the node calls app.parma.ai/api)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned (no geometry change; the yellow rounded tile is kept because it is Parma's own app icon)"
+  ],
+  "notes": "The triage's 'vanishes-light' was the white circle, which sits inside the brand's yellow tile and shows on both themes. The tile is the brand's own app icon, so it stays (icon_check reports it as a coloured tile).",
+  "license": "Parma brand mark, used nominatively to identify the connected service; trademark rights remain with Parma.",
+  "sha256": "f6b218ce4964bd7ddd41a8f950232a0177a41dc807a682ceaba3898370f203f3"
+}

@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/mobile-text-alerts.svg",
+  "source": "https://mobile-text-alerts.com/mta-logo-dark.svg",
+  "found_at": "https://mobile-text-alerts.com/ (header logo; mta-logo-light.svg is the same with a light wordmark)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the two rings (elements 16, 17) and their grey overlap pieces (18, 19)",
+    "removed the 'Mobile Text Alerts' wordmark (elements 0-15) and the \u00ae (element 20)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "DECISION: the current PNG puts the rings on a dark green tile (from a Postman listing); the company's current logo has no tile, so none was kept. The \u00ae was dropped as it is not part of the mark.",
+  "license": "Mobile Text Alerts brand mark, used nominatively to identify the connected service; trademark rights remain with Mobile Text Alerts.",
+  "sha256": "88cf522b6adaf75d5079a7f2719e421e2ee257af98054c8975c893cc726e27f6"
+}

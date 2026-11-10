@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/microsoft-bookings.svg",
-  "source": "https://github.com/microsoft/fluentui/blob/master/packages/react-icons-mdl2-branded/src/components/BookingsLogoIcon.tsx",
-  "license": "MIT License\n\nCopyright (c) Microsoft Corporation.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE\n\nNOTE: Usage of the fonts and icons referenced in Fluent UI React is subject to the terms listed at https://aka.ms/fluentui-assets-license\n\nMicrosoft Bookings trademark remains with Microsoft. SVG geometry extracted from the official BookingsLogoIcon.",
-  "sha256": "39a7f8ef05ecb451cec37e256cb8d784b6f0190dfcc5d7374ab7e98b04fb3d8d"
+  "source": "https://raw.githubusercontent.com/microsoft/Microsoft-AI-Decision-Framework/main/images/icons/Bookings.svg",
+  "found_at": "https://github.com/microsoft/Microsoft-AI-Decision-Framework (Microsoft's own GitHub org, images/icons/)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the icon",
+    "cleaned"
+  ],
+  "notes": "DECISION: Microsoft's Office CDN product-icon library and Learn's /media/logos/ have no Bookings icon, and microsoft.com's Bookings page blocks automated fetches, so the vector comes from a Microsoft-owned GitHub repo (preference 6); a second copy in the same repo (images/Bookings.svg, src4) is the same drawing. If Microsoft has refreshed Bookings with its 2025 icon style (as OneNote was), this is the 2019 Fluent version; I found no published vector of a newer one. The black element 5 is the icon's own 50%-opacity shadow under the B tile.",
+  "license": "Microsoft (Microsoft Bookings) brand mark, used nominatively to identify the connected service; trademark rights remain with Microsoft (Microsoft Bookings).",
+  "sha256": "414600bb9dbd653c0c91a0a91a1c0dadd74f59cc6f2c11f51ec1f5a6dbacdf86"
 }

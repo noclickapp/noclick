@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/paradym-dark.svg",
+  "source": "https://paradym.id/ (inline <svg> in the header logo link)",
+  "found_at": "https://paradym.id/ (header logo, also the same path inline on https://docs.paradym.id/)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML class/aria attributes from the root",
+    "cropped the viewBox to the P",
+    "cleaned",
+    "light mode: #fff -> #12121e (Paradym's grey-900, the colour the docs site gives this same P in dark mode: class dark:fill-grey-900; grey-900 = #12121e in paradym.id's CSS)",
+    "dark mode keeps the source's own white #fff P"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: the brand's app icon is the white P on a #12121e rounded tile, but that tile is an HTML span on the site (no SVG of the tile exists: favicons and the wallet app icon in github.com/animo/paradym-wallet are PNG). I shipped the bare P: #12121e on light, white on dark (mirroring what docs.paradym.id itself does per theme).",
+  "license": "Paradym brand mark, used nominatively to identify the connected service; trademark rights remain with Paradym.",
+  "sha256": "62ab650703645860cbb1818afad442afab61f59756ff007f56d9048387d07c93"
+}

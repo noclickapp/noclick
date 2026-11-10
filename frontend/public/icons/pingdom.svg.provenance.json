@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/pingdom.svg",
-  "source": "https://tmp-new-api-doc.s3-eu-west-1.amazonaws.com/sw-pingdom-logo.svg",
-  "license": "Pingdom trademark; official logo linked by the Pingdom API 3.1 contract at https://docs.pingdom.com/API_3.1.yaml, used to identify this integration",
-  "sha256": "0c6e2a86528336928d3e8fd0544bf675da0543a7736473875e28a756e4906507"
+  "source": "https://www.pingdom.com/wp-content/uploads/2026/03/SW_Logo2025_Pingdom_Web_Orange.svg",
+  "found_at": "https://www.pingdom.com/ (header logo, the 2025 'SOLARWINDS Pingdom' lockup)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the orange #FF6200 square with the knocked-out SolarWinds bird and its tiny \u00ae (elements 7-9); removed the 'SOLARWINDS' and 'Pingdom' lettering and their \u00ae marks",
+    "cleaned (removed the Illustrator comment and namespace)",
+    "cropped the viewBox to the square (no pad: the square is the mark itself)"
+  ],
+  "notes": "DECISION: Pingdom has no mark of its own any more; it ships under SolarWinds' mark (simple-icons' 'pingdom' entry is the same bird in black, hex #FFF000 from the old Pingdom brand). I used the 2025 square from pingdom.com's own SVG. The bird is a knockout, so it shows the tile colour through it (dark on the dark theme, white on light), as the brand file draws it. The alternative is the 2024 bare orange bird, which exists only as PNG (the favicon).",
+  "license": "SolarWinds Pingdom brand mark, used nominatively to identify the connected service; trademark rights remain with SolarWinds Pingdom.",
+  "sha256": "1e4a8d4051bdf7a82908183d77acf9644e2e52cef55c68be0c31b5ed2af94a3e"
 }

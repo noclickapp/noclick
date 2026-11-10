@@ -1,6 +1,0 @@
-{
-  "path": "frontend/public/icons/mattermost.png",
-  "source": "https://raw.githubusercontent.com/mattermost/mattermost/master/webapp/channels/src/images/favicon/favicon-32x32.png",
-  "license": "Mattermost brand mark used nominatively to identify the connected service. Trademark rights remain with Mattermost, Inc.",
-  "sha256": "5ac6783e84c3e31f354c97ea57bf572d2c69450e64244cfcabfd96767aa12bfc"
-}

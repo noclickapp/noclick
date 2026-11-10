@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/pipeless.svg",
-  "source": "https://files.readme.io/6906562-logo-docs1.svg (Pipeless official documentation header: https://docs.pipeless.io/reference/create-event)",
+  "source": "https://pipeless.io/ (inline <svg> header nav logo, viewBox 0 0 155 35)",
+  "found_at": "https://pipeless.io/ (header nav-logo link)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "gave the page's Vue data-v-* boolean attributes empty values so the file parses as XML (no drawing change), and removed them from the final",
+    "removed the white 'pipeless' wordmark path (element 0)",
+    "cleaned, removed width/height from the root",
+    "cropped the viewBox to the X of teal dots"
+  ],
+  "notes": "Mark only; teal reads on both themes (one file).",
   "license": "Pipeless brand mark, used nominatively to identify the connected service; trademark rights remain with Pipeless.",
-  "sha256": "499dc8bb4897de52489110305bb8f208973af7045d4bc344d3ed32ca7f4135e9"
+  "sha256": "0a4f60a146e07e58c666b9bf0754028b33c1b5b76411abe1b1bbd2b3dc69392d"
 }

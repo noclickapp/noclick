@@ -12,7 +12,7 @@ const PaystackIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/paystack.png"
+        src="/icons/paystack.svg"
         alt=""
         aria-hidden="true"
         className={className}

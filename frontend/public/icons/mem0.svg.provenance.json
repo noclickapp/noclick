@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/mem0.svg",
-  "source": "https://mem0.ai/ (official logo: https://mintcdn.com/mem0/jmnLaiutcXgYmrAY/logo/light.svg?fit=max&auto=format&n=jmnLaiutcXgYmrAY&q=85&s=262e6e63930c20446217323d7f850a7a)",
-  "license": "Mem0 brand mark used nominatively to identify the connected service. Trademark rights remain with Mem0.",
-  "sha256": "e03d0e3ca82aae25268abc15e0fbc84932d51c19a2d5134ae9033fb1a4cc4e54"
+  "source": "https://framerusercontent.com/images/2ys67ADJdvcyGmQnhp8vKWSq8.svg",
+  "found_at": "https://mem0.ai/ (<link rel=\"icon\"> SVG favicon)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "added a viewBox (0 0 100 100) matching the file's own width/height so it scales",
+    "cleaned"
+  ],
+  "notes": "Kept the lavender tile: it is Mem0's own app-icon form (GitHub avatar, site and docs favicons all show the black mark on it), and it keeps the black mark visible on the dark theme. If a bare mark is preferred, the dotted mark alone exists in the repo's docs/logo/light.svg (black) and dark.svg (white) lockups (saved as src3/src2).",
+  "license": "Mem0 brand mark, used nominatively to identify the connected service; trademark rights remain with Mem0.",
+  "sha256": "b67650f63035db52b043449bd1319a1d14b4dee3a12d2c08280e13d0d6f5393c"
 }

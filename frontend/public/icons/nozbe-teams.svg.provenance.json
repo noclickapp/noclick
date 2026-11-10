@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/nozbe-teams.svg",
+  "source": "https://files.nozbe.com/images/nt/nozbe_logo.svg",
+  "found_at": "https://nozbe.com/ (header logo <img class=\"logo-teams\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the three gradient faces of the magenta 'N' mark (elements 0-2); removed the 'NOZBE' wordmark path (element 3)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "Not the green check in a ring (nozbe-sign.svg): nozbe.com labels that one 'Nozbe Classic logo'. The header's dark variant (nozbe_logo-dark.svg) only changes the wordmark; the magenta mark reads on both themes.",
+  "license": "Nozbe brand mark, used nominatively to identify the connected service; trademark rights remain with Nozbe.",
+  "sha256": "b65195c29b0238595a1a80e9e1fb6bc2e1c3a4798840faf3661f1f816227492c"
+}

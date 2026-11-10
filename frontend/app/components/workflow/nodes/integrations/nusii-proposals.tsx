@@ -12,7 +12,7 @@ const NusiiIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/nusii-proposals.png"
+        src="/icons/nusii-proposals.svg"
         alt=""
         aria-hidden="true"
         className={className}

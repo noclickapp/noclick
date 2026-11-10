@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/ownerrez.svg",
+  "source": "https://drive.google.com/uc?export=download&id=1gzcvdHgrEEqehPbcc6zlV-A8sXv1MMYq",
+  "found_at": "https://www.ownerrez.com/brand (Brand Guidelines, 'OwnerRez logo + OR brandmark \u2014 SVG \u00b7 EPS \u00b7 PNG' -> 'Download logo pack' Google Drive link; zip saved as downloads/ownerrez/src7/ownerrez-logo-pack.zip)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned (the file is already the square brand-mark tile, viewBox tight)"
+  ],
+  "notes": "Replaces the 'OwnerRez' wordmark PNG with OwnerRez's 'OR' brandmark. The green rounded square is the brand's own app/favicon tile (the pack ships it as logomark-greenbg), so it is kept; the pack also has a tile-less green 'OR' (logomark-green.svg) if the reviewer prefers. Not the app login page's safari-pinned-tab.svg, which is a potrace auto-trace. The zip's folder 'logo pack' was renamed 'logo_pack' after extraction (the space broke the sheet tool).",
+  "license": "OwnerRez brand mark, used nominatively to identify the connected service; trademark rights remain with OwnerRez.",
+  "sha256": "df101014fcfc079afbb2f59345ceadef2b67e83cc809a39a5ead55fd61a8a8c0"
+}

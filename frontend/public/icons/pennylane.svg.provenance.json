@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/pennylane.svg",
+  "source": "https://www.pennylane.com/_nuxt/logo.BkRDgVYD.svg",
+  "found_at": "https://www.pennylane.com/fr (header logo, linked as /_nuxt/logo.BkRDgVYD.svg)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the 'pennylane' wordmark path (element 3)",
+    "cleaned, removed width/height from the root",
+    "cropped the viewBox to the ring mark"
+  ],
+  "variant": "light mode",
+  "notes": "Pennylane's own dark-background logo (pennylane.readme.io white-logo.png) is all white; I only whitened the two dark teal parts and kept the green, per the recolour rule. The light-mode green half is the brand's own colour and stays.",
+  "license": "Pennylane brand mark, used nominatively to identify the connected service; trademark rights remain with Pennylane.",
+  "sha256": "19280459cb74d51a82dd4e1defcb8117650b24000b5edd07dce716ca810e6704"
+}

@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/neo4j-dark.svg",
+  "source": "https://dist.neo4j.com/wp-content/uploads/20230926084108/Logo_FullColor_RGB_TransBG.svg",
+  "found_at": "https://neo4j.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the graph glyph (element 5) and the 'n' arch (element 0)",
+    "removed 'eo4j' and the j's dot (elements 1-4, 6)",
+    "cropped the viewBox",
+    "cleaned",
+    "#231F20 -> #FFFFFF on the 'n' (element 0), dark mode only"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: (1) the favicon's colours are #00547F / #101820, this logo file's are #014063 / #231F20 (kept as in the file); (2) the navy graph is dim on the dark tile but icon_check does not flag it and recolouring a brand blue isn't allowed; (3) Neo4j's Aura console splash uses the graph glyph alone (downloads/neo4j/src4/inline-00.svg, fill from CSS only), an alternative if the reviewer wants just the symbol.",
+  "license": "Neo4j brand mark, used nominatively to identify the connected service; trademark rights remain with Neo4j.",
+  "sha256": "ab4a806bad6117907c4723fad24405444e271102ac4d386d63b75ff65a1d698b"
+}

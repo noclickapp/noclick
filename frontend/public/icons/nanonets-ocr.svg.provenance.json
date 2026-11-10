@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/nanonets-ocr.svg",
+  "source": "https://nanonets.com/icon.svg?icon.08zai12kz8owj.svg?dpl=dpl_2SKVeDs8QaJgRScDFrEi2DqDPJKm",
+  "found_at": "https://nanonets.com/ (<link rel=\"icon\" type=\"image/svg+xml\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "no elements removed",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "Replaces the 4.5:1 'Nanonets' wordmark PNG with the mark.",
+  "license": "Nanonets brand mark, used nominatively to identify the connected service; trademark rights remain with Nanonets.",
+  "sha256": "f7a02e5fb8d43673dfba03ab23bc18212705d2d5615620d6aa07592affaf7ab7"
+}

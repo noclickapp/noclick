@@ -7,7 +7,7 @@ import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nod
 
 const MeshyIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/meshy.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <img ref={ref} src="/icons/meshy.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
     ),
 );
 MeshyIcon.displayName = 'MeshyIcon';

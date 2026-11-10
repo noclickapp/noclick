@@ -10,14 +10,23 @@ const MuralIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <img
-        ref={ref}
-        src="/icons/mural.svg"
-        alt=""
-        className={className}
-        style={style}
-        {...props}
-    />
+    <>
+        <img
+            ref={ref}
+            src="/icons/mural.svg"
+            alt=""
+            className={`${className ?? ''} dark:hidden`}
+            style={style}
+            {...props}
+        />
+        <img
+            src="/icons/mural-dark.svg"
+            alt=""
+            className={`${className ?? ''} hidden dark:block`}
+            style={style}
+            {...props}
+        />
+    </>
 ));
 MuralIcon.displayName = 'MuralIcon';
 

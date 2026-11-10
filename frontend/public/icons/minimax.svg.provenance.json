@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/minimax.svg",
+  "source": "https://mintcdn.com/minimax-cac98058/XYzsL2L2ynonu2Q_/logo/light.svg",
+  "found_at": "https://platform.minimax.io/docs (MiniMax API docs header logo, light-theme version)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the waveform mark (element 0, its #E21680 -> #FF633A gradient), removed the 'MINIMAX' wordmark (elements 1-7)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "DECISION: MiniMax's app/favicon form is the white waveform on a pink-orange gradient tile, published only as PNG/ICO; the vector logos carry the waveform itself in that gradient, shown bare here (reads on both themes, one file). simple-icons also has a monochrome copy of the waveform (not used).",
+  "license": "MiniMax brand mark, used nominatively to identify the connected service; trademark rights remain with MiniMax.",
+  "sha256": "7ccb6a4e183022493f76b4637da31e4be8f5bb6a572c757c326d5a3257a526ac"
+}

@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/memberspot.svg",
+  "source": "https://cdn.prod.website-files.com/62b5697fd4d1b82b5269a07f/6a46ed90b58b52983d155835_memberspot-icon.svg",
+  "found_at": "https://www.memberspot.de/en (memberspot-icon.svg, used beside testimonials)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the pale-blue #C7DDFF square behind the M (element 0)",
+    "cropped the viewBox to the M",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: Memberspot's app icon (webclip, app.memberspot.de apple-touch icon) is a white M on a rounded #0065EE blue tile, but only as PNG; the only vector of the M alone is this site icon (navy M on a pale-blue square). I shipped the bare M, navy on light and white on dark. Recreating the blue app tile would need recolouring the pale square to #0065EE and the M to white (square corners, not the app icon's rounded ones), so I did not.",
+  "license": "Memberspot brand mark, used nominatively to identify the connected service; trademark rights remain with Memberspot.",
+  "sha256": "a63b45745d4b1fbc64c8bfbcc019deae004dd7b31829dc941ff3c8a2ff4a67a4"
+}

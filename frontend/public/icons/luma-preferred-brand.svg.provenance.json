@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/luma-preferred-brand.svg",
-  "source": "https://github.com/ComposioHQ/logo-cdn/blob/3eff86db0d0ac01806c4a8791a6965c35ea23ffb/src/assets/luma.svg",
-  "license": "Trademark; used for provider identification",
-  "sha256": "8d65f21e75eee319fa9f3a091d3e8c1040701764530cf6ce3450449194787ed9"
+  "source": "https://luma.com/ (inline <svg viewBox=\"0 0 133 134\"> inside <div class=\"logo\"> in <header class=\"landing-topnav\">, copied verbatim)",
+  "found_at": "https://luma.com/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "fill currentColor -> #000000",
+    "cropped the viewBox to the star (2% pad)",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: Luma's app icon (apple-touch-icon.png) shows this star with an iridescent, raster-only finish on white; no vector of that finish exists, so this is the flat star Luma draws in its own header. The current file is an auto-trace of that PNG (Composio CDN, hundreds of stroked paths) and must go.",
+  "license": "Luma brand mark, used nominatively to identify the connected service; trademark rights remain with Luma.",
+  "sha256": "bd72446bc94d952982378c28006e34fcf498b9e058d760f1b68c5644a2ab4e4d"
 }

@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/planetscale-dark.svg",
+  "source": "https://planetscale.com/brand/planetscale-logo-mark-white.svg",
+  "found_at": "https://planetscale.com/brand (Brand page: logo mark, black and white)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned, removed width/height from the root",
+    "cropped the viewBox to the mark",
+    "dark file is the brand page's own white logo mark, cleaned and cropped (no recolouring)"
+  ],
+  "variant": "dark mode",
+  "notes": "Replaces the black-tile PNG with the brand page's bare mark: black on light, the brand's own white mark on dark.",
+  "license": "PlanetScale brand mark, used nominatively to identify the connected service; trademark rights remain with PlanetScale.",
+  "sha256": "b7b8853cb0df92dc30a2c635fccc05a9e54dc3fd9faaa4ef314501dee7ea52dc"
+}

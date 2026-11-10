@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/mixmax.svg",
+  "source": "https://www.mixmax.com/_astro/mixmax-mark.De_LqLaT_ZC7Ac.svg?dpl=dpl_9uKerSxoj3kn55tVH4gRag469kNB",
+  "found_at": "https://www.mixmax.com/ (the mark used on the page; the header logo mixmax-white-logo.svg carries the same purple mark)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "no elements removed (a standalone mark file)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The current PNG is Mixmax's older black/grey/white stripes; mixmax.com now uses the purple (#C53FDF / #971AAE) version. The batch's homepage reference (dash.readme.com favicon) is ReadMe's, not Mixmax's.",
+  "license": "Mixmax brand mark, used nominatively to identify the connected service; trademark rights remain with Mixmax.",
+  "sha256": "af27fad28ae7c8ea2de6020a42b2180afce238db7980036b859f2b224b7f8a5e"
+}

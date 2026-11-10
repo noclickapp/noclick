@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/opencage.svg",
+  "source": "https://assets.opencagedata.com/assets/opencage-cage.color-8f2e570d9a0326c4e3e7bc02f84bd4e6c881e35402e4e21231a7860b85463d74.svg",
+  "found_at": "https://opencagedata.com/branding (OpenCage GmbH Branding / Media Resources: the 'cage' symbol download)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the cage (the file holds only the symbol)",
+    "cleaned"
+  ],
+  "notes": "Replaces the wide 'OpenCage' banner PNG with the cage symbol from OpenCage's branding page.",
+  "license": "OpenCage brand mark, used nominatively to identify the connected service; trademark rights remain with OpenCage.",
+  "sha256": "2d41846ffd717f6354211ba92a82a4ac7a3b054f1794a6bfea0d291b268fe230"
+}

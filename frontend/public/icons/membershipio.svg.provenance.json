@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/membershipio.svg",
+  "source": "https://membership.io/ (inline <svg class=\"mio-logo-sm\"> in the page)",
+  "found_at": "https://membership.io/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: the site's own vector mark ('mio-logo-sm') is near-black green #06211E, so the dark file recolours it to the site's CSS primary green #8ADC6D rather than white (close to the current PNG). The app icon itself (lime mark on a dark-teal tile) exists only as PNG, so it is not used.",
+  "license": "Membership.io brand mark, used nominatively to identify the connected service; trademark rights remain with Membership.io.",
+  "sha256": "03315e1b1a82cde3eaf5f0e7ac62bec9e91f8a67eedc02c0860b0a212e1c57b7"
+}

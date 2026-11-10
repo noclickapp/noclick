@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/planable.svg",
+  "source": "https://planable.io/ (inline <svg class=\"mobile-logo\"> in the header logo, viewBox 0 0 494 498)",
+  "found_at": "https://planable.io/ (header logo container; the same mark is also https://planable.io/wp-content/uploads/2026/09/planable-small-logo.svg, downloads/planable/src2/)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML class/width/height from the root",
+    "cleaned",
+    "cropped the viewBox to the mark"
+  ],
+  "notes": "Mark only; reads on both themes (one file). The triage's 'vanishes-light' was the PNG's pale tints, which the SVG keeps as the brand draws them.",
+  "license": "Planable brand mark, used nominatively to identify the connected service; trademark rights remain with Planable.",
+  "sha256": "76f5308623e2c2a2b54781421e413cadeb978e37b0a3e26f4b6e8d07787fe905"
+}

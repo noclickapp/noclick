@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/newie.svg",
+  "source": "https://newie.app/",
+  "found_at": "https://newie.app/ (inline <svg> header logo, link 'Newie home')",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML class on the root svg",
+    "kept the purple speech bubble (element 5) and its white smile (element 6); removed the 'newie' wordmark paths (elements 0-4)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The app-icon PNGs are a glossy 3D render of this mark on a white/black tile; the header SVG is Newie's flat vector of the same bubble, shipped without a tile.",
+  "license": "Newie brand mark, used nominatively to identify the connected service; trademark rights remain with Newie.",
+  "sha256": "eb4e24352d736f08a704f1e07ff099473ae57356f6c5e78ff857a8d8ce15beb4"
+}

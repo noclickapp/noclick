@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/octen-dark.svg",
+  "source": "https://octen.ai/_next/static/media/icon-octen-dark.2c5e3d2d.svg",
+  "found_at": "https://octen.ai/ (<img> of the Octen mark used on light panels of the homepage)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark (the file holds only the mark)",
+    "cleaned",
+    "dark file is Octen's own dark-background icon (icon-octen-dark.svg, #70FE7E, the green of the header logo on octen.ai's dark header), cropped and cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "Octen publishes the mark in #039855 for light backgrounds and #70FE7E for dark ones; both are used here. The light file also reads on dark, so the dark file is optional.",
+  "license": "Octen brand mark, used nominatively to identify the connected service; trademark rights remain with Octen.",
+  "sha256": "b8d3c033565d14015fb493cf0f2ac68bf0d30ba3cd74c977d22560dbf4237aaa"
+}

@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/paperform-dark.svg",
+  "source": "https://paperform.co/website/logo-v3/Paperform_Master_White.svg",
+  "found_at": "https://paperform.co/ (the header logo is /website/logo-v3/Paperform_Master_Black.png; the same folder serves the master logo as SVG in black and white)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the symbol (elements 0-8: the eight outer segments and the square with its round counter); removed the 'Paperform' letters (elements 9-17)",
+    "cropped the viewBox to the symbol",
+    "cleaned",
+    "dark file is the same nine elements from Paperform's own white master (Paperform_Master_White.svg), cropped and cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "Paperform also links a Notion press kit (paperform.notion.site/Paperform-Press-Kit-...), not needed since the site serves the master SVGs directly.",
+  "license": "Paperform brand mark, used nominatively to identify the connected service; trademark rights remain with Paperform.",
+  "sha256": "22122fe6a04f45d9980af0f1b2fd28847734665d4dafd35653b08cef3d4c441e"
+}

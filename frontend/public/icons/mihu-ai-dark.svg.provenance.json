@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/mihu-ai-dark.svg",
+  "source": "https://mihu.ai/logo-white.svg",
+  "found_at": "https://mihu.ai/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the 15-dot grid mark (elements 7-21), removed the 'mihu.ai' wordmark (elements 0-6)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "dark file is the same 15 dots (elements 7-21) from the company's own white logo (logo-white.svg, used in its footer), cropped and cleaned"
+  ],
+  "variant": "dark mode",
+  "license": "Mihu Ai brand mark, used nominatively to identify the connected service; trademark rights remain with Mihu Ai.",
+  "sha256": "f4c6f0db8f9dd9d52eace44af05e41daed170d6a17b53e1b3dea0678c61ce56e"
+}

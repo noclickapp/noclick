@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/perigon.svg",
+  "source": "https://raw.githubusercontent.com/goperigon/n8n-nodes-perigon/HEAD/nodes/Perigon/perigon.svg",
+  "found_at": "https://github.com/goperigon/n8n-nodes-perigon (Perigon's own GitHub org, which also hosts perigon-ts and perigon-mcp-server)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned, removed width/height from the root",
+    "cropped the viewBox to the tile (no pad: the yellow rounded tile is Perigon's own app icon)"
+  ],
+  "notes": "Perigon's site serves its logos only as PNG (data: URIs inside Logo-Perigon-Dark/Light JS modules, perigon-logo-square.png). The n8n repo's perigon.dark.svg is byte-identical to perigon.svg. The yellow tile is the brand's own app icon and keeps the black glyph visible on both themes (one file).",
+  "license": "Perigon brand mark, used nominatively to identify the connected service; trademark rights remain with Perigon.",
+  "sha256": "0b39cb11c2405c6fec312672595cee75446364fe0971de0920054a7e4736c7e6"
+}

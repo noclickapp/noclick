@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/partnerstack.svg",
+  "source": "https://cdn.prod.website-files.com/655381e691678a2583615d93/6a0f4f28d2aeb639c6cda4a8_partnerstack-brand-assets-2026.zip (SVG/PartnerStack-logo-pack-2026_Icon-only (Full-color).svg)",
+  "found_at": "https://partnerstack.com/brand (Brand Guide, logo download)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned (removed the Illustrator comment)",
+    "cropped the viewBox to the mark"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: dark mode uses PartnerStack's own white icon from the brand kit (the kit's horizontal white logo uses this same white mark on dark), as the rule asks; it is monochrome with the overlap left open. The full-colour icon loses its navy #0A1567 piece on the dark tile. If the reviewer prefers colour in dark mode, the alternative is the full-colour file with #0a1567 recoloured to a lighter brand tone, which the kit does not provide.",
+  "license": "PartnerStack brand mark, used nominatively to identify the connected service; trademark rights remain with PartnerStack.",
+  "sha256": "c5acb63a5d65104644677b69d758015f57f0b066c6193bd11c230392dd72704b"
+}

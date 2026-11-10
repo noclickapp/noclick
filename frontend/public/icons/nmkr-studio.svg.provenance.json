@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/nmkr-studio.svg",
+  "source": "https://cdn.prod.website-files.com/627424a55a80c8659c58943a/66a3dec08c724972d211ca38_Logo.svg",
+  "found_at": "https://www.nmkr.io/ and https://www.nmkr.io/press (<img> logo: green mark + black 'NMKR')",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the green mark (elements 4-5: the notched block and the bar); removed the 'NMKR' letter paths (elements 0-3)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "NMKR's app/favicon tile is the mark in black on a green square, but no SVG of that tile exists (favicon and webclip are PNG; studio.nmkr.io has only a safari-pinned-tab mask; no brand page). The green mark is how NMKR's own logo files draw it on light and dark pages.",
+  "license": "NMKR brand mark, used nominatively to identify the connected service; trademark rights remain with NMKR.",
+  "sha256": "88a5e28e56657f1a9c21d27bff92c56295a3049023691ed2ee18578e9591f031"
+}

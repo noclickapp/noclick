@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/mailersend.svg",
+  "source": "https://www.mailersend.com/favicon/favicon.svg",
+  "found_at": "https://www.mailersend.com/ (<link rel=\"icon\" href=\"/favicon/favicon.svg\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "added a viewBox tight to the bolt (2% pad; the file had only width/height)",
+    "cleaned"
+  ],
+  "notes": "Bolt colours read on both themes, so one file.",
+  "license": "MailerSend brand mark, used nominatively to identify the connected service; trademark rights remain with MailerSend.",
+  "sha256": "c3650114764c95eb5eecce07ccc0a86131e620b7916ec8bcb583421ae6a2aecd"
+}

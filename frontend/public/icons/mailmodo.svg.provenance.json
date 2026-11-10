@@ -1,7 +1,15 @@
 {
   "path": "frontend/public/icons/mailmodo.svg",
   "source": "https://www.mailmodo.com/static/images/logo/logo-full.svg",
-  "license": "Mailmodo brand mark used nominatively to identify the service; trademark rights remain with Mailmodo.",
-  "sha256": "4736997aeefa6a5058f7e212bb7351bed6ef1620cf855f0c689ea8f6d7e363bc",
-  "modifications": "Trailing whitespace normalized; vector artwork unchanged."
+  "found_at": "https://www.mailmodo.com/ (header logo <img src=\"/static/images/logo/logo-full.svg\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the tile mark (elements 0-4: green and purple halves and three white bars), removed the 'mailmodo' wordmark (elements 5-12)",
+    "cropped the viewBox to the tile (2% pad)",
+    "cleaned"
+  ],
+  "notes": "The rounded tile is Mailmodo's own app mark (as in its favicon), so it stays; one file reads on both themes.",
+  "license": "Mailmodo brand mark, used nominatively to identify the connected service; trademark rights remain with Mailmodo.",
+  "sha256": "752f7e14f42a81c2964e4fb436bd1d99d0f5ea43bb0415f6c3db7a5d3867f0c9"
 }

@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/meshy.svg",
+  "source": "https://www.meshy.ai/ (inline header logo <svg class=\"h-8\">)",
+  "found_at": "https://www.meshy.ai/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the 'Meshy' wordmark (element 18)",
+    "removed the two small lime sparkles at top-left of the mark (element 17), which the app icon doesn't have",
+    "cropped the viewBox to the mushroom mark",
+    "cleaned"
+  ],
+  "notes": "DECISION: Meshy's app icon (apple-icon.png) is this mushroom on a purple gradient tile, raster only, so I shipped the logo's vector mark bare; its lime outline keeps the black body readable on the dark theme (icon_check lost 0 on both). I dropped the logo's two sparkles to match the app icon; to keep them, drop only element 18.",
+  "license": "Meshy brand mark, used nominatively to identify the connected service; trademark rights remain with Meshy.",
+  "sha256": "a0e680c6dda5fb83597b7c3729c2f4d4470a5b0c9dad59126b17748e6df60557"
+}

@@ -5,7 +5,7 @@ import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nod
 
 const MailercloudIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/mailercloud.png" alt="" className={className}
+        <img ref={ref} src="/icons/mailercloud.svg" alt="" className={className}
             style={{ ...style, objectFit: 'contain' }} {...props} />
     ),
 );

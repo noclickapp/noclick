@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/metricool-brand-vector-dark.svg",
+  "source": "https://drive.google.com/uc?export=download&id=1S2AI-i4aoVwqGVxUHRSMA-lsgHF-a7X0 (Brand Assets > Isotype > SVG > Isotype_White.svg)",
+  "found_at": "https://metricool.com/newsroom/ ('Brand Assets' button -> Google Drive folder 16iZAnclaIklx--tOPKhOhiN24RPlSyoV)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the isotype",
+    "cleaned",
+    "dark file is the brand kit's own Isotype_White.svg, cropped and cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: the 'oo' isotype is Metricool's mark and is naturally 2.2:1 wide, so icon_check's wordmark-shape flag is a false positive (there is no text). The brand kit has the isotype in black, dark plum and white only (SVG and PNG), no lime tile; the lime-tile app icon exists only as the site's PNG favicons, so I shipped the plum isotype on light and the white one on dark.",
+  "license": "Metricool brand mark, used nominatively to identify the connected service; trademark rights remain with Metricool.",
+  "sha256": "55cf660f7b04c0610e1e9cc9c8c651bf81ed3633980dfb5d60dd980f80665340"
+}
