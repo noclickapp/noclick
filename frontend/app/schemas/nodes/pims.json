@@ -1,0 +1,2405 @@
+{
+  "$defs": {
+    "PimsBasicCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "pims_basic",
+          "default": "pims_basic",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_domain": {
+          "description": "Your Pims subdomain, such as caramba, or your https://caramba.pims.io URL. API credentials are customer-specific; request them from Pims with the customer's agreement.",
+          "title": "Customer Domain",
+          "type": "string"
+        },
+        "username": {
+          "description": "The API username supplied by Pims.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "API Username",
+          "type": "string"
+        },
+        "password": {
+          "description": "The API password supplied by Pims.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "customer_domain",
+        "username",
+        "password"
+      ],
+      "title": "Pims API Account",
+      "type": "object",
+      "x-credential-url": "https://api.pims.io/v2/index.html#section/Authentication"
+    },
+    "PimsCreateEventConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "datetime": {
+          "format": "date-time",
+          "title": "Datetime",
+          "type": "string"
+        },
+        "venue_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Venue Id",
+          "type": "integer"
+        },
+        "series_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Series Id"
+        },
+        "input_type_id": {
+          "enum": [
+            "DET",
+            "GLO"
+          ],
+          "title": "Input Type Id",
+          "type": "string"
+        },
+        "contract_type_id": {
+          "maxLength": 3,
+          "minLength": 3,
+          "title": "Contract Type Id",
+          "type": "string"
+        },
+        "seating_type_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seating Type Id"
+        },
+        "internal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Internal Code"
+        },
+        "opening_act": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Opening Act"
+        },
+        "announcement_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Announcement Date"
+        },
+        "onsale_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Onsale Date"
+        },
+        "sold_out_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sold Out Date"
+        },
+        "cancellation_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cancellation Date"
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hidden"
+        },
+        "free": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Free"
+        },
+        "operation": {
+          "const": "create_event",
+          "default": "create_event",
+          "title": "Create Event",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "label",
+        "datetime",
+        "venue_id",
+        "input_type_id",
+        "contract_type_id"
+      ],
+      "title": "PimsCreateEventConfig",
+      "type": "object"
+    },
+    "PimsCreatePromotionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "type_id": {
+          "maxLength": 3,
+          "minLength": 2,
+          "title": "Type Id",
+          "type": "string"
+        },
+        "cost_type_id": {
+          "enum": [
+            "PAY",
+            "P&E",
+            "ECH",
+            "GRA"
+          ],
+          "title": "Cost Type Id",
+          "type": "string"
+        },
+        "supplier_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier Id"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Date"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quantity"
+        },
+        "unit_cost": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit Cost"
+        },
+        "comments": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comments"
+        },
+        "external_url": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Url"
+        },
+        "operation": {
+          "const": "create_promotion",
+          "default": "create_promotion",
+          "title": "Create Promotion",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "label",
+        "type_id",
+        "cost_type_id"
+      ],
+      "title": "PimsCreatePromotionConfig",
+      "type": "object"
+    },
+    "PimsDeleteEventConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_event",
+          "default": "delete_event",
+          "title": "Delete Event",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "PimsDeleteEventConfig",
+      "type": "object"
+    },
+    "PimsDeletePromotionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_promotion",
+          "default": "delete_promotion",
+          "title": "Delete Promotion",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "promotion_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Promotion Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "promotion_id"
+      ],
+      "title": "PimsDeletePromotionConfig",
+      "type": "object"
+    },
+    "PimsGetEventConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Get Event",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "PimsGetEventConfig",
+      "type": "object"
+    },
+    "PimsGetOrderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Get Order",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "PimsGetOrderConfig",
+      "type": "object"
+    },
+    "PimsGetPromotionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_promotion",
+          "default": "get_promotion",
+          "title": "Get Promotion",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "promotion_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Promotion Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "promotion_id"
+      ],
+      "title": "PimsGetPromotionConfig",
+      "type": "object"
+    },
+    "PimsGetSeriesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_series",
+          "default": "get_series",
+          "title": "Get Series",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "series_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Series Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "series_id"
+      ],
+      "title": "PimsGetSeriesConfig",
+      "type": "object"
+    },
+    "PimsGetTicketConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_ticket",
+          "default": "get_ticket",
+          "title": "Get Ticket",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ticket_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Ticket Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "ticket_id"
+      ],
+      "title": "PimsGetTicketConfig",
+      "type": "object"
+    },
+    "PimsGetVenueConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_venue",
+          "default": "get_venue",
+          "title": "Get Venue",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "venue_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Venue Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "venue_id"
+      ],
+      "title": "PimsGetVenueConfig",
+      "type": "object"
+    },
+    "PimsListCapacitiesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "HAL page number; the Pims pagination guide documents ?page=2.",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_capacities",
+          "default": "list_capacities",
+          "title": "List Capacities",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To Date"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "PimsListCapacitiesConfig",
+      "type": "object"
+    },
+    "PimsListEventCategoriesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "HAL page number; the Pims pagination guide documents ?page=2.",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_event_categories",
+          "default": "list_event_categories",
+          "title": "List Event Categories",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "PimsListEventCategoriesConfig",
+      "type": "object"
+    },
+    "PimsListEventChannelsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "HAL page number; the Pims pagination guide documents ?page=2.",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_event_channels",
+          "default": "list_event_channels",
+          "title": "List Event Channels",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "PimsListEventChannelsConfig",
+      "type": "object"
+    },
+    "PimsListEventsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "HAL page number; the Pims pagination guide documents ?page=2.",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List Events",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "from_created_at": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Created At"
+        },
+        "from_updated_at": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Updated At"
+        },
+        "venue_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Venue Id"
+        },
+        "from_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Datetime"
+        },
+        "to_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To Datetime"
+        },
+        "series_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Series Id"
+        }
+      },
+      "title": "PimsListEventsConfig",
+      "type": "object"
+    },
+    "PimsListGuestsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "HAL page number; the Pims pagination guide documents ?page=2.",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_guests",
+          "default": "list_guests",
+          "title": "List Guests",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "PimsListGuestsConfig",
+      "type": "object"
+    },
+    "PimsListOrdersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "HAL page number; the Pims pagination guide documents ?page=2.",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "List Orders",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        }
+      },
+      "title": "PimsListOrdersConfig",
+      "type": "object"
+    },
+    "PimsListPromotionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "HAL page number; the Pims pagination guide documents ?page=2.",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_promotions",
+          "default": "list_promotions",
+          "title": "List Promotions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "series_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Series Id"
+        },
+        "event_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Id"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To Date"
+        }
+      },
+      "title": "PimsListPromotionsConfig",
+      "type": "object"
+    },
+    "PimsListSeriesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "HAL page number; the Pims pagination guide documents ?page=2.",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_series",
+          "default": "list_series",
+          "title": "List Series",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "from_created_at": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Created At"
+        },
+        "from_updated_at": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Updated At"
+        },
+        "venue_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Venue Id"
+        },
+        "from_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Datetime"
+        },
+        "to_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To Datetime"
+        }
+      },
+      "title": "PimsListSeriesConfig",
+      "type": "object"
+    },
+    "PimsListTicketCountsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "HAL page number; the Pims pagination guide documents ?page=2.",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_ticket_counts",
+          "default": "list_ticket_counts",
+          "title": "List Ticket Counts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To Date"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "PimsListTicketCountsConfig",
+      "type": "object"
+    },
+    "PimsListTicketsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "HAL page number; the Pims pagination guide documents ?page=2.",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tickets",
+          "default": "list_tickets",
+          "title": "List Tickets",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Id"
+        },
+        "order_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order Id"
+        },
+        "bar_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bar Code"
+        },
+        "from_movement_date": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Movement Date"
+        }
+      },
+      "title": "PimsListTicketsConfig",
+      "type": "object"
+    },
+    "PimsListVenuesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "HAL page number; the Pims pagination guide documents ?page=2.",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_venues",
+          "default": "list_venues",
+          "title": "List Venues",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "from_created_at": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Created At"
+        },
+        "from_updated_at": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Updated At"
+        }
+      },
+      "title": "PimsListVenuesConfig",
+      "type": "object"
+    },
+    "PimsOnNewEventConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_event",
+          "default": "on_new_event",
+          "title": "On New Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        },
+        "venue_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Venue Id"
+        },
+        "series_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Series Id"
+        }
+      },
+      "title": "PimsOnNewEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PimsOnUpdatedEventConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_updated_event",
+          "default": "on_updated_event",
+          "title": "On Updated Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        },
+        "venue_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Venue Id"
+        },
+        "series_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Series Id"
+        }
+      },
+      "title": "PimsOnUpdatedEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PimsUpdateEventConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event time in the venue's timezone.",
+          "title": "Datetime"
+        },
+        "venue_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Venue Id"
+        },
+        "series_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Series Id"
+        },
+        "input_type_id": {
+          "anyOf": [
+            {
+              "enum": [
+                "DET",
+                "GLO"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Type Id",
+          "enum": [
+            "DET",
+            "GLO"
+          ],
+          "x-enum-searchable": true
+        },
+        "contract_type_id": {
+          "anyOf": [
+            {
+              "maxLength": 3,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contract Type Id"
+        },
+        "seating_type_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seating Type Id"
+        },
+        "internal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Internal Code"
+        },
+        "opening_act": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Opening Act"
+        },
+        "announcement_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Announcement Date"
+        },
+        "onsale_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Onsale Date"
+        },
+        "sold_out_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sold Out Date"
+        },
+        "cancellation_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cancellation Date"
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hidden"
+        },
+        "free": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Free"
+        },
+        "operation": {
+          "const": "update_event",
+          "default": "update_event",
+          "title": "Update Event",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "PimsUpdateEventConfig",
+      "type": "object"
+    },
+    "PimsUpdatePromotionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "type_id": {
+          "anyOf": [
+            {
+              "maxLength": 3,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type Id"
+        },
+        "cost_type_id": {
+          "anyOf": [
+            {
+              "enum": [
+                "PAY",
+                "P&E",
+                "ECH",
+                "GRA"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost Type Id",
+          "enum": [
+            "PAY",
+            "P&E",
+            "ECH",
+            "GRA"
+          ],
+          "x-enum-searchable": true
+        },
+        "supplier_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier Id"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Date"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quantity"
+        },
+        "unit_cost": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit Cost"
+        },
+        "comments": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comments"
+        },
+        "external_url": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Url"
+        },
+        "operation": {
+          "const": "update_promotion",
+          "default": "update_promotion",
+          "title": "Update Promotion",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "promotion_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Promotion Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "promotion_id"
+      ],
+      "title": "PimsUpdatePromotionConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_event": "#/$defs/PimsCreateEventConfig",
+          "create_promotion": "#/$defs/PimsCreatePromotionConfig",
+          "delete_event": "#/$defs/PimsDeleteEventConfig",
+          "delete_promotion": "#/$defs/PimsDeletePromotionConfig",
+          "get_event": "#/$defs/PimsGetEventConfig",
+          "get_order": "#/$defs/PimsGetOrderConfig",
+          "get_promotion": "#/$defs/PimsGetPromotionConfig",
+          "get_series": "#/$defs/PimsGetSeriesConfig",
+          "get_ticket": "#/$defs/PimsGetTicketConfig",
+          "get_venue": "#/$defs/PimsGetVenueConfig",
+          "list_capacities": "#/$defs/PimsListCapacitiesConfig",
+          "list_event_categories": "#/$defs/PimsListEventCategoriesConfig",
+          "list_event_channels": "#/$defs/PimsListEventChannelsConfig",
+          "list_events": "#/$defs/PimsListEventsConfig",
+          "list_guests": "#/$defs/PimsListGuestsConfig",
+          "list_orders": "#/$defs/PimsListOrdersConfig",
+          "list_promotions": "#/$defs/PimsListPromotionsConfig",
+          "list_series": "#/$defs/PimsListSeriesConfig",
+          "list_ticket_counts": "#/$defs/PimsListTicketCountsConfig",
+          "list_tickets": "#/$defs/PimsListTicketsConfig",
+          "list_venues": "#/$defs/PimsListVenuesConfig",
+          "on_new_event": "#/$defs/PimsOnNewEventConfig",
+          "on_updated_event": "#/$defs/PimsOnUpdatedEventConfig",
+          "update_event": "#/$defs/PimsUpdateEventConfig",
+          "update_promotion": "#/$defs/PimsUpdatePromotionConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PimsListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsCreateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsUpdateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsDeleteEventConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsListSeriesConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsGetSeriesConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsListVenuesConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsGetVenueConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsListTicketsConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsGetTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsListOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsGetOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsListPromotionsConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsGetPromotionConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsCreatePromotionConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsUpdatePromotionConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsDeletePromotionConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsListTicketCountsConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsListCapacitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsListEventCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsListEventChannelsConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsListGuestsConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsOnNewEventConfig"
+        },
+        {
+          "$ref": "#/$defs/PimsOnUpdatedEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PimsBasicCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Pims Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
