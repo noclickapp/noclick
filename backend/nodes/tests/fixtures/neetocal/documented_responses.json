@@ -1,0 +1,94 @@
+{
+  "get_booking": {
+    "status": 200,
+    "body": {
+      "id": "efb296a3-8205-419f-8ac4-1abfc46bc3c7",
+      "sid": "8sqtzrs",
+      "parent_booking_id": null,
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "host_name": "Jane Smith",
+      "host_email": "jane@bigbinary.com",
+      "is_multihost": false,
+      "multihosts": [
+        {
+          "name": "Jane Smith",
+          "email": "jane@bigbinary.com"
+        }
+      ],
+      "starts_at": "2025-07-23T05:00:00.000Z",
+      "ends_at": "2025-07-23T05:15:00.000Z",
+      "time_zone": "Asia/Kolkata",
+      "starts_at_for_client": "2025-07-23T10:30:00.000+05:30",
+      "ends_at_for_client": "2025-07-23T10:45:00.000+05:30",
+      "status": "confirmed",
+      "cancel_reason": null,
+      "cancelled_by": null,
+      "reschedule_requested": false,
+      "preferred_meeting_spot": "jitsi",
+      "room_type": "jitsi",
+      "room_url": "https://jitsi.neetocal.com/meeting-with-jane-of-jane-d12ec",
+      "room_id": null,
+      "spot_details": "https://jitsi.neetocal.com/meeting-with-jane-of-jane-d12ec",
+      "created_at": "2025-07-22T06:29:35.963Z",
+      "updated_at": "2025-07-22T06:31:33.090Z",
+      "meeting_id": "8a7794e3-3142-4569-9dd7-6411369b5d3f",
+      "meeting": {
+        "name": "Product Demo Meeting"
+      },
+      "no_show": false,
+      "meeting_outcome": {
+        "id": "59413def-60eb-47c6-b390-098fcf583b66",
+        "name": "Pricing Discussion",
+        "color": "yellow",
+        "kind": "custom",
+        "color_hex": "#EAB308",
+        "is_system": false,
+        "is_organization_owned": true
+      },
+      "internal_notes": null,
+      "metadata": {},
+      "admin_booking_url": "https://jane-bigbinary.neetocal.com/admin/bookings/8sqtzrs",
+      "client_booking_url": "https://jane-bigbinary.neetocal.com/booking/8sqtzrs",
+      "form_responses": [
+        {
+          "field": "Name",
+          "value": "John Doe",
+          "type": "name",
+          "field_code": "name",
+          "Name": "John Doe"
+        },
+        {
+          "field": "Email",
+          "value": "john.doe@example.com",
+          "type": "email",
+          "field_code": "email",
+          "Email": "john.doe@example.com"
+        },
+        {
+          "field": "Guest email(s)",
+          "value": [],
+          "type": "additional_guests",
+          "field_code": "guest_email_s",
+          "Guest email(s)": []
+        }
+      ],
+      "form_responses_as_hash": {
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "guest_email_s": []
+      }
+    },
+    "source": "https://apidocs.neetocal.com/bundled/bookings.yaml"
+  },
+  "create_one_off_link": {
+    "status": 200,
+    "body": {
+      "one_off_link": {
+        "slug": "one-off-c5530bc7c9ab",
+        "url": "https://spinkart.neetocal.com/one-off-c5530bc7c9ab"
+      }
+    },
+    "source": "https://apidocs.neetocal.com/bundled/meetings.yaml"
+  }
+}
