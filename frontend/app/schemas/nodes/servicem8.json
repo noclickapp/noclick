@@ -1,0 +1,1823 @@
+{
+  "$defs": {
+    "ServiceM8CreateClientConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Create Client",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Create Client"
+        },
+        "name": {
+          "description": "",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Client Name",
+          "type": "string"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Address"
+        },
+        "billing_address": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Billing Address"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Website"
+        },
+        "abn_number": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "ABN"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ServiceM8CreateClientConfig",
+      "type": "object"
+    },
+    "ServiceM8CreateContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Client Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Create Client Contact"
+        },
+        "company_uuid": {
+          "format": "uuid",
+          "title": "Client",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "company_uuid",
+            "auto_select_sole_option": true
+          }
+        },
+        "first": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "First Name"
+        },
+        "last": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Phone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Mobile"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For example BILLING.",
+          "title": "Contact Type"
+        }
+      },
+      "required": [
+        "company_uuid"
+      ],
+      "title": "ServiceM8CreateContactConfig",
+      "type": "object"
+    },
+    "ServiceM8CreateJobActivityConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_job_activity",
+          "default": "create_job_activity",
+          "title": "Schedule Job Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Schedule Job Activity"
+        },
+        "job_uuid": {
+          "format": "uuid",
+          "title": "Job",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "job_uuid",
+            "auto_select_sole_option": true
+          }
+        },
+        "staff_uuid": {
+          "format": "uuid",
+          "title": "Staff Member",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "staff_uuid",
+            "auto_select_sole_option": true
+          }
+        },
+        "start_date": {
+          "description": "Account local time: YYYY-MM-DD HH:MM:SS.",
+          "minLength": 1,
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "Account local time: YYYY-MM-DD HH:MM:SS.",
+          "minLength": 1,
+          "title": "End Time",
+          "type": "string"
+        },
+        "activity_was_scheduled": {
+          "default": "1",
+          "enum": [
+            "0",
+            "1"
+          ],
+          "title": "Scheduled Activity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_uuid",
+        "staff_uuid",
+        "start_date",
+        "end_date"
+      ],
+      "title": "ServiceM8CreateJobActivityConfig",
+      "type": "object"
+    },
+    "ServiceM8CreateJobConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_job",
+          "default": "create_job",
+          "title": "Create Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Create Job"
+        },
+        "status": {
+          "enum": [
+            "Quote",
+            "Work Order",
+            "Unsuccessful",
+            "Completed"
+          ],
+          "title": "Job Status",
+          "type": "string"
+        },
+        "company_uuid": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "company_uuid"
+          }
+        },
+        "job_description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Job Description",
+          "ui:widget": "textarea"
+        },
+        "job_address": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Job Address"
+        },
+        "billing_address": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Billing Address"
+        },
+        "work_done_description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Work Done",
+          "ui:widget": "textarea"
+        },
+        "purchase_order_number": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Purchase Order Number"
+        },
+        "category_uuid": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category UUID"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "ServiceM8CreateJobConfig",
+      "type": "object"
+    },
+    "ServiceM8CreateJobPaymentConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_job_payment",
+          "default": "create_job_payment",
+          "title": "Record Job Payment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Record Job Payment"
+        },
+        "job_uuid": {
+          "format": "uuid",
+          "title": "Job",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "job_uuid",
+            "auto_select_sole_option": true
+          }
+        },
+        "amount": {
+          "description": "Amount in account currency; records a payment, does not charge a card.",
+          "minLength": 1,
+          "title": "Payment Amount",
+          "type": "string"
+        },
+        "method": {
+          "description": "For example Cash or Credit Card.",
+          "minLength": 1,
+          "title": "Payment Method",
+          "type": "string"
+        },
+        "timestamp": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Account local time: YYYY-MM-DD HH:MM:SS.",
+          "title": "Payment Time"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Payment Note"
+        },
+        "actioned_by_uuid": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actioned by Staff",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "staff_uuid"
+          }
+        }
+      },
+      "required": [
+        "job_uuid",
+        "amount",
+        "method"
+      ],
+      "title": "ServiceM8CreateJobPaymentConfig",
+      "type": "object"
+    },
+    "ServiceM8CreateNoteConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Create Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Create Note"
+        },
+        "related_object": {
+          "description": "For example job.",
+          "minLength": 1,
+          "title": "Related Object",
+          "type": "string"
+        },
+        "related_object_uuid": {
+          "format": "uuid",
+          "title": "Related Record UUID",
+          "type": "string"
+        },
+        "note": {
+          "description": "",
+          "minLength": 1,
+          "title": "Note",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "related_object",
+        "related_object_uuid",
+        "note"
+      ],
+      "title": "ServiceM8CreateNoteConfig",
+      "type": "object"
+    },
+    "ServiceM8CreateTaskConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Create Task"
+        },
+        "name": {
+          "description": "",
+          "minLength": 1,
+          "title": "Task Name",
+          "type": "string"
+        },
+        "task_details": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Details",
+          "ui:widget": "textarea"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD.",
+          "title": "Due Date"
+        },
+        "related_object": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ServiceM8 object class, e.g. job.",
+          "title": "Related Object"
+        },
+        "related_object_uuid": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Related Record UUID"
+        },
+        "assigned_to_staff_uuid": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned Staff",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "staff_uuid"
+          }
+        },
+        "task_complete": {
+          "anyOf": [
+            {
+              "enum": [
+                "0",
+                "1"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed",
+          "enum": [
+            "0",
+            "1"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ServiceM8CreateTaskConfig",
+      "type": "object"
+    },
+    "ServiceM8Credential": {
+      "properties": {
+        "credential_type": {
+          "const": "servicem8_api_key",
+          "default": "servicem8_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "ServiceM8 API Key",
+      "type": "object",
+      "x-credential-instructions": "In ServiceM8, open Settings \u2192 API Keys and create an API key. Paste the key here. API access requires a supported paid plan and the Business Owner role to create keys.",
+      "x-credential-url": "https://developer.servicem8.com/docs/authentication"
+    },
+    "ServiceM8GetAccountConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Account"
+        }
+      },
+      "title": "ServiceM8GetAccountConfig",
+      "type": "object"
+    },
+    "ServiceM8GetClientConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Get Client",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Get Client"
+        },
+        "company_uuid": {
+          "format": "uuid",
+          "title": "Client",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "company_uuid",
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "company_uuid"
+      ],
+      "title": "ServiceM8GetClientConfig",
+      "type": "object"
+    },
+    "ServiceM8GetContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Client Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Get Client Contact"
+        },
+        "contact_uuid": {
+          "format": "uuid",
+          "title": "Client Contact",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "contact_uuid",
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "contact_uuid"
+      ],
+      "title": "ServiceM8GetContactConfig",
+      "type": "object"
+    },
+    "ServiceM8GetJobConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Get Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Get Job"
+        },
+        "job_uuid": {
+          "format": "uuid",
+          "title": "Job",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "job_uuid",
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "job_uuid"
+      ],
+      "title": "ServiceM8GetJobConfig",
+      "type": "object"
+    },
+    "ServiceM8JobChangedConfig": {
+      "description": "Receive object changes, including the job UUID and names of changed fields.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_job_changed",
+          "default": "on_job_changed",
+          "title": "Job Changed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Job Changed",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with ServiceM8 automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "ServiceM8JobChangedConfig",
+      "type": "object",
+      "x-is-trigger": true,
+      "x-requires-webhook": true
+    },
+    "ServiceM8ListClientsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "List Clients",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Clients"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unencoded ServiceM8 $filter expression, e.g. active eq 1. Uses eq, ne, gt, lt and up to ten conditions joined with and. https://developer.servicem8.com/docs/filtering",
+          "title": "Filter"
+        }
+      },
+      "title": "ServiceM8ListClientsConfig",
+      "type": "object"
+    },
+    "ServiceM8ListContactsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Client Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Client Contacts"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unencoded ServiceM8 $filter expression, e.g. active eq 1. Uses eq, ne, gt, lt and up to ten conditions joined with and. https://developer.servicem8.com/docs/filtering",
+          "title": "Filter"
+        }
+      },
+      "title": "ServiceM8ListContactsConfig",
+      "type": "object"
+    },
+    "ServiceM8ListJobActivitiesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_job_activities",
+          "default": "list_job_activities",
+          "title": "List Job Activities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Job Activities"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unencoded ServiceM8 $filter expression, e.g. active eq 1. Uses eq, ne, gt, lt and up to ten conditions joined with and. https://developer.servicem8.com/docs/filtering",
+          "title": "Filter"
+        }
+      },
+      "title": "ServiceM8ListJobActivitiesConfig",
+      "type": "object"
+    },
+    "ServiceM8ListJobPaymentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_job_payments",
+          "default": "list_job_payments",
+          "title": "List Job Payments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Job Payments"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unencoded ServiceM8 $filter expression, e.g. active eq 1. Uses eq, ne, gt, lt and up to ten conditions joined with and. https://developer.servicem8.com/docs/filtering",
+          "title": "Filter"
+        }
+      },
+      "title": "ServiceM8ListJobPaymentsConfig",
+      "type": "object"
+    },
+    "ServiceM8ListJobsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "List Jobs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Jobs"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unencoded ServiceM8 $filter expression, e.g. active eq 1. Uses eq, ne, gt, lt and up to ten conditions joined with and. https://developer.servicem8.com/docs/filtering",
+          "title": "Filter"
+        }
+      },
+      "title": "ServiceM8ListJobsConfig",
+      "type": "object"
+    },
+    "ServiceM8ListNotesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "List Notes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Notes"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unencoded ServiceM8 $filter expression, e.g. active eq 1. Uses eq, ne, gt, lt and up to ten conditions joined with and. https://developer.servicem8.com/docs/filtering",
+          "title": "Filter"
+        }
+      },
+      "title": "ServiceM8ListNotesConfig",
+      "type": "object"
+    },
+    "ServiceM8ListStaffConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_staff",
+          "default": "list_staff",
+          "title": "List Staff",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Staff"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unencoded ServiceM8 $filter expression, e.g. active eq 1. Uses eq, ne, gt, lt and up to ten conditions joined with and. https://developer.servicem8.com/docs/filtering",
+          "title": "Filter"
+        }
+      },
+      "title": "ServiceM8ListStaffConfig",
+      "type": "object"
+    },
+    "ServiceM8ListTasksConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Tasks"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unencoded ServiceM8 $filter expression, e.g. active eq 1. Uses eq, ne, gt, lt and up to ten conditions joined with and. https://developer.servicem8.com/docs/filtering",
+          "title": "Filter"
+        }
+      },
+      "title": "ServiceM8ListTasksConfig",
+      "type": "object"
+    },
+    "ServiceM8UpdateClientConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "title": "Update Client",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Update Client"
+        },
+        "company_uuid": {
+          "format": "uuid",
+          "title": "Client",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "company_uuid",
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "description": "",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Client Name",
+          "type": "string"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Address"
+        },
+        "billing_address": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Billing Address"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Website"
+        },
+        "abn_number": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "ABN"
+        }
+      },
+      "required": [
+        "company_uuid",
+        "name"
+      ],
+      "title": "ServiceM8UpdateClientConfig",
+      "type": "object"
+    },
+    "ServiceM8UpdateContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Client Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Update Client Contact"
+        },
+        "contact_uuid": {
+          "format": "uuid",
+          "title": "Client Contact",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "contact_uuid",
+            "auto_select_sole_option": true
+          }
+        },
+        "company_uuid": {
+          "format": "uuid",
+          "title": "Client",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "company_uuid",
+            "auto_select_sole_option": true
+          }
+        },
+        "first": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "First Name"
+        },
+        "last": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Phone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Mobile"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For example BILLING.",
+          "title": "Contact Type"
+        }
+      },
+      "required": [
+        "contact_uuid",
+        "company_uuid"
+      ],
+      "title": "ServiceM8UpdateContactConfig",
+      "type": "object"
+    },
+    "ServiceM8UpdateJobActivityConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_job_activity",
+          "default": "update_job_activity",
+          "title": "Update Job Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Update Job Activity"
+        },
+        "activity_uuid": {
+          "format": "uuid",
+          "title": "Job Activity",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "activity_uuid",
+            "auto_select_sole_option": true
+          }
+        },
+        "job_uuid": {
+          "format": "uuid",
+          "title": "Job",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "job_uuid",
+            "auto_select_sole_option": true
+          }
+        },
+        "staff_uuid": {
+          "format": "uuid",
+          "title": "Staff Member",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "staff_uuid",
+            "auto_select_sole_option": true
+          }
+        },
+        "start_date": {
+          "description": "Account local time: YYYY-MM-DD HH:MM:SS.",
+          "minLength": 1,
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "Account local time: YYYY-MM-DD HH:MM:SS.",
+          "minLength": 1,
+          "title": "End Time",
+          "type": "string"
+        },
+        "activity_was_scheduled": {
+          "default": "1",
+          "enum": [
+            "0",
+            "1"
+          ],
+          "title": "Scheduled Activity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "activity_uuid",
+        "job_uuid",
+        "staff_uuid",
+        "start_date",
+        "end_date"
+      ],
+      "title": "ServiceM8UpdateJobActivityConfig",
+      "type": "object"
+    },
+    "ServiceM8UpdateJobConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_job",
+          "default": "update_job",
+          "title": "Update Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Update Job"
+        },
+        "job_uuid": {
+          "format": "uuid",
+          "title": "Job",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "job_uuid",
+            "auto_select_sole_option": true
+          }
+        },
+        "status": {
+          "enum": [
+            "Quote",
+            "Work Order",
+            "Unsuccessful",
+            "Completed"
+          ],
+          "title": "Job Status",
+          "type": "string"
+        },
+        "company_uuid": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "company_uuid"
+          }
+        },
+        "job_description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Job Description",
+          "ui:widget": "textarea"
+        },
+        "job_address": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Job Address"
+        },
+        "billing_address": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Billing Address"
+        },
+        "work_done_description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Work Done",
+          "ui:widget": "textarea"
+        },
+        "purchase_order_number": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Purchase Order Number"
+        },
+        "category_uuid": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category UUID"
+        }
+      },
+      "required": [
+        "job_uuid",
+        "status"
+      ],
+      "title": "ServiceM8UpdateJobConfig",
+      "type": "object"
+    },
+    "ServiceM8UpdateTaskConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Update Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Update Task"
+        },
+        "task_uuid": {
+          "format": "uuid",
+          "title": "Task",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "task_uuid",
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "description": "",
+          "minLength": 1,
+          "title": "Task Name",
+          "type": "string"
+        },
+        "task_details": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Details",
+          "ui:widget": "textarea"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD.",
+          "title": "Due Date"
+        },
+        "related_object": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ServiceM8 object class, e.g. job.",
+          "title": "Related Object"
+        },
+        "related_object_uuid": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Related Record UUID"
+        },
+        "assigned_to_staff_uuid": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned Staff",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "staff_uuid"
+          }
+        },
+        "task_complete": {
+          "anyOf": [
+            {
+              "enum": [
+                "0",
+                "1"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed",
+          "enum": [
+            "0",
+            "1"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "task_uuid",
+        "name"
+      ],
+      "title": "ServiceM8UpdateTaskConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_client": "#/$defs/ServiceM8CreateClientConfig",
+          "create_contact": "#/$defs/ServiceM8CreateContactConfig",
+          "create_job": "#/$defs/ServiceM8CreateJobConfig",
+          "create_job_activity": "#/$defs/ServiceM8CreateJobActivityConfig",
+          "create_job_payment": "#/$defs/ServiceM8CreateJobPaymentConfig",
+          "create_note": "#/$defs/ServiceM8CreateNoteConfig",
+          "create_task": "#/$defs/ServiceM8CreateTaskConfig",
+          "get_account": "#/$defs/ServiceM8GetAccountConfig",
+          "get_client": "#/$defs/ServiceM8GetClientConfig",
+          "get_contact": "#/$defs/ServiceM8GetContactConfig",
+          "get_job": "#/$defs/ServiceM8GetJobConfig",
+          "list_clients": "#/$defs/ServiceM8ListClientsConfig",
+          "list_contacts": "#/$defs/ServiceM8ListContactsConfig",
+          "list_job_activities": "#/$defs/ServiceM8ListJobActivitiesConfig",
+          "list_job_payments": "#/$defs/ServiceM8ListJobPaymentsConfig",
+          "list_jobs": "#/$defs/ServiceM8ListJobsConfig",
+          "list_notes": "#/$defs/ServiceM8ListNotesConfig",
+          "list_staff": "#/$defs/ServiceM8ListStaffConfig",
+          "list_tasks": "#/$defs/ServiceM8ListTasksConfig",
+          "on_job_changed": "#/$defs/ServiceM8JobChangedConfig",
+          "update_client": "#/$defs/ServiceM8UpdateClientConfig",
+          "update_contact": "#/$defs/ServiceM8UpdateContactConfig",
+          "update_job": "#/$defs/ServiceM8UpdateJobConfig",
+          "update_job_activity": "#/$defs/ServiceM8UpdateJobActivityConfig",
+          "update_task": "#/$defs/ServiceM8UpdateTaskConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ServiceM8GetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8ListJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8GetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8CreateJobConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8UpdateJobConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8ListClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8GetClientConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8CreateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8UpdateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8ListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8GetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8CreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8UpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8ListNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8CreateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8ListJobActivitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8CreateJobActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8UpdateJobActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8ListJobPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8CreateJobPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8ListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8CreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8UpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8ListStaffConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceM8JobChangedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ServiceM8Credential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Servicem8 Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a ServiceM8 job",
+    "Update a client's address",
+    "Schedule a job for a staff member",
+    "Record a job payment",
+    "Run when a ServiceM8 job changes"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,601 @@
+{
+  "GET /company.json": {
+    "body": [
+      {
+        "name": "string",
+        "abn_number": "string",
+        "address": "string",
+        "billing_address": "string",
+        "is_individual": 0,
+        "parent_company_uuid": "123e4567-02d1-406c-ba4c-245b94c9ad6a",
+        "uuid": "123e4567-526d-47ed-adee-32c27370383a",
+        "active": 1,
+        "edit_date": "2025-01-01 12:00:00",
+        "website": "string",
+        "address_street": "string",
+        "address_city": "string",
+        "address_state": "string",
+        "address_postcode": "string",
+        "address_country": "string",
+        "fax_number": "string",
+        "badges": "string",
+        "tax_rate_uuid": "123e4567-3381-4f47-abf1-13c180485bfb",
+        "billing_attention": "string",
+        "payment_terms": "string",
+        "deposit_percent": 0
+      }
+    ],
+    "source": "https://developer.servicem8.com/reference/listclients"
+  },
+  "POST /company.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/createclients"
+  },
+  "GET /company/{uuid}.json": {
+    "body": {
+      "name": "string",
+      "abn_number": "string",
+      "address": "string",
+      "billing_address": "string",
+      "is_individual": 0,
+      "parent_company_uuid": "123e4567-02d1-406c-ba4c-245b94c9ad6a",
+      "uuid": "123e4567-526d-47ed-adee-32c27370383a",
+      "active": 1,
+      "edit_date": "2025-01-01 12:00:00",
+      "website": "string",
+      "address_street": "string",
+      "address_city": "string",
+      "address_state": "string",
+      "address_postcode": "string",
+      "address_country": "string",
+      "fax_number": "string",
+      "badges": "string",
+      "tax_rate_uuid": "123e4567-3381-4f47-abf1-13c180485bfb",
+      "billing_attention": "string",
+      "payment_terms": "string",
+      "deposit_percent": 0
+    },
+    "source": "https://developer.servicem8.com/reference/getclients"
+  },
+  "POST /company/{uuid}.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/updateclients"
+  },
+  "GET /companycontact.json": {
+    "body": [
+      {
+        "uuid": "123e4567-9d6f-4131-a5c9-76c1a998870d",
+        "active": 1,
+        "edit_date": "2025-01-01 12:00:00",
+        "company_uuid": "123e4567-39ca-4c7d-b7da-da9dfc5ca648",
+        "is_primary_contact": "string",
+        "first": "string",
+        "last": "string",
+        "phone": "string",
+        "mobile": "string",
+        "email": "name@example.com",
+        "type": "string"
+      }
+    ],
+    "source": "https://developer.servicem8.com/reference/listcompanycontacts"
+  },
+  "POST /companycontact.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/createcompanycontacts"
+  },
+  "GET /companycontact/{uuid}.json": {
+    "body": {
+      "uuid": "123e4567-9d6f-4131-a5c9-76c1a998870d",
+      "active": 1,
+      "edit_date": "2025-01-01 12:00:00",
+      "company_uuid": "123e4567-39ca-4c7d-b7da-da9dfc5ca648",
+      "is_primary_contact": "string",
+      "first": "string",
+      "last": "string",
+      "phone": "string",
+      "mobile": "string",
+      "email": "name@example.com",
+      "type": "string"
+    },
+    "source": "https://developer.servicem8.com/reference/getcompanycontacts"
+  },
+  "POST /companycontact/{uuid}.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/updatecompanycontacts"
+  },
+  "GET /job.json": {
+    "body": [
+      {
+        "created_by_staff_uuid": "123e4567-467d-49bd-a1d3-5fb632f31dec",
+        "date": "YYYY-MM-DD",
+        "company_uuid": "123e4567-7ab8-4902-a013-5e290de842d9",
+        "billing_address": "string",
+        "status": "Quote",
+        "lng": 0,
+        "lat": 0,
+        "payment_date": "2025-01-01 12:00:00",
+        "payment_actioned_by_uuid": "123e4567-a014-4f79-bbe4-a44d8715efdb",
+        "payment_method": "string",
+        "payment_amount": "string",
+        "category_uuid": "123e4567-c7aa-468b-9cf6-285d9dceb769",
+        "payment_note": "string",
+        "geo_is_valid": 0,
+        "purchase_order_number": "string",
+        "invoice_sent": 0,
+        "invoice_sent_stamp": "2025-01-01 12:00:00",
+        "invoice_date": "2025-01-01 12:00:00",
+        "ready_to_invoice": "string",
+        "ready_to_invoice_stamp": "string",
+        "geo_country": "string",
+        "geo_postcode": "string",
+        "geo_state": "string",
+        "geo_city": "string",
+        "geo_street": "string",
+        "geo_number": "string",
+        "queue_uuid": "123e4567-af1d-470a-b569-33c1417cdc43",
+        "queue_expiry_date": "2025-01-01 12:00:00",
+        "queue_assigned_staff_uuid": "123e4567-8ed6-4b29-9e87-fd4a05f1d0e8",
+        "badges": "string",
+        "quote_date": "2025-01-01 12:00:00",
+        "quote_sent": 0,
+        "quote_sent_stamp": "2025-01-01 12:00:00",
+        "work_order_date": "2025-01-01 12:00:00",
+        "active_network_request_uuid": "string",
+        "related_knowledge_articles": "string",
+        "uuid": "123e4567-14e1-44a3-8ed1-5a615c189ead",
+        "active": 1,
+        "edit_date": "2025-01-01 12:00:00",
+        "job_address": "string",
+        "job_description": "string",
+        "work_done_description": "string",
+        "generated_job_id": "string",
+        "total_invoice_amount": "string",
+        "payment_processed": 0,
+        "payment_processed_stamp": "2025-01-01 12:00:00",
+        "payment_received": 0,
+        "payment_received_stamp": "2025-01-01 12:00:00",
+        "completion_date": "2025-01-01 12:00:00",
+        "completion_actioned_by_uuid": "123e4567-c5f3-4b76-bb5b-5fc9d1a8a206",
+        "unsuccessful_date": "2025-01-01 12:00:00",
+        "job_is_scheduled_until_stamp": "2025-01-01 12:00:00"
+      }
+    ],
+    "source": "https://developer.servicem8.com/reference/listjobs"
+  },
+  "POST /job.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/createjobs"
+  },
+  "GET /job/{uuid}.json": {
+    "body": {
+      "created_by_staff_uuid": "123e4567-467d-49bd-a1d3-5fb632f31dec",
+      "date": "YYYY-MM-DD",
+      "company_uuid": "123e4567-7ab8-4902-a013-5e290de842d9",
+      "billing_address": "string",
+      "status": "Quote",
+      "lng": 0,
+      "lat": 0,
+      "payment_date": "2025-01-01 12:00:00",
+      "payment_actioned_by_uuid": "123e4567-a014-4f79-bbe4-a44d8715efdb",
+      "payment_method": "string",
+      "payment_amount": "string",
+      "category_uuid": "123e4567-c7aa-468b-9cf6-285d9dceb769",
+      "payment_note": "string",
+      "geo_is_valid": 0,
+      "purchase_order_number": "string",
+      "invoice_sent": 0,
+      "invoice_sent_stamp": "2025-01-01 12:00:00",
+      "invoice_date": "2025-01-01 12:00:00",
+      "ready_to_invoice": "string",
+      "ready_to_invoice_stamp": "string",
+      "geo_country": "string",
+      "geo_postcode": "string",
+      "geo_state": "string",
+      "geo_city": "string",
+      "geo_street": "string",
+      "geo_number": "string",
+      "queue_uuid": "123e4567-af1d-470a-b569-33c1417cdc43",
+      "queue_expiry_date": "2025-01-01 12:00:00",
+      "queue_assigned_staff_uuid": "123e4567-8ed6-4b29-9e87-fd4a05f1d0e8",
+      "badges": "string",
+      "quote_date": "2025-01-01 12:00:00",
+      "quote_sent": 0,
+      "quote_sent_stamp": "2025-01-01 12:00:00",
+      "work_order_date": "2025-01-01 12:00:00",
+      "active_network_request_uuid": "string",
+      "related_knowledge_articles": "string",
+      "uuid": "123e4567-14e1-44a3-8ed1-5a615c189ead",
+      "active": 1,
+      "edit_date": "2025-01-01 12:00:00",
+      "job_address": "string",
+      "job_description": "string",
+      "work_done_description": "string",
+      "generated_job_id": "string",
+      "total_invoice_amount": "string",
+      "payment_processed": 0,
+      "payment_processed_stamp": "2025-01-01 12:00:00",
+      "payment_received": 0,
+      "payment_received_stamp": "2025-01-01 12:00:00",
+      "completion_date": "2025-01-01 12:00:00",
+      "completion_actioned_by_uuid": "123e4567-c5f3-4b76-bb5b-5fc9d1a8a206",
+      "unsuccessful_date": "2025-01-01 12:00:00",
+      "job_is_scheduled_until_stamp": "2025-01-01 12:00:00"
+    },
+    "source": "https://developer.servicem8.com/reference/getjobs"
+  },
+  "POST /job/{uuid}.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/updatejobs"
+  },
+  "GET /jobactivity.json": {
+    "body": [
+      {
+        "uuid": "123e4567-e42e-44f5-bc54-d25b570a55a9",
+        "active": 1,
+        "edit_date": "2025-01-01 12:00:00",
+        "job_uuid": "123e4567-5ca4-4742-8931-efdb26580ae1",
+        "staff_uuid": "123e4567-a87c-4b2a-8fbb-e888d7e26e65",
+        "start_date": "2025-01-01 12:00:00",
+        "end_date": "2025-01-01 12:00:00",
+        "activity_was_scheduled": "string",
+        "activity_was_recorded": "string",
+        "activity_was_automated": "string",
+        "has_been_opened": "string",
+        "has_been_opened_timestamp": "2025-01-01 12:00:00",
+        "travel_time_in_seconds": 0,
+        "travel_distance_in_meters": 0,
+        "allocated_by_staff_uuid": "123e4567-604c-4409-9709-1667cf3b6bde",
+        "allocated_timestamp": "2025-01-01 12:00:00",
+        "material_uuid": "123e4567-ebe8-46ce-aa7e-e4b4ea112d7a",
+        "edit_by_staff_uuid": "123e4567-0c17-4986-b74b-6bfe2e5dbee7"
+      }
+    ],
+    "source": "https://developer.servicem8.com/reference/listjobactivities"
+  },
+  "POST /jobactivity.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/createjobactivities"
+  },
+  "GET /jobactivity/{uuid}.json": {
+    "body": {
+      "uuid": "123e4567-e42e-44f5-bc54-d25b570a55a9",
+      "active": 1,
+      "edit_date": "2025-01-01 12:00:00",
+      "job_uuid": "123e4567-5ca4-4742-8931-efdb26580ae1",
+      "staff_uuid": "123e4567-a87c-4b2a-8fbb-e888d7e26e65",
+      "start_date": "2025-01-01 12:00:00",
+      "end_date": "2025-01-01 12:00:00",
+      "activity_was_scheduled": "string",
+      "activity_was_recorded": "string",
+      "activity_was_automated": "string",
+      "has_been_opened": "string",
+      "has_been_opened_timestamp": "2025-01-01 12:00:00",
+      "travel_time_in_seconds": 0,
+      "travel_distance_in_meters": 0,
+      "allocated_by_staff_uuid": "123e4567-604c-4409-9709-1667cf3b6bde",
+      "allocated_timestamp": "2025-01-01 12:00:00",
+      "material_uuid": "123e4567-ebe8-46ce-aa7e-e4b4ea112d7a",
+      "edit_by_staff_uuid": "123e4567-0c17-4986-b74b-6bfe2e5dbee7"
+    },
+    "source": "https://developer.servicem8.com/reference/getjobactivities"
+  },
+  "POST /jobactivity/{uuid}.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/updatejobactivities"
+  },
+  "GET /jobpayment.json": {
+    "body": [
+      {
+        "uuid": "123e4567-1f65-4dab-9e7f-20bb7132b2cd",
+        "active": 1,
+        "edit_date": "2025-01-01 12:00:00",
+        "job_uuid": "123e4567-8e23-4c2f-9ae6-b7ca8133ae1a",
+        "actioned_by_uuid": "123e4567-81c8-41d0-8ccf-d3cb11ab7064",
+        "timestamp": "2025-01-01 12:00:00",
+        "amount": "string",
+        "method": "string",
+        "note": "string",
+        "attachment_uuid": "123e4567-c958-4090-9010-eb3da0a2dc91",
+        "is_deposit": 0
+      }
+    ],
+    "source": "https://developer.servicem8.com/reference/listjobpayments"
+  },
+  "POST /jobpayment.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/createjobpayments"
+  },
+  "GET /jobpayment/{uuid}.json": {
+    "body": {
+      "uuid": "123e4567-1f65-4dab-9e7f-20bb7132b2cd",
+      "active": 1,
+      "edit_date": "2025-01-01 12:00:00",
+      "job_uuid": "123e4567-8e23-4c2f-9ae6-b7ca8133ae1a",
+      "actioned_by_uuid": "123e4567-81c8-41d0-8ccf-d3cb11ab7064",
+      "timestamp": "2025-01-01 12:00:00",
+      "amount": "string",
+      "method": "string",
+      "note": "string",
+      "attachment_uuid": "123e4567-c958-4090-9010-eb3da0a2dc91",
+      "is_deposit": 0
+    },
+    "source": "https://developer.servicem8.com/reference/getjobpayments"
+  },
+  "POST /jobpayment/{uuid}.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/updatejobpayments"
+  },
+  "GET /note.json": {
+    "body": [
+      {
+        "uuid": "123e4567-679d-4650-adfb-879d2af0d48b",
+        "active": 1,
+        "edit_date": "2025-01-01 12:00:00",
+        "related_object": "string",
+        "related_object_uuid": "123e4567-f0bf-4d2a-af7f-3ff74ac8b4e3",
+        "note": "string",
+        "action_required": "string",
+        "action_completed_by_staff_uuid": "123e4567-fde0-4c70-81e2-31f7ff7ea6b2",
+        "edit_by_staff_uuid": "123e4567-f812-4cc2-9ebc-6d1be8007b71",
+        "create_date": "2025-01-01 12:00:00"
+      }
+    ],
+    "source": "https://developer.servicem8.com/reference/listnotes"
+  },
+  "POST /note.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/createnotes"
+  },
+  "GET /staff.json": {
+    "body": [
+      {
+        "first": "string",
+        "last": "string",
+        "email": "name@example.com",
+        "mobile": "string",
+        "lng": 0,
+        "lat": 0,
+        "geo_timestamp": "2025-01-01 12:00:00",
+        "job_title": "string",
+        "navigating_to_job_uuid": "123e4567-b02d-45b7-9ea2-65735eb91451",
+        "navigating_timestamp": "2025-01-01 12:00:00",
+        "navigating_expiry_timestamp": "2025-01-01 12:00:00",
+        "color": "string",
+        "custom_icon_url": "string",
+        "status_message": "string",
+        "status_message_timestamp": "2025-01-01 12:00:00",
+        "hide_from_schedule": 0,
+        "uuid": "123e4567-a6a5-4603-9f5c-4c1e292f988a",
+        "active": 1,
+        "edit_date": "2025-01-01 12:00:00",
+        "can_receive_push_notification": "string",
+        "security_role_uuid": "123e4567-6843-4e24-8cda-5af85cbe194c",
+        "labour_material_uuid": "123e4567-bec3-47b0-b177-c16f65e37032"
+      }
+    ],
+    "source": "https://developer.servicem8.com/reference/liststaffmembers"
+  },
+  "POST /staff.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/createstaffmembers"
+  },
+  "GET /staff/{uuid}.json": {
+    "body": {
+      "first": "string",
+      "last": "string",
+      "email": "name@example.com",
+      "mobile": "string",
+      "lng": 0,
+      "lat": 0,
+      "geo_timestamp": "2025-01-01 12:00:00",
+      "job_title": "string",
+      "navigating_to_job_uuid": "123e4567-b02d-45b7-9ea2-65735eb91451",
+      "navigating_timestamp": "2025-01-01 12:00:00",
+      "navigating_expiry_timestamp": "2025-01-01 12:00:00",
+      "color": "string",
+      "custom_icon_url": "string",
+      "status_message": "string",
+      "status_message_timestamp": "2025-01-01 12:00:00",
+      "hide_from_schedule": 0,
+      "uuid": "123e4567-a6a5-4603-9f5c-4c1e292f988a",
+      "active": 1,
+      "edit_date": "2025-01-01 12:00:00",
+      "can_receive_push_notification": "string",
+      "security_role_uuid": "123e4567-6843-4e24-8cda-5af85cbe194c",
+      "labour_material_uuid": "123e4567-bec3-47b0-b177-c16f65e37032"
+    },
+    "source": "https://developer.servicem8.com/reference/getstaffmembers"
+  },
+  "POST /staff/{uuid}.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/updatestaffmembers"
+  },
+  "GET /task.json": {
+    "body": [
+      {
+        "due_date": "YYYY-MM-DD",
+        "task_details": "string",
+        "name": "string",
+        "related_object": "string",
+        "related_object_uuid": "123e4567-fd64-4934-9542-88f03658c90f",
+        "task_complete": "string",
+        "completed_timestamp": "2025-01-01 12:00:00",
+        "completed_by_staff_uuid": "123e4567-a500-4c60-af25-7d7336b1afd8",
+        "assigned_to_staff_uuid": "123e4567-ef37-4087-a7eb-529611fd0866",
+        "lng": "string",
+        "lat": "string",
+        "uuid": "123e4567-bf61-42be-bd4a-1a2036b7b28f",
+        "active": 1,
+        "edit_date": "2025-01-01 12:00:00",
+        "created_by_staff_uuid": "123e4567-63f7-49ae-9f78-3ea6f7e0a885",
+        "create_date": "2025-01-01 12:00:00"
+      }
+    ],
+    "source": "https://developer.servicem8.com/reference/listtasks"
+  },
+  "POST /task.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/createtasks"
+  },
+  "GET /task/{uuid}.json": {
+    "body": {
+      "due_date": "YYYY-MM-DD",
+      "task_details": "string",
+      "name": "string",
+      "related_object": "string",
+      "related_object_uuid": "123e4567-fd64-4934-9542-88f03658c90f",
+      "task_complete": "string",
+      "completed_timestamp": "2025-01-01 12:00:00",
+      "completed_by_staff_uuid": "123e4567-a500-4c60-af25-7d7336b1afd8",
+      "assigned_to_staff_uuid": "123e4567-ef37-4087-a7eb-529611fd0866",
+      "lng": "string",
+      "lat": "string",
+      "uuid": "123e4567-bf61-42be-bd4a-1a2036b7b28f",
+      "active": 1,
+      "edit_date": "2025-01-01 12:00:00",
+      "created_by_staff_uuid": "123e4567-63f7-49ae-9f78-3ea6f7e0a885",
+      "create_date": "2025-01-01 12:00:00"
+    },
+    "source": "https://developer.servicem8.com/reference/gettasks"
+  },
+  "POST /task/{uuid}.json": {
+    "body": {
+      "errorCode": 0,
+      "message": "OK"
+    },
+    "source": "https://developer.servicem8.com/reference/updatetasks"
+  },
+  "GET /vendor.json": {
+    "body": [
+      {
+        "uuid": "123e4567-ea2f-49a7-8608-589e8dfe228e",
+        "active": 1,
+        "edit_date": "2025-01-01 12:00:00",
+        "name": "string",
+        "abn_number": "string",
+        "business_number": "string",
+        "website": "string",
+        "email": "name@example.com",
+        "email_accounts": "string",
+        "billing_address": "string",
+        "accepted_payment_methods": "string",
+        "default_region": "string",
+        "currency": "string",
+        "opening_time_monday": "string",
+        "closing_time_monday": "string",
+        "opening_time_tuesday": "string",
+        "closing_time_tuesday": "string",
+        "opening_time_wednesday": "string",
+        "closing_time_wednesday": "string",
+        "opening_time_thursday": "string",
+        "closing_time_thursday": "string",
+        "opening_time_friday": "string",
+        "closing_time_friday": "string",
+        "opening_time_saturday": "string",
+        "closing_time_saturday": "string",
+        "opening_time_sunday": "string",
+        "closing_time_sunday": "string",
+        "timezone_name": "string",
+        "invoice_terms": "string",
+        "job_default_status": "string",
+        "displayed_amounts_are_tax_inclusive": "string"
+      }
+    ],
+    "source": "https://developer.servicem8.com/reference/listvendors"
+  },
+  "GET /vendor/{uuid}.json": {
+    "body": {
+      "uuid": "123e4567-ea2f-49a7-8608-589e8dfe228e",
+      "active": 1,
+      "edit_date": "2025-01-01 12:00:00",
+      "name": "string",
+      "abn_number": "string",
+      "business_number": "string",
+      "website": "string",
+      "email": "name@example.com",
+      "email_accounts": "string",
+      "billing_address": "string",
+      "accepted_payment_methods": "string",
+      "default_region": "string",
+      "currency": "string",
+      "opening_time_monday": "string",
+      "closing_time_monday": "string",
+      "opening_time_tuesday": "string",
+      "closing_time_tuesday": "string",
+      "opening_time_wednesday": "string",
+      "closing_time_wednesday": "string",
+      "opening_time_thursday": "string",
+      "closing_time_thursday": "string",
+      "opening_time_friday": "string",
+      "closing_time_friday": "string",
+      "opening_time_saturday": "string",
+      "closing_time_saturday": "string",
+      "opening_time_sunday": "string",
+      "closing_time_sunday": "string",
+      "timezone_name": "string",
+      "invoice_terms": "string",
+      "job_default_status": "string",
+      "displayed_amounts_are_tax_inclusive": "string"
+    },
+    "source": "https://developer.servicem8.com/reference/getvendors"
+  },
+  "job.changed": {
+    "body": {
+      "object": "job",
+      "entry": [
+        {
+          "changed_fields": [
+            "badges",
+            "generated_job_id"
+          ],
+          "time": "2015-01-01 00:00:00",
+          "uuid": "de305d54-75b4-431b-adb2-eb6b9e546013"
+        }
+      ],
+      "resource_url": "https://api.servicem8.com/api_1.0/job/de305d54-75b4-431b-adb2-eb6b9e546013.json"
+    },
+    "source": "https://developer.servicem8.com/docs/webhooks-overview"
+  }
+}
