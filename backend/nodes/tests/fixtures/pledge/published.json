@@ -1,0 +1,26 @@
+{
+  "source": "https://developer.pledge.to/api.yaml",
+  "organization_request_approved": {
+    "topic": "organization_request/approved",
+    "data": {
+      "ngo_id": "53-0196605",
+      "status": "approved"
+    }
+  },
+  "organization_request_declined": {
+    "topic": "organization_request/declined",
+    "data": {
+      "ngo_id": "58-2060131",
+      "status": "declined",
+      "reason": "The organization doesn\u2019t like technology"
+    }
+  },
+  "donation_field_examples": {
+    "email": "btyrese@gmail.com",
+    "first_name": "Brock",
+    "last_name": "Tyrese",
+    "amount": "0.25",
+    "id": "0f69319c-9321-4531-ad52-6cb87a292d35"
+  },
+  "organization_id": "3685b542-61d5-45da-9580-162dca725966"
+}
