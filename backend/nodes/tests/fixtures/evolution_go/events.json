@@ -11,7 +11,7 @@
           "IsGroup": false,
           "ID": "3EB0C05FF2D3A0068B2A2D",
           "Type": "text",
-          "PushName": "Davidson Gomes",
+          "PushName": "Alex Example",
           "Timestamp": "2024-10-10T17:17:44-03:00",
           "MediaType": "",
           "VerifiedName": {
@@ -22,7 +22,7 @@
             "Details": {
               "serial": 4651594154187643283,
               "issuer": "smb:wa",
-              "verifiedName": "Davidson Gomes"
+              "verifiedName": "Alex Example"
             }
           }
         },
@@ -56,7 +56,7 @@
           "IsGroup": false,
           "ID": "3EB0546D154AB4C90A11E1",
           "Type": "media",
-          "PushName": "Davidson Gomes",
+          "PushName": "Alex Example",
           "Timestamp": "2024-10-23T09:15:41-03:00",
           "MediaType": "image"
         },
@@ -100,7 +100,7 @@
           "IsGroup": false,
           "ID": "3EB0A1B2C3D4E5F6071234",
           "Type": "media",
-          "PushName": "Davidson Gomes",
+          "PushName": "Alex Example",
           "Timestamp": "2024-10-23T09:20:00-03:00",
           "MediaType": "video"
         },
@@ -138,7 +138,7 @@
           "IsGroup": false,
           "ID": "3EB0F1E2D3C4B5A6091234",
           "Type": "media",
-          "PushName": "Davidson Gomes",
+          "PushName": "Alex Example",
           "Timestamp": "2024-10-23T09:25:00-03:00",
           "MediaType": "audio"
         },
@@ -178,7 +178,7 @@
           "IsGroup": false,
           "ID": "3EB0D1C2B3A4E5F6071234",
           "Type": "media",
-          "PushName": "Davidson Gomes",
+          "PushName": "Alex Example",
           "Timestamp": "2024-10-23T09:30:00-03:00",
           "MediaType": "document"
         },

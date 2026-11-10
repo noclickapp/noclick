@@ -5,7 +5,7 @@
     "path": "/send/text",
     "config": {
       "operation": "send_text",
-      "number": "5511999999999",
+      "number": "12025550100",
       "text": "Olá! Como posso ajudar?",
       "id": "msg-custom-123"
     },
@@ -28,7 +28,7 @@
     "path": "/send/media",
     "config": {
       "operation": "send_media",
-      "number": "5511999999999",
+      "number": "12025550100",
       "url": "https://example.com/imagem.jpg",
       "type": "image",
       "caption": "Confira esta imagem!",
@@ -51,7 +51,7 @@
     "path": "/send/link",
     "config": {
       "operation": "send_link",
-      "number": "5511999999999",
+      "number": "12025550100",
       "text": "Confira este artigo: https://example.com/artigo",
       "title": "Título do Link",
       "url": "https://example.com/artigo",
@@ -75,7 +75,7 @@
     "path": "/send/location",
     "config": {
       "operation": "send_location",
-      "number": "5511999999999",
+      "number": "12025550100",
       "name": "Escritório Central",
       "address": "Av. Paulista, 1000 - São Paulo, SP",
       "latitude": -23.5505199,
@@ -98,7 +98,7 @@
     "path": "/send/poll",
     "config": {
       "operation": "send_poll",
-      "number": "5511999999999",
+      "number": "12025550100",
       "question": "Qual seu horário preferido?",
       "maxAnswer": 1,
       "options": [
@@ -124,7 +124,7 @@
     "path": "/message/react",
     "config": {
       "operation": "react_to_message",
-      "number": "5511999999999",
+      "number": "12025550100",
       "reaction": "👍",
       "id": "3EB0C5A277F7F9B6C599",
       "fromMe": false,
@@ -147,7 +147,7 @@
     "path": "/message/markread",
     "config": {
       "operation": "mark_messages_read",
-      "number": "5511999999999",
+      "number": "12025550100",
       "id": [
         "3EB0C5A277F7F9B6C599",
         "3EB0C5A277F7F9B6C600"
@@ -235,7 +235,7 @@
     "config": {
       "operation": "check_users",
       "number": [
-        "5511999999999",
+        "12025550100",
         "11999999999",
         "+55 11 99999-9999"
       ],
@@ -246,7 +246,7 @@
       "data": {
         "Users": [
           {
-            "Query": "5511999999999",
+            "Query": "12025550100",
             "IsInWhatsapp": true,
             "JID": "12025550100@s.whatsapp.net",
             "RemoteJID": "12025550100@s.whatsapp.net",
@@ -272,7 +272,7 @@
     "path": "/user/avatar",
     "config": {
       "operation": "get_avatar",
-      "number": "5511999999999",
+      "number": "12025550100",
       "preview": false
     },
     "response": {
@@ -373,7 +373,7 @@
       "operation": "create_group",
       "groupName": "Equipe de Vendas",
       "participants": [
-        "5511999999999",
+        "12025550100",
         "12025550104",
         "12025550104"
       ]

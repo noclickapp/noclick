@@ -1,4 +1,4 @@
-"""Request and event behavior using the publisher's documented examples."""
+"""Provider-documented request/event shapes with fictional account identifiers."""
 import json
 from pathlib import Path
 from unittest.mock import Mock
@@ -116,7 +116,7 @@ async def test_evolution_go_webhook_lifecycle_and_documented_delivery(monkeypatc
     assert (payload["data"]["Info"]["ID"] if event_type == "MESSAGE" else payload["data"]["CallID"]) in event["text"]
     if event_type == "MESSAGE":
         assert payload["data"]["Message"]["conversation"] in event["text"]
-        assert "Davidson Gomes" in event["text"]
+        assert "Alex Example" in event["text"]
     await module.EvolutionGoNode._unregister_external_webhook(credential=CREDENTIAL, config={**config, **extra}, node_id="test")
     assert bodies[1]["webhookUrl"] == ""
     assert len(bodies) == 2
