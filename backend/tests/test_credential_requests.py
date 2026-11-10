@@ -895,6 +895,7 @@ class TestCredentialRequestHTTPAPI:
             agent_oauth_start, agent_oauth_complete,
             AgentOAuthStartBody, AgentOAuthCompleteBody,
         )
+        from nodes.agent.harness_oauth import CHATGPT_MODELS_URL, PLAN_MODELS_KEY
         from nodes.agent.harness_oauth_flows import CODEX_ISSUER
         from utils.encryption import get_encryption
 
@@ -929,6 +930,8 @@ class TestCredentialRequestHTTPAPI:
                         "access_token": "acc-tok", "refresh_token": "ref-tok", "id_token": "id-tok", "expires_in": 3600,
                     })
                 )
+                respx.get(CHATGPT_MODELS_URL).mock(return_value=httpx.Response(200, json={"models": [
+                    {"slug": "gpt-6-luna", "visibility": "list"}, {"slug": "gpt-reserve", "visibility": "hide"}]}))
 
                 start = await agent_oauth_start(token, AgentOAuthStartBody(credential_type=oauth_type))
                 assert start['kind'] == 'device_code'
@@ -952,6 +955,8 @@ class TestCredentialRequestHTTPAPI:
             meta = cred['metadata']
             meta = json.loads(meta) if isinstance(meta, str) else meta
             assert meta['provider'] == 'codex'
+            # The models ChatGPT lists for the sign-in are kept with its credential, what a plan is judged by.
+            assert meta[PLAN_MODELS_KEY] == ['gpt-6-luna']
             decrypted = get_encryption().decrypt_credential(cred['credential'])
             assert decrypted['credentials']['CODEX_ACCESS_TOKEN'] == 'acc-tok'
             assert decrypted['credentials']['CODEX_REFRESH_TOKEN'] == 'ref-tok'

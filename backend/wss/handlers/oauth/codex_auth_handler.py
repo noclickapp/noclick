@@ -169,6 +169,7 @@ class CodexAuthHandler(DatabasePoolMixin, SocketIOHandler):
                     credential_name, encrypted_data, {
                         'provider': 'codex',
                         'auth_mode': 'chatgpt',
+                        **(result.get('metadata') or {}),
                     },
                 )
                 if error:

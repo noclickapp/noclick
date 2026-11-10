@@ -208,17 +208,18 @@ async def codex_complete(poll: Dict[str, Any]) -> Dict[str, Any]:
     ineligible = codex_chatgpt_ineligible(tokens.get("id_token"))
     if ineligible:
         raise OAuthFlowError(ineligible)
-    return {
-        "status": "completed",
-        "credential_data": {
-            "credentials": {
-                "CODEX_ACCESS_TOKEN": access_token,
-                "CODEX_REFRESH_TOKEN": tokens.get("refresh_token", ""),
-                "CODEX_ID_TOKEN": tokens.get("id_token", ""),
-                "CODEX_EXPIRES_AT": compute_expires_at_iso(tokens.get("expires_in"), access_token) or "",
-            }
-        },
+    credentials = {
+        "CODEX_ACCESS_TOKEN": access_token,
+        "CODEX_REFRESH_TOKEN": tokens.get("refresh_token", ""),
+        "CODEX_ID_TOKEN": tokens.get("id_token", ""),
+        "CODEX_EXPIRES_AT": compute_expires_at_iso(tokens.get("expires_in"), access_token) or "",
     }
+    from nodes.agent.harness_oauth import chatgpt_plan_models, plan_models_metadata
+
+    models = await chatgpt_plan_models(credentials)
+    # The credential's own metadata: the models ChatGPT lists for this sign-in, which a plan is judged by.
+    return {"status": "completed", "credential_data": {"credentials": credentials},
+            "metadata": plan_models_metadata(models) if models is not None else {}}
 
 
 # ==============================================================================

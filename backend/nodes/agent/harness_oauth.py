@@ -26,7 +26,7 @@ import json
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import httpx
 
@@ -53,11 +53,22 @@ CODEX_ISSUER = "https://auth.openai.com"
 CODEX_CLIENT_ID = "app_EMoamEEZ73f0CkXaXp7hrann"
 CODEX_TOKEN_URL = f"{CODEX_ISSUER}/oauth/token"
 
+# Where ChatGPT lists the models a sign-in runs, read as Codex reads it for a
+# ChatGPT account. Its picker list is the CLI's own and can name a model ChatGPT
+# no longer serves its accounts ("The 'gpt-5.5' model is not supported when using
+# Codex with a ChatGPT account", 2026-11-11), so a plan is judged by this.
+CHATGPT_MODELS_URL = "https://chatgpt.com/backend-api/codex/models"
+# A ChatGPT sign-in's credential metadata: the models ChatGPT lists for it, and when it said so.
+PLAN_MODELS_KEY = "chatgpt_models"
+PLAN_MODELS_AT_KEY = "chatgpt_models_at"
+
 # Row-level bookkeeping keys the flat env view carries for the refresh
 # machinery (CAS + audit); never env vars, always stripped before dispatch.
 _BOOKKEEPING_KEYS = ("token_version", "updated_at")
 
 _TOKEN_TIMEOUT_S = 30.0
+# A sign-in or refresh waits this long for ChatGPT's model list, then goes on without it.
+_MODELS_TIMEOUT_S = 10.0
 
 # Refresh when less than this remains. Wider than the integration-node default
 # because an agent turn may run for a while before the CLI refreshes its token.
@@ -169,11 +180,13 @@ async def _refresh_claude_code(refresh_token: str) -> HarnessTokens:
     )
 
 
-def _make_codex_refresh(env: Dict[str, str]):
+def _make_codex_refresh(env: Dict[str, str], metadata: Dict[str, Any]):
     """Codex refresh closure over the flat env dict: the response's rotated
     ``id_token`` must ride along into the persisted blob, but the shared
     ``_adopt_keys`` only carries access/refresh/expires — so the closure writes
-    it into ``env`` directly (``env`` IS the dict the store persists)."""
+    it into ``env`` directly (``env`` IS the dict the store persists). The
+    models ChatGPT lists for the sign-in go into ``metadata``, persisted with
+    the tokens."""
 
     async def _refresh(refresh_token: str) -> HarnessTokens:
         async with httpx.AsyncClient(timeout=_TOKEN_TIMEOUT_S) as client:
@@ -194,6 +207,9 @@ def _make_codex_refresh(env: Dict[str, str]):
             raise ValueError("codex_chatgpt token refresh response had no access_token")
         if tokens.get("id_token"):
             env["CODEX_ID_TOKEN"] = tokens["id_token"]
+        models = await chatgpt_plan_models({**env, "CODEX_ACCESS_TOKEN": access})
+        if models is not None:
+            metadata.update(plan_models_metadata(models))
         return HarnessTokens(
             access_token=access,
             refresh_token=tokens.get("refresh_token"),
@@ -212,6 +228,11 @@ class HarnessCredentialsStore(CredentialsTableStore):
     injected (mirroring ``load_credential``'s row-level extras); ``persist()``
     re-nests the env keys and submits the CAS guard from the flat view.
     """
+
+    def __init__(self, pool, user_id: str, credential_id: str, metadata: Optional[Dict[str, Any]] = None):
+        super().__init__(pool, user_id, credential_id)
+        # Written beside each refresh's own (a ChatGPT sign-in's models, ``_make_codex_refresh``).
+        self.metadata = metadata if metadata is not None else {}
 
     async def load(self) -> Optional[Dict[str, Any]]:
         blob = await super().load()
@@ -239,7 +260,7 @@ class HarnessCredentialsStore(CredentialsTableStore):
             credential_id=self.credential_id,
             user_id=self.user_id,
             new_data={"credentials": env},
-            metadata_updates=metadata_updates,
+            metadata_updates={**(metadata_updates or {}), **self.metadata} or None,
             pool=self.pool,
             expected_token_version=new_data.get("token_version"),
         )
@@ -254,10 +275,10 @@ class _HarnessOAuthSpec:
     # Token fields a refresh rotates alongside access/refresh/expires.
     companion_keys: Tuple[str, ...] = ()
 
-    def build_refresh(self, env: Dict[str, str]):
+    def build_refresh(self, env: Dict[str, str], metadata: Dict[str, Any]):
         if self.provider == "claude_code":
             return lambda token: _refresh_claude_code(token)
-        return _make_codex_refresh(env)
+        return _make_codex_refresh(env, metadata)
 
     def stale(self, row: Dict[str, Any]) -> bool:
         """Refresh even though the access token is fine: a legacy blob with no
@@ -313,8 +334,9 @@ async def ensure_fresh_harness_tokens(
     for spec in HARNESS_OAUTH_SPECS:
         if not env.get(spec.access_key) or not env.get(spec.refresh_key):
             continue
+        metadata: Dict[str, Any] = {}
         store = (
-            HarnessCredentialsStore(pool, user_id, credential_id)
+            HarnessCredentialsStore(pool, user_id, credential_id, metadata)
             if user_id and credential_id
             else None
         )
@@ -323,7 +345,7 @@ async def ensure_fresh_harness_tokens(
             credential_id=credential_id,
             user_id=user_id,
             credential=env,
-            refresh=spec.build_refresh(env),
+            refresh=spec.build_refresh(env, metadata),
             access_token_key=spec.access_key,
             refresh_token_key=spec.refresh_key,
             expires_at_key=spec.expires_at_key,
@@ -388,6 +410,39 @@ def chatgpt_account_id(id_token: Optional[str]) -> Optional[str]:
     """The ChatGPT account (workspace) a sign-in acts in, from its id token's claims, as Codex reads it; an expired
     token still names it. None when unknown."""
     return _chatgpt_auth_claim(id_token, "chatgpt_account_id")
+
+
+async def chatgpt_plan_models(env: Dict[str, Any]) -> Optional[List[str]]:
+    """The models ChatGPT lists for this sign-in, as the pinned Codex asks for
+    them: those it offers, in its order. None when the list can't be read (no
+    token, a refusal, an outage): unknown, never empty."""
+    from nodes.agent.config._cli_models_loader import codex_version
+
+    token = env.get("CODEX_ACCESS_TOKEN")
+    if not token:
+        return None
+    account = chatgpt_account_of(env)
+    headers = {"Authorization": f"Bearer {token}", "Accept": "application/json", "originator": "codex_cli_rs",
+               **({"ChatGPT-Account-ID": account} if account else {})}
+    try:
+        async with httpx.AsyncClient(timeout=_MODELS_TIMEOUT_S) as client:
+            resp = await client.get(CHATGPT_MODELS_URL, params={"client_version": codex_version()}, headers=headers)
+        if not resp.is_success:
+            logger.warning("[harness_oauth] ChatGPT's model list answered HTTP %s", resp.status_code)
+            return None
+        rows = resp.json().get("models")
+    except (httpx.HTTPError, ValueError, AttributeError) as e:
+        logger.warning("[harness_oauth] ChatGPT's model list couldn't be read: %s", e)
+        return None
+    if not isinstance(rows, list):
+        return None
+    return [m["slug"] for m in rows if isinstance(m, dict) and isinstance(m.get("slug"), str)
+            and m.get("visibility") == "list"]
+
+
+def plan_models_metadata(models: List[str]) -> Dict[str, Any]:
+    """The credential metadata recording the models ChatGPT listed for a sign-in."""
+    return {PLAN_MODELS_KEY: models, PLAN_MODELS_AT_KEY: datetime.now(timezone.utc).isoformat()}
 
 
 def chatgpt_account_of(env: Dict[str, Any]) -> Optional[str]:

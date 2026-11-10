@@ -63,6 +63,8 @@ class TestCodexFlow:
 
     @respx.mock
     async def test_complete_mints_credential(self):
+        from nodes.agent.harness_oauth import CHATGPT_MODELS_URL, PLAN_MODELS_KEY
+
         respx.post(f"{CODEX_ISSUER}/api/accounts/deviceauth/token").mock(
             return_value=httpx.Response(200, json={"authorization_code": "authz", "code_verifier": "ver"})
         )
@@ -71,12 +73,34 @@ class TestCodexFlow:
                 "access_token": "acc", "refresh_token": "ref", "id_token": "idt", "expires_in": 3600,
             })
         )
+        listed = respx.get(CHATGPT_MODELS_URL).mock(return_value=httpx.Response(200, json={"models": [
+            {"slug": "gpt-6-luna", "visibility": "list"}, {"slug": "gpt-5.6-sol", "visibility": "list"}]}))
         result = await codex_complete({"device_auth_id": "d", "user_code": "c"})
         assert result["status"] == "completed"
         creds = result["credential_data"]["credentials"]
         assert creds["CODEX_ACCESS_TOKEN"] == "acc"
         assert creds["CODEX_REFRESH_TOKEN"] == "ref"
         assert creds["CODEX_ID_TOKEN"] == "idt"
+        # The models ChatGPT lists for this sign-in, read with its own token, ride along as metadata.
+        assert listed.calls.last.request.headers["Authorization"] == "Bearer acc"
+        assert result["metadata"][PLAN_MODELS_KEY] == ["gpt-6-luna", "gpt-5.6-sol"]
+        assert PLAN_MODELS_KEY not in creds
+
+    @respx.mock
+    async def test_a_sign_in_whose_list_cant_be_read_still_completes(self):
+        from nodes.agent.harness_oauth import CHATGPT_MODELS_URL
+
+        respx.post(f"{CODEX_ISSUER}/api/accounts/deviceauth/token").mock(
+            return_value=httpx.Response(200, json={"authorization_code": "authz", "code_verifier": "ver"})
+        )
+        respx.post(f"{CODEX_ISSUER}/oauth/token").mock(
+            return_value=httpx.Response(200, json={
+                "access_token": "acc", "refresh_token": "ref", "id_token": "idt", "expires_in": 3600,
+            })
+        )
+        respx.get(CHATGPT_MODELS_URL).mock(return_value=httpx.Response(502))
+        result = await codex_complete({"device_auth_id": "d", "user_code": "c"})
+        assert result["status"] == "completed" and result["metadata"] == {}
 
     @respx.mock
     async def test_complete_raises_without_access_token(self):
@@ -154,6 +178,9 @@ class TestCodexIdTokenRepair:
                 "id_token": _minted_id_token("pro"), "expires_in": 3600,
             }),
         ])
+        from nodes.agent.harness_oauth import CHATGPT_MODELS_URL
+
+        respx.get(CHATGPT_MODELS_URL).mock(return_value=httpx.Response(200, json={"models": []}))
         result = await codex_complete({"device_auth_id": "d", "user_code": "c"})
         assert result["status"] == "completed"
         creds = result["credential_data"]["credentials"]

@@ -1115,7 +1115,7 @@ async def agent_oauth_complete(token: str, body: AgentOAuthCompleteBody) -> dict
     if status != "completed":
         raise HTTPException(status_code=502, detail="Unexpected sign-in state")
 
-    metadata = {**flow.metadata, "provided_by": row['target_email']}
+    metadata = {**flow.metadata, **(result.get("metadata") or {}), "provided_by": row['target_email']}
     return await _store_and_fulfill(
         pool, row, flow.credential_type, result["credential_data"], flow.credential_name, metadata,
     )
