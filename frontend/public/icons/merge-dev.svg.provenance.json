@@ -1,0 +1,11 @@
+{
+  "path": "frontend/public/icons/merge-dev.svg",
+  "source": "https://cdn.prod.website-files.com/624b192df0b0151225c10026/67b5ed56e63b65409a3f0fa6_merge-logo_bbl.svg",
+  "found_at": "https://www.merge.dev/",
+  "retrieved": "2026-11-11",
+  "license": "Merge trademark; nominative use to identify integration",
+  "edits": [
+    "Removed five wordmark paths; kept the two original symbol paths; cropped viewBox"
+  ],
+  "sha256": "cbe56ba1bdcbbaac9a21ed86481336e97356a6119ad0791a3a98b2ebd2a0677c"
+}

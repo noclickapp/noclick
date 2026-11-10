@@ -1,0 +1,52 @@
+{
+  "id": "0958cbc6-6040-430a-848e-aafacbadf4ae",
+  "remote_id": "19202938",
+  "created_at": "2021-09-15T00:00:00Z",
+  "modified_at": "2021-10-16T00:00:00Z",
+  "name": "Please add more integrations",
+  "assignees": [
+    "17a54124-287f-494d-965e-3c5b330c9a68"
+  ],
+  "assigned_teams": [
+    "4857c306-c1f9-489e-a6b6-90902f736dfe"
+  ],
+  "due_date": "2022-10-11T00:00:00Z",
+  "status": "OPEN",
+  "description": "Can you please add more integrations? It'll make syncing data much easier!",
+  "collections": [
+    "fb8c55b6-1cb8-4b4c-9fb6-17924231619d"
+  ],
+  "ticket_type": "incident",
+  "account": "0958cbc6-6040-430a-848e-aafacbadf4ae",
+  "contact": "65c345ba-6870-4974-87ba-dd31509c367a",
+  "parent_ticket": "75b33d04-30d2-4f3e-be45-27838bc94342",
+  "attachments": [
+    "42747df1-95e7-46e2-93cc-66f1191edca5",
+    "92f972d0-2526-434b-9409-4c3b468e08f0"
+  ],
+  "access_level": "PRIVATE",
+  "permissions": [
+    "17a54124-287f-494d-965e-3c5b330c9a68"
+  ],
+  "tags": [
+    "enterprise",
+    "other-tag"
+  ],
+  "roles": [
+    "21a54124-397f-494d-985e-3c5b330b8a68",
+    "17a54124-287f-494d-965e-3c5b330c9a68"
+  ],
+  "ticket_url": "https://thirdpartysoftware.com/project/3/issue/1",
+  "priority": "HIGH",
+  "remote_created_at": "2021-11-10T00:00:00Z",
+  "remote_updated_at": "2021-12-09T00:00:00Z",
+  "completed_at": "2021-12-09T00:00:00Z",
+  "field_mappings": {
+    "organization_defined_targets": {
+      "custom_key": "custom_value"
+    },
+    "linked_account_defined_targets": {
+      "custom_key": "custom_value"
+    }
+  }
+}
