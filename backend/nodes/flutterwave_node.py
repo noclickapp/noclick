@@ -1,7 +1,12 @@
-"""Flutterwave v4 operations using an existing, short-lived bearer access token."""
+"""Flutterwave v4 operations and signed payment-event triggers using a bearer access token."""
 from __future__ import annotations
 
 import re
+import base64
+import hashlib
+import hmac
+import secrets
+from urllib.parse import quote
 from datetime import datetime
 from typing import Annotated, Literal, Union
 from uuid import uuid4
@@ -11,6 +16,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -274,7 +280,30 @@ class GetVirtualAccount(_Detail):
     operation: Literal["get_virtual_account"] = "get_virtual_account"
 
 
+# Registration and event shapes: the provider's v4 OpenAPI version 1.0.
+# Signing: https://developer.flutterwave.com/v4.0.0/docs/webhooks
+WEBHOOK_EVENTS = (
+    "charge.completed", "transfer.disburse", "transfer.reversal",
+    "refund.completed", "order.authorization",
+)
+
+
+class _WebhookTrigger(WebhookTriggerConfigBase):
+    webhook_url: str | None = Field(None, title="Webhook URL",
+        description="Registered with Flutterwave automatically. The access token must be current when activating or removing the trigger.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+class OnEvent(_WebhookTrigger):
+    operation: Literal["on_event"] = Field("on_event", title="On Flutterwave Event", json_schema_extra={
+        "const": "on_event", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On Flutterwave Event"})
+    event_type: Literal["all", *WEBHOOK_EVENTS] = Field("all", title="Event",
+        description="Receive all supported payment events, or only the selected event. Completion notifications include the provider's status; they do not always mean success.")
+
+
 FlutterwaveConfig = Annotated[Union[
+    OnEvent,
     ListCustomers, GetCustomer, CreateCustomer, UpdateCustomer, ListCharges, GetCharge, CreateCharge,
     ListCheckoutSessions, GetCheckoutSession, CreateCheckoutSession, ListPaymentMethods, GetPaymentMethod,
     ListTransfers, GetTransfer, CreateTransfer, ListRefunds, GetRefund, CreateRefund, ListSettlements,
@@ -324,7 +353,7 @@ def _redact(value, token):
     return value.replace(token, "[redacted]") if isinstance(value, str) else value
 
 
-class FlutterwaveNode(WorkflowNode):
+class FlutterwaveNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-flutterwave"
     connection_evidence = ConnectionEvidence(noun="customers", operation="list_customers", label_keys=("email", "id"))
 
@@ -332,11 +361,135 @@ class FlutterwaveNode(WorkflowNode):
     def get_config_model(cls):
         return FlutterwaveNodeConfig
 
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, *, body=None):
+        credential = FlutterwaveAccessTokenCredential.model_validate(credential)
+        headers = {"Authorization": "Bearer " + credential.access_token,
+                   "Accept": "application/json", "X-Trace-Id": str(uuid4())}
+        if method == "POST":
+            headers["X-Idempotency-Key"] = str(uuid4())
+        try:
+            async with guarded_async_client(timeout=30.0, follow_redirects=False, trust_env=False) as client:
+                response = await client.request(method, BASE_URLS[credential.environment] + path,
+                                                headers=headers, **({"json": body} if body is not None else {}))
+        except httpx.HTTPError:
+            raise ValueError("Flutterwave webhook request did not complete; inspect the endpoint before retrying") from None
+        if method == "DELETE" and response.status_code in (200, 204, 404):
+            return {}
+        if response.status_code >= 300:
+            raise ValueError(f"Flutterwave webhook request failed (HTTP {response.status_code})")
+        try:
+            payload = response.json()
+        except ValueError:
+            raise ValueError("Flutterwave returned an invalid webhook response") from None
+        if not isinstance(payload, dict) or payload.get("status") != "success" or not isinstance(payload.get("data"), dict):
+            raise ValueError("Flutterwave did not confirm webhook registration")
+        return payload["data"]
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        parsed = cls.parse_config({"config": config or {}}).config
+        if not isinstance(parsed, OnEvent):
+            raise ValueError("Choose a Flutterwave trigger before activating it")
+        events = list(WEBHOOK_EVENTS) if parsed.event_type == "all" else [parsed.event_type]
+        # 36 characters satisfy both request (36–72) and response (12–36) schemas.
+        secret = secrets.token_hex(18)
+        data = await cls._webhook_request(credential, "POST", "/profile/webhook-endpoints", body={
+            "url": webhook_url, "secret": secret, "supported_event_types": events, "status": "enabled",
+            "description": f"NoClick {node_id}",
+        })
+        endpoint_id = data.get("id")
+        if not isinstance(endpoint_id, str) or not endpoint_id.strip():
+            raise ValueError("Flutterwave did not return a webhook endpoint ID")
+        return {"external_webhook_id": endpoint_id, "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = (config or {}).get("external_webhook_id")
+        if endpoint_id:
+            if not credential:
+                raise ValueError("Connect Flutterwave to remove its webhook endpoint")
+            await cls._webhook_request(credential, "DELETE", "/profile/webhook-endpoints/" + quote(str(endpoint_id), safe=""))
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"event_type": (config or {}).get("event_type", "all")}
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        secret = (config or {}).get("signing_secret")
+        signature = next((value for key, value in headers.items() if key.lower() == "flutterwave-signature"), None)
+        if not isinstance(secret, str) or not secret or not isinstance(signature, str) or not signature.isascii():
+            return False
+        expected = base64.b64encode(hmac.new(secret.encode(), body, hashlib.sha256).digest()).decode()
+        return hmac.compare_digest(expected, signature)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        selected = (config or {}).get("event_type", "all")
+        return bool((config or {}).get("operation") == "on_event" and isinstance(payload, dict)
+                    and payload.get("type") in WEBHOOK_EVENTS
+                    and (selected == "all" or payload["type"] == selected)
+                    and isinstance(payload.get("data"), dict) and payload["data"].get("id"))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if not cls.filter_trigger_payload(payload, config):
+            return cls.no_event_output((config or {}).get("operation", "Flutterwave trigger"))
+        # Keep provider delivery IDs/timestamps for downstream deduplication,
+        # while removing NoClick's HTTP transport metadata and its headers.
+        return {key: value for key, value in payload.items() if not str(key).startswith("_")}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("type") not in WEBHOOK_EVENTS:
+            return super().resolve_agent_event(output)
+        event = output["type"]
+        data = output.get("data")
+        if not isinstance(data, dict) or not data.get("id"):
+            return None
+        resource_id = str(data["id"])
+        status = data.get("status")
+        lines = [f"Flutterwave {event}: {resource_id}" + (f" ({status})" if status else "")]
+        for key in ("id", "webhook_id", "timestamp"):
+            if key in output:
+                lines.append(f"Delivery {key}: {output[key]}")
+        # Optional fields vary across the five documented event schemas.
+        # Inspect only fields actually supplied, retaining the provider's units.
+        if "customer" in data and isinstance(data["customer"], dict):
+            customer = data["customer"]
+            identity = customer.get("email") or customer.get("id")
+            if identity:
+                lines.append(f"Customer: {identity}")
+            if customer.get("id"):
+                lines.append(f"Customer ID: {customer['id']}")
+        if "bank" in data and isinstance(data["bank"], dict) and data["bank"].get("name"):
+            lines.append(f"Recipient bank: {data['bank']['name']}")
+        if "bank" in data and isinstance(data["bank"], dict) and data["bank"].get("account_number"):
+            lines.append(f"Recipient account ending: {str(data['bank']['account_number'])[-4:]}")
+        if "mobile_money" in data and isinstance(data["mobile_money"], dict) and data["mobile_money"].get("msisdn"):
+            lines.append(f"Recipient phone: {data['mobile_money']['msisdn']}")
+        if "wallet" in data and isinstance(data["wallet"], dict) and data["wallet"].get("identifier"):
+            lines.append(f"Recipient wallet: {data['wallet']['identifier']}")
+        for key, label in (("amount", "Amount (provider units)"), ("amount_refunded", "Amount refunded"),
+                           ("currency", "Currency"), ("source_currency", "Source currency"),
+                           ("destination_currency", "Destination currency"), ("reference", "Reference"),
+                           ("description", "Description"), ("charge_id", "Charge ID"), ("reason", "Reason")):
+            if key in data and data[key] is not None:
+                lines.append(f"{label}: {str(data[key])[:1500]}")
+        action = ({"charge.completed": "get_charge", "refund.completed": "get_refund",
+                   "transfer.disburse": "get_transfer", "transfer.reversal": "get_transfer"}.get(event))
+        action = f"{action} id={resource_id}" if action else f"Order ID: {resource_id}"
+        lines.append(f"To inspect: {action}. Verify transaction details before giving value to a customer.")
+        return {"text": "\n".join(lines), "conversation_key": resource_id, "title": f"Flutterwave {event}: {resource_id}"}
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Flutterwave v4 access token")
         credential = self.config.credentials
         op = self.config.config
+        if isinstance(op, OnEvent):
+            return self.no_event_output(op.operation)
         method, path = ROUTES[op.operation]
         values = op.model_dump(mode="json", exclude_none=True, exclude={"operation", "idempotency_key"})
         for key in ("id", "currency"):

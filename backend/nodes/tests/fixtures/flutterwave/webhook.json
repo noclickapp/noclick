@@ -1,0 +1,47 @@
+{
+  "source": "https://developer.flutterwave.com/v4.0.0/docs/webhooks",
+  "notes": "Successful Payment example, including the documentation renderer\u2019s obscured email address. Timestamp numbers and the top-level id are preserved as published, despite the OpenAPI schema declaring ISO timestamps and webhook_id.",
+  "body": {
+    "data": {
+      "amount": 2500,
+      "created_datetime": 1735116842.116,
+      "currency": "KES",
+      "customer": {
+        "address": null,
+        "created_datetime": 1732977179.938,
+        "email": "[email\u00a0protected]",
+        "id": "cus_csm0pcQim4",
+        "meta": {},
+        "name": null,
+        "phone": null
+      },
+      "description": null,
+      "id": "chg_Hq4oBRTJ4r",
+      "meta": {},
+      "payment_method": {
+        "client_ip": null,
+        "created_datetime": 1735116842.107,
+        "customer_id": "cus_csm0pcQim4",
+        "device_fingerprint": null,
+        "id": "pmd_sG5zwZBN4L",
+        "meta": {},
+        "mobile_money": {
+          "country_code": "234",
+          "network": "MTN",
+          "phone_number": "9067985861"
+        },
+        "type": "mobile_money"
+      },
+      "processor_response": {
+        "code": "00",
+        "type": "approved"
+      },
+      "redirect_url": "https://custom-redirect.com",
+      "reference": "49c3c6f5-aedd-4443-9eb4-92c51758f04a",
+      "status": "succeeded"
+    },
+    "id": "wbk_W5p6ktwU0jQ8RO4By860",
+    "timestamp": 1735116884019,
+    "type": "charge.completed"
+  }
+}

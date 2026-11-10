@@ -12,7 +12,7 @@ const FlutterwaveIcon = ({ className, style }: { className?: string; style?: CSS
 export const FlutterwaveNode: NodeDefinition = {
     type: 'automation-flutterwave', label: 'Flutterwave',
     category: 'finance-accounting',
-    description: 'Manage customers, charges, checkout sessions, transfers, refunds and balances',
+    description: 'Start workflows from payment events and manage customers, charges, transfers, refunds and balances',
     Icon: FlutterwaveIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={FlutterwaveIcon} iconColor="" />),
