@@ -1,0 +1,1383 @@
+{
+  "$defs": {
+    "AbortExecutionConfig": {
+      "properties": {
+        "execution_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Execution ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "abort_execution",
+          "default": "abort_execution",
+          "title": "Abort Execution",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "force_incomplete": {
+          "default": false,
+          "description": "Force a running execution to be marked incomplete.",
+          "title": "Force Incomplete",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "execution_id"
+      ],
+      "title": "AbortExecutionConfig",
+      "type": "object"
+    },
+    "DisableJobExecutionConfig": {
+      "properties": {
+        "job_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "disable_job_execution",
+          "default": "disable_job_execution",
+          "title": "Disable Job Execution",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "DisableJobExecutionConfig",
+      "type": "object"
+    },
+    "DisableJobScheduleConfig": {
+      "properties": {
+        "job_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "disable_job_schedule",
+          "default": "disable_job_schedule",
+          "title": "Disable Job Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "DisableJobScheduleConfig",
+      "type": "object"
+    },
+    "EnableJobExecutionConfig": {
+      "properties": {
+        "job_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "enable_job_execution",
+          "default": "enable_job_execution",
+          "title": "Enable Job Execution",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "EnableJobExecutionConfig",
+      "type": "object"
+    },
+    "EnableJobScheduleConfig": {
+      "properties": {
+        "job_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "enable_job_schedule",
+          "default": "enable_job_schedule",
+          "title": "Enable Job Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "EnableJobScheduleConfig",
+      "type": "object"
+    },
+    "GetExecutionConfig": {
+      "properties": {
+        "execution_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Execution ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_execution",
+          "default": "get_execution",
+          "title": "Get Execution",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "execution_id"
+      ],
+      "title": "GetExecutionConfig",
+      "type": "object"
+    },
+    "GetExecutionOutputConfig": {
+      "properties": {
+        "execution_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Execution ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_execution_output",
+          "default": "get_execution_output",
+          "title": "Get Execution Output",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Log Byte Offset",
+          "type": "integer"
+        },
+        "maxlines": {
+          "default": 100,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Maximum Lines",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "execution_id"
+      ],
+      "title": "GetExecutionOutputConfig",
+      "type": "object"
+    },
+    "GetExecutionStateConfig": {
+      "properties": {
+        "execution_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Execution ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_execution_state",
+          "default": "get_execution_state",
+          "title": "Get Execution State",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "execution_id"
+      ],
+      "title": "GetExecutionStateConfig",
+      "type": "object"
+    },
+    "GetJobConfig": {
+      "properties": {
+        "job_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Get Job Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJobConfig",
+      "type": "object"
+    },
+    "GetJobWorkflowConfig": {
+      "properties": {
+        "job_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_job_workflow",
+          "default": "get_job_workflow",
+          "title": "Get Job Workflow",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJobWorkflowConfig",
+      "type": "object"
+    },
+    "GetProfileConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Get My Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetProfileConfig",
+      "type": "object"
+    },
+    "GetProjectConfig": {
+      "properties": {
+        "project": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "title": "GetProjectConfig",
+      "type": "object"
+    },
+    "ListJobExecutionsConfig": {
+      "properties": {
+        "max": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Request another page explicitly using the next offset. Results are one page only.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "job_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_job_executions",
+          "default": "list_job_executions",
+          "title": "List Job Executions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "succeeded",
+                "failed",
+                "aborted",
+                "running"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Execution Status",
+          "enum": [
+            "succeeded",
+            "failed",
+            "aborted",
+            "running"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ListJobExecutionsConfig",
+      "type": "object"
+    },
+    "ListJobsConfig": {
+      "properties": {
+        "max": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Request another page explicitly using the next offset. Results are one page only.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "project": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "List Jobs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "job_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Name Contains"
+        },
+        "group_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Path"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "title": "ListJobsConfig",
+      "type": "object"
+    },
+    "ListNodesConfig": {
+      "properties": {
+        "project": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_nodes",
+          "default": "list_nodes",
+          "title": "List Project Nodes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "node_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Node Filter"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "title": "ListNodesConfig",
+      "type": "object"
+    },
+    "ListProjectsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListProjectsConfig",
+      "type": "object"
+    },
+    "ListRunningExecutionsConfig": {
+      "properties": {
+        "max": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Request another page explicitly using the next offset. Results are one page only.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "project": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_running_executions",
+          "default": "list_running_executions",
+          "title": "List Running Executions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "title": "ListRunningExecutionsConfig",
+      "type": "object"
+    },
+    "OnCompletedExecutionConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_completed_execution",
+          "default": "on_completed_execution",
+          "title": "On New Completed Execution",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        },
+        "project": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project Name",
+          "type": "string"
+        },
+        "recent_filter": {
+          "default": "2w",
+          "description": "Poll executions completed in this relative window. Keep it longer than the polling interval and expected outages, e.g. 2w. Baselines existing executions on first poll.",
+          "pattern": "^[1-9][0-9]*[snhdwmy]$",
+          "title": "Completion Window",
+          "type": "string"
+        },
+        "status_filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "succeeded",
+                "failed",
+                "aborted"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to watch every completed status.",
+          "title": "Completion Status",
+          "enum": [
+            "succeeded",
+            "failed",
+            "aborted"
+          ],
+          "x-enum-searchable": true
+        },
+        "job_id_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job ID Filter"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "title": "OnCompletedExecutionConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "QueryExecutionsConfig": {
+      "properties": {
+        "max": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Request another page explicitly using the next offset. Results are one page only.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "project": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "query_executions",
+          "default": "query_executions",
+          "title": "Query Executions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "status_filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "succeeded",
+                "failed",
+                "aborted",
+                "running"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Execution Status",
+          "enum": [
+            "succeeded",
+            "failed",
+            "aborted",
+            "running"
+          ],
+          "x-enum-searchable": true
+        },
+        "recent_filter": {
+          "anyOf": [
+            {
+              "pattern": "^[1-9][0-9]*[snhdwmy]$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Relative completion window, for example 2w.",
+          "title": "Completed Within"
+        },
+        "begin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix millisecond timestamp or W3C dateTime.",
+          "title": "Completed After"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix millisecond timestamp or W3C dateTime.",
+          "title": "Completed Before"
+        },
+        "job_id_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job ID Filter"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "title": "QueryExecutionsConfig",
+      "type": "object"
+    },
+    "RetryJobConfig": {
+      "properties": {
+        "arg_string": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job options in Rundeck format, for example -opt value.",
+          "title": "Arguments"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Option name to value map. When supplied, Rundeck ignores Arguments.",
+          "title": "Option Values"
+        },
+        "loglevel": {
+          "anyOf": [
+            {
+              "enum": [
+                "DEBUG",
+                "VERBOSE",
+                "INFO",
+                "WARN",
+                "ERROR"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Log Level",
+          "enum": [
+            "DEBUG",
+            "VERBOSE",
+            "INFO",
+            "WARN",
+            "ERROR"
+          ],
+          "x-enum-searchable": true
+        },
+        "node_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Node Filter"
+        },
+        "job_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "retry_job",
+          "default": "retry_job",
+          "title": "Retry Job Execution",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "execution_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Execution ID",
+          "type": "string"
+        },
+        "failed_nodes": {
+          "default": false,
+          "title": "Retry Failed Nodes Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "job_id",
+        "execution_id"
+      ],
+      "title": "RetryJobConfig",
+      "type": "object"
+    },
+    "RunJobConfig": {
+      "properties": {
+        "arg_string": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job options in Rundeck format, for example -opt value.",
+          "title": "Arguments"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Option name to value map. When supplied, Rundeck ignores Arguments.",
+          "title": "Option Values"
+        },
+        "loglevel": {
+          "anyOf": [
+            {
+              "enum": [
+                "DEBUG",
+                "VERBOSE",
+                "INFO",
+                "WARN",
+                "ERROR"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Log Level",
+          "enum": [
+            "DEBUG",
+            "VERBOSE",
+            "INFO",
+            "WARN",
+            "ERROR"
+          ],
+          "x-enum-searchable": true
+        },
+        "node_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Node Filter"
+        },
+        "job_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "run_job",
+          "default": "run_job",
+          "title": "Run Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "RunJobConfig",
+      "type": "object"
+    },
+    "RundeckTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "rundeck_api_token",
+          "default": "rundeck_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "server_url": {
+          "description": "Your public HTTPS Rundeck server, for example https://rundeck.example.com. Include a deployment context path if used; omit /api/60.",
+          "title": "Server URL",
+          "type": "string"
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "server_url",
+        "api_token"
+      ],
+      "title": "Rundeck API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing API token from your Rundeck User Profile and the public HTTPS server URL. Use a token whose roles allow the selected jobs and projects. NoClick sends X-Rundeck-Auth-Token over HTTPS and checks your user profile. API version 60 is required.",
+      "x-credential-url": "https://docs.rundeck.com/docs/api/#api-token-authentication"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "abort_execution": "#/$defs/AbortExecutionConfig",
+          "disable_job_execution": "#/$defs/DisableJobExecutionConfig",
+          "disable_job_schedule": "#/$defs/DisableJobScheduleConfig",
+          "enable_job_execution": "#/$defs/EnableJobExecutionConfig",
+          "enable_job_schedule": "#/$defs/EnableJobScheduleConfig",
+          "get_execution": "#/$defs/GetExecutionConfig",
+          "get_execution_output": "#/$defs/GetExecutionOutputConfig",
+          "get_execution_state": "#/$defs/GetExecutionStateConfig",
+          "get_job": "#/$defs/GetJobConfig",
+          "get_job_workflow": "#/$defs/GetJobWorkflowConfig",
+          "get_profile": "#/$defs/GetProfileConfig",
+          "get_project": "#/$defs/GetProjectConfig",
+          "list_job_executions": "#/$defs/ListJobExecutionsConfig",
+          "list_jobs": "#/$defs/ListJobsConfig",
+          "list_nodes": "#/$defs/ListNodesConfig",
+          "list_projects": "#/$defs/ListProjectsConfig",
+          "list_running_executions": "#/$defs/ListRunningExecutionsConfig",
+          "on_completed_execution": "#/$defs/OnCompletedExecutionConfig",
+          "query_executions": "#/$defs/QueryExecutionsConfig",
+          "retry_job": "#/$defs/RetryJobConfig",
+          "run_job": "#/$defs/RunJobConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/ListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ListJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/GetJobWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/RunJobConfig"
+        },
+        {
+          "$ref": "#/$defs/RetryJobConfig"
+        },
+        {
+          "$ref": "#/$defs/EnableJobExecutionConfig"
+        },
+        {
+          "$ref": "#/$defs/DisableJobExecutionConfig"
+        },
+        {
+          "$ref": "#/$defs/EnableJobScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/DisableJobScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/ListJobExecutionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetExecutionConfig"
+        },
+        {
+          "$ref": "#/$defs/GetExecutionStateConfig"
+        },
+        {
+          "$ref": "#/$defs/GetExecutionOutputConfig"
+        },
+        {
+          "$ref": "#/$defs/AbortExecutionConfig"
+        },
+        {
+          "$ref": "#/$defs/QueryExecutionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListRunningExecutionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListNodesConfig"
+        },
+        {
+          "$ref": "#/$defs/OnCompletedExecutionConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RundeckTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Rundeck Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

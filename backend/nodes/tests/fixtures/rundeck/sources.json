@@ -1,0 +1,10 @@
+{
+  "source": "https://docs.rundeck.com/docs/files/rundeck-api.yml",
+  "version": "60",
+  "examples": {
+    "profile": "GET /user/info user-profile",
+    "projects": "GET /projects projects-list",
+    "executions": "GET /project/{project}/executions executions-query"
+  },
+  "normalization": "The projects-list example is JSON serialized inside a YAML scalar in the published contract; decode it to its HTTP response array. Timestamps in the execution example are serialized as ISO-8601 strings."
+}
