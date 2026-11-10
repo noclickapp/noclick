@@ -1,0 +1,1600 @@
+{
+  "$defs": {
+    "ExLibrisActOnPrintoutConfig": {
+      "additionalProperties": false,
+      "description": "This API operates on an printout. given a Printout ID.",
+      "properties": {
+        "operation": {
+          "const": "act_on_printout",
+          "default": "act_on_printout",
+          "title": "Act On Printout",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "printout_id": {
+          "description": "The Printout ID",
+          "minLength": 1,
+          "title": "Printout Id",
+          "type": "string"
+        },
+        "op": {
+          "description": "The operation to perform on the printout. Currently, the options are 'mark_as_printed','mark_as_canceled'",
+          "enum": [
+            "mark_as_printed",
+            "mark_as_canceled"
+          ],
+          "title": "Op",
+          "type": "string"
+        }
+      },
+      "required": [
+        "printout_id",
+        "op"
+      ],
+      "title": "ExLibrisActOnPrintoutConfig",
+      "type": "object"
+    },
+    "ExLibrisActOnPrintoutsConfig": {
+      "additionalProperties": false,
+      "description": "This API performs an action on printouts: mark as printed or canceled. 10,000 records can be handled in one requests. Only printouts which were updated will be returned.",
+      "properties": {
+        "operation": {
+          "const": "act_on_printouts",
+          "default": "act_on_printouts",
+          "title": "Act On Printouts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "letter": {
+          "default": "ALL",
+          "description": "Printout Name. Optional. ",
+          "title": "Letter",
+          "type": "string"
+        },
+        "status": {
+          "default": "ALL",
+          "description": "Printout status. Optional. Valid values are: Printed, Pending, Canceled.",
+          "title": "Status",
+          "type": "string"
+        },
+        "printer_id": {
+          "default": "ALL",
+          "description": "Printout Printer",
+          "title": "Printer Id",
+          "type": "string"
+        },
+        "printed_by": {
+          "default": "ALL",
+          "description": "Printed by: ALL/ME. This field is relevant when using the API from within Cloud Apps.",
+          "title": "Printed By",
+          "type": "string"
+        },
+        "printout_id": {
+          "default": "ALL",
+          "description": "A list of Printout IDs (for example: 123,456,778) from 1 to the limit of 100 Optional. Use of this option overrides all of the filtering parameters",
+          "title": "Printout Id",
+          "type": "string"
+        },
+        "op": {
+          "description": "The operation to perform on the printout. Currently, the options are: 'mark_as_printed','mark_as_canceled'",
+          "enum": [
+            "mark_as_printed",
+            "mark_as_canceled"
+          ],
+          "title": "Op",
+          "type": "string"
+        }
+      },
+      "required": [
+        "op"
+      ],
+      "title": "ExLibrisActOnPrintoutsConfig",
+      "type": "object"
+    },
+    "ExLibrisCreatePrintoutConfig": {
+      "additionalProperties": false,
+      "description": "This Web service creates a Printout given a Printout Obj.",
+      "properties": {
+        "operation": {
+          "const": "create_printout",
+          "default": "create_printout",
+          "title": "Create Printout",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "$ref": "#/$defs/ExLibrisPrintoutBody",
+          "title": "Printout"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "ExLibrisCreatePrintoutConfig",
+      "type": "object"
+    },
+    "ExLibrisCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "exlibrisgroup_api_key",
+          "default": "exlibrisgroup_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "eu",
+          "description": "Choose the region used by your institution.",
+          "enum": [
+            "eu",
+            "na",
+            "ap",
+            "aps",
+            "cn",
+            "ca"
+          ],
+          "title": "API region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Ex Libris API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Alma API key with Task-lists permissions and select your institution's API region. Writes require read/write access. NoClick checks the institution's authority control tasks when connecting.",
+      "x-credential-url": "https://developers.exlibrisgroup.com/alma/apis/#defining"
+    },
+    "ExLibrisDismissAuthorityControlTaskConfig": {
+      "additionalProperties": false,
+      "description": "This API operates on an authority control task. given a Authority Control Task ID.",
+      "properties": {
+        "operation": {
+          "const": "dismiss_authority_control_task",
+          "default": "dismiss_authority_control_task",
+          "title": "Dismiss Authority Control Task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "description": "The Authority Control Task ID",
+          "minLength": 1,
+          "title": "Task Id",
+          "type": "string"
+        },
+        "op": {
+          "const": "dismiss",
+          "default": "dismiss",
+          "description": "The operation to perform on the authority control task. Currently, the option 'dismiss' is supported",
+          "title": "Op",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ExLibrisDismissAuthorityControlTaskConfig",
+      "type": "object"
+    },
+    "ExLibrisGetAuthorityControlTaskConfig": {
+      "additionalProperties": false,
+      "description": "This API returns an authority control task in Alma.",
+      "properties": {
+        "operation": {
+          "const": "get_authority_control_task",
+          "default": "get_authority_control_task",
+          "title": "Get Authority Control Task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "description": "The Authority Control Task ID",
+          "minLength": 1,
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ExLibrisGetAuthorityControlTaskConfig",
+      "type": "object"
+    },
+    "ExLibrisGetConnectionTestConfig": {
+      "additionalProperties": false,
+      "description": "This API is used to test if the API key was configured correctly.It returns a short XML (no schema available - the output is subject to changes) with the following structure:<test>GET - OK - institutionCode: 01ABC_INST</test>",
+      "properties": {
+        "operation": {
+          "const": "get_connection_test",
+          "default": "get_connection_test",
+          "title": "Get Connection Test",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ExLibrisGetConnectionTestConfig",
+      "type": "object"
+    },
+    "ExLibrisGetPrintoutConfig": {
+      "additionalProperties": false,
+      "description": "This Web service returns a Printout given a Printout ID.",
+      "properties": {
+        "operation": {
+          "const": "get_printout",
+          "default": "get_printout",
+          "title": "Get Printout",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "printout_id": {
+          "description": "The Printout ID",
+          "minLength": 1,
+          "title": "Printout Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "printout_id"
+      ],
+      "title": "ExLibrisGetPrintoutConfig",
+      "type": "object"
+    },
+    "ExLibrisListAuthorityControlTasksConfig": {
+      "additionalProperties": false,
+      "description": "This API returns a list of authority control tasks in Alma.",
+      "properties": {
+        "operation": {
+          "const": "list_authority_control_tasks",
+          "default": "list_authority_control_tasks",
+          "title": "List Authority Control Tasks",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mode": {
+          "default": "review",
+          "description": "Mode. Optional. Valid values: review (as in the Review tab), all (as in the All tab). Default: review.",
+          "enum": [
+            "review",
+            "all"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "mms_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by MMS ID. Optional.",
+          "title": "Mms Id"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by title. Optional.",
+          "title": "Title"
+        },
+        "bib_heading_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by bib heading before. Optional.",
+          "title": "Bib Heading Before"
+        },
+        "report_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report type. Optional.",
+          "title": "Report Type"
+        },
+        "vocabulary_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by vocabulary code. Optional.",
+          "title": "Vocabulary Code"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by field. Optional.",
+          "title": "Field"
+        },
+        "linked_inventory_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by linked inventory type. Optional. Valid values: PHYSICAL, DIGITAL, ELECTRONIC, NO_INVENTORY.",
+          "title": "Linked Inventory Type"
+        },
+        "brief_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by brief level. Optional. Numeric value.",
+          "title": "Brief Level"
+        },
+        "suppressed_from_discovery": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by suppressed from discovery. Optional. If omitted, all records are returned. Valid values: true (suppressed only), false (not suppressed only).",
+          "title": "Suppressed From Discovery",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        },
+        "linked_to_community_zone": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by linked to community zone. Optional. If omitted, all records are returned. Valid values: true (linked to CZ only), false (not linked to CZ only).",
+          "title": "Linked To Community Zone",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        },
+        "submit_date_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by submit date from (inclusive). Optional. Format: yyyy-MM-dd.",
+          "format": "date",
+          "title": "Submit Date From"
+        },
+        "submit_date_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by submit date to (inclusive). Optional. Format: yyyy-MM-dd.",
+          "format": "date",
+          "title": "Submit Date To"
+        },
+        "order_by": {
+          "default": "create_date",
+          "description": "Sort field. Optional. Valid values: create_date, mms_id, title, field, vocabulary_code, type.",
+          "enum": [
+            "create_date",
+            "mms_id",
+            "title",
+            "field",
+            "vocabulary_code",
+            "type"
+          ],
+          "title": "Order By",
+          "type": "string"
+        },
+        "direction": {
+          "default": "asc",
+          "description": "Sort direction. Optional. Valid values: asc, desc.",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Limits the number of results. Optional. Valid values are 0-100. Default value: 10.",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset of the results returned. Optional. Default value: 0.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "ExLibrisListAuthorityControlTasksConfig",
+      "type": "object"
+    },
+    "ExLibrisListLendingRequestsConfig": {
+      "additionalProperties": false,
+      "description": "This API returns a list of lending requests in Alma",
+      "properties": {
+        "operation": {
+          "const": "list_lending_requests",
+          "default": "list_lending_requests",
+          "title": "List Lending Requests",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "library": {
+          "description": "The resource sharing library for which lending requests should be retrieved. Mandatory. List of possible libraries can be retrieved using the [GET /almaws/v1/conf/libraries API](https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4Dp4I8TKv6CAxBlD4LyRaVE=/37088dc9-c685-4641-bc7f-60b5ca7cabed).",
+          "minLength": 1,
+          "title": "Library",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The status of lending requests to retrieve. Optional. List of possible statuses can be retrieved using the [GET almaws/v1/conf/code-tables/MandatoryLendingWorkflowSteps API](https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4K7cQ0vuYHLS4NSgDGmcRpRYqx5hIMRTng9SIKO5Vof+/37088dc9-c685-4641-bc7f-60b5ca7cabed) and the  [GET almaws/v1/conf/code-tables/OptionalLendingWorkflowSteps API](https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4K7cQ0vuYHLS4NSgDGmcRpRYqx5hIMRTng9SIKO5Vof+/37088dc9-c685-4641-bc7f-60b5ca7cabed).",
+          "title": "Status"
+        },
+        "printed": {
+          "anyOf": [
+            {
+              "enum": [
+                "Y",
+                "N"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The 'printed' value of lending requests to retrieve. Optional. Possible values: Y, N.",
+          "title": "Printed",
+          "enum": [
+            "Y",
+            "N"
+          ],
+          "x-enum-searchable": true
+        },
+        "reported": {
+          "anyOf": [
+            {
+              "enum": [
+                "Y",
+                "N"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The 'reported' value of lending requests to retrieve. Optional. Possible values: Y, N.",
+          "title": "Reported",
+          "enum": [
+            "Y",
+            "N"
+          ],
+          "x-enum-searchable": true
+        },
+        "partner": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The partner value. Only lending requests from this partner should be retrieved. Optional. List of possible partners can be retrieved using the [GET almaws/v1/partners API](https://developers.exlibrisgroup.com/alma/apis/partners/GET/gwPcGly021piAVNPLaef7suP1zfa6Lui/8883ef41-c3b8-4792-9ff8-cb6b729d6e07).",
+          "title": "Partner"
+        },
+        "requested_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Requested format of the resource. Optional. List of possible formats can be retrieved using the [GET almaws/v1/conf/code-tables/RequestFormats API](https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4K7cQ0vuYHLS4NSgDGmcRpRYqx5hIMRTng9SIKO5Vof+/37088dc9-c685-4641-bc7f-60b5ca7cabed).",
+          "title": "Requested Format"
+        },
+        "supplied_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplied Format of the resource. Optional. List of possible formats can be retrieved using the [GET almaws/v1/conf/code-tables/RequestFormats API](https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4K7cQ0vuYHLS4NSgDGmcRpRYqx5hIMRTng9SIKO5Vof+/37088dc9-c685-4641-bc7f-60b5ca7cabed).",
+          "title": "Supplied Format"
+        }
+      },
+      "required": [
+        "library"
+      ],
+      "title": "ExLibrisListLendingRequestsConfig",
+      "type": "object"
+    },
+    "ExLibrisListPrintoutsConfig": {
+      "additionalProperties": false,
+      "description": "This API returns a list of Printouts.",
+      "properties": {
+        "operation": {
+          "const": "list_printouts",
+          "default": "list_printouts",
+          "title": "List Printouts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "letter": {
+          "default": "ALL",
+          "description": "Printout Name. Optional. ",
+          "title": "Letter",
+          "type": "string"
+        },
+        "status": {
+          "default": "ALL",
+          "description": "Printout status. Optional. Valid values are: Printed, Pending, Canceled.",
+          "title": "Status",
+          "type": "string"
+        },
+        "printer_id": {
+          "default": "ALL",
+          "description": "Printout Printer",
+          "title": "Printer Id",
+          "type": "string"
+        },
+        "printed_by": {
+          "default": "ALL",
+          "description": "Printed by: ALL/ME. This field is relevant when using the API from within Cloud Apps.",
+          "title": "Printed By",
+          "type": "string"
+        },
+        "printout_id": {
+          "default": "ALL",
+          "description": "A list of Printout IDs (for example: 123,456,778) from 1 to the limit of 100 Optional. Use of this option overrides all of the filtering parameters",
+          "title": "Printout Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Limits the number of results. Optional. Valid values are 0-100. Default value: 10.",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset of the results returned. Optional. Default value: 0, which means that the first results will be returned.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "ExLibrisListPrintoutsConfig",
+      "type": "object"
+    },
+    "ExLibrisListRequestedResourcesConfig": {
+      "additionalProperties": false,
+      "description": "This API returns a list of requested resources to be picked from the shelf in Alma",
+      "properties": {
+        "operation": {
+          "const": "list_requested_resources",
+          "default": "list_requested_resources",
+          "title": "List Requested Resources",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "library": {
+          "description": "The library of the given circulation desk or department where the resources are located. Mandatory.",
+          "minLength": 1,
+          "title": "Library",
+          "type": "string"
+        },
+        "circ_desk": {
+          "description": "The circulation desk where the action is being performed. Mandatory.",
+          "minLength": 1,
+          "title": "Circ Desk",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The location code. Optional.",
+          "title": "Location"
+        },
+        "order_by": {
+          "default": "call_number",
+          "description": "The order in which to retrieve the results: location/call_number (default).",
+          "enum": [
+            "location",
+            "call_number"
+          ],
+          "title": "Order By",
+          "type": "string"
+        },
+        "direction": {
+          "default": "asc",
+          "description": "The order direction in which to retrieve the results. Optional.",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "pickup_inst": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The pickup institution. Optional.",
+          "title": "Pickup Inst"
+        },
+        "reported": {
+          "anyOf": [
+            {
+              "enum": [
+                "Y",
+                "N"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show reported results: Y/N. Optional.",
+          "title": "Reported",
+          "enum": [
+            "Y",
+            "N"
+          ],
+          "x-enum-searchable": true
+        },
+        "printed": {
+          "anyOf": [
+            {
+              "enum": [
+                "Y",
+                "N"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show printed results: Y/N. Optional.",
+          "title": "Printed",
+          "enum": [
+            "Y",
+            "N"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 10,
+          "description": "Limits the number of results. Optional. Valid values are 0-100. Default value: 10.",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset of the results returned. Optional. Default value: 0, which means that the first results will be returned.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "library",
+        "circ_desk"
+      ],
+      "title": "ExLibrisListRequestedResourcesConfig",
+      "type": "object"
+    },
+    "ExLibrisMarkLendingRequestsReportedConfig": {
+      "additionalProperties": false,
+      "description": "This API preforms the requested action on a list (specified by given filters) of lending requests in Alma",
+      "properties": {
+        "operation": {
+          "const": "mark_lending_requests_reported",
+          "default": "mark_lending_requests_reported",
+          "title": "Mark Lending Requests Reported",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "library": {
+          "description": "The resource sharing library from which lending requests should be retrieved. Mandatory. List of possible libraries can be retrieved using the [GET /almaws/v1/conf/libraries API](https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4Dp4I8TKv6CAxBlD4LyRaVE=/37088dc9-c685-4641-bc7f-60b5ca7cabed).",
+          "minLength": 1,
+          "title": "Library",
+          "type": "string"
+        },
+        "op": {
+          "const": "mark_reported",
+          "default": "mark_reported",
+          "description": "Operation to be preformed on the list of given requests. Currently the only supported action is 'mark_reported'. Mandatory.",
+          "title": "Op",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The status of lending requests to retrieve. Optional. List of possible statuses can be retrieved using the [GET almaws/v1/conf/code-tables/MandatoryLendingWorkflowSteps API](https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4K7cQ0vuYHLS4NSgDGmcRpRYqx5hIMRTng9SIKO5Vof+/37088dc9-c685-4641-bc7f-60b5ca7cabed).and the  [GET almaws/v1/conf/code-tables/OptionalLendingWorkflowSteps API](https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4K7cQ0vuYHLS4NSgDGmcRpRYqx5hIMRTng9SIKO5Vof+/37088dc9-c685-4641-bc7f-60b5ca7cabed).",
+          "title": "Status"
+        },
+        "printed": {
+          "anyOf": [
+            {
+              "enum": [
+                "Y",
+                "N"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The 'printed' value of lending requests to retrieve. Optional. Possible values: Y, N.",
+          "title": "Printed",
+          "enum": [
+            "Y",
+            "N"
+          ],
+          "x-enum-searchable": true
+        },
+        "reported": {
+          "anyOf": [
+            {
+              "enum": [
+                "Y",
+                "N"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The 'reported' value of lending requests to retrieve. Optional. Possible values: Y, N.",
+          "title": "Reported",
+          "enum": [
+            "Y",
+            "N"
+          ],
+          "x-enum-searchable": true
+        },
+        "partner": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The partner value. Only lending requests from this partner should be. Optional. List of possible partners can be retrieved using the [GET almaws/v1/partners API](https://developers.exlibrisgroup.com/alma/apis/partners/GET/gwPcGly021piAVNPLaef7suP1zfa6Lui/8883ef41-c3b8-4792-9ff8-cb6b729d6e07).",
+          "title": "Partner"
+        },
+        "requested_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Requested format of the resource. Optional. List of possible formats can be retrieved using the [GET almaws/v1/conf/code-tables/RequestFormats API](https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4K7cQ0vuYHLS4NSgDGmcRpRYqx5hIMRTng9SIKO5Vof+/37088dc9-c685-4641-bc7f-60b5ca7cabed).",
+          "title": "Requested Format"
+        },
+        "supplied_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplied Format of the resource. Optional. List of possible formats can be retrieved using the [GET almaws/v1/conf/code-tables/RequestFormats API](https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4K7cQ0vuYHLS4NSgDGmcRpRYqx5hIMRTng9SIKO5Vof+/37088dc9-c685-4641-bc7f-60b5ca7cabed).",
+          "title": "Supplied Format"
+        }
+      },
+      "required": [
+        "library"
+      ],
+      "title": "ExLibrisMarkLendingRequestsReportedConfig",
+      "type": "object"
+    },
+    "ExLibrisMarkRequestedResourcesReportedConfig": {
+      "additionalProperties": false,
+      "description": "This API performs an action on requested resources that are on the shelf in Alma",
+      "properties": {
+        "operation": {
+          "const": "mark_requested_resources_reported",
+          "default": "mark_requested_resources_reported",
+          "title": "Mark Requested Resources Reported",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "library": {
+          "description": "The library of the given circulation desk or department where the resources are located. Mandatory.",
+          "minLength": 1,
+          "title": "Library",
+          "type": "string"
+        },
+        "circ_desk": {
+          "description": "The circulation desk where the action is being performed. Mandatory.",
+          "minLength": 1,
+          "title": "Circ Desk",
+          "type": "string"
+        },
+        "op": {
+          "const": "mark_reported",
+          "default": "mark_reported",
+          "description": "Operation to be preformed on the list of given requests. Currently the only supported action is 'mark_reported'. Mandatory.",
+          "title": "Op",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The location code. Optional.",
+          "title": "Location"
+        },
+        "pickup_inst": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The pickup institution. Optional.",
+          "title": "Pickup Inst"
+        },
+        "reported": {
+          "anyOf": [
+            {
+              "enum": [
+                "Y",
+                "N"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show reported results: Y/N. Optional.",
+          "title": "Reported",
+          "enum": [
+            "Y",
+            "N"
+          ],
+          "x-enum-searchable": true
+        },
+        "printed": {
+          "anyOf": [
+            {
+              "enum": [
+                "Y",
+                "N"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show printed results: Y/N. Optional.",
+          "title": "Printed",
+          "enum": [
+            "Y",
+            "N"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "library",
+        "circ_desk"
+      ],
+      "title": "ExLibrisMarkRequestedResourcesReportedConfig",
+      "type": "object"
+    },
+    "ExLibrisOnNewAuthorityTaskConfig": {
+      "description": "Poll task creation order, baseline on arming, then emit unseen task IDs.\n\nLists up to 2,000 most recent tasks. Narrow by vocabulary when the review\nqueue is larger; a truncated queue fails without advancing the seen set.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_authority_task",
+          "default": "on_new_authority_task",
+          "title": "On New Authority Control Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        },
+        "vocabulary_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vocabulary code"
+        },
+        "mode": {
+          "default": "review",
+          "enum": [
+            "review",
+            "all"
+          ],
+          "title": "Task mode",
+          "type": "string"
+        }
+      },
+      "title": "ExLibrisOnNewAuthorityTaskConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ExLibrisPrinter": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "minLength": 1,
+          "title": "Printer code",
+          "type": "string"
+        },
+        "desc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Printer name"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "ExLibrisPrinter",
+      "type": "object"
+    },
+    "ExLibrisPrintoutBody": {
+      "additionalProperties": false,
+      "properties": {
+        "printout": {
+          "minLength": 1,
+          "title": "Printout name",
+          "type": "string"
+        },
+        "printer": {
+          "$ref": "#/$defs/ExLibrisPrinter",
+          "title": "Printer"
+        },
+        "letter": {
+          "minLength": 1,
+          "title": "Letter HTML",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "printout",
+        "printer",
+        "letter"
+      ],
+      "title": "ExLibrisPrintoutBody",
+      "type": "object"
+    },
+    "ExLibrisTestWritePermissionsConfig": {
+      "additionalProperties": false,
+      "description": "This API is used to test if the API key was configured correctly, including read/write permissions.It returns a short XML (no schema available - the output is subject to changes) with the following structure:<test>POST - OK</test>",
+      "properties": {
+        "operation": {
+          "const": "test_write_permissions",
+          "default": "test_write_permissions",
+          "title": "Test Write Permissions",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ExLibrisTestWritePermissionsConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "act_on_printout": "#/$defs/ExLibrisActOnPrintoutConfig",
+          "act_on_printouts": "#/$defs/ExLibrisActOnPrintoutsConfig",
+          "create_printout": "#/$defs/ExLibrisCreatePrintoutConfig",
+          "dismiss_authority_control_task": "#/$defs/ExLibrisDismissAuthorityControlTaskConfig",
+          "get_authority_control_task": "#/$defs/ExLibrisGetAuthorityControlTaskConfig",
+          "get_connection_test": "#/$defs/ExLibrisGetConnectionTestConfig",
+          "get_printout": "#/$defs/ExLibrisGetPrintoutConfig",
+          "list_authority_control_tasks": "#/$defs/ExLibrisListAuthorityControlTasksConfig",
+          "list_lending_requests": "#/$defs/ExLibrisListLendingRequestsConfig",
+          "list_printouts": "#/$defs/ExLibrisListPrintoutsConfig",
+          "list_requested_resources": "#/$defs/ExLibrisListRequestedResourcesConfig",
+          "mark_lending_requests_reported": "#/$defs/ExLibrisMarkLendingRequestsReportedConfig",
+          "mark_requested_resources_reported": "#/$defs/ExLibrisMarkRequestedResourcesReportedConfig",
+          "on_new_authority_task": "#/$defs/ExLibrisOnNewAuthorityTaskConfig",
+          "test_write_permissions": "#/$defs/ExLibrisTestWritePermissionsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ExLibrisListAuthorityControlTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/ExLibrisGetAuthorityControlTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ExLibrisDismissAuthorityControlTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ExLibrisListPrintoutsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExLibrisActOnPrintoutsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExLibrisCreatePrintoutConfig"
+        },
+        {
+          "$ref": "#/$defs/ExLibrisGetPrintoutConfig"
+        },
+        {
+          "$ref": "#/$defs/ExLibrisActOnPrintoutConfig"
+        },
+        {
+          "$ref": "#/$defs/ExLibrisListRequestedResourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/ExLibrisMarkRequestedResourcesReportedConfig"
+        },
+        {
+          "$ref": "#/$defs/ExLibrisListLendingRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExLibrisMarkLendingRequestsReportedConfig"
+        },
+        {
+          "$ref": "#/$defs/ExLibrisGetConnectionTestConfig"
+        },
+        {
+          "$ref": "#/$defs/ExLibrisTestWritePermissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExLibrisOnNewAuthorityTaskConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ExLibrisCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Exlibrisgroup Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
