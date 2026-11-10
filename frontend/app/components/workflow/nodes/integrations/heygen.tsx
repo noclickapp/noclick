@@ -11,7 +11,7 @@ const HeyGenIcon = ({ className, style }: { className?: string; style?: CSSPrope
 
 export const HeyGenNode: NodeDefinition = {
     type: 'automation-heygen', category: 'ai', label: 'HeyGen',
-    description: 'Create avatar and template videos, translate videos, and manage media',
+    description: 'Create avatar and template videos, translate videos, manage media, and start workflows when videos complete',
     Icon: HeyGenIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={HeyGenIcon} iconColor="" />),

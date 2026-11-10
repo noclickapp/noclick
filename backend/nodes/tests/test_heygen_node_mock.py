@@ -110,3 +110,78 @@ async def test_translation_accepts_existing_asset_without_downloading_it(monkeyp
     await node({"operation": "create_translation", "video": {"type": "asset_id", "asset_id": "asset_abc"}, "output_languages": ["English"]}).execute({})
     assert json.loads(calls[0].content)["video"] == {"type": "asset_id", "asset_id": "asset_abc"}
     assert len(calls) == 1
+
+
+WEBHOOK_EVENT = json.loads((Path(__file__).parent / "fixtures/heygen/video_completed.json").read_text())["body"]
+WEBHOOK_CREATED = json.loads((Path(__file__).parent / "fixtures/heygen/webhook_created.json").read_text())["body"]
+
+@pytest.mark.asyncio
+async def test_webhook_lifecycle_uses_documented_endpoint_and_secret(monkeypatch):
+    calls = transport(monkeypatch, WEBHOOK_CREATED)
+    config = {"operation": "on_video_completed"}
+    credential = {"api_key": TOKEN}
+    registration = await native.HeyGenNode._register_external_webhook(
+        webhook_url="https://test.hooks.example.test/webhook", credential=credential, config=config, node_id="heygen-test")
+    assert registration == {"external_webhook_id": "ep_abc123", "signing_secret": "whsec_k7x9m2..."}
+    assert calls[0].method == "POST" and calls[0].url.path == "/v3/webhooks/endpoints"
+    assert json.loads(calls[0].content) == {"url": "https://test.hooks.example.test/webhook", "events": ["avatar_video.success"]}
+    assert calls[0].headers["x-api-key"] == TOKEN
+    # Undo the client patch before installing the deletion transport.
+    monkeypatch.undo()
+    calls = transport(monkeypatch, {"data": {}})
+    await native.HeyGenNode._unregister_external_webhook(
+        credential=credential, config={**config, **registration}, node_id="heygen-test")
+    assert calls[0].method == "DELETE" and calls[0].url.path == "/v3/webhooks/endpoints/ep_abc123"
+    assert calls[0].content == b""
+
+@pytest.mark.parametrize("data", [{}, {"endpoint_id": "ep_abc123"}, {"secret": "whsec_test"}])
+@pytest.mark.asyncio
+async def test_webhook_registration_requires_secret_and_id(monkeypatch, data):
+    transport(monkeypatch, {"data": data})
+    with pytest.raises(ValueError, match="endpoint ID and signing secret"):
+        await native.HeyGenNode._register_external_webhook(webhook_url="https://test.hooks.example.test/webhook",
+            credential={"api_key": TOKEN}, config={"operation": "on_video_completed"}, node_id="heygen-test")
+
+@pytest.mark.asyncio
+async def test_webhook_teardown_failure_is_not_silently_lost(monkeypatch):
+    transport(monkeypatch, {"error": {"message": TOKEN}}, status=401)
+    with pytest.raises(ValueError, match="HTTP 401") as error:
+        await native.HeyGenNode._unregister_external_webhook(credential={"api_key": TOKEN},
+            config={"external_webhook_id": "ep_abc123"}, node_id="heygen-test")
+    assert TOKEN not in str(error.value)
+
+
+def test_webhook_signature_is_raw_body_hmac_sha256_with_verbatim_secret():
+    import hashlib
+    import hmac
+    raw = json.dumps(WEBHOOK_EVENT, indent=2).encode()
+    secret = "whsec_k7x9m2..."
+    signature = hmac.new(secret.encode(), raw, hashlib.sha256).hexdigest()
+    verify = native.HeyGenNode.verify_webhook_signature
+    assert verify(raw, {"Signature": signature}, {"signing_secret": secret})
+    assert not verify(raw + b" ", {"signature": signature}, {"signing_secret": secret})
+    assert not verify(raw, {"signature": signature}, {"signing_secret": "wrong"})
+    assert not verify(raw, {"signature": signature}, {})
+    for value in ("", "bad", "sha256=" + signature, "☃"):
+        assert not verify(raw, {"signature": value}, {"signing_secret": secret})
+
+@pytest.mark.asyncio
+async def test_documented_completion_reaches_workflow_and_human_shaped_agent_turn():
+    config = {"operation": "on_video_completed"}
+    cls = native.HeyGenNode
+    assert cls.filter_trigger_payload(WEBHOOK_EVENT, config)
+    output = cls.resolve_trigger_payload(WEBHOOK_EVENT, config)
+    assert output == {"status": "success", "event_type": "avatar_video.success", "data": WEBHOOK_EVENT["event_data"]}
+    assert await node(config).execute(WEBHOOK_EVENT) == output
+    event = cls.resolve_agent_event(output)
+    assert event["conversation_key"] == "vid_xyz789"
+    assert "completed avatar video vid_xyz789" in event["text"]
+    assert "https://files.heygen.com/video/vid_xyz789.mp4" in event["text"]
+    assert "get_video video_id=vid_xyz789" in event["text"]
+    assert "_webhook" not in event["text"] and "signing_secret" not in event["text"]
+    assert not cls.filter_trigger_payload({**WEBHOOK_EVENT, "event_type": "avatar_video.fail"}, config)
+    assert not cls.filter_trigger_payload(WEBHOOK_EVENT, {"operation": "list_videos"})
+    with pytest.raises(ValueError, match="video ID"):
+        cls.resolve_trigger_payload({"event_type": "avatar_video.success", "event_data": {}}, config)
+    parsed = node({**config, "external_webhook_id": "ep_abc123", "signing_secret": "whsec_test"})
+    assert parsed.config.config.model_dump()["signing_secret"] == "whsec_test"

@@ -15,3 +15,11 @@ Provider references: [create video](https://developers.heygen.com/reference/crea
 [generate from template](https://developers.heygen.com/reference/generate-video-from-template),
 [translate video](https://developers.heygen.com/reference/create-video-translation),
 [current user](https://developers.heygen.com/reference/get-current-user).
+
+`video_completed.json` copies the avatar_video.success event from
+https://developers.heygen.com/docs/webhook-events (List Delivered Events).
+`webhook_created.json` copies the registration response from
+https://developers.heygen.com/docs/webhooks. Only avatar_video.success has a
+complete documented payload example on that page; other event families are
+not subscribed to. Signatures use the raw body and verbatim secret (including
+whsec_) with HMAC-SHA256, hex in the signature header, as documented there.

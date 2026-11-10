@@ -4,6 +4,8 @@ Contract: https://developers.heygen.com/openapi/external-api.json.
 Lists return one page and preserve has_more/next_token. Generation returns a job,
 not a completed video; poll its corresponding get operation for completion.
 """
+import hashlib
+import hmac
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
 import httpx
@@ -11,6 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 
 BASE = "https://api.heygen.com"
 ResourceID = Annotated[str, Field(min_length=1, max_length=256, pattern=r"^[A-Za-z0-9_-]+$")]
@@ -181,7 +184,19 @@ class CreateFolder(Write):
     parent_id: str | None = Field(None, max_length=64)
     type: Literal["mixed", "video", "video_translate"] = "mixed"
 
-HeyGenOperation = Annotated[Union[GetCurrentUser, CreateVideo, ListVideos, GetVideo, DeleteVideo, GetTemplate, GetAvatarGroup, GetVoice, GetTranslation, DeleteTranslation, GetFolder, GetAsset, DeleteAsset, ListTemplates, GenerateFromTemplate, ListAvatarGroups, ListVoices, CreateTranslation, ListTranslations, ListTranslationLanguages, CreateFolder], Field(discriminator="operation")]
+class OnVideoCompleted(WebhookTriggerConfigBase):
+    """Start a workflow when HeyGen finishes an avatar video.
+
+    Payload and signature: https://developers.heygen.com/docs/webhook-events
+    and https://developers.heygen.com/docs/webhooks.
+    """
+    operation: Literal["on_video_completed"] = Field("on_video_completed", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+        "x-display-name": "Video Completed"})
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with HeyGen automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+HeyGenOperation = Annotated[Union[OnVideoCompleted, GetCurrentUser, CreateVideo, ListVideos, GetVideo, DeleteVideo, GetTemplate, GetAvatarGroup, GetVoice, GetTranslation, DeleteTranslation, GetFolder, GetAsset, DeleteAsset, ListTemplates, GenerateFromTemplate, ListAvatarGroups, ListVoices, CreateTranslation, ListTranslations, ListTranslationLanguages, CreateFolder], Field(discriminator="operation")]
 
 class HeyGenConfig(NodeConfig[HeyGenOperation, HeyGenAPIKey]):
     pass
@@ -197,7 +212,7 @@ def _redact(value, token):
         return {_redact(key, token): _redact(item, token) for key, item in value.items()}
     return value
 
-class HeyGenNode(WorkflowNode):
+class HeyGenNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-heygen"
     connection_evidence = ConnectionEvidence(noun="HeyGen account", identity_operation="get_current_user", identity_keys=("email", "username"))
 
@@ -205,10 +220,100 @@ class HeyGenNode(WorkflowNode):
     def get_config_model(cls):
         return HeyGenConfig
 
+    @staticmethod
+    async def _webhook_request(credential, method, path, body=None):
+        token = (credential or {}).get("api_key")
+        if not token:
+            raise ValueError("Connect a HeyGen API key before activating this trigger")
+        try:
+            async with httpx.AsyncClient(timeout=60, follow_redirects=False, trust_env=False) as client:
+                response = await client.request(method, BASE + path,
+                    headers={"x-api-key": token, "Accept": "application/json"},
+                    **({"json": body} if body is not None else {}))
+        except httpx.HTTPError:
+            raise ValueError("HeyGen webhook request could not be completed") from None
+        if not response.is_success:
+            raise ValueError(f"HeyGen webhook request failed (HTTP {response.status_code})")
+        try:
+            result = response.json()
+        except ValueError:
+            raise ValueError("HeyGen returned an invalid webhook response") from None
+        if not isinstance(result, dict) or result.get("error") or not isinstance(result.get("data"), dict):
+            raise ValueError("HeyGen returned an invalid webhook data envelope")
+        return result["data"]
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        if (config or {}).get("operation") != "on_video_completed":
+            raise ValueError("Choose the Video Completed trigger")
+        endpoint = await cls._webhook_request(credential, "POST", "/v3/webhooks/endpoints",
+            {"url": webhook_url, "events": ["avatar_video.success"]})
+        endpoint_id, secret = endpoint.get("endpoint_id"), endpoint.get("secret")
+        if not isinstance(endpoint_id, str) or not endpoint_id or not isinstance(secret, str) or not secret:
+            raise ValueError("HeyGen did not return a webhook endpoint ID and signing secret")
+        return {"external_webhook_id": endpoint_id, "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = (config or {}).get("external_webhook_id")
+        if endpoint_id:
+            await cls._webhook_request(credential, "DELETE",
+                "/v3/webhooks/endpoints/" + quote(str(endpoint_id), safe=""))
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # HeyGen uses the whole secret verbatim, including whsec_, and raw bytes.
+        secret = (config or {}).get("signing_secret")
+        signature = next((v for k, v in headers.items() if k.lower() == "signature"), "")
+        if not isinstance(secret, str) or not secret or not isinstance(signature, str):
+            return False
+        expected = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
+        try:
+            supplied = bytes.fromhex(signature)
+        except ValueError:
+            return False
+        return hmac.compare_digest(supplied, bytes.fromhex(expected))
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return (config or {}).get("operation") == "on_video_completed" and payload.get("event_type") == "avatar_video.success"
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if not cls.filter_trigger_payload(payload, config):
+            return None
+        data = payload.get("event_data")
+        if not isinstance(data, dict) or not isinstance(data.get("video_id"), str) or not data["video_id"]:
+            raise ValueError("HeyGen video completion did not include a video ID")
+        return {"status": "success", "event_type": payload["event_type"], "data": data}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("event_type") != "avatar_video.success":
+            return super().resolve_agent_event(output)
+        data = output.get("data")
+        if not isinstance(data, dict) or not data.get("video_id"):
+            return super().resolve_agent_event(output)
+        video_id = data["video_id"]
+        lines = [f"HeyGen completed avatar video {video_id}."]
+        for label, key in (("Video", "video_page_url"), ("Download (expires)", "url"),
+                           ("Share", "video_share_page_url"), ("GIF", "gif_download_url"),
+                           ("Folder ID", "folder_id"), ("Callback ID", "callback_id")):
+            if data.get(key):
+                lines.append(f"{label}: {data[key]}")
+        lines.append(f"To fetch the current video and fresh download links: get_video video_id={video_id}.")
+        return {"text": "\n".join(lines), "conversation_key": str(video_id), "title": f"HeyGen video completed: {video_id}"}
+
     async def execute(self, inputs):
         if not self.config or not self.config.credentials:
             raise ValueError("Connect a HeyGen API key")
         config = self.config.config
+        if isinstance(config, OnVideoCompleted):
+            payload = (self.node_data.get("config") or {}).get("_triggerPayload") or inputs
+            result = self.resolve_trigger_payload(payload, config.model_dump())
+            if result is None:
+                raise ValueError("Waiting for a HeyGen video completion")
+            return result
         method, route = ROUTES[config.operation]
         values = config.model_dump(exclude={"operation"}, exclude_none=True)
         for name in ("video_id", "template_id", "group_id", "voice_id", "video_translation_id", "folder_id", "asset_id"):
