@@ -107,9 +107,11 @@ def build_git_mount_script(setup: Dict[str, Any], workdir: str) -> str:
                 f"{shlex.quote(setup['auth_header'])}\n")
     elif setup.get("kind") == "git_proxy":
         raise ValueError(f"The checkout of {setup['repo']} was never given its key")
+    elif not setup.get("token"):
+        auth = ""  # a public repository's clone signs in with nothing
     else:
         repo_path = f"{setup['host']}/{setup['repo']}"
-        cred_line = f"https://x-access-token:{setup['token']}@{repo_path}.git"
+        cred_line = f"https://{setup.get('username') or 'x-access-token'}:{setup['token']}@{repo_path}.git"
         auth = (
             "git config --global credential.helper store\n"
             "git config --global credential.useHttpPath true\n"
@@ -132,8 +134,9 @@ def build_git_mount_script(setup: Dict[str, Any], workdir: str) -> str:
 
 
 def _gh_reaches(setup: Dict[str, Any]) -> bool:
-    """Whether ``gh`` reaches a setup's repository: a git host's, not the edition's own repo (``repo_id``)."""
-    return not setup.get("repo_id")
+    """Whether ``gh`` reaches a setup's repository: a git host's, not the edition's own repo (``repo_id``), nor a
+    git URL's, whose host could be any (its agent sets its own CLIs up)."""
+    return not setup.get("repo_id") and setup.get("kind") != "git_url"
 
 
 def build_gh_auth_script(setups: List[Dict[str, Any]]) -> str:
