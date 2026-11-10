@@ -268,8 +268,8 @@ class WhopNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     @classmethod
     def registration_fingerprint_fields(cls, config):
-        parsed = WhopOnEventConfig.model_validate(config or {})
-        return {"event_type": parsed.event_type, "resource_id": parsed.resource_id}
+        return {"event_type": (config or {}).get("event_type") or "payment.succeeded",
+                "resource_id": (config or {}).get("resource_id")}
 
     @classmethod
     async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):

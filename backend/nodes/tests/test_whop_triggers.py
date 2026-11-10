@@ -124,6 +124,7 @@ async def test_whop_registration_requires_secret_and_valid_config(monkeypatch):
 def test_whop_registration_scope_fingerprint():
     fingerprint = whop.WhopNode.registration_fingerprint_fields({})
     assert fingerprint == {"event_type": "payment.succeeded", "resource_id": None}
+    assert fingerprint == whop.WhopNode.registration_fingerprint_fields({"operation": "get_account"})
     for field, value in [("event_type", "membership.updated"), ("resource_id", "biz_xxxxxxxxxxxxxx")]:
         assert fingerprint != whop.WhopNode.registration_fingerprint_fields({field: value})
     assert fingerprint == whop.WhopNode.registration_fingerprint_fields({"webhook_url": "https://hooks.example.com/changed"})
