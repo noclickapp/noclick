@@ -884,6 +884,7 @@ async def run_local_harness_turn(
                 logger.debug("Local agent presence update failed", exc_info=True)
         async with asyncio.timeout(TURN_TIMEOUT_S):
             session, future = await sessions.submit(key, fingerprint, factory, prompt, activate)
+            node._harness_reached = True  # its CLI has the message (AgentNode._hand_back_turn)
             result = await asyncio.shield(future)
         error = result.pop("error", None)
         if error:

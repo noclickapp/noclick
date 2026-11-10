@@ -85,6 +85,18 @@ def assign_mount_dirs(setups: List[Dict[str, Any]]) -> None:
         setup["dir"] = chosen
 
 
+# A clone is tried this many times, a pause longer each time, before the mount fails with git's own exit: the first
+# clone of a just-moved agent met a cold credential proxy's redirect (2026-11-10), and a branch pushed seconds before
+# can be a moment from readable. Each retry says so on stderr (``CLONE_RETRY_MARK``), which the logs keep.
+CLONE_TRIES = 3
+CLONE_RETRY_MARK = "noclick: the clone failed; trying it again"
+
+
+def clone_retries(output: str) -> int:
+    """How many times a mount script's clone was tried again."""
+    return output.count(CLONE_RETRY_MARK)
+
+
 def build_git_mount_script(setup: Dict[str, Any], workdir: str) -> str:
     """Shell script that authenticates git and clones one repo.
 
@@ -126,7 +138,15 @@ def build_git_mount_script(setup: Dict[str, Any], workdir: str) -> str:
         f"mkdir -p {shlex.quote(target.rsplit('/', 1)[0])}\n"
         + auth +
         f"if [ ! -d {shlex.quote(target)}/.git ]; then\n"
-        f"  git clone {clone_args}{shlex.quote(setup['clone_url'])} {shlex.quote(target)}\n"
+        "  tries=0\n"
+        f"  until git clone {clone_args}{shlex.quote(setup['clone_url'])} {shlex.quote(target)}; do\n"
+        "    status=$?\n"
+        "    tries=$((tries + 1))\n"
+        f"    if [ \"$tries\" -ge {CLONE_TRIES} ]; then exit \"$status\"; fi\n"
+        f"    echo \"{CLONE_RETRY_MARK} (exit $status, try $tries of {CLONE_TRIES})\" >&2\n"
+        f"    rm -rf {shlex.quote(target)}\n"
+        "    sleep $((tries * 2))\n"
+        "  done\n"
         "fi\n"
         f"git -C {shlex.quote(target)} config user.name {shlex.quote(setup['git_user'])}\n"
         f"git -C {shlex.quote(target)} config user.email {shlex.quote(setup['git_email'])}\n"
@@ -248,6 +268,10 @@ async def _run_local(script: str, what: str, secrets: List[str]) -> None:
         stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
     )
     stdout_b, stderr_b = await process.communicate()
+    retried = clone_retries(stderr_b.decode(errors="replace"))
+    if process.returncode == 0 and retried:
+        logger.warning("[sandbox-git] %s: the clone was tried again %d time%s", what, retried,
+                       "" if retried == 1 else "s")
     if process.returncode != 0:
         from nodes.core.base import FailureWithDiagnostics
 

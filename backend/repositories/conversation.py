@@ -511,6 +511,13 @@ class ConversationRepo:
                 conversation_id,
             )
 
+    async def set_agent_model(self, conversation_id: str, agent_model: Optional[str]) -> None:
+        """Name the harness that ran the conversation's last turn (``get_agent_model``): put back by a turn that
+        failed before its harness had the message, so the next turn moves the thread as this one would have."""
+        async with self._pool.acquire() as conn:
+            await conn.execute("UPDATE conversations SET agent_model = $2 WHERE conversation_id::text = $1::text",
+                               conversation_id, agent_model)
+
     async def set_metadata_key(self, conversation_id: str, key: str, value: Any) -> None:
         """Set one top-level key of ``conversations.metadata`` (UPDATE-only)."""
         async with self._pool.acquire() as conn:
@@ -914,10 +921,11 @@ class ConversationRepo:
         return out
 
     async def mark_events_relayed(
-        self, conversation_id: str, relay_keys: List[tuple], kinds: Dict[str, str]
+        self, conversation_id: str, relay_keys: List[tuple], kinds: Dict[str, str], relayed: bool = True
     ) -> None:
         """Stamp ``relayed: true`` on the given ``(kind, id)`` events of ``kinds``,
-        so each reaches the agent exactly once."""
+        so each reaches the agent exactly once; ``relayed=False`` hands them back
+        to the next turn (one that failed before its harness had them)."""
         if not relay_keys:
             return
         ids_by_kind: Dict[str, List[str]] = {}
@@ -935,7 +943,7 @@ class ConversationRepo:
                         SELECT COALESCE(jsonb_agg(
                             CASE WHEN e.value ? '{kind}'
                                       AND (e.value->'{kind}'->>'{id_field}') = ANY($2::text[])
-                                 THEN jsonb_set(e.value, '{{{kind},relayed}}', 'true'::jsonb)
+                                 THEN jsonb_set(e.value, '{{{kind},relayed}}', to_jsonb($3::boolean))
                                  ELSE e.value END
                             ORDER BY e.ordinality), '[]'::jsonb)
                         FROM jsonb_array_elements(events) WITH ORDINALITY e
@@ -944,6 +952,7 @@ class ConversationRepo:
                     """,
                     conversation_id,
                     ids,
+                    relayed,
                 )
 
     async def update_app_context(
