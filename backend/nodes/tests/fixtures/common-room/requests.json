@@ -1,0 +1,254 @@
+[
+  {
+    "config": {
+      "operation": "list_contacts"
+    },
+    "method": "GET",
+    "path": "/api/v2/contacts",
+    "params": {
+      "limit": "50",
+      "sort": "id",
+      "direction": "asc"
+    },
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_contact",
+      "id": "c_123"
+    },
+    "method": "GET",
+    "path": "/api/v2/contacts/c_123",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_organizations"
+    },
+    "method": "GET",
+    "path": "/api/v2/organizations",
+    "params": {
+      "limit": "50",
+      "sort": "id",
+      "direction": "asc"
+    },
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_organization",
+      "id": "o_123"
+    },
+    "method": "GET",
+    "path": "/api/v2/organizations/o_123",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_activities"
+    },
+    "method": "GET",
+    "path": "/api/v2/activities",
+    "params": {
+      "limit": "50",
+      "sort": "activityTime",
+      "direction": "asc"
+    },
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_activity",
+      "id": "a_123"
+    },
+    "method": "GET",
+    "path": "/api/v2/activities/a_123",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_segments"
+    },
+    "method": "GET",
+    "path": "/api/v2/segments",
+    "params": {
+      "limit": "50"
+    },
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_segment",
+      "id": "s_123"
+    },
+    "method": "GET",
+    "path": "/api/v2/segments/s_123",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_tags"
+    },
+    "method": "GET",
+    "path": "/api/v2/tags",
+    "params": {
+      "limit": "50"
+    },
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_tag",
+      "id": "l_123"
+    },
+    "method": "GET",
+    "path": "/api/v2/tags/l_123",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_objects",
+      "objectTypeId": "cot_123"
+    },
+    "method": "GET",
+    "path": "/api/v2/objects",
+    "params": {
+      "limit": "50",
+      "sort": "id",
+      "direction": "asc",
+      "objectTypeId": "cot_123"
+    },
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_object",
+      "id": "co_123"
+    },
+    "method": "GET",
+    "path": "/api/v2/objects/co_123",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_me"
+    },
+    "method": "GET",
+    "path": "/api/v2/me",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_custom_fields"
+    },
+    "method": "GET",
+    "path": "/api/v2/custom-fields",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_lead_scores"
+    },
+    "method": "GET",
+    "path": "/api/v2/lead-scores",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_object_types"
+    },
+    "method": "GET",
+    "path": "/api/v2/object-types",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "create_segment",
+      "name": "Sales prospects"
+    },
+    "method": "POST",
+    "path": "/api/v2/segments",
+    "params": {},
+    "body": {
+      "name": "Sales prospects",
+      "entityType": "contact"
+    }
+  },
+  {
+    "config": {
+      "operation": "rename_segment",
+      "id": "s_123",
+      "name": "Sales prospects"
+    },
+    "method": "PATCH",
+    "path": "/api/v2/segments/s_123",
+    "params": {},
+    "body": {
+      "name": "Sales prospects"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_contacts",
+      "contactIds": [
+        "c_123"
+      ],
+      "segmentId": "s_123"
+    },
+    "method": "POST",
+    "path": "/api/v2/contacts/bulk",
+    "params": {},
+    "body": {
+      "contactIds": [
+        "c_123"
+      ],
+      "segmentId": "s_123"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_organizations",
+      "organizationIds": [
+        "o_123"
+      ],
+      "segmentId": "s_123"
+    },
+    "method": "POST",
+    "path": "/api/v2/organizations/bulk",
+    "params": {},
+    "body": {
+      "organizationIds": [
+        "o_123"
+      ],
+      "segmentId": "s_123"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_objects",
+      "objectIds": [
+        "co_123"
+      ],
+      "segmentId": "s_123"
+    },
+    "method": "POST",
+    "path": "/api/v2/objects/bulk",
+    "params": {},
+    "body": {
+      "objectIds": [
+        "co_123"
+      ],
+      "segmentId": "s_123"
+    }
+  }
+]
