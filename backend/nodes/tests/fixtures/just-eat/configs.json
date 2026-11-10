@@ -1,0 +1,75 @@
+{
+  "estimate_delivery": {
+    "config": {
+      "collect_point_id": "efeb46ce-53eb-44cd-afba-ba59e7b84a57",
+      "delivery_json": "{\"name\": \"Delivery Point\", \"emailAddress\": \"delivery.point@email.com\", \"phoneNumber\": \"+12049433578\", \"address\": \"140 Bannatyne Ave\", \"city\": \"Winnipeg\", \"province\": \"Manitoba\", \"postalCode\": \"R3B 3C5\", \"geolocation\": {\"coordinates\": [-37.8156, 144.96292], \"type\": \"point\"}}",
+      "delivery_details_json": "{\"weightGrams\": 100, \"preparationDuration\": 30, \"hasAlcohol\": true, \"ageRestriction\": 18, \"ageVerificationWithId\": false}",
+      "delivery_options_json": "{\"proofOfDelivery\": {\"pinCode\": {\"type\": \"DSP_GENERATED\"}}, \"unreachablePreference\": \"DROP_OFF\", \"proofOfPickup\": {\"barcode\": {\"type\": \"PARTNER_PROVIDED\"}}, \"vehiclePreference\": {\"carOnly\": true}, \"dropoffAction\": \"MEET_AT_DOOR\"}",
+      "target_deliver_time": "2021-12-20T15:25:33.339Z",
+      "item_list_json": "[{\"itemId\": \"1111\", \"name\": \"Item1\", \"quantity\": 4, \"weight\": 200, \"barcode\": {\"type\": \"UPC\", \"value\": \"3765532\"}, \"price\": 1000, \"category\": \"FOOD\"}, {\"itemId\": \"1141\", \"name\": \"Item4\", \"quantity\": 3, \"weight\": 1000, \"barcode\": {\"type\": \"UPC\", \"value\": \"376665532\"}, \"price\": 1200, \"category\": \"GROCERY\"}]"
+    },
+    "source": "https://uk.api.just-eat.io/docs/openapi.yaml"
+  },
+  "create_delivery": {
+    "config": {
+      "request_id": "9f84ce96-69e4-4122-8250-b17c0e92dd25",
+      "special_instructions": "Double meat",
+      "target_collect_time": "2021-08-04T19:00:45.211Z",
+      "tip": 100,
+      "order_value": 2000,
+      "vendor_order_id": "123456789",
+      "payment_type": "PREPAID",
+      "metadata_json": "{\"store_id\": \"2132546\"}"
+    },
+    "source": "https://uk.api.just-eat.io/docs/openapi.yaml"
+  },
+  "cancel_delivery": {
+    "config": {
+      "request_id": "9f84ce96-69e4-4122-8250-b17c0e92dd25"
+    },
+    "source": "https://uk.api.just-eat.io/docs/openapi.yaml"
+  },
+  "request_assistance": {
+    "config": {
+      "request_id": "9f84ce96-69e4-4122-8250-b17c0e92dd25",
+      "collect_point_id": "efeb46ce-53eb-44cd-afba-ba59e7b84a57",
+      "reason": "COLLECTION_TIME_UPDATE"
+    },
+    "source": "https://uk.api.just-eat.io/docs/openapi.yaml"
+  },
+  "simulate_delivery": {
+    "config": {
+      "request_id": "9f84ce96-69e4-4122-8250-b17c0e92dd25",
+      "step_wait_duration": 10000
+    },
+    "source": "https://uk.api.just-eat.io/docs/openapi.yaml"
+  },
+  "create_notification_config": {
+    "config": {
+      "email": "email@partner.com",
+      "endpoint": "https://uk.api.just-eat.io",
+      "secret": "partner-password",
+      "subscriptions_json": "[\"COURIERJOBSTATUS\", \"CANCELJOBSTATUS\"]"
+    },
+    "source": "https://uk.api.just-eat.io/docs/openapi.yaml"
+  },
+  "update_notification_config": {
+    "config": {
+      "subscriptions_json": "[\"COURIERJOBSTATUS\", \"CANCELJOBSTATUS\"]"
+    },
+    "source": "https://uk.api.just-eat.io/docs/openapi.yaml"
+  },
+  "on_delivery_event": {
+    "config": {
+      "email": "email@partner.com",
+      "replace_existing_configuration": true
+    },
+    "source": "https://uk.api.just-eat.io/docs/openapi.yaml"
+  },
+  "get_delivery_status": {
+    "config": {
+      "request_id": "9f84ce96-69e4-4122-8250-b17c0e92dd25"
+    },
+    "source": "https://uk.api.just-eat.io/docs/openapi.yaml"
+  }
+}
