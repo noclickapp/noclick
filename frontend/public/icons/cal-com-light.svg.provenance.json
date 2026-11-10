@@ -1,0 +1,11 @@
+{
+  "path": "frontend/public/icons/cal-com-light.svg",
+  "source": "/icons/cal-com.svg in this repository (the dark-mode file)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "light mode: each paint replaced by its exact inverse (#ffffff -> #000000, #000000 -> #FFFFFF), reproducing what the retired CSS invert filter drew; no geometry changed"
+  ],
+  "variant": "light mode",
+  "license": "Brand mark of its owner, used nominatively to identify the connected service; trademark rights remain with its owner.",
+  "sha256": "be3af16e92f3011b964837f50dfc9771bb79a51f951bd5090741dbfadd68170f"
+}

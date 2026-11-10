@@ -9,13 +9,9 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 // Unmodified compact brand asset from https://neonone.com/solutions/neon-crm-overview/
 import type { CSSProperties as BrandCSSProperties } from 'react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <>
-        <img src="/icons/neoncrm-brand.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
-        <img src="/icons/neoncrm-brand-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
-    </>
+    <ThemedBrandImg light="/icons/neoncrm-brand.svg" dark="/icons/neoncrm-brand-dark.svg" className={className} style={style} />
 );
 
 export const NeonCRMIcon = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(

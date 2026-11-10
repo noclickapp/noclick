@@ -6,10 +6,10 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 import DNSimpleIcon from '~/components/icons/DNSimpleIcon';
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Vector brand artwork from https://dnsimple.com
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/dnsimple-brand-vector.svg" alt="" aria-hidden="true" className={(className || '') + ' [--brand-invert:0] dark:[--brand-invert:1]'}
-        style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
+    <ThemedBrandImg light="/icons/dnsimple-brand-vector.svg" dark="/icons/dnsimple-brand-vector-dark.svg" className={className} style={style} />
 );
 
 const DNSimpleNodeComponent = (props: NodeProps) => (

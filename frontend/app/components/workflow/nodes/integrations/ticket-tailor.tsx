@@ -5,14 +5,10 @@ import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nod
 
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Vector brand artwork from https://www.tickettailor.com
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <>
-        <img src="/icons/ticket-tailor.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
-        <img src="/icons/ticket-tailor-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
-    </>
+    <ThemedBrandImg light="/icons/ticket-tailor.svg" dark="/icons/ticket-tailor-dark.svg" className={className} style={style} />
 );
 
 export const TicketTailorIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(

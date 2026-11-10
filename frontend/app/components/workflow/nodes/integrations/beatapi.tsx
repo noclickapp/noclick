@@ -1,6 +1,7 @@
 import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 import {
     NodeDefinition,
     SvgIconComponent,
@@ -10,23 +11,7 @@ const BeatapiIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <>
-        <img
-            ref={ref}
-            src="/icons/beatapi.png"
-            alt=""
-            className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' }}
-            {...props}
-        />
-        <img
-            src="/icons/beatapi-dark.png"
-            alt=""
-            className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' }}
-            {...props}
-        />
-    </>
+    <ThemedBrandImg light="/icons/beatapi.png" dark="/icons/beatapi-dark.png" className={className} style={style} {...props} ref={ref} />
 ));
 BeatapiIcon.displayName = 'BeatapiIcon';
 

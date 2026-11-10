@@ -1,0 +1,11 @@
+{
+  "path": "frontend/public/icons/statuspal-brand-vector-dark.svg",
+  "source": "/icons/statuspal-brand-vector.svg in this repository (the light-mode file)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: each paint replaced by its exact inverse (#000000 -> #FFFFFF), reproducing what the retired CSS invert filter drew; no geometry changed"
+  ],
+  "variant": "dark mode",
+  "license": "Brand mark of its owner, used nominatively to identify the connected service; trademark rights remain with its owner.",
+  "sha256": "25090d714798481c77d385fa761be6c27644f3085bf77e989f1abb2ab0710104"
+}

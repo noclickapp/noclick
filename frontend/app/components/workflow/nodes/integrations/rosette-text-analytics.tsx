@@ -3,12 +3,10 @@ import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const RosetteTextAnalyticsIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <>
-            <img ref={ref} src="/icons/rosette-text-analytics.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} {...props} />
-            <img src="/icons/rosette-text-analytics-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} {...props} />
-        </>
+        <ThemedBrandImg light="/icons/rosette-text-analytics.svg" dark="/icons/rosette-text-analytics-dark.svg" className={className} style={style} {...props} ref={ref} />
     ),
 );
 RosetteTextAnalyticsIcon.displayName = 'RosetteTextAnalyticsIcon';

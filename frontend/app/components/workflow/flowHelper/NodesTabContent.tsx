@@ -525,9 +525,7 @@ export function NodePreviewIcon({
             style={{
                 width: iconSize,
                 height: iconSize,
-                // invert(var(--brand-invert,0)) composes with the shadow so
-                // monochrome marks (.brand-mono sets the var) still flip.
-                filter: `invert(var(--brand-invert, 0)) ${shadow}`,
+                filter: shadow,
             }}
         />
     );

@@ -1,11 +1,10 @@
 // Displays the exact original inline SVG from DNSimple's official v2 guide.
-// Source-black artwork is converted to the shared white-mark convention before theme/disabled filters.
-import { forwardRef, type CSSProperties, type ImgHTMLAttributes } from 'react';
+// Black artwork in light mode, its white copy (dnsimple-dark.svg) in dark mode.
+import { forwardRef, type ImgHTMLAttributes } from 'react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const DNSimpleIcon = forwardRef<HTMLImageElement, ImgHTMLAttributes<HTMLImageElement>>(
-    ({ style, className, ...props }, ref) => (
-        <img {...props} ref={ref} src="/icons/dnsimple.svg" alt="" aria-hidden="true"
-            className={['brand-mono', className].filter(Boolean).join(' ')}
-            style={{ ...style, objectFit: 'contain', filter: 'invert(1) ' + (style?.filter || 'invert(var(--brand-invert, 0))') } as CSSProperties} />
+    (props, ref) => (
+        <ThemedBrandImg {...props} ref={ref} light="/icons/dnsimple.svg" dark="/icons/dnsimple-dark.svg" />
     ),
 );
 DNSimpleIcon.displayName = 'DNSimpleIcon';

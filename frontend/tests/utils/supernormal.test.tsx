@@ -45,14 +45,21 @@ describe('native Supernormal wiring', () => {
     expect(defs.SupernormalRecordingsConfig.properties.per_page).toBeUndefined();
   });
 
-  it('adapts the exact dark artwork before the real canvas filter and retains sizing', () => {
-    const filter = 'invert(var(--brand-invert, 0)) drop-shadow(0 0 3px black)';
+  it('shows the exact dark artwork in light mode and its white copy in dark, under the real canvas filter', () => {
+    const filter = 'drop-shadow(0 0 3px black)';
     const html = renderToStaticMarkup(<SupernormalIcon style={{ width: 48, height: 48, filter }} />);
-    expect(html).toContain('/icons/supernormal.svg');
-    expect(html).toContain('object-fit:contain');
-    expect(html).toContain(`filter:invert(1) ${filter}`);
-    expect(html).toContain('brand-mono');
+    const [light, dark, ...more] = html.match(/<img[^>]*>/g) ?? [];
+    expect(more).toEqual([]);
+    expect(light).toContain('src="/icons/supernormal.svg"');
+    expect(light).toContain('class="dark:hidden"');
+    expect(dark).toContain('src="/icons/supernormal-dark.svg"');
+    expect(dark).toContain('class="hidden dark:block"');
+    for (const img of [light, dark]) {
+      expect(img).toContain('object-fit:contain');
+      expect(img).toContain(`filter:${filter}`);
+    }
     const disabled = renderToStaticMarkup(<SupernormalIcon style={{ filter: 'grayscale(100%) brightness(0.4) drop-shadow(0 0 3px black)' }} />);
-    expect(disabled).toContain('filter:invert(1) grayscale(100%) brightness(0.4)');
+    expect(disabled).toContain('filter:grayscale(100%) brightness(0.4)');
+    expect(disabled).not.toContain('invert(');
   });
 });

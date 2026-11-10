@@ -6,29 +6,14 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };
 
 const DocusignIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <>
-        <img
-            ref={ref}
-            src="/icons/docusign-brand-vector.svg"
-            alt=""
-            className={`${className ?? ''} dark:hidden`}
-            style={style}
-            {...props}
-        />
-        <img
-            src="/icons/docusign-brand-vector-dark.svg"
-            alt=""
-            className={`${className ?? ''} hidden dark:block`}
-            style={style}
-            {...props}
-        />
-    </>
+    <ThemedBrandImg light="/icons/docusign-brand-vector.svg" dark="/icons/docusign-brand-vector-dark.svg" className={className} style={style} {...props} ref={ref} />
 ));
 DocusignIcon.displayName = 'DocusignIcon';
 

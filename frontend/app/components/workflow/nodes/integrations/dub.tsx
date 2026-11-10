@@ -3,13 +3,9 @@ import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const DubIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-  <>
-      <img src="/icons/dub-preferred-brand.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
-      <img src="/icons/dub-preferred-brand-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
-  </>
+  <ThemedBrandImg light="/icons/dub-preferred-brand.svg" dark="/icons/dub-preferred-brand-dark.svg" className={className} style={style} />
 );
 
 export const DubNode: NodeDefinition = {

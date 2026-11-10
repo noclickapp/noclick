@@ -4,6 +4,7 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const TemporalIcon = ({
     className,
     style,
@@ -11,22 +12,7 @@ const TemporalIcon = ({
     className?: string;
     style?: CSSProperties;
 }) => (
-    <>
-        <img
-            src="/icons/temporal.svg"
-            alt=""
-            aria-hidden="true"
-            className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' } as CSSProperties}
-        />
-        <img
-            src="/icons/temporal-dark.svg"
-            alt=""
-            aria-hidden="true"
-            className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' } as CSSProperties}
-        />
-    </>
+    <ThemedBrandImg light="/icons/temporal.svg" dark="/icons/temporal-dark.svg" className={className} style={style} />
 );
 
 export const TemporalNode: NodeDefinition = {

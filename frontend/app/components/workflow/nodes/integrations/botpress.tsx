@@ -8,10 +8,10 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Vector brand artwork from https://botpress.com
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/botpress-brand-vector.svg" alt="" aria-hidden="true" className={(className || '') + ' [--brand-invert:0] dark:[--brand-invert:1]'}
-        style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
+    <ThemedBrandImg light="/icons/botpress-brand-vector.svg" dark="/icons/botpress-brand-vector-dark.svg" className={className} style={style} />
 );
 
 export const BotpressIcon = forwardRef<HTMLImageElement, ImgHTMLAttributes<HTMLImageElement>>(

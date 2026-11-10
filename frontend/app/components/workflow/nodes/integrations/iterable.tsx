@@ -1,16 +1,12 @@
-import { forwardRef, type CSSProperties, type ImgHTMLAttributes } from 'react';
+import { forwardRef, type ImgHTMLAttributes } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const IterableIcon = forwardRef<HTMLImageElement, ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <>
-            <img {...props} className={`${className ?? ''} dark:hidden`} ref={ref} src="/icons/iterable-preferred-brand.svg" alt="" aria-hidden="true"
-                style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
-            <img {...props} className={`${className ?? ''} hidden dark:block`} src="/icons/iterable-preferred-brand-dark.svg" alt="" aria-hidden="true"
-                style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
-        </>
+        <ThemedBrandImg light="/icons/iterable-preferred-brand.svg" dark="/icons/iterable-preferred-brand-dark.svg" className={className} style={style} {...props} ref={ref} />
     ),
 );
 IterableIcon.displayName = 'IterableIcon';

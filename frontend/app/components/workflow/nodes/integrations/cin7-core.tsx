@@ -3,14 +3,10 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const Cin7CoreIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <>
-            <img ref={ref} src="/icons/cin7-core.svg" alt="" className={`${className ?? ''} dark:hidden`}
-                style={{ ...style, objectFit: 'contain' }} {...props} />
-            <img src="/icons/cin7-core-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`}
-                style={{ ...style, objectFit: 'contain' }} {...props} />
-        </>
+        <ThemedBrandImg light="/icons/cin7-core.svg" dark="/icons/cin7-core-dark.svg" className={className} style={style} {...props} ref={ref} />
     ),
 );
 Cin7CoreIcon.displayName = 'Cin7CoreIcon';

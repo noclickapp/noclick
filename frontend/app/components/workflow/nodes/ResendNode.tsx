@@ -6,6 +6,7 @@ import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from './types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const DIMENSIONS = { width: 90, height: 90, iconSize: 42 };
 
@@ -13,15 +14,8 @@ const DIMENSIONS = { width: 90, height: 90, iconSize: 42 };
 const ResendIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
->(({ className, style, ...props }, ref) => (
-    <img
-        ref={ref}
-        src="/icons/resend.svg"
-        alt=""
-        className={`brand-mono ${className || ''}`}
-        style={style}
-        {...props}
-    />
+>((props, ref) => (
+    <ThemedBrandImg ref={ref} light="/icons/resend-light.svg" dark="/icons/resend.svg" {...props} />
 ));
 ResendIcon.displayName = 'ResendIcon';
 

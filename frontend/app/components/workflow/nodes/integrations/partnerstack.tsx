@@ -4,12 +4,10 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const PartnerStackIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <>
-            <img ref={ref} src="/icons/partnerstack.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} {...props} />
-            <img src="/icons/partnerstack-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} {...props} />
-        </>
+        <ThemedBrandImg light="/icons/partnerstack.svg" dark="/icons/partnerstack-dark.svg" className={className} style={style} {...props} ref={ref} />
     ),
 );
 PartnerStackIcon.displayName = 'PartnerStackIcon';

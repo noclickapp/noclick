@@ -1,6 +1,7 @@
 import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 import {
     NodeDefinition,
     SvgIconComponent,
@@ -10,23 +11,7 @@ const FireberryIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <>
-        <img
-            ref={ref}
-            src="/icons/fireberry.svg"
-            alt=""
-            className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' }}
-            {...props}
-        />
-        <img
-            src="/icons/fireberry-dark.svg"
-            alt=""
-            className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' }}
-            {...props}
-        />
-    </>
+    <ThemedBrandImg light="/icons/fireberry.svg" dark="/icons/fireberry-dark.svg" className={className} style={style} {...props} ref={ref} />
 ));
 FireberryIcon.displayName = 'FireberryIcon';
 

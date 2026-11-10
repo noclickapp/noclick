@@ -21,10 +21,10 @@ describe('Teachable native wiring', () => {
     it('registers the native definition and preserves exact official SVG geometry under the supplied canvas filter', async () => {
         expect(getNodeMetadata(NODE)?.label).toBe('Teachable');
         expect(TeachableNode.type).toBe(NODE);
-        const markup = renderToStaticMarkup(<TeachableIcon style={{ width: 48, height: 48, filter: 'invert(var(--brand-invert, 0)) drop-shadow(0 1px 2px black)' }} />);
+        const markup = renderToStaticMarkup(<TeachableIcon style={{ width: 48, height: 48, filter: 'drop-shadow(0 1px 2px black)' }} />);
         expect(markup).toContain('src="/icons/teachable.png"');
         expect(markup).toContain('object-fit:contain');
-        expect(markup).toContain('invert(var(--brand-invert, 0))');
+        expect(markup).toContain('filter:drop-shadow(0 1px 2px black)');
     });
     it('reads both native nullable models through actual credential readers without converting the supplied grant into login OAuth', () => {
         const info = getNodeCredentialInfo(NODE)!;

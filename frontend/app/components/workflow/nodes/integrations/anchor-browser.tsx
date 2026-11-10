@@ -3,12 +3,10 @@ import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const AnchorBrowserIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <>
-            <img ref={ref} src="/icons/anchor-browser.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} {...props} />
-            <img src="/icons/anchor-browser-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} {...props} />
-        </>
+        <ThemedBrandImg light="/icons/anchor-browser.svg" dark="/icons/anchor-browser-dark.svg" className={className} style={style} {...props} ref={ref} />
     ),
 );
 AnchorBrowserIcon.displayName = 'AnchorBrowserIcon';

@@ -4,12 +4,10 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const EzekiaIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <>
-            <img ref={ref} src="/icons/ezekia.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} {...props} />
-            <img src="/icons/ezekia-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} {...props} />
-        </>
+        <ThemedBrandImg light="/icons/ezekia.svg" dark="/icons/ezekia-dark.svg" className={className} style={style} {...props} ref={ref} />
     ),
 );
 EzekiaIcon.displayName = 'EzekiaIcon';

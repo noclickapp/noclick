@@ -17,8 +17,6 @@ const IntercomIcon: SvgIconComponent = forwardRef<
         ref={ref}
         src="/icons/intercom.svg"
         alt=""
-        // NOT brand-mono: intercom's mark is light CYAN (#6AFDEF), not white —
-        // inverting flips it to dark red. Keep its brand color.
         className={className || ''}
         style={style}
         {...props}

@@ -6,12 +6,10 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const JevIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <>
-            <img ref={ref} src="/icons/jev.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} {...props} />
-            <img src="/icons/jev-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} {...props} />
-        </>
+        <ThemedBrandImg light="/icons/jev.svg" dark="/icons/jev-dark.svg" className={className} style={style} {...props} ref={ref} />
     ),
 );
 JevIcon.displayName = 'JevIcon';

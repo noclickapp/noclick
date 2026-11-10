@@ -10,16 +10,12 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Vector brand artwork from https://luma.com
 
 // Sourced brand artwork: https://github.com/ComposioHQ/logo-cdn/blob/3eff86db0d0ac01806c4a8791a6965c35ea23ffb/src/assets/luma.svg
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <>
-        <img src="/icons/luma-preferred-brand.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
-        <img src="/icons/luma-preferred-brand-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
-    </>
+    <ThemedBrandImg light="/icons/luma-preferred-brand.svg" dark="/icons/luma-preferred-brand-dark.svg" className={className} style={style} />
 );
 
 const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };

@@ -6,13 +6,9 @@ import { NodeDefinition } from '~/components/workflow/nodes/types';
 
 // Unmodified compact brand asset from https://centralstationcrm.com
 import type { CSSProperties as BrandCSSProperties } from 'react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <>
-        <img src="/icons/centralstationcrm-brand.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
-        <img src="/icons/centralstationcrm-brand-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
-    </>
+    <ThemedBrandImg light="/icons/centralstationcrm-brand.svg" dark="/icons/centralstationcrm-brand-dark.svg" className={className} style={style} />
 );
 
 const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };

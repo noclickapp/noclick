@@ -248,22 +248,6 @@ body {
     @apply bg-white;
 }
 
-/* Monochrome (all-white) brand marks — notion, resend, extend, … — render as a
-   dark glyph in light mode and stay white in dark, so they never vanish on a
-   light node body / chip. One class, applied wherever the mark renders (node
-   img components + SerializedIcon wrappers), standardizes it everywhere.
-   `--brand-invert` is exposed so a consumer that sets its own inline `filter`
-   (e.g. an icon drop-shadow) can COMPOSE the inversion instead of clobbering it:
-   `filter: invert(var(--brand-invert, 0)) drop-shadow(...)`. */
-.brand-mono {
-    --brand-invert: 1;
-    filter: invert(1);
-}
-.dark .brand-mono {
-    --brand-invert: 0;
-    filter: none;
-}
-
 @keyframes fadeIn {
     from {
         opacity: 0;

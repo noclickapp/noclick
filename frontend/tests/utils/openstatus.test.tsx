@@ -59,9 +59,12 @@ it('wires exactly thirteen closed read operations and dependent page ancestry', 
     for (const field of ['url', 'body', 'rpc']) expect(cfg.properties).not.toHaveProperty(field);
 });
 
-it('renders the unchanged official checked-in vector asset', () => {
+it('renders the official vector in light mode and its white copy in dark', () => {
     const { container } = render(<OpenStatusNode.Icon />);
-    expect(container.querySelector('img')?.getAttribute('src')).toBe('/icons/openstatus.svg');
+    const [light, dark] = container.querySelectorAll('img');
+    expect(light.getAttribute('src')).toBe('/icons/openstatus.svg');
+    expect(dark.getAttribute('src')).toBe('/icons/openstatus-dark.svg');
+    expect(dark.className).toBe('hidden dark:block');
 });
 
 it('selects only the owned current native key family through the actual cache', () => {

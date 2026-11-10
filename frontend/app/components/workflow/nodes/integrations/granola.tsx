@@ -3,6 +3,7 @@ import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 // Sourced brand artwork: https://www.granola.ai
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
@@ -12,8 +13,8 @@ const PreferredBrandIcon = ({ className, style }: { className?: string; style?: 
 
 export const GranolaIcon: SvgIconComponent = forwardRef<
     HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>
->(({ className, style, ...props }, ref) => (
-    <img ref={ref} src="/icons/granola.svg" alt="" className={['dark:invert dark:[--brand-invert:1]', className].filter(Boolean).join(' ')} style={style} {...props} />
+>((props, ref) => (
+    <ThemedBrandImg ref={ref} light="/icons/granola.svg" dark="/icons/granola-dark.svg" {...props} />
 ));
 GranolaIcon.displayName = 'GranolaIcon';
 

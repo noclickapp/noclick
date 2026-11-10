@@ -4,13 +4,9 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const ListenNotesIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <>
-        <img src="/icons/listennotes.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' } as CSSProperties} />
-        <img src="/icons/listennotes-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' } as CSSProperties} />
-    </>
+    <ThemedBrandImg light="/icons/listennotes.svg" dark="/icons/listennotes-dark.svg" className={className} style={style} />
 );
 
 export const ListenNotesNode: NodeDefinition = {

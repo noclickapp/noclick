@@ -5,12 +5,10 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const SpeechmaticsIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <>
-            <img ref={ref} src="/icons/speechmatics.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} {...props} />
-            <img src="/icons/speechmatics-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} {...props} />
-        </>
+        <ThemedBrandImg light="/icons/speechmatics.svg" dark="/icons/speechmatics-dark.svg" className={className} style={style} {...props} ref={ref} />
     ),
 );
 SpeechmaticsIcon.displayName = 'SpeechmaticsIcon';

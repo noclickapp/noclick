@@ -11,11 +11,10 @@ import { memo, useId, useMemo } from 'react';
 import { Bot } from 'lucide-react';
 import { useIsDark } from '~/hooks/useIsDark';
 import OpenAI from '@lobehub/icons/es/OpenAI';
-import { SerializedIcon } from '~/components/shared/SerializedIcon';
+import { SerializedIcon, serializedImgSrc } from '~/components/shared/SerializedIcon';
 import type { SerializedIconEntry } from '~/components/shared/SerializedNodeIconStack';
 import { IMG_META } from '~/components/workflow/nodes/base/AgentModelIcon';
 import { resolveAgentModelKind, type AgentModelKind } from '~/lib/harnessBrand';
-import { monochromeIconClassFromHtml } from '~/lib/monochromeIcons';
 import { stickyScheme } from '~/lib/stickyColors';
 import {
     DEFAULT_EDGE_STYLE,
@@ -459,13 +458,11 @@ function TileContent({
     n,
     scale,
     pal,
-    invertFilterId,
     nodeIcons,
 }: {
     n: PlacedNode;
     scale: number;
     pal: GraphPalette;
-    invertFilterId: string;
     nodeIcons: Readonly<Record<string, SerializedIconEntry>>;
 }) {
     if (n.type === 'agent') return <AgentTileLogo n={n} pal={pal} />;
@@ -480,22 +477,12 @@ function TileContent({
     const x = n.x + n.w / 2 - icon / 2;
     const y = cy - icon / 2;
     // Image-based brand marks render as a native SVG <image>: a <foreignObject> <img>
-    // rasterizes at CSS resolution (blurry on iOS retina), and a monochrome mark's
-    // light-mode invert filter on that <img> mis-composites and displaces the icon —
-    // the same iOS bug as the wordmark. Monochrome marks (cal-com, notion, …) invert
-    // in light via a color-only SVG filter on a wrapping <g> (an SVG filter is applied
-    // in user space, so it doesn't displace and, being color-only, doesn't blur).
-    // Inline-<svg> brand icons keep the foreignObject path — they're multicolor with
-    // no filter, so they neither displace nor need recoloring.
-    // meta.iconHtml is either an inline <svg>, or an <img> (sometimes preceded by a
-    // <link rel="preload">), so match the <img src> ANYWHERE — the same way
-    // monochromeIconClassFromHtml reads it — rather than assuming a leading <img>.
-    const imgSrc = meta.iconHtml.match(/<img[^>]*\ssrc="([^"]+)"/)?.[1];
+    // rasterizes at CSS resolution (blurry on iOS retina). A mark with a light/dark
+    // pair draws the file for the preview's own theme. Inline-<svg> brand icons keep
+    // the foreignObject path.
+    const imgSrc = serializedImgSrc(meta.iconHtml, pal.isDark);
     if (imgSrc) {
-        const invert =
-            !pal.isDark &&
-            monochromeIconClassFromHtml(meta.iconHtml) === 'brand-mono';
-        const image = (
+        return (
             <image
                 href={imgSrc}
                 x={x}
@@ -504,11 +491,6 @@ function TileContent({
                 height={icon}
                 preserveAspectRatio="xMidYMid meet"
             />
-        );
-        return invert ? (
-            <g filter={`url(#${invertFilterId})`}>{image}</g>
-        ) : (
-            image
         );
     }
     return (
@@ -604,9 +586,6 @@ function WorkflowGraphPreviewComponent({
     );
     const edgeDashView = Math.max(5 * Math.pow(scale, 0.8), 1.6);
     const tileGradientId = `wgp-tile-${uid}`;
-    // Per-instance id — inline SVGs share a document; a bare "#invert" would collide
-    // across the many preview cards on one page (the same reason tileGradientId is uid-scoped).
-    const invertFilterId = `wgp-invert-${uid}`;
 
     return (
         <div
@@ -636,22 +615,6 @@ function WorkflowGraphPreviewComponent({
                         <stop offset="0%" stopColor={pal.tileFrom} />
                         <stop offset="100%" stopColor={pal.tileTo} />
                     </radialGradient>
-                    {/* Light-mode invert for monochrome brand marks (cal-com, notion,
-                        …), replacing the CSS `filter: invert(1)` that would displace an
-                        <img> in a foreignObject on iOS. A color-only SVG filter is
-                        applied in user space (no displacement, no perceptible blur).
-                        colorInterpolationFilters="sRGB" so it matches CSS invert()
-                        (SVG filters default to linearRGB). */}
-                    <filter
-                        id={invertFilterId}
-                        colorInterpolationFilters="sRGB"
-                    >
-                        <feComponentTransfer>
-                            <feFuncR type="table" tableValues="1 0" />
-                            <feFuncG type="table" tableValues="1 0" />
-                            <feFuncB type="table" tableValues="1 0" />
-                        </feComponentTransfer>
-                    </filter>
                 </defs>
                 {stickies.map((n) => (
                     <StickyRect key={n.id} n={n} scale={scale} pal={pal} />
@@ -703,7 +666,6 @@ function WorkflowGraphPreviewComponent({
                                     n={n}
                                     scale={scale}
                                     pal={pal}
-                                    invertFilterId={invertFilterId}
                                     nodeIcons={nodeIcons}
                                 />
                             </g>

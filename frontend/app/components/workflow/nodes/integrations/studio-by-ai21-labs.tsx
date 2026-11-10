@@ -1,6 +1,7 @@
 import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 import {
     NodeDefinition,
     SvgIconComponent,
@@ -10,23 +11,7 @@ const StudioByAI21LabsIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <>
-        <img
-            ref={ref}
-            src="/icons/studio-by-ai21-labs.svg"
-            alt=""
-            className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' }}
-            {...props}
-        />
-        <img
-            src="/icons/studio-by-ai21-labs-dark.svg"
-            alt=""
-            className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' }}
-            {...props}
-        />
-    </>
+    <ThemedBrandImg light="/icons/studio-by-ai21-labs.svg" dark="/icons/studio-by-ai21-labs-dark.svg" className={className} style={style} {...props} ref={ref} />
 ));
 StudioByAI21LabsIcon.displayName = 'StudioByAI21LabsIcon';
 

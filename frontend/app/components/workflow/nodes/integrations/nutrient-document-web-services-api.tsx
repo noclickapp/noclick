@@ -3,11 +3,9 @@ import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const NutrientIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
-    ({ className, style, ...props }, ref) => <>
-        <img ref={ref} src="/icons/nutrient-document-web-services-api.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} {...props} />
-        <img src="/icons/nutrient-document-web-services-api-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} {...props} />
-    </>,
+    ({ className, style, ...props }, ref) => <ThemedBrandImg light="/icons/nutrient-document-web-services-api.svg" dark="/icons/nutrient-document-web-services-api-dark.svg" className={className} style={style} {...props} ref={ref} />,
 );
 NutrientIcon.displayName = 'NutrientIcon';
 export const NutrientDocumentWebServicesApiNode: NodeDefinition = {

@@ -5,14 +5,10 @@ import { NodeDefinition } from '~/components/workflow/nodes/types';
 
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Vector brand artwork from https://bizzabo.com
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <>
-        <img src="/icons/bizzabo-brand-vector.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
-        <img src="/icons/bizzabo-brand-vector-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
-    </>
+    <ThemedBrandImg light="/icons/bizzabo-brand-vector.svg" dark="/icons/bizzabo-brand-vector-dark.svg" className={className} style={style} />
 );
 
 export const BizzaboNode: NodeDefinition = {

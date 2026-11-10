@@ -1,0 +1,11 @@
+{
+  "path": "frontend/public/icons/the-odds-api-dark.svg",
+  "source": "/icons/the-odds-api.svg in this repository (the light-mode file)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: each paint replaced by its exact inverse (#000000 -> #FFFFFF), reproducing what the retired CSS invert filter drew; no geometry changed"
+  ],
+  "variant": "dark mode",
+  "license": "Brand mark of its owner, used nominatively to identify the connected service; trademark rights remain with its owner.",
+  "sha256": "9246b417536c9461e7ce5b15b41074e0eb47b42a98a3ff76216ab48117fb6d35"
+}

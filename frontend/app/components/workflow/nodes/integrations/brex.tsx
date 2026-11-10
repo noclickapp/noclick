@@ -6,6 +6,7 @@ import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Unmodified Brex symbol from Brex's official press kit.
 const BrexIcon = ({
     className,

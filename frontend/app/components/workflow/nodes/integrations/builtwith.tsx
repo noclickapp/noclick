@@ -8,14 +8,10 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Vector brand artwork from https://logos-download.com/77095-builtwith-pty-ltd-logo-download.html
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <>
-        <img src="/icons/builtwith-brand-vector.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
-        <img src="/icons/builtwith-brand-vector-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
-    </>
+    <ThemedBrandImg light="/icons/builtwith-brand-vector.svg" dark="/icons/builtwith-brand-vector-dark.svg" className={className} style={style} />
 );
 
 export const BuiltWithNode: NodeDefinition = {

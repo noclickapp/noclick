@@ -28,6 +28,7 @@ import { SiAtlassian, SiClaude, SiIntuit } from 'react-icons/si';
 import { getNodeIconData } from '~/lib/nodeIconRegistry';
 import { serializedIconComponent } from '~/components/shared/SerializedIcon';
 import { HARNESS_BRANDS } from '~/lib/harnessBrand';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 import { OAUTH_PROVIDER_CONFIG, PROVIDER_ALIASES, getProviderConfigByCredentialType } from '~/utils/oauthProviders';
 import { cn } from '~/lib/utils';
 
@@ -43,11 +44,12 @@ const AnthropicIcon: IconCmp = Anthropic as unknown as IconCmp;
 const MCPIcon: IconCmp = MCP as unknown as IconCmp;
 const OpenRouterIcon: IconCmp = OpenRouter as unknown as IconCmp;
 
-// Wrap a public-SVG brand mark (served from /public/icons) as an IconCmp. Used
-// for the CLI-harness agents whose marks aren't in @lobehub/icons.
-function imgIconComponent(src: string, alt: string): IconCmp {
+// Wrap a public-SVG brand mark (served from /public/icons), with its dark-mode file
+// if it has one, as an IconCmp. Used for the CLI-harness agents whose marks aren't
+// in @lobehub/icons.
+function imgIconComponent(src: string, alt: string, dark?: string): IconCmp {
     return function ImgBrandIcon({ className, style }) {
-        return <img src={src} alt={alt} className={cn('object-contain', className)} style={style} />;
+        return <ThemedBrandImg light={src} dark={dark} alt={alt} className={cn('object-contain', className)} style={style} />;
     };
 }
 
@@ -114,7 +116,7 @@ const OAUTH_PROVIDER_BRAND_ICONS: Record<string, CredentialIconEntry> = {
     microsoft: { Icon: MicrosoftIcon, iconColor: '' },
     atlassian: { Icon: SiAtlassian as unknown as IconCmp, iconColor: '#0052CC' },
     intuit: { Icon: SiIntuit as unknown as IconCmp, iconColor: '#236CFF' },
-    calcom: { Icon: imgIconComponent('/icons/cal-com.svg', 'Cal.com'), iconColor: '' },
+    calcom: { Icon: imgIconComponent('/icons/cal-com-light.svg', 'Cal.com', '/icons/cal-com.svg'), iconColor: '' },
     discord: { Icon: OAUTH_PROVIDER_CONFIG.discord.Icon as IconCmp, iconColor: '#5865F2' },
 };
 

@@ -3,14 +3,10 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const FixerIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <>
-            <img ref={ref} src="/icons/fixer.svg" alt="" className={`${className ?? ''} dark:hidden`}
-                style={{ ...style, objectFit: 'contain' }} {...props} />
-            <img src="/icons/fixer-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`}
-                style={{ ...style, objectFit: 'contain' }} {...props} />
-        </>
+        <ThemedBrandImg light="/icons/fixer.svg" dark="/icons/fixer-dark.svg" className={className} style={style} {...props} ref={ref} />
     ),
 );
 FixerIcon.displayName = 'FixerIcon';

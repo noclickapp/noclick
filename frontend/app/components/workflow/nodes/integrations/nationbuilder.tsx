@@ -5,12 +5,10 @@ import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const NationBuilderIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <>
-            <img ref={ref} src="/icons/nationbuilder.svg" alt="" className={`${className ?? ''} dark:hidden`} style={style} {...props} />
-            <img src="/icons/nationbuilder-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={style} {...props} />
-        </>
+        <ThemedBrandImg light="/icons/nationbuilder.svg" dark="/icons/nationbuilder-dark.svg" className={className} style={style} {...props} ref={ref} />
     )
 );
 NationBuilderIcon.displayName = 'NationBuilderIcon';

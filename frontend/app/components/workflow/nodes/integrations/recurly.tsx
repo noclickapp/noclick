@@ -6,6 +6,7 @@ import { forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 // Sourced brand artwork: https://logos.composio.dev/api/recurly
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
@@ -16,8 +17,8 @@ const PreferredBrandIcon = ({ className, style }: { className?: string; style?: 
 const RecurlyIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
->(({ className, ...props }, ref) => (
-    <img ref={ref} src="/icons/recurly.svg" alt="" className={`brand-mono ${className ?? ''}`} {...props} />
+>((props, ref) => (
+    <ThemedBrandImg ref={ref} light="/icons/recurly-light.svg" dark="/icons/recurly.svg" {...props} />
 ));
 RecurlyIcon.displayName = 'RecurlyIcon';
 

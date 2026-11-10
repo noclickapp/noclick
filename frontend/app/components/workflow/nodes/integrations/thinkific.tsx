@@ -1,47 +1,18 @@
 // Thinkific workflow node for learner management, enrollment, and commerce automation.
 // Registers the canvas component with the official Thinkific icon and searchable operation keywords.
 import { memo, forwardRef } from 'react';
-import type { CSSProperties, ImgHTMLAttributes } from 'react';
+import type { ImgHTMLAttributes } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Unmodified Thinkific mark from its official Partner Marketing Kit logo pack.
 const ThinkificIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <>
-        <img
-            ref={ref}
-            src="/icons/thinkific.svg"
-            alt=""
-            aria-hidden="true"
-            className={`${className ?? ''} dark:hidden`}
-            style={
-                {
-                    ...style,
-                    '--brand-invert': 0,
-                    objectFit: 'contain',
-                } as CSSProperties
-            }
-            {...props}
-        />
-        <img
-            src="/icons/thinkific-dark.svg"
-            alt=""
-            aria-hidden="true"
-            className={`${className ?? ''} hidden dark:block`}
-            style={
-                {
-                    ...style,
-                    '--brand-invert': 0,
-                    objectFit: 'contain',
-                } as CSSProperties
-            }
-            {...props}
-        />
-    </>
+    <ThemedBrandImg light="/icons/thinkific.svg" dark="/icons/thinkific-dark.svg" className={className} style={style} {...props} ref={ref} />
 ));
 ThinkificIcon.displayName = 'ThinkificIcon';
 

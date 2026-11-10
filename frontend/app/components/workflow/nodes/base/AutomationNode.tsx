@@ -508,11 +508,9 @@ const AutomationNode = ({
                                 style={{
                                     width: iconSize,
                                     height: iconSize,
-                                    // invert(var(--brand-invert,0)) composes with the shadow so
-                                    // monochrome marks (.brand-mono sets the var) flip in light.
                                     filter: isDisabled
                                         ? 'grayscale(100%) brightness(0.4) drop-shadow(0 4px 12px rgba(0, 0, 0, calc(0.4 * var(--icon-shadow-scale, 1))))'
-                                        : 'invert(var(--brand-invert, 0)) drop-shadow(0 4px 12px rgba(0, 0, 0, calc(0.4 * var(--icon-shadow-scale, 1))))',
+                                        : 'drop-shadow(0 4px 12px rgba(0, 0, 0, calc(0.4 * var(--icon-shadow-scale, 1))))',
                                 }}
                             />
                             {/* MOCK label - part of the centered flex column */}

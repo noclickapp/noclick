@@ -6,7 +6,6 @@
 // icons look identical to the in-app surfaces that use BrandIcon directly.
 import { type ComponentType, type CSSProperties, useId, useMemo } from 'react';
 import { cn } from '~/lib/utils';
-import { monochromeIconClassFromHtml } from '~/lib/monochromeIcons';
 
 interface SerializedIconProps {
     /** Pre-rendered icon markup from nodeCatalog.server (SerializedNodeMeta.iconHtml). */
@@ -49,6 +48,15 @@ function scopeSvgIds(html: string, uid: string): string {
     return out;
 }
 
+/** The file an image-based mark shows in one theme: of a light/dark pair (ThemedBrandImg's `dark:hidden` and
+ *  `hidden dark:block` images), the one for that theme; else its only image. For surfaces that draw the file
+ *  themselves rather than the markup. */
+export function serializedImgSrc(html: string, dark: boolean): string | undefined {
+    const imgs = html.match(/<img\b[^>]*>/g) ?? [];
+    const shown = dark ? /\sclass="[^"]*\bdark:block\b/ : /\sclass="[^"]*\bdark:hidden\b/;
+    return (imgs.find((tag) => shown.test(tag)) ?? imgs[0])?.match(/\ssrc="([^"]+)"/)?.[1];
+}
+
 export function SerializedIcon({
     html,
     iconColor,
@@ -67,16 +75,6 @@ export function SerializedIcon({
     // currentColor inherits it; img ignores it), a raw value applies via color.
     const c = iconColor || 'text-foreground';
     const isTw = c.startsWith('text-');
-    // All-white brand marks (notion, resend, …) invert to a dark glyph in light
-    // mode so they don't vanish on light node bodies / chips; unchanged on dark.
-    // The node's own Icon component may already bake `brand-mono` into its markup
-    // (renderToStaticMarkup keeps the class), so applying it AGAIN on the wrapper
-    // would double-invert — two nested filter:invert(1) cancel out and the mark
-    // renders as a blank white tile on light chips (the cal-com bug). Add the
-    // wrapper invert only when the injected markup doesn't already carry it.
-    const monoInvert = /class=["'][^"']*\bbrand-mono\b/.test(scopedHtml)
-        ? ''
-        : monochromeIconClassFromHtml(scopedHtml);
     return (
         <span
             className={cn(
@@ -87,7 +85,6 @@ export function SerializedIcon({
                     ? '[&>img]:h-full [&>img]:w-auto'
                     : '[&>img]:w-full [&>img]:h-full',
                 className,
-                monoInvert,
                 isTw && c
             )}
             style={!isTw && c ? { ...style, color: c } : style}

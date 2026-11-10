@@ -6,27 +6,12 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const NgrokIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <>
-        <img
-            ref={ref}
-            src="/icons/ngrok.svg"
-            alt=""
-            className={`${className || ''} dark:hidden`}
-            style={style}
-            {...props}
-        />
-        <img
-            src="/icons/ngrok-dark.svg"
-            alt=""
-            className={`${className || ''} hidden dark:block`}
-            style={style}
-            {...props}
-        />
-    </>
+    <ThemedBrandImg light="/icons/ngrok.svg" dark="/icons/ngrok-dark.svg" className={className} style={style} {...props} ref={ref} />
 ));
 NgrokIcon.displayName = 'NgrokIcon';
 

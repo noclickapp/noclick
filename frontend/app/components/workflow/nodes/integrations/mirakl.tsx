@@ -6,13 +6,9 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 // Unmodified compact brand asset from https://www.mirakl.com
 import type { CSSProperties as BrandCSSProperties } from 'react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <>
-        <img src="/icons/mirakl-brand.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
-        <img src="/icons/mirakl-brand-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
-    </>
+    <ThemedBrandImg light="/icons/mirakl-brand.svg" dark="/icons/mirakl-brand-dark.svg" className={className} style={style} />
 );
 
 const MiraklNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;

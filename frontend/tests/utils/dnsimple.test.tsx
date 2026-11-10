@@ -41,14 +41,20 @@ describe('DNSimple native metadata', () => {
     removeCredentialsFromCache(['dnsimple-fixture']);
     expect(cachedCredentialsOfType(FAMILY) ?? []).toEqual([]);
   });
-  it('preserves original SVG and the actual supplied canvas filter order', () => {
+  it('shows the original black SVG in light mode and its white copy in dark, under the supplied canvas filter', () => {
     const filter = 'grayscale(100%) brightness(0.4) drop-shadow(0 4px 12px #0004)';
     const html = renderToStaticMarkup(<DNSimpleIcon style={{ width: 48, height: 48, filter }} />);
-    expect(html).toContain('/icons/dnsimple.svg');
-    expect(html).toContain('object-fit:contain');
-    expect(html).toContain('filter:invert(1) ' + filter);
-    expect(html).toContain('brand-mono');
-    expect(renderToStaticMarkup(<DNSimpleIcon />)).toContain('invert(var(--brand-invert, 0))');
+    const [light, dark, ...more] = html.match(/<img[^>]*>/g) ?? [];
+    expect(more).toEqual([]);
+    expect(light).toContain('src="/icons/dnsimple.svg"');
+    expect(light).toContain('class="dark:hidden"');
+    expect(dark).toContain('src="/icons/dnsimple-dark.svg"');
+    expect(dark).toContain('class="hidden dark:block"');
+    for (const img of [light, dark]) {
+      expect(img).toContain('object-fit:contain');
+      expect(img).toContain(`filter:${filter}`);
+    }
+    expect(html).not.toContain('invert(');
   });
 });
 

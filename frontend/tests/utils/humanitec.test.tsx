@@ -19,7 +19,7 @@ describe('Humanitec native wiring', () => {
     it('registers and mounts the exact official mark with the actual supplied canvas style', async () => {
         expect(getNodeMetadata(NODE)?.label).toBe('Humanitec'); expect(HumanitecNode.type).toBe(NODE);
         const host = document.createElement('div'), root = createRoot(host);
-        const filter = 'invert(var(--brand-invert, 0)) drop-shadow(0 1px 2px black)';
+        const filter = 'drop-shadow(0 1px 2px black)';
         await act(async () => { root.render(<HumanitecIcon style={{ width: 48, height: 48, filter }} />); });
         const image = host.querySelector('img')!;
         expect(image.getAttribute('src')).toBe('/icons/humanitec.svg'); expect(image.style.objectFit).toBe('contain'); expect(image.style.filter).toBe(filter);

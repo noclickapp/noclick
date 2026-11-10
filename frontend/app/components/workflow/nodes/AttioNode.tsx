@@ -6,21 +6,15 @@ import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from './types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };
 
 const AttioIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
->(({ className, style, ...props }, ref) => (
-    <img
-        ref={ref}
-        src="/icons/attio.svg"
-        alt=""
-        className={`brand-mono ${className || ''}`}
-        style={style}
-        {...props}
-    />
+>((props, ref) => (
+    <ThemedBrandImg ref={ref} light="/icons/attio-light.svg" dark="/icons/attio.svg" {...props} />
 ));
 AttioIcon.displayName = 'AttioIcon';
 

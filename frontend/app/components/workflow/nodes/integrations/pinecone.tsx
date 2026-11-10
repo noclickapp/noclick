@@ -7,21 +7,15 @@ import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const DIMENSIONS = { width: 90, height: 90, iconSize: 42 };
 
 const PineconeIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
->(({ className, style, ...props }, ref) => (
-    <img
-        ref={ref}
-        src="/icons/pinecone.svg"
-        alt=""
-        className={`brand-mono ${className || ''}`}
-        style={style}
-        {...props}
-    />
+>((props, ref) => (
+    <ThemedBrandImg ref={ref} light="/icons/pinecone-light.svg" dark="/icons/pinecone.svg" {...props} />
 ));
 PineconeIcon.displayName = 'PineconeIcon';
 

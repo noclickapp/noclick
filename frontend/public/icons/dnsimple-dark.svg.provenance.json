@@ -1,0 +1,11 @@
+{
+  "path": "frontend/public/icons/dnsimple-dark.svg",
+  "source": "/icons/dnsimple.svg in this repository (the light-mode file)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: each paint replaced by its exact inverse (#000000 -> #FFFFFF), reproducing what the retired CSS invert filter drew; no geometry changed"
+  ],
+  "variant": "dark mode",
+  "license": "Brand mark of its owner, used nominatively to identify the connected service; trademark rights remain with its owner.",
+  "sha256": "b77d13e4c2f7a579fc80bacc6bfc65901834d892189563ebe622683436c937a3"
+}

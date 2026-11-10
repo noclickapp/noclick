@@ -17,8 +17,6 @@ const ClickHouseIcon: SvgIconComponent = forwardRef<
         ref={ref}
         src="/icons/clickhouse.svg"
         alt=""
-        // NOT brand-mono: clickhouse's mark is light YELLOW (#FCFF74), not white —
-        // inverting flips it to blue. Keep its brand color.
         className={className || ''}
         style={style}
         {...props}
