@@ -1,0 +1,430 @@
+{
+  "source": "https://docs.strangebee.com/thehive/api-docs/docs.yaml",
+  "notes": "Request fields copied from x-codeSamples and schema examples. Mock responses are synthetic shapes, not recorded traffic.",
+  "operations": [
+    {
+      "config": {
+        "operation": "get_current_user"
+      },
+      "method": "GET",
+      "path": "/api/v1/user/current",
+      "body": null,
+      "status": 200,
+      "response": {
+        "_id": "~354"
+      }
+    },
+    {
+      "config": {
+        "operation": "get_case",
+        "case_id": "~354"
+      },
+      "method": "GET",
+      "path": "/api/v1/case/~354",
+      "body": null,
+      "status": 200,
+      "response": {
+        "_id": "~354"
+      }
+    },
+    {
+      "config": {
+        "operation": "create_case",
+        "title": "Suspicious Ransomware Activity",
+        "description": "File encryption via PowerShell script (encrypt.ps1) detected on multiple workstations.",
+        "severity": 3,
+        "tags": [
+          "file-encryption",
+          "TheOrganization"
+        ],
+        "tlp": 2,
+        "pap": 2,
+        "assignee": "lucas@example.com",
+        "caseTemplate": "Ransomware"
+      },
+      "method": "POST",
+      "path": "/api/v1/case",
+      "body": {
+        "title": "Suspicious Ransomware Activity",
+        "description": "File encryption via PowerShell script (encrypt.ps1) detected on multiple workstations.",
+        "severity": 3,
+        "tags": [
+          "file-encryption",
+          "TheOrganization"
+        ],
+        "tlp": 2,
+        "pap": 2,
+        "assignee": "lucas@example.com",
+        "caseTemplate": "Ransomware"
+      },
+      "status": 201,
+      "response": {
+        "_id": "~354"
+      }
+    },
+    {
+      "config": {
+        "operation": "update_case",
+        "case_id": "~354",
+        "title": "Suspicious Ransomware Activity \u2014 CORP-LAPTOP-056",
+        "description": "File encryption via PowerShell script (encrypt.ps1) detected on multiple workstations.",
+        "severity": 3,
+        "tags": [
+          "file-encryption",
+          "TheOrganization"
+        ],
+        "tlp": 2,
+        "pap": 2,
+        "status": "InProgress",
+        "summary": "File encryption via PowerShell script (encrypt.ps1) on multiple workstations. Propagation detected before isolation. 632 files encrypted.",
+        "assignee": "sami@example.com",
+        "addTags": [
+          "ransomware",
+          "endpoint"
+        ],
+        "removeTags": [
+          "file-encryption"
+        ]
+      },
+      "method": "PATCH",
+      "path": "/api/v1/case/~354",
+      "body": {
+        "title": "Suspicious Ransomware Activity \u2014 CORP-LAPTOP-056",
+        "description": "File encryption via PowerShell script (encrypt.ps1) detected on multiple workstations.",
+        "severity": 3,
+        "tags": [
+          "file-encryption",
+          "TheOrganization"
+        ],
+        "tlp": 2,
+        "pap": 2,
+        "status": "InProgress",
+        "summary": "File encryption via PowerShell script (encrypt.ps1) on multiple workstations. Propagation detected before isolation. 632 files encrypted.",
+        "assignee": "sami@example.com",
+        "addTags": [
+          "ransomware",
+          "endpoint"
+        ],
+        "removeTags": [
+          "file-encryption"
+        ]
+      },
+      "status": 204,
+      "response": null
+    },
+    {
+      "config": {
+        "operation": "get_alert",
+        "alert_id": "~354"
+      },
+      "method": "GET",
+      "path": "/api/v1/alert/~354",
+      "body": null,
+      "status": 200,
+      "response": {
+        "_id": "~354"
+      }
+    },
+    {
+      "config": {
+        "operation": "create_alert",
+        "type": "Endpoint Detection",
+        "source": "EDR",
+        "sourceRef": "MDATP-2025-004512",
+        "title": "File encrypted on CORP-LAPTOP-056",
+        "description": "File encryption detected via PowerShell script (encrypt.ps1) on CORP-LAPTOP-056.",
+        "severity": 3,
+        "date": 1718532000000,
+        "tags": [
+          "threat-type:file-encryption",
+          "TheOrganization"
+        ],
+        "tlp": 2,
+        "pap": 2,
+        "assignee": "lucas@example.com"
+      },
+      "method": "POST",
+      "path": "/api/v1/alert",
+      "body": {
+        "type": "Endpoint Detection",
+        "source": "EDR",
+        "sourceRef": "MDATP-2025-004512",
+        "title": "File encrypted on CORP-LAPTOP-056",
+        "description": "File encryption detected via PowerShell script (encrypt.ps1) on CORP-LAPTOP-056.",
+        "severity": 3,
+        "date": 1718532000000,
+        "tags": [
+          "threat-type:file-encryption",
+          "TheOrganization"
+        ],
+        "tlp": 2,
+        "pap": 2,
+        "assignee": "lucas@example.com"
+      },
+      "status": 201,
+      "response": {
+        "_id": "~354"
+      }
+    },
+    {
+      "config": {
+        "operation": "update_alert",
+        "alert_id": "~354",
+        "title": "File encrypted on CORP-LAPTOP-056",
+        "description": "File encryption detected via PowerShell script (encrypt.ps1) on CORP-LAPTOP-056.",
+        "severity": 3,
+        "tags": [
+          "threat-type:file-encryption",
+          "TheOrganization"
+        ],
+        "tlp": 2,
+        "pap": 2,
+        "status": "InProgress",
+        "summary": "File encryption detected via PowerShell on three workstations.",
+        "assignee": "lucas@example.com",
+        "addTags": [
+          "threat-type:file-encryption"
+        ],
+        "removeTags": [
+          "TheOrganization"
+        ]
+      },
+      "method": "PATCH",
+      "path": "/api/v1/alert/~354",
+      "body": {
+        "title": "File encrypted on CORP-LAPTOP-056",
+        "description": "File encryption detected via PowerShell script (encrypt.ps1) on CORP-LAPTOP-056.",
+        "severity": 3,
+        "tags": [
+          "threat-type:file-encryption",
+          "TheOrganization"
+        ],
+        "tlp": 2,
+        "pap": 2,
+        "status": "InProgress",
+        "summary": "File encryption detected via PowerShell on three workstations.",
+        "assignee": "lucas@example.com",
+        "addTags": [
+          "threat-type:file-encryption"
+        ],
+        "removeTags": [
+          "TheOrganization"
+        ]
+      },
+      "status": 204,
+      "response": null
+    },
+    {
+      "config": {
+        "operation": "promote_alert",
+        "alert_id": "~354",
+        "title": "Suspicious Ransomware Activity",
+        "description": "File encryption via PowerShell script (encrypt.ps1) detected on multiple workstations.",
+        "assignee": "lucas@example.com",
+        "caseTemplate": "Ransomware"
+      },
+      "method": "POST",
+      "path": "/api/v1/alert/~354/case",
+      "body": {
+        "title": "Suspicious Ransomware Activity",
+        "description": "File encryption via PowerShell script (encrypt.ps1) detected on multiple workstations.",
+        "assignee": "lucas@example.com",
+        "caseTemplate": "Ransomware"
+      },
+      "status": 201,
+      "response": {
+        "_id": "~354"
+      }
+    },
+    {
+      "config": {
+        "operation": "get_task",
+        "task_id": "~354"
+      },
+      "method": "GET",
+      "path": "/api/v1/task/~354",
+      "body": null,
+      "status": 200,
+      "response": {
+        "_id": "~354"
+      }
+    },
+    {
+      "config": {
+        "operation": "create_task",
+        "case_id": "~354",
+        "title": "Isolate affected workstation from the network",
+        "group": "Containment",
+        "description": "Disconnect CORP-LAPTOP-056 from the network immediately.",
+        "status": "Waiting",
+        "dueDate": 1748563200000,
+        "assignee": "lucas@example.com"
+      },
+      "method": "POST",
+      "path": "/api/v1/case/~354/task",
+      "body": {
+        "title": "Isolate affected workstation from the network",
+        "group": "Containment",
+        "description": "Disconnect CORP-LAPTOP-056 from the network immediately.",
+        "status": "Waiting",
+        "dueDate": 1748563200000,
+        "assignee": "lucas@example.com"
+      },
+      "status": 201,
+      "response": {
+        "_id": "~354"
+      }
+    },
+    {
+      "config": {
+        "operation": "update_task",
+        "task_id": "~354",
+        "title": "Isolate affected workstation from the network",
+        "group": "Containment",
+        "description": "Disconnect CORP-LAPTOP-056 from the network immediately.",
+        "status": "InProgress",
+        "dueDate": 1748563200000,
+        "assignee": "sami@example.com"
+      },
+      "method": "PATCH",
+      "path": "/api/v1/task/~354",
+      "body": {
+        "title": "Isolate affected workstation from the network",
+        "group": "Containment",
+        "description": "Disconnect CORP-LAPTOP-056 from the network immediately.",
+        "status": "InProgress",
+        "dueDate": 1748563200000,
+        "assignee": "sami@example.com"
+      },
+      "status": 204,
+      "response": null
+    },
+    {
+      "config": {
+        "operation": "create_task_log",
+        "task_id": "~354",
+        "message": "Ran memory analysis on CORP-LAPTOP-056 using Volatility. Found evidence of code injection into explorer.exe.",
+        "startDate": 1742048580000
+      },
+      "method": "POST",
+      "path": "/api/v1/task/~354/log",
+      "body": {
+        "message": "Ran memory analysis on CORP-LAPTOP-056 using Volatility. Found evidence of code injection into explorer.exe.",
+        "startDate": 1742048580000
+      },
+      "status": 201,
+      "response": {
+        "_id": "~354"
+      }
+    },
+    {
+      "config": {
+        "operation": "get_observable",
+        "observable_id": "~354"
+      },
+      "method": "GET",
+      "path": "/api/v1/observable/~354",
+      "body": null,
+      "status": 200,
+      "response": {
+        "_id": "~354"
+      }
+    },
+    {
+      "config": {
+        "operation": "create_case_observable",
+        "case_id": "~354",
+        "dataType": "ip",
+        "data": "00.01.002.003",
+        "message": "Source IP of the ransomware C2 server detected on CORP-LAPTOP-056",
+        "tlp": 2,
+        "pap": 2,
+        "tags": [
+          "encrypted"
+        ],
+        "ioc": true,
+        "sighted": false
+      },
+      "method": "POST",
+      "path": "/api/v1/case/~354/observable",
+      "body": {
+        "dataType": "ip",
+        "data": "00.01.002.003",
+        "message": "Source IP of the ransomware C2 server detected on CORP-LAPTOP-056",
+        "tlp": 2,
+        "pap": 2,
+        "tags": [
+          "encrypted"
+        ],
+        "ioc": true,
+        "sighted": false
+      },
+      "status": 201,
+      "response": []
+    },
+    {
+      "config": {
+        "operation": "update_observable",
+        "observable_id": "~354",
+        "message": "Source IP of the ransomware C2 server detected on CORP-LAPTOP-056",
+        "tlp": 2,
+        "pap": 2,
+        "tags": [
+          "threat-type:file-encryption",
+          "TheOrganization"
+        ],
+        "ioc": true,
+        "sighted": false,
+        "ignoreSimilarity": false
+      },
+      "method": "PATCH",
+      "path": "/api/v1/observable/~354",
+      "body": {
+        "message": "Source IP of the ransomware C2 server detected on CORP-LAPTOP-056",
+        "tlp": 2,
+        "pap": 2,
+        "tags": [
+          "threat-type:file-encryption",
+          "TheOrganization"
+        ],
+        "ioc": true,
+        "sighted": false,
+        "ignoreSimilarity": false
+      },
+      "status": 204,
+      "response": null
+    },
+    {
+      "config": {
+        "operation": "create_case_comment",
+        "case_id": "~354",
+        "message": "Confirmed as ransomware. Containment measures initiated."
+      },
+      "method": "POST",
+      "path": "/api/v1/case/~354/comment",
+      "body": {
+        "message": "Confirmed as ransomware. Containment measures initiated."
+      },
+      "status": 201,
+      "response": {
+        "_id": "~354"
+      }
+    },
+    {
+      "config": {
+        "operation": "create_alert_comment",
+        "alert_id": "~354",
+        "message": "Confirmed as ransomware. Containment measures initiated."
+      },
+      "method": "POST",
+      "path": "/api/v1/alert/~354/comment",
+      "body": {
+        "message": "Confirmed as ransomware. Containment measures initiated."
+      },
+      "status": 201,
+      "response": {
+        "_id": "~354"
+      }
+    }
+  ]
+}
