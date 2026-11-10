@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const TheOddsAPIIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/the-odds-api.svg" dark="/icons/the-odds-api-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/the-odds-api.svg" className={className} style={style} />
 );
 
 export const TheOddsAPINode: NodeDefinition = {

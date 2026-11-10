@@ -1,6 +1,8 @@
 // Exercises DNSimple's generated schema, credential cache and canvas icon.
 // Schema loading follows the same lazy-loading contract as the workflow UI.
 import React from 'react';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeAll, describe, expect, it } from 'vitest';
 import DNSimpleIcon from '~/components/icons/DNSimpleIcon';
@@ -41,20 +43,16 @@ describe('DNSimple native metadata', () => {
     removeCredentialsFromCache(['dnsimple-fixture']);
     expect(cachedCredentialsOfType(FAMILY) ?? []).toEqual([]);
   });
-  it('shows the original black SVG in light mode and its white copy in dark, under the supplied canvas filter', () => {
+  it('shows DNSimple\'s mark in its brand blue in both themes, under the supplied canvas filter', () => {
     const filter = 'grayscale(100%) brightness(0.4) drop-shadow(0 4px 12px #0004)';
     const html = renderToStaticMarkup(<DNSimpleIcon style={{ width: 48, height: 48, filter }} />);
-    const [light, dark, ...more] = html.match(/<img[^>]*>/g) ?? [];
-    expect(more).toEqual([]);
-    expect(light).toContain('src="/icons/dnsimple.svg"');
-    expect(light).toContain('class="dark:hidden"');
-    expect(dark).toContain('src="/icons/dnsimple-dark.svg"');
-    expect(dark).toContain('class="hidden dark:block"');
-    for (const img of [light, dark]) {
-      expect(img).toContain('object-fit:contain');
-      expect(img).toContain(`filter:${filter}`);
-    }
-    expect(html).not.toContain('invert(');
+    const imgs = html.match(/<img[^>]*>/g) ?? [];
+    expect(imgs).toHaveLength(1);
+    expect(imgs[0]).toContain('src="/icons/dnsimple-brand-vector.svg"');
+    expect(imgs[0]).not.toContain('dark:');
+    expect(imgs[0]).toContain('object-fit:contain');
+    expect(imgs[0]).toContain(`filter:${filter}`);
+    expect(readFileSync(join(__dirname, '../../public/icons/dnsimple-brand-vector.svg'), 'utf8')).toContain('fill="#1A5EC6"');
   });
 });
 

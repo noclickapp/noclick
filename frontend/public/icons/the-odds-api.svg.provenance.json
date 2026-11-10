@@ -1,6 +1,11 @@
 {
   "path": "frontend/public/icons/the-odds-api.svg",
-  "source": "https://the-odds-api.com/assets/img/logo.svg",
+  "source": "https://the-odds-api.com/icon.svg",
+  "found_at": "https://the-odds-api.com/ (<link rel=\"icon\" type=\"image/svg+xml\" href=\"/icon.svg\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
+  "edits": [],
+  "notes": "The Odds API's own monogram: TOA on its white rounded tile, the site's SVG favicon, unchanged. It replaces the THE ODDS-API wordmark (assets/img/logo.svg). The Odds API publishes no mark drawn as paths: like its logo, the favicon sets the letters as <text> in 'Courier New' bold, so they draw in that font (or Courier Prime, Courier, monospace) on the viewer's machine. The tile is the brand's own; it reads on both themes, so one file serves both.",
   "license": "The Odds API brand mark, used nominatively to identify the service. Trademark rights remain with The Odds API.",
-  "sha256": "e09bd954d18ee6ff883dfd73bf4dc2b0c61fb012146e26468c4acf0f6d5647ff"
+  "sha256": "de78fa8c3592a929fd871e57c46372d45ee0294995c46930bade879fc137ba7a"
 }

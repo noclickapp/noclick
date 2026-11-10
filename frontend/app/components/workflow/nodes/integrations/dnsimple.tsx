@@ -3,13 +3,12 @@
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
-import DNSimpleIcon from '~/components/icons/DNSimpleIcon';
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Vector brand artwork from https://dnsimple.com
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <ThemedBrandImg light="/icons/dnsimple-brand-vector.svg" dark="/icons/dnsimple-brand-vector-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/dnsimple-brand-vector.svg" className={className} style={style} />
 );
 
 const DNSimpleNodeComponent = (props: NodeProps) => (
