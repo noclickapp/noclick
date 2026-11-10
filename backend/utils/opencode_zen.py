@@ -5,7 +5,7 @@ two tiers sharing one OPENCODE_API_KEY: the standard ``opencode/*`` catalog and
 the ``opencode-go/*`` subscription catalog, each served from its own base URL
 (models.dev providers/{opencode,opencode-go} ``api``). This module is the single
 source for the tier → base-URL map and the two cached fetches every consumer
-composes: the tier's live servable id set (its keyless ``/models`` endpoint —
+composes: the tier's live models, each with its maker's name for it (its keyless ``/models`` endpoint —
 models.dev is a historical superset that keeps rotated-out models) and the raw
 models.dev catalog (metadata: names, cost, context, tool_call).
 
@@ -39,7 +39,7 @@ _FETCH_TIMEOUT_S = 15.0
 # successfully-fetched set is served on a transient failure so an outage never
 # reverts consumers to offering the unservable models.dev superset.
 _SERVABLE_TTL_S = 300
-_servable_cache: Dict[str, Tuple[set, float]] = {}
+_servable_cache: Dict[str, Tuple[Dict[str, Optional[str]], float]] = {}
 
 _MODELS_DEV_URL = "https://models.dev/api.json"
 _MODELS_DEV_TTL_S = 3600
@@ -87,69 +87,79 @@ def _get_json_sync(url: str) -> Any:
     return resp.json()
 
 
-def _parse_servable(payload: Dict[str, Any]) -> set:
-    return {m["id"] for m in payload.get("data", []) if m.get("id")}
+def _parse_models(payload: Dict[str, Any]) -> Dict[str, Optional[str]]:
+    """Each model the tier serves, by id → the model as its maker names it (Zen's ``canonical_id``,
+    ``anthropic/claude-sonnet-5-5``), None where Zen names none."""
+    return {m["id"]: (m.get("canonical_id") or None) for m in payload.get("data", []) if m.get("id")}
 
 
-def _cached_servable(tier: str, *, allow_stale: bool) -> Optional[set]:
+def _cached_models(tier: str, *, allow_stale: bool) -> Optional[Dict[str, Optional[str]]]:
     hit = _servable_cache.get(tier)
     if hit is None:
         return None
-    ids, fetched_at = hit
+    models, fetched_at = hit
     if allow_stale or (time.time() - fetched_at) < _SERVABLE_TTL_S:
-        return ids
+        return models
     return None
 
 
-def _store_servable(tier: str, ids: set) -> None:
-    _servable_cache[tier] = (ids, time.time())
+def _store_models(tier: str, models: Dict[str, Optional[str]]) -> None:
+    _servable_cache[tier] = (models, time.time())
 
 
 def zen_models_url(tier: str) -> str:
     return f"{ZEN_TIER_BASE_URLS[tier]}/models"
 
 
-async def get_zen_servable_ids(tier: str, *, timeout: Optional[float] = None) -> Optional[set]:
-    """Live set of model ids the tier's gateway will actually serve.
+async def get_zen_models(tier: str, *, timeout: Optional[float] = None) -> Optional[Dict[str, Optional[str]]]:
+    """The models the tier's gateway will actually serve now, each id → its maker's name for it.
 
-    Cached briefly (Zen rotates fast). Returns the last good set when a fetch
+    Cached briefly (Zen rotates fast). Returns the last good list when a fetch
     fails or failed within the last minute, or None if it was never read:
     callers decide how to degrade (typically: drop the tier rather than offer
     the superset). ``timeout`` bounds the whole fetch, in seconds.
     """
-    cached = _cached_servable(tier, allow_stale=False)
+    cached = _cached_models(tier, allow_stale=False)
     if cached is not None:
         return cached
     if _failed_recently(tier):
-        return _cached_servable(tier, allow_stale=True)
+        return _cached_models(tier, allow_stale=True)
     try:
-        ids = _parse_servable(await _get_json(zen_models_url(tier), timeout))
+        models = _parse_models(await _get_json(zen_models_url(tier), timeout))
     except Exception as e:
         logger.warning("[opencode_zen] servable fetch failed for %s: %r", tier, e)
         _record(tier, ok=False)
-        return _cached_servable(tier, allow_stale=True)
+        return _cached_models(tier, allow_stale=True)
     _record(tier, ok=True)
-    _store_servable(tier, ids)
-    return ids
+    _store_models(tier, models)
+    return models
+
+
+async def get_zen_servable_ids(tier: str, *, timeout: Optional[float] = None) -> Optional[set]:
+    """The ids of :func:`get_zen_models`: what the tier serves now, or None if it was never read."""
+    models = await get_zen_models(tier, timeout=timeout)
+    return set(models) if models is not None else None
 
 
 def get_zen_servable_ids_sync(tier: str) -> Optional[set]:
     """Sync sibling of :func:`get_zen_servable_ids` (same cache) for callers
     already off the event loop (the model catalog's thread-offloaded path)."""
-    cached = _cached_servable(tier, allow_stale=False)
+    cached = _cached_models(tier, allow_stale=False)
     if cached is not None:
-        return cached
+        return set(cached)
     if _failed_recently(tier):
-        return _cached_servable(tier, allow_stale=True)
+        stale = _cached_models(tier, allow_stale=True)
+        return set(stale) if stale is not None else None
     try:
-        ids = _parse_servable(_get_json_sync(zen_models_url(tier)))
+        models = _parse_models(_get_json_sync(zen_models_url(tier)))
     except Exception as e:
         logger.warning("[opencode_zen] servable fetch failed for %s: %r", tier, e)
         _record(tier, ok=False)
-        return _cached_servable(tier, allow_stale=True)
+        stale = _cached_models(tier, allow_stale=True)
+        return set(stale) if stale is not None else None
     _record(tier, ok=True)
-    _store_servable(tier, ids)
-    return ids
+    _store_models(tier, models)
+    return set(models)
 
 
 def _models_dev_fresh() -> Optional[Dict[str, Any]]:
