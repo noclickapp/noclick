@@ -1,0 +1,270 @@
+{
+  "product-access-update-product-access": {
+    "body": {
+      "id": "string",
+      "created_at": "2024-01-15T09:30:00Z",
+      "expiration_days": 1,
+      "status": "string",
+      "passed": true,
+      "progress": 1,
+      "product": {
+        "id": "string",
+        "slug": "string",
+        "type": "string",
+        "name": "string"
+      },
+      "user": {
+        "id": "string",
+        "name": "string",
+        "last_name": "string",
+        "email": "string"
+      }
+    },
+    "source": "https://docs.wisboo.com/wisboo-api/product-access/update-product-access"
+  },
+  "users-list-users": {
+    "body": {
+      "object": "string",
+      "url": "string",
+      "data": [
+        {
+          "id": "string",
+          "name": "string",
+          "last_name": "string",
+          "email": "string",
+          "created_at": "2024-01-15T09:30:00Z",
+          "country": "string",
+          "phone": "string",
+          "external_id": "string",
+          "language": "ES",
+          "avatar": "string",
+          "custom_fields": {}
+        }
+      ],
+      "metadata": {
+        "page_number": 1,
+        "total_record_count": 1,
+        "page_size": 1
+      }
+    },
+    "source": "https://docs.wisboo.com/wisboo-api/users/list-users"
+  },
+  "users-get-user": {
+    "body": {
+      "id": "string",
+      "name": "string",
+      "last_name": "string",
+      "email": "string",
+      "created_at": "2024-01-15T09:30:00Z",
+      "country": "string",
+      "phone": "string",
+      "external_id": "string",
+      "language": "string",
+      "avatar": "string",
+      "custom_fields": {}
+    },
+    "source": "https://docs.wisboo.com/wisboo-api/users/get-user"
+  },
+  "users-create-user": {
+    "body": {
+      "id": "USR-06a8ddc702a570008a88f53d1bd8e16e",
+      "name": "John",
+      "last_name": "Doe",
+      "email": "john_doe@email.com",
+      "created_at": "2024-11-13T23:14:28.651Z",
+      "country": "AR",
+      "phone": "+5491134578457",
+      "external_id": "1e3aafh",
+      "language": "ES",
+      "avatar": "",
+      "custom_fields": {
+        "field1": "value"
+      },
+      "role": "basic",
+      "updated_at": "2024-11-13T23:14:28.665Z"
+    },
+    "source": "https://docs.wisboo.com/wisboo-api/users/create-user"
+  },
+  "users-update-user-email": {
+    "body": {},
+    "source": "https://docs.wisboo.com/wisboo-api/users/update-user-email"
+  },
+  "users-update-user": {
+    "body": {
+      "id": "USR-06a8ddc702a570008a88f53d1bd8e16e",
+      "name": "John",
+      "last_name": "Doe",
+      "email": "john_doe@email.com",
+      "created_at": "2024-10-13T23:14:28.651Z",
+      "country": "PE",
+      "external_id": "ext_123",
+      "language": "ES",
+      "avatar": "",
+      "custom_fields": {
+        "field1": "new_value"
+      },
+      "role": "basic",
+      "updated_at": "2024-10-14T00:45:46.527Z"
+    },
+    "source": "https://docs.wisboo.com/wisboo-api/users/update-user"
+  },
+  "products-list-products": {
+    "body": {
+      "object": "string",
+      "url": "string",
+      "data": [
+        {
+          "id": "string",
+          "name": "string",
+          "slug": "string",
+          "product_type": "downloadable_type",
+          "state": "not_published",
+          "access_type": "paid_access",
+          "created_at": "2024-01-15T09:30:00Z"
+        }
+      ],
+      "metadata": {
+        "page_number": 1,
+        "total_record_count": 1,
+        "page_size": 1
+      }
+    },
+    "source": "https://docs.wisboo.com/wisboo-api/products/list-products"
+  },
+  "product-access-list-product-accesses": {
+    "body": {
+      "object": "string",
+      "url": "string",
+      "data": [
+        {
+          "id": "string",
+          "created_at": "2024-01-15T09:30:00Z",
+          "access_due_date": "2024-01-15T09:30:00Z",
+          "expiration_days": 1,
+          "status": "string",
+          "passed": true,
+          "progress": 1,
+          "product": {
+            "id": "string",
+            "slug": "string",
+            "type": "string",
+            "name": "string"
+          },
+          "user": {
+            "id": "string",
+            "name": "string",
+            "last_name": "string",
+            "email": "string"
+          }
+        }
+      ],
+      "metadata": {
+        "page_number": 1,
+        "total_record_count": 1,
+        "page_size": 1
+      }
+    },
+    "source": "https://docs.wisboo.com/wisboo-api/product-access/list-product-accesses"
+  },
+  "product-access-grant-product-access": {
+    "body": {
+      "id": "string"
+    },
+    "source": "https://docs.wisboo.com/wisboo-api/product-access/grant-product-access"
+  },
+  "purchases-list-purchases": {
+    "body": {
+      "object": "string",
+      "url": "string",
+      "data": [
+        {
+          "id": "string",
+          "status": "string",
+          "payment_id": "string",
+          "payment_gateway": "string",
+          "base_price": "string",
+          "promotion_percentage_off": "string",
+          "promotion_amount_off": "string",
+          "promotional_price": "string",
+          "discounted_amount": "string",
+          "extra_charge": "string",
+          "extra_charge_percentage": "string",
+          "taxes_amount": "string",
+          "installment_plan_interval": "string",
+          "installments": 1,
+          "installment_amount": "string",
+          "installment_interest_rate": "string",
+          "installment_interest_rate_amount": "string",
+          "amount_due": "string",
+          "amount_paid": "string",
+          "charged_installments": 1,
+          "installment_plan_end_date": "2024-01-15T09:30:00Z",
+          "next_charge_at": "2024-01-15T09:30:00Z",
+          "total_amount": "string",
+          "currency": "string",
+          "gift_recipient_id": "string",
+          "gift_recipient_email": "string",
+          "custom_fields": {},
+          "promotion_type": "string",
+          "checkout_session": {
+            "id": "string",
+            "started_at": "2024-01-15T09:30:00Z",
+            "ip": "string",
+            "device_type": "string",
+            "user_agent": "string",
+            "utm_medium": "string",
+            "utm_source": "string",
+            "utm_campaign": "string",
+            "utm_term": "string",
+            "utm_content": "string"
+          },
+          "discount": {
+            "percentage": "string",
+            "code": "string",
+            "id": "string"
+          },
+          "product": {
+            "id": "string",
+            "name": "string",
+            "type": "string",
+            "slug": "string"
+          },
+          "user": {
+            "id": "string",
+            "name": "string",
+            "last_name": "string",
+            "email": "string",
+            "external_id": "string"
+          },
+          "created_at": "2024-01-15T09:30:00Z",
+          "paid_at": "2024-01-15T09:30:00Z"
+        }
+      ],
+      "metadata": {
+        "page_number": 1,
+        "total_record_count": 1,
+        "page_size": 1
+      }
+    },
+    "source": "https://docs.wisboo.com/wisboo-api/purchases/list-purchases"
+  },
+  "products-get-product": {
+    "body": {
+      "id": "string",
+      "name": "string",
+      "slug": "string",
+      "product_type": "downloadable_type",
+      "state": "not_published",
+      "access_type": "paid_access",
+      "created_at": "2024-01-15T09:30:00Z"
+    },
+    "source": "https://docs.wisboo.com/wisboo-api/products/get-product"
+  },
+  "users-generate-magic-link": {
+    "body": {
+      "link": "string",
+      "expires_at": "2024-01-15T09:30:00Z"
+    },
+    "source": "https://docs.wisboo.com/wisboo-api/users/generate-magic-link"
+  }
+}
