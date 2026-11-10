@@ -1,0 +1,191 @@
+{
+  "source": "https://raw.githubusercontent.com/hashlookup/hashlookup-server/main/README.md",
+  "examples": [
+    {
+      "nsrl-version": "RDS Verion 2.73.1 - July 2021",
+      "nsrl-NSRL-items": "165968856",
+      "nsrl-NSRL-Legacy-items": "113737918",
+      "nsrl-Android-items": "33419323",
+      "nsrl-iOS-items": "46447082",
+      "nsrl-NSRLMfg": "92353",
+      "nsrl-NSRLOS": "1331",
+      "nsrl-NSRLProd": "19050",
+      "hashlookup-version": "1.0"
+    },
+    {
+      "CRC32": "7A5407CA",
+      "FileName": "wow64_microsoft-windows-i..timezones.resources_31bf3856ad364e35_10.0.16299.579_de-de_f24979c73226184d.manifest",
+      "FileSize": "2520",
+      "MD5": "8ED4B4ED952526D89899E723F3488DE4",
+      "OpSystemCode": {
+        "MfgCode": "1006",
+        "OpSystemCode": "362",
+        "OpSystemName": "TBD",
+        "OpSystemVersion": "none"
+      },
+      "ProductCode": {
+        "ApplicationType": "Security",
+        "Language": "Multilanguage",
+        "MfgCode": "608",
+        "OpSystemCode": "868",
+        "ProductCode": "190742",
+        "ProductName": "Cumulative Update for Windows Server 2016 for x64 (KB4338817)",
+        "ProductVersion": "1709"
+      },
+      "SHA-1": "00000079FD7AAC9B2F9C988C50750E1F50B27EB5",
+      "SpecialCode": ""
+    },
+    {
+      "CRC32": "CBD64CD9",
+      "FileName": ".rela.dyn",
+      "FileSize": "240",
+      "MD5": "131312A96CAD4ACAA7E2631A34A0D47C",
+      "OpSystemCode": {
+        "MfgCode": "1006",
+        "OpSystemCode": "362",
+        "OpSystemName": "TBD",
+        "OpSystemVersion": "none"
+      },
+      "ProductCode": {
+        "ApplicationType": "Operating System",
+        "Language": "English",
+        "MfgCode": "1722",
+        "OpSystemCode": "599",
+        "ProductCode": "163709",
+        "ProductName": "BlackArch Linux",
+        "ProductVersion": "2017.03.01"
+      },
+      "SHA-1": "FFFFFDAC1B1B4C513896C805C2C698D9688BE69F",
+      "SpecialCode": ""
+    },
+    [
+      {
+        "CRC32": "E774FD92",
+        "FileName": "network",
+        "FileSize": "7279",
+        "MD5": "6E2F8616A01725DCB37BED0A2495AEB2",
+        "OpSystemCode": "362",
+        "ProductCode": "8321",
+        "SHA-1": "00000903319A8CE18A03DFA22C07C6CA43602061",
+        "SpecialCode": ""
+      },
+      {
+        "CRC32": "7A5407CA",
+        "FileName": "wow64_microsoft-windows-i..timezones.resources_31bf3856ad364e35_10.0.16299.579_de-de_f24979c73226184d.manifest",
+        "FileSize": "2520",
+        "MD5": "8ED4B4ED952526D89899E723F3488DE4",
+        "OpSystemCode": "362",
+        "ProductCode": "190742",
+        "SHA-1": "00000079FD7AAC9B2F9C988C50750E1F50B27EB5",
+        "SpecialCode": ""
+      },
+      {
+        "CRC32": "7516A25F",
+        "FileName": ".text._ZNSt14overflow_errorC1ERKSs",
+        "FileSize": "33",
+        "MD5": "344428FA4BA313712E4CA9B16D089AC4",
+        "OpSystemCode": "362",
+        "ProductCode": "219181",
+        "SHA-1": "0000001FFEF4BE312BAB534ECA7AEAA3E4684D85",
+        "SpecialCode": ""
+      }
+    ],
+    [
+      {
+        "CRC32": "CBD64CD9",
+        "FileName": ".rela.dyn",
+        "FileSize": "240",
+        "MD5": "131312A96CAD4ACAA7E2631A34A0D47C",
+        "OpSystemCode": "362",
+        "ProductCode": "163709",
+        "SHA-1": "FFFFFDAC1B1B4C513896C805C2C698D9688BE69F",
+        "SpecialCode": ""
+      },
+      {
+        "CRC32": "8654F11A",
+        "FileName": "s_copypix.c",
+        "FileSize": "19541",
+        "MD5": "559D049F44942683093A91BA19D0AF54",
+        "OpSystemCode": "362",
+        "ProductCode": "215139",
+        "SHA-1": "FFFFFF4DB8282D002893A9BAF00E9E9D4BA45E65",
+        "SpecialCode": ""
+      },
+      {
+        "CRC32": "8E51A269",
+        "FileName": "358.git2-msvstfs.dll",
+        "FileSize": "65",
+        "MD5": "9E4C165089CBA3653484C3F23F1CBC67",
+        "OpSystemCode": "362",
+        "ProductCode": "201317",
+        "SHA-1": "FFFFFE4C92E3F7282C7502F1734B243FA52326FB",
+        "SpecialCode": ""
+      }
+    ],
+    {
+      "parents": [
+        "0844D3CB657F353AB2CE1DB164CE6BDFFD2BB6FD",
+        "1A092638422762239916983CBB72DE7DDA4AC55C",
+        "1D4AB60C729A361D46A90D92DEFACA518B2918D2",
+        "1E10EA9987C122605DBE27813C264D123CD7F06D",
+        "1EAE139BC814D30FD0A35EA65DE7B900D8F9B32E",
+        "209721EED90BADEDFC6492BA88B2BE47C4FD227F",
+        "2536D5629A9F4E70415C84D29832D78196E5DFCA",
+        "314D0C987794C04CC36FF72F96512CEFE230C374",
+        "36ACB0DA0279B63059D0CC5B85F3B157492FB00E",
+        "423520AC1D58E3C4AA8834E70026DB930D9B2052"
+      ],
+      "cursor": "423520AC1D58E3C4AA8834E70026DB930D9B2052",
+      "total": 42
+    },
+    {
+      "parents": [
+        "44F00A8980D93F7B4D0C2736BED583C936D60AC4",
+        "4D81C1067049D8C804FE5FD2DA507664830D1374",
+        "5910B8B3B9BA9D9A78BC0F5851EEF945A9031066",
+        "59335138486480F9C28CDE7E99C636C0A3D78C96",
+        "5FC0DA1534EBE056703A9A7F789BC4040C0576A0",
+        "621B7639C3B4770AD4511B3477C0D26316C5BD7B",
+        "64EB8E8FDF7A505F3ADCAA651197A393AD33597E",
+        "669C2474462A883EDCC619F2EC8884F60DAB1C32",
+        "6D2134F4245236DB19784B37DC8200A5AFF6D98A",
+        "6F824CC9BA2D6CB6839144D1B697143309D98805"
+      ],
+      "cursor": "6F824CC9BA2D6CB6839144D1B697143309D98805",
+      "total": 42
+    },
+    {
+      "message": "Session test created and session will expire in 86400 seconds"
+    },
+    {
+      "nx": [
+        "8ED4B4ED952526D89899E723F3488DE2",
+        "8ED4B4ED952526D89899E723F3488DE3"
+      ],
+      "exist": [
+        "8ED4B4ED952526D89899E723F3488DE4"
+      ],
+      "info": "{'ip_addr': '127.0.0.1', 'user_agent': 'curl/7.78.0'}"
+    },
+    {
+      "nsrl-version": "RDS Verion 2.73.1 - July 2021",
+      "nsrl-NSRL-items": "165968856",
+      "nsrl-Android-items": "33419323",
+      "nsrl-iOS-items": "46447082",
+      "nsrl-NSRLMfg": "543004",
+      "nsrl-NSRLOS": "6414",
+      "nsrl-NSRLProd": "333546",
+      "hashlookup-version": "0.1"
+    },
+    {
+      "CRC32": "13C49389",
+      "FileName": "ls",
+      "FileSize": "133792",
+      "MD5": "931606BAAA7A2B4EF61198406F8FC3F4",
+      "OpSystemCode": "362",
+      "ProductCode": "217853",
+      "SHA-1": "D3A21675A8F19518D8B8F3CEF0F6A21DE1DA6CC7",
+      "SpecialCode": ""
+    }
+  ]
+}

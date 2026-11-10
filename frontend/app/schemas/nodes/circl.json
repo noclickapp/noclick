@@ -1,0 +1,472 @@
+{
+  "$defs": {
+    "BulkMD5": {
+      "additionalProperties": false,
+      "description": "Search MD5 hashes in one POST query; this does not add database records.",
+      "properties": {
+        "server_url": {
+          "default": "https://hashlookup.circl.lu",
+          "description": "Public CIRCL service by default. Use an HTTPS hashlookup-server origin for optional session support. No authentication is sent.",
+          "title": "Hashlookup server URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "bulk_md5",
+          "default": "bulk_md5",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Bulk Look Up MD5 Hashes"
+        },
+        "hashes": {
+          "items": {
+            "pattern": "^[0-9A-Fa-f]{32}$",
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Hashes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "hashes"
+      ],
+      "title": "BulkMD5",
+      "type": "object"
+    },
+    "BulkSHA1": {
+      "additionalProperties": false,
+      "description": "Search SHA-1 hashes in one POST query; this does not add database records.",
+      "properties": {
+        "server_url": {
+          "default": "https://hashlookup.circl.lu",
+          "description": "Public CIRCL service by default. Use an HTTPS hashlookup-server origin for optional session support. No authentication is sent.",
+          "title": "Hashlookup server URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "bulk_sha1",
+          "default": "bulk_sha1",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Bulk Look Up SHA-1 Hashes"
+        },
+        "hashes": {
+          "items": {
+            "pattern": "^[0-9A-Fa-f]{40}$",
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Hashes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "hashes"
+      ],
+      "title": "BulkSHA1",
+      "type": "object"
+    },
+    "CreateSession": {
+      "additionalProperties": false,
+      "description": "Create a forensic session or reset its TTL (a write, despite HTTP GET).",
+      "properties": {
+        "server_url": {
+          "default": "https://hashlookup.circl.lu",
+          "description": "Public CIRCL service by default. Use an HTTPS hashlookup-server origin for optional session support. No authentication is sent.",
+          "title": "Hashlookup server URL",
+          "type": "string"
+        },
+        "name": {
+          "description": "For a server with sessions enabled. This feature is disabled on the public CIRCL instance.",
+          "pattern": "^[A-Za-z0-9_-]{1,120}$",
+          "title": "Session name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_session",
+          "default": "create_session",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create or Renew Session (Server Feature)"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateSession",
+      "type": "object"
+    },
+    "GetChildren": {
+      "additionalProperties": false,
+      "description": "Read one page of child file hashes; preserve the provider's cursor.",
+      "properties": {
+        "server_url": {
+          "default": "https://hashlookup.circl.lu",
+          "description": "Public CIRCL service by default. Use an HTTPS hashlookup-server origin for optional session support. No authentication is sent.",
+          "title": "Hashlookup server URL",
+          "type": "string"
+        },
+        "sha1": {
+          "pattern": "^[0-9A-Fa-f]{40}$",
+          "title": "Sha1",
+          "type": "string"
+        },
+        "count": {
+          "default": 100,
+          "description": "Maximum relationships to return in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "cursor": {
+          "default": "0",
+          "description": "Start with 0. For another page, return the provider's opaque cursor unchanged with the same hash and count (may be numeric or a hash).",
+          "pattern": "^[A-Za-z0-9_-]{1,256}$",
+          "title": "Cursor",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_children",
+          "default": "get_children",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Child Hashes"
+        }
+      },
+      "required": [
+        "sha1"
+      ],
+      "title": "GetChildren",
+      "type": "object"
+    },
+    "GetInfo": {
+      "additionalProperties": false,
+      "description": "Read database versions and dataset statistics; proves public reachability.",
+      "properties": {
+        "server_url": {
+          "default": "https://hashlookup.circl.lu",
+          "description": "Public CIRCL service by default. Use an HTTPS hashlookup-server origin for optional session support. No authentication is sent.",
+          "title": "Hashlookup server URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_info",
+          "default": "get_info",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Database Information"
+        }
+      },
+      "title": "GetInfo",
+      "type": "object"
+    },
+    "GetParents": {
+      "additionalProperties": false,
+      "description": "Read one page of parent file hashes; preserve the provider's cursor.",
+      "properties": {
+        "server_url": {
+          "default": "https://hashlookup.circl.lu",
+          "description": "Public CIRCL service by default. Use an HTTPS hashlookup-server origin for optional session support. No authentication is sent.",
+          "title": "Hashlookup server URL",
+          "type": "string"
+        },
+        "sha1": {
+          "pattern": "^[0-9A-Fa-f]{40}$",
+          "title": "Sha1",
+          "type": "string"
+        },
+        "count": {
+          "default": 100,
+          "description": "Maximum relationships to return in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "cursor": {
+          "default": "0",
+          "description": "Start with 0. For another page, return the provider's opaque cursor unchanged with the same hash and count (may be numeric or a hash).",
+          "pattern": "^[A-Za-z0-9_-]{1,256}$",
+          "title": "Cursor",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_parents",
+          "default": "get_parents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Parent Hashes"
+        }
+      },
+      "required": [
+        "sha1"
+      ],
+      "title": "GetParents",
+      "type": "object"
+    },
+    "GetSession": {
+      "additionalProperties": false,
+      "description": "Read matching and non-matching hashes recorded in an enabled session.",
+      "properties": {
+        "server_url": {
+          "default": "https://hashlookup.circl.lu",
+          "description": "Public CIRCL service by default. Use an HTTPS hashlookup-server origin for optional session support. No authentication is sent.",
+          "title": "Hashlookup server URL",
+          "type": "string"
+        },
+        "name": {
+          "description": "For a server with sessions enabled. This feature is disabled on the public CIRCL instance.",
+          "pattern": "^[A-Za-z0-9_-]{1,120}$",
+          "title": "Session name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_session",
+          "default": "get_session",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Session Matches (Server Feature)"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GetSession",
+      "type": "object"
+    },
+    "GetTop": {
+      "additionalProperties": false,
+      "description": "Read the 100 most queried values when public statistics are enabled.",
+      "properties": {
+        "server_url": {
+          "default": "https://hashlookup.circl.lu",
+          "description": "Public CIRCL service by default. Use an HTTPS hashlookup-server origin for optional session support. No authentication is sent.",
+          "title": "Hashlookup server URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_top",
+          "default": "get_top",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Most Queried Hashes"
+        }
+      },
+      "title": "GetTop",
+      "type": "object"
+    },
+    "LookupMD5": {
+      "additionalProperties": false,
+      "description": "Look up a file's MD5 digest in known-file datasets.",
+      "properties": {
+        "server_url": {
+          "default": "https://hashlookup.circl.lu",
+          "description": "Public CIRCL service by default. Use an HTTPS hashlookup-server origin for optional session support. No authentication is sent.",
+          "title": "Hashlookup server URL",
+          "type": "string"
+        },
+        "session_name": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9_-]{1,120}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional existing session name sent as hashlookup_session. Public CIRCL does not enable sessions.",
+          "title": "Session Name"
+        },
+        "operation": {
+          "const": "lookup_md5",
+          "default": "lookup_md5",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Look Up MD5"
+        },
+        "md5": {
+          "pattern": "^[0-9A-Fa-f]{32}$",
+          "title": "Md5",
+          "type": "string"
+        }
+      },
+      "required": [
+        "md5"
+      ],
+      "title": "LookupMD5",
+      "type": "object"
+    },
+    "LookupSHA1": {
+      "additionalProperties": false,
+      "description": "Look up a file's SHA-1 digest in known-file datasets.",
+      "properties": {
+        "server_url": {
+          "default": "https://hashlookup.circl.lu",
+          "description": "Public CIRCL service by default. Use an HTTPS hashlookup-server origin for optional session support. No authentication is sent.",
+          "title": "Hashlookup server URL",
+          "type": "string"
+        },
+        "session_name": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9_-]{1,120}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional existing session name sent as hashlookup_session. Public CIRCL does not enable sessions.",
+          "title": "Session Name"
+        },
+        "operation": {
+          "const": "lookup_sha1",
+          "default": "lookup_sha1",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Look Up SHA-1"
+        },
+        "sha1": {
+          "pattern": "^[0-9A-Fa-f]{40}$",
+          "title": "Sha1",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sha1"
+      ],
+      "title": "LookupSHA1",
+      "type": "object"
+    },
+    "LookupSHA256": {
+      "additionalProperties": false,
+      "description": "Look up a file's SHA-256 digest in known-file datasets.",
+      "properties": {
+        "server_url": {
+          "default": "https://hashlookup.circl.lu",
+          "description": "Public CIRCL service by default. Use an HTTPS hashlookup-server origin for optional session support. No authentication is sent.",
+          "title": "Hashlookup server URL",
+          "type": "string"
+        },
+        "session_name": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9_-]{1,120}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional existing session name sent as hashlookup_session. Public CIRCL does not enable sessions.",
+          "title": "Session Name"
+        },
+        "operation": {
+          "const": "lookup_sha256",
+          "default": "lookup_sha256",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Look Up SHA-256"
+        },
+        "sha256": {
+          "pattern": "^[0-9A-Fa-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sha256"
+      ],
+      "title": "LookupSHA256",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "bulk_md5": "#/$defs/BulkMD5",
+          "bulk_sha1": "#/$defs/BulkSHA1",
+          "create_session": "#/$defs/CreateSession",
+          "get_children": "#/$defs/GetChildren",
+          "get_info": "#/$defs/GetInfo",
+          "get_parents": "#/$defs/GetParents",
+          "get_session": "#/$defs/GetSession",
+          "get_top": "#/$defs/GetTop",
+          "lookup_md5": "#/$defs/LookupMD5",
+          "lookup_sha1": "#/$defs/LookupSHA1",
+          "lookup_sha256": "#/$defs/LookupSHA256"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LookupMD5"
+        },
+        {
+          "$ref": "#/$defs/LookupSHA1"
+        },
+        {
+          "$ref": "#/$defs/LookupSHA256"
+        },
+        {
+          "$ref": "#/$defs/BulkMD5"
+        },
+        {
+          "$ref": "#/$defs/BulkSHA1"
+        },
+        {
+          "$ref": "#/$defs/GetParents"
+        },
+        {
+          "$ref": "#/$defs/GetChildren"
+        },
+        {
+          "$ref": "#/$defs/GetInfo"
+        },
+        {
+          "$ref": "#/$defs/GetTop"
+        },
+        {
+          "$ref": "#/$defs/CreateSession"
+        },
+        {
+          "$ref": "#/$defs/GetSession"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Circl Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
