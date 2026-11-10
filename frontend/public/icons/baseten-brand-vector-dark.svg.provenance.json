@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/baseten-brand-vector-dark.svg",
+  "source": "https://www.baseten.co (provider brand vector, carried from noclickapp/noclick4#2478 commit 2058245129a3d8d774c91ce5a962460c9e037554)",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #000 -> #FFFFFF"
+  ],
+  "variant": "dark mode",
+  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+  "sha256": "7a4a434175950757d1c4952b14b793685a9a4ab3126d619f95f5044667289a83"
+}
