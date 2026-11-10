@@ -1145,8 +1145,10 @@ async def _schedule_failure_streak(
             """
             SELECT e.status, e.error, e.started_at FROM workflow_executions e
             WHERE e.workflow_id = $1 AND e.trigger_source = $2
-              AND (EXISTS (SELECT 1 FROM cas_manifests m WHERE m.execution_id = e.id AND m.node_id = $3)
-                   OR NOT EXISTS (SELECT 1 FROM cas_manifests m WHERE m.execution_id = e.id))
+              -- One lookup of each run's own manifests. Written as EXISTS ... OR NOT
+              -- EXISTS, the first was hashed over every manifest of that node id in
+              -- every workflow: the whole primary key, read on each tick.
+              AND COALESCE((SELECT bool_or(m.node_id = $3) FROM cas_manifests m WHERE m.execution_id = e.id), true)
             ORDER BY e.started_at DESC
             LIMIT $4
             """,

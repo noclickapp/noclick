@@ -8,6 +8,7 @@ belongs to the trigger that ran in it (its manifest); a run that failed before
 any node ran belongs to every trigger.
 """
 
+import json
 import uuid
 from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
@@ -88,3 +89,45 @@ async def test_a_run_that_failed_before_any_node_ran_counts_for_every_trigger(po
 
     streak = await _streak(postgres_db, wid, "email")
     assert streak.count == 5 and streak.trips_breaker
+
+
+class _Recording:
+    def __init__(self, conn):
+        self.conn, self.calls = conn, []
+
+    async def fetch(self, sql, *args):
+        self.calls.append((sql, args))
+        return await self.conn.fetch(sql, *args)
+
+
+def _plan_nodes(node):
+    yield node
+    for child in node.get("Plans", ()):
+        yield from _plan_nodes(child)
+
+
+@pytest.mark.asyncio
+async def test_each_tick_reads_only_its_own_runs_manifests(postgres_db):
+    # Every tick runs this, and a trigger's node id is common across workflows (as default ids are). A
+    # lookup hashed over every manifest of that id read the whole primary key on each tick; each run's
+    # manifests are found by its own execution id instead.
+    wid = await _workflow(postgres_db)
+    for tick in range(120):
+        await _run(postgres_db, wid, NEWEST - timedelta(minutes=tick), status="completed", ran=("trigger", "agent"))
+    others = [await _workflow(postgres_db) for _ in range(4)]
+    for other in others:
+        for tick in range(600):
+            await _run(postgres_db, other, NEWEST - timedelta(minutes=tick), status="completed", ran=("trigger",))
+    await postgres_db.execute("ANALYZE workflow_executions")
+    await postgres_db.execute("ANALYZE cas_manifests")
+
+    from utils.webhook_routes import _schedule_failure_streak
+    pool = _Recording(postgres_db)
+    with patch("utils.webhook_routes.get_native_pool", return_value=pool):
+        await _schedule_failure_streak(str(wid), "webhook", "trigger")
+    [(sql, args)] = pool.calls
+    [plan] = json.loads(await postgres_db.fetchval("EXPLAIN (FORMAT JSON) " + sql, *args))
+    nodes = list(_plan_nodes(plan["Plan"]))
+    assert not any("hashed" in node.get("Subplan Name", "") for node in nodes)
+    manifests = [node for node in nodes if node.get("Relation Name") == "cas_manifests"]
+    assert manifests and all("execution_id = e.id" in node.get("Index Cond", "") for node in manifests)
