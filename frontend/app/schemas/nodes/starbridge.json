@@ -1,0 +1,1816 @@
+{
+  "$defs": {
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "StarbridgeCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "starbridge_api_token",
+          "default": "starbridge_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Starbridge API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste your Starbridge API bearer token. NoClick checks the bridges visible to your account.",
+      "x-credential-url": "https://dashboard.starbridge.ai"
+    },
+    "StarbridgeGetBridgeColumnMetadataConfig": {
+      "additionalProperties": false,
+      "description": "List existing columns with their per-type settings.",
+      "properties": {
+        "operation": {
+          "const": "get_bridge_column_metadata",
+          "default": "get_bridge_column_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List existing columns with their per-type settings",
+          "x-is-trigger": false
+        },
+        "bridgeId": {
+          "description": "bridgeId",
+          "format": "uuid",
+          "title": "Bridgeid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bridgeId"
+      ],
+      "title": "StarbridgeGetBridgeColumnMetadataConfig",
+      "type": "object"
+    },
+    "StarbridgeGetBridgeConfig": {
+      "additionalProperties": false,
+      "description": "Get Bridge.",
+      "properties": {
+        "operation": {
+          "const": "get_bridge",
+          "default": "get_bridge",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Bridge",
+          "x-is-trigger": false
+        },
+        "bridgeId": {
+          "description": "bridgeId",
+          "format": "uuid",
+          "title": "Bridgeid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bridgeId"
+      ],
+      "title": "StarbridgeGetBridgeConfig",
+      "type": "object"
+    },
+    "StarbridgeGetBuyerAttributesBulkConfig": {
+      "additionalProperties": false,
+      "description": "Get Buyer Attributes in bulk.",
+      "properties": {
+        "operation": {
+          "const": "get_buyer_attributes_bulk",
+          "default": "get_buyer_attributes_bulk",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Buyer Attributes in bulk",
+          "x-is-trigger": false
+        },
+        "buyerId": {
+          "description": "buyerId",
+          "title": "Buyerid",
+          "type": "string"
+        },
+        "attribute": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "Id",
+                  "Name",
+                  "CommonName",
+                  "ParentName",
+                  "ParentBuyerId",
+                  "Type",
+                  "Classifications",
+                  "Url",
+                  "LinkedinSlug",
+                  "Zip",
+                  "CountryCode",
+                  "StateCode",
+                  "StateName",
+                  "City",
+                  "County",
+                  "Address",
+                  "Street1",
+                  "Street2",
+                  "MainPhoneNumber",
+                  "ContractVehicles",
+                  "EmailDomains",
+                  "Population",
+                  "PopulationTrend",
+                  "PopulationOneYearChangePercentage",
+                  "PopulationFiveYearChangePercentage",
+                  "PopulationDensityPerSquareMile",
+                  "CountyHudAssistedHousingUnitCount",
+                  "HudAreaMedianFamilyIncome",
+                  "CountyMedicareAdvantageEnrollmentCount",
+                  "CountyMedicareAdvantagePenetrationPercentage",
+                  "CountyMedicareMedicaidEnrolleeCount",
+                  "CountyOriginalMedicareEnrollmentCount",
+                  "FemaDisasterDeclarationCount",
+                  "FemaFireDisasterDeclarationCount",
+                  "FemaFloodDisasterDeclarationCount",
+                  "FemaSevereStormDisasterDeclarationCount",
+                  "FemaWinterStormDisasterDeclarationCount",
+                  "BudgetAmount",
+                  "BudgetSbita",
+                  "BudgetUrl",
+                  "BudgetLatestYear",
+                  "BudgetConfidence",
+                  "SchoolDistrictType",
+                  "HigherEdFullTimeEnrollment",
+                  "HigherEdInstitutionType",
+                  "DepartmentName",
+                  "DepartmentCode",
+                  "AgencyName",
+                  "OfficeCodeArray",
+                  "AgencyCode",
+                  "AiAdoptionScore",
+                  "AiAdoptionSummary",
+                  "StartupFriendlinessScore",
+                  "StartupFriendlinessSummary",
+                  "ProcurementHellScore",
+                  "AngelProcurementSummary",
+                  "IpedsIdNumeric",
+                  "TotalEnrollment",
+                  "NcesId",
+                  "NcesStateDistrictId",
+                  "CensusIdPid6",
+                  "CensusIdGidId",
+                  "SgcId",
+                  "HigherEdGraduationRate",
+                  "HigherEdRetentionRate",
+                  "HigherEdAcceptanceRate",
+                  "HigherEdYieldRate",
+                  "HigherEdGraduationEnrollment",
+                  "HigherEdUndergradEnrollment",
+                  "HigherEdOnlineOnlyEnrollment",
+                  "HigherEdControlOfInstitution",
+                  "HigherEdForProfitStatus",
+                  "HigherEdHbcuStatus",
+                  "HigherEdLevelOfInstitution",
+                  "HigherEdRecruitmentAdmissionsCrmArray",
+                  "HigherEdEndowment",
+                  "HigherEdTotalExpenses",
+                  "HigherEdMascot",
+                  "HigherEdNumberOfOnCampusResidents",
+                  "HigherEdNumberOfFullTimeEmployees",
+                  "HigherEdSisModernizationStatus",
+                  "HigherEdPrimaryRegionalAccreditor",
+                  "HigherEdAccreditationSummary",
+                  "HigherEdAccreditationStatus",
+                  "DapipId",
+                  "HigherEdNextAccreditationReviewDate",
+                  "HigherEdSystem",
+                  "CommunityCollegeSystem",
+                  "HigherEdContinuingProfessionalEducationOffered",
+                  "Sis",
+                  "LmsArray",
+                  "SchoolDistrictLocale",
+                  "SchoolDistrictFullTimeEquivalentTeachers",
+                  "LowestGradeOffered",
+                  "HighestGradeOffered",
+                  "SchoolYearStartDate",
+                  "SchoolYearEndDate",
+                  "SchoolDistrictNumberOfSchools",
+                  "SchoolDistrictNewlyOpenedSchoolCount",
+                  "SchoolDistrictClosedSchoolCount",
+                  "SchoolDistrictElementarySchools",
+                  "SchoolDistrictMiddleSchools",
+                  "SchoolDistrictHighSchools",
+                  "SchoolDistrictTotalStaff",
+                  "SchoolDistrictMedianHouseholdIncome",
+                  "SchoolDistrictSector",
+                  "RegionalEducationServiceAgencyName",
+                  "RegionalEducationServiceAgencyBuyerId",
+                  "SchoolManagementOrganizationName",
+                  "SchoolManagementOrganizationBuyerId",
+                  "EnglishLearners",
+                  "BlackPercentage",
+                  "LatinoPercentage",
+                  "WhitePercentage",
+                  "StudentTeacherRatio",
+                  "SchoolSector",
+                  "SchoolLevel",
+                  "AlternativeSchool",
+                  "SchoolCurriculumProgramArray",
+                  "ReligiousAffiliation",
+                  "StudentGenderComposition",
+                  "SchoolVirtualStatus",
+                  "Subentity",
+                  "FiscalYearStartDate",
+                  "FreeOrReducedLunchEligiblePercentage",
+                  "FdId",
+                  "FireDepartmentType",
+                  "FireDepartmentOrganizationType",
+                  "FireDepartmentPrimaryAgency",
+                  "FireDepartmentNumberOfStations",
+                  "FireDepartmentActiveFirefightersCareer",
+                  "FireDepartmentActiveFirefightersVolunteer",
+                  "FireDepartmentActiveFirefightersPaidPerCall",
+                  "FireDepartmentNonFirefightingCivilian",
+                  "FireDepartmentNonFirefightingVolunteer",
+                  "PoliceOri",
+                  "PoliceOfficerCt",
+                  "PoliceDepartmentType",
+                  "HasCampusPolice",
+                  "Psap",
+                  "StateAgencySector",
+                  "EmployeeFte",
+                  "WaterSystemPopulationServed",
+                  "SpecialDistrictResidentPopulationEstimate",
+                  "MotorCarrierPowerUnits",
+                  "PropensityToSpendScore",
+                  "PropensityToSpendSummary",
+                  "BudgetChangeAnalysisSourceUrls",
+                  "PropensityToSpend",
+                  "YoyChangeInEnrollment",
+                  "EnrollmentTrend",
+                  "EnrollmentTrendBasedOnFte",
+                  "AtsiDesignation",
+                  "SpecialEducationEnrollment",
+                  "SpecialEducationEnrollmentPercentage",
+                  "TsiDesignation",
+                  "CsiDesignation",
+                  "SchoolDistrictTotalRevenue",
+                  "SchoolDistrictFederalRevenue",
+                  "SchoolDistrictStateRevenue",
+                  "SchoolDistrictLocalRevenue",
+                  "PerPupilExpenditure",
+                  "MathProficiencyPercentage",
+                  "ElaProficiencyPercentage",
+                  "GraduationRatePercentage",
+                  "ChronicAbsenteeismPercentage",
+                  "MathProficiencyStatePercentile",
+                  "ElaProficiencyStatePercentile",
+                  "TitleIFunding",
+                  "TitleIiFunding",
+                  "TitleIiiFunding",
+                  "TitleIvFunding",
+                  "TitleVFunding",
+                  "FederalGrantComplianceRisk",
+                  "FederalGrantComplianceCapSummary",
+                  "ErateFunding",
+                  "IhbgFinalAllocationAmount",
+                  "TribalTransportationProgramShare",
+                  "BuyerLocationLatitude",
+                  "BuyerLocationLongitude",
+                  "StarbridgeUrl"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The attribute keys to retrieve. Pass multiple `attribute` parameters for multiple keys, or omit entirely to return all available attributes. Each key is a BuyerField value; `getBuyerSchema` lists them with what each one returns.",
+          "title": "Attribute"
+        }
+      },
+      "required": [
+        "buyerId"
+      ],
+      "title": "StarbridgeGetBuyerAttributesBulkConfig",
+      "type": "object"
+    },
+    "StarbridgeGetBuyerSummaryConfig": {
+      "additionalProperties": false,
+      "description": "Get Buyer Summary.",
+      "properties": {
+        "operation": {
+          "const": "get_buyer_summary",
+          "default": "get_buyer_summary",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Buyer Summary",
+          "x-is-trigger": false
+        },
+        "buyerId": {
+          "description": "buyerId",
+          "title": "Buyerid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "buyerId"
+      ],
+      "title": "StarbridgeGetBuyerSummaryConfig",
+      "type": "object"
+    },
+    "StarbridgeGetBuyerSummaryV2Config": {
+      "additionalProperties": false,
+      "description": "Get Buyer Summary V2.",
+      "properties": {
+        "operation": {
+          "const": "get_buyer_summary_v2",
+          "default": "get_buyer_summary_v2",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Buyer Summary V2",
+          "x-is-trigger": false
+        },
+        "buyerId": {
+          "description": "buyerId",
+          "title": "Buyerid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "buyerId"
+      ],
+      "title": "StarbridgeGetBuyerSummaryV2Config",
+      "type": "object"
+    },
+    "StarbridgeGetFileDownloadLinksConfig": {
+      "additionalProperties": false,
+      "description": "Get Buyer File Download Links.",
+      "properties": {
+        "operation": {
+          "const": "get_file_download_links",
+          "default": "get_file_download_links",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Buyer File Download Links",
+          "x-is-trigger": false
+        },
+        "fileId": {
+          "description": "Buyer file ID, from `researchBuyerFiles`.",
+          "format": "uuid",
+          "title": "Fileid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fileId"
+      ],
+      "title": "StarbridgeGetFileDownloadLinksConfig",
+      "type": "object"
+    },
+    "StarbridgeGetOpportunityConfig": {
+      "additionalProperties": false,
+      "description": "Get Opportunity.",
+      "properties": {
+        "operation": {
+          "const": "get_opportunity",
+          "default": "get_opportunity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Opportunity",
+          "x-is-trigger": false
+        },
+        "opportunityId": {
+          "description": "opportunityId",
+          "title": "Opportunityid",
+          "type": "string"
+        },
+        "includeFiles": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to include the source files. Set false when you only need the record.",
+          "title": "Includefiles"
+        },
+        "includeLineItems": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to include parsed purchase-order line items. Set false to skip an extra lookup.",
+          "title": "Includelineitems"
+        }
+      },
+      "required": [
+        "opportunityId"
+      ],
+      "title": "StarbridgeGetOpportunityConfig",
+      "type": "object"
+    },
+    "StarbridgeListBridgeRowsConfig": {
+      "additionalProperties": false,
+      "description": "List Bridge Rows.",
+      "properties": {
+        "operation": {
+          "const": "list_bridge_rows",
+          "default": "list_bridge_rows",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Bridge Rows",
+          "x-is-trigger": false
+        },
+        "bridgeId": {
+          "description": "bridgeId",
+          "format": "uuid",
+          "title": "Bridgeid",
+          "type": "string"
+        },
+        "pageNumber": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number, 1-based. Minimum 1.",
+          "title": "Pagenumber"
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page size. Must be > 0 and <= 100. Prefer <= 20.",
+          "title": "Pagesize"
+        },
+        "filters": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "\n        Filter criteria for bridge rows. All `terms` are combined with logical AND \u2014 a row must\n        satisfy every term to be included. Provide an empty `terms` list (or omit `filters`) to\n        return all rows.\n    ",
+          "title": "Filters"
+        },
+        "sorts": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "\n        Sort specification for rows. For each sort term, `column` should be a bridge\n        column's `columnId` UUID \u2014 call `getBridgeColumnMetadata` to look it up. The\n        column's display name, `key`, or any prefixed reference is not a valid value.\n        A small set of common entry-level fields (`entryId`, `entryName`, `triggeredAt`)\n        is also accepted but discouraged. Fields computed per row when the Bridge is read \u2014\n        `op:added_date` (\"Added to Bridge\") and `bridge:entry_url` \u2014 are never sortable and\n        return 400; sort by `triggeredAt` instead. The synthetic column `rowUpdatedAt` sorts by when\n        the row was last updated \u2014 sort `DESC` to poll for recently-changed rows, matching the\n        `updatedAt` field in the response. Sort columns that are not mapped on the server return 400.\n     Omit `sorts` for the bridge's default order, the order `runRows: FirstFiveRows` takes its five rows from. A sort on an object column is refused: sort a Top Buyers bridge by its Account Scoring Score column, not the Account Score object. An enumeration column such as Fit Band sorts alphabetically, so filter it with `Any` instead. A `processBridgeRows` `limit` takes its rows from the same default order.",
+          "title": "Sorts"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search across the rows' searchable content",
+          "title": "Query"
+        },
+        "buyerScope": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Narrows the rows to those whose buyer matches this scope, on top of `filters`. Either a saved buyer list (`buyerListId`) or inline `terms` \u2014 never both. Use `listBuyerLists` to find a list id.",
+          "title": "Buyerscope"
+        },
+        "columnIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project each row's `columns` down to these column ids. Every id must belong to this bridge. Omit to get every column `getBridgeFull` lists, including the ones hidden from the table view \u2014 send it whenever you only need a few, it is the cheapest way to keep a wide bridge inside a context window, and a link column left out is not resolved at all.",
+          "title": "Columnids"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "True to list the bridge's archived rows instead of its live ones, most recently archived first unless `sorts` is sent \u2014 `rowArchivedAt` sorts by archive date; `filters`, `query`, `buyerScope` and `columnIds` apply the same way",
+          "title": "Archived"
+        },
+        "includeBasis": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to add each cell's `basis`: the reasoning, confidence and cited sources behind its value, for explaining why a row holds what it does. Only columns that research the web, such as web agent columns, record one. A basis can run to thousands of characters, so send it with `columnIds` set to just the columns you are explaining and a `pageSize` of 5 or fewer. Each cell lists at most its first 10 citations, each with at most 3 excerpts cut to 500 characters. Defaults to false.",
+          "title": "Includebasis"
+        }
+      },
+      "required": [
+        "bridgeId"
+      ],
+      "title": "StarbridgeListBridgeRowsConfig",
+      "type": "object"
+    },
+    "StarbridgeListBridgesConfig": {
+      "additionalProperties": false,
+      "description": "List Bridges.",
+      "properties": {
+        "operation": {
+          "const": "list_bridges",
+          "default": "list_bridges",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Bridges",
+          "x-is-trigger": false
+        },
+        "sortField": {
+          "anyOf": [
+            {
+              "enum": [
+                "Name",
+                "RowsCount",
+                "Type",
+                "CreatedBy",
+                "CreditUsage",
+                "SharedWith",
+                "LastUpdatedByUser",
+                "CreatedAt"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name, EntriesCount, Type, CreatedBy, CreditUsage, SharedWith, LastUpdatedByUser or CreatedAt",
+          "title": "Sortfield",
+          "enum": [
+            "Name",
+            "RowsCount",
+            "Type",
+            "CreatedBy",
+            "CreditUsage",
+            "SharedWith",
+            "LastUpdatedByUser",
+            "CreatedAt"
+          ],
+          "x-enum-searchable": true
+        },
+        "sortDirection": {
+          "anyOf": [
+            {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ASC or DESC",
+          "title": "Sortdirection",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "x-enum-searchable": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by bridge name (substring match)",
+          "title": "Query"
+        },
+        "viewMode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "viewMode",
+          "title": "Viewmode"
+        },
+        "folderId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only bridges inside this folder (UUID)",
+          "title": "Folderid"
+        },
+        "subscribedOnly": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "true to return only bridges you are subscribed to",
+          "title": "Subscribedonly"
+        },
+        "live": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "true for only bridges with live updates on, false for only those with them off; a bridge type without the setting counts as on",
+          "title": "Live"
+        },
+        "pageNumber": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number, 1-based. Minimum 1.",
+          "title": "Pagenumber"
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page size. Must be > 0 and <= 100. Prefer <= 20.",
+          "title": "Pagesize"
+        },
+        "filterType": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "RFP",
+                  "Meeting",
+                  "Purchase",
+                  "Buyer",
+                  "TopBuyer",
+                  "Contact",
+                  "Signal",
+                  "Conference",
+                  "JobChange",
+                  "VendorPresence",
+                  "ProductCompetitorPresence",
+                  "CompanionPresence"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bridge type(s) to include. Without it the list holds RFP, Meeting, Purchase, Buyer, Contact, Signal, Conference, JobChange, VendorPresence bridges; name TopBuyer, ProductCompetitorPresence or CompanionPresence to list those",
+          "title": "Filtertype"
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "Initializing",
+                  "Matching",
+                  "Draft",
+                  "Open",
+                  "Failed",
+                  "Deleting"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bridge lifecycle status(es) to include: Open (live), Initializing and Matching (still building), Draft, Failed, Deleting",
+          "title": "Statuses"
+        },
+        "createdByUserId": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only bridges owned by these user id(s)",
+          "title": "Createdbyuserid"
+        },
+        "userIdsHaveAccessTo": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only bridges these user id(s) can see \u2014 how you find what a teammate has access to",
+          "title": "Useridshaveaccessto"
+        },
+        "buyerListId": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only bridges whose buyer scope is one of these saved buyer lists",
+          "title": "Buyerlistid"
+        }
+      },
+      "title": "StarbridgeListBridgesConfig",
+      "type": "object"
+    },
+    "StarbridgeListRecentBuyerSignalsConfig": {
+      "additionalProperties": false,
+      "description": "List Recent Buyer Signals.",
+      "properties": {
+        "operation": {
+          "const": "list_recent_buyer_signals",
+          "default": "list_recent_buyer_signals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Recent Buyer Signals",
+          "x-is-trigger": false
+        },
+        "triggerIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit results to signals from these bridge ids.",
+          "title": "Triggerids"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free-text search over signal name and column values",
+          "title": "Query"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "Date",
+                "Hotness"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort field. Date = by signal date, Hotness = by hotness score. Always descending. Date is the default.",
+          "title": "Sort",
+          "enum": [
+            "Date",
+            "Hotness"
+          ],
+          "x-enum-searchable": true
+        },
+        "pageNumber": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number (1-based)",
+          "title": "Pagenumber"
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page size",
+          "title": "Pagesize"
+        },
+        "buyerId": {
+          "description": "UUID of the buyer whose signals to return.",
+          "title": "Buyerid",
+          "type": "string"
+        },
+        "filterType": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "RFP",
+                  "Meeting",
+                  "Purchase",
+                  "Buyer",
+                  "TopBuyer",
+                  "Contact",
+                  "Signal",
+                  "Conference",
+                  "JobChange",
+                  "VendorPresence",
+                  "ProductCompetitorPresence",
+                  "CompanionPresence"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by bridge filter type (repeatable).",
+          "title": "Filtertype"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "New",
+                  "Actioned",
+                  "Saved",
+                  "Attending",
+                  "Sponsoring",
+                  "NotInterested"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by row status. Defaults to New when omitted.",
+          "title": "Status"
+        },
+        "relativeDatePeriodFrom": {
+          "anyOf": [
+            {
+              "enum": [
+                "LastOneDay",
+                "LastSevenDays",
+                "LastThirtyDays",
+                "LastSixtyDays",
+                "LastOneMonths",
+                "LastTwoMonths",
+                "LastThreeMonths",
+                "LastSixMonths",
+                "LastNineMonths",
+                "LastYear",
+                "LastTwoYears"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lower bound on the signal date as a relative period.",
+          "title": "Relativedateperiodfrom",
+          "enum": [
+            "LastOneDay",
+            "LastSevenDays",
+            "LastThirtyDays",
+            "LastSixtyDays",
+            "LastOneMonths",
+            "LastTwoMonths",
+            "LastThreeMonths",
+            "LastSixMonths",
+            "LastNineMonths",
+            "LastYear",
+            "LastTwoYears"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "buyerId"
+      ],
+      "title": "StarbridgeListRecentBuyerSignalsConfig",
+      "type": "object"
+    },
+    "StarbridgeListTopRecentSignalsConfig": {
+      "additionalProperties": false,
+      "description": "List Top Recent Signals.",
+      "properties": {
+        "operation": {
+          "const": "list_top_recent_signals",
+          "default": "list_top_recent_signals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Top Recent Signals",
+          "x-is-trigger": false
+        },
+        "triggerIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit results to signals from these bridge ids.",
+          "title": "Triggerids"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free-text search over signal name and column values",
+          "title": "Query"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "Date",
+                "Hotness"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort field. Hotness = by hotness score, Date = by signal date. Always descending. Hotness is the default.",
+          "title": "Sort",
+          "enum": [
+            "Date",
+            "Hotness"
+          ],
+          "x-enum-searchable": true
+        },
+        "pageNumber": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number (1-based)",
+          "title": "Pagenumber"
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page size",
+          "title": "Pagesize"
+        },
+        "filterType": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "RFP",
+                  "Meeting",
+                  "Purchase",
+                  "Buyer",
+                  "TopBuyer",
+                  "Contact",
+                  "Signal",
+                  "Conference",
+                  "JobChange",
+                  "VendorPresence",
+                  "ProductCompetitorPresence",
+                  "CompanionPresence"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by bridge filter type (repeatable).",
+          "title": "Filtertype"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "New",
+                  "Actioned",
+                  "Saved",
+                  "Attending",
+                  "Sponsoring",
+                  "NotInterested"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by row status. Defaults to New when omitted.",
+          "title": "Status"
+        },
+        "relativeDatePeriodFrom": {
+          "anyOf": [
+            {
+              "enum": [
+                "LastOneDay",
+                "LastSevenDays",
+                "LastThirtyDays",
+                "LastSixtyDays",
+                "LastOneMonths",
+                "LastTwoMonths",
+                "LastThreeMonths",
+                "LastSixMonths",
+                "LastNineMonths",
+                "LastYear",
+                "LastTwoYears"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lower bound on the signal date as a relative period.",
+          "title": "Relativedateperiodfrom",
+          "enum": [
+            "LastOneDay",
+            "LastSevenDays",
+            "LastThirtyDays",
+            "LastSixtyDays",
+            "LastOneMonths",
+            "LastTwoMonths",
+            "LastThreeMonths",
+            "LastSixMonths",
+            "LastNineMonths",
+            "LastYear",
+            "LastTwoYears"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "StarbridgeListTopRecentSignalsConfig",
+      "type": "object"
+    },
+    "StarbridgeOnUpdatedRowConfig": {
+      "description": "New or updated bridge rows. Technical maintenance can also advance updatedAt.\n\nPolls up to 2,000 rows; larger bridges fail without advancing the baseline.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_row",
+          "default": "on_new_or_updated_row",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "New or updated bridge row",
+          "x-is-trigger": true
+        },
+        "bridgeId": {
+          "format": "uuid",
+          "title": "Bridge ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bridgeId"
+      ],
+      "title": "StarbridgeOnUpdatedRowConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "StarbridgeSearchBuyersConfig": {
+      "additionalProperties": false,
+      "description": "Search Buyers.",
+      "properties": {
+        "operation": {
+          "const": "search_buyers",
+          "default": "search_buyers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Search Buyers",
+          "x-is-trigger": false
+        },
+        "buyerName": {
+          "description": "Buyer name to search Buyer entity by.",
+          "title": "Buyername",
+          "type": "string"
+        },
+        "buyerStateCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "StateMapping enum value for the buyer's ISO 3166-2 state code. Optional.",
+          "title": "Buyerstatecode"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of buyers to return. Defaults to 10.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "buyerName"
+      ],
+      "title": "StarbridgeSearchBuyersConfig",
+      "type": "object"
+    },
+    "StarbridgeSetBridgeRowStatusConfig": {
+      "additionalProperties": false,
+      "description": "Set Bridge Row Status.",
+      "properties": {
+        "operation": {
+          "const": "set_bridge_row_status",
+          "default": "set_bridge_row_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Set Bridge Row Status",
+          "x-is-trigger": false
+        },
+        "bridgeId": {
+          "description": "bridgeId",
+          "format": "uuid",
+          "title": "Bridgeid",
+          "type": "string"
+        },
+        "rowId": {
+          "description": "rowId",
+          "title": "Rowid",
+          "type": "string"
+        },
+        "newStatus": {
+          "description": "newStatus",
+          "enum": [
+            "New",
+            "Actioned",
+            "Saved",
+            "Attending",
+            "Sponsoring",
+            "Not Interested"
+          ],
+          "title": "Newstatus",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bridgeId",
+        "rowId",
+        "newStatus"
+      ],
+      "title": "StarbridgeSetBridgeRowStatusConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_bridge": "#/$defs/StarbridgeGetBridgeConfig",
+          "get_bridge_column_metadata": "#/$defs/StarbridgeGetBridgeColumnMetadataConfig",
+          "get_buyer_attributes_bulk": "#/$defs/StarbridgeGetBuyerAttributesBulkConfig",
+          "get_buyer_summary": "#/$defs/StarbridgeGetBuyerSummaryConfig",
+          "get_buyer_summary_v2": "#/$defs/StarbridgeGetBuyerSummaryV2Config",
+          "get_file_download_links": "#/$defs/StarbridgeGetFileDownloadLinksConfig",
+          "get_opportunity": "#/$defs/StarbridgeGetOpportunityConfig",
+          "list_bridge_rows": "#/$defs/StarbridgeListBridgeRowsConfig",
+          "list_bridges": "#/$defs/StarbridgeListBridgesConfig",
+          "list_recent_buyer_signals": "#/$defs/StarbridgeListRecentBuyerSignalsConfig",
+          "list_top_recent_signals": "#/$defs/StarbridgeListTopRecentSignalsConfig",
+          "on_new_or_updated_row": "#/$defs/StarbridgeOnUpdatedRowConfig",
+          "search_buyers": "#/$defs/StarbridgeSearchBuyersConfig",
+          "set_bridge_row_status": "#/$defs/StarbridgeSetBridgeRowStatusConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/StarbridgeSearchBuyersConfig"
+        },
+        {
+          "$ref": "#/$defs/StarbridgeGetBuyerAttributesBulkConfig"
+        },
+        {
+          "$ref": "#/$defs/StarbridgeGetFileDownloadLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/StarbridgeGetOpportunityConfig"
+        },
+        {
+          "$ref": "#/$defs/StarbridgeListBridgesConfig"
+        },
+        {
+          "$ref": "#/$defs/StarbridgeGetBridgeConfig"
+        },
+        {
+          "$ref": "#/$defs/StarbridgeListBridgeRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/StarbridgeSetBridgeRowStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/StarbridgeGetBridgeColumnMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/StarbridgeListRecentBuyerSignalsConfig"
+        },
+        {
+          "$ref": "#/$defs/StarbridgeListTopRecentSignalsConfig"
+        },
+        {
+          "$ref": "#/$defs/StarbridgeGetBuyerSummaryConfig"
+        },
+        {
+          "$ref": "#/$defs/StarbridgeGetBuyerSummaryV2Config"
+        },
+        {
+          "$ref": "#/$defs/StarbridgeOnUpdatedRowConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StarbridgeCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Starbridge Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

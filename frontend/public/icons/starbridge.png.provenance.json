@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/starbridge.png",
+  "source": "https://www.starbridge.ai/favicon.ico",
+  "license": "Provider brand asset; used to identify Starbridge",
+  "sha256": "354ba004f285197ee0a1000ba3afc0b4915b02b0923ce7f1eec5893485ddac8f",
+  "notes": "32px PNG extracted without modification from the official favicon ICO container."
+}
