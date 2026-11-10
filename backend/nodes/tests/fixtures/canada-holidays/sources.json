@@ -1,0 +1,6 @@
+{
+  "source": "https://raw.githubusercontent.com/pcraig3/hols/main/reference/Canada-Holidays-API.v1.yaml",
+  "version": "1.15.0",
+  "sha256": "ca79b4a4bbd3edb70d2fb66fd93dd265cd050e315447048cc700c2670f5c014e",
+  "description": "200 response examples copied verbatim from the pinned provider contract."
+}

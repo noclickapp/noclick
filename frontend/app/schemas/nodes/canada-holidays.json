@@ -1,0 +1,454 @@
+{
+  "$defs": {
+    "GetApiInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_api_info",
+          "default": "get_api_info",
+          "title": "Get API Information",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get API Information"
+        }
+      },
+      "title": "GetApiInfo",
+      "type": "object"
+    },
+    "GetApiSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_api_spec",
+          "default": "get_api_spec",
+          "title": "Get Published API Specification",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Published API Specification"
+        }
+      },
+      "title": "GetApiSpec",
+      "type": "object"
+    },
+    "GetHoliday": {
+      "additionalProperties": false,
+      "properties": {
+        "year": {
+          "anyOf": [
+            {
+              "maximum": 2038,
+              "minimum": 2013,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Calendar year. Leave empty for the provider's current year.",
+          "title": "Year"
+        },
+        "optional": {
+          "default": false,
+          "description": "Include holidays optionally observed by employers as well as legislated holidays.",
+          "title": "Include optional holidays",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "get_holiday",
+          "default": "get_holiday",
+          "title": "Get Holiday and Observing Provinces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Holiday and Observing Provinces"
+        },
+        "holiday_id": {
+          "description": "Numeric ID returned by List Canadian Holidays.",
+          "maximum": 35,
+          "minimum": 1,
+          "title": "Holiday ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "holiday_id"
+      ],
+      "title": "GetHoliday",
+      "type": "object"
+    },
+    "GetProvince": {
+      "additionalProperties": false,
+      "properties": {
+        "year": {
+          "anyOf": [
+            {
+              "maximum": 2038,
+              "minimum": 2013,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Calendar year. Leave empty for the provider's current year.",
+          "title": "Year"
+        },
+        "optional": {
+          "default": false,
+          "description": "Include holidays optionally observed by employers as well as legislated holidays.",
+          "title": "Include optional holidays",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "get_province",
+          "default": "get_province",
+          "title": "Get Province Holiday Calendar",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Province Holiday Calendar"
+        },
+        "province_id": {
+          "enum": [
+            "AB",
+            "BC",
+            "MB",
+            "NB",
+            "NL",
+            "NS",
+            "NT",
+            "NU",
+            "ON",
+            "PE",
+            "QC",
+            "SK",
+            "YT"
+          ],
+          "title": "Province or territory",
+          "type": "string"
+        }
+      },
+      "required": [
+        "province_id"
+      ],
+      "title": "GetProvince",
+      "type": "object"
+    },
+    "GetProvinceWithOptionalHolidays": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_province_with_optional_holidays",
+          "default": "get_province_with_optional_holidays",
+          "title": "Get Province Calendar Including Optional Holidays",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Province Calendar Including Optional Holidays"
+        },
+        "province_id": {
+          "enum": [
+            "AB",
+            "BC",
+            "MB",
+            "NB",
+            "NL",
+            "NS",
+            "NT",
+            "NU",
+            "ON",
+            "PE",
+            "QC",
+            "SK",
+            "YT"
+          ],
+          "title": "Province or territory",
+          "type": "string"
+        },
+        "year": {
+          "anyOf": [
+            {
+              "maximum": 2038,
+              "minimum": 2013,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Year"
+        }
+      },
+      "required": [
+        "province_id"
+      ],
+      "title": "GetProvinceWithOptionalHolidays",
+      "type": "object"
+    },
+    "ListFederalHolidays": {
+      "additionalProperties": false,
+      "properties": {
+        "year": {
+          "anyOf": [
+            {
+              "maximum": 2038,
+              "minimum": 2013,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Calendar year. Leave empty for the provider's current year.",
+          "title": "Year"
+        },
+        "optional": {
+          "default": false,
+          "description": "Include holidays optionally observed by employers as well as legislated holidays.",
+          "title": "Include optional holidays",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_federal_holidays",
+          "default": "list_federal_holidays",
+          "title": "List Federal Holidays",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Federal Holidays"
+        }
+      },
+      "title": "ListFederalHolidays",
+      "type": "object"
+    },
+    "ListHolidays": {
+      "additionalProperties": false,
+      "properties": {
+        "year": {
+          "anyOf": [
+            {
+              "maximum": 2038,
+              "minimum": 2013,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Calendar year. Leave empty for the provider's current year.",
+          "title": "Year"
+        },
+        "optional": {
+          "default": false,
+          "description": "Include holidays optionally observed by employers as well as legislated holidays.",
+          "title": "Include optional holidays",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_holidays",
+          "default": "list_holidays",
+          "title": "List Canadian Holidays",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Canadian Holidays"
+        },
+        "federal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Yes: only federal holidays. No: exclude federal holidays. Empty: all holidays.",
+          "title": "Federal"
+        }
+      },
+      "title": "ListHolidays",
+      "type": "object"
+    },
+    "ListNonFederalHolidays": {
+      "additionalProperties": false,
+      "properties": {
+        "year": {
+          "anyOf": [
+            {
+              "maximum": 2038,
+              "minimum": 2013,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Calendar year. Leave empty for the provider's current year.",
+          "title": "Year"
+        },
+        "optional": {
+          "default": false,
+          "description": "Include holidays optionally observed by employers as well as legislated holidays.",
+          "title": "Include optional holidays",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_non_federal_holidays",
+          "default": "list_non_federal_holidays",
+          "title": "List Non-Federal Holidays",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Non-Federal Holidays"
+        }
+      },
+      "title": "ListNonFederalHolidays",
+      "type": "object"
+    },
+    "ListOptionalHolidays": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_optional_holidays",
+          "default": "list_optional_holidays",
+          "title": "List Holidays Including Optional Observances",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Holidays Including Optional Observances"
+        },
+        "year": {
+          "anyOf": [
+            {
+              "maximum": 2038,
+              "minimum": 2013,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Year"
+        },
+        "federal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by federal observance; leave empty for all holidays.",
+          "title": "Federal"
+        }
+      },
+      "title": "ListOptionalHolidays",
+      "type": "object"
+    },
+    "ListProvinces": {
+      "additionalProperties": false,
+      "properties": {
+        "year": {
+          "anyOf": [
+            {
+              "maximum": 2038,
+              "minimum": 2013,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Calendar year. Leave empty for the provider's current year.",
+          "title": "Year"
+        },
+        "optional": {
+          "default": false,
+          "description": "Include holidays optionally observed by employers as well as legislated holidays.",
+          "title": "Include optional holidays",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_provinces",
+          "default": "list_provinces",
+          "title": "List Provinces and Their Holidays",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Provinces and Their Holidays"
+        }
+      },
+      "title": "ListProvinces",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_api_info": "#/$defs/GetApiInfo",
+          "get_api_spec": "#/$defs/GetApiSpec",
+          "get_holiday": "#/$defs/GetHoliday",
+          "get_province": "#/$defs/GetProvince",
+          "get_province_with_optional_holidays": "#/$defs/GetProvinceWithOptionalHolidays",
+          "list_federal_holidays": "#/$defs/ListFederalHolidays",
+          "list_holidays": "#/$defs/ListHolidays",
+          "list_non_federal_holidays": "#/$defs/ListNonFederalHolidays",
+          "list_optional_holidays": "#/$defs/ListOptionalHolidays",
+          "list_provinces": "#/$defs/ListProvinces"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListHolidays"
+        },
+        {
+          "$ref": "#/$defs/ListFederalHolidays"
+        },
+        {
+          "$ref": "#/$defs/ListNonFederalHolidays"
+        },
+        {
+          "$ref": "#/$defs/ListOptionalHolidays"
+        },
+        {
+          "$ref": "#/$defs/GetHoliday"
+        },
+        {
+          "$ref": "#/$defs/ListProvinces"
+        },
+        {
+          "$ref": "#/$defs/GetProvince"
+        },
+        {
+          "$ref": "#/$defs/GetProvinceWithOptionalHolidays"
+        },
+        {
+          "$ref": "#/$defs/GetApiInfo"
+        },
+        {
+          "$ref": "#/$defs/GetApiSpec"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Canada-holidays Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,320 @@
+{
+  "/api/v1": {
+    "message": "Hello / Bonjour! Welcome to the Canada Holidays API / Bienvenue dans l’API canadienne des jours fériés",
+    "_links": {
+      "self": {
+        "href": "https://canada-holidays.ca/api/v1/"
+      },
+      "holidays": {
+        "href": "https://canada-holidays.ca/api/v1/holidays"
+      },
+      "provinces": {
+        "href": "https://canada-holidays.ca/api/v1/provinces"
+      },
+      "spec": {
+        "href": "https://canada-holidays.ca/api/v1/spec"
+      }
+    }
+  },
+  "/api/v1/holidays": {
+    "holidays": [
+      {
+        "id": 1,
+        "date": "2023-01-01",
+        "nameEn": "New Year’s Day",
+        "nameFr": "Jour de l’An",
+        "federal": 1,
+        "observedDate": "2023-01-02",
+        "provinces": [
+          {
+            "id": "AB",
+            "nameEn": "Alberta",
+            "nameFr": "Alberta",
+            "sourceLink": "https://www.alberta.ca/alberta-general-holidays.aspx#jumplinks-1",
+            "sourceEn": "General holidays in Alberta"
+          },
+          {
+            "id": "BC",
+            "nameEn": "British Columbia",
+            "nameFr": "Colombie-Britannique",
+            "sourceLink": "https://www2.gov.bc.ca/gov/content/employment-business/employment-standards-advice/employment-standards/statutory-holidays#body",
+            "sourceEn": "Statutory Holidays in British Columbia"
+          },
+          {
+            "id": "MB",
+            "nameEn": "Manitoba",
+            "nameFr": "Manitoba",
+            "sourceLink": "https://www.gov.mb.ca/labour/standards/doc,gen-holidays-after-april-30-07,factsheet.html#q12",
+            "sourceEn": "General holidays in Manitoba"
+          },
+          {
+            "id": "NB",
+            "nameEn": "New Brunswick",
+            "nameFr": "Nouveau-Brunswick",
+            "sourceLink": "https://www2.gnb.ca/content/gnb/en/departments/elg/local_government/content/governance/content/days_of_rest_act/faq.html#2",
+            "sourceEn": "10 prescribed days of rest"
+          },
+          {
+            "id": "NL",
+            "nameEn": "Newfoundland and Labrador",
+            "nameFr": "Terre-Neuve-et-Labrador",
+            "sourceLink": "https://www.gov.nl.ca/exec/tbs/2026-paid-holidays-2/",
+            "sourceEn": "Newfoundland 2026 Paid Holidays"
+          },
+          {
+            "id": "NT",
+            "nameEn": "Northwest Territories",
+            "nameFr": "Territoires du Nord-Ouest",
+            "sourceLink": "https://www.ece.gov.nt.ca/en/services/employment-standards/frequently-asked-questions#Statutory%20Holidays",
+            "sourceEn": "Employment Standards, Northwest Territories"
+          },
+          {
+            "id": "NS",
+            "nameEn": "Nova Scotia",
+            "nameFr": "Nouvelle-Écosse",
+            "sourceLink": "https://novascotia.ca/lae/employmentrights/holidaychart.asp",
+            "sourceEn": "Paid holidays in Nova Scotia"
+          },
+          {
+            "id": "NU",
+            "nameEn": "Nunavut",
+            "nameFr": "Nunavut",
+            "sourceLink": "https://nu-lsco.ca/faq-s?tmpl=component&faqid=11",
+            "sourceEn": "Nunavut General Holidays"
+          },
+          {
+            "id": "ON",
+            "nameEn": "Ontario",
+            "nameFr": "Ontario",
+            "sourceLink": "https://www.ontario.ca/document/your-guide-employment-standards-act-0/public-holidays",
+            "sourceEn": "Ontario Public holidays"
+          },
+          {
+            "id": "PE",
+            "nameEn": "Prince Edward Island",
+            "nameFr": "Île-du-Prince-Édouard",
+            "sourceLink": "https://www.princeedwardisland.ca/en/information/economic-growth-tourism-and-culture/paid-holidays",
+            "sourceEn": "PEI Paid Holidays"
+          },
+          {
+            "id": "QC",
+            "nameEn": "Quebec",
+            "nameFr": "Québec",
+            "sourceLink": "https://www2.gouv.qc.ca/entreprises/portail/quebec/ressourcesh?lang=fr&g=ressourcesh&sg=personnel&t=o&e=2318829344:3908165687",
+            "sourceEn": "Jours fériés, chômés et payés"
+          },
+          {
+            "id": "SK",
+            "nameEn": "Saskatchewan",
+            "nameFr": "Saskatchewan",
+            "sourceLink": "https://www.saskatchewan.ca/business/employment-standards/public-statutory-holidays/list-of-saskatchewan-public-holidays",
+            "sourceEn": "Saskatchewan Public Holidays"
+          },
+          {
+            "id": "YT",
+            "nameEn": "Yukon",
+            "nameFr": "Yukon",
+            "sourceLink": "https://yukon.ca/en/doing-business/employer-responsibilities/find-yukon-statutory-holiday",
+            "sourceEn": "Yukon statutory holiday dates"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "date": "2023-02-20",
+        "nameEn": "Louis Riel Day",
+        "nameFr": "Journée Louis Riel",
+        "federal": 0,
+        "observedDate": "2023-02-20",
+        "provinces": [
+          {
+            "id": "MB",
+            "nameEn": "Manitoba",
+            "nameFr": "Manitoba",
+            "sourceLink": "https://www.gov.mb.ca/labour/standards/doc,gen-holidays-after-april-30-07,factsheet.html#q12",
+            "sourceEn": "General holidays in Manitoba"
+          }
+        ]
+      }
+    ]
+  },
+  "/api/v1/provinces": {
+    "provinces": [
+      {
+        "id": "AB",
+        "nameEn": "Alberta",
+        "nameFr": "Alberta",
+        "sourceLink": "https://www.alberta.ca/alberta-general-holidays.aspx#jumplinks-1",
+        "sourceEn": "General holidays in Alberta",
+        "holidays": [
+          {
+            "id": 1,
+            "date": "2023-01-01",
+            "nameEn": "New Year’s Day",
+            "nameFr": "Jour de l’An",
+            "federal": 1,
+            "observedDate": "2023-01-02"
+          },
+          {
+            "id": 4,
+            "date": "2023-02-20",
+            "nameEn": "Family Day",
+            "nameFr": "Fête de la famille",
+            "federal": 0,
+            "observedDate": "2023-02-20"
+          }
+        ],
+        "nextHoliday": {
+          "id": 1,
+          "date": "2023-01-01",
+          "nameEn": "New Year’s Day",
+          "nameFr": "Jour de l’An",
+          "federal": 1,
+          "observedDate": "2023-01-02"
+        }
+      },
+      {
+        "id": "BC",
+        "nameEn": "British Columbia",
+        "nameFr": "Colombie-Britannique",
+        "sourceLink": "https://www2.gov.bc.ca/gov/content/employment-business/employment-standards-advice/employment-standards/statutory-holidays#body",
+        "sourceEn": "Statutory Holidays in British Columbia",
+        "holidays": [
+          {
+            "id": 1,
+            "date": "2023-01-01",
+            "nameEn": "New Year’s Day",
+            "nameFr": "Jour de l’An",
+            "federal": 1,
+            "observedDate": "2023-01-02"
+          },
+          {
+            "id": 4,
+            "date": "2023-02-20",
+            "nameEn": "Family Day",
+            "nameFr": "Fête de la famille",
+            "federal": 0,
+            "observedDate": "2023-02-20"
+          }
+        ],
+        "nextHoliday": {
+          "id": 1,
+          "date": "2023-01-01",
+          "nameEn": "New Year’s Day",
+          "nameFr": "Jour de l’An",
+          "federal": 1,
+          "observedDate": "2023-01-02"
+        }
+      }
+    ]
+  },
+  "/api/v1/provinces/{provinceId}": {
+    "province": {
+      "id": "MB",
+      "nameEn": "Manitoba",
+      "nameFr": "Manitoba",
+      "sourceLink": "https://www.gov.mb.ca/labour/standards/doc,gen-holidays-after-april-30-07,factsheet.html#q12",
+      "sourceEn": "General holidays in Manitoba",
+      "holidays": [
+        {
+          "id": 1,
+          "date": "2023-01-01",
+          "nameEn": "New Year’s Day",
+          "nameFr": "Jour de l’An",
+          "federal": 1,
+          "observedDate": "2023-01-02"
+        },
+        {
+          "id": 2,
+          "date": "2023-02-20",
+          "nameEn": "Louis Riel Day",
+          "nameFr": "Journée Louis Riel",
+          "federal": 0,
+          "observedDate": "2023-02-20"
+        },
+        {
+          "id": 7,
+          "date": "2023-04-07",
+          "nameEn": "Good Friday",
+          "nameFr": "Vendredi saint",
+          "federal": 1,
+          "observedDate": "2023-04-07"
+        },
+        {
+          "id": 11,
+          "date": "2023-05-22",
+          "nameEn": "Victoria Day",
+          "nameFr": "Fête de la Reine",
+          "federal": 1,
+          "observedDate": "2023-05-22"
+        },
+        {
+          "id": 15,
+          "date": "2023-07-01",
+          "nameEn": "Canada Day",
+          "nameFr": "Fête du Canada",
+          "federal": 1,
+          "observedDate": "2023-07-03"
+        },
+        {
+          "id": 26,
+          "date": "2023-09-04",
+          "nameEn": "Labour Day",
+          "nameFr": "Fête du travail",
+          "federal": 1,
+          "observedDate": "2023-09-04"
+        },
+        {
+          "id": 29,
+          "date": "2023-10-09",
+          "nameEn": "Thanksgiving",
+          "nameFr": "Action de grâce",
+          "federal": 1,
+          "observedDate": "2023-10-09"
+        },
+        {
+          "id": 31,
+          "date": "2023-12-25",
+          "nameEn": "Christmas Day",
+          "nameFr": "Noël",
+          "federal": 1,
+          "observedDate": "2023-12-25"
+        }
+      ],
+      "nextHoliday": {
+        "id": 1,
+        "date": "2023-01-01",
+        "nameEn": "New Year’s Day",
+        "nameFr": "Jour de l’An",
+        "federal": 1,
+        "observedDate": "2023-01-02"
+      }
+    }
+  },
+  "/api/v1/holidays/{holidayId}": {
+    "holiday": {
+      "id": 35,
+      "date": "2023-12-26",
+      "nameEn": "Boxing Day",
+      "nameFr": "Lendemain de Noël",
+      "federal": 1,
+      "observedDate": "2023-12-26",
+      "provinces": [
+        {
+          "id": "NL",
+          "nameEn": "Newfoundland and Labrador",
+          "nameFr": "Terre-Neuve-et-Labrador",
+          "sourceLink": "https://www.gov.nl.ca/exec/tbs/2026-paid-holidays-2/",
+          "sourceEn": "Newfoundland 2026 Paid Holidays"
+        },
+        {
+          "id": "ON",
+          "nameEn": "Ontario",
+          "nameFr": "Ontario",
+          "sourceLink": "https://www.ontario.ca/document/your-guide-employment-standards-act-0/public-holidays",
+          "sourceEn": "Ontario Public holidays"
+        }
+      ]
+    }
+  }
+}
