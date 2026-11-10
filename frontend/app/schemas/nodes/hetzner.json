@@ -1,0 +1,1579 @@
+{
+  "$defs": {
+    "AttachVolume": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "attach_volume",
+          "default": "attach_volume",
+          "title": "Attach Volume",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "volume_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Volume Id",
+          "type": "integer"
+        },
+        "server_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Server Id",
+          "type": "integer"
+        },
+        "automount": {
+          "default": false,
+          "title": "Automount",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "volume_id",
+        "server_id"
+      ],
+      "title": "AttachVolume",
+      "type": "object"
+    },
+    "CreateSSHKey": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_ssh_key",
+          "default": "create_ssh_key",
+          "title": "Create SSH Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "name": {
+          "examples": [
+            "My ssh key"
+          ],
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "public_key": {
+          "description": "The complete OpenSSH public key, never a private key.",
+          "minLength": 1,
+          "title": "Public Key",
+          "type": "string"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        }
+      },
+      "required": [
+        "name",
+        "public_key"
+      ],
+      "title": "CreateSSHKey",
+      "type": "object"
+    },
+    "CreateServer": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_server",
+          "default": "create_server",
+          "title": "Create Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "name": {
+          "examples": [
+            "my-server"
+          ],
+          "maxLength": 253,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9.-]*$",
+          "title": "Name",
+          "type": "string"
+        },
+        "server_type": {
+          "examples": [
+            "cpx22"
+          ],
+          "minLength": 1,
+          "title": "Server Type",
+          "type": "string"
+        },
+        "image": {
+          "examples": [
+            "ubuntu-24.04"
+          ],
+          "minLength": 1,
+          "title": "Image",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "nbg1"
+          ],
+          "title": "Location"
+        },
+        "ssh_keys": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Existing SSH key names or IDs as strings. Without SSH keys Hetzner returns a root password.",
+          "title": "Ssh Keys"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        },
+        "user_data": {
+          "anyOf": [
+            {
+              "maxLength": 32768,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cloud-init data. Do not put secrets in user data; Hetzner stores it.",
+          "title": "User Data"
+        },
+        "start_after_create": {
+          "default": true,
+          "title": "Start After Create",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "server_type",
+        "image"
+      ],
+      "title": "CreateServer",
+      "type": "object"
+    },
+    "CreateServerImage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_server_image",
+          "default": "create_server_image",
+          "title": "Create Server Image",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "server_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Server Id",
+          "type": "integer"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "type": {
+          "default": "snapshot",
+          "enum": [
+            "snapshot",
+            "backup"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        }
+      },
+      "required": [
+        "server_id"
+      ],
+      "title": "CreateServerImage",
+      "type": "object"
+    },
+    "CreateVolume": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_volume",
+          "default": "create_volume",
+          "title": "Create Volume",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "name": {
+          "examples": [
+            "test-database"
+          ],
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "size": {
+          "description": "Size in GB.",
+          "examples": [
+            42
+          ],
+          "maximum": 10240,
+          "minimum": 10,
+          "title": "Size",
+          "type": "integer"
+        },
+        "location": {
+          "examples": [
+            "nbg1"
+          ],
+          "minLength": 1,
+          "title": "Location",
+          "type": "string"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "enum": [
+                "xfs",
+                "ext4"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format",
+          "enum": [
+            "xfs",
+            "ext4"
+          ],
+          "x-enum-searchable": true
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        }
+      },
+      "required": [
+        "name",
+        "size",
+        "location"
+      ],
+      "title": "CreateVolume",
+      "type": "object"
+    },
+    "DeleteSSHKey": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_ssh_key",
+          "default": "delete_ssh_key",
+          "title": "Delete SSH Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "ssh_key_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Ssh Key Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "ssh_key_id"
+      ],
+      "title": "DeleteSSHKey",
+      "type": "object"
+    },
+    "DeleteServer": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_server",
+          "default": "delete_server",
+          "title": "Delete Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "server_id": {
+          "description": "Permanently deletes this server and its disks.",
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Server Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "server_id"
+      ],
+      "title": "DeleteServer",
+      "type": "object"
+    },
+    "DeleteVolume": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_volume",
+          "default": "delete_volume",
+          "title": "Delete Volume",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "volume_id": {
+          "description": "Permanently deletes the volume and its data.",
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Volume Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "volume_id"
+      ],
+      "title": "DeleteVolume",
+      "type": "object"
+    },
+    "DetachVolume": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "detach_volume",
+          "default": "detach_volume",
+          "title": "Detach Volume",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "volume_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Volume Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "volume_id"
+      ],
+      "title": "DetachVolume",
+      "type": "object"
+    },
+    "GetImage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_image",
+          "default": "get_image",
+          "title": "Get Image",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "image_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Image Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "image_id"
+      ],
+      "title": "GetImage",
+      "type": "object"
+    },
+    "GetServer": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_server",
+          "default": "get_server",
+          "title": "Get Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "server_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Server Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "server_id"
+      ],
+      "title": "GetServer",
+      "type": "object"
+    },
+    "GetServerAction": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_server_action",
+          "default": "get_server_action",
+          "title": "Get Server Action",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "server_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Server Id",
+          "type": "integer"
+        },
+        "action_id": {
+          "description": "Action ID returned by the server operation. Acknowledged actions may still be running.",
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Action Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "server_id",
+        "action_id"
+      ],
+      "title": "GetServerAction",
+      "type": "object"
+    },
+    "HetznerAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "hetzner_api_token",
+          "default": "hetzner_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Hetzner Cloud API Token",
+      "type": "object",
+      "x-credential-instructions": "In your Hetzner Console project, open Security \u2192 API tokens and generate a token. Paste it here. Read-only tokens support reads and polling; choose Read & Write for changes. Tokens are scoped to one project.",
+      "x-credential-url": "https://console.hetzner.com/"
+    },
+    "ListFirewalls": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use meta.pagination.next_page from the response.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "label_selector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hetzner label selector, for example environment=prod.",
+          "title": "Label Selector"
+        },
+        "operation": {
+          "const": "list_firewalls",
+          "default": "list_firewalls",
+          "title": "List Firewalls",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListFirewalls",
+      "type": "object"
+    },
+    "ListImages": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use meta.pagination.next_page from the response.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_images",
+          "default": "list_images",
+          "title": "List Images",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "system",
+                "snapshot",
+                "backup",
+                "app"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "system",
+            "snapshot",
+            "backup",
+            "app"
+          ],
+          "x-enum-searchable": true
+        },
+        "label_selector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label Selector"
+        }
+      },
+      "title": "ListImages",
+      "type": "object"
+    },
+    "ListSSHKeys": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use meta.pagination.next_page from the response.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "label_selector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hetzner label selector, for example environment=prod.",
+          "title": "Label Selector"
+        },
+        "operation": {
+          "const": "list_ssh_keys",
+          "default": "list_ssh_keys",
+          "title": "List SSH Keys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListSSHKeys",
+      "type": "object"
+    },
+    "ListServerTypes": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use meta.pagination.next_page from the response.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_server_types",
+          "default": "list_server_types",
+          "title": "List Server Types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListServerTypes",
+      "type": "object"
+    },
+    "ListServers": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use meta.pagination.next_page from the response.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "label_selector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hetzner label selector, for example environment=prod.",
+          "title": "Label Selector"
+        },
+        "operation": {
+          "const": "list_servers",
+          "default": "list_servers",
+          "title": "List Servers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "sort": {
+          "default": "id:asc",
+          "enum": [
+            "id:asc",
+            "id:desc",
+            "name:asc",
+            "name:desc",
+            "created:asc",
+            "created:desc"
+          ],
+          "title": "Sort",
+          "type": "string"
+        }
+      },
+      "title": "ListServers",
+      "type": "object"
+    },
+    "ListVolumes": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use meta.pagination.next_page from the response.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "label_selector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hetzner label selector, for example environment=prod.",
+          "title": "Label Selector"
+        },
+        "operation": {
+          "const": "list_volumes",
+          "default": "list_volumes",
+          "title": "List Volumes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListVolumes",
+      "type": "object"
+    },
+    "OnNewServer": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_server",
+          "default": "on_new_server",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On New Server",
+          "x-is-trigger": true
+        },
+        "label_selector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only watch servers matching this label selector. Existing servers form the baseline when armed.",
+          "title": "Label Selector"
+        }
+      },
+      "title": "OnNewServer",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PowerOffServer": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "poweroff_server",
+          "default": "poweroff_server",
+          "title": "Power Off Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "server_id": {
+          "description": "Immediately cuts power; may cause data loss.",
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Server Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "server_id"
+      ],
+      "title": "PowerOffServer",
+      "type": "object"
+    },
+    "PowerOnServer": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "poweron_server",
+          "default": "poweron_server",
+          "title": "Power On Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "server_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Server Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "server_id"
+      ],
+      "title": "PowerOnServer",
+      "type": "object"
+    },
+    "RebootServer": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "reboot_server",
+          "default": "reboot_server",
+          "title": "Reboot Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "server_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Server Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "server_id"
+      ],
+      "title": "RebootServer",
+      "type": "object"
+    },
+    "ResizeVolume": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "resize_volume",
+          "default": "resize_volume",
+          "title": "Resize Volume",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "volume_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Volume Id",
+          "type": "integer"
+        },
+        "size": {
+          "description": "New size in GB; must exceed the current size.",
+          "examples": [
+            50
+          ],
+          "maximum": 10240,
+          "minimum": 10,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "volume_id",
+        "size"
+      ],
+      "title": "ResizeVolume",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "ShutdownServer": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "shutdown_server",
+          "default": "shutdown_server",
+          "title": "Shutdown Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "server_id": {
+          "description": "Requests a graceful shutdown through ACPI.",
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Server Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "server_id"
+      ],
+      "title": "ShutdownServer",
+      "type": "object"
+    },
+    "UpdateServer": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_server",
+          "default": "update_server",
+          "title": "Update Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "server_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Server Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "my-server"
+          ],
+          "title": "Name"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces all existing labels; an empty object clears them.",
+          "title": "Labels"
+        }
+      },
+      "required": [
+        "server_id"
+      ],
+      "title": "UpdateServer",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "attach_volume": "#/$defs/AttachVolume",
+          "create_server": "#/$defs/CreateServer",
+          "create_server_image": "#/$defs/CreateServerImage",
+          "create_ssh_key": "#/$defs/CreateSSHKey",
+          "create_volume": "#/$defs/CreateVolume",
+          "delete_server": "#/$defs/DeleteServer",
+          "delete_ssh_key": "#/$defs/DeleteSSHKey",
+          "delete_volume": "#/$defs/DeleteVolume",
+          "detach_volume": "#/$defs/DetachVolume",
+          "get_image": "#/$defs/GetImage",
+          "get_server": "#/$defs/GetServer",
+          "get_server_action": "#/$defs/GetServerAction",
+          "list_firewalls": "#/$defs/ListFirewalls",
+          "list_images": "#/$defs/ListImages",
+          "list_server_types": "#/$defs/ListServerTypes",
+          "list_servers": "#/$defs/ListServers",
+          "list_ssh_keys": "#/$defs/ListSSHKeys",
+          "list_volumes": "#/$defs/ListVolumes",
+          "on_new_server": "#/$defs/OnNewServer",
+          "poweroff_server": "#/$defs/PowerOffServer",
+          "poweron_server": "#/$defs/PowerOnServer",
+          "reboot_server": "#/$defs/RebootServer",
+          "resize_volume": "#/$defs/ResizeVolume",
+          "shutdown_server": "#/$defs/ShutdownServer",
+          "update_server": "#/$defs/UpdateServer"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListServers"
+        },
+        {
+          "$ref": "#/$defs/GetServer"
+        },
+        {
+          "$ref": "#/$defs/CreateServer"
+        },
+        {
+          "$ref": "#/$defs/UpdateServer"
+        },
+        {
+          "$ref": "#/$defs/DeleteServer"
+        },
+        {
+          "$ref": "#/$defs/PowerOnServer"
+        },
+        {
+          "$ref": "#/$defs/ShutdownServer"
+        },
+        {
+          "$ref": "#/$defs/PowerOffServer"
+        },
+        {
+          "$ref": "#/$defs/RebootServer"
+        },
+        {
+          "$ref": "#/$defs/CreateServerImage"
+        },
+        {
+          "$ref": "#/$defs/ListImages"
+        },
+        {
+          "$ref": "#/$defs/GetImage"
+        },
+        {
+          "$ref": "#/$defs/ListServerTypes"
+        },
+        {
+          "$ref": "#/$defs/ListSSHKeys"
+        },
+        {
+          "$ref": "#/$defs/CreateSSHKey"
+        },
+        {
+          "$ref": "#/$defs/DeleteSSHKey"
+        },
+        {
+          "$ref": "#/$defs/ListVolumes"
+        },
+        {
+          "$ref": "#/$defs/CreateVolume"
+        },
+        {
+          "$ref": "#/$defs/AttachVolume"
+        },
+        {
+          "$ref": "#/$defs/DetachVolume"
+        },
+        {
+          "$ref": "#/$defs/ResizeVolume"
+        },
+        {
+          "$ref": "#/$defs/DeleteVolume"
+        },
+        {
+          "$ref": "#/$defs/ListFirewalls"
+        },
+        {
+          "$ref": "#/$defs/GetServerAction"
+        },
+        {
+          "$ref": "#/$defs/OnNewServer"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HetznerAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Hetzner Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
