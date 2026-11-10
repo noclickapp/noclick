@@ -1,0 +1,4622 @@
+{
+  "$defs": {
+    "ConstantContactAddAccountEmailAddressConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_account_email_address",
+          "default": "add_account_email_address",
+          "title": "Add Account Email Address",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account Services",
+          "x-creates-resource": true,
+          "x-display-name": "Add Account Email Address",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_add_account_email_address"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactAddAccountEmailAddressConfig",
+      "type": "object"
+    },
+    "ConstantContactAddPhysicalAddressConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_physical_address",
+          "default": "add_physical_address",
+          "title": "Add Physical Address",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account Services",
+          "x-creates-resource": true,
+          "x-display-name": "Add Physical Address",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_add_physical_address"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactAddPhysicalAddressConfig",
+      "type": "object"
+    },
+    "ConstantContactBulkImportContactsJsonConfig": {
+      "properties": {
+        "operation": {
+          "const": "bulk_import_contacts_json",
+          "default": "bulk_import_contacts_json",
+          "title": "Bulk Import Contacts JSON",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Activities",
+          "x-display-name": "Bulk Import Contacts JSON",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactBulkImportContactsJsonConfig",
+      "type": "object"
+    },
+    "ConstantContactCountContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "count_contact",
+          "default": "count_contact",
+          "title": "Count Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Count Contact",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactCountContactConfig",
+      "type": "object"
+    },
+    "ConstantContactCreateAutomationCampaignUsingPostConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_automation_campaign_using_post",
+          "default": "create_automation_campaign_using_post",
+          "title": "Create Automation Campaign Using Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-creates-resource": true,
+          "x-display-name": "Create Automation Campaign Using Post",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_automation_campaign_using_post"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactCreateAutomationCampaignUsingPostConfig",
+      "type": "object"
+    },
+    "ConstantContactCreateContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-creates-resource": true,
+          "x-display-name": "Create Contact",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_contact"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactCreateContactConfig",
+      "type": "object"
+    },
+    "ConstantContactCreateEmailCampaignAbTestConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_email_campaign_ab_test",
+          "default": "create_email_campaign_ab_test",
+          "title": "Create Email Campaign AB Test",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Campaigns AB Tests",
+          "x-creates-resource": true,
+          "x-display-name": "Create Email Campaign AB Test",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_email_campaign_ab_test"
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id",
+        "payload_json"
+      ],
+      "title": "ConstantContactCreateEmailCampaignAbTestConfig",
+      "type": "object"
+    },
+    "ConstantContactCreateEmailCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_email_campaign",
+          "default": "create_email_campaign",
+          "title": "Create Email Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Campaigns",
+          "x-creates-resource": true,
+          "x-display-name": "Create Email Campaign",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_email_campaign"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactCreateEmailCampaignConfig",
+      "type": "object"
+    },
+    "ConstantContactCreateListConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Lists",
+          "x-creates-resource": true,
+          "x-display-name": "Create List",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_list"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactCreateListConfig",
+      "type": "object"
+    },
+    "ConstantContactCreateOrUpdateContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_or_update_contact",
+          "default": "create_or_update_contact",
+          "title": "Create Or Update Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-creates-resource": true,
+          "x-display-name": "Create Or Update Contact",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_or_update_contact"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactCreateOrUpdateContactConfig",
+      "type": "object"
+    },
+    "ConstantContactCreateResendToNonOpenersConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_resend_to_non_openers",
+          "default": "create_resend_to_non_openers",
+          "title": "Create Resend To Non Openers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Campaigns",
+          "x-creates-resource": true,
+          "x-display-name": "Create Resend To Non Openers",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_resend_to_non_openers"
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id",
+        "payload_json"
+      ],
+      "title": "ConstantContactCreateResendToNonOpenersConfig",
+      "type": "object"
+    },
+    "ConstantContactCreateSegmentConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_segment",
+          "default": "create_segment",
+          "title": "Create Segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-creates-resource": true,
+          "x-display-name": "Create Segment",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_segment"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactCreateSegmentConfig",
+      "type": "object"
+    },
+    "ConstantContactDeleteContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Delete Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ConstantContactDeleteContactConfig",
+      "type": "object"
+    },
+    "ConstantContactDeleteCustomFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_custom_field",
+          "default": "delete_custom_field",
+          "title": "Delete Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts Custom Fields",
+          "x-display-name": "Delete Custom Field",
+          "x-is-trigger": false
+        },
+        "custom_field_id": {
+          "title": "Custom Field Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "custom_field_id"
+      ],
+      "title": "ConstantContactDeleteCustomFieldConfig",
+      "type": "object"
+    },
+    "ConstantContactDeleteEmailCampaignAbTestConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_email_campaign_ab_test",
+          "default": "delete_email_campaign_ab_test",
+          "title": "Delete Email Campaign AB Test",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Campaigns AB Tests",
+          "x-display-name": "Delete Email Campaign AB Test",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactDeleteEmailCampaignAbTestConfig",
+      "type": "object"
+    },
+    "ConstantContactDeleteListActivityConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_list_activity",
+          "default": "delete_list_activity",
+          "title": "Delete List Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Lists",
+          "x-display-name": "Delete List Activity",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "ConstantContactDeleteListActivityConfig",
+      "type": "object"
+    },
+    "ConstantContactDeleteResendToNonOpenersConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_resend_to_non_openers",
+          "default": "delete_resend_to_non_openers",
+          "title": "Delete Resend To Non Openers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Campaigns",
+          "x-display-name": "Delete Resend To Non Openers",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "resend_request_id": {
+          "title": "Resend Request Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id",
+        "resend_request_id"
+      ],
+      "title": "ConstantContactDeleteResendToNonOpenersConfig",
+      "type": "object"
+    },
+    "ConstantContactDeleteSegmentConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_segment",
+          "default": "delete_segment",
+          "title": "Delete Segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Delete Segment",
+          "x-is-trigger": false
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "segment_id"
+      ],
+      "title": "ConstantContactDeleteSegmentConfig",
+      "type": "object"
+    },
+    "ConstantContactDeleteTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "title": "Delete Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Tags",
+          "x-display-name": "Delete Tag",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "title": "Tag Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "ConstantContactDeleteTagConfig",
+      "type": "object"
+    },
+    "ConstantContactGetAccountByIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_account_by_id",
+          "default": "get_account_by_id",
+          "title": "Get Account By ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account Services",
+          "x-display-name": "Get Account By ID",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactGetAccountByIdConfig",
+      "type": "object"
+    },
+    "ConstantContactGetAccountSegmentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_account_segments",
+          "default": "get_account_segments",
+          "title": "Get Account Segments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Get Account Segments",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactGetAccountSegmentsConfig",
+      "type": "object"
+    },
+    "ConstantContactGetActivityConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_activity",
+          "default": "get_activity",
+          "title": "Get Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Activities",
+          "x-display-name": "Get Activity",
+          "x-is-trigger": false
+        },
+        "activity_id": {
+          "title": "Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "activity_id"
+      ],
+      "title": "ConstantContactGetActivityConfig",
+      "type": "object"
+    },
+    "ConstantContactGetActivityStatusCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_activity_status_collection",
+          "default": "get_activity_status_collection",
+          "title": "Get Activity Status Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Activities",
+          "x-display-name": "Get Activity Status Collection",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactGetActivityStatusCollectionConfig",
+      "type": "object"
+    },
+    "ConstantContactGetAllBulkEmailCampaignSummariesConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_all_bulk_email_campaign_summaries",
+          "default": "get_all_bulk_email_campaign_summaries",
+          "title": "Get All Bulk Email Campaign Summaries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Reporting",
+          "x-display-name": "Get All Bulk Email Campaign Summaries",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactGetAllBulkEmailCampaignSummariesConfig",
+      "type": "object"
+    },
+    "ConstantContactGetBouncesConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_bounces",
+          "default": "get_bounces",
+          "title": "Get Bounces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Reporting",
+          "x-display-name": "Get Bounces",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactGetBouncesConfig",
+      "type": "object"
+    },
+    "ConstantContactGetCampaignActivityLinkStatsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_campaign_activity_link_stats",
+          "default": "get_campaign_activity_link_stats",
+          "title": "Get Campaign Activity Link Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Reporting",
+          "x-display-name": "Get Campaign Activity Link Stats",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactGetCampaignActivityLinkStatsConfig",
+      "type": "object"
+    },
+    "ConstantContactGetCampaignPerformanceStatsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_campaign_performance_stats",
+          "default": "get_campaign_performance_stats",
+          "title": "Get Campaign Performance Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts Reporting",
+          "x-display-name": "Get Campaign Performance Stats",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactGetCampaignPerformanceStatsConfig",
+      "type": "object"
+    },
+    "ConstantContactGetClicksConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_clicks",
+          "default": "get_clicks",
+          "title": "Get Clicks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Reporting",
+          "x-display-name": "Get Clicks",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactGetClicksConfig",
+      "type": "object"
+    },
+    "ConstantContactGetCompanyLogoConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_company_logo",
+          "default": "get_company_logo",
+          "title": "Get Company Logo",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account Services",
+          "x-display-name": "Get Company Logo",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactGetCompanyLogoConfig",
+      "type": "object"
+    },
+    "ConstantContactGetContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ConstantContactGetContactConfig",
+      "type": "object"
+    },
+    "ConstantContactGetContactIdXrefsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_contact_id_xrefs",
+          "default": "get_contact_id_xrefs",
+          "title": "Get Contact ID Xrefs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Contact ID Xrefs",
+          "x-is-trigger": false
+        },
+        "sequence_ids": {
+          "title": "Sequence Ids",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "sequence_ids"
+      ],
+      "title": "ConstantContactGetContactIdXrefsConfig",
+      "type": "object"
+    },
+    "ConstantContactGetContactOpenClickRateConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_contact_open_click_rate",
+          "default": "get_contact_open_click_rate",
+          "title": "Get Contact Open Click Rate",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts Reporting",
+          "x-display-name": "Get Contact Open Click Rate",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "start": {
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "title": "End",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "contact_id",
+        "start",
+        "end"
+      ],
+      "title": "ConstantContactGetContactOpenClickRateConfig",
+      "type": "object"
+    },
+    "ConstantContactGetContactTrackingConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_contact_tracking",
+          "default": "get_contact_tracking",
+          "title": "Get Contact Tracking",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts Reporting",
+          "x-display-name": "Get Contact Tracking",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ConstantContactGetContactTrackingConfig",
+      "type": "object"
+    },
+    "ConstantContactGetContactTrackingCountConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_contact_tracking_count",
+          "default": "get_contact_tracking_count",
+          "title": "Get Contact Tracking Count",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts Reporting",
+          "x-display-name": "Get Contact Tracking Count",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "start": {
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "title": "End",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "contact_id",
+        "start",
+        "end"
+      ],
+      "title": "ConstantContactGetContactTrackingCountConfig",
+      "type": "object"
+    },
+    "ConstantContactGetContactsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_contacts",
+          "default": "get_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contacts",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactGetContactsConfig",
+      "type": "object"
+    },
+    "ConstantContactGetContactsExportConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_contacts_export",
+          "default": "get_contacts_export",
+          "title": "Get Contacts Export",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Activities",
+          "x-display-name": "Get Contacts Export",
+          "x-is-trigger": false
+        },
+        "file_export_id": {
+          "title": "File Export Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "file_export_id"
+      ],
+      "title": "ConstantContactGetContactsExportConfig",
+      "type": "object"
+    },
+    "ConstantContactGetCustomFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_custom_field",
+          "default": "get_custom_field",
+          "title": "Get Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts Custom Fields",
+          "x-display-name": "Get Custom Field",
+          "x-is-trigger": false
+        },
+        "custom_field_id": {
+          "title": "Custom Field Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "custom_field_id"
+      ],
+      "title": "ConstantContactGetCustomFieldConfig",
+      "type": "object"
+    },
+    "ConstantContactGetCustomFieldsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_custom_fields",
+          "default": "get_custom_fields",
+          "title": "Get Custom Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts Custom Fields",
+          "x-display-name": "Get Custom Fields",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactGetCustomFieldsConfig",
+      "type": "object"
+    },
+    "ConstantContactGetDidNotOpensConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_did_not_opens",
+          "default": "get_did_not_opens",
+          "title": "Get Did Not Opens",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Reporting",
+          "x-display-name": "Get Did Not Opens",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactGetDidNotOpensConfig",
+      "type": "object"
+    },
+    "ConstantContactGetEmailCampaignActivitySummaryConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_email_campaign_activity_summary",
+          "default": "get_email_campaign_activity_summary",
+          "title": "Get Email Campaign Activity Summary",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Reporting",
+          "x-display-name": "Get Email Campaign Activity Summary",
+          "x-is-trigger": false
+        },
+        "campaign_activity_ids": {
+          "title": "Campaign Activity Ids",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_ids"
+      ],
+      "title": "ConstantContactGetEmailCampaignActivitySummaryConfig",
+      "type": "object"
+    },
+    "ConstantContactGetEmailSummaryConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_email_summary",
+          "default": "get_email_summary",
+          "title": "Get Email Summary",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Reporting",
+          "x-display-name": "Get Email Summary",
+          "x-is-trigger": false
+        },
+        "campaign_ids": {
+          "title": "Campaign Ids",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_ids"
+      ],
+      "title": "ConstantContactGetEmailSummaryConfig",
+      "type": "object"
+    },
+    "ConstantContactGetForwardsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_forwards",
+          "default": "get_forwards",
+          "title": "Get Forwards",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Reporting",
+          "x-display-name": "Get Forwards",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactGetForwardsConfig",
+      "type": "object"
+    },
+    "ConstantContactGetListConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Get List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Lists",
+          "x-display-name": "Get List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "ConstantContactGetListConfig",
+      "type": "object"
+    },
+    "ConstantContactGetListIdXrefsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_list_id_xrefs",
+          "default": "get_list_id_xrefs",
+          "title": "Get List ID Xrefs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Lists",
+          "x-display-name": "Get List ID Xrefs",
+          "x-is-trigger": false
+        },
+        "sequence_ids": {
+          "title": "Sequence Ids",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "sequence_ids"
+      ],
+      "title": "ConstantContactGetListIdXrefsConfig",
+      "type": "object"
+    },
+    "ConstantContactGetListsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_lists",
+          "default": "get_lists",
+          "title": "Get Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Lists",
+          "x-display-name": "Get Lists",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactGetListsConfig",
+      "type": "object"
+    },
+    "ConstantContactGetOpensConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_opens",
+          "default": "get_opens",
+          "title": "Get Opens",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Reporting",
+          "x-display-name": "Get Opens",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactGetOpensConfig",
+      "type": "object"
+    },
+    "ConstantContactGetOptoutsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_optouts",
+          "default": "get_optouts",
+          "title": "Get Optouts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Reporting",
+          "x-display-name": "Get Optouts",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactGetOptoutsConfig",
+      "type": "object"
+    },
+    "ConstantContactGetPhysicalAddressConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_physical_address",
+          "default": "get_physical_address",
+          "title": "Get Physical Address",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account Services",
+          "x-display-name": "Get Physical Address",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactGetPhysicalAddressConfig",
+      "type": "object"
+    },
+    "ConstantContactGetSegmentDetailConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_segment_detail",
+          "default": "get_segment_detail",
+          "title": "Get Segment Detail",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Get Segment Detail",
+          "x-is-trigger": false
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "segment_id"
+      ],
+      "title": "ConstantContactGetSegmentDetailConfig",
+      "type": "object"
+    },
+    "ConstantContactGetSendsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_sends",
+          "default": "get_sends",
+          "title": "Get Sends",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Reporting",
+          "x-display-name": "Get Sends",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactGetSendsConfig",
+      "type": "object"
+    },
+    "ConstantContactGetSmsEngagementHistoryConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_sms_engagement_history",
+          "default": "get_sms_engagement_history",
+          "title": "Get SMS Engagement History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get SMS Engagement History",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ConstantContactGetSmsEngagementHistoryConfig",
+      "type": "object"
+    },
+    "ConstantContactGetTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Get Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Tags",
+          "x-display-name": "Get Tag",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "title": "Tag Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "ConstantContactGetTagConfig",
+      "type": "object"
+    },
+    "ConstantContactGetTagsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_tags",
+          "default": "get_tags",
+          "title": "Get Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Tags",
+          "x-display-name": "Get Tags",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactGetTagsConfig",
+      "type": "object"
+    },
+    "ConstantContactGetUniqueOpensConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_unique_opens",
+          "default": "get_unique_opens",
+          "title": "Get Unique Opens",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Reporting",
+          "x-display-name": "Get Unique Opens",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactGetUniqueOpensConfig",
+      "type": "object"
+    },
+    "ConstantContactGetUserPrivilegesConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_user_privileges",
+          "default": "get_user_privileges",
+          "title": "Get User Privileges",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account Services",
+          "x-display-name": "Get User Privileges",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactGetUserPrivilegesConfig",
+      "type": "object"
+    },
+    "ConstantContactListAutomationsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_automations",
+          "default": "list_automations",
+          "title": "List Automations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "List Automations",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactListAutomationsConfig",
+      "type": "object"
+    },
+    "ConstantContactOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "constant_contact_oauth",
+          "default": "constant_contact_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Granted Scopes"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token"
+      ],
+      "title": "Constant Contact OAuth",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://app.constantcontact.com/pages/dma/portal",
+      "x-oauth-provider": "constant_contact",
+      "x-oauth-scopes": [
+        "account_read",
+        "account_update",
+        "campaign_data",
+        "contact_data",
+        "offline_access"
+      ]
+    },
+    "ConstantContactOnNewContactConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_contact",
+          "default": "on_new_contact",
+          "title": "On New Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Contact",
+          "x-is-trigger": true
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional list to monitor; leave blank for all contacts",
+          "title": "List ID"
+        }
+      },
+      "title": "ConstantContactOnNewContactConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ConstantContactPostContactDeleteConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_contact_delete",
+          "default": "post_contact_delete",
+          "title": "Post Contact Delete",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Activities",
+          "x-creates-resource": true,
+          "x-display-name": "Post Contact Delete",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_post_contact_delete"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactPostContactDeleteConfig",
+      "type": "object"
+    },
+    "ConstantContactPostContactsExportConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_contacts_export",
+          "default": "post_contacts_export",
+          "title": "Post Contacts Export",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Activities",
+          "x-creates-resource": true,
+          "x-display-name": "Post Contacts Export",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_post_contacts_export"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactPostContactsExportConfig",
+      "type": "object"
+    },
+    "ConstantContactPostCustomFieldDeleteConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_custom_field_delete",
+          "default": "post_custom_field_delete",
+          "title": "Post Custom Field Delete",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Activities",
+          "x-creates-resource": true,
+          "x-display-name": "Post Custom Field Delete",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_post_custom_field_delete"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactPostCustomFieldDeleteConfig",
+      "type": "object"
+    },
+    "ConstantContactPostCustomFieldsConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_custom_fields",
+          "default": "post_custom_fields",
+          "title": "Post Custom Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts Custom Fields",
+          "x-creates-resource": true,
+          "x-display-name": "Post Custom Fields",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_post_custom_fields"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactPostCustomFieldsConfig",
+      "type": "object"
+    },
+    "ConstantContactPostListAddContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_list_add_contact",
+          "default": "post_list_add_contact",
+          "title": "Post List Add Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Activities",
+          "x-creates-resource": true,
+          "x-display-name": "Post List Add Contact",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_post_list_add_contact"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactPostListAddContactConfig",
+      "type": "object"
+    },
+    "ConstantContactPostListDeleteConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_list_delete",
+          "default": "post_list_delete",
+          "title": "Post List Delete",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Activities",
+          "x-creates-resource": true,
+          "x-display-name": "Post List Delete",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_post_list_delete"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactPostListDeleteConfig",
+      "type": "object"
+    },
+    "ConstantContactPostListRemoveContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_list_remove_contact",
+          "default": "post_list_remove_contact",
+          "title": "Post List Remove Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Activities",
+          "x-creates-resource": true,
+          "x-display-name": "Post List Remove Contact",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_post_list_remove_contact"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactPostListRemoveContactConfig",
+      "type": "object"
+    },
+    "ConstantContactPostTagAddContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_tag_add_contact",
+          "default": "post_tag_add_contact",
+          "title": "Post Tag Add Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Activities",
+          "x-creates-resource": true,
+          "x-display-name": "Post Tag Add Contact",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_post_tag_add_contact"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactPostTagAddContactConfig",
+      "type": "object"
+    },
+    "ConstantContactPostTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_tag",
+          "default": "post_tag",
+          "title": "Post Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Tags",
+          "x-creates-resource": true,
+          "x-display-name": "Post Tag",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_post_tag"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactPostTagConfig",
+      "type": "object"
+    },
+    "ConstantContactPostTagDeleteConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_tag_delete",
+          "default": "post_tag_delete",
+          "title": "Post Tag Delete",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Activities",
+          "x-creates-resource": true,
+          "x-display-name": "Post Tag Delete",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_post_tag_delete"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactPostTagDeleteConfig",
+      "type": "object"
+    },
+    "ConstantContactPostTagRemoveContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_tag_remove_contact",
+          "default": "post_tag_remove_contact",
+          "title": "Post Tag Remove Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Activities",
+          "x-creates-resource": true,
+          "x-display-name": "Post Tag Remove Contact",
+          "x-is-trigger": false,
+          "x-resource-type": "constant_contact_post_tag_remove_contact"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactPostTagRemoveContactConfig",
+      "type": "object"
+    },
+    "ConstantContactPutContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "put_contact",
+          "default": "put_contact",
+          "title": "Put Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Put Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "contact_id",
+        "payload_json"
+      ],
+      "title": "ConstantContactPutContactConfig",
+      "type": "object"
+    },
+    "ConstantContactPutCustomFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "put_custom_field",
+          "default": "put_custom_field",
+          "title": "Put Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts Custom Fields",
+          "x-display-name": "Put Custom Field",
+          "x-is-trigger": false
+        },
+        "custom_field_id": {
+          "title": "Custom Field Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "custom_field_id",
+        "payload_json"
+      ],
+      "title": "ConstantContactPutCustomFieldConfig",
+      "type": "object"
+    },
+    "ConstantContactPutCustomerByIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "put_customer_by_id",
+          "default": "put_customer_by_id",
+          "title": "Put Customer By ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account Services",
+          "x-display-name": "Put Customer By ID",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactPutCustomerByIdConfig",
+      "type": "object"
+    },
+    "ConstantContactPutListConfig": {
+      "properties": {
+        "operation": {
+          "const": "put_list",
+          "default": "put_list",
+          "title": "Put List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Lists",
+          "x-display-name": "Put List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "list_id",
+        "payload_json"
+      ],
+      "title": "ConstantContactPutListConfig",
+      "type": "object"
+    },
+    "ConstantContactPutPhysicalAddressConfig": {
+      "properties": {
+        "operation": {
+          "const": "put_physical_address",
+          "default": "put_physical_address",
+          "title": "Put Physical Address",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account Services",
+          "x-display-name": "Put Physical Address",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactPutPhysicalAddressConfig",
+      "type": "object"
+    },
+    "ConstantContactPutTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "put_tag",
+          "default": "put_tag",
+          "title": "Put Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Tags",
+          "x-display-name": "Put Tag",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "title": "Tag Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "tag_id",
+        "payload_json"
+      ],
+      "title": "ConstantContactPutTagConfig",
+      "type": "object"
+    },
+    "ConstantContactRemoveEmailCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "remove_email_campaign",
+          "default": "remove_email_campaign",
+          "title": "Remove Email Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Campaigns",
+          "x-display-name": "Remove Email Campaign",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "ConstantContactRemoveEmailCampaignConfig",
+      "type": "object"
+    },
+    "ConstantContactRenameEmailCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "rename_email_campaign",
+          "default": "rename_email_campaign",
+          "title": "Rename Email Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Campaigns",
+          "x-display-name": "Rename Email Campaign",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "payload_json"
+      ],
+      "title": "ConstantContactRenameEmailCampaignConfig",
+      "type": "object"
+    },
+    "ConstantContactResubscribeContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "resubscribe_contact",
+          "default": "resubscribe_contact",
+          "title": "Resubscribe Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Resubscribe Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "contact_id",
+        "payload_json"
+      ],
+      "title": "ConstantContactResubscribeContactConfig",
+      "type": "object"
+    },
+    "ConstantContactRetrieveAutomationCampaignUsingGetConfig": {
+      "properties": {
+        "operation": {
+          "const": "retrieve_automation_campaign_using_get",
+          "default": "retrieve_automation_campaign_using_get",
+          "title": "Retrieve Automation Campaign Using Get",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "Retrieve Automation Campaign Using Get",
+          "x-is-trigger": false
+        },
+        "automation_flow_id": {
+          "title": "Automation Flow Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "automation_flow_id"
+      ],
+      "title": "ConstantContactRetrieveAutomationCampaignUsingGetConfig",
+      "type": "object"
+    },
+    "ConstantContactRetrieveEmailAddressesConfig": {
+      "properties": {
+        "operation": {
+          "const": "retrieve_email_addresses",
+          "default": "retrieve_email_addresses",
+          "title": "Retrieve Email Addresses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account Services",
+          "x-display-name": "Retrieve Email Addresses",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactRetrieveEmailAddressesConfig",
+      "type": "object"
+    },
+    "ConstantContactRetrieveEmailCampaignAbTestConfig": {
+      "properties": {
+        "operation": {
+          "const": "retrieve_email_campaign_ab_test",
+          "default": "retrieve_email_campaign_ab_test",
+          "title": "Retrieve Email Campaign AB Test",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Campaigns AB Tests",
+          "x-display-name": "Retrieve Email Campaign AB Test",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactRetrieveEmailCampaignAbTestConfig",
+      "type": "object"
+    },
+    "ConstantContactRetrieveEmailCampaignActivityConfig": {
+      "properties": {
+        "operation": {
+          "const": "retrieve_email_campaign_activity",
+          "default": "retrieve_email_campaign_activity",
+          "title": "Retrieve Email Campaign Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Campaigns",
+          "x-display-name": "Retrieve Email Campaign Activity",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactRetrieveEmailCampaignActivityConfig",
+      "type": "object"
+    },
+    "ConstantContactRetrieveEmailCampaignActivityPreviewConfig": {
+      "properties": {
+        "operation": {
+          "const": "retrieve_email_campaign_activity_preview",
+          "default": "retrieve_email_campaign_activity_preview",
+          "title": "Retrieve Email Campaign Activity Preview",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Scheduling",
+          "x-display-name": "Retrieve Email Campaign Activity Preview",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactRetrieveEmailCampaignActivityPreviewConfig",
+      "type": "object"
+    },
+    "ConstantContactRetrieveEmailCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "retrieve_email_campaign",
+          "default": "retrieve_email_campaign",
+          "title": "Retrieve Email Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Campaigns",
+          "x-display-name": "Retrieve Email Campaign",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "ConstantContactRetrieveEmailCampaignConfig",
+      "type": "object"
+    },
+    "ConstantContactRetrieveEmailCampaignsConfig": {
+      "properties": {
+        "operation": {
+          "const": "retrieve_email_campaigns",
+          "default": "retrieve_email_campaigns",
+          "title": "Retrieve Email Campaigns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Campaigns",
+          "x-display-name": "Retrieve Email Campaigns",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ConstantContactRetrieveEmailCampaignsConfig",
+      "type": "object"
+    },
+    "ConstantContactRetrieveEmailSchedulesConfig": {
+      "properties": {
+        "operation": {
+          "const": "retrieve_email_schedules",
+          "default": "retrieve_email_schedules",
+          "title": "Retrieve Email Schedules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Scheduling",
+          "x-display-name": "Retrieve Email Schedules",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactRetrieveEmailSchedulesConfig",
+      "type": "object"
+    },
+    "ConstantContactRetrieveEmailSendHistoryConfig": {
+      "properties": {
+        "operation": {
+          "const": "retrieve_email_send_history",
+          "default": "retrieve_email_send_history",
+          "title": "Retrieve Email Send History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Scheduling",
+          "x-display-name": "Retrieve Email Send History",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactRetrieveEmailSendHistoryConfig",
+      "type": "object"
+    },
+    "ConstantContactRetrieveResendToNonOpenersConfig": {
+      "properties": {
+        "operation": {
+          "const": "retrieve_resend_to_non_openers",
+          "default": "retrieve_resend_to_non_openers",
+          "title": "Retrieve Resend To Non Openers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Campaigns",
+          "x-display-name": "Retrieve Resend To Non Openers",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactRetrieveResendToNonOpenersConfig",
+      "type": "object"
+    },
+    "ConstantContactRetrieveXrefMappingsConfig": {
+      "properties": {
+        "operation": {
+          "const": "retrieve_xref_mappings",
+          "default": "retrieve_xref_mappings",
+          "title": "Retrieve Xref Mappings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Campaigns",
+          "x-display-name": "Retrieve Xref Mappings",
+          "x-is-trigger": false
+        },
+        "v2_email_campaign_ids": {
+          "title": "V2 Email Campaign Ids",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "v2_email_campaign_ids"
+      ],
+      "title": "ConstantContactRetrieveXrefMappingsConfig",
+      "type": "object"
+    },
+    "ConstantContactScheduleEmailCampaignActivityConfig": {
+      "properties": {
+        "operation": {
+          "const": "schedule_email_campaign_activity",
+          "default": "schedule_email_campaign_activity",
+          "title": "Schedule Email Campaign Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Scheduling",
+          "x-display-name": "Schedule Email Campaign Activity",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id",
+        "payload_json"
+      ],
+      "title": "ConstantContactScheduleEmailCampaignActivityConfig",
+      "type": "object"
+    },
+    "ConstantContactTestSendCampaignActivityConfig": {
+      "properties": {
+        "operation": {
+          "const": "test_send_campaign_activity",
+          "default": "test_send_campaign_activity",
+          "title": "Test Send Campaign Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Scheduling",
+          "x-display-name": "Test Send Campaign Activity",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id",
+        "payload_json"
+      ],
+      "title": "ConstantContactTestSendCampaignActivityConfig",
+      "type": "object"
+    },
+    "ConstantContactUnscheduleEmailCampaignActivityConfig": {
+      "properties": {
+        "operation": {
+          "const": "unschedule_email_campaign_activity",
+          "default": "unschedule_email_campaign_activity",
+          "title": "Unschedule Email Campaign Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Scheduling",
+          "x-display-name": "Unschedule Email Campaign Activity",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id"
+      ],
+      "title": "ConstantContactUnscheduleEmailCampaignActivityConfig",
+      "type": "object"
+    },
+    "ConstantContactUpdateAutomationCampaignUsingPutConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_automation_campaign_using_put",
+          "default": "update_automation_campaign_using_put",
+          "title": "Update Automation Campaign Using Put",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "Update Automation Campaign Using Put",
+          "x-is-trigger": false
+        },
+        "automation_flow_id": {
+          "title": "Automation Flow Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "automation_flow_id",
+        "payload_json"
+      ],
+      "title": "ConstantContactUpdateAutomationCampaignUsingPutConfig",
+      "type": "object"
+    },
+    "ConstantContactUpdateCompanyLogoConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_company_logo",
+          "default": "update_company_logo",
+          "title": "Update Company Logo",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account Services",
+          "x-display-name": "Update Company Logo",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "ConstantContactUpdateCompanyLogoConfig",
+      "type": "object"
+    },
+    "ConstantContactUpdateEmailCampaignActivityConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_email_campaign_activity",
+          "default": "update_email_campaign_activity",
+          "title": "Update Email Campaign Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Campaigns",
+          "x-display-name": "Update Email Campaign Activity",
+          "x-is-trigger": false
+        },
+        "campaign_activity_id": {
+          "title": "Campaign Activity Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaign_activity_id",
+        "payload_json"
+      ],
+      "title": "ConstantContactUpdateEmailCampaignActivityConfig",
+      "type": "object"
+    },
+    "ConstantContactUpdateSegmentConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_segment",
+          "default": "update_segment",
+          "title": "Update Segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Update Segment",
+          "x-is-trigger": false
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "segment_id",
+        "payload_json"
+      ],
+      "title": "ConstantContactUpdateSegmentConfig",
+      "type": "object"
+    },
+    "ConstantContactUpdateSegmentNameConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_segment_name",
+          "default": "update_segment_name",
+          "title": "Update Segment Name",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Update Segment Name",
+          "x-is-trigger": false
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "The JSON request body using Constant Contact V3 field names",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters and pagination, for example {\"limit\": 20}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "segment_id",
+        "payload_json"
+      ],
+      "title": "ConstantContactUpdateSegmentNameConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_account_email_address": "#/$defs/ConstantContactAddAccountEmailAddressConfig",
+          "add_physical_address": "#/$defs/ConstantContactAddPhysicalAddressConfig",
+          "bulk_import_contacts_json": "#/$defs/ConstantContactBulkImportContactsJsonConfig",
+          "count_contact": "#/$defs/ConstantContactCountContactConfig",
+          "create_automation_campaign_using_post": "#/$defs/ConstantContactCreateAutomationCampaignUsingPostConfig",
+          "create_contact": "#/$defs/ConstantContactCreateContactConfig",
+          "create_email_campaign": "#/$defs/ConstantContactCreateEmailCampaignConfig",
+          "create_email_campaign_ab_test": "#/$defs/ConstantContactCreateEmailCampaignAbTestConfig",
+          "create_list": "#/$defs/ConstantContactCreateListConfig",
+          "create_or_update_contact": "#/$defs/ConstantContactCreateOrUpdateContactConfig",
+          "create_resend_to_non_openers": "#/$defs/ConstantContactCreateResendToNonOpenersConfig",
+          "create_segment": "#/$defs/ConstantContactCreateSegmentConfig",
+          "delete_contact": "#/$defs/ConstantContactDeleteContactConfig",
+          "delete_custom_field": "#/$defs/ConstantContactDeleteCustomFieldConfig",
+          "delete_email_campaign_ab_test": "#/$defs/ConstantContactDeleteEmailCampaignAbTestConfig",
+          "delete_list_activity": "#/$defs/ConstantContactDeleteListActivityConfig",
+          "delete_resend_to_non_openers": "#/$defs/ConstantContactDeleteResendToNonOpenersConfig",
+          "delete_segment": "#/$defs/ConstantContactDeleteSegmentConfig",
+          "delete_tag": "#/$defs/ConstantContactDeleteTagConfig",
+          "get_account_by_id": "#/$defs/ConstantContactGetAccountByIdConfig",
+          "get_account_segments": "#/$defs/ConstantContactGetAccountSegmentsConfig",
+          "get_activity": "#/$defs/ConstantContactGetActivityConfig",
+          "get_activity_status_collection": "#/$defs/ConstantContactGetActivityStatusCollectionConfig",
+          "get_all_bulk_email_campaign_summaries": "#/$defs/ConstantContactGetAllBulkEmailCampaignSummariesConfig",
+          "get_bounces": "#/$defs/ConstantContactGetBouncesConfig",
+          "get_campaign_activity_link_stats": "#/$defs/ConstantContactGetCampaignActivityLinkStatsConfig",
+          "get_campaign_performance_stats": "#/$defs/ConstantContactGetCampaignPerformanceStatsConfig",
+          "get_clicks": "#/$defs/ConstantContactGetClicksConfig",
+          "get_company_logo": "#/$defs/ConstantContactGetCompanyLogoConfig",
+          "get_contact": "#/$defs/ConstantContactGetContactConfig",
+          "get_contact_id_xrefs": "#/$defs/ConstantContactGetContactIdXrefsConfig",
+          "get_contact_open_click_rate": "#/$defs/ConstantContactGetContactOpenClickRateConfig",
+          "get_contact_tracking": "#/$defs/ConstantContactGetContactTrackingConfig",
+          "get_contact_tracking_count": "#/$defs/ConstantContactGetContactTrackingCountConfig",
+          "get_contacts": "#/$defs/ConstantContactGetContactsConfig",
+          "get_contacts_export": "#/$defs/ConstantContactGetContactsExportConfig",
+          "get_custom_field": "#/$defs/ConstantContactGetCustomFieldConfig",
+          "get_custom_fields": "#/$defs/ConstantContactGetCustomFieldsConfig",
+          "get_did_not_opens": "#/$defs/ConstantContactGetDidNotOpensConfig",
+          "get_email_campaign_activity_summary": "#/$defs/ConstantContactGetEmailCampaignActivitySummaryConfig",
+          "get_email_summary": "#/$defs/ConstantContactGetEmailSummaryConfig",
+          "get_forwards": "#/$defs/ConstantContactGetForwardsConfig",
+          "get_list": "#/$defs/ConstantContactGetListConfig",
+          "get_list_id_xrefs": "#/$defs/ConstantContactGetListIdXrefsConfig",
+          "get_lists": "#/$defs/ConstantContactGetListsConfig",
+          "get_opens": "#/$defs/ConstantContactGetOpensConfig",
+          "get_optouts": "#/$defs/ConstantContactGetOptoutsConfig",
+          "get_physical_address": "#/$defs/ConstantContactGetPhysicalAddressConfig",
+          "get_segment_detail": "#/$defs/ConstantContactGetSegmentDetailConfig",
+          "get_sends": "#/$defs/ConstantContactGetSendsConfig",
+          "get_sms_engagement_history": "#/$defs/ConstantContactGetSmsEngagementHistoryConfig",
+          "get_tag": "#/$defs/ConstantContactGetTagConfig",
+          "get_tags": "#/$defs/ConstantContactGetTagsConfig",
+          "get_unique_opens": "#/$defs/ConstantContactGetUniqueOpensConfig",
+          "get_user_privileges": "#/$defs/ConstantContactGetUserPrivilegesConfig",
+          "list_automations": "#/$defs/ConstantContactListAutomationsConfig",
+          "on_new_contact": "#/$defs/ConstantContactOnNewContactConfig",
+          "post_contact_delete": "#/$defs/ConstantContactPostContactDeleteConfig",
+          "post_contacts_export": "#/$defs/ConstantContactPostContactsExportConfig",
+          "post_custom_field_delete": "#/$defs/ConstantContactPostCustomFieldDeleteConfig",
+          "post_custom_fields": "#/$defs/ConstantContactPostCustomFieldsConfig",
+          "post_list_add_contact": "#/$defs/ConstantContactPostListAddContactConfig",
+          "post_list_delete": "#/$defs/ConstantContactPostListDeleteConfig",
+          "post_list_remove_contact": "#/$defs/ConstantContactPostListRemoveContactConfig",
+          "post_tag": "#/$defs/ConstantContactPostTagConfig",
+          "post_tag_add_contact": "#/$defs/ConstantContactPostTagAddContactConfig",
+          "post_tag_delete": "#/$defs/ConstantContactPostTagDeleteConfig",
+          "post_tag_remove_contact": "#/$defs/ConstantContactPostTagRemoveContactConfig",
+          "put_contact": "#/$defs/ConstantContactPutContactConfig",
+          "put_custom_field": "#/$defs/ConstantContactPutCustomFieldConfig",
+          "put_customer_by_id": "#/$defs/ConstantContactPutCustomerByIdConfig",
+          "put_list": "#/$defs/ConstantContactPutListConfig",
+          "put_physical_address": "#/$defs/ConstantContactPutPhysicalAddressConfig",
+          "put_tag": "#/$defs/ConstantContactPutTagConfig",
+          "remove_email_campaign": "#/$defs/ConstantContactRemoveEmailCampaignConfig",
+          "rename_email_campaign": "#/$defs/ConstantContactRenameEmailCampaignConfig",
+          "resubscribe_contact": "#/$defs/ConstantContactResubscribeContactConfig",
+          "retrieve_automation_campaign_using_get": "#/$defs/ConstantContactRetrieveAutomationCampaignUsingGetConfig",
+          "retrieve_email_addresses": "#/$defs/ConstantContactRetrieveEmailAddressesConfig",
+          "retrieve_email_campaign": "#/$defs/ConstantContactRetrieveEmailCampaignConfig",
+          "retrieve_email_campaign_ab_test": "#/$defs/ConstantContactRetrieveEmailCampaignAbTestConfig",
+          "retrieve_email_campaign_activity": "#/$defs/ConstantContactRetrieveEmailCampaignActivityConfig",
+          "retrieve_email_campaign_activity_preview": "#/$defs/ConstantContactRetrieveEmailCampaignActivityPreviewConfig",
+          "retrieve_email_campaigns": "#/$defs/ConstantContactRetrieveEmailCampaignsConfig",
+          "retrieve_email_schedules": "#/$defs/ConstantContactRetrieveEmailSchedulesConfig",
+          "retrieve_email_send_history": "#/$defs/ConstantContactRetrieveEmailSendHistoryConfig",
+          "retrieve_resend_to_non_openers": "#/$defs/ConstantContactRetrieveResendToNonOpenersConfig",
+          "retrieve_xref_mappings": "#/$defs/ConstantContactRetrieveXrefMappingsConfig",
+          "schedule_email_campaign_activity": "#/$defs/ConstantContactScheduleEmailCampaignActivityConfig",
+          "test_send_campaign_activity": "#/$defs/ConstantContactTestSendCampaignActivityConfig",
+          "unschedule_email_campaign_activity": "#/$defs/ConstantContactUnscheduleEmailCampaignActivityConfig",
+          "update_automation_campaign_using_put": "#/$defs/ConstantContactUpdateAutomationCampaignUsingPutConfig",
+          "update_company_logo": "#/$defs/ConstantContactUpdateCompanyLogoConfig",
+          "update_email_campaign_activity": "#/$defs/ConstantContactUpdateEmailCampaignActivityConfig",
+          "update_segment": "#/$defs/ConstantContactUpdateSegmentConfig",
+          "update_segment_name": "#/$defs/ConstantContactUpdateSegmentNameConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ConstantContactGetUserPrivilegesConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetAccountByIdConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPutCustomerByIdConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetPhysicalAddressConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactAddPhysicalAddressConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPutPhysicalAddressConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetCompanyLogoConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactUpdateCompanyLogoConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactRetrieveEmailAddressesConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactAddAccountEmailAddressConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetActivityStatusCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPostContactsExportConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetContactsExportConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPostContactDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactBulkImportContactsJsonConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPostListRemoveContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPostListAddContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPostListDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPostTagRemoveContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPostTagAddContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPostTagDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPostCustomFieldDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetAccountSegmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactCreateSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetSegmentDetailConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactUpdateSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactDeleteSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactUpdateSegmentNameConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPutContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactCreateOrUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetContactIdXrefsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPutCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactDeleteCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPostCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetListConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPutListConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactDeleteListActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetListsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactCreateListConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetListIdXrefsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetSmsEngagementHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactCountContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactResubscribeContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetTagConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPutTagConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactDeleteTagConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactPostTagConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactRetrieveEmailCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactCreateEmailCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactRetrieveEmailCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactRemoveEmailCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactRenameEmailCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactRetrieveXrefMappingsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactRetrieveEmailCampaignActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactUpdateEmailCampaignActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactRetrieveEmailSchedulesConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactScheduleEmailCampaignActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactUnscheduleEmailCampaignActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactTestSendCampaignActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactRetrieveEmailCampaignActivityPreviewConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactRetrieveEmailSendHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactRetrieveResendToNonOpenersConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactCreateResendToNonOpenersConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactDeleteResendToNonOpenersConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactListAutomationsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactCreateAutomationCampaignUsingPostConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactRetrieveAutomationCampaignUsingGetConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactUpdateAutomationCampaignUsingPutConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactRetrieveEmailCampaignAbTestConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactCreateEmailCampaignAbTestConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactDeleteEmailCampaignAbTestConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetContactTrackingConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetContactOpenClickRateConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetContactTrackingCountConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetCampaignActivityLinkStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetSendsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetOpensConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetUniqueOpensConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetDidNotOpensConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetClicksConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetForwardsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetOptoutsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetBouncesConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetCampaignPerformanceStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetAllBulkEmailCampaignSummariesConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetEmailSummaryConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactGetEmailCampaignActivitySummaryConfig"
+        },
+        {
+          "$ref": "#/$defs/ConstantContactOnNewContactConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ConstantContactOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Constant-contact Node Configuration",
+  "type": "object",
+  "x-agent-tool-provider": true,
+  "x-edit-examples": [
+    "Create a Constant Contact contact",
+    "Add contacts to a list",
+    "Schedule an email campaign",
+    "Read campaign open and click reports"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
