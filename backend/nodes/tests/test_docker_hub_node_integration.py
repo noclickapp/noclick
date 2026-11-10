@@ -272,3 +272,130 @@ async def test_invalid_json_response_is_rejected(monkeypatch):
         await DockerHubNode._request(
             _pat(), "list_namespace_repositories", {"path_namespace": "docker"}
         )
+
+
+def _documented_list(path):
+    """Use Docker's saved API response, including its real event field names."""
+    spec = yaml.safe_load((Path(__file__).parent / "fixtures/docker-hub/openapi.yaml").read_text())
+    examples = spec["paths"][path]["get"]["responses"]["200"]["content"]["application/json"]["examples"]
+    return json.loads(json.dumps(next(iter(examples.values()))["value"], default=str))
+
+
+def _poll_node(operation, **config):
+    return DockerHubNode(node_id="docker-poll", node_type="automation-docker-hub", node_data={},
+                         config=DockerHubNodeConfig(config={"operation": operation, **config}, credentials=_pat()))
+
+
+def _state_store(node):
+    state = {}
+
+    async def update(mutator, **kwargs):
+        new_state, result = mutator(dict(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+
+    node._update_node_state = update
+    return state
+
+
+@pytest.mark.asyncio
+async def test_repository_poll_baselines_deduplicates_updates_and_repoints(monkeypatch):
+    body = _documented_list("/v2/namespaces/{namespace}/repositories")
+    node = _poll_node("on_repository_updated", namespace="docker")
+    _state_store(node)
+
+    def handler(request):
+        if request.url.path == "/v2/auth/token":
+            return _auth_response()
+        assert request.url.params["ordering"] == "-last_updated"
+        assert request.url.params["page_size"] == "100"
+        return httpx.Response(200, json=body)
+
+    _mock_client(monkeypatch, handler)
+    baseline = await node.execute({})
+    assert baseline["new_item_count"] == 0
+    assert not node.should_propagate_output(baseline, {"operation": "on_repository_updated"})
+    assert node.resolve_agent_event(baseline) is None
+    assert (await node.execute({}))["new_item_count"] == 0
+    body["results"][0]["last_updated"] = "2026-11-11T00:00:00Z"
+    output = await node.execute({})
+    assert output["new_item_count"] == 1
+    assert node.trigger_emitted_event(output)
+    assert "docker/highland_builder" in node.resolve_agent_event(output)["text"]
+    assert "https://hub.docker.com/r/docker/highland_builder" in node.resolve_agent_event(output)["text"]
+    assert (await node.execute({}))["new_item_count"] == 0
+    node.config.config.namespace = "another-namespace"
+    assert (await node.execute({}))["new_item_count"] == 0
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["on_image_pushed", "on_new_audit_event"])
+async def test_audit_polls_use_documented_event_and_filters(monkeypatch, operation):
+    body = _documented_list("/v2/auditlogs/{account}")
+    # The other documented event is an offload lease; only the push can fire.
+    node = _poll_node(operation, account="docker", name="docker/example",
+                      **({"action": "repo.tag.push"} if operation == "on_new_audit_event" else {}))
+    state = _state_store(node)
+
+    def handler(request):
+        if request.url.path == "/v2/auth/token":
+            return _auth_response()
+        assert request.url.params["action"] == "repo.tag.push"
+        assert request.url.params["name"] == "docker/example"
+        assert "from" in request.url.params
+        return httpx.Response(200, json=body)
+
+    _mock_client(monkeypatch, handler)
+    assert (await node.execute({}))["new_item_count"] == 0
+    state["seen_ids"] = []
+    result = await node.execute({})
+    assert result["new_item_count"] == 1
+    text = node.resolve_agent_event(result)["text"]
+    for value in ("docker", "repo.tag.push", "docker/example", "latest", "sha256:"):
+        assert value in text
+    assert (await node.execute({}))["new_item_count"] == 0
+
+
+@pytest.mark.asyncio
+async def test_poll_paginates_before_persisting_and_leaves_state_on_failure(monkeypatch):
+    from copy import deepcopy
+
+    example = _documented_list("/v2/namespaces/{namespace}/repositories")["results"][0]
+    node = _poll_node("on_repository_updated", namespace="docker")
+    state = _state_store(node)
+    seen_pages = []
+    fail = False
+
+    def handler(request):
+        if request.url.path == "/v2/auth/token":
+            return _auth_response()
+        page = int(request.url.params["page"])
+        seen_pages.append(page)
+        if page == 2:
+            return httpx.Response(500 if fail else 200, json={"results": []})
+        return httpx.Response(200, json={"results": [dict(deepcopy(example), name=f"image-{i}") for i in range(100)]})
+
+    _mock_client(monkeypatch, handler)
+    await node.execute({})
+    assert seen_pages == [1, 2]
+    before = deepcopy(state)
+    fail = True
+    with pytest.raises(ValueError, match="Docker Hub API error 500"):
+        await node.execute({})
+    assert state == before
+
+
+def test_trigger_schemas_and_scope_use_declared_config_only():
+    from nodes.core.poll_trigger import poll_scope
+
+    schema = DockerHubNode.get_config_schema()
+    marked = {value["properties"]["operation"]["const"] for value in schema["$defs"].values()
+              if value.get("properties", {}).get("operation", {}).get("x-is-trigger")}
+    assert marked == {"on_repository_updated", "on_image_pushed", "on_new_audit_event"}
+    config = {"operation": "on_image_pushed", "account": "docker"}
+    scope = poll_scope(DockerHubNode, config)
+    assert scope == poll_scope(DockerHubNode, {**config, "label": "A prettier label"})
+    assert scope != poll_scope(DockerHubNode, {**config, "account": "other"})
+    assert scope != poll_scope(DockerHubNode, {**config, "lookback_hours": 48})

@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import time
+from datetime import datetime, timedelta, timezone
 from typing import Annotated, Any, Literal, Optional, Union
 from urllib.parse import quote
 
@@ -14,6 +16,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.binary_output import BinaryOutput
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 
 
 _BASE_URL = "https://hub.docker.com"
@@ -901,8 +904,51 @@ def _make_config(op: dict[str, Any]) -> type[BaseModel]:
 
 CONFIG_MODELS = {name: _make_config(op) for name, op in OPERATIONS.items()}
 globals().update({model.__name__: model for model in CONFIG_MODELS.values()})
+# Poll contracts: Docker's API 2-beta listNamespaceRepositories and
+# AuditLogs_ListAuditLogs. No webhook registration API is published there.
+class DockerHubOnRepositoryUpdatedConfig(PollTriggerConfigBase):
+    operation: Literal["on_repository_updated"] = Field(
+        "on_repository_updated", title="On New or Updated Repository", json_schema_extra={
+            "const": "on_repository_updated", "ui:hidden": True,
+            "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On New or Updated Repository",
+        })
+    namespace: str = Field(..., min_length=1, title="Namespace")
+
+
+class DockerHubAuditPollConfig(PollTriggerConfigBase):
+    account: str = Field(..., min_length=1, title="Organization Namespace",
+                         description="Requires access to Docker Hub organization audit logs.")
+    lookback_hours: int = Field(24, ge=1, le=168, title="Look Back (Hours)",
+                               description="Time window to scan each poll; keep longer than the polling interval.")
+    name: Optional[str] = Field(None, title="Repository, Organization, or Member Name",
+                                description="Optional audit log name filter, such as docker/example.")
+
+
+class DockerHubOnImagePushedConfig(DockerHubAuditPollConfig):
+    operation: Literal["on_image_pushed"] = Field(
+        "on_image_pushed", title="On Image Pushed", json_schema_extra={
+            "const": "on_image_pushed", "ui:hidden": True,
+            "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On Image Pushed",
+        })
+
+
+class DockerHubOnAuditEventConfig(DockerHubAuditPollConfig):
+    operation: Literal["on_new_audit_event"] = Field(
+        "on_new_audit_event", title="On New Audit Event", json_schema_extra={
+            "const": "on_new_audit_event", "ui:hidden": True,
+            "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On New Audit Event",
+        })
+    action: Optional[str] = Field(None, title="Action",
+                                 description="Optional Docker audit action, such as repo.tag.push.")
+
+
+TRIGGER_MODELS = (DockerHubOnRepositoryUpdatedConfig, DockerHubOnImagePushedConfig,
+                  DockerHubOnAuditEventConfig)
 DockerHubConfig = Annotated[
-    Union[tuple(CONFIG_MODELS.values())], Discriminator("operation")
+    Union[tuple(CONFIG_MODELS.values()) + TRIGGER_MODELS], Discriminator("operation")
 ]
 
 
@@ -938,7 +984,7 @@ def _redact_data(value: Any, secrets: list[str]) -> Any:
     return value
 
 
-class DockerHubNode(WorkflowNode):
+class DockerHubNode(ScheduledPollTriggerMixin, WorkflowNode):
     """Execute a documented Docker Hub API action."""
 
     integration_type = "automation-docker-hub"
@@ -957,6 +1003,84 @@ class DockerHubNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return DockerHubNodeConfig
+
+    @classmethod
+    def should_propagate_output(cls, output: dict[str, Any], config: dict[str, Any]) -> bool:
+        if config.get("operation") in {"on_repository_updated", "on_image_pushed", "on_new_audit_event"}:
+            return bool(output.get("new_item_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output: dict[str, Any]) -> Optional[dict[str, Any]]:
+        if output.get("operation") not in {"on_repository_updated", "on_image_pushed", "on_new_audit_event"}:
+            return super().resolve_agent_event(output)
+        items = output.get("items", [])
+        if not items:
+            return None
+        lines = []
+        for item in items[:10]:
+            if output["operation"] == "on_repository_updated":
+                repo = f"{item['namespace']}/{item['name']}"
+                lines.append(f"- Repository {repo} was created or updated at {item['last_updated']}. "
+                             f"{item.get('description') or ''} https://hub.docker.com/r/{repo}")
+            else:
+                lines.append(f"- {item['actor']} {item['action']} on {item['name']} "
+                             f"in {item['account']} at {item['timestamp']}: "
+                             f"{item.get('action_description') or ''} "
+                             f"Details: {json.dumps(item.get('data', {}), default=str)}")
+        if len(items) > 10:
+            lines.append(f"- … and {len(items) - 10} more; full records are in the trigger output.")
+        return {"text": (f"Docker Hub: {len(items)} new event(s):\n" + "\n".join(lines))[:12000],
+                "conversation_key": None}
+
+    async def _poll(self, config: PollTriggerConfigBase) -> dict[str, Any]:
+        repositories = isinstance(config, DockerHubOnRepositoryUpdatedConfig)
+        if repositories:
+            operation = "list_namespace_repositories"
+            values = {"path_namespace": config.namespace}
+            query = {"ordering": "-last_updated"}
+            list_key = "results"
+        else:
+            operation = "audit_logs__list_audit_logs"
+            values = {"path_account": config.account}
+            query = {"from": (datetime.now(timezone.utc) - timedelta(hours=config.lookback_hours)).isoformat()}
+            action = "repo.tag.push" if isinstance(config, DockerHubOnImagePushedConfig) else config.action
+            if action:
+                query["action"] = action
+            if config.name:
+                query["name"] = config.name
+            list_key = "logs"
+        items = []
+        # Read the complete bounded scope before changing dedup state, so a
+        # truncated response cannot silently swallow the remaining events.
+        for page in range(1, 101):
+            query.update({"page": page, "page_size": 100})
+            result = await self._request(self.config.credentials, operation,
+                                         {**values, "query_json": json.dumps(query)})
+            data = result["data"]
+            if not isinstance(data, dict) or not isinstance(data.get(list_key), list):
+                raise ValueError("Docker Hub did not return the documented list response")
+            batch = data[list_key]
+            if any(not isinstance(item, dict) for item in batch):
+                raise ValueError("Docker Hub returned an invalid list item")
+            items.extend(batch)
+            if len(batch) < 100:
+                break
+        else:
+            raise ValueError("Docker Hub poll exceeds 10,000 items; narrow the watched scope")
+        if not repositories:
+            items = [item for item in items
+                     if (not action or item.get("action") == action)
+                     and (not config.name or item.get("name") == config.name)]
+        if repositories:
+            def item_key(item):
+                return json.dumps([item["namespace"], item["name"], item["last_updated"]], default=str)
+        else:
+            def item_key(item):
+                return hashlib.sha256(json.dumps(item, sort_keys=True, default=str).encode()).hexdigest()
+        unique = {item_key(item): item for item in items}
+        fresh = await self._filter_unseen(list(unique.values()), item_key)
+        return {"operation": config.operation, "items": fresh, "new_item_count": len(fresh)}
 
     @staticmethod
     async def _request(
@@ -1109,6 +1233,8 @@ class DockerHubNode(WorkflowNode):
             or not self.config.credentials
         ):
             raise ValueError("Connect Docker Hub before running this action")
+        if isinstance(self.config.config, TRIGGER_MODELS):
+            return await self._poll(self.config.config)
         return await self._request(
             self.config.credentials,
             self.config.config.operation,
