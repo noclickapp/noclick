@@ -1,0 +1,226 @@
+{
+  "Message.text": {
+    "body": {
+      "event": "Message",
+      "data": {
+        "Info": {
+          "Chat": "12025550100@s.whatsapp.net",
+          "Sender": "12025550100:38@s.whatsapp.net",
+          "SenderAlt": "12025550102@lid",
+          "IsFromMe": false,
+          "IsGroup": false,
+          "ID": "3EB0C05FF2D3A0068B2A2D",
+          "Type": "text",
+          "PushName": "Davidson Gomes",
+          "Timestamp": "2024-10-10T17:17:44-03:00",
+          "MediaType": "",
+          "VerifiedName": {
+            "Certificate": {
+              "details": "CJOzjf3Oh/LGQBIGc21iOndhIg5EYXZpZHNvbiBHb21lcw==",
+              "signature": "KjXTl5LfeToLO6bFflbHyiBQe7a1zly4Wdhhf2XPU1Lq8tj9p03hvYUjbs+M0ChWBQhjy/NBq7+nYCKQlLP3Bw=="
+            },
+            "Details": {
+              "serial": 4651594154187643283,
+              "issuer": "smb:wa",
+              "verifiedName": "Davidson Gomes"
+            }
+          }
+        },
+        "Message": {
+          "conversation": "oi",
+          "messageContextInfo": {
+            "deviceListMetadata": {
+              "senderKeyHash": "jS2BFebH+KJxzA==",
+              "senderTimestamp": 1728407293
+            },
+            "deviceListMetadataVersion": 2
+          }
+        },
+        "IsEphemeral": false,
+        "IsViewOnce": false,
+        "IsEdit": false
+      },
+      "instanceId": "249aad2e-68f9-464f-bc84-aca560c38f0e",
+      "instanceToken": "2ef79c34-b6e1-4969-9e37-12b3d3a9d1062"
+    },
+    "source": "https://docs.evolutionfoundation.com.br/evolution-go/webhooks.md"
+  },
+  "Message.image": {
+    "body": {
+      "event": "Message",
+      "data": {
+        "Info": {
+          "Chat": "12025550100@s.whatsapp.net",
+          "Sender": "12025550100:45@s.whatsapp.net",
+          "IsFromMe": false,
+          "IsGroup": false,
+          "ID": "3EB0546D154AB4C90A11E1",
+          "Type": "media",
+          "PushName": "Davidson Gomes",
+          "Timestamp": "2024-10-23T09:15:41-03:00",
+          "MediaType": "image"
+        },
+        "Message": {
+          "imageMessage": {
+            "url": "https://mmg.whatsapp.net/v/...",
+            "mimetype": "image/jpeg",
+            "fileSha256": "...",
+            "fileLength": 82247,
+            "height": 1600,
+            "width": 1200,
+            "mediaKey": "...",
+            "fileEncSha256": "...",
+            "directPath": "/v/...",
+            "mediaKeyTimestamp": 1729685741,
+            "scansSidecar": "...",
+            "scanLengths": [
+              20898
+            ],
+            "midQualityFileSha256": "..."
+          },
+          "base64": "/9j/4AAQSkZJRgABAQAAAQABAAD/..."
+        },
+        "IsEphemeral": false,
+        "IsViewOnce": false,
+        "IsEdit": false
+      },
+      "instanceId": "249aad2e-68f9-464f-bc84-aca560c38f0e",
+      "instanceToken": "2ef79c34-b6e1-4969-9e37-12b3d3a9d1062"
+    },
+    "source": "https://docs.evolutionfoundation.com.br/evolution-go/webhooks.md"
+  },
+  "Message.video": {
+    "body": {
+      "event": "Message",
+      "data": {
+        "Info": {
+          "Chat": "12025550100@s.whatsapp.net",
+          "Sender": "12025550100:45@s.whatsapp.net",
+          "IsFromMe": false,
+          "IsGroup": false,
+          "ID": "3EB0A1B2C3D4E5F6071234",
+          "Type": "media",
+          "PushName": "Davidson Gomes",
+          "Timestamp": "2024-10-23T09:20:00-03:00",
+          "MediaType": "video"
+        },
+        "Message": {
+          "videoMessage": {
+            "url": "https://mmg.whatsapp.net/v/...",
+            "mimetype": "video/mp4",
+            "fileSha256": "...",
+            "fileLength": 1048576,
+            "seconds": 15,
+            "mediaKey": "...",
+            "fileEncSha256": "...",
+            "directPath": "/v/...",
+            "mediaKeyTimestamp": 1729685741
+          },
+          "base64": "AAAAIGZ0eXBpc29tAAACAGlzb21pc28y..."
+        },
+        "IsEphemeral": false,
+        "IsViewOnce": false,
+        "IsEdit": false
+      },
+      "instanceId": "249aad2e-68f9-464f-bc84-aca560c38f0e",
+      "instanceToken": "2ef79c34-b6e1-4969-9e37-12b3d3a9d1062"
+    },
+    "source": "https://docs.evolutionfoundation.com.br/evolution-go/webhooks.md"
+  },
+  "Message.audio": {
+    "body": {
+      "event": "Message",
+      "data": {
+        "Info": {
+          "Chat": "12025550100@s.whatsapp.net",
+          "Sender": "12025550100:45@s.whatsapp.net",
+          "IsFromMe": false,
+          "IsGroup": false,
+          "ID": "3EB0F1E2D3C4B5A6091234",
+          "Type": "media",
+          "PushName": "Davidson Gomes",
+          "Timestamp": "2024-10-23T09:25:00-03:00",
+          "MediaType": "audio"
+        },
+        "Message": {
+          "audioMessage": {
+            "url": "https://mmg.whatsapp.net/v/...",
+            "mimetype": "audio/ogg; codecs=opus",
+            "fileSha256": "...",
+            "fileLength": 25600,
+            "seconds": 5,
+            "ptt": true,
+            "mediaKey": "...",
+            "fileEncSha256": "...",
+            "directPath": "/v/...",
+            "mediaKeyTimestamp": 1729685741,
+            "waveform": "AAAAAAAAAAAAAAAA..."
+          },
+          "base64": "T2dnUwACAAAAAAAAAAA..."
+        },
+        "IsEphemeral": false,
+        "IsViewOnce": false,
+        "IsEdit": false
+      },
+      "instanceId": "249aad2e-68f9-464f-bc84-aca560c38f0e",
+      "instanceToken": "2ef79c34-b6e1-4969-9e37-12b3d3a9d1062"
+    },
+    "source": "https://docs.evolutionfoundation.com.br/evolution-go/webhooks.md"
+  },
+  "Message.document": {
+    "body": {
+      "event": "Message",
+      "data": {
+        "Info": {
+          "Chat": "12025550100@s.whatsapp.net",
+          "Sender": "12025550100:45@s.whatsapp.net",
+          "IsFromMe": false,
+          "IsGroup": false,
+          "ID": "3EB0D1C2B3A4E5F6071234",
+          "Type": "media",
+          "PushName": "Davidson Gomes",
+          "Timestamp": "2024-10-23T09:30:00-03:00",
+          "MediaType": "document"
+        },
+        "Message": {
+          "documentMessage": {
+            "url": "https://mmg.whatsapp.net/v/...",
+            "mimetype": "application/pdf",
+            "title": "documento.pdf",
+            "fileSha256": "...",
+            "fileLength": 512000,
+            "fileName": "documento.pdf",
+            "mediaKey": "...",
+            "fileEncSha256": "...",
+            "directPath": "/v/...",
+            "mediaKeyTimestamp": 1729685741
+          },
+          "base64": "JVBERi0xLjQKJeLj..."
+        },
+        "IsDocumentWithCaption": false,
+        "IsEphemeral": false,
+        "IsViewOnce": false,
+        "IsEdit": false
+      },
+      "instanceId": "249aad2e-68f9-464f-bc84-aca560c38f0e",
+      "instanceToken": "2ef79c34-b6e1-4969-9e37-12b3d3a9d1062"
+    },
+    "source": "https://docs.evolutionfoundation.com.br/evolution-go/webhooks.md"
+  },
+  "CallOffer": {
+    "body": {
+      "event": "CallOffer",
+      "data": {
+        "From": "12025550100@s.whatsapp.net",
+        "Timestamp": "2024-10-10T17:20:00-03:00",
+        "CallCreator": "12025550100@s.whatsapp.net",
+        "CallID": "A1B2C3D4E5F6",
+        "RemotePlatform": "android",
+        "RemoteVersion": "2.24.10.12"
+      },
+      "instanceId": "249aad2e-68f9-464f-bc84-aca560c38f0e",
+      "instanceToken": "2ef79c34-b6e1-4969-9e37-12b3d3a9d1062"
+    },
+    "source": "https://docs.evolutionfoundation.com.br/evolution-go/webhooks.md"
+  }
+}

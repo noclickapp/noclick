@@ -1,0 +1,491 @@
+[
+  {
+    "operation": "send_text",
+    "method": "POST",
+    "path": "/send/text",
+    "config": {
+      "operation": "send_text",
+      "number": "5511999999999",
+      "text": "Olá! Como posso ajudar?",
+      "id": "msg-custom-123"
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "Info": {
+          "ID": "3EB0C5A277F7F9B6C599",
+          "ServerID": 12345,
+          "Timestamp": "2025-11-11T10:30:00Z",
+          "Type": "ExtendedTextMessage"
+        }
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-messages.md"
+  },
+  {
+    "operation": "send_media",
+    "method": "POST",
+    "path": "/send/media",
+    "config": {
+      "operation": "send_media",
+      "number": "5511999999999",
+      "url": "https://example.com/imagem.jpg",
+      "type": "image",
+      "caption": "Confira esta imagem!",
+      "filename": "foto.jpg"
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "Info": {
+          "ID": "3EB0C5A277F7F9B6C599",
+          "Type": "ImageMessage"
+        }
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-messages.md"
+  },
+  {
+    "operation": "send_link",
+    "method": "POST",
+    "path": "/send/link",
+    "config": {
+      "operation": "send_link",
+      "number": "5511999999999",
+      "text": "Confira este artigo: https://example.com/artigo",
+      "title": "Título do Link",
+      "url": "https://example.com/artigo",
+      "description": "Descrição do conteúdo",
+      "imgUrl": "https://example.com/imagem.jpg"
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "Info": {
+          "ID": "3EB0C5A277F7F9B6C599",
+          "Type": "ExtendedTextMessage"
+        }
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-messages.md"
+  },
+  {
+    "operation": "send_location",
+    "method": "POST",
+    "path": "/send/location",
+    "config": {
+      "operation": "send_location",
+      "number": "5511999999999",
+      "name": "Escritório Central",
+      "address": "Av. Paulista, 1000 - São Paulo, SP",
+      "latitude": -23.5505199,
+      "longitude": -46.6333094
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "Info": {
+          "ID": "3EB0C5A277F7F9B6C599",
+          "Type": "LocationMessage"
+        }
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-messages.md"
+  },
+  {
+    "operation": "send_poll",
+    "method": "POST",
+    "path": "/send/poll",
+    "config": {
+      "operation": "send_poll",
+      "number": "5511999999999",
+      "question": "Qual seu horário preferido?",
+      "maxAnswer": 1,
+      "options": [
+        "Manhã (8h-12h)",
+        "Tarde (13h-18h)",
+        "Noite (19h-22h)"
+      ]
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "Info": {
+          "ID": "3EB0C5A277F7F9B6C599",
+          "Type": "PollCreationMessage"
+        }
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-messages.md"
+  },
+  {
+    "operation": "react_to_message",
+    "method": "POST",
+    "path": "/message/react",
+    "config": {
+      "operation": "react_to_message",
+      "number": "5511999999999",
+      "reaction": "👍",
+      "id": "3EB0C5A277F7F9B6C599",
+      "fromMe": false,
+      "participant": "12025550104@s.whatsapp.net"
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "Info": {
+          "ID": "3EB0C5A277F7F9B6C599",
+          "Type": "ReactionMessage"
+        }
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-messages.md"
+  },
+  {
+    "operation": "mark_messages_read",
+    "method": "POST",
+    "path": "/message/markread",
+    "config": {
+      "operation": "mark_messages_read",
+      "number": "5511999999999",
+      "id": [
+        "3EB0C5A277F7F9B6C599",
+        "3EB0C5A277F7F9B6C600"
+      ]
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "timestamp": "2025-11-11T10:30:00Z"
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-messages.md"
+  },
+  {
+    "operation": "edit_message",
+    "method": "POST",
+    "path": "/message/edit",
+    "config": {
+      "operation": "edit_message",
+      "chat": "12025550100@s.whatsapp.net",
+      "messageId": "3EB0C5A277F7F9B6C599",
+      "message": "Texto editado da mensagem"
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "messageId": "3EB0C5A277F7F9B6C599",
+        "timestamp": "2025-11-11T10:30:00Z"
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-messages.md"
+  },
+  {
+    "operation": "delete_message",
+    "method": "POST",
+    "path": "/message/delete",
+    "config": {
+      "operation": "delete_message",
+      "chat": "12025550100@s.whatsapp.net",
+      "messageId": "3EB0C5A277F7F9B6C599"
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "messageId": "3EB0C5A277F7F9B6C599",
+        "timestamp": "2025-11-11T10:30:00Z"
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-messages.md"
+  },
+  {
+    "operation": "list_contacts",
+    "method": "GET",
+    "path": "/user/contacts",
+    "config": {
+      "operation": "list_contacts"
+    },
+    "response": {
+      "message": "success",
+      "data": [
+        {
+          "Jid": "12025550100@s.whatsapp.net",
+          "Found": true,
+          "FirstName": "João",
+          "FullName": "João Silva",
+          "PushName": "João",
+          "BusinessName": ""
+        },
+        {
+          "Jid": "12025550104@s.whatsapp.net",
+          "Found": true,
+          "FirstName": "Maria",
+          "FullName": "Maria Santos",
+          "PushName": "Maria",
+          "BusinessName": "Loja da Maria"
+        }
+      ]
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-user.md"
+  },
+  {
+    "operation": "check_users",
+    "method": "POST",
+    "path": "/user/check",
+    "config": {
+      "operation": "check_users",
+      "number": [
+        "5511999999999",
+        "11999999999",
+        "+55 11 99999-9999"
+      ],
+      "formatJid": false
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "Users": [
+          {
+            "Query": "5511999999999",
+            "IsInWhatsapp": true,
+            "JID": "12025550100@s.whatsapp.net",
+            "RemoteJID": "12025550100@s.whatsapp.net",
+            "LID": "lid_string",
+            "VerifiedName": "Empresa LTDA"
+          },
+          {
+            "Query": "12025550104",
+            "IsInWhatsapp": false,
+            "JID": "",
+            "RemoteJID": "12025550104",
+            "LID": null,
+            "VerifiedName": ""
+          }
+        ]
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-user.md"
+  },
+  {
+    "operation": "get_avatar",
+    "method": "POST",
+    "path": "/user/avatar",
+    "config": {
+      "operation": "get_avatar",
+      "number": "5511999999999",
+      "preview": false
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "URL": "https://pps.whatsapp.net/v/...",
+        "ID": "abc123",
+        "Type": "image",
+        "DirectPath": "/v/..."
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-user.md"
+  },
+  {
+    "operation": "list_groups",
+    "method": "GET",
+    "path": "/group/list",
+    "config": {
+      "operation": "list_groups"
+    },
+    "response": {
+      "message": "success",
+      "data": [
+        {
+          "JID": "120363XXXXXXXXXX@g.us",
+          "OwnerJID": "12025550100@s.whatsapp.net",
+          "GroupName": {
+            "Name": "Equipe de Vendas",
+            "NameSetAt": "2025-01-15T10:30:00Z",
+            "NameSetBy": "12025550100@s.whatsapp.net"
+          },
+          "GroupTopic": {
+            "Topic": "Discussões sobre vendas e metas",
+            "TopicID": "abc123",
+            "TopicSetAt": "2025-01-15T10:35:00Z",
+            "TopicSetBy": "12025550100@s.whatsapp.net"
+          },
+          "GroupCreated": "2025-01-15T10:00:00Z",
+          "Participants": [
+            {
+              "JID": "12025550100@s.whatsapp.net",
+              "IsAdmin": true,
+              "IsSuperAdmin": true
+            },
+            {
+              "JID": "12025550104@s.whatsapp.net",
+              "IsAdmin": false,
+              "IsSuperAdmin": false
+            }
+          ],
+          "ParticipantVersionID": "abc123"
+        }
+      ]
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-groups.md"
+  },
+  {
+    "operation": "get_group",
+    "method": "POST",
+    "path": "/group/info",
+    "config": {
+      "operation": "get_group",
+      "groupJid": "120363XXXXXXXXXX@g.us"
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "JID": "120363XXXXXXXXXX@g.us",
+        "OwnerJID": "12025550100@s.whatsapp.net",
+        "GroupName": {
+          "Name": "Equipe de Vendas",
+          "NameSetAt": "2025-01-15T10:30:00Z",
+          "NameSetBy": "12025550100@s.whatsapp.net"
+        },
+        "GroupTopic": {
+          "Topic": "Discussões sobre vendas",
+          "TopicID": "abc123",
+          "TopicSetAt": "2025-01-15T10:35:00Z",
+          "TopicSetBy": "12025550100@s.whatsapp.net"
+        },
+        "GroupCreated": "2025-01-15T10:00:00Z",
+        "Participants": [
+          {
+            "JID": "12025550100@s.whatsapp.net",
+            "IsAdmin": true,
+            "IsSuperAdmin": true
+          }
+        ]
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-groups.md"
+  },
+  {
+    "operation": "create_group",
+    "method": "POST",
+    "path": "/group/create",
+    "config": {
+      "operation": "create_group",
+      "groupName": "Equipe de Vendas",
+      "participants": [
+        "5511999999999",
+        "12025550104",
+        "12025550104"
+      ]
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "jid": "120363XXXXXXXXXX@g.us",
+        "name": "Equipe de Vendas",
+        "owner": "12025550100@s.whatsapp.net",
+        "added": [
+          "12025550100@s.whatsapp.net",
+          "12025550104@s.whatsapp.net"
+        ],
+        "failed": [
+          "12025550104@s.whatsapp.net"
+        ]
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-groups.md"
+  },
+  {
+    "operation": "rename_group",
+    "method": "POST",
+    "path": "/group/name",
+    "config": {
+      "operation": "rename_group",
+      "groupJid": "120363XXXXXXXXXX@g.us",
+      "name": "Novo Nome do Grupo"
+    },
+    "response": {
+      "message": "success"
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-groups.md"
+  },
+  {
+    "operation": "set_group_description",
+    "method": "POST",
+    "path": "/group/description",
+    "config": {
+      "operation": "set_group_description",
+      "groupJid": "120363XXXXXXXXXX@g.us",
+      "description": "Grupo para discussões sobre marketing e estratégias de vendas."
+    },
+    "response": {
+      "message": "success"
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-groups.md"
+  },
+  {
+    "operation": "get_group_invite_link",
+    "method": "POST",
+    "path": "/group/invitelink",
+    "config": {
+      "operation": "get_group_invite_link",
+      "groupJid": "120363XXXXXXXXXX@g.us",
+      "reset": false
+    },
+    "response": {
+      "message": "success",
+      "data": "https://chat.whatsapp.com/ABCDEFGHIJKLMNOP"
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-groups.md"
+  },
+  {
+    "operation": "archive_chat",
+    "method": "POST",
+    "path": "/chat/archive",
+    "config": {
+      "operation": "archive_chat",
+      "chat": "12025550100@s.whatsapp.net"
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "timestamp": "2025-11-11T10:30:00Z"
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-chats.md"
+  },
+  {
+    "operation": "unarchive_chat",
+    "method": "POST",
+    "path": "/chat/unarchive",
+    "config": {
+      "operation": "unarchive_chat",
+      "chat": "12025550100@s.whatsapp.net"
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "timestamp": "2025-11-11T10:30:00Z"
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-chats.md"
+  },
+  {
+    "operation": "get_instance_status",
+    "method": "GET",
+    "path": "/instance/status",
+    "config": {
+      "operation": "get_instance_status"
+    },
+    "response": {
+      "message": "success",
+      "data": {
+        "connected": true,
+        "loggedIn": true,
+        "name": "Minha Empresa",
+        "myJid": "12025550100@s.whatsapp.net"
+      }
+    },
+    "source": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/guias-api/api-instances.md"
+  }
+]

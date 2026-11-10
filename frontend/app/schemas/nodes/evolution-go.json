@@ -1,0 +1,1056 @@
+{
+  "$defs": {
+    "EvolutionGoArchiveChatConfig": {
+      "properties": {
+        "operation": {
+          "const": "archive_chat",
+          "default": "archive_chat",
+          "title": "Archive chat",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Archive chat",
+          "x-is-trigger": false
+        },
+        "chat": {
+          "minLength": 1,
+          "title": "Chat JID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat"
+      ],
+      "title": "EvolutionGoArchiveChatConfig",
+      "type": "object"
+    },
+    "EvolutionGoCheckUsersConfig": {
+      "properties": {
+        "operation": {
+          "const": "check_users",
+          "default": "check_users",
+          "title": "Check WhatsApp numbers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Check WhatsApp numbers",
+          "x-is-trigger": false
+        },
+        "number": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Phone numbers",
+          "type": "array"
+        },
+        "formatJid": {
+          "default": true,
+          "title": "Format phone numbers",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "number"
+      ],
+      "title": "EvolutionGoCheckUsersConfig",
+      "type": "object"
+    },
+    "EvolutionGoCreateGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Create group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create group",
+          "x-is-trigger": false
+        },
+        "groupName": {
+          "minLength": 1,
+          "title": "Group name",
+          "type": "string"
+        },
+        "participants": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Participant phone numbers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "groupName",
+        "participants"
+      ],
+      "title": "EvolutionGoCreateGroupConfig",
+      "type": "object"
+    },
+    "EvolutionGoDeleteMessageConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_message",
+          "default": "delete_message",
+          "title": "Delete message for everyone",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete message for everyone",
+          "x-is-trigger": false
+        },
+        "chat": {
+          "minLength": 1,
+          "title": "Chat JID",
+          "type": "string"
+        },
+        "messageId": {
+          "minLength": 1,
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat",
+        "messageId"
+      ],
+      "title": "EvolutionGoDeleteMessageConfig",
+      "type": "object"
+    },
+    "EvolutionGoEditMessageConfig": {
+      "properties": {
+        "operation": {
+          "const": "edit_message",
+          "default": "edit_message",
+          "title": "Edit message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Edit message",
+          "x-is-trigger": false
+        },
+        "chat": {
+          "minLength": 1,
+          "title": "Chat JID",
+          "type": "string"
+        },
+        "messageId": {
+          "minLength": 1,
+          "title": "Message ID",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "New message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat",
+        "messageId",
+        "message"
+      ],
+      "title": "EvolutionGoEditMessageConfig",
+      "type": "object"
+    },
+    "EvolutionGoGetAvatarConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_avatar",
+          "default": "get_avatar",
+          "title": "Get avatar",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get avatar",
+          "x-is-trigger": false
+        },
+        "number": {
+          "minLength": 1,
+          "title": "Phone number or JID",
+          "type": "string"
+        },
+        "preview": {
+          "default": false,
+          "title": "Preview image",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "number"
+      ],
+      "title": "EvolutionGoGetAvatarConfig",
+      "type": "object"
+    },
+    "EvolutionGoGetGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Get group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get group",
+          "x-is-trigger": false
+        },
+        "groupJid": {
+          "minLength": 1,
+          "title": "Group JID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupJid"
+      ],
+      "title": "EvolutionGoGetGroupConfig",
+      "type": "object"
+    },
+    "EvolutionGoGetGroupInviteLinkConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_group_invite_link",
+          "default": "get_group_invite_link",
+          "title": "Get group invite link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get group invite link",
+          "x-is-trigger": false
+        },
+        "groupJid": {
+          "minLength": 1,
+          "title": "Group JID",
+          "type": "string"
+        },
+        "reset": {
+          "default": false,
+          "description": "Revokes the previous invite link when enabled.",
+          "title": "Reset invite link",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "groupJid"
+      ],
+      "title": "EvolutionGoGetGroupInviteLinkConfig",
+      "type": "object"
+    },
+    "EvolutionGoGetInstanceStatusConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_instance_status",
+          "default": "get_instance_status",
+          "title": "Get instance status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get instance status",
+          "x-is-trigger": false
+        }
+      },
+      "title": "EvolutionGoGetInstanceStatusConfig",
+      "type": "object"
+    },
+    "EvolutionGoGetUsersConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_users",
+          "default": "get_users",
+          "title": "Get users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get users",
+          "x-is-trigger": false
+        },
+        "number": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Phone numbers",
+          "type": "array"
+        },
+        "formatJid": {
+          "default": true,
+          "title": "Format phone numbers",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "number"
+      ],
+      "title": "EvolutionGoGetUsersConfig",
+      "type": "object"
+    },
+    "EvolutionGoInstanceTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "evolution_go_instance_token",
+          "default": "evolution_go_instance_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "server_url": {
+          "description": "The public HTTPS origin of your Evolution Go server, without a path.",
+          "title": "Server URL",
+          "type": "string"
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "Instance token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "server_url",
+        "api_token"
+      ],
+      "title": "Evolution Go Instance Token",
+      "type": "object",
+      "x-credential-instructions": "Paste the token of an existing, paired Evolution Go WhatsApp instance and its public HTTPS server URL. Use the instance token, not the global admin key. NoClick sends it in the apikey header to that server.",
+      "x-credential-url": "https://github.com/evolution-foundation/evolution-go/blob/main/docs/wiki/conceitos-core/authentication.md"
+    },
+    "EvolutionGoListContactsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List contacts",
+          "x-is-trigger": false
+        }
+      },
+      "title": "EvolutionGoListContactsConfig",
+      "type": "object"
+    },
+    "EvolutionGoListGroupsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List groups",
+          "x-is-trigger": false
+        }
+      },
+      "title": "EvolutionGoListGroupsConfig",
+      "type": "object"
+    },
+    "EvolutionGoMarkMessagesReadConfig": {
+      "properties": {
+        "operation": {
+          "const": "mark_messages_read",
+          "default": "mark_messages_read",
+          "title": "Mark messages read",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Mark messages read",
+          "x-is-trigger": false
+        },
+        "number": {
+          "minLength": 1,
+          "title": "Chat JID",
+          "type": "string"
+        },
+        "id": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Message IDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "number",
+        "id"
+      ],
+      "title": "EvolutionGoMarkMessagesReadConfig",
+      "type": "object"
+    },
+    "EvolutionGoOnEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On WhatsApp event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On WhatsApp event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "MESSAGE",
+          "description": "Incoming message or call. Use a dedicated instance: Evolution Go has one webhook URL per instance; registration replaces its event and channel settings. Deliveries are unsigned.",
+          "enum": [
+            "MESSAGE",
+            "CALL"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "EvolutionGoOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "EvolutionGoReactToMessageConfig": {
+      "properties": {
+        "operation": {
+          "const": "react_to_message",
+          "default": "react_to_message",
+          "title": "React to message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "React to message",
+          "x-is-trigger": false
+        },
+        "number": {
+          "minLength": 1,
+          "title": "Chat JID",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Message ID",
+          "type": "string"
+        },
+        "reaction": {
+          "minLength": 1,
+          "title": "Reaction emoji",
+          "type": "string"
+        },
+        "fromMe": {
+          "default": false,
+          "title": "Sent by this account",
+          "type": "boolean"
+        },
+        "participant": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Participant JID"
+        }
+      },
+      "required": [
+        "number",
+        "id",
+        "reaction"
+      ],
+      "title": "EvolutionGoReactToMessageConfig",
+      "type": "object"
+    },
+    "EvolutionGoRenameGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "rename_group",
+          "default": "rename_group",
+          "title": "Rename group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Rename group",
+          "x-is-trigger": false
+        },
+        "groupJid": {
+          "minLength": 1,
+          "title": "Group JID",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Group name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupJid",
+        "name"
+      ],
+      "title": "EvolutionGoRenameGroupConfig",
+      "type": "object"
+    },
+    "EvolutionGoSendLinkConfig": {
+      "properties": {
+        "operation": {
+          "const": "send_link",
+          "default": "send_link",
+          "title": "Send link preview",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Send link preview",
+          "x-is-trigger": false
+        },
+        "number": {
+          "minLength": 1,
+          "title": "Recipient",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "url": {
+          "minLength": 1,
+          "title": "Link URL",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preview title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preview description"
+        },
+        "imgUrl": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preview image URL"
+        }
+      },
+      "required": [
+        "number",
+        "text",
+        "url"
+      ],
+      "title": "EvolutionGoSendLinkConfig",
+      "type": "object"
+    },
+    "EvolutionGoSendLocationConfig": {
+      "properties": {
+        "operation": {
+          "const": "send_location",
+          "default": "send_location",
+          "title": "Send location",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Send location",
+          "x-is-trigger": false
+        },
+        "number": {
+          "minLength": 1,
+          "title": "Recipient",
+          "type": "string"
+        },
+        "latitude": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Place name"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        }
+      },
+      "required": [
+        "number",
+        "latitude",
+        "longitude"
+      ],
+      "title": "EvolutionGoSendLocationConfig",
+      "type": "object"
+    },
+    "EvolutionGoSendMediaConfig": {
+      "properties": {
+        "operation": {
+          "const": "send_media",
+          "default": "send_media",
+          "title": "Send media",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Send media",
+          "x-is-trigger": false
+        },
+        "number": {
+          "minLength": 1,
+          "title": "Recipient",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "image",
+            "video",
+            "audio",
+            "document"
+          ],
+          "title": "Media type",
+          "type": "string"
+        },
+        "url": {
+          "minLength": 1,
+          "title": "Media URL",
+          "type": "string"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        }
+      },
+      "required": [
+        "number",
+        "type",
+        "url"
+      ],
+      "title": "EvolutionGoSendMediaConfig",
+      "type": "object"
+    },
+    "EvolutionGoSendPollConfig": {
+      "properties": {
+        "operation": {
+          "const": "send_poll",
+          "default": "send_poll",
+          "title": "Send poll",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Send poll",
+          "x-is-trigger": false
+        },
+        "number": {
+          "minLength": 1,
+          "title": "Recipient",
+          "type": "string"
+        },
+        "question": {
+          "minLength": 1,
+          "title": "Question",
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Answer options",
+          "type": "array"
+        },
+        "maxAnswer": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Maximum answers",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "number",
+        "question",
+        "options"
+      ],
+      "title": "EvolutionGoSendPollConfig",
+      "type": "object"
+    },
+    "EvolutionGoSendTextConfig": {
+      "properties": {
+        "operation": {
+          "const": "send_text",
+          "default": "send_text",
+          "title": "Send text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Send text",
+          "x-is-trigger": false
+        },
+        "number": {
+          "description": "Country-code phone number or WhatsApp JID.",
+          "minLength": 1,
+          "title": "Recipient",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom message ID"
+        }
+      },
+      "required": [
+        "number",
+        "text"
+      ],
+      "title": "EvolutionGoSendTextConfig",
+      "type": "object"
+    },
+    "EvolutionGoSetGroupDescriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "set_group_description",
+          "default": "set_group_description",
+          "title": "Set group description",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Set group description",
+          "x-is-trigger": false
+        },
+        "groupJid": {
+          "minLength": 1,
+          "title": "Group JID",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Group description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupJid",
+        "description"
+      ],
+      "title": "EvolutionGoSetGroupDescriptionConfig",
+      "type": "object"
+    },
+    "EvolutionGoUnarchiveChatConfig": {
+      "properties": {
+        "operation": {
+          "const": "unarchive_chat",
+          "default": "unarchive_chat",
+          "title": "Unarchive chat",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Unarchive chat",
+          "x-is-trigger": false
+        },
+        "chat": {
+          "minLength": 1,
+          "title": "Chat JID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat"
+      ],
+      "title": "EvolutionGoUnarchiveChatConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_chat": "#/$defs/EvolutionGoArchiveChatConfig",
+          "check_users": "#/$defs/EvolutionGoCheckUsersConfig",
+          "create_group": "#/$defs/EvolutionGoCreateGroupConfig",
+          "delete_message": "#/$defs/EvolutionGoDeleteMessageConfig",
+          "edit_message": "#/$defs/EvolutionGoEditMessageConfig",
+          "get_avatar": "#/$defs/EvolutionGoGetAvatarConfig",
+          "get_group": "#/$defs/EvolutionGoGetGroupConfig",
+          "get_group_invite_link": "#/$defs/EvolutionGoGetGroupInviteLinkConfig",
+          "get_instance_status": "#/$defs/EvolutionGoGetInstanceStatusConfig",
+          "get_users": "#/$defs/EvolutionGoGetUsersConfig",
+          "list_contacts": "#/$defs/EvolutionGoListContactsConfig",
+          "list_groups": "#/$defs/EvolutionGoListGroupsConfig",
+          "mark_messages_read": "#/$defs/EvolutionGoMarkMessagesReadConfig",
+          "on_event": "#/$defs/EvolutionGoOnEventConfig",
+          "react_to_message": "#/$defs/EvolutionGoReactToMessageConfig",
+          "rename_group": "#/$defs/EvolutionGoRenameGroupConfig",
+          "send_link": "#/$defs/EvolutionGoSendLinkConfig",
+          "send_location": "#/$defs/EvolutionGoSendLocationConfig",
+          "send_media": "#/$defs/EvolutionGoSendMediaConfig",
+          "send_poll": "#/$defs/EvolutionGoSendPollConfig",
+          "send_text": "#/$defs/EvolutionGoSendTextConfig",
+          "set_group_description": "#/$defs/EvolutionGoSetGroupDescriptionConfig",
+          "unarchive_chat": "#/$defs/EvolutionGoUnarchiveChatConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/EvolutionGoSendTextConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoSendMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoSendLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoSendLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoSendPollConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoReactToMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoMarkMessagesReadConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoEditMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoDeleteMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoCheckUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoGetUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoGetAvatarConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoGetGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoCreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoRenameGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoSetGroupDescriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoGetGroupInviteLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoArchiveChatConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoUnarchiveChatConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoGetInstanceStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/EvolutionGoOnEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EvolutionGoInstanceTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Evolution-go Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
