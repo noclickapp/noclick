@@ -134,3 +134,102 @@ def test_saved_workflow_metadata_is_accepted_and_not_forwarded():
     assert gb.GivebutterNode.validate_config(raw)["valid"] is True
     parsed = gb.GivebutterNode.parse_config(raw)
     assert parsed.config.model_dump() == {"operation": "list_campaigns", "scope": None}
+
+
+EVENTS = json.loads((Path(__file__).parent / "fixtures/givebutter/events.json").read_text())
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("event", gb.WEBHOOK_EVENTS)
+async def test_documented_webhook_lifecycle_and_agent_turn(transport, event):
+    requests, responses = transport
+    responses.append((200, {"id": "webhook-42", "signature": "webhook-secret"}))
+    config = {"operation": "on_event", "event_type": event}
+    registration = await gb.GivebutterNode._register_external_webhook(
+        webhook_url="https://example.hooks.example.test", credential=AUTH, config=config, node_id="trigger-42")
+    assert registration == {"external_webhook_id": "webhook-42", "signing_secret": "webhook-secret"}
+    assert requests[0].method == "POST" and requests[0].url.path == "/v1/webhooks"
+    assert json.loads(requests[0].content) == {"url": "https://example.hooks.example.test", "events": [event],
+        "name": "NoClick trigger-42", "enabled": True}
+    config.update(registration)
+    payload = EVENTS[event]["body"]
+    raw = json.dumps(payload).encode()
+    assert gb.GivebutterNode.verify_webhook_signature(raw, {"sIgNaTuRe": "webhook-secret"}, config)
+    assert not gb.GivebutterNode.verify_webhook_signature(raw, {"Signature": "wrong"}, config)
+    assert not gb.GivebutterNode.verify_webhook_signature(raw, {}, config)
+    assert not gb.GivebutterNode.verify_webhook_signature(raw, {"Signature": "webhook-secret"}, {})
+    assert gb.GivebutterNode.filter_trigger_payload(payload, config)
+    other = next(e for e in gb.WEBHOOK_EVENTS if e != event)
+    assert not gb.GivebutterNode.filter_trigger_payload(EVENTS[other]["body"], config)
+    output = gb.GivebutterNode.resolve_trigger_payload(payload, config)
+    assert output == payload
+    agent = gb.GivebutterNode.resolve_agent_event(output)
+    assert event in agent["text"] and str(payload["data"]["id"]) in agent["text"]
+    kind = event.split(".")[0]
+    assert agent["conversation_key"] == f"{kind}:{payload['data']['id']}"
+    if kind in {"transaction", "contact", "plan", "ticket"}:
+        assert payload["data"]["first_name"] in agent["text"]
+    if kind in {"transaction", "campaign"}:
+        assert payload["data"]["currency"] in agent["text"]
+    if kind == "campaign":
+        assert payload["data"]["url"] in agent["text"]
+    responses.append((200, {}))
+    await gb.GivebutterNode._unregister_external_webhook(credential=AUTH, config=config, node_id="trigger-42")
+    assert requests[-1].method == "DELETE" and requests[-1].url.path == "/v1/webhooks/webhook-42"
+
+
+@pytest.mark.asyncio
+async def test_trigger_manual_run_never_makes_a_provider_request(transport):
+    result = await run("on_event", {"event_type": "transaction.succeeded"})
+    assert result["status"] == "no_event" and result["data"] == {}
+    assert not transport[0]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("body", [{"id": "42"}, {"id": "42", "signature": None}, {"signature": "secret"}])
+async def test_missing_webhook_registration_secret_or_id_is_refused(transport, body):
+    transport[1].append((200, body))
+    with pytest.raises(ValueError, match="webhook ID and signature"):
+        await gb.GivebutterNode._register_external_webhook(webhook_url="https://example.hooks.example.test",
+            credential=AUTH, config={"event_type": "contact.created"}, node_id="trigger")
+
+
+@pytest.mark.asyncio
+async def test_webhook_lifecycle_rejections_and_idempotent_delete(transport):
+    transport[1].append((401, {"message": AUTH["api_key"]}))
+    with pytest.raises(ValueError, match="HTTP 401") as caught:
+        await gb.GivebutterNode._register_external_webhook(webhook_url="https://example.hooks.example.test",
+            credential=AUTH, config={}, node_id="trigger")
+    assert AUTH["api_key"] not in str(caught.value)
+    config = {"external_webhook_id": "gone"}
+    transport[1].append((404, {}))
+    await gb.GivebutterNode._unregister_external_webhook(credential=AUTH, config=config, node_id="trigger")
+    with pytest.raises(ValueError):
+        await gb.GivebutterNode._unregister_external_webhook(credential=None, config=config, node_id="trigger")
+    transport[1].append((403, {}))
+    with pytest.raises(ValueError, match="HTTP 403"):
+        await gb.GivebutterNode._unregister_external_webhook(credential=AUTH, config=config, node_id="trigger")
+
+
+def test_trigger_config_and_registration_fingerprint_round_trip():
+    parsed = gb.GivebutterNode.parse_config({"config": {"operation": "on_event", "event_type": "plan.failed",
+        "signing_secret": "secret", "external_webhook_id": "42", "trigger_registered": True}, "credentials": AUTH})
+    assert parsed.config.signing_secret == "secret" and parsed.config.external_webhook_id == "42"
+    schema = gb.OnEvent.model_json_schema()
+    assert schema["x-requires-webhook"] and schema["properties"]["operation"]["x-is-trigger"]
+    assert gb.GivebutterNode.registration_fingerprint_fields({"event_type": "plan.failed"}) == {"event_type": "plan.failed"}
+    assert gb.GivebutterNode.registration_fingerprint_fields({}) == {"event_type": "transaction.succeeded"}
+    with pytest.raises(ValueError):
+        gb.OnEvent(event_type="invented.event")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,identifier,key", [
+    ("get_transaction", "459oGBTylHk8laDF", "transaction_id"),
+    ("get_plan", "sample_plan_id", "plan_id"),
+])
+async def test_documented_string_resource_ids_can_be_used_to_act(transport, operation, identifier, key):
+    transport[1].append((200, {"id": identifier}))
+    result = await run(operation, {key: identifier})
+    assert result["data"]["id"] == identifier
+    assert transport[0][-1].url.path.endswith("/" + identifier)

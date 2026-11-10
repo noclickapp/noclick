@@ -5,7 +5,9 @@ return the first page and its pagination metadata; links are never followed.
 """
 from __future__ import annotations
 
-from typing import Annotated, Literal, Union
+import hmac
+from typing import Annotated, Any, Literal, Union
+from urllib.parse import quote
 
 import httpx
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, field_validator
@@ -13,6 +15,7 @@ from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, field_validato
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 BASE_URL = "https://api.givebutter.com"
@@ -38,6 +41,7 @@ class GivebutterAPIKeyCredential(BaseModel):
 
 
 ID = Annotated[int, Field(gt=0)]
+ResourceID = Annotated[str, Field(min_length=1, max_length=255)] | ID
 Name = Annotated[str, Field(min_length=1, max_length=255)]
 Tag = Annotated[str, Field(min_length=1, max_length=64)]
 
@@ -202,7 +206,7 @@ class ListTransactions(_Input):
 class GetTransaction(_Input):
     """Read one donation transaction."""
     operation: Literal["get_transaction"] = "get_transaction"
-    transaction_id: ID
+    transaction_id: ResourceID
 
 
 class ListPlans(_Input):
@@ -213,7 +217,28 @@ class ListPlans(_Input):
 class GetPlan(_Input):
     """Read one recurring donation plan."""
     operation: Literal["get_plan"] = "get_plan"
-    plan_id: ID
+    plan_id: ResourceID
+
+
+# Event names and registration: https://givebutter.com/docs/api.json.
+# Payloads and static Signature header: https://help.givebutter.com/en/articles/8828428-how-to-automate-workflows-and-data-using-webhooks.
+WEBHOOK_EVENTS = (
+    "campaign.created", "campaign.updated", "ticket.created", "transaction.succeeded",
+    "contact.created", "plan.canceled", "plan.created", "plan.failed", "plan.paused",
+    "plan.resumed", "plan.updated", "refund.created",
+)
+
+
+class OnEvent(WebhookTriggerConfigBase):
+    """Start a workflow or agent when the selected Givebutter event arrives."""
+    operation: Literal["on_event"] = Field("on_event", json_schema_extra={
+        "const": "on_event", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On Givebutter Event",
+    })
+    event_type: Literal[*WEBHOOK_EVENTS] = Field("transaction.succeeded", title="Event Type",
+        description="Start on a donation, new contact, campaign, ticket, recurring plan or refund event. Donation and contact events do not fire for CSV imports.")
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with Givebutter automatically",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
 
 
 GivebutterOperation = Annotated[Union[
@@ -221,7 +246,7 @@ GivebutterOperation = Annotated[Union[
     ListContacts, GetContact, CreateContact, UpdateContact, RestoreContact,
     AddContactTags, RemoveContactTags, ListContactActivities, CreateContactActivity,
     ListFunds, GetFund, CreateFund, UpdateFund, ListTransactions, GetTransaction,
-    ListPlans, GetPlan,
+    ListPlans, GetPlan, OnEvent,
 ], Field(discriminator="operation")]
 
 
@@ -255,15 +280,129 @@ ROUTES = {
 }
 
 
-class GivebutterNode(WorkflowNode):
+class GivebutterNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-givebutter"
+    webhook_replace_stale_endpoint = True
     connection_evidence = ConnectionEvidence(noun="campaigns", operation="list_campaigns", label_keys=("title", "id"))
 
     @classmethod
     def get_config_model(cls):
         return GivebutterConfig
 
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event_type = (config or {}).get("event_type", "transaction.succeeded")
+        if event_type not in WEBHOOK_EVENTS:
+            raise ValueError("Choose a supported Givebutter event")
+        payload = await cls._webhook_request("POST", "/v1/webhooks", credential,
+            body={"url": webhook_url, "events": [event_type], "name": f"NoClick {node_id}"[:255], "enabled": True})
+        endpoint_id, secret = payload.get("id"), payload.get("signature")
+        if not isinstance(endpoint_id, str) or not endpoint_id or not isinstance(secret, str) or not secret:
+            raise ValueError("Givebutter did not return a webhook ID and signature")
+        return {"external_webhook_id": endpoint_id, "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = (config or {}).get("external_webhook_id")
+        if endpoint_id is not None:
+            await cls._webhook_request("DELETE", "/v1/webhooks/" + quote(str(endpoint_id), safe=""), credential)
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"event_type": (config or {}).get("event_type", "transaction.succeeded")}
+
+    @classmethod
+    def verify_webhook_signature(cls, body: bytes, headers: dict[str, str], config: dict[str, Any]) -> bool:
+        # Givebutter sends the signature verbatim; it does not sign the body.
+        secret = (config or {}).get("signing_secret")
+        signature = next((v for k, v in headers.items() if k.lower() == "signature"), None)
+        return (isinstance(secret, str) and bool(secret) and isinstance(signature, str)
+                and hmac.compare_digest(secret.encode(), signature.encode()))
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return (isinstance(payload, dict)
+                and payload.get("event") == (config or {}).get("event_type", "transaction.succeeded")
+                and isinstance(payload.get("data"), dict) and payload["data"].get("id") is not None)
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("event") not in WEBHOOK_EVENTS:
+            return super().resolve_agent_event(output)
+        event = output["event"]
+        data = output.get("data")
+        if not isinstance(data, dict) or data.get("id") is None:
+            return None
+        kind = event.split(".")[0]
+        identifier = data["id"]
+        if kind in {"contact", "transaction", "plan", "ticket"}:
+            who = " ".join(str(data.get(k) or "") for k in ("first_name", "last_name")).strip()
+        else:
+            who = ""
+        title = f"Givebutter {event}: {who or identifier}"
+        lines = [title, f"{kind}_id: {identifier}"]
+        if kind == "campaign":
+            lines += [f"Campaign: {data['title']}", f"URL: {data['url']}",
+                      f"Raised: {data['raised']} {data['currency']}; goal: {data['goal']}"]
+            if data.get("description"):
+                lines.append(f"Description: {str(data['description'])[:1500]}")
+        elif kind == "contact":
+            for key in ("primary_email", "primary_phone", "note"):
+                if data.get(key):
+                    lines.append(f"{key}: {str(data[key])[:1500]}")
+            lines.append(f"To act: get_contact or update_contact with contact_id={identifier}.")
+        elif kind == "transaction":
+            lines += [f"Donation: {data['amount']} {data['currency']}",
+                      f"Campaign: {data['campaign_code']} (campaign_id={data['campaign_id']})",
+                      f"Donor email: {data['email']}", f"At: {data['transacted_at']}"]
+            giving = data.get("giving_space")
+            if isinstance(giving, dict) and giving.get("message"):
+                lines.append(f"Message: {str(giving['message'])[:1500]}")
+            lines.append(f"To act: get_transaction with transaction_id={identifier}.")
+        elif kind == "plan":
+            lines += [f"Recurring amount: {data['amount']}; frequency: {data['frequency']}",
+                      f"Donor email: {data['email']}", f"Next bill: {data['next_bill_date']}",
+                      f"To act: get_plan with plan_id={identifier}."]
+        elif kind == "ticket":
+            lines += [f"Ticket: {data['title']}", f"Email: {data['email']}",
+                      f"transaction_id: {data['transaction_id']}", f"PDF: {data['pdf']}"]
+        elif kind == "refund":
+            lines += [f"Refund amount: {data['amount']}; type: {data['type']}",
+                      f"Reason: {str(data['reason'])[:1500]}", f"transaction_id: {data['transaction_id']}"]
+        return {"text": "\n".join(lines), "conversation_key": f"{kind}:{identifier}", "title": title}
+
+    @staticmethod
+    async def _request(method, path, key, *, params=None, body=None):
+        try:
+            async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+                response = await client.request(method, BASE_URL + path,
+                    headers={"Authorization": "Bearer " + key, "Accept": "application/json"},
+                    params=params, **({"json": body} if body is not None else {}))
+        except httpx.HTTPError:
+            raise ValueError("Givebutter could not be reached; inspect write outcomes before retrying") from None
+        if len(response.content) > 10_000_000:
+            raise ValueError("Givebutter response exceeds the supported size")
+        return response
+
+    @classmethod
+    async def _webhook_request(cls, method, path, credential, *, body=None):
+        key = GivebutterAPIKeyCredential.model_validate(credential or {}).api_key
+        response = await cls._request(method, path, key, body=body)
+        if method == "DELETE" and (response.status_code == 404 or 200 <= response.status_code < 300):
+            return {}
+        if not 200 <= response.status_code < 300:
+            raise ValueError(f"Givebutter webhook request failed (HTTP {response.status_code})")
+        try:
+            payload = response.json()
+        except ValueError:
+            raise ValueError("Givebutter returned an unexpected non-JSON response") from None
+        if not isinstance(payload, dict):
+            raise ValueError("Givebutter returned an unexpected webhook response")
+        return payload
+
     async def execute(self, inputs):
+        if self.config and isinstance(self.config.config, OnEvent):
+            return self.no_event_output("on_event")
         if not self.config or not self.config.credentials:
             raise ValueError("Connect a Givebutter API key")
         config = self.config.config
@@ -272,17 +411,13 @@ class GivebutterNode(WorkflowNode):
         path = template
         for key in tuple(values):
             if "{" + key + "}" in path:
-                path = path.replace("{" + key + "}", str(values.pop(key)))
+                path = path.replace("{" + key + "}", quote(str(values.pop(key)), safe=""))
         if config.operation in {"update_contact", "update_campaign"} and not values:
             raise ValueError("Supply at least one field to update")
         key = self.config.credentials.api_key
-        kwargs = {"params": values} if method == "GET" else {"json": values} if values else {}
-        try:
-            async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
-                response = await client.request(method, BASE_URL + path,
-                    headers={"Authorization": "Bearer " + key, "Accept": "application/json"}, **kwargs)
-        except httpx.HTTPError:
-            raise ValueError("Givebutter could not be reached; inspect write outcomes before retrying") from None
+        response = await self._request(method, path, key,
+            params=values if method == "GET" else None,
+            body=values if method != "GET" and values else None)
         if not 200 <= response.status_code < 300:
             # Retain provider rejection text for the connection seam; never emit the credential.
             try:
@@ -293,8 +428,6 @@ class GivebutterNode(WorkflowNode):
             message = message if isinstance(message, str) else "Givebutter request failed"
             result = {"status": "error", "http_status": response.status_code, "message": message[:2000].replace(key, "[redacted]")}
         else:
-            if len(response.content) > 10_000_000:
-                raise ValueError("Givebutter response exceeds the supported size")
             try:
                 payload = response.json()
             except ValueError:

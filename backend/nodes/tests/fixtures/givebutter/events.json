@@ -1,0 +1,375 @@
+{
+  "campaign.created": {
+    "body": {
+      "event": "campaign.created",
+      "data": {
+        "id": 39,
+        "code": "ABCDEF",
+        "account_id": "ABCDEF",
+        "type": "collect",
+        "title": "My form",
+        "subtitle": null,
+        "description": null,
+        "slug": "ABCDEF",
+        "url": "https://givebutter.com/ABCDEF",
+        "goal": null,
+        "raised": 0,
+        "donors": 0,
+        "currency": "USD",
+        "cover": null,
+        "status": "active",
+        "timezone": "UTC",
+        "end_at": null,
+        "created_at": "2024-02-01T12:09:29+00:00",
+        "updated_at": "2024-02-01T12:09:29+00:00"
+      }
+    },
+    "source": "https://help.givebutter.com/en/articles/8828428-how-to-automate-workflows-and-data-using-webhooks"
+  },
+  "campaign.updated": {
+    "body": {
+      "event": "campaign.updated",
+      "data": {
+        "id": 39,
+        "code": "ABCDEF",
+        "account_id": "ABCDEF",
+        "type": "collect",
+        "title": "My form",
+        "subtitle": null,
+        "description": null,
+        "slug": "ABCDEF",
+        "url": "http://givebutter.test/ABCDEF",
+        "goal": null,
+        "raised": 0,
+        "donors": 0,
+        "currency": "USD",
+        "cover": null,
+        "status": "active",
+        "timezone": "UTC",
+        "end_at": null,
+        "created_at": "2024-02-01T12:09:29+00:00",
+        "updated_at": "2024-02-01T12:09:34+00:00"
+      }
+    },
+    "source": "https://help.givebutter.com/en/articles/8828428-how-to-automate-workflows-and-data-using-webhooks"
+  },
+  "ticket.created": {
+    "body": {
+      "event": "ticket.created",
+      "data": {
+        "id": "72891263A0001",
+        "id_suffix": "A0001",
+        "transaction_id": "5aH2u32QUnl8hFVS",
+        "name": "John Doe",
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "[email\u00a0protected]",
+        "phone": "+12674325019",
+        "title": "Ticket",
+        "description": "<p>Ticket</p>",
+        "price": 10,
+        "pdf": "https://givebutter.com/ticket.pdf",
+        "checked_in_at": null,
+        "created_at": "2024-02-01T12:18:01+00:00"
+      }
+    },
+    "source": "https://help.givebutter.com/en/articles/8828428-how-to-automate-workflows-and-data-using-webhooks"
+  },
+  "transaction.succeeded": {
+    "body": {
+      "event": "transaction.succeeded",
+      "data": {
+        "id": "459oGBTylHk8laDF",
+        "campaign_id": 39,
+        "campaign_code": "ABCDEF",
+        "plan_id": null,
+        "team_id": null,
+        "member_id": null,
+        "fund_id": null,
+        "fund_code": null,
+        "first_name": "John",
+        "last_name": "Doe",
+        "company": null,
+        "email": "[email\u00a0protected]",
+        "phone": "+12674325019",
+        "address": {
+          "address_1": "N 15th Ave",
+          "address_2": "123",
+          "city": "Melrose Park",
+          "state": "IL",
+          "country": "USA",
+          "zipcode": "60160"
+        },
+        "status": "succeeded",
+        "payment_method": "card",
+        "method": "card",
+        "amount": 250,
+        "fee": 7.78,
+        "fee_covered": 7.78,
+        "donated": 250,
+        "payout": 250,
+        "currency": "USD",
+        "transacted_at": "2024-02-01T12:15:20+00:00",
+        "created_at": "2024-02-01T12:15:20+00:00",
+        "giving_space": {
+          "id": 15,
+          "name": "John Doe",
+          "amount": 250,
+          "message": null
+        },
+        "dedication": null,
+        "transactions": [
+          {
+            "id": "2794514649",
+            "plan_id": null,
+            "amount": 250,
+            "fee": 7.78,
+            "fee_covered": 7.78,
+            "donated": 250,
+            "payout": 250,
+            "captured": true,
+            "captured_at": "2024-02-01T12:15:22+00:00",
+            "refunded": false,
+            "refunded_at": null,
+            "line_items": [
+              {
+                "type": "donation",
+                "subtype": "donation",
+                "description": "Donation to Recurring enabled",
+                "quantity": 1,
+                "price": 250,
+                "discount": 0,
+                "total": 250
+              },
+              {
+                "type": "donation",
+                "subtype": "fee",
+                "description": "Processing fee",
+                "quantity": 1,
+                "price": 7.78,
+                "discount": 0,
+                "total": 7.78
+              }
+            ]
+          }
+        ],
+        "custom_fields": [],
+        "utm_parameters": [],
+        "external_id": null,
+        "communication_opt_in": true,
+        "session_id": "945c8292-0b32-45ba-a4c4-9866fc15af07"
+      }
+    },
+    "source": "https://help.givebutter.com/en/articles/8828428-how-to-automate-workflows-and-data-using-webhooks"
+  },
+  "contact.created": {
+    "body": {
+      "event": "contact.created",
+      "data": {
+        "id": 89,
+        "prefix": null,
+        "first_name": "John",
+        "middle_name": null,
+        "last_name": "Doe",
+        "suffix": null,
+        "gender": null,
+        "dob": null,
+        "company": null,
+        "title": null,
+        "website_url": null,
+        "twitter_url": null,
+        "linkedin_url": null,
+        "facebook_url": null,
+        "emails": [],
+        "phones": [],
+        "primary_email": null,
+        "primary_phone": null,
+        "note": null,
+        "addresses": [],
+        "primary_address": null,
+        "stats": {
+          "total_contributions": 0,
+          "recurring_contributions": 0
+        },
+        "tags": [],
+        "custom_fields": [],
+        "external_ids": [],
+        "is_email_subscribed": false,
+        "is_phone_subscribed": false,
+        "is_address_subscribed": true,
+        "archived_at": null,
+        "created_at": "2024-02-01T12:13:22+00:00",
+        "updated_at": "2024-02-01T12:13:22+00:00"
+      }
+    },
+    "source": "https://help.givebutter.com/en/articles/8828428-how-to-automate-workflows-and-data-using-webhooks"
+  },
+  "plan.canceled": {
+    "body": {
+      "id": "test",
+      "event": "plan.canceled",
+      "data": {
+        "id": "sample_plan_id",
+        "contact_id": null,
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "[email\u00a0protected]",
+        "phone": null,
+        "frequency": "monthly",
+        "status": "active",
+        "method": "card",
+        "amount": 50,
+        "fee_covered": 0,
+        "created_at": "2026-03-20 21:03:18",
+        "updated_at": "2026-03-20 21:03:18",
+        "start_at": "2026-03-20 21:03:18",
+        "canceled_at": null,
+        "next_bill_date": "2026-04-20 21:03:18"
+      }
+    },
+    "source": "https://help.givebutter.com/en/articles/8828428-how-to-automate-workflows-and-data-using-webhooks"
+  },
+  "plan.created": {
+    "body": {
+      "id": "test",
+      "event": "plan.created",
+      "data": {
+        "id": "sample_plan_id",
+        "contact_id": null,
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "[email\u00a0protected]",
+        "phone": null,
+        "frequency": "monthly",
+        "status": "active",
+        "method": "card",
+        "amount": 50,
+        "fee_covered": 0,
+        "created_at": "2026-03-20 21:02:39",
+        "updated_at": "2026-03-20 21:02:39",
+        "start_at": "2026-03-20 21:02:39",
+        "canceled_at": null,
+        "next_bill_date": "2026-04-20 21:02:39"
+      }
+    },
+    "source": "https://help.givebutter.com/en/articles/8828428-how-to-automate-workflows-and-data-using-webhooks"
+  },
+  "plan.failed": {
+    "body": {
+      "id": "test",
+      "event": "plan.failed",
+      "data": {
+        "id": "sample_plan_id",
+        "contact_id": null,
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "[email\u00a0protected]",
+        "phone": null,
+        "frequency": "monthly",
+        "status": "active",
+        "method": "card",
+        "amount": 50,
+        "fee_covered": 0,
+        "created_at": "2026-03-20 21:02:06",
+        "updated_at": "2026-03-20 21:02:06",
+        "start_at": "2026-03-20 21:02:06",
+        "canceled_at": null,
+        "next_bill_date": "2026-04-20 21:02:06"
+      }
+    },
+    "source": "https://help.givebutter.com/en/articles/8828428-how-to-automate-workflows-and-data-using-webhooks"
+  },
+  "plan.resumed": {
+    "body": {
+      "id": "test",
+      "event": "plan.resumed",
+      "data": {
+        "id": "sample_plan_id",
+        "contact_id": null,
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "[email\u00a0protected]",
+        "phone": null,
+        "frequency": "monthly",
+        "status": "active",
+        "method": "card",
+        "amount": 50,
+        "fee_covered": 0,
+        "created_at": "2026-03-20 21:01:34",
+        "updated_at": "2026-03-20 21:01:34",
+        "start_at": "2026-03-20 21:01:34",
+        "canceled_at": null,
+        "next_bill_date": "2026-04-20 21:01:34"
+      }
+    },
+    "source": "https://help.givebutter.com/en/articles/8828428-how-to-automate-workflows-and-data-using-webhooks"
+  },
+  "plan.paused": {
+    "body": {
+      "id": "test",
+      "event": "plan.paused",
+      "data": {
+        "id": "sample_plan_id",
+        "contact_id": null,
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "[email\u00a0protected]",
+        "phone": null,
+        "frequency": "monthly",
+        "status": "active",
+        "method": "card",
+        "amount": 50,
+        "fee_covered": 0,
+        "created_at": "2026-03-20 21:01:10",
+        "updated_at": "2026-03-20 21:01:10",
+        "start_at": "2026-03-20 21:01:10",
+        "canceled_at": null,
+        "next_bill_date": "2026-04-20 21:01:10"
+      }
+    },
+    "source": "https://help.givebutter.com/en/articles/8828428-how-to-automate-workflows-and-data-using-webhooks"
+  },
+  "plan.updated": {
+    "body": {
+      "id": "test",
+      "event": "plan.updated",
+      "data": {
+        "id": "sample_plan_id",
+        "contact_id": null,
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "[email\u00a0protected]",
+        "phone": null,
+        "frequency": "monthly",
+        "status": "active",
+        "method": "card",
+        "amount": 50,
+        "fee_covered": 0,
+        "created_at": "2026-03-20 21:00:04",
+        "updated_at": "2026-03-20 21:00:04",
+        "start_at": "2026-03-20 21:00:04",
+        "canceled_at": null,
+        "next_bill_date": "2026-04-20 21:00:04"
+      }
+    },
+    "source": "https://help.givebutter.com/en/articles/8828428-how-to-automate-workflows-and-data-using-webhooks"
+  },
+  "refund.created": {
+    "body": {
+      "id": "test",
+      "event": "refund.created",
+      "data": {
+        "id": 0,
+        "transaction_id": 0,
+        "status": "succeeded",
+        "type": "full",
+        "amount": 100,
+        "reason": "Sample refund",
+        "method": "card",
+        "created_at": "2026-03-03 16:42:21",
+        "updated_at": "2026-03-03 16:42:21"
+      }
+    },
+    "source": "https://help.givebutter.com/en/articles/8828428-how-to-automate-workflows-and-data-using-webhooks"
+  }
+}

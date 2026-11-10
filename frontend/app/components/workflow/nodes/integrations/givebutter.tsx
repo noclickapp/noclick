@@ -15,7 +15,7 @@ const GivebutterIcon = ({ className, style }: { className?: string; style?: CSSP
 
 export const GivebutterNode: NodeDefinition = {
     type: 'automation-givebutter', category: 'nonprofit', label: 'Givebutter',
-    description: 'Manage donor contacts, campaigns, activities, tags and funds; read donations and recurring plans',
+    description: 'Manage donor contacts, campaigns, activities, tags and funds; read donations and recurring plans; start workflows and agents from Givebutter events',
     keywords: ['fundraising', 'donations', 'donors', 'nonprofit', 'CRM'],
     Icon: GivebutterIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -438,9 +438,18 @@
           "type": "string"
         },
         "plan_id": {
-          "exclusiveMinimum": 0,
-          "title": "Plan Id",
-          "type": "integer"
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            }
+          ],
+          "title": "Plan Id"
         }
       },
       "required": [
@@ -459,9 +468,18 @@
           "type": "string"
         },
         "transaction_id": {
-          "exclusiveMinimum": 0,
-          "title": "Transaction Id",
-          "type": "integer"
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            }
+          ],
+          "title": "Transaction Id"
         }
       },
       "required": [
@@ -776,6 +794,154 @@
       "title": "ListTransactions",
       "type": "object"
     },
+    "OnEvent": {
+      "description": "Start a workflow or agent when the selected Givebutter event arrives.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Givebutter Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "transaction.succeeded",
+          "description": "Start on a donation, new contact, campaign, ticket, recurring plan or refund event. Donation and contact events do not fire for CSV imports.",
+          "enum": [
+            "campaign.created",
+            "campaign.updated",
+            "ticket.created",
+            "transaction.succeeded",
+            "contact.created",
+            "plan.canceled",
+            "plan.created",
+            "plan.failed",
+            "plan.paused",
+            "plan.resumed",
+            "plan.updated",
+            "refund.created"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Givebutter automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "OnEvent",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "RemoveContactTags": {
       "description": "Remove the named tags from a contact.",
       "properties": {
@@ -1069,6 +1235,7 @@
           "list_funds": "#/$defs/ListFunds",
           "list_plans": "#/$defs/ListPlans",
           "list_transactions": "#/$defs/ListTransactions",
+          "on_event": "#/$defs/OnEvent",
           "remove_contact_tags": "#/$defs/RemoveContactTags",
           "restore_contact": "#/$defs/RestoreContact",
           "update_campaign": "#/$defs/UpdateCampaign",
@@ -1140,6 +1307,9 @@
         },
         {
           "$ref": "#/$defs/GetPlan"
+        },
+        {
+          "$ref": "#/$defs/OnEvent"
         }
       ],
       "title": "Config"
