@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/jackrabbit-class.svg",
+  "source": "https://app.jackrabbitclass.com/assets/Content/Images/2023_Logos/favicon-jackrabbit-technologies-2D-dark-blue-bkgd-face-2023.svg",
+  "found_at": "https://app.jackrabbitclass.com/jr4.0/Login (<link rel=\"mask-icon\" href=\"/assets/Content/Images/2023_Logos/favicon-jackrabbit-technologies-2D-dark-blue-bkgd-face-2023.svg\">, beside the same face's PNG favicons and apple-touch-icon)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned (dropped Illustrator's i:pgf private data, 396 KB \u2192 10 KB); the file is already the app icon alone: the 2D rabbit face on a #0033A0 circle",
+    "crop left the viewBox at 0 0 16 16",
+    "removed an empty <foreignObject> left by Illustrator (it drew nothing)"
+  ],
+  "notes": "DECISION: icon_check reports external-ref only because Illustrator's export keeps an empty <switch><foreignObject requiredExtensions=\"&ns_ai;\"> wrapper (its i:pgf content was removed by clean) plus the DOCTYPE entity list; nothing is loaded and browsers skip that branch, but svgtool has no command to delete a non-drawn element, so it is left for the reviewer to strip. The blue circle is the brand's own app icon (its favicon), so it stays; it reads on both themes. jackrabbitclass.com's header SVG (logo-website-header-jackrabbit-class.svg) is the wordmark only; the app's horizontal 2023 logo shows the 3D full-body rabbit, not the app mark.",
+  "license": "Jackrabbit Class (Jackrabbit Technologies) brand mark, used nominatively to identify the connected service; trademark rights remain with Jackrabbit Class (Jackrabbit Technologies).",
+  "sha256": "09b7ab37b1d6d5d5fb83a63917ba5bf64c6b30100af33a9d766424e2969fecdb"
+}

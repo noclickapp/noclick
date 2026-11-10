@@ -6,7 +6,7 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const HiverIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/hiver.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <img ref={ref} src="/icons/hiver.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
     ),
 );
 HiverIcon.displayName = 'HiverIcon';

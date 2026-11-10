@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/insightly.svg",
-  "source": "https://github.com/ComposioHQ/logo-cdn/blob/3eff86db0d0ac01806c4a8791a6965c35ea23ffb/src/assets/insightly.svg",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "36332a0b57c541a8036c6a24df92f1cf96963f4b8cb5b84a1fe22765502ce778"
+  "source": "https://unbounce.com/photos/Insightly-Symbol.svg",
+  "found_at": "https://unbounce.com/ (Unbounce, Insightly's parent company: product switcher, <img alt=\"Insightly icon\" data-src=\"/photos/Insightly-Symbol.svg\"> linking to insightly.com, labelled 'Insightly CRM')",
+  "source_kind": "parent company site",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the orange tile (the file's 37x37 canvas had the 36x36 tile offset by 0.8)",
+    "cleaned"
+  ],
+  "notes": "The orange tile is Insightly's own app icon, so it stays; it reads on both themes. insightly.com itself publishes the mark only as PNG (no SVG favicon, no /brand or /press page) and the wordmark's 'ins' is one path, so the parent company's symbol file is the vector source. Replaces the Composio logo-cdn copy.",
+  "license": "Insightly brand mark, used nominatively to identify the connected service; trademark rights remain with Insightly.",
+  "sha256": "262e94a05709a44f0eccf36f59b37417edb25482d6de3ee6ac83d3b7b07bab51"
 }

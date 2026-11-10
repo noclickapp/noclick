@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/icypeas.svg",
+  "source": "https://www.icypeas.com/ (inline <svg> header logo, viewBox 0 0 155 33)",
+  "found_at": "https://www.icypeas.com/ (page saved as downloads/icypeas/src1/page.html; inline svg extracted with extract_svg.py)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the #02C29F ring and pixel check (elements 0-1); dropped the #011C21 'icypeas' letters (elements 2-9)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The webclip's dark tile exists only as PNG and was not kept; the green mark reads on both themes.",
+  "license": "Icypeas brand mark, used nominatively to identify the connected service; trademark rights remain with Icypeas.",
+  "sha256": "63e6e298db0d75d4a5e0b88a1290b009bf8b9e24aa0c73ce5bdd54e0d0c2b800"
+}

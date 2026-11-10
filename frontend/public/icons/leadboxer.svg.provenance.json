@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/leadboxer.svg",
+  "source": "https://framerusercontent.com/images/g3BCbpX8MwTY4eXljtvyhMS3Kg.svg",
+  "found_at": "https://www.leadboxer.com/ (the site's own schema.org Organization \"logo\" in the page head)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the box mark (element 0, gradient fill with its own defs); removed the LeadBoxer wordmark (element 1)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "Gradient ends in a dark navy (#19418D) at the bottom right; it reads on the dark tile (lost_dark 0.0), so one file serves both themes.",
+  "license": "LeadBoxer brand mark, used nominatively to identify the connected service; trademark rights remain with LeadBoxer.",
+  "sha256": "62a9f3abee298b1d54963f435bfe83b6ba36177b0c9060d3337eefbb870b8a26"
+}

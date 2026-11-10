@@ -5,8 +5,12 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const HedyIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/hedy.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <>
+        <img src="/icons/hedy.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, objectFit: 'contain' }} />
+        <img src="/icons/hedy-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, objectFit: 'contain' }} />
+    </>
 );
 
 export const HedyNode: NodeDefinition = {

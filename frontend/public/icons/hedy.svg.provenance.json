@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/hedy.svg",
+  "source": "https://www.hedy.ai/images/hedy-logo.svg",
+  "found_at": "https://www.hedy.ai/ (header logo <img src=\"/images/hedy-logo.svg\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the 'Hedy' wordmark (element 0); kept the glasses-and-sparkle mark (elements 1-9)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "Reviewer decision: Hedy's app icon is these glasses on an orange gradient tile, but that tile exists only as PNG/WebP, so the vector is the bare glasses (about 2:1, which icon_check flags as wordmark-shape though it has no text). Light file keeps the source's white lens fill; the dark file is Hedy's own white-outlined version.",
+  "license": "Hedy brand mark, used nominatively to identify the connected service; trademark rights remain with Hedy.",
+  "sha256": "80cde74e8ff23c7036f28a3c8d70cb70b199107c701ba1ad0579aeca8e52e312"
+}

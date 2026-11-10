@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/glide-apps-dark.svg",
+  "source": "https://apidocs.glideapps.com/logo/favicon.svg",
+  "found_at": "https://apidocs.glideapps.com/ (Mintlify docs config: \"favicon\":\"/logo/favicon.svg\"; the current PNG is Mintlify's render of this file)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "#202124 \u2192 #FFFFFF on both shapes (the whole mark is near-black and touches the tile)"
+  ],
+  "variant": "dark mode",
+  "notes": "Glide's mark is monochrome near-black; the dark file is the white recolour. simple-icons lists Glide's old teal (#18BED4) from its brand app, which is no longer the mark's colour.",
+  "license": "Glide brand mark, used nominatively to identify the connected service; trademark rights remain with Glide.",
+  "sha256": "798be3b4793442d92e85e84d921abae5ee6ace0162d19c094813f191c5812750"
+}

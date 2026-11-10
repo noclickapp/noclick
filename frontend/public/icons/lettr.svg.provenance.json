@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/lettr.svg",
+  "source": "https://lettr.com/logo.svg",
+  "found_at": "https://lettr.com/ (header <img src=\"/logo.svg\" alt=\"Lettr home\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the pink #EC104B diamond-grid mark (element 1); removed the navy 'LETTR' wordmark (element 0)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "Used the header mark rather than the SVG favicon because the favicon draws a white stroke around the shapes, which would be a white halo on the dark tile and vanish on the light one. The current PNG's black background is gone.",
+  "license": "Lettr brand mark, used nominatively to identify the connected service; trademark rights remain with Lettr.",
+  "sha256": "2ee2490079ec53a8fd395de0761c97a8424b835027f1f20163cd57b9e471ac6d"
+}

@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/harness.svg",
+  "source": "https://www.harness.io/ (inline header logo <svg>, nav_logo)",
+  "found_at": "https://www.harness.io/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the mark (element 0); removed the 'harness' wordmark (element 1)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The current PNG was the grey developer-docs favicon variant; the brand mark on harness.io is cyan, which reads on both themes.",
+  "license": "Harness brand mark, used nominatively to identify the connected service; trademark rights remain with Harness.",
+  "sha256": "184cc36d494794b2a98919d5d0cdc907ef7001cf5c2cee6abd652ea3c1a4b453"
+}

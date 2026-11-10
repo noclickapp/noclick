@@ -12,7 +12,7 @@ const LinklyIcon: SvgIconComponent = forwardRef<
 >(({ className, style, ...props }, ref) => (
     <img
         ref={ref}
-        src="/icons/linkly.png"
+        src="/icons/linkly.svg"
         alt=""
         className={className}
         style={{ ...style, objectFit: 'contain' }}

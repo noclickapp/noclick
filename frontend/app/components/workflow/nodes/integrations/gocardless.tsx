@@ -8,7 +8,7 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const GoCardlessIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/gocardless.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <img ref={ref} src="/icons/gocardless.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
     ),
 );
 GoCardlessIcon.displayName = 'GoCardlessIcon';

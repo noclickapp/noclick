@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/jinko.svg",
+  "source": "https://gojinko.com/logo/Property%201=SM.svg",
+  "found_at": "https://gojinko.com/ (header logo <img src=\"/logo/Property 1=SM.svg\" alt=\"Jinko\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned; kept as published: the black rounded square (element 0) with the peach-to-coral gradient orb and its light ring (noise filter included)"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: the triage asked to remove the black background, but the black rounded square is Jinko's own app icon (header logo and favicons), and the orb's near-white top (#FFF7E8) vanishes on the light tile without it, so the light file keeps it. The dark file drops it, as it would only show as a faint square there. The orb alone also exists as https://gojinko.com/logo/jinko-symbol.svg (downloads/jinko/src4; slightly different gradient stops and no ring).",
+  "license": "Jinko brand mark, used nominatively to identify the connected service; trademark rights remain with Jinko.",
+  "sha256": "e01f5073596311f2477c7534bac71bfd26cafccad6e6b5799234fdf23c751d2c"
+}

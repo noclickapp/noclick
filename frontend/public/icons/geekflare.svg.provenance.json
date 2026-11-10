@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/geekflare.svg",
+  "source": "https://cdn.geekflare.com/general/logo.svg",
+  "found_at": "https://geekflare.com/ (header logo; logo-dark.svg is the same file with the wordmark in white)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the GEEKFLARE wordmark (element 2)",
+    "cleaned",
+    "cropped the viewBox to the mark (pad 0.02)"
+  ],
+  "notes": "Orange reads on both themes; one file.",
+  "license": "Geekflare brand mark, used nominatively to identify the connected service; trademark rights remain with Geekflare.",
+  "sha256": "5ca3cc8f68f758b1d677dcb28b7c8a24cb98cffd6c31545d514732d3717fedb7"
+}

@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/gorgias.svg",
-  "source": "https://github.com/noclickapp/noclick-cloud/pull/2442",
-  "license": "Gorgias brand mark; trademark belongs to Gorgias. Used to identify the integration.",
-  "sha256": "78db47cf35b028aa9ad93435b0a32b1e2f96d1a77a21f3ebadd323cf6b4342d4"
+  "source": "https://cdn.prod.website-files.com/5e4ff204e7b6f80e402d407a/669a5ab4a69be50c3a94800a_Gorgias%20Logo%20-%20Black.svg",
+  "found_at": "https://www.gorgias.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the mark (element 0); removed the 'gorgias' wordmark paths (elements 1-8)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "Replaces the black rounded-square tile the current file added (no such tile in Gorgias's logo). The social avatar shows the same mark in coral on black; the header and favicon use plain black, which is what ships here.",
+  "license": "Gorgias brand mark, used nominatively to identify the connected service; trademark rights remain with Gorgias.",
+  "sha256": "01b21aef0fe7c556a906ff8e98728c9347c6543017410be72e702f787b96cba0"
 }

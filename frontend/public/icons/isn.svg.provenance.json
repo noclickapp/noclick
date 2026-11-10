@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/isn.svg",
+  "source": "https://www.inspectionsupport.com/ (inline <svg viewBox=\"0 0 60.57 70.63\"> of the ISN 'S' mark, used as the bullet of the homepage's icon lists), extracted verbatim from the saved page downloads/isn/src1/home.html",
+  "found_at": "https://www.inspectionsupport.com/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "A clean Illustrator export (4 paths), not a trace. The header logo itself is a PNG; this inline mark is the site's only vector of it. Both colours read on both themes, so one file.",
+  "license": "ISN (Inspection Support Network) brand mark, used nominatively to identify the connected service; trademark rights remain with ISN (Inspection Support Network).",
+  "sha256": "c6be5734a4284b0c17f964411c3548c05aeee08bf3808ce5f83e2343e87ebf8f"
+}

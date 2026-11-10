@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/gender-api.svg",
+  "source": "https://gender-api.com/img/logo.svg?v2",
+  "found_at": "https://gender-api.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the mark (two ellipses and the joining path, elements 10-12); removed the 'Gender API' wordmark (0-8) and two empty paths (9, 13)",
+    "cleaned",
+    "cropped the viewBox to the mark (pad 0.02)"
+  ],
+  "notes": "Blue reads on both themes; one file.",
+  "license": "Gender-API brand mark, used nominatively to identify the connected service; trademark rights remain with Gender-API.",
+  "sha256": "dc7ba6e960dda0b9ed311166cbd2acb781f7b78863c333627ce4099d8d1b2f0f"
+}

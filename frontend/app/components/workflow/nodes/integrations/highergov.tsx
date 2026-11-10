@@ -7,8 +7,12 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const HigherGovIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/highergov.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <>
+        <img src="/icons/highergov.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, objectFit: 'contain' }} />
+        <img src="/icons/highergov-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, objectFit: 'contain' }} />
+    </>
 );
 
 export const HigherGovNode: NodeDefinition = {

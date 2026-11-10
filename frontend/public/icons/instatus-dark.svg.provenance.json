@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/instatus-dark.svg",
+  "source": "https://instatus.com/ (inline <svg viewBox=\"0 0 29 23\"> logo mark in the site footer, fill=currentColor), extracted verbatim from the saved page downloads/instatus/src1/home.html",
+  "found_at": "https://instatus.com/ (footer; the same path is the logo component in dashboard.instatus.com's bundle)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "currentColor \u2192 #000000 (the colour of the brand kit's b&w logo)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "#000000 \u2192 #FFFFFF on the mark (element 0)"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: Instatus's colour mark is this outline 'S' filled with a cyan-to-blue gradient, but every published colour version paints the gradient as a bitmap: instatus.com/icon.svg and the header's inline svg (mask + <image> pattern) and the brand kit's rgb/cmyk logo.pdf (a 565x459 PNG inside); the kit has no SVG (ai/eps/pdf/png only). So the vector here is the monochrome mark, black in light mode and white in dark, as the kit's b&w logo and Instatus's own dashboard use it. instatus.com/logo.svg (BIMI tiny-ps, teal ringed planet on black) and github.com/instatushq/out-home svg/instatus-icon.svg are the retired 2021 mark, not used. simple-icons' instatus.svg and svgl's instatus/instatus_dark.svg are that retired planet mark too.",
+  "license": "Instatus brand mark, used nominatively to identify the connected service; trademark rights remain with Instatus.",
+  "sha256": "d412a5bb7cb749614254b923e1d68eaa4abc6969415291f7a6522262027d34dd"
+}

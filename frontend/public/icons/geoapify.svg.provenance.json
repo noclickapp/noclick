@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/geoapify.svg",
+  "source": "https://www.geoapify.com/ (inline <svg> in the page header, extracted as inline-00.svg)",
+  "found_at": "https://www.geoapify.com/ (header logo: this mark beside the 'Geoapify' text)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned",
+    "cropped the viewBox to the mark (pad 0.02); the header's mark is a separate <svg> from the wordmark, so nothing was removed"
+  ],
+  "notes": "The site's PWA/apple-touch PNG icons (the current file) draw the same pin-on-map as a hollow outline in a bluer hue; that version has no SVG anywhere I could find. The header mark is the filled pin with an open hole, in the site's current purple. Reads on both themes; one file.",
+  "license": "Geoapify brand mark, used nominatively to identify the connected service; trademark rights remain with Geoapify.",
+  "sha256": "c70d1d9283ae9544c3e74b2df0a5b91572f2e565f8b7a08b36410553ae0a9ab9"
+}

@@ -12,7 +12,7 @@ const HlrLookupIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/hlr-lookup.png"
+        src="/icons/hlr-lookup.svg"
         alt=""
         aria-hidden="true"
         className={className}

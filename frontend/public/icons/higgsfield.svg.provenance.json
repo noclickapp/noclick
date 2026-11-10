@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/higgsfield.svg",
+  "source": "https://higgsfield.ai/ (inline header logo <svg class=\"hf-logo__glyph\">)",
+  "found_at": "https://higgsfield.ai/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "currentColor \u2192 #000000 so the light file is explicitly black"
+  ],
+  "variant": "light mode",
+  "notes": "Higgsfield's app icon puts this glyph on a lime tile, which exists only as PNG (higgsfield.ai/icon.png, apple-icon.png); the header ships the bare glyph, which is what this is.",
+  "license": "Higgsfield AI brand mark, used nominatively to identify the connected service; trademark rights remain with Higgsfield AI.",
+  "sha256": "c1d1cd69a61d7828eb99e96aebb8b2c014e1506e7883e546ae63836098fce1bd"
+}

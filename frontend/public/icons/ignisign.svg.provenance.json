@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/ignisign.svg",
+  "source": "https://console.ignisign.io/icons/mark.svg?v=2",
+  "found_at": "https://console.ignisign.io/ (the app's <link rel=\"icon\" type=\"image/svg+xml\">); byte-identical to https://ignisign.io/images/logo-mark.svg, the site's header logo (src2)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the #FD5B2D chevron",
+    "cleaned"
+  ],
+  "notes": "DECISION: the current PNG (console.ignisign.io/img/logo-horizontal-black.png) and ignisign.io/favicon.ico still show an older straight-armed '>'; the app's '?v=2' icons and the site header now use this curved chevron, so it was taken as current. The file is a tiny hand-built path (integer coordinates), but it is IgniSign's own published favicon and header logo.",
+  "license": "IgniSign brand mark, used nominatively to identify the connected service; trademark rights remain with IgniSign.",
+  "sha256": "347d46242d4d9945f57dd4c700fa36cca09dd4fd642851f205a66c2bdd6dd8d7"
+}

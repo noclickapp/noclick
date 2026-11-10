@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/highergov.svg",
+  "source": "https://www.highergov.com/static/favicon.svg",
+  "found_at": "https://www.highergov.com/ (served beside the site's /static/favicon.png and /static/highergov_logo.svg; Inkscape name favicon_black_square.svg)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the white 'H' (element 1); removed the black square (element 0)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "light file: #FFFFFF \u2192 #000000 on the 'H' (it vanished on light)"
+  ],
+  "variant": "light mode",
+  "notes": "HigherGov's logo is a wordmark, so the mark is its own favicon letter H, per rule 1. The black square was dropped (triage flagged it; on the dark theme it merges with the tile); the light file is the base recoloured white \u2192 black, the black being the favicon's own.",
+  "license": "HigherGov brand mark, used nominatively to identify the connected service; trademark rights remain with HigherGov.",
+  "sha256": "1d7e92b4c16ec1f3cda5be7064cd5116b8d84c70c82f52a62c12a358f18a05a6"
+}

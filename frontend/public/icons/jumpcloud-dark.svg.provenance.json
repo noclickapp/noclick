@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/jumpcloud-dark.svg",
+  "source": "https://jumpcloud.com/wp-content/themes/jumpcloud/assets/images/logos/jumpcloud-logo-tm-oceanblue.svg",
+  "found_at": "https://jumpcloud.com/ and https://jumpcloud.com/press (header logo <img>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only subpath 0 of element 0 (the cloud-with-people mark); dropped the 'jumpcloud' letter subpaths and the TM (element 1)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned",
+    "#002B49 (Ocean Blue) -> #F7F7FB (JumpCloud's own 'whitesmoke' logo colour, from its press kit's 04-jc-whitesmoke logo and jumpcloud-logo-tm-whitesmoke.svg) on the cloud"
+  ],
+  "variant": "dark mode",
+  "notes": "The current jumpcloud.png is the WordPress logo (jumpcloud.com/favicon.ico serves WordPress's default), so the shipped icon was the wrong company entirely. The press kit zip (https://jumpcloud.com/wp-content/uploads/2026/01/JumpCloud-Logos.zip) has PNGs only. The site's whitesmoke SVG is the wordmark without the cloud, so the dark file is the ocean-blue mark recoloured to that whitesmoke. The mark itself is about 2:1 wide (icon_check flags wordmark-shape); that is the cloud's own proportion, no text remains.",
+  "license": "JumpCloud brand mark, used nominatively to identify the connected service; trademark rights remain with JumpCloud.",
+  "sha256": "0ad40c2811bf24f61582fd254efe0348653dae1b6b4b51c696007f44bfbafc6c"
+}

@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/kintone.svg",
   "source": "https://www.kintone.com/wp-content/themes/kintone-global/assets/svg/logo_kinton_black.svg",
-  "license": "Kintone official brand mark, used nominatively to identify the connected service. Trademark rights remain with Cybozu. Brand guidelines: https://www.kintone.com/en-us/files/Brand-Guidelines.pdf",
-  "sha256": "c6cfabc50e36bd1118e8802ace76805e47d7ad606fcf8da7dfc8bd25eb4cc81b"
+  "found_at": "https://www.kintone.com/en-us/ (header logo <img>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the ten red #EF3F24 pieces of the cube mark (elements 7-16); dropped the dark #231F20 'kintone' letters (elements 0-6)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "Same file as the current icon's provenance, now with the wordmark removed, so nothing dark is left to vanish. No brand/press page found (404); kintone's GitHub org has no logo SVG (portal-designer's kintone-icon.svg is a generic code icon).",
+  "license": "Kintone brand mark, used nominatively to identify the connected service; trademark rights remain with Kintone.",
+  "sha256": "aae8f30542c50ed8ce3bb75d23aa1f6af56e1415e08163ffa2f3a4928b083d4d"
 }

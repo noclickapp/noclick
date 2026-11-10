@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/heymarket-dark.svg",
+  "source": "https://www.heymarket.com/wp-content/uploads/2022/03/logo_hey_white_Icon.svg",
+  "found_at": "https://www.heymarket.com/ (header logo, light sections)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the two-bubble mark (elements 9-10); removed the 'heymarket' wordmark (elements 0-8)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "dark file is Heymarket's own icon for dark backgrounds (logo_hey_white_Icon.svg: yellow bubble over a white bubble), cropped and cleaned; no recolouring"
+  ],
+  "variant": "dark mode",
+  "notes": "Heymarket publishes the mark with a black back bubble for light backgrounds and a white back bubble for dark ones, so each theme gets the company's own version.",
+  "license": "Heymarket brand mark, used nominatively to identify the connected service; trademark rights remain with Heymarket.",
+  "sha256": "1b27269726f0b619bf8af5e07806e9546720ccff83bd4cdd35f778eda81adaa8"
+}

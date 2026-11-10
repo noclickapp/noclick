@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/gleif.svg",
-  "source": "https://www.gleif.org/assets/build/img/logo/gleif-logo-new.svg",
-  "license": "GLEIF official brand mark, used nominatively to identify the service. Trademark rights remain with the Global Legal Entity Identifier Foundation.",
-  "sha256": "1db55d2ffc4ef11592f44a1123d9d73bcdad92d40103422569f5bd6f391cc07d"
+  "source": "https://www.gleif.org/favicon.svg",
+  "found_at": "https://www.gleif.org/en (<link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned",
+    "cropped the viewBox to the rings (pad 0.02); the file has a viewBox, unlike the current one"
+  ],
+  "notes": "Replaces the emblem whose dark #003336 'GLEIF' letters vanished on dark with GLEIF's own app/favicon mark: the two rings without text, one file that reads on both themes. If the reviewer would rather keep the lettered emblem, it needs a dark file with #003336 \u2192 #FFFFFF on elements 2-4 of gleif-logo-new.svg.",
+  "license": "GLEIF (Global Legal Entity Identifier Foundation) brand mark, used nominatively to identify the connected service; trademark rights remain with GLEIF (Global Legal Entity Identifier Foundation).",
+  "sha256": "2a075f69680b126b7bf30ebbb3f759795a79eeba2246b64b0497a900a04aa05a"
 }

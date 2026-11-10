@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/graphhopper-dark.svg",
+  "source": "https://raw.githubusercontent.com/graphhopper/graphhopper-maps/master/src/logo.svg",
+  "found_at": "https://github.com/graphhopper/graphhopper-maps/blob/master/src/logo.svg (GraphHopper's own Maps app; its Inkscape export name is logo-512.png, the 512px favicon graphhopper.com serves)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the white backing circle (element 0)",
+    "kept the black 'g' (element 1)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "#000000 \u2192 #FFFFFF on the 'g' (element 1)"
+  ],
+  "variant": "dark mode",
+  "notes": "graphhopper.com itself serves only PNG logos, so the vector comes from GraphHopper's own graphhopper-maps repo. The white disc in the favicon is a backing for the map UI, so I removed it (counter of the g is open). If the reviewer treats the disc as GraphHopper's app icon, keep element 0 in the dark file only.",
+  "license": "GraphHopper brand mark, used nominatively to identify the connected service; trademark rights remain with GraphHopper.",
+  "sha256": "acb42f8e6268a7b4c9b45f690c70b16ed1855cd70c439548e7a31cb990b6f88a"
+}

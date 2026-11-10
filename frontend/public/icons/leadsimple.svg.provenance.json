@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/leadsimple.svg",
+  "source": "https://www.leadsimple.com/ (inline <svg aria-label=\"LeadSimple\" class=\"text-midnight\"> header logo, extracted from the saved page)",
+  "found_at": "https://www.leadsimple.com/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the four ring segments (elements 0-3) and only the ring subpath of the compound path (element 4, subpath 0); removed the 'LeadSimple' letters",
+    "currentColor -> #001534 (the site's --color-midnight, which the header logo's class text-midnight paints it in; the segments keep their own fill-opacity 1/.6/.4/.2/1)",
+    "cropped the viewBox to the ring",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: LeadSimple's app icon/favicon is this ring in a blue gradient, but that exists only as PNG; every SVG the company publishes (homepage header, API docs header, app login) is the monochrome ring with stepped opacity. I shipped the monochrome ring: midnight #001534 in light mode, the docs' own white mark in dark mode. The reviewer may prefer to keep the blue PNG look, which would need a vector LeadSimple doesn't publish.",
+  "license": "LeadSimple brand mark, used nominatively to identify the connected service; trademark rights remain with LeadSimple.",
+  "sha256": "d32a87ad151401588167688ae8d6d930367c13e360cea6886c4b762594e34fa1"
+}

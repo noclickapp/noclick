@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/houzz-pro.svg",
   "source": "https://developer.houzz.com/img/houzz-logo.svg",
-  "license": "Houzz trademark; used to identify the Houzz Pro integration",
-  "sha256": "39db43ecd73848a9135ae033311923288a6c2c02d3973e60798a9acc79ce274e"
+  "found_at": "https://developer.houzz.com/ (Houzz Pro developer portal header logo; the file the current icon was cut from, re-downloaded, same sha256)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the green #4DBC15 'h' (element 5); dropped the dark 'houzz' letters (elements 0-4) and the grey 'PRO' (elements 6-8)",
+    "cropped the viewBox to the 'h'",
+    "cleaned"
+  ],
+  "notes": "Houzz Pro has no mark of its own; it uses the Houzz 'h', as its developer portal logo does.",
+  "license": "Houzz brand mark, used nominatively to identify the connected service; trademark rights remain with Houzz.",
+  "sha256": "04ee473175e4bee4ad931a0ead6c49541ab2c4348f420f2f25d152ad5d682a01"
 }

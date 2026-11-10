@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/hello-tracks.svg",
+  "source": "https://mintcdn.com/hellotracks/Ef0Eqx61i3dR12gk/logo/light.svg",
+  "found_at": "https://api-docs.hellotracks.com/introduction (Hellotracks' API docs header logo, light theme; identical to its favicon.svg)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark (including the outer ring's stroke)",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The mark is the company's whole logo (no wordmark). hellotracks.com's safari-pinned-tab.svg is a potrace trace, not used.",
+  "license": "Hellotracks brand mark, used nominatively to identify the connected service; trademark rights remain with Hellotracks.",
+  "sha256": "c9d03fc0e24ac9030fb5c6011e7c5cd63898aa5aeac8bbf0cddb64551691daa0"
+}

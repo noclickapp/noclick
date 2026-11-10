@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/hiver.svg",
+  "source": "https://hiverhq.com/wp-content/themes/hello-elementor-child/assets/images/hiver-logo-main.svg",
+  "found_at": "https://hiverhq.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the yellow hexagon and its white 'h' (elements 0-2); dropped the black 'hiver' wordmark (elements 3-7)",
+    "cropped the viewBox to the hexagon",
+    "cleaned"
+  ],
+  "notes": "The yellow hexagon is the brand's own app-icon shape, so it stays; the white 'h' sits inside it and is fine on both themes.",
+  "license": "Hiver brand mark, used nominatively to identify the connected service; trademark rights remain with Hiver.",
+  "sha256": "1bfbe6e91376654f4b22b5336341dd8a6c4bcb7bb45af03668b446a2db8e3869"
+}

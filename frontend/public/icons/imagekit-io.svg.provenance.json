@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/imagekit-io.svg",
-  "source": "https://ik.imgkit.net/ikmedia/logo/light_T4buIzohVH.svg (official logo linked by https://imagekit.io/)",
-  "license": "ImageKit brand mark used nominatively to identify the connected service; trademark rights remain with ImageKit.",
-  "sha256": "1794d3af8a0ad461f3df787fde201d0a6584f220e5ba511465a2307141481c32"
+  "source": "https://raw.githubusercontent.com/imagekit-developer/n8n-nodes-imagekit/main/nodes/Imagekit/imagekit.light.svg",
+  "found_at": "https://github.com/imagekit-developer/n8n-nodes-imagekit (ImageKit's official GitHub org; the node's icon; imagekit.dark.svg in the same folder is byte-identical)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept every element: the #0450D5 square is ImageKit's own app icon tile",
+    "cleaned (dropped data-name)"
+  ],
+  "notes": "No SVG of the tile is on imagekit.io itself (/brand, /press, /favicon.svg 404; favicon and touch icon are PNG), so the vector comes from ImageKit's own n8n integration repo.",
+  "license": "ImageKit brand mark, used nominatively to identify the connected service; trademark rights remain with ImageKit.",
+  "sha256": "7e88615ae3856a26fea6c61d3f4825dcf50ef9d94d8a51fe5bc0329b12082566"
 }

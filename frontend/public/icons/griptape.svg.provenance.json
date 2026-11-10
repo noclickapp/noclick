@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/griptape.svg",
-  "source": "https://docs.griptape.ai/stable/assets/img/griptape-mark-square-light.svg",
-  "license": "Griptape brand mark used nominatively to identify the integration; trademark rights remain with Griptape.",
-  "sha256": "3902bccd7306a451e66b63146d12c5de4803be0fb20bc191272ebfc4a8ad9a74"
+  "source": "https://raw.githubusercontent.com/griptape-ai/griptape/main/docs/assets/img/GRIPTAPE_rgb_black.svg",
+  "found_at": "https://github.com/griptape-ai/griptape/tree/main/docs/assets/img (Griptape's own framework repo, docs assets)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the ring mark (elements 8-14); removed the GRIPTAPE wordmark (elements 0-7)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The current file was only the white docs mark, invisible on light; now black for light, the company's own white version for dark.",
+  "license": "Griptape brand mark, used nominatively to identify the connected service; trademark rights remain with Griptape.",
+  "sha256": "cee68e8582e3841c9cbec054508053b34904fd8bb09e2f3b7d4bc4884f9fe9d4"
 }

@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/hello-tracks-dark.svg",
+  "source": "https://mintcdn.com/hellotracks/Ef0Eqx61i3dR12gk/logo/dark.svg",
+  "found_at": "https://api-docs.hellotracks.com/introduction (Hellotracks' API docs header logo, light theme; identical to its favicon.svg)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark (including the outer ring's stroke)",
+    "cleaned",
+    "dark file is Hellotracks' own dark-theme docs logo (same paths in #EEEEEE), cropped and cleaned; no recolouring"
+  ],
+  "variant": "dark mode",
+  "notes": "The mark is the company's whole logo (no wordmark). hellotracks.com's safari-pinned-tab.svg is a potrace trace, not used.",
+  "license": "Hellotracks brand mark, used nominatively to identify the connected service; trademark rights remain with Hellotracks.",
+  "sha256": "0cb895b9afe24b8a39a11722587b99c75c8ae194aa609a006b3f205dac9576be"
+}

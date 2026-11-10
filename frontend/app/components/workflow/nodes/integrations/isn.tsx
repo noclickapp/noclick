@@ -12,7 +12,7 @@ const ISNIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/isn.png"
+        src="/icons/isn.svg"
         alt=""
         aria-hidden="true"
         className={className}

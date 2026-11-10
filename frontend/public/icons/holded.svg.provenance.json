@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/holded.svg",
+  "source": "https://www.holded.com/ (inline <svg> header logo 'holded by Visma', clipPath id holded-visma-logo-clip)",
+  "found_at": "https://www.holded.com/ (page saved as downloads/holded/src1/page.html; inline svg extracted with extract_svg.py)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the two red #FF5454 pieces of the mark (elements 0-1); dropped the black 'holded' and 'by VISMA' text (elements 2-4)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The current PNG was the whole wordmark on white; the mark alone matches Holded's own favicon. No SVG brand kit found (/brand, /press, /media-kit 404).",
+  "license": "Holded brand mark, used nominatively to identify the connected service; trademark rights remain with Holded.",
+  "sha256": "6b6d97397d3aae4a1f112877f045ce81e3b31d301d75f754f8ba8a10ad340ee3"
+}

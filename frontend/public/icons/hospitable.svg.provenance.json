@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/hospitable.svg",
+  "source": "https://hospitable.com/ (header 'Logo' link: the logomark is a CSS mask, data:image/svg+xml with viewBox 0 0 19 24, painted var(--otq7m0) = rgb(237,60,106))",
+  "found_at": "https://hospitable.com/ (page saved as downloads/hospitable/src1/page.html; the data-URI SVG decoded byte for byte into src3)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "fill var(--otq7m0, rgb(237,60,106)) \u2192 #ED3C6A (the same colour, written as a plain hex so every renderer paints it)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "hospitable.com/brand has 'Download logo kit / icon kit' buttons, but their targets are not in the page HTML (Framer components); the header's own SVG mask was used instead. The app tile on their favicon is this mark in white on a crimson square (PNG only); the pink mark alone reads on both themes.",
+  "license": "Hospitable brand mark, used nominatively to identify the connected service; trademark rights remain with Hospitable.",
+  "sha256": "2d9eeb8ff49d75e6979509cec25b9710d55268b90fb96808e314bb68846d8c73"
+}

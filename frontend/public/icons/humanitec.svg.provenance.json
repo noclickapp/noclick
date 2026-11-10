@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/humanitec.svg",
   "source": "https://developer.humanitec.com/favicon.svg",
-  "license": "Brand mark of its owner, used nominatively to identify the connected service; no trademark rights claimed or granted.",
-  "sha256": "6e938d43a9654c8a36f64618a99eeb6a2f4a4741807664da7e548e37db966e95"
+  "found_at": "https://developer.humanitec.com/ (docs site SVG favicon; the file the current icon is, re-downloaded, same sha256)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the pale #CBDAFF rounded square behind the mark (element 0)",
+    "cropped the viewBox to the blue mark",
+    "cleaned"
+  ],
+  "notes": "DECISION: Humanitec shows its mark on two different tiles (pale blue on the docs favicon, solid blue with a white mark on the homepage webclip, PNG only), so neither tile is clearly the app icon; the pale one also vanished on the light theme. Shipped the bare #2156F6 mark, which reads on both themes. If the reviewer wants a tile, the only vector one is the pale docs favicon (the current file).",
+  "license": "Humanitec brand mark, used nominatively to identify the connected service; trademark rights remain with Humanitec.",
+  "sha256": "3fd1685dac48009cd848186a93760fbe89aa9aaa2d56b5288e4f8ceeaf639782"
 }

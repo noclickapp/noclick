@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/iclosed.svg",
+  "source": "https://framerusercontent.com/images/OAcC9hOvGrcvNZ4fmyTjAzY0QSs.svg",
+  "found_at": "https://www.iclosed.io/ (<link rel=\"icon\" media=\"(prefers-color-scheme: light)\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the #282828 mark (the file had no viewBox, 64x64 canvas)",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "license": "iClosed brand mark, used nominatively to identify the connected service; trademark rights remain with iClosed.",
+  "sha256": "cba159f356b2812de04392668310e93fe4fb7cd805d2a25d8f1e9b5a39d1013a"
+}

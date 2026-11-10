@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/grok-dark.svg",
+  "source": "https://grok.com/ (inline header logo <svg>, the two paths with id=\"mark\")",
+  "found_at": "https://grok.com/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the Grok mark (elements 4-5, id=mark); removed the 'Grok' wordmark (elements 0-3)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "currentColor \u2192 #000000 so the light file is explicitly black",
+    "currentColor \u2192 #FFFFFF on the mark (elements 4-5)"
+  ],
+  "variant": "dark mode",
+  "notes": "Reviewer decision: the current file is x.ai's favicon, which is now the SpaceX-style swoosh X (x.ai's site title reads 'SpaceXSI'); its only vector (x.ai/docs.x.ai header) is the full swoosh at ~2.6:1, and the square favicon is a raster crop of it. Since the node is labelled Grok, I used the Grok product mark from grok.com. Grok's own app icon puts this mark on a black rounded tile; I shipped the bare mark (the favicon.svg tile uses foreignObject blur filters).",
+  "license": "xAI (Grok) brand mark, used nominatively to identify the connected service; trademark rights remain with xAI (Grok).",
+  "sha256": "29835c8a3f226a070a5a21521bb9267ea68234166fc7fa67d06f441224fd337b"
+}

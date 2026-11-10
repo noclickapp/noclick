@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/langflow.svg",
   "source": "https://raw.githubusercontent.com/langflow-ai/langflow/main/docs/static/img/langflow-logo-color-black-solid.svg",
-  "license": "Brand mark of its owner, shown nominatively to identify the service; no trademark rights are claimed or granted.",
-  "sha256": "202dd53fe475b0eb92b0f3353324ca85f99fb2bd106508d784fd9c39048196ca"
+  "found_at": "https://github.com/langflow-ai/langflow/tree/main/docs/static/img (Langflow's own repo, the logos its docs site uses)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the three coloured strokes of the mark (elements 9-11: #7528FC, #FF3276, #F480FF); dropped the white background bar (element 0) and the black 'Langflow' letters (elements 1-8)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "The colour mark reads on both themes, so one file. A one-colour black icon (docs/static/img/langflow-icon-black-transparent.svg, downloads/langflow/src1) also exists if a monochrome mark is preferred.",
+  "license": "Langflow brand mark, used nominatively to identify the connected service; trademark rights remain with Langflow.",
+  "sha256": "b72999a8d1a188a27d4571594a2d51268b82589e52076b4dc1eceff80089e5e0"
 }

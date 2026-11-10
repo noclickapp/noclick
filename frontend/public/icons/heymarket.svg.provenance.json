@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/heymarket.svg",
+  "source": "https://www.heymarket.com/wp-content/themes/heymarket/dist/images/heymarket_black_logo_new.svg",
+  "found_at": "https://www.heymarket.com/ (header logo, light sections)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the two-bubble mark (elements 9-10); removed the 'heymarket' wordmark (elements 0-8)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "Heymarket publishes the mark with a black back bubble for light backgrounds and a white back bubble for dark ones, so each theme gets the company's own version.",
+  "license": "Heymarket brand mark, used nominatively to identify the connected service; trademark rights remain with Heymarket.",
+  "sha256": "e3b371c6c7060d66d9f9a1fa35cc42c1e09ee5d9d8e4121c8b60da83e2770360"
+}

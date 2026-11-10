@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/hubstaff.svg",
+  "source": "https://hubstaff.com/icons-cds/hubstaff-logo.svg",
+  "found_at": "https://hubstaff.com/ (footer logo <use data-href=\"/icons-cds/hubstaff-logo.svg#hubstaff-logo\">; the header draws the same logo inline)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the three blue pieces of the mark (elements 1-3); dropped the black 'Hubstaff' wordmark (element 0)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "hubstaff.com/favicon.svg is the Astro framework's default favicon, not Hubstaff's; the press page's 'Download kit' is a 2022 PDF style guide, so the site's own logo sprite was used.",
+  "license": "Hubstaff brand mark, used nominatively to identify the connected service; trademark rights remain with Hubstaff.",
+  "sha256": "06eea2a5d45f218309cf81e4c7c398947ffb035bde88c57986e968a1860062a2"
+}

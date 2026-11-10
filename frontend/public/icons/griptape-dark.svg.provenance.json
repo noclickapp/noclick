@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/griptape-dark.svg",
+  "source": "https://docs.griptape.ai/stable/assets/img/griptape-mark-square-light.svg",
+  "found_at": "https://github.com/griptape-ai/griptape/tree/main/docs/assets/img (Griptape's own framework repo, docs assets)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the ring mark (elements 8-14); removed the GRIPTAPE wordmark (elements 0-7)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "dark file is Griptape's own white mark (griptape-mark-square-light.svg), cropped and cleaned; no recolouring"
+  ],
+  "variant": "dark mode",
+  "notes": "The current file was only the white docs mark, invisible on light; now black for light, the company's own white version for dark.",
+  "license": "Griptape brand mark, used nominatively to identify the connected service; trademark rights remain with Griptape.",
+  "sha256": "dfe3e663977e45e83fd98b177dfddfce86c9e3a0a0773feef5ff4ec20edf638a"
+}

@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/hypeauditor.svg",
+  "source": "https://assets.hypeauditor.com/hype/a54b50e9/_nuxt/logoBlack.D_gcte5_.svg",
+  "found_at": "https://hypeauditor.com/ (header logo <img>; a logoWhite variant sits beside it)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the orange gradient flame (element 0); dropped the #0B1426 'HypeAuditor' letters (elements 1-11)",
+    "cropped the viewBox to the flame",
+    "cleaned"
+  ],
+  "notes": "The flame's #FF9466 to #FF6436 gradient is identical in the black and white logo files, so one file serves both themes.",
+  "license": "HypeAuditor brand mark, used nominatively to identify the connected service; trademark rights remain with HypeAuditor.",
+  "sha256": "f35afe209b667162aca416d74a4eb80f5a574b37cb516fc1da07d1bed3431d8b"
+}

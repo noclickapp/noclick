@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/futureagi.svg",
-  "source": "https://docs.futureagi.com/favicon.svg",
-  "license": "Future AGI trademark; used to identify the Futureagi integration",
-  "sha256": "727ce9329d5793fb83718d69cfdde042fa5aec21cbac679e1639437990b270c1"
+  "source": "https://raw.githubusercontent.com/future-agi/docs/main/public/logo/Icon.svg",
+  "found_at": "https://github.com/future-agi/docs/blob/main/public/logo/Icon.svg (Future AGI's own docs repo; fetched with gh api)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned",
+    "cropped the viewBox to the mark (pad 0.02)"
+  ],
+  "variant": "light mode",
+  "notes": "Light and dark are the company's own two versions (purple for light, silver for dark), not a recolour. The silver star is identical to the current file.",
+  "license": "Future AGI brand mark, used nominatively to identify the connected service; trademark rights remain with Future AGI.",
+  "sha256": "6b67d1ae99a79bb9ed6d5121cab7d6d8708d303f34646e1437b98b832e43b7f6"
 }

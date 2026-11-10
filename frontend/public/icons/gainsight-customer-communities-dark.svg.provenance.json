@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/gainsight-customer-communities-dark.svg",
+  "source": "https://www.gainsight.com/wp-content/uploads/2025/09/gainsight-1c.svg",
+  "found_at": "https://www.gainsight.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the 'G' subpath (5) of the wordmark's single compound path; dropped the 'ainsight' letters",
+    "cleaned",
+    "cropped the viewBox to the G (pad 0.02)",
+    "#153D5E \u2192 #FFFFFF on the G (the whole mark): dark navy touches the tile and vanishes on dark"
+  ],
+  "variant": "dark mode",
+  "notes": "Gainsight's only vector logo is the wordmark; its app/favicon mark is the wordmark's G (PNG only, navy G on a white square). The final is that G taken from the official wordmark SVG, with no tile (the source has none). Gainsight publishes a white wordmark (Gainsight_Logo_White.png on the developer portal, PNG only), which backs the white dark-mode recolour. Reviewer: confirm a bare G is acceptable rather than no-official-svg.",
+  "license": "Gainsight brand mark, used nominatively to identify the connected service; trademark rights remain with Gainsight.",
+  "sha256": "984c21e79438af7ae45b72b94f3af28d1ee6712614021fc6e6788a90c07f8ac3"
+}

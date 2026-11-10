@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/leexi.svg",
+  "source": "https://docs.leexi.ai/logo-light.svg",
+  "found_at": "https://docs.leexi.ai/fr (Leexi's documentation site header, light-mode logo; logo-dark.svg is the white version)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the mark: the two purple #503CF3 halves (elements 10, 11) and the green #4ADE80 play triangle (element 9); removed the 'Leexi.ai' wordmark (elements 0-8)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The purple reads on the dark tile (lost_dark 0.0), so one file serves both themes, as the favicon does.",
+  "license": "Leexi brand mark, used nominatively to identify the connected service; trademark rights remain with Leexi.",
+  "sha256": "8ca47d35aed2f364ba34001d8799bccd0ba5d670a40c79b2528b458fa6c3405c"
+}

@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/giphy.svg",
+  "source": "https://upload.wikimedia.org/wikipedia/commons/7/76/Giphy_Logo_9.2016.svg",
+  "found_at": "https://commons.wikimedia.org/wiki/File:Giphy_Logo_9.2016.svg (Commons gives its source as GIPHY's Brand Guidelines, support.giphy.com/hc/en-us/articles/360022283772)",
+  "source_kind": "Wikimedia Commons",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the dark banner rectangle behind the whole lockup (element 0)",
+    "removed the GIPHY wordmark (elements 8-12)",
+    "cleaned (Inkscape metadata)",
+    "cropped the viewBox to the page mark (pad 0.02)"
+  ],
+  "notes": "GIPHY publishes no SVG I could reach: giphy.com and developers.giphy.com serve PNG/GIF/WebP logos only, the brand-guidelines page answers 403, and its own SDK carries the mark only as an Android VectorDrawable. Commons' other file (Giphy-logo.svg) is sourced from worldvectorlogo, so I did not use it. GIPHY's app icon sets this frame on a #121212 square; the source has only a wide banner behind the lockup, so the final is the frame alone: the page interior is the tile colour (dark on dark, white on light). Reviewer: decide whether the white page on light is acceptable.",
+  "license": "GIPHY brand mark, used nominatively to identify the connected service; trademark rights remain with GIPHY.",
+  "sha256": "e358aad0f07b5794b052d7bf5bd00a25203e3c2dd6df27601c676eedb5df55cb"
+}

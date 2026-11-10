@@ -1,6 +1,0 @@
-{
-  "path": "frontend/public/icons/line.png",
-  "source": "https://vos.line-scdn.net/line-developers/docs/media/line-login/login-button/LINE_Login_Button_Image.zip (Line_Login_Button_Image/images/DeskTop/2x/44dp/btn_base.png); https://developers.line.biz/en/docs/line-login/login-button/",
-  "license": "LINE brand asset used to identify the LINE service; trademark rights remain with LY Corporation. Usage guidelines linked at https://developers.line.biz/en/docs/line-login/login-button/.",
-  "sha256": "04a40a1caf84a7bd0a9dd78ff3bd84ffecb5d855625ae7540995e67c87b3d1ba"
-}

@@ -1,8 +1,0 @@
-{
-  "path": "frontend/public/icons/lessonspace.png",
-  "source": "https://www.thelessonspace.com/favicon.ico",
-  "license": "Lessonspace trademark; official publisher asset used to identify the integration",
-  "sha256": "7a6d51b23dd47e51aadcbe0c8f44cee5ba0b7e99f0c08d38666bfdada91c77dc",
-  "source_sha256": "1454f431f4b7e79a8d5a112635e6d9e0bd0ed7fa70968010f74f3d9a73c654af",
-  "transform": "Lossless PNG of the official favicon 48x48 RGBA frame; pixel values unchanged."
-}

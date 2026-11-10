@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/infisical-dark.svg",
+  "source": "https://raw.githubusercontent.com/Infisical/infisical/main/docs/logo/dark.svg",
+  "found_at": "https://github.com/Infisical/infisical/blob/main/docs/docs.json (\"logo\": {\"light\": \"/logo/light.svg\", \"dark\": \"/logo/dark.svg\"}, the logo of Infisical's docs at infisical.com/docs)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the infinity's three subpaths (3, 10, 11: outline and its two open loops) of the single compound path, dropping the 'Infisical' letters",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "the same subpaths (3, 10, 11) taken from Infisical's own dark-theme docs logo (white), then cropped and cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: Infisical's app icon is this black infinity on a yellow (#F4F55F-ish) square, but that tile exists only as the ICO favicon; no SVG of it on infisical.com (no /brand, /press, /media-kit), app.infisical.com, or the GitHub repo (only wordmark SVGs: docs/logo/{light,dark}.svg, img/logoname*.svg, frontend/public/images/gradientLogo.svg, the current pale gradient). So light ships the black infinity and dark Infisical's own white one. The infinity is 2:1 wide by design, which trips the wordmark-shape check; there is no square form other than the yellow tile.",
+  "license": "Infisical brand mark, used nominatively to identify the connected service; trademark rights remain with Infisical.",
+  "sha256": "ee507fd3f6a66437ef49396e3edf784bd56ffe81335c491c3dcee00438bf248c"
+}

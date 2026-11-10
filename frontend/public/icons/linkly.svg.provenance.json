@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/linkly.svg",
+  "source": "https://linklyhq.com/img/linkly-logo.svg",
+  "found_at": "https://linklyhq.com/ (header and footer <img src=\"/img/linkly-logo.svg\" alt=\"Linkly logo\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the mark: the #FFA200 square (element 6), the #009EFF square (element 7) and the #FF4400 triangle (element 8); removed the black 'Linkly' wordmark (elements 0-5)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "license": "Linkly brand mark, used nominatively to identify the connected service; trademark rights remain with Linkly.",
+  "sha256": "170949c517aca7555723ed9d85e0c72d83f45aff5851864e2e458cea3dc08631"
+}

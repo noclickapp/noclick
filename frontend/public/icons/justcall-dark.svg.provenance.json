@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/justcall-dark.svg",
+  "source": "https://cdn.justcall.io/assets-marketing/images/svg/jc-logo-white.svg",
+  "found_at": "https://justcall.io/ (page saved as downloads/justcall/src1/page.html; inline svg extracted with extract_svg.py as inline-08)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the four #101828 mark pieces (elements 0-3); dropped the duplicate unfilled copies (elements 4-7) and the 'JustCall' letters (elements 8-15)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned",
+    "dark file is JustCall's own white logo: kept the four mark pieces (elements 0-3) of jc-logo-white.svg, dropped its letters (4-11), cropped and cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: JustCall's favicon/app icon is two-tone (navy #001E59 + blue #196AFF) but no SVG in those colours exists on its sites; the live header and footer logos are one-colour (#101828 / white), used here. An alternative two-tone SVG is still served on justcall.io's 404 page (https://cdn.justcall.io/assets-website/images/svg/logo.svg, downloads/justcall/src4/logo.svg) in #03008F + #004CE6, which match neither the favicon nor the current header, so it looks like an older colourway. No /brand, /press or /media-kit page (all 404).",
+  "license": "JustCall brand mark, used nominatively to identify the connected service; trademark rights remain with JustCall.",
+  "sha256": "ae74933462ddfe1d640b42a8e301dbd790b4080bef719737565f2967bfbb1e3f"
+}

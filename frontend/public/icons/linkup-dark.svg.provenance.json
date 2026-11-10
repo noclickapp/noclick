@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/linkup-dark.svg",
+  "source": "https://www.linkup.so/_next/static/immutable/media/logo-mark.0ik9azgcc90iz.svg",
+  "found_at": "https://www.linkup.so/ (header <img alt=\"Linkup\" src=\".../logo-mark...svg\">, shown on small screens; logo-wordmark...svg on large)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "#000000 -> #FFFFFF on the mark, dark mode only"
+  ],
+  "variant": "dark mode",
+  "notes": "The current PNG's black square background is gone. The site's own mark draws slightly heavier lines than the 32px favicon PNG; it is the same shape.",
+  "license": "Linkup brand mark, used nominatively to identify the connected service; trademark rights remain with Linkup.",
+  "sha256": "1fe33324fa3b44663e7bbe68cfa79ef45946f80afa6311aeec0013b805abafa5"
+}

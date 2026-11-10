@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/givebutter-dark.svg",
+  "source": "https://drive.google.com/uc?export=download&id=1dqzdWZO1RgtkUl1LZgAtsiyU2-GFkhHd",
+  "found_at": "Givebutter press kit (https://givebutter.com/press \u2192 Google Doc 1kNQ0cM0FpmhO1Y4jTfNpftvoHy0X0dhU0ht0aPZu-gM \u2192 'Logos & brand assets' Drive folder \u2192 'Default logo - for light backgrounds' \u2192 GB-darklogo.svg)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the butter-face mark (elements 0-7); removed the 'Givebutter' wordmark (8-18)",
+    "cleaned",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "none: the dark file is the face mark with its white rounded backing plate (elements 0-8) from the brand kit's own 'Light logo - for dark backgrounds' (GB-lightlogo.svg), cleaned and cropped"
+  ],
+  "variant": "dark mode",
+  "notes": "Uses the logo's face mark rather than the standing Mr. Butter mascot the current PNG shows (that mascot is also in the kit as mrbutter-standing.svg, saved in src6, if the reviewer prefers it). The #222 outline vanishes on dark, so the dark file is the kit's own dark-background version, which puts the face on a white rounded plate with a soft drop shadow; the shadow widens the crop, so the plate fills about 71% of the box. Alternative if the plate is unwanted: recolour #222222 \u2192 #FFFFFF in the light file.",
+  "license": "Givebutter brand mark, used nominatively to identify the connected service; trademark rights remain with Givebutter.",
+  "sha256": "d30b2e51f3046fc29cf81b5c5a5542990a927721627e64e232ca0aa7667fc5bf"
+}

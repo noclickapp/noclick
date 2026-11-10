@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/lofty.svg",
+  "source": "https://static.chimeroi.com/servicetool-temp/20231011/2/909d1fff-2120-4401-b3a2-f58a69e6bfd4_lofty_logo.svg",
+  "found_at": "https://lofty.com/ (header logo; static.chimeroi.com is Lofty's own asset host, formerly Chime)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the mark (element 1); removed the white 'Lofty' wordmark (element 0)",
+    "#FFFFFF -> #3C5CDC on the mark: the header logo is white for the dark hero; #3C5CDC is the colour Lofty's own developer docs logo paints the identical mark in (https://mintcdn.com/lofty-23bfa97a/.../logo-dark.svg, downloads/lofty/src5/logo-dark.svg, the light-mode logo of developer.lofty.com)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The docs logo already has the mark in #3C5CDC but carries a live <text>Open API</text> element that svgtool cannot drop, so I used the homepage header's mark and recoloured it to that blue. The current PNG's recorded source was media.brand.dev, an aggregator; this replaces it with Lofty's own files.",
+  "license": "Lofty brand mark, used nominatively to identify the connected service; trademark rights remain with Lofty.",
+  "sha256": "a00800b3b44d1842bda1f0c95cdd277cc80199264d79d771399b64f1c904d258"
+}

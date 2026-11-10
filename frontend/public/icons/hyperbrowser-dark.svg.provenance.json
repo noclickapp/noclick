@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/hyperbrowser-dark.svg",
+  "source": "https://www.hyperbrowser.ai/hyperbrowser%20(white).svg",
+  "found_at": "https://www.hyperbrowser.ai/ (header logo; the page ships '(black)' and '(white)' versions)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the two halves of the #1D1D1D bolt (elements 0-1); dropped the 'hyperbrowser' letters (elements 2-13)",
+    "cropped the viewBox to the bolt",
+    "cleaned",
+    "none: the dark file is Hyperbrowser's own white logo, cut the same way (kept elements 0-1, cropped, cleaned)"
+  ],
+  "variant": "dark mode",
+  "notes": "The favicon's black square is not shipped (rule 6, PNG only); the bolt is tall (0.63:1).",
+  "license": "Hyperbrowser brand mark, used nominatively to identify the connected service; trademark rights remain with Hyperbrowser.",
+  "sha256": "37ba2f7cdf296384d25f80111ee309fbf72036b9d9203ca850d1524b1bebcb4d"
+}

@@ -5,8 +5,12 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const GrokIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/grok.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <>
+        <img src="/icons/grok.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, objectFit: 'contain' }} />
+        <img src="/icons/grok-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, objectFit: 'contain' }} />
+    </>
 );
 
 export const GrokNode: NodeDefinition = {

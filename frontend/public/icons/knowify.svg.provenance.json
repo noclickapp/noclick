@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/knowify.svg",
+  "source": "https://knowify.com/ (inline <svg> header logo, 136x35 'knowify' wordmark)",
+  "found_at": "https://knowify.com/ (page saved as downloads/knowify/src1/page.html with a Safari user agent; inline svg extracted with extract_svg.py as inline-00, repeated as inline-20 and inline-34)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the orange #FF7900 'o' (element 10) and its five rays (elements 3-7); dropped the grey letters 'kn', 'wify' (elements 0-2, 8, 9, 11)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "Knowify's logo is a wordmark; its favicon is the 'o' with rays cut from that wordmark, which is what this file is (counter left open). knowify.com answers curl's default agent with a Cloudflare block; a browser user agent gets the real page.",
+  "license": "Knowify brand mark, used nominatively to identify the connected service; trademark rights remain with Knowify.",
+  "sha256": "22a1510c76f050c904b09c5728b308f209a1df105a478584a9851e3a69e5f1fc"
+}

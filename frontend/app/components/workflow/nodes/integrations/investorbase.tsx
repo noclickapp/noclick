@@ -21,9 +21,6 @@ const InvestorBaseIcon = ({
                 ...style,
                 '--brand-invert': 0,
                 objectFit: 'contain',
-                backgroundColor: '#0f172a',
-                borderRadius: 8,
-                padding: 6,
             } as CSSProperties
         }
     />
