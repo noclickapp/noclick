@@ -7,7 +7,7 @@ never retried automatically; a transport failure can follow an applied write.
 """
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Annotated, Literal, Union
 from uuid import UUID
 
@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -265,11 +266,63 @@ class ListAgeCategories(_Page):
     service_id: str
 
 
+class _UpdatedTrigger(PollTriggerConfigBase):
+    """Watch changes from the last 24 hours; existing records are baselined when armed.
+
+    Each poll reads at most 2,000 records. Resume within 24 hours to catch changes
+    during an interruption; intermediate versions between polls are not emitted.
+    """
+    model_config = ConfigDict(extra="ignore", hide_input_in_errors=True,
+                              json_schema_extra={"x-requires-webhook": True})
+
+
+class OnUpdatedReservation(_UpdatedTrigger):
+    """Watch new and updated reservations, including check-in, check-out and cancellation states.
+
+    Poll the last 24 hours, up to 2,000 records, baselining existing records when armed.
+    Only the latest version between polls is delivered.
+    """
+    operation: Literal["on_updated_reservation"] = Field("on_updated_reservation", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "New or Updated Reservation",
+    })
+    service_id: UUID | None = Field(None, description="Watch one bookable service, or all bookable services when empty.")
+
+
+class OnUpdatedCustomer(_UpdatedTrigger):
+    """Watch new and updated guest profiles.
+
+    Poll the last 24 hours, up to 2,000 records, baselining existing records when armed.
+    Only the latest version between polls is delivered.
+    """
+    operation: Literal["on_updated_customer"] = Field("on_updated_customer", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "New or Updated Guest",
+    })
+
+
+class OnUpdatedResource(_UpdatedTrigger):
+    """Watch new and updated rooms/resources, including housekeeping state changes.
+
+    Poll the last 24 hours, up to 2,000 records, baselining existing records when armed.
+    Only the latest version between polls is delivered.
+    """
+    operation: Literal["on_updated_resource"] = Field("on_updated_resource", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "New or Updated Room / Resource",
+    })
+
+
+POLL_OPERATIONS = {
+    "on_updated_reservation": (ListReservations, "Reservations"),
+    "on_updated_customer": (ListCustomers, "Customers"),
+    "on_updated_resource": (ListResources, "Resources"),
+}
+
+
 MewsOperation = Annotated[Union[GetConfiguration, ListCustomers, SearchCustomers,
     CreateCustomer, UpdateCustomer, ListReservations, CreateReservation,
     ConfirmReservation, CancelReservation, StartReservation, ProcessReservation,
     ListResources, UpdateResource, ListTasks, CreateTask, CloseTask,
-    ListServices, ListRates, ListProducts, ListCompanies, ListAgeCategories], Field(discriminator="operation")]
+    ListServices, ListRates, ListProducts, ListCompanies, ListAgeCategories,
+    OnUpdatedReservation, OnUpdatedCustomer, OnUpdatedResource], Field(discriminator="operation")]
 
 
 class MewsFullConfig(NodeConfig[MewsOperation, MewsTokenCredential]):
@@ -368,13 +421,17 @@ def _redact(value, credential):
         for secret in secrets:
             value = value.replace(secret, "[redacted]")
     elif isinstance(value, dict):
-        return {k: _redact(v, credential) for k, v in value.items() if k.lower() not in {"clienttoken", "accesstoken", "client_token", "access_token"}}
+        for key in list(value):
+            if key.lower() in {"clienttoken", "accesstoken", "client_token", "access_token"}:
+                del value[key]
+            else:
+                value[key] = _redact(value[key], credential)
     elif isinstance(value, list):
-        return [_redact(item, credential) for item in value]
+        value[:] = [_redact(item, credential) for item in value]
     return value
 
 
-class MewsNode(WorkflowNode):
+class MewsNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-mews"
     connection_evidence = ConnectionEvidence(noun="property", identity_operation="get_configuration", identity_keys=("Name",))
 
@@ -387,6 +444,70 @@ class MewsNode(WorkflowNode):
             raise ValueError("Connect Mews API tokens")
         credential = self.config.credentials
         op = self.config.config
+        if isinstance(op, _UpdatedTrigger):
+            return await self._poll_updates(op, credential)
+        data = await self._request(op, credential)
+        result = {"data": data}
+        if isinstance(op, _Page):
+            result["next_cursor"] = data.get("Cursor")
+        return result
+
+    async def _poll_updates(self, op, credential):
+        model, collection = POLL_OPERATIONS[op.operation]
+        end = datetime.now(timezone.utc)
+        config = {"count": 100, "updated_start_utc": (end - timedelta(days=1)).isoformat(),
+                  "updated_end_utc": end.isoformat()}
+        if isinstance(op, OnUpdatedReservation):
+            config["service_id"] = str(op.service_id) if op.service_id else None
+        items = []
+        cursors = set()
+        for _ in range(20):
+            data = await self._request(model(**config), credential)
+            page = data.get(collection)
+            if not isinstance(page, list):
+                raise ValueError(f"Mews returned an invalid {collection} list")
+            for item in page:
+                if not isinstance(item, dict) or not item.get("Id") or not item.get("UpdatedUtc"):
+                    raise ValueError("Mews returned a record without Id or UpdatedUtc")
+            items.extend(page)
+            cursor = data.get("Cursor")
+            if len(page) < config["count"] or not cursor:
+                break
+            if cursor in cursors:
+                raise ValueError("Mews returned a repeated pagination cursor")
+            cursors.add(cursor)
+            config["cursor"] = cursor
+        else:
+            raise ValueError("Mews poll reached 2,000 records; narrow the watched scope or contact support")
+        fresh = await self._filter_unseen(items, lambda item: item["Id"] + ":" + item["UpdatedUtc"])
+        return {"event": op.operation, "records": fresh, "new_record_count": len(fresh)}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        event = output.get("event") if isinstance(output, dict) else None
+        if event not in POLL_OPERATIONS:
+            return super().resolve_agent_event(output)
+        records = output.get("records") or []
+        if not records:
+            return None
+        lines = []
+        for item in records[:10]:
+            if event == "on_updated_reservation":
+                detail = (f"Reservation {item.get('Number')} ({item.get('State')}); "
+                          f"account {item.get('AccountId')}, service {item.get('ServiceId')}, "
+                          f"room/resource {item.get('AssignedResourceId')}; "
+                          f"stay {item.get('ScheduledStartUtc')} to {item.get('ScheduledEndUtc')}")
+            elif event == "on_updated_customer":
+                detail = f"Guest {item.get('FirstName') or ''} {item.get('LastName')}; {item.get('Email') or ''}"
+            else:
+                detail = f"Room/resource {item.get('Name')} ({item.get('State')}); property {item.get('EnterpriseId')}"
+            lines.append(f"- {detail}; id {item['Id']}; updated {item['UpdatedUtc']}")
+        if len(records) > 10:
+            lines.append(f"- {len(records) - 10} more records in the trigger output")
+        return {"text": f"Mews: {len(records)} new or updated {POLL_OPERATIONS[event][1].lower()}:\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _request(self, op, credential):
         body = {**_body(op), "ClientToken": credential.client_token,
                 "AccessToken": credential.access_token, "Client": "NoClick 1.0.0"}
         # No redirects, credentials in the JSON body, fixed production origin.
@@ -408,10 +529,7 @@ class MewsNode(WorkflowNode):
             raise ValueError("Mews returned an invalid JSON response") from None
         if not isinstance(data, dict):
             raise ValueError("Mews returned an unexpected response shape")
-        if data.get("Message") and ("RequestId" in data or "Details" in data):
+        if "Message" in data and data["Message"] and ("RequestId" in data or "Details" in data):
             raise ValueError("Mews: " + _redact(str(data["Message"]), credential))
         data = _redact(data, credential)
-        result = {"data": data}
-        if isinstance(op, _Page):
-            result["next_cursor"] = data.get("Cursor")
-        return result
+        return data

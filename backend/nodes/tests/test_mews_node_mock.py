@@ -132,3 +132,146 @@ def test_manual_credential_default_and_secret_repr():
     assert credential.credential_type == "mews_tokens"
     assert AUTH["access_token"] not in repr(credential)
     assert AUTH["client_token"] not in repr(credential)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('operation,action,key', [
+    ('on_updated_reservation', 'list_reservations', 'Reservations'),
+    ('on_updated_customer', 'list_customers', 'Customers'),
+    ('on_updated_resource', 'list_resources', 'Resources'),
+])
+async def test_poll_baselines_and_emits_changed_versions(monkeypatch, operation, action, key):
+    from copy import deepcopy
+    from datetime import datetime
+
+    case = CASES[action]
+    response = deepcopy(case['response'])
+    calls = []
+
+    def handler(request):
+        body = json.loads(request.content)
+        calls.append(body)
+        assert str(request.url) == mews.BASE_URL + case['route']
+        start, end = (datetime.fromisoformat(body['UpdatedUtc'][k]) for k in ('StartUtc', 'EndUtc'))
+        assert (end - start).total_seconds() == 86400
+        assert body['Limitation'] == {'Count': 100}
+        if operation == 'on_updated_reservation':
+            assert body['ServiceIds'] == [ID]
+        return httpx.Response(200, json=response)
+
+    mock_http(monkeypatch, handler)
+    instance = node(operation, **({'service_id': ID} if operation == 'on_updated_reservation' else {}))
+    state = {}
+
+    async def update(mutator, **kwargs):
+        new_state, result = mutator(dict(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+
+    instance._update_node_state = update
+    baseline = await instance.execute({})
+    assert baseline['records'] == []
+    assert instance.trigger_produced_no_event(baseline)
+    assert instance.resolve_agent_event(baseline) is None
+    assert (await instance.execute({}))['records'] == []
+    response[key][0]['UpdatedUtc'] = '2026-11-10T12:00:00Z'
+    changed = await instance.execute({})
+    assert changed['records'] == [response[key][0]]
+    assert instance.trigger_emitted_event(changed)
+    turn = instance.resolve_agent_event(changed)
+    assert 'Mews:' in turn['text']
+    assert response[key][0]['Id'] in turn['text']
+    assert '2026-11-10T12:00:00Z' in turn['text']
+    assert (await instance.execute({}))['records'] == []
+    added = deepcopy(response[key][0])
+    added['Id'] = '00000000-0000-4000-8000-000000000123'
+    response[key].append(added)
+    assert (await instance.execute({}))['records'] == [added]
+    assert len(calls) == 5
+
+
+@pytest.mark.asyncio
+async def test_poll_reads_all_pages_before_dedup(monkeypatch):
+    from copy import deepcopy
+
+    record = CASES['list_customers']['response']['Customers'][0]
+    calls = []
+
+    def handler(request):
+        body = json.loads(request.content)
+        calls.append(body)
+        if len(calls) == 1:
+            return httpx.Response(200, json={'Customers': [record] * 100, 'Cursor': ID})
+        assert body['Limitation']['Cursor'] == ID
+        assert body['UpdatedUtc'] == calls[0]['UpdatedUtc']
+        return httpx.Response(200, json={'Customers': [record], 'Cursor': None})
+
+    mock_http(monkeypatch, handler)
+    instance = node('on_updated_customer')
+    captured = []
+
+    async def filter_unseen(items, id_fn):
+        captured.extend(deepcopy(items))
+        assert id_fn(items[0]) == record['Id'] + ':' + record['UpdatedUtc']
+        return items
+
+    monkeypatch.setattr(instance, '_filter_unseen', filter_unseen)
+    await instance.execute({})
+    assert len(calls) == 2
+    assert len(captured) == 101
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('response', [{'Customers': None}, {'Customers': [{}]}])
+async def test_poll_invalid_response_does_not_advance_baseline(monkeypatch, response):
+    mock_http(monkeypatch, lambda _: httpx.Response(200, json=response))
+    instance = node('on_updated_customer')
+
+    async def unexpected(*args, **kwargs):
+        pytest.fail('Invalid responses must not update poll state')
+
+    monkeypatch.setattr(instance, '_filter_unseen', unexpected)
+    with pytest.raises(ValueError):
+        await instance.execute({})
+
+
+def test_poll_scope_tracks_service_and_ignores_canvas_metadata():
+    from nodes.core.poll_trigger import poll_scope
+    config = {'operation': 'on_updated_reservation', 'service_id': ID}
+    scope = poll_scope(mews.MewsNode, config)
+    assert scope
+    assert poll_scope(mews.MewsNode, {**config, 'label': 'New name'}) == scope
+    assert poll_scope(mews.MewsNode, {**config, 'service_id': None}) != scope
+
+
+def test_poll_schedule_mirrors_are_not_provider_uuids():
+    parsed = mews.OnUpdatedReservation(service_id=ID, schedule_id='schedule-mews-test',
+                                      webhook_id='webhook-mews-test')
+    assert str(parsed.service_id) == ID
+    assert parsed.schedule_id == 'schedule-mews-test'
+    assert mews.MewsNode._is_schedule_operation('on_updated_reservation')
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('repeated,expected_calls', [(True, 2), (False, 20)])
+async def test_incomplete_poll_never_consumes_seen_state(monkeypatch, repeated, expected_calls):
+    calls = []
+    record = CASES['list_customers']['response']['Customers'][0]
+
+    def handler(request):
+        calls.append(request)
+        cursor = ID if repeated else f'00000000-0000-4000-8000-{len(calls):012d}'
+        return httpx.Response(200, json={'Customers': [record] * 100, 'Cursor': cursor})
+
+    mock_http(monkeypatch, handler)
+    instance = node('on_updated_customer')
+
+    async def unexpected(*args, **kwargs):
+        pytest.fail('Incomplete pagination must not consume poll state')
+
+    monkeypatch.setattr(instance, '_filter_unseen', unexpected)
+    with pytest.raises(ValueError, match='repeated pagination|2,000 records'):
+        await instance.execute({})
+    assert len(calls) == expected_calls
