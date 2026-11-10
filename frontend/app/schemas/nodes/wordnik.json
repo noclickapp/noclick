@@ -1,0 +1,1419 @@
+{
+  "$defs": {
+    "WordnikAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "wordnik_api_key",
+          "default": "wordnik_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Wordnik API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Wordnik API key from the developer portal. NoClick checks it by reading the word of the day; this proves API reachability, not account identity.",
+      "x-credential-url": "https://developer.wordnik.com/"
+    },
+    "WordnikGetAudioConfig": {
+      "additionalProperties": false,
+      "description": "Fetches audio metadata for a word..",
+      "properties": {
+        "operation": {
+          "const": "get_audio",
+          "default": "get_audio",
+          "title": "Get Audio",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "word": {
+          "description": "Word to get audio for.",
+          "minLength": 1,
+          "title": "Word",
+          "type": "string"
+        },
+        "use_canonical": {
+          "default": "false",
+          "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested.",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Use Canonical",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum number of results to return",
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "word"
+      ],
+      "title": "WordnikGetAudioConfig",
+      "type": "object"
+    },
+    "WordnikGetDefinitionsConfig": {
+      "additionalProperties": false,
+      "description": "Return definitions for a word.",
+      "properties": {
+        "operation": {
+          "const": "get_definitions",
+          "default": "get_definitions",
+          "title": "Get Definitions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "word": {
+          "description": "Word to return definitions for",
+          "minLength": 1,
+          "title": "Word",
+          "type": "string"
+        },
+        "limit": {
+          "default": 200,
+          "description": "Maximum number of results to return",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "part_of_speech": {
+          "anyOf": [
+            {
+              "enum": [
+                "noun",
+                "adjective",
+                "verb",
+                "adverb",
+                "interjection",
+                "pronoun",
+                "preposition",
+                "abbreviation",
+                "affix",
+                "article",
+                "auxiliary-verb",
+                "conjunction",
+                "definite-article",
+                "family-name",
+                "given-name",
+                "idiom",
+                "imperative",
+                "noun-plural",
+                "noun-posessive",
+                "past-participle",
+                "phrasal-prefix",
+                "proper-noun",
+                "proper-noun-plural",
+                "proper-noun-posessive",
+                "suffix",
+                "verb-intransitive",
+                "verb-transitive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CSV list of part-of-speech types",
+          "title": "Part Of Speech",
+          "enum": [
+            "noun",
+            "adjective",
+            "verb",
+            "adverb",
+            "interjection",
+            "pronoun",
+            "preposition",
+            "abbreviation",
+            "affix",
+            "article",
+            "auxiliary-verb",
+            "conjunction",
+            "definite-article",
+            "family-name",
+            "given-name",
+            "idiom",
+            "imperative",
+            "noun-plural",
+            "noun-posessive",
+            "past-participle",
+            "phrasal-prefix",
+            "proper-noun",
+            "proper-noun-plural",
+            "proper-noun-posessive",
+            "suffix",
+            "verb-intransitive",
+            "verb-transitive"
+          ],
+          "x-enum-searchable": true
+        },
+        "include_related": {
+          "default": "false",
+          "description": "Return related words with definitions",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Include Related",
+          "type": "string"
+        },
+        "source_dictionaries": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "all",
+                  "ahd-5",
+                  "century",
+                  "wiktionary",
+                  "webster",
+                  "wordnet"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source dictionary to return definitions from.  If 'all' is received, results are returned from all sources. If multiple values are received (e.g. 'century,wiktionary'), results are returned from the first specified dictionary that has definitions. If left blank, results are returned from the first dictionary that has definitions. By default, dictionaries are searched in this order: ahd-5, wiktionary, webster, century, wordnet",
+          "title": "Source Dictionaries"
+        },
+        "use_canonical": {
+          "default": "false",
+          "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested.",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Use Canonical",
+          "type": "string"
+        },
+        "include_tags": {
+          "default": "false",
+          "description": "Return a closed set of XML tags in response",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Include Tags",
+          "type": "string"
+        }
+      },
+      "required": [
+        "word"
+      ],
+      "title": "WordnikGetDefinitionsConfig",
+      "type": "object"
+    },
+    "WordnikGetEtymologiesConfig": {
+      "additionalProperties": false,
+      "description": "Fetches etymology data.",
+      "properties": {
+        "operation": {
+          "const": "get_etymologies",
+          "default": "get_etymologies",
+          "title": "Get Etymologies",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "word": {
+          "description": "Word to return",
+          "minLength": 1,
+          "title": "Word",
+          "type": "string"
+        },
+        "use_canonical": {
+          "default": "false",
+          "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested.",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Use Canonical",
+          "type": "string"
+        }
+      },
+      "required": [
+        "word"
+      ],
+      "title": "WordnikGetEtymologiesConfig",
+      "type": "object"
+    },
+    "WordnikGetExamplesConfig": {
+      "additionalProperties": false,
+      "description": "Returns examples for a word.",
+      "properties": {
+        "operation": {
+          "const": "get_examples",
+          "default": "get_examples",
+          "title": "Get Examples",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "word": {
+          "description": "Word to return examples for",
+          "minLength": 1,
+          "title": "Word",
+          "type": "string"
+        },
+        "include_duplicates": {
+          "default": "false",
+          "description": "Show duplicate examples from different sources",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Include Duplicates",
+          "type": "string"
+        },
+        "use_canonical": {
+          "default": "false",
+          "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested.",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Use Canonical",
+          "type": "string"
+        },
+        "skip": {
+          "default": 0,
+          "description": "Results to skip",
+          "title": "Skip",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 5,
+          "description": "Maximum number of results to return",
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "word"
+      ],
+      "title": "WordnikGetExamplesConfig",
+      "type": "object"
+    },
+    "WordnikGetHyphenationConfig": {
+      "additionalProperties": false,
+      "description": "Returns syllable information for a word.",
+      "properties": {
+        "operation": {
+          "const": "get_hyphenation",
+          "default": "get_hyphenation",
+          "title": "Get Hyphenation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "word": {
+          "description": "Word to get syllables for",
+          "minLength": 1,
+          "title": "Word",
+          "type": "string"
+        },
+        "use_canonical": {
+          "default": "false",
+          "description": "If true will try to return a correct word root ('cats' -> 'cat'). If false returns exactly what was requested.",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Use Canonical",
+          "type": "string"
+        },
+        "source_dictionary": {
+          "anyOf": [
+            {
+              "enum": [
+                "ahd-5",
+                "century",
+                "wiktionary",
+                "webster",
+                "wordnet"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Get from a single dictionary. Valid options: ahd-5, century, wiktionary, webster, and wordnet.",
+          "title": "Source Dictionary",
+          "enum": [
+            "ahd-5",
+            "century",
+            "wiktionary",
+            "webster",
+            "wordnet"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum number of results to return",
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "word"
+      ],
+      "title": "WordnikGetHyphenationConfig",
+      "type": "object"
+    },
+    "WordnikGetPhrasesConfig": {
+      "additionalProperties": false,
+      "description": "Fetches bi-gram phrases for a word.",
+      "properties": {
+        "operation": {
+          "const": "get_phrases",
+          "default": "get_phrases",
+          "title": "Get Phrases",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "word": {
+          "description": "Word to fetch phrases for",
+          "minLength": 1,
+          "title": "Word",
+          "type": "string"
+        },
+        "limit": {
+          "default": 5,
+          "description": "Maximum number of results to return",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "wlmi": {
+          "default": 0,
+          "description": "Minimum WLMI for the phrase",
+          "title": "Wlmi",
+          "type": "integer"
+        },
+        "use_canonical": {
+          "default": "false",
+          "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested.",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Use Canonical",
+          "type": "string"
+        }
+      },
+      "required": [
+        "word"
+      ],
+      "title": "WordnikGetPhrasesConfig",
+      "type": "object"
+    },
+    "WordnikGetRandomWordConfig": {
+      "additionalProperties": false,
+      "description": "Returns a single random WordObject.",
+      "properties": {
+        "operation": {
+          "const": "get_random_word",
+          "default": "get_random_word",
+          "title": "Get Random Word",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "has_dictionary_def": {
+          "default": "true",
+          "description": "Only return words with dictionary definitions",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Has Dictionary Def",
+          "type": "string"
+        },
+        "include_part_of_speech": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CSV part-of-speech values to include (allowable values are noun, adjective, verb, adverb, interjection, pronoun, preposition, abbreviation, affix, article, auxiliary-verb, conjunction, definite-article, family-name, given-name, idiom, imperative, noun-plural, noun-posessive, past-participle, phrasal-prefix, proper-noun, proper-noun-plural, proper-noun-posessive, suffix, verb-intransitive, verb-transitive)",
+          "title": "Include Part Of Speech"
+        },
+        "exclude_part_of_speech": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CSV part-of-speech values to exclude (allowable values are noun, adjective, verb, adverb, interjection, pronoun, preposition, abbreviation, affix, article, auxiliary-verb, conjunction, definite-article, family-name, given-name, idiom, imperative, noun-plural, noun-posessive, past-participle, phrasal-prefix, proper-noun, proper-noun-plural, proper-noun-posessive, suffix, verb-intransitive, verb-transitive)",
+          "title": "Exclude Part Of Speech"
+        },
+        "min_corpus_count": {
+          "default": 0,
+          "description": "Minimum corpus frequency for terms",
+          "title": "Min Corpus Count",
+          "type": "integer"
+        },
+        "max_corpus_count": {
+          "default": -1,
+          "description": "Maximum corpus frequency for terms",
+          "title": "Max Corpus Count",
+          "type": "integer"
+        },
+        "min_dictionary_count": {
+          "default": 1,
+          "description": "Minimum dictionary count",
+          "title": "Min Dictionary Count",
+          "type": "integer"
+        },
+        "max_dictionary_count": {
+          "default": -1,
+          "description": "Maximum dictionary count",
+          "title": "Max Dictionary Count",
+          "type": "integer"
+        },
+        "min_length": {
+          "default": 5,
+          "description": "Minimum word length",
+          "title": "Min Length",
+          "type": "integer"
+        },
+        "max_length": {
+          "default": -1,
+          "description": "Maximum word length",
+          "title": "Max Length",
+          "type": "integer"
+        }
+      },
+      "title": "WordnikGetRandomWordConfig",
+      "type": "object"
+    },
+    "WordnikGetRandomWordsConfig": {
+      "additionalProperties": false,
+      "description": "Returns an array of random WordObjects.",
+      "properties": {
+        "operation": {
+          "const": "get_random_words",
+          "default": "get_random_words",
+          "title": "Get Random Words",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "has_dictionary_def": {
+          "default": "true",
+          "description": "Only return words with dictionary definitions",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Has Dictionary Def",
+          "type": "string"
+        },
+        "include_part_of_speech": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CSV part-of-speech values to include (allowable values are noun, adjective, verb, adverb, interjection, pronoun, preposition, abbreviation, affix, article, auxiliary-verb, conjunction, definite-article, family-name, given-name, idiom, imperative, noun-plural, noun-posessive, past-participle, phrasal-prefix, proper-noun, proper-noun-plural, proper-noun-posessive, suffix, verb-intransitive, verb-transitive)",
+          "title": "Include Part Of Speech"
+        },
+        "exclude_part_of_speech": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CSV part-of-speech values to exclude (allowable values are noun, adjective, verb, adverb, interjection, pronoun, preposition, abbreviation, affix, article, auxiliary-verb, conjunction, definite-article, family-name, given-name, idiom, imperative, noun-plural, noun-posessive, past-participle, phrasal-prefix, proper-noun, proper-noun-plural, proper-noun-posessive, suffix, verb-intransitive, verb-transitive)",
+          "title": "Exclude Part Of Speech"
+        },
+        "min_corpus_count": {
+          "default": 0,
+          "description": "Minimum corpus frequency for terms",
+          "title": "Min Corpus Count",
+          "type": "integer"
+        },
+        "max_corpus_count": {
+          "default": -1,
+          "description": "Maximum corpus frequency for terms",
+          "title": "Max Corpus Count",
+          "type": "integer"
+        },
+        "min_dictionary_count": {
+          "default": 1,
+          "description": "Minimum dictionary count",
+          "title": "Min Dictionary Count",
+          "type": "integer"
+        },
+        "max_dictionary_count": {
+          "default": -1,
+          "description": "Maximum dictionary count",
+          "title": "Max Dictionary Count",
+          "type": "integer"
+        },
+        "min_length": {
+          "default": 5,
+          "description": "Minimum word length",
+          "title": "Min Length",
+          "type": "integer"
+        },
+        "max_length": {
+          "default": -1,
+          "description": "Maximum word length",
+          "title": "Max Length",
+          "type": "integer"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "alpha",
+                "count"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attribute to sort by",
+          "title": "Sort By",
+          "enum": [
+            "alpha",
+            "count"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort direction",
+          "title": "Sort Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum number of results to return",
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "WordnikGetRandomWordsConfig",
+      "type": "object"
+    },
+    "WordnikGetRelatedWordsConfig": {
+      "additionalProperties": false,
+      "description": "Given a word as a string, returns relationships from the Word Graph.",
+      "properties": {
+        "operation": {
+          "const": "get_related_words",
+          "default": "get_related_words",
+          "title": "Get Related Words",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "word": {
+          "description": "Word to fetch relationships for",
+          "minLength": 1,
+          "title": "Word",
+          "type": "string"
+        },
+        "use_canonical": {
+          "default": "false",
+          "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested.",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Use Canonical",
+          "type": "string"
+        },
+        "relationship_types": {
+          "anyOf": [
+            {
+              "enum": [
+                "synonym",
+                "antonym",
+                "variant",
+                "equivalent",
+                "cross-reference",
+                "related-word",
+                "rhyme",
+                "form",
+                "etymologically-related-term",
+                "hypernym",
+                "hyponym",
+                "inflected-form",
+                "primary",
+                "same-context",
+                "verb-form",
+                "verb-stem",
+                "has_topic"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limits the total results per type of relationship type",
+          "title": "Relationship Types",
+          "enum": [
+            "synonym",
+            "antonym",
+            "variant",
+            "equivalent",
+            "cross-reference",
+            "related-word",
+            "rhyme",
+            "form",
+            "etymologically-related-term",
+            "hypernym",
+            "hyponym",
+            "inflected-form",
+            "primary",
+            "same-context",
+            "verb-form",
+            "verb-stem",
+            "has_topic"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit_per_relationship_type": {
+          "default": 10,
+          "description": "Restrict to the supplied relationship types",
+          "title": "Limit Per Relationship Type",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "word"
+      ],
+      "title": "WordnikGetRelatedWordsConfig",
+      "type": "object"
+    },
+    "WordnikGetScrabbleScoreConfig": {
+      "additionalProperties": false,
+      "description": "Returns the Scrabble score for a word.",
+      "properties": {
+        "operation": {
+          "const": "get_scrabble_score",
+          "default": "get_scrabble_score",
+          "title": "Get Scrabble Score",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "word": {
+          "description": "Word to get scrabble score for.",
+          "minLength": 1,
+          "title": "Word",
+          "type": "string"
+        }
+      },
+      "required": [
+        "word"
+      ],
+      "title": "WordnikGetScrabbleScoreConfig",
+      "type": "object"
+    },
+    "WordnikGetTextPronunciationsConfig": {
+      "additionalProperties": false,
+      "description": "Returns text pronunciations for a given word.",
+      "properties": {
+        "operation": {
+          "const": "get_text_pronunciations",
+          "default": "get_text_pronunciations",
+          "title": "Get Text Pronunciations",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "word": {
+          "description": "Word to get pronunciations for",
+          "minLength": 1,
+          "title": "Word",
+          "type": "string"
+        },
+        "use_canonical": {
+          "default": "false",
+          "description": "If true will try to return a correct word root ('cats' -> 'cat'). If false returns exactly what was requested.",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Use Canonical",
+          "type": "string"
+        },
+        "source_dictionary": {
+          "anyOf": [
+            {
+              "enum": [
+                "ahd-5",
+                "century",
+                "cmu",
+                "macmillan",
+                "wiktionary",
+                "webster",
+                "wordnet"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Get from a single dictionary",
+          "title": "Source Dictionary",
+          "enum": [
+            "ahd-5",
+            "century",
+            "cmu",
+            "macmillan",
+            "wiktionary",
+            "webster",
+            "wordnet"
+          ],
+          "x-enum-searchable": true
+        },
+        "type_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "ahd-5",
+                "arpabet",
+                "gcide-diacritical",
+                "IPA"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text pronunciation type",
+          "title": "Type Format",
+          "enum": [
+            "ahd-5",
+            "arpabet",
+            "gcide-diacritical",
+            "IPA"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum number of results to return",
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "word"
+      ],
+      "title": "WordnikGetTextPronunciationsConfig",
+      "type": "object"
+    },
+    "WordnikGetTopExampleConfig": {
+      "additionalProperties": false,
+      "description": "Returns a top example for a word.",
+      "properties": {
+        "operation": {
+          "const": "get_top_example",
+          "default": "get_top_example",
+          "title": "Get Top Example",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "word": {
+          "description": "Word to fetch examples for",
+          "minLength": 1,
+          "title": "Word",
+          "type": "string"
+        },
+        "use_canonical": {
+          "default": "false",
+          "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested.",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Use Canonical",
+          "type": "string"
+        }
+      },
+      "required": [
+        "word"
+      ],
+      "title": "WordnikGetTopExampleConfig",
+      "type": "object"
+    },
+    "WordnikGetWordFrequencyConfig": {
+      "additionalProperties": false,
+      "description": "Returns word usage over time.",
+      "properties": {
+        "operation": {
+          "const": "get_word_frequency",
+          "default": "get_word_frequency",
+          "title": "Get Word Frequency",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "word": {
+          "description": "Word to return",
+          "minLength": 1,
+          "title": "Word",
+          "type": "string"
+        },
+        "use_canonical": {
+          "default": "false",
+          "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested.",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Use Canonical",
+          "type": "string"
+        },
+        "start_year": {
+          "default": 1800,
+          "description": "Starting Year",
+          "title": "Start Year",
+          "type": "integer"
+        },
+        "end_year": {
+          "default": 2012,
+          "description": "Ending Year",
+          "title": "End Year",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "word"
+      ],
+      "title": "WordnikGetWordFrequencyConfig",
+      "type": "object"
+    },
+    "WordnikGetWordOfTheDayConfig": {
+      "additionalProperties": false,
+      "description": "Returns a specific WordOfTheDay.",
+      "properties": {
+        "operation": {
+          "const": "get_word_of_the_day",
+          "default": "get_word_of_the_day",
+          "title": "Get Word Of The Day",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetches by date in yyyy-MM-dd",
+          "title": "Date"
+        }
+      },
+      "title": "WordnikGetWordOfTheDayConfig",
+      "type": "object"
+    },
+    "WordnikReverseDictionaryConfig": {
+      "additionalProperties": false,
+      "description": "Reverse dictionary search.",
+      "properties": {
+        "operation": {
+          "const": "reverse_dictionary",
+          "default": "reverse_dictionary",
+          "title": "Reverse Dictionary",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "description": "Search term",
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "find_sense_for_word": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restricts words and finds closest sense",
+          "title": "Find Sense For Word"
+        },
+        "include_source_dictionaries": {
+          "anyOf": [
+            {
+              "enum": [
+                "ahd-5",
+                "century",
+                "cmu",
+                "macmillan",
+                "wiktionary",
+                "webster",
+                "wordnet"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only include these comma-delimited source dictionaries",
+          "title": "Include Source Dictionaries",
+          "enum": [
+            "ahd-5",
+            "century",
+            "cmu",
+            "macmillan",
+            "wiktionary",
+            "webster",
+            "wordnet"
+          ],
+          "x-enum-searchable": true
+        },
+        "exclude_source_dictionaries": {
+          "anyOf": [
+            {
+              "enum": [
+                "ahd-5",
+                "century",
+                "cmu",
+                "macmillan",
+                "wiktionary",
+                "webster",
+                "wordnet"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclude these comma-delimited source dictionaries",
+          "title": "Exclude Source Dictionaries",
+          "enum": [
+            "ahd-5",
+            "century",
+            "cmu",
+            "macmillan",
+            "wiktionary",
+            "webster",
+            "wordnet"
+          ],
+          "x-enum-searchable": true
+        },
+        "include_part_of_speech": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only include these comma-delimited parts of speech (allowable values are noun, adjective, verb, adverb, interjection, pronoun, preposition, abbreviation, affix, article, auxiliary-verb, conjunction, definite-article, family-name, given-name, idiom, imperative, noun-plural, noun-posessive, past-participle, phrasal-prefix, proper-noun, proper-noun-plural, proper-noun-posessive, suffix, verb-intransitive, verb-transitive)",
+          "title": "Include Part Of Speech"
+        },
+        "exclude_part_of_speech": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclude these comma-delimited parts of speech (allowable values are noun, adjective, verb, adverb, interjection, pronoun, preposition, abbreviation, affix, article, auxiliary-verb, conjunction, definite-article, family-name, given-name, idiom, imperative, noun-plural, noun-posessive, past-participle, phrasal-prefix, proper-noun, proper-noun-plural, proper-noun-posessive, suffix, verb-intransitive, verb-transitive)",
+          "title": "Exclude Part Of Speech"
+        },
+        "min_corpus_count": {
+          "default": 5,
+          "description": "Minimum corpus frequency for terms",
+          "title": "Min Corpus Count",
+          "type": "integer"
+        },
+        "max_corpus_count": {
+          "default": -1,
+          "description": "Maximum corpus frequency for terms",
+          "title": "Max Corpus Count",
+          "type": "integer"
+        },
+        "min_length": {
+          "default": 1,
+          "description": "Minimum word length",
+          "title": "Min Length",
+          "type": "integer"
+        },
+        "max_length": {
+          "default": -1,
+          "description": "Maximum word length",
+          "title": "Max Length",
+          "type": "integer"
+        },
+        "expand_terms": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expand terms",
+          "title": "Expand Terms"
+        },
+        "include_tags": {
+          "default": "false",
+          "description": "Return a closed set of XML tags in response",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Include Tags",
+          "type": "string"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "alpha",
+                "count"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attribute to sort by",
+          "title": "Sort By",
+          "enum": [
+            "alpha",
+            "count"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort direction",
+          "title": "Sort Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "skip": {
+          "default": "0",
+          "description": "Results to skip",
+          "title": "Skip",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum number of results to return",
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "WordnikReverseDictionaryConfig",
+      "type": "object"
+    },
+    "WordnikSearchWordsConfig": {
+      "additionalProperties": false,
+      "description": "Searches words.",
+      "properties": {
+        "operation": {
+          "const": "search_words",
+          "default": "search_words",
+          "title": "Search Words",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "allow_regex": {
+          "default": "false",
+          "description": "Search term is a Regular Expression",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Allow Regex",
+          "type": "string"
+        },
+        "query": {
+          "description": "Search query",
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "case_sensitive": {
+          "default": "true",
+          "description": "Search case sensitive",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "title": "Case Sensitive",
+          "type": "string"
+        },
+        "include_part_of_speech": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only include these comma-delimited parts of speech (allowable values are noun, adjective, verb, adverb, interjection, pronoun, preposition, abbreviation, affix, article, auxiliary-verb, conjunction, definite-article, family-name, given-name, idiom, imperative, noun-plural, noun-posessive, past-participle, phrasal-prefix, proper-noun, proper-noun-plural, proper-noun-posessive, suffix, verb-intransitive, verb-transitive)",
+          "title": "Include Part Of Speech"
+        },
+        "exclude_part_of_speech": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclude these comma-delimited parts of speech (allowable values are noun, adjective, verb, adverb, interjection, pronoun, preposition, abbreviation, affix, article, auxiliary-verb, conjunction, definite-article, family-name, given-name, idiom, imperative, noun-plural, noun-posessive, past-participle, phrasal-prefix, proper-noun, proper-noun-plural, proper-noun-posessive, suffix, verb-intransitive, verb-transitive)",
+          "title": "Exclude Part Of Speech"
+        },
+        "min_corpus_count": {
+          "default": 5,
+          "description": "Minimum corpus frequency for terms",
+          "title": "Min Corpus Count",
+          "type": "integer"
+        },
+        "max_corpus_count": {
+          "default": -1,
+          "description": "Maximum corpus frequency for terms",
+          "title": "Max Corpus Count",
+          "type": "integer"
+        },
+        "min_dictionary_count": {
+          "default": 1,
+          "description": "Minimum number of dictionary entries for words returned",
+          "title": "Min Dictionary Count",
+          "type": "integer"
+        },
+        "max_dictionary_count": {
+          "default": -1,
+          "description": "Maximum dictionary definition count",
+          "title": "Max Dictionary Count",
+          "type": "integer"
+        },
+        "min_length": {
+          "default": 1,
+          "description": "Minimum word length",
+          "title": "Min Length",
+          "type": "integer"
+        },
+        "max_length": {
+          "default": -1,
+          "description": "Maximum word length",
+          "title": "Max Length",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "description": "Results to skip",
+          "title": "Skip",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum number of results to return",
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "WordnikSearchWordsConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_audio": "#/$defs/WordnikGetAudioConfig",
+          "get_definitions": "#/$defs/WordnikGetDefinitionsConfig",
+          "get_etymologies": "#/$defs/WordnikGetEtymologiesConfig",
+          "get_examples": "#/$defs/WordnikGetExamplesConfig",
+          "get_hyphenation": "#/$defs/WordnikGetHyphenationConfig",
+          "get_phrases": "#/$defs/WordnikGetPhrasesConfig",
+          "get_random_word": "#/$defs/WordnikGetRandomWordConfig",
+          "get_random_words": "#/$defs/WordnikGetRandomWordsConfig",
+          "get_related_words": "#/$defs/WordnikGetRelatedWordsConfig",
+          "get_scrabble_score": "#/$defs/WordnikGetScrabbleScoreConfig",
+          "get_text_pronunciations": "#/$defs/WordnikGetTextPronunciationsConfig",
+          "get_top_example": "#/$defs/WordnikGetTopExampleConfig",
+          "get_word_frequency": "#/$defs/WordnikGetWordFrequencyConfig",
+          "get_word_of_the_day": "#/$defs/WordnikGetWordOfTheDayConfig",
+          "reverse_dictionary": "#/$defs/WordnikReverseDictionaryConfig",
+          "search_words": "#/$defs/WordnikSearchWordsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WordnikGetDefinitionsConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikGetExamplesConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikGetRelatedWordsConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikGetWordOfTheDayConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikSearchWordsConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikReverseDictionaryConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikGetRandomWordConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikGetRandomWordsConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikGetTextPronunciationsConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikGetAudioConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikGetEtymologiesConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikGetHyphenationConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikGetWordFrequencyConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikGetPhrasesConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikGetTopExampleConfig"
+        },
+        {
+          "$ref": "#/$defs/WordnikGetScrabbleScoreConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WordnikAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Wordnik Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
