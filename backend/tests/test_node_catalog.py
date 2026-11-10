@@ -5,8 +5,9 @@ connections catalog, OAuth providers, provide-link methods, linked fields, the
 rehearsal fence) reads ``nodes/catalog/<type>.json`` instead of importing every
 integration. These tests:
 - hold each generated file to what its class and canvas definition give;
-- hold each lookup to the answer the whole-registry class walk it replaced gave,
-  for every credential type and node type there is;
+- hold each lookup to the answer the whole-registry class walk it replaced gave (each
+  credential type's owner before the nodes borrowing it), for every credential type and
+  node type there is;
 - check that a fresh process answers them without importing any other integration.
 """
 import json
@@ -28,6 +29,12 @@ BACKEND = Path(__file__).resolve().parents[1]
 @pytest.fixture(scope="module")
 def classes():
     return dict(NODE_REGISTRY.items())
+
+
+def _owners_first(classes, entries):
+    """``(node_type, credential_type, ...)`` entries, each type's owner before the nodes borrowing it, as the
+    class walks order them (``credential_connect.owners_first``), read from the classes themselves."""
+    return sorted(entries, key=lambda entry: entry[1] in classes[entry[0]].borrowed_credential_types)
 
 
 @pytest.fixture(scope="module")
@@ -67,7 +74,7 @@ def test_connection_catalog_is_the_class_walks(classes):
     from nodes.agent.node_op_tools import node_supports_op_tools
     from utils.credential_operations import connection_catalog
 
-    methods, providers = {}, {}
+    candidates, providers = [], {}
     for node_type, cls in classes.items():
         types = []
         for credential_cls in credential_classes_for_node(cls):
@@ -75,12 +82,15 @@ def test_connection_catalog_is_the_class_walks(classes):
             schema = credential_cls.model_json_schema() if kind else {}
             if not kind or schema.get("x-credential-hidden"):
                 continue
-            methods.setdefault(kind, {"credential_type": kind, "name": schema.get("title", kind),
-                                      "oauth_provider": schema.get("x-oauth-provider"),
-                                      "connection_method": schema.get("x-credential-type")})
+            candidates.append((node_type, kind, {"credential_type": kind, "name": schema.get("title", kind),
+                                                 "oauth_provider": schema.get("x-oauth-provider"),
+                                                 "connection_method": schema.get("x-credential-type")}))
             types.append(kind)
         if node_supports_op_tools(node_type) and types:
             providers[node_type] = tuple(types)
+    methods = {}
+    for _, kind, method in _owners_first(classes, candidates):
+        methods.setdefault(kind, method)
     assert connection_catalog() == (methods, providers)
     assert list(connection_catalog()[1]) == list(providers)
 
@@ -89,10 +99,10 @@ def test_resolved_credential_classes_are_the_class_walks(classes):
     from nodes.core.credential_connect import resolve_credential_class
 
     index = {}
-    for node_type, cls in classes.items():
-        for credential_cls in credential_classes_for_node(cls):
-            index.setdefault(credential_type_of(credential_cls), (node_type, credential_cls))
-    index.pop(None, None)
+    candidates = [(node_type, credential_type_of(credential_cls), credential_cls)
+                  for node_type, cls in classes.items() for credential_cls in credential_classes_for_node(cls)]
+    for node_type, kind, credential_cls in _owners_first(classes, [c for c in candidates if c[1]]):
+        index.setdefault(kind, (node_type, credential_cls))
     assert {t: resolve_credential_class(t) for t in index} == index
     assert resolve_credential_class("not_a_credential_type") is None
 
@@ -110,37 +120,38 @@ def test_linked_fields_are_the_class_walks(classes):
     assert {name: credential_connect.resolve_credential_class(t)[1] for name, t in index.items()} == linked
 
 
-def test_provide_link_lookups_are_the_schema_sweeps(schemas):
+def test_provide_link_lookups_are_the_schema_sweeps(classes, schemas):
     from utils import credential_request_routes as routes
 
     providers, fields, methods, siblings = {}, {}, {}, {}
-    for schema in schemas.values():
-        defs = schema.get("$defs", {})
-        for title, definition in defs.items():
-            provider, credential_type = definition.get("x-oauth-provider"), routes._resolve_credential_type(title, definition)
-            if provider and credential_type:
-                providers.setdefault(credential_type, provider)
-    assert routes._oauth_providers_by_type() == providers
-
-    seen = set()
-    for schema in schemas.values():
+    oauth, definitions, groups = [], [], []
+    for node_type, schema in schemas.items():
         defs = schema.get("$defs", {})
         for title, definition in defs.items():
             credential_type = routes._resolve_credential_type(title, definition)
-            if not credential_type or credential_type in seen:
-                continue
-            seen.add(credential_type)
-            if definition.get("x-credential-type") != "oauth":
-                fields[credential_type] = routes._extract_fields_from_schema(definition)
-            methods[credential_type] = routes._method_dict_from_defn(title, definition)
+            if credential_type and definition.get("x-oauth-provider"):
+                oauth.append((node_type, credential_type, definition["x-oauth-provider"]))
+            if credential_type:
+                definitions.append((node_type, credential_type, title, definition))
         refs = [e for e in schema.get("properties", {}).get("credentials", {}).get("anyOf", []) if "$ref" in e]
         if len(refs) <= 1:
             continue
         group = [routes._method_dict_from_defn(ref["$ref"].split("/")[-1], defs.get(ref["$ref"].split("/")[-1], {}))
                  for ref in refs if not defs.get(ref["$ref"].split("/")[-1], {}).get("x-credential-hidden")]
         group = [method for method in group if method]
-        for method in group:
-            siblings[method["credential_type"]] = group
+        groups.extend((node_type, method["credential_type"], group) for method in group)
+    for _, credential_type, provider in _owners_first(classes, oauth):
+        providers.setdefault(credential_type, provider)
+    assert routes._oauth_providers_by_type() == providers
+
+    for _, credential_type, title, definition in _owners_first(classes, definitions):
+        if credential_type in methods:
+            continue
+        if definition.get("x-credential-type") != "oauth":
+            fields[credential_type] = routes._extract_fields_from_schema(definition)
+        methods[credential_type] = routes._method_dict_from_defn(title, definition)
+    for _, credential_type, group in _owners_first(classes, groups):
+        siblings.setdefault(credential_type, group)
     for credential_type in sorted(set(fields) | set(methods) | set(siblings) | set(catalog.credential_types())):
         assert routes._get_credential_fields(credential_type) == fields.get(credential_type, []), credential_type
         assert routes._get_credential_method(credential_type) == methods.get(credential_type), credential_type

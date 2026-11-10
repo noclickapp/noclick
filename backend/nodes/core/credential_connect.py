@@ -187,6 +187,22 @@ def owners_first(candidates: Iterable[Tuple[Any, ...]]) -> List[Tuple[Any, ...]]
     return sorted(candidates, key=lambda c: borrows(c[0], c[1]))
 
 
+@lru_cache(maxsize=1)
+def _class_index() -> Dict[str, Tuple[str, Type[BaseModel]]]:
+    """Every credential type's owner and class, by walking every node class (which imports every
+    integration): the tests' whole view, which ``resolve_credential_class`` answers type by type."""
+    from nodes.core.registry import NODE_REGISTRY
+
+    index: Dict[str, Tuple[str, Type[BaseModel]]] = {}
+    candidates = (
+        (node_type, credential_type_of(cls), cls)
+        for node_type, node_cls in NODE_REGISTRY.items() for cls in credential_classes_for_node(node_cls)
+    )
+    for node_type, ct, cls in owners_first(c for c in candidates if c[1]):
+        index.setdefault(ct, (node_type, cls))
+    return index
+
+
 def resolve_credential_class(credential_type: Optional[str]) -> Optional[Tuple[str, Type[BaseModel]]]:
     """``(node_type, credential class)`` for a stored ``credential_type``, or None.
 
@@ -194,12 +210,6 @@ def resolve_credential_class(credential_type: Optional[str]) -> Optional[Tuple[s
     which lists the owner before the nodes borrowing it, so only that node's integration is imported. None
     covers types no node declares (agent OAuth sign-ins, legacy rows), which shape as-is.
     """
-    return _class_index(credential_type or "")
-
-
-@lru_cache(maxsize=None)
-def _class_index(credential_type: str) -> Optional[Tuple[str, Type[BaseModel]]]:
-    """Each type's entry, filled as it's first asked for."""
     from nodes.core.catalog import credential_holders
     from nodes.core.registry import NODE_REGISTRY
 

@@ -12,7 +12,8 @@
    "oauth_provider": "google",
    "method": "oauth",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   },
   {
    "type": "google_cloud_storage_service_account",
@@ -20,7 +21,8 @@
    "oauth_provider": null,
    "method": null,
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [
