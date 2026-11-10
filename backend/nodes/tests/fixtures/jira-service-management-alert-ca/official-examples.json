@@ -1,0 +1,173 @@
+{
+  "source": "https://developer.atlassian.com/cloud/jira/service-desk-ops/rest/v2/api-group-alerts/",
+  "responses": {
+    "request_status": {
+      "action": "Create",
+      "processedAt": "2024-01-05T07:44:10.409Z",
+      "integrationId": "",
+      "isSuccess": true,
+      "status": "Alert does not exist",
+      "alertId": "9b251e07-73c9-4907-9996-8cb53a6a20d0-1704440650350",
+      "alias": "DatabaseConnectionFailure_DatabaseServer1"
+    },
+    "alerts": {
+      "values": [
+        {
+          "id": "e0caa0ce-d52f-4500-81b9-d592d06970b6",
+          "tinyId": "1234",
+          "createdAt": "2024-01-05T07:06:47.958Z",
+          "updatedAt": "2024-01-05T07:06:47.958Z",
+          "message": "The CPU usage on Server XYZ has exceeded 80% for over 5 minutes.",
+          "entity": "DatabaseServer1",
+          "source": "DBMonitoringTool",
+          "status": "closed",
+          "alias": "DatabaseConnectionFailure_DatabaseServer1",
+          "tags": [
+            "OverwriteQuietHours",
+            "Critical"
+          ],
+          "extraProperties": {
+            "backend": false,
+            "browser": "Firefox 113.0",
+            "browser.name": "Firefox",
+            "bundler": "parcel@2.10.3",
+            "environment": "production"
+          },
+          "description": "The alert is triggered due to the high CPU usage on Server XYZ. The CPU usage has consistently been above 80% for more than 5 minutes which could potentially lead to server slowdown or even a crash. Suggested action is to investigate the processes consuming high CPU and optimize or terminate them as needed. If the issue persists, consider upgrading the server resources.",
+          "acknowledged": true,
+          "ackTime": "2024-01-05T07:08:47.958Z",
+          "closeTime": "2024-01-05T09:06:47.958Z",
+          "count": 3,
+          "owner": "John Smith",
+          "snoozed": false,
+          "snoozedUntil": "2022-05-01T00:00:00Z",
+          "lastOccuredAt": "2022-04-01T00:00:00Z",
+          "integrationType": "API",
+          "integrationName": "Default API",
+          "priority": "P1",
+          "responders": [
+            {
+              "id": "4513b7ea-3b91-438f-b7e4-e3e54af9147c",
+              "type": "team"
+            },
+            {
+              "id": "bb4d9938-c3c2-455d-aaab-727aa701c0d8",
+              "type": "user"
+            },
+            {
+              "id": "aee8a0de-c80f-4515-a232-501c0bc9d715",
+              "type": "escalation"
+            },
+            {
+              "id": "80564037-1984-4f38-b98e-8a1f662df552",
+              "type": "schedule"
+            }
+          ],
+          "actions": [
+            "RestartServer"
+          ],
+          "seen": true
+        }
+      ],
+      "count": 1,
+      "links": {
+        "next": "/v1/alerts?offset=10&size=5"
+      }
+    },
+    "accepted": {
+      "result": "Request will be processed",
+      "requestId": "d383c6e9-b1e7-4b59-9c35-72f1a2187777",
+      "took": 0.195
+    },
+    "alert": {
+      "id": "e0caa0ce-d52f-4500-81b9-d592d06970b6",
+      "tinyId": "1234",
+      "createdAt": "2024-01-05T07:06:47.958Z",
+      "updatedAt": "2024-01-05T07:06:47.958Z",
+      "message": "The CPU usage on Server XYZ has exceeded 80% for over 5 minutes.",
+      "entity": "DatabaseServer1",
+      "source": "DBMonitoringTool",
+      "status": "closed",
+      "alias": "DatabaseConnectionFailure_DatabaseServer1",
+      "tags": [
+        "OverwriteQuietHours",
+        "Critical"
+      ],
+      "extraProperties": {
+        "backend": false,
+        "browser": "Firefox 113.0",
+        "browser.name": "Firefox",
+        "bundler": "parcel@2.10.3",
+        "environment": "production"
+      },
+      "description": "The alert is triggered due to the high CPU usage on Server XYZ. The CPU usage has consistently been above 80% for more than 5 minutes which could potentially lead to server slowdown or even a crash. Suggested action is to investigate the processes consuming high CPU and optimize or terminate them as needed. If the issue persists, consider upgrading the server resources.",
+      "acknowledged": true,
+      "ackTime": "2024-01-05T07:08:47.958Z",
+      "closeTime": "2024-01-05T09:06:47.958Z",
+      "count": 3,
+      "owner": "John Smith",
+      "snoozed": false,
+      "snoozedUntil": "2022-05-01T00:00:00Z",
+      "lastOccuredAt": "2022-04-01T00:00:00Z",
+      "integrationType": "API",
+      "integrationName": "Default API",
+      "priority": "P1",
+      "responders": [
+        {
+          "id": "4513b7ea-3b91-438f-b7e4-e3e54af9147c",
+          "type": "team"
+        },
+        {
+          "id": "bb4d9938-c3c2-455d-aaab-727aa701c0d8",
+          "type": "user"
+        },
+        {
+          "id": "aee8a0de-c80f-4515-a232-501c0bc9d715",
+          "type": "escalation"
+        },
+        {
+          "id": "80564037-1984-4f38-b98e-8a1f662df552",
+          "type": "schedule"
+        }
+      ],
+      "actions": [
+        "RestartServer"
+      ],
+      "seen": true
+    },
+    "notes": {
+      "values": [
+        {
+          "id": "1704869443312000050",
+          "createdAt": "2024-01-05T07:06:47.958Z",
+          "updatedAt": "2024-01-05T07:06:47.958Z",
+          "note": "System downtime expected due to maintenance activities.",
+          "owner": "user@atlassian.com"
+        }
+      ],
+      "links": {
+        "next": "/v1/alerts/4513b7ea-3b91-438f-b7e4-e3e54af9147c/notes?after=1492000072838"
+      }
+    },
+    "note": {
+      "id": "1704869443312000050",
+      "createdAt": "2024-01-05T07:06:47.958Z",
+      "updatedAt": "2024-01-05T07:06:47.958Z",
+      "note": "System downtime expected due to maintenance activities.",
+      "owner": "user@atlassian.com"
+    },
+    "logs": {
+      "values": [
+        {
+          "logTime": "2024-01-05T07:06:47.958Z",
+          "logType": "system",
+          "log": "Assigning owner team [Dream] to alert because it is the only team on the alert and alert is not created via team integration.",
+          "owner": "system"
+        }
+      ],
+      "links": {
+        "next": "/v1/alerts/4513b7ea-3b91-438f-b7e4-e3e54af9147c/logs?after=1492000072838_1492000072838234593"
+      }
+    }
+  }
+}

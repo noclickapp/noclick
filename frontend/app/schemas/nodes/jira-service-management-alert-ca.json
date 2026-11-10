@@ -1,0 +1,1329 @@
+{
+  "$defs": {
+    "AcknowledgeAlert": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "acknowledge_alert",
+          "default": "acknowledge_alert",
+          "title": "Acknowledge Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Acknowledge Alert",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "alert_id"
+      ],
+      "title": "AcknowledgeAlert",
+      "type": "object"
+    },
+    "AddNote": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_note",
+          "default": "add_note",
+          "title": "Add Alert Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "Add Alert Note",
+          "x-is-trigger": false
+        },
+        "note": {
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "alert_id",
+        "note"
+      ],
+      "title": "AddNote",
+      "type": "object"
+    },
+    "AddTags": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_tags",
+          "default": "add_tags",
+          "title": "Add Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Add Tags",
+          "x-is-trigger": false
+        },
+        "tags": {
+          "description": "Comma-separated tags to add.",
+          "minLength": 1,
+          "title": "Tags",
+          "type": "string"
+        }
+      },
+      "required": [
+        "alert_id",
+        "tags"
+      ],
+      "title": "AddTags",
+      "type": "object"
+    },
+    "AssignAlert": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "assign_alert",
+          "default": "assign_alert",
+          "title": "Assign Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Assign Alert",
+          "x-is-trigger": false
+        },
+        "account_id": {
+          "minLength": 1,
+          "title": "Assignee Account ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "alert_id",
+        "account_id"
+      ],
+      "title": "AssignAlert",
+      "type": "object"
+    },
+    "CloseAlert": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "close_alert",
+          "default": "close_alert",
+          "title": "Close Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Close Alert",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "alert_id"
+      ],
+      "title": "CloseAlert",
+      "type": "object"
+    },
+    "CreateAlert": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_alert",
+          "default": "create_alert",
+          "title": "Create Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Create Alert",
+          "x-is-trigger": false
+        },
+        "message": {
+          "maxLength": 130,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 15000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deduplication key.",
+          "title": "Alias"
+        },
+        "priority": {
+          "default": "P3",
+          "enum": [
+            "P1",
+            "P2",
+            "P3",
+            "P4",
+            "P5"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "entity": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entity"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 25000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "CreateAlert",
+      "type": "object"
+    },
+    "DeleteAlert": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_alert",
+          "default": "delete_alert",
+          "title": "Delete Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Delete Alert",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "alert_id"
+      ],
+      "title": "DeleteAlert",
+      "type": "object"
+    },
+    "DeleteNote": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_note",
+          "default": "delete_note",
+          "title": "Delete Alert Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "Delete Alert Note",
+          "x-is-trigger": false
+        },
+        "note_id": {
+          "minLength": 1,
+          "title": "Note ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "alert_id",
+        "note_id"
+      ],
+      "title": "DeleteNote",
+      "type": "object"
+    },
+    "GetAlert": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_alert",
+          "default": "get_alert",
+          "title": "Get Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Get Alert",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "alert_id"
+      ],
+      "title": "GetAlert",
+      "type": "object"
+    },
+    "GetAlertByAlias": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_alert_by_alias",
+          "default": "get_alert_by_alias",
+          "title": "Get Alert by Alias",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Get Alert by Alias",
+          "x-is-trigger": false
+        },
+        "alias": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alias",
+          "type": "string"
+        }
+      },
+      "required": [
+        "alias"
+      ],
+      "title": "GetAlertByAlias",
+      "type": "object"
+    },
+    "GetRequestStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_request_status",
+          "default": "get_request_status",
+          "title": "Get Alert Request Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Get Alert Request Status",
+          "x-is-trigger": false
+        },
+        "request_id": {
+          "description": "The requestId returned by an accepted asynchronous alert write.",
+          "minLength": 1,
+          "title": "Request ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "GetRequestStatus",
+      "type": "object"
+    },
+    "JiraServiceManagementAlertTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "jira_service_management_alert_ca_token",
+          "default": "jira_service_management_alert_ca_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "minLength": 3,
+          "title": "Atlassian Account Email",
+          "type": "string"
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "cloud_id": {
+          "description": "The cloudId for your Jira Cloud instance, not the site URL.",
+          "minLength": 1,
+          "title": "Cloud ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "api_token",
+        "cloud_id"
+      ],
+      "title": "Jira Service Management Alert API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste your Atlassian account email, API token without scopes, and Jira Cloud ID. Find the Cloud ID at https://YOUR-SITE.atlassian.net/_edge/tenant_info (cloudId). Your account needs permission to view or manage Operations alerts. Requests go to api.atlassian.com only.",
+      "x-credential-url": "https://id.atlassian.com/manage-profile/security/api-tokens"
+    },
+    "ListAlerts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_alerts",
+          "default": "list_alerts",
+          "title": "List Alerts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "List Alerts",
+          "x-is-trigger": false
+        },
+        "size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 19999,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "sort": {
+          "default": "insertedAt",
+          "enum": [
+            "createdAt",
+            "insertedAt",
+            "lastOccurredAt",
+            "priority"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Query"
+        },
+        "from_time": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider's integer date-time filter (from).",
+          "title": "From Timestamp"
+        },
+        "to_time": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider's integer date-time filter (to).",
+          "title": "To Timestamp"
+        }
+      },
+      "title": "ListAlerts",
+      "type": "object"
+    },
+    "ListLogs": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use the cursor from the previous page's links.",
+          "title": "After Cursor"
+        },
+        "operation": {
+          "const": "list_logs",
+          "default": "list_logs",
+          "title": "List Alert Logs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "List Alert Logs",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "alert_id"
+      ],
+      "title": "ListLogs",
+      "type": "object"
+    },
+    "ListNotes": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use the cursor from the previous page's links.",
+          "title": "After Cursor"
+        },
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "List Alert Notes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "List Alert Notes",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "alert_id"
+      ],
+      "title": "ListNotes",
+      "type": "object"
+    },
+    "OnNewAlert": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_alert",
+          "default": "on_new_alert",
+          "title": "On New Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Alert",
+          "x-is-trigger": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional alert search. Limit the scope to fewer than 10000 alerts. Existing alerts form a baseline; only new IDs fire. Alerts created and deleted between polls cannot be detected.",
+          "title": "Search Query"
+        }
+      },
+      "title": "OnNewAlert",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "SnoozeAlert": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "snooze_alert",
+          "default": "snooze_alert",
+          "title": "Snooze Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Snooze Alert",
+          "x-is-trigger": false
+        },
+        "end_time": {
+          "description": "ISO 8601 date and time with timezone.",
+          "format": "date-time",
+          "title": "Snooze Until",
+          "type": "string"
+        }
+      },
+      "required": [
+        "alert_id",
+        "end_time"
+      ],
+      "title": "SnoozeAlert",
+      "type": "object"
+    },
+    "UnacknowledgeAlert": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "unacknowledge_alert",
+          "default": "unacknowledge_alert",
+          "title": "Unacknowledge Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Unacknowledge Alert",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "alert_id"
+      ],
+      "title": "UnacknowledgeAlert",
+      "type": "object"
+    },
+    "UpdateDescription": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_description",
+          "default": "update_description",
+          "title": "Update Alert Description",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Update Alert Description",
+          "x-is-trigger": false
+        },
+        "description": {
+          "maxLength": 15000,
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "alert_id",
+        "description"
+      ],
+      "title": "UpdateDescription",
+      "type": "object"
+    },
+    "UpdateMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_message",
+          "default": "update_message",
+          "title": "Update Alert Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Update Alert Message",
+          "x-is-trigger": false
+        },
+        "message": {
+          "maxLength": 130,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "alert_id",
+        "message"
+      ],
+      "title": "UpdateMessage",
+      "type": "object"
+    },
+    "UpdateNote": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Update Alert Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "Update Alert Note",
+          "x-is-trigger": false
+        },
+        "note_id": {
+          "minLength": 1,
+          "title": "Note ID",
+          "type": "string"
+        },
+        "note": {
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "alert_id",
+        "note_id",
+        "note"
+      ],
+      "title": "UpdateNote",
+      "type": "object"
+    },
+    "UpdatePriority": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Alert ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_priority",
+          "default": "update_priority",
+          "title": "Update Alert Priority",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Update Alert Priority",
+          "x-is-trigger": false
+        },
+        "priority": {
+          "enum": [
+            "P1",
+            "P2",
+            "P3",
+            "P4",
+            "P5"
+          ],
+          "title": "Priority",
+          "type": "string"
+        }
+      },
+      "required": [
+        "alert_id",
+        "priority"
+      ],
+      "title": "UpdatePriority",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "acknowledge_alert": "#/$defs/AcknowledgeAlert",
+          "add_note": "#/$defs/AddNote",
+          "add_tags": "#/$defs/AddTags",
+          "assign_alert": "#/$defs/AssignAlert",
+          "close_alert": "#/$defs/CloseAlert",
+          "create_alert": "#/$defs/CreateAlert",
+          "delete_alert": "#/$defs/DeleteAlert",
+          "delete_note": "#/$defs/DeleteNote",
+          "get_alert": "#/$defs/GetAlert",
+          "get_alert_by_alias": "#/$defs/GetAlertByAlias",
+          "get_request_status": "#/$defs/GetRequestStatus",
+          "list_alerts": "#/$defs/ListAlerts",
+          "list_logs": "#/$defs/ListLogs",
+          "list_notes": "#/$defs/ListNotes",
+          "on_new_alert": "#/$defs/OnNewAlert",
+          "snooze_alert": "#/$defs/SnoozeAlert",
+          "unacknowledge_alert": "#/$defs/UnacknowledgeAlert",
+          "update_description": "#/$defs/UpdateDescription",
+          "update_message": "#/$defs/UpdateMessage",
+          "update_note": "#/$defs/UpdateNote",
+          "update_priority": "#/$defs/UpdatePriority"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListAlerts"
+        },
+        {
+          "$ref": "#/$defs/GetAlert"
+        },
+        {
+          "$ref": "#/$defs/GetAlertByAlias"
+        },
+        {
+          "$ref": "#/$defs/CreateAlert"
+        },
+        {
+          "$ref": "#/$defs/DeleteAlert"
+        },
+        {
+          "$ref": "#/$defs/AcknowledgeAlert"
+        },
+        {
+          "$ref": "#/$defs/UnacknowledgeAlert"
+        },
+        {
+          "$ref": "#/$defs/CloseAlert"
+        },
+        {
+          "$ref": "#/$defs/AssignAlert"
+        },
+        {
+          "$ref": "#/$defs/AddTags"
+        },
+        {
+          "$ref": "#/$defs/SnoozeAlert"
+        },
+        {
+          "$ref": "#/$defs/ListNotes"
+        },
+        {
+          "$ref": "#/$defs/AddNote"
+        },
+        {
+          "$ref": "#/$defs/UpdateNote"
+        },
+        {
+          "$ref": "#/$defs/DeleteNote"
+        },
+        {
+          "$ref": "#/$defs/UpdatePriority"
+        },
+        {
+          "$ref": "#/$defs/UpdateMessage"
+        },
+        {
+          "$ref": "#/$defs/UpdateDescription"
+        },
+        {
+          "$ref": "#/$defs/GetRequestStatus"
+        },
+        {
+          "$ref": "#/$defs/ListLogs"
+        },
+        {
+          "$ref": "#/$defs/OnNewAlert"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JiraServiceManagementAlertTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Jira-service-management-alert-ca Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a high priority alert",
+    "Acknowledge an alert",
+    "Add a note to an alert",
+    "Close an alert",
+    "Watch for new Operations alerts"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
