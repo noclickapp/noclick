@@ -141,3 +141,49 @@ def test_schema_credential_metadata_and_catalog():
     assert schema["$defs"]["PayPalClientCredential"]["x-credential-type"] == "api_key"
     assert "x-oauth-provider" not in schema["$defs"]["PayPalClientCredential"]
     assert PayPalNode.connection_evidence.operation == "list_products"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["provide_dispute_evidence", "appeal_dispute"])
+async def test_dispute_evidence_uses_documented_multipart_input(operation):
+    # PayPal Use Disputes API guide: tracking/notes are the JSON input part.
+    # https://developer.paypal.com/platforms/disputes/handle-disputes/use-disputes-api/
+    _TOKEN_CACHE.clear()
+    evidence = {"evidences": [{"evidence_type": "PROOF_OF_FULFILLMENT",
+        "evidence_info": {"tracking_info": [{"carrier_name": "FEDEX", "tracking_number": "122533485"}]},
+        "notes": "Test"}]}
+    requests = []
+
+    def respond(request):
+        requests.append(request)
+        if request.url.path.endswith("/oauth2/token"):
+            return httpx.Response(200, json={"access_token": "token", "expires_in": 3600})
+        return httpx.Response(200)
+
+    real_client = httpx.AsyncClient
+    with patch("nodes.paypal_node.httpx.AsyncClient",
+               side_effect=lambda **kw: real_client(transport=httpx.MockTransport(respond), **kw)):
+        result = await _node({"operation": operation, "dispute_id": "PP-D-27803",
+                              "body_json": json.dumps(evidence)}).execute({})
+    assert result["status"] == "success"
+    request = requests[-1]
+    assert request.headers["content-type"].startswith("multipart/form-data; boundary=")
+    from email.parser import BytesParser
+    from email.policy import default
+    message = BytesParser(policy=default).parsebytes(
+        ("Content-Type: " + request.headers["content-type"] + "\r\n\r\n").encode() + request.content)
+    parts = list(message.iter_parts())
+    assert len(parts) == 1
+    assert parts[0].get_param("name", header="content-disposition") == "input"
+    assert parts[0].get_content_type() == "application/json"
+    assert json.loads(parts[0].get_payload(decode=True)) == evidence
+
+
+def test_paypal_scope_metadata_uses_seller_dispute_and_webhook_requirements():
+    scopes = PayPalNode.scope_registry
+    assert scopes.require("provide_dispute_evidence").scopes == (
+        "https://uri.paypal.com/services/disputes/update-seller",)
+    assert scopes.require("on_event").scopes == (
+        "https://uri.paypal.com/services/applications/webhooks",)
+    assert scopes.require("refund_capture").scopes == (
+        "https://uri.paypal.com/services/payments/refund",)

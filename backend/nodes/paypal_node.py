@@ -28,6 +28,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.scopes.paypal import PAYPAL_SCOPES
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.oauth_token_cache import OAuthTokenCache, oauth_authority_digest, token_expiry_input
@@ -305,6 +306,7 @@ async def _access_token(credential: PayPalClientCredential) -> str:
 
 class PayPalNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-paypal"
+    scope_registry = PAYPAL_SCOPES
     edit_examples = ["List PayPal products", "Find recent PayPal transactions",
                      "Review disputes", "Create a draft invoice"]
     connection_evidence = ConnectionEvidence(operation="list_products", noun="products")
@@ -458,10 +460,18 @@ class PayPalNode(ExternalWebhookTriggerMixin, WorkflowNode):
             headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
             if request_id:
                 headers["PayPal-Request-Id"] = request_id
+            # PayPal's evidence and appeal endpoints take JSON in a multipart
+            # input part, even when the evidence consists only of notes/tracking.
+            # https://developer.paypal.com/platforms/disputes/handle-disputes/use-disputes-api/
+            request_body = (
+                {"files": {"input": (None, json.dumps(body), "application/json")}}
+                if spec.name in {"provide_dispute_evidence", "appeal_dispute"}
+                else {"json": body}
+            )
             async with httpx.AsyncClient(timeout=45.0) as client:
                 response = await client.request(
                     spec.method, _BASE[config.credentials.environment] + path,
-                    headers=headers, params=query or None, json=body,
+                    headers=headers, params=query or None, **request_body,
                 )
             content_type = response.headers.get("content-type", "").split(";", 1)[0]
             if content_type.startswith("image/"):

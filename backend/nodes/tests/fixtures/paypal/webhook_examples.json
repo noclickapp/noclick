@@ -83,25 +83,31 @@
   "transmission_id": "db49fb10-1343-11ef-ac58-e32457403f67",
   "transmission_time": "2024-05-16T05:19:23Z",
   "cert_url": "https://api.sandbox.paypal.com/v1/notifications/certs/CERT-360caa42-fca2a594-ab66f33d",
-  "registration_source": "https://developer.paypal.com/api/webhooks/v1/webhooks-post",
+  "registration_source": "https://raw.githubusercontent.com/paypal/postman-collections/7f7240ab2d9417a55bf9c68355bf33bf64b1665c/Collections/PayPal_Public_APIs.json",
   "registration_response": {
-    "id": "string",
-    "url": "http://example.com",
+    "id": "1AV998667T7275054",
+    "url": "https://enllwl46eqmr.x.pipedream.net",
     "event_types": [
       {
-        "name": "string",
-        "description": "string",
-        "status": "string",
-        "resource_versions": [
-          "string"
-        ]
+        "name": "*",
+        "description": "ALL"
       }
     ],
     "links": [
       {
-        "href": "string",
-        "rel": "string",
+        "href": "https://api.sandbox.paypal.com/v1/notifications/webhooks/1AV998667T7275054",
+        "rel": "self",
         "method": "GET"
+      },
+      {
+        "href": "https://api.sandbox.paypal.com/v1/notifications/webhooks/1AV998667T7275054",
+        "rel": "update",
+        "method": "PATCH"
+      },
+      {
+        "href": "https://api.sandbox.paypal.com/v1/notifications/webhooks/1AV998667T7275054",
+        "rel": "delete",
+        "method": "DELETE"
       }
     ]
   },
