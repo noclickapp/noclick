@@ -1186,6 +1186,685 @@
       "x-credential-instructions": "Paste a profile API key from Mollie Dashboard \u2192 Developers \u2192 API keys, without Bearer. Use a test_ key for testing or a live_ key for real payments. Enable the payment, refund, customer, subscription and payment-link permissions you need. This connection uses the key's profile and mode; organization tokens and OAuth tokens are not supported.",
       "x-credential-url": "https://my.mollie.com/dashboard/developers/api-keys"
     },
+    "MollieAdvancedAccessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "mollie_1_advanced_access_token",
+          "default": "mollie_1_advanced_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Advanced Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Mollie Advanced Access Token",
+      "type": "object",
+      "x-credential-instructions": "Create an advanced access token in Mollie Dashboard \u2192 Developers \u2192 API access tokens. Enable customers.read to test the connection, plus webhooks.write and payments.read for payment, refund and chargeback events, or payment-links.read for payment-link events. Some payment, refund and chargeback events require Mollie's beta access. Paste the access_ token without Bearer. This connection is for webhook triggers; use a profile API key for actions.",
+      "x-credential-url": "https://my.mollie.com/dashboard/developers/api-keys"
+    },
+    "OnChargebackReceived": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "testmode": {
+          "default": false,
+          "description": "Receive test-mode events instead of live-mode events.",
+          "title": "Test Mode",
+          "type": "boolean"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_chargeback_received",
+          "default": "on_chargeback_received",
+          "title": "On Chargeback Received",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Chargeback Received",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OnChargebackReceived",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OnPaymentFailed": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "testmode": {
+          "default": false,
+          "description": "Receive test-mode events instead of live-mode events.",
+          "title": "Test Mode",
+          "type": "boolean"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_payment_failed",
+          "default": "on_payment_failed",
+          "title": "On Payment Failed",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Payment Failed",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OnPaymentFailed",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OnPaymentLinkPaid": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "testmode": {
+          "default": false,
+          "description": "Receive test-mode events instead of live-mode events.",
+          "title": "Test Mode",
+          "type": "boolean"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_payment_link_paid",
+          "default": "on_payment_link_paid",
+          "title": "On Payment Link Paid",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Payment Link Paid",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OnPaymentLinkPaid",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OnPaymentPaid": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "testmode": {
+          "default": false,
+          "description": "Receive test-mode events instead of live-mode events.",
+          "title": "Test Mode",
+          "type": "boolean"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_payment_paid",
+          "default": "on_payment_paid",
+          "title": "On Payment Paid",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Payment Paid",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OnPaymentPaid",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OnRefundRefunded": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "testmode": {
+          "default": false,
+          "description": "Receive test-mode events instead of live-mode events.",
+          "title": "Test Mode",
+          "type": "boolean"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_refund_refunded",
+          "default": "on_refund_refunded",
+          "title": "On Refund Completed",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Refund Completed",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OnRefundRefunded",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "UpdateCustomer": {
       "additionalProperties": false,
       "properties": {
@@ -1633,6 +2312,11 @@
           "list_payments": "#/$defs/ListPayments",
           "list_refunds": "#/$defs/ListRefunds",
           "list_subscriptions": "#/$defs/ListSubscriptions",
+          "on_chargeback_received": "#/$defs/OnChargebackReceived",
+          "on_payment_failed": "#/$defs/OnPaymentFailed",
+          "on_payment_link_paid": "#/$defs/OnPaymentLinkPaid",
+          "on_payment_paid": "#/$defs/OnPaymentPaid",
+          "on_refund_refunded": "#/$defs/OnRefundRefunded",
           "update_customer": "#/$defs/UpdateCustomer",
           "update_payment": "#/$defs/UpdatePayment",
           "update_payment_link": "#/$defs/UpdatePaymentLink",
@@ -1715,6 +2399,21 @@
         },
         {
           "$ref": "#/$defs/DeletePaymentLink"
+        },
+        {
+          "$ref": "#/$defs/OnPaymentPaid"
+        },
+        {
+          "$ref": "#/$defs/OnPaymentFailed"
+        },
+        {
+          "$ref": "#/$defs/OnRefundRefunded"
+        },
+        {
+          "$ref": "#/$defs/OnChargebackReceived"
+        },
+        {
+          "$ref": "#/$defs/OnPaymentLinkPaid"
         }
       ],
       "title": "Config"
@@ -1725,11 +2424,15 @@
           "$ref": "#/$defs/MollieAPIKeyCredential"
         },
         {
+          "$ref": "#/$defs/MollieAdvancedAccessTokenCredential"
+        },
+        {
           "type": "null"
         }
       ],
       "default": null,
-      "description": "Credentials for this node (optional if using environment variables)"
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
     }
   },
   "required": [

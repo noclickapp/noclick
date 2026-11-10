@@ -7,15 +7,15 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 const MollieIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <>
         <img src="/icons/mollie-1.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+            style={{ ...style, objectFit: 'contain' }} />
         <img src="/icons/mollie-1-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+            style={{ ...style, objectFit: 'contain' }} />
     </>
 );
 
 export const MollieNode: NodeDefinition = {
     type: 'automation-mollie-1', category: 'finance-accounting', label: 'Mollie',
-    description: 'Automate payments, refunds, customers, subscriptions and payment links',
+    description: 'Automate Mollie payments and react to payment, refund, chargeback and payment-link events',
     Icon: MollieIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={MollieIcon} iconColor="" />),

@@ -1,5 +1,9 @@
-"""Mollie v2 profile API: one published endpoint per operation, no write retries."""
+"""Mollie v2 actions and signed webhook events, without automatic write retries."""
 from __future__ import annotations
+
+import hashlib
+import hmac
+import re
 
 from datetime import date, datetime
 from typing import Annotated, Literal, Union
@@ -9,6 +13,7 @@ from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validat
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 PaymentID = Annotated[str, Field(pattern=r"^tr_[A-Za-z0-9]+$")]
@@ -39,6 +44,15 @@ class MollieAPIKeyCredential(BaseModel):
     })
     credential_type: Literal["mollie_1_api_key"] = Field("mollie_1_api_key", json_schema_extra={"ui:hidden": True})
     api_key: str = Field(..., min_length=1, title="API Key", repr=False, json_schema_extra={"ui:widget": "password"})
+
+
+class MollieAdvancedAccessTokenCredential(BaseModel):
+    model_config = ConfigDict(title="Mollie Advanced Access Token", hide_input_in_errors=True, json_schema_extra={
+        "x-credential-url": "https://my.mollie.com/dashboard/developers/api-keys",
+        "x-credential-instructions": "Create an advanced access token in Mollie Dashboard → Developers → API access tokens. Enable customers.read to test the connection, plus webhooks.write and payments.read for payment, refund and chargeback events, or payment-links.read for payment-link events. Some payment, refund and chargeback events require Mollie's beta access. Paste the access_ token without Bearer. This connection is for webhook triggers; use a profile API key for actions.",
+    })
+    credential_type: Literal["mollie_1_advanced_access_token"] = Field("mollie_1_advanced_access_token", json_schema_extra={"ui:hidden": True})
+    access_token: str = Field(..., min_length=1, title="Advanced Access Token", repr=False, json_schema_extra={"ui:widget": "password"})
 
 
 class Closed(BaseModel):
@@ -244,14 +258,57 @@ class DeletePaymentLink(Write):
     payment_link_id: PaymentLinkID
 
 
+# Registration: https://docs.mollie.com/reference/create-webhook
+# Delivery and HMAC: https://docs.mollie.com/reference/webhooks-new
+TRIGGER_EVENTS = {
+    "on_payment_paid": "payment.paid",
+    "on_payment_failed": "payment.failed",
+    "on_refund_refunded": "refund.refunded",
+    "on_chargeback_received": "chargeback.received",
+    "on_payment_link_paid": "payment-link.paid",
+}
+
+
+class MollieEventConfig(WebhookTriggerConfigBase):
+    testmode: bool = Field(False, title="Test Mode", description="Receive test-mode events instead of live-mode events.")
+    webhook_url: str | None = Field(None, title="Webhook URL", json_schema_extra={
+        "ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+class OnPaymentPaid(MollieEventConfig):
+    operation: Literal["on_payment_paid"] = Field("on_payment_paid", title="On Payment Paid", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Payment Paid"})
+
+
+class OnPaymentFailed(MollieEventConfig):
+    operation: Literal["on_payment_failed"] = Field("on_payment_failed", title="On Payment Failed", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Payment Failed"})
+
+
+class OnRefundRefunded(MollieEventConfig):
+    operation: Literal["on_refund_refunded"] = Field("on_refund_refunded", title="On Refund Completed", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Refund Completed"})
+
+
+class OnChargebackReceived(MollieEventConfig):
+    operation: Literal["on_chargeback_received"] = Field("on_chargeback_received", title="On Chargeback Received", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Chargeback Received"})
+
+
+class OnPaymentLinkPaid(MollieEventConfig):
+    operation: Literal["on_payment_link_paid"] = Field("on_payment_link_paid", title="On Payment Link Paid", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Payment Link Paid"})
+
+
 Operation = Annotated[Union[ListPayments, GetPayment, CreatePayment, UpdatePayment, CancelPayment,
     CreateRefund, ListRefunds, GetRefund, CancelRefund, ListCustomers, GetCustomer, CreateCustomer,
     UpdateCustomer, DeleteCustomer, ListCustomerPayments, CreateSubscription, ListSubscriptions,
     GetSubscription, UpdateSubscription, CancelSubscription, CreatePaymentLink, ListPaymentLinks,
-    GetPaymentLink, UpdatePaymentLink, DeletePaymentLink], Field(discriminator="operation")]
+    GetPaymentLink, UpdatePaymentLink, DeletePaymentLink, OnPaymentPaid, OnPaymentFailed,
+    OnRefundRefunded, OnChargebackReceived, OnPaymentLinkPaid], Field(discriminator="operation")]
 
 
-class MollieConfig(NodeConfig[Operation, MollieAPIKeyCredential]):
+class MollieConfig(NodeConfig[Operation, Union[MollieAPIKeyCredential, MollieAdvancedAccessTokenCredential]]):
     pass
 
 
@@ -288,25 +345,133 @@ RENAMES = {"from_id": "from", "redirect_url": "redirectUrl", "webhook_url": "web
     "customer_id": "customerId", "sequence_type": "sequenceType", "start_date": "startDate", "mandate_id": "mandateId", "expires_at": "expiresAt"}
 
 
-class MollieNode(WorkflowNode):
+class MollieNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-mollie-1"
+    credential_provider_labels = {"mollie_1": "Mollie"}
     connection_evidence = ConnectionEvidence(noun="customers", operation="list_customers")
 
     @classmethod
     def get_config_model(cls):
         return MollieConfig
 
+    @classmethod
+    def operation_credential_types(cls, operation):
+        if operation == "list_customers":
+            return frozenset({"mollie_1_api_key", "mollie_1_advanced_access_token"})
+        return frozenset({"mollie_1_advanced_access_token" if operation in TRIGGER_EVENTS else "mollie_1_api_key"})
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"testmode": bool(config.get("testmode", False))}
+
+    @staticmethod
+    async def _webhook_request(credential, method, path, body=None):
+        token = (credential or {}).get("access_token")
+        if not token:
+            raise ValueError("Connect a Mollie advanced access token with webhooks.write permission")
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, "https://api.mollie.com" + path,
+                headers={"Authorization": "Bearer " + token, "Accept": "application/hal+json"}, json=body)
+        response.raise_for_status()
+        return response.json() if response.content else {}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event = TRIGGER_EVENTS.get(config.get("operation"))
+        if not event:
+            raise ValueError("Choose a Mollie trigger")
+        result = await cls._webhook_request(credential, "POST", "/v2/webhooks", {
+            "name": f"NoClick {node_id}", "url": webhook_url, "eventTypes": [event],
+            "testmode": bool(config.get("testmode", False)),
+        })
+        if not isinstance(result.get("id"), str) or not result.get("webhookSecret"):
+            raise ValueError("Mollie did not return a webhook ID and signing secret")
+        return {"external_webhook_id": result["id"], "signing_secret": result["webhookSecret"]}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        webhook_id = config.get("external_webhook_id")
+        if not webhook_id:
+            return
+        await cls._webhook_request(credential, "DELETE", "/v2/webhooks/" + quote(str(webhook_id), safe=""),
+            {"testmode": bool(config.get("testmode", False))})
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        secret = (config or {}).get("signing_secret")
+        signature = next((v for k, v in headers.items() if k.lower() == "x-mollie-signature"), "")
+        if not secret or not isinstance(signature, str) or not re.fullmatch(r"sha256=[0-9a-f]{64}", signature):
+            return False
+        expected = "sha256=" + hmac.new(str(secret).encode(), body, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(signature, expected)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event = TRIGGER_EVENTS.get(config.get("operation"))
+        if not event or not isinstance(payload, dict):
+            return False
+        resource = payload.get("resource")
+        if resource == "event":
+            return payload.get("type") == event
+        kind, state = event.split(".", 1)
+        if resource != kind or not payload.get("id"):
+            return False
+        # The API-specific docs also publish resource snapshots without an event envelope.
+        if kind in {"payment", "refund"}:
+            return payload.get("status") == state
+        if kind == "chargeback":
+            return payload.get("reversedAt") is None
+        return bool(payload.get("paidAt"))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if not cls.filter_trigger_payload(payload, config):
+            return cls.no_event_output(config.get("operation", "Mollie event"))
+        envelope = payload.get("resource") == "event"
+        entity = payload.get("_embedded", {}).get("entity") if envelope else {k: v for k, v in payload.items() if k != "_webhook"}
+        if not isinstance(entity, dict):
+            # Simple deliveries still identify the entity an agent can retrieve.
+            entity = {"id": payload.get("entityId")}
+        return {"status": "success", "operation": config["operation"],
+            "event_type": TRIGGER_EVENTS[config["operation"]], "data": entity,
+            "event_id": payload.get("id") if envelope else None}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("event_type") not in TRIGGER_EVENTS.values():
+            return None
+        entity = output["data"]
+        event = output["event_type"]
+        label = {"payment.paid": "Customer payment received", "payment.failed": "Customer payment failed",
+            "refund.refunded": "Customer refund completed", "chargeback.received": "Chargeback received",
+            "payment-link.paid": "Customer paid a payment link"}[event]
+        details = [f"Mollie: {label} (ID {entity['id']})."]
+        if "description" in entity:
+            details.append(str(entity["description"]))
+        if "amount" in entity and isinstance(entity["amount"], dict):
+            amount = entity["amount"]
+            details.append(f"Amount: {amount['value']} {amount['currency']}.")
+        if "paymentId" in entity:
+            details.append(f"Payment ID: {entity['paymentId']}.")
+        if "customerId" in entity and entity["customerId"]:
+            details.append(f"Customer ID: {entity['customerId']}.")
+        return {"text": " ".join(details), "conversation_key": "mollie:" + str(entity["id"])}
+
     async def execute(self, inputs):
         config = self.config.config
         credential = self.config.credentials
         if credential is None:
             raise ValueError("Connect a Mollie API key")
+        if config.operation in TRIGGER_EVENTS:
+            return self.no_event_output(config.operation)
+        if not isinstance(credential, MollieAPIKeyCredential) and config.operation != "list_customers":
+            raise ValueError("Connect a Mollie profile API key for actions")
         method, path = ROUTES[config.operation]
         data = config.model_dump(mode="json", exclude_none=True, exclude={"operation"})
         for key in list(data):
             if "{" + key + "}" in path:
                 path = path.replace("{" + key + "}", quote(data.pop(key), safe=""))
-        headers = {"Authorization": "Bearer " + credential.api_key, "Accept": "application/hal+json"}
+        headers = {"Authorization": "Bearer " + (credential.api_key if isinstance(credential, MollieAPIKeyCredential) else credential.access_token), "Accept": "application/hal+json"}
         idempotency = data.pop("idempotency_key", None)
         if idempotency:
             headers["Idempotency-Key"] = idempotency

@@ -177,3 +177,89 @@ async def test_mollie_1_empty_update_and_missing_key_make_no_request(monkeypatch
         with pytest.raises(ValueError):
             await node(config, credential).execute({})
     assert requests == []
+
+
+EVENTS = json.loads((Path(__file__).parent / 'fixtures/mollie-1/events.json').read_text())
+REGISTRATION = json.loads((Path(__file__).parent / 'fixtures/mollie-1/webhook-registration.json').read_text())['body']
+ADVANCED = {'credential_type': 'mollie_1_advanced_access_token', 'access_token': 'synthetic-advanced-token'}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('operation,event', native.TRIGGER_EVENTS.items())
+async def test_mollie_1_webhook_lifecycle(monkeypatch, operation, event):
+    requests = intercept(monkeypatch, REGISTRATION, 201)
+    config = {'operation': operation, 'testmode': True}
+    registered = await native.MollieNode._register_external_webhook(
+        webhook_url='https://example.org/webhooks', credential=ADVANCED, config=config, node_id='mollie-test')
+    assert registered == {'external_webhook_id': REGISTRATION['id'], 'signing_secret': REGISTRATION['webhookSecret']}
+    assert requests[0].url.path == '/v2/webhooks'
+    assert requests[0].headers['Authorization'] == 'Bearer ' + ADVANCED['access_token']
+    assert json.loads(requests[0].content) == {'name': 'NoClick mollie-test', 'url': 'https://example.org/webhooks', 'eventTypes': [event], 'testmode': True}
+    requests = intercept(monkeypatch, None, 204)
+    await native.MollieNode._unregister_external_webhook(
+        credential=ADVANCED, config={**config, **registered}, node_id='mollie-test')
+    assert requests[0].method == 'DELETE'
+    assert requests[0].url.path == '/v2/webhooks/' + REGISTRATION['id']
+    assert json.loads(requests[0].content) == {'testmode': True}
+
+
+@pytest.mark.parametrize('operation,event', native.TRIGGER_EVENTS.items())
+def test_mollie_1_published_event_routing_and_agent_context(operation, event):
+    for name, fixture in EVENTS.items():
+        body = copy.deepcopy(fixture['body'])
+        body['_webhook'] = {'headers': {'X-Mollie-Signature': 'redacted'}}
+        config = {'operation': operation}
+        expected = name == event or (event == 'payment-link.paid' and name.startswith('payment-link.paid.'))
+        assert native.MollieNode.filter_trigger_payload(body, config) is expected
+        if not expected:
+            continue
+        output = native.MollieNode.resolve_trigger_payload(body, config)
+        assert output['event_type'] == event
+        assert '_webhook' not in output['data']
+        agent = native.MollieNode.resolve_agent_event(output)
+        entity_id = body['entityId'] if body['resource'] == 'event' else body['id']
+        assert entity_id in agent['text']
+        assert agent['conversation_key'] == 'mollie:' + entity_id
+        assert 'Mollie:' in agent['text']
+        if 'amount' in output['data']:
+            assert output['data']['amount']['value'] in agent['text']
+        if 'paymentId' in output['data']:
+            assert output['data']['paymentId'] in agent['text']
+
+
+def test_mollie_1_signature_rejects_forgery_and_missing_secrets():
+    import hashlib
+    import hmac
+    body = json.dumps(EVENTS['payment.paid']['body']).encode()
+    secret = REGISTRATION['webhookSecret']
+    signature = 'sha256=' + hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
+    headers = {'X-Mollie-Signature': signature}
+    config = {'signing_secret': secret}
+    assert native.MollieNode.verify_webhook_signature(body, headers, config)
+    assert native.MollieNode.verify_webhook_signature(body, {'x-mollie-signature': signature}, config)
+    assert not native.MollieNode.verify_webhook_signature(body + b' ', headers, config)
+    assert not native.MollieNode.verify_webhook_signature(body, {}, config)
+    assert not native.MollieNode.verify_webhook_signature(body, headers, {})
+    assert not native.MollieNode.verify_webhook_signature(body, headers, {'signing_secret': 'wrong'})
+
+
+@pytest.mark.asyncio
+async def test_mollie_1_trigger_credential_boundary_and_manual_run(monkeypatch):
+    requests = intercept(monkeypatch, REGISTRATION, 201)
+    with pytest.raises(ValueError, match='advanced access token'):
+        await native.MollieNode._register_external_webhook(webhook_url='https://example.org/webhooks',
+            credential={'api_key': TOKEN}, config={'operation': 'on_payment_paid'}, node_id='test')
+    assert requests == []
+    trigger = NodeFactory.create_node(node_id='test', node_type='automation-mollie-1',
+        node_data={'config': {'operation': 'on_payment_paid'}, 'credentials': ADVANCED})
+    result = await trigger.execute({})
+    assert result['status'] == 'no_event'
+    assert native.MollieNode.resolve_agent_event(result) is None
+    assert native.MollieNode.operation_credential_types('on_payment_paid') == {'mollie_1_advanced_access_token'}
+    assert native.MollieNode.operation_credential_types('create_payment') == {'mollie_1_api_key'}
+    assert native.MollieAdvancedAccessTokenCredential(access_token='access_example').credential_type == 'mollie_1_advanced_access_token'
+    # The advanced-token connect probe uses the integration's documented customer list endpoint.
+    intercept(monkeypatch, EXAMPLES['list-customers']['response'])
+    probe = NodeFactory.create_node(node_id='test', node_type='automation-mollie-1',
+        node_data={'config': {'operation': 'list_customers'}, 'credentials': ADVANCED})
+    assert (await probe.execute({}))['status'] == 'success'
