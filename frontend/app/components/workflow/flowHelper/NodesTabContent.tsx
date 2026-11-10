@@ -6,12 +6,13 @@ import { isTextEntryTarget } from '~/lib/keyboard';
 import { KeyHint } from '~/components/shared/KeyHint';
 import { DragHintBadge } from '../DragHintBadge';
 import { MiniStickyNotePreview } from '../nodes/MiniStickyNotePreview';
-import { NODE_DEFINITION_TYPES, offeredNodeDefinitions } from '../nodes/nodeDefinitions';
+import { NODE_DEFINITION_TYPES, isOfferedNodeType } from '../nodes/nodeDefinitions';
 import type { NodeDefinition, NodeDimensions } from '../nodes/types';
-import { useNodeDefinitions } from '~/hooks/useNodeDefinitions';
 import { IMG_META } from '../nodes/base/AgentModelIcon';
 import { resolveAgentModelKind } from '~/lib/harnessBrand';
-import { BrandIcon } from '~/components/shared/BrandIcon';
+import { BrandIcon, type BrandIconComponent } from '~/components/shared/BrandIcon';
+import { serializedIconComponent } from '~/components/shared/SerializedIcon';
+import { getNodeIconData } from '~/lib/nodeIconRegistry';
 import {
     buildAgentInitialConfig,
     describeAgentSeed,
@@ -20,14 +21,13 @@ import {
 import { useModels } from '~/hooks/useModels';
 import type { Model } from '~/types/model';
 import {
-    buildNodeSearchIndexEntry,
     getNodeSearchScore,
     getOperationSearchMatch,
+    nodeSearchIndexEntry,
     type NodeSearchIndexEntry,
 } from '~/utils/nodeSearchMatch';
-import { NODE_SCHEMA_TYPES, nodeSchemasLoaded } from '~/utils/nodeSchemas';
-import { useNodeSchemas } from '~/hooks/useNodeSchemas';
-import { onIdle } from '~/lib/onIdle';
+import type { NodeSearchCatalog } from '~/utils/nodeSearchCatalog';
+import { useNodeSearchCatalog } from '~/hooks/useNodeSearchCatalog';
 
 // PREVIEW_SIZE is exported so FlowCanvas's drag overlay can match it
 // — the overlay must be the same visual size as the source tile or the
@@ -36,8 +36,14 @@ export const PREVIEW_SIZE = 90;
 const TILE_HEIGHT = 118;
 const ROW_GAP = 12;
 
+/** A node the palette offers: what its tile, its drag and its search read, from the node catalog the dashboard's
+ *  loader serves (lib/nodeIconRegistry), so opening the palette loads no node module. */
+export type PaletteNode = Pick<NodeDefinition, 'type' | 'label' | 'description' | 'keywords' | 'iconColor' | 'bgGradient' | 'dimensions'> & {
+    Icon: BrandIconComponent;
+};
+
 interface NodeSearchMatch {
-    node: NodeDefinition;
+    node: PaletteNode;
     initialConfig?: Record<string, unknown> | null;
     initialOperation?: string | null;
     seedLabel?: string | null;
@@ -62,7 +68,7 @@ const MULTIMEDIA_TILE_DIMS: NodeDimensions = {
     height: 90,
     iconSize: 60,
 };
-function paletteDimsForNode(node: NodeDefinition): NodeDimensions {
+function paletteDimsForNode(node: PaletteNode): NodeDimensions {
     if (node.type === 'interface-file') return MULTIMEDIA_TILE_DIMS;
     return node.type.startsWith('interface-')
         ? INTERFACE_TILE_DIMS
@@ -71,7 +77,7 @@ function paletteDimsForNode(node: NodeDefinition): NodeDimensions {
 
 // Preview width follows the node's aspect ratio so wider nodes (e.g. Agent,
 // 1.43:1) render true to shape; height matches the preview size.
-function previewSizeForNode(node: NodeDefinition): {
+function previewSizeForNode(node: PaletteNode): {
     width: number;
     height: number;
 } {
@@ -89,18 +95,24 @@ interface NodesTabContentProps {
     onClearSearch?: () => void;
 }
 
-// The palette node list and its schema-backed search index are pure functions of
-// the static registry + node schemas, so both are built ONCE per session at
-// module scope — not per mount. The index build touches every operation's schema
-// (~9.5k ops), so rebuilding it on every "N" press was the dominant open cost.
-let _paletteNodes: NodeDefinition[] | null = null;
-function getPaletteNodes(): NodeDefinition[] {
+// The palette's nodes and their search indexes are pure functions of the node catalog and the search catalog, so
+// each is built once per session at module scope, not per mount.
+let _paletteNodes: PaletteNode[] | null = null;
+function getPaletteNodes(): PaletteNode[] {
     if (_paletteNodes) return _paletteNodes;
+    const catalog = getNodeIconData();
+    const nodes = NODE_DEFINITION_TYPES.filter(isOfferedNodeType).flatMap((type): PaletteNode[] => {
+        const meta = catalog[type];
+        if (!meta) return [];
+        const { label, description, keywords, iconColor, iconHtml, dimensions } = meta;
+        return [{ type, label, description, keywords, iconColor, dimensions, Icon: serializedIconComponent(iconHtml) }];
+    });
+    // A page whose loader serves no node catalog (a shared workflow) gets it with the search catalog.
+    if (!nodes.length) return nodes;
     // Sticky notes pinned first (common quick-access); Agent pinned right after so
     // it lands in a full first row alongside other 1×1 tiles (if it were last it
     // would often be alone on its own flex row and `flex-grow: 1` would stretch it).
-    const nodes = offeredNodeDefinitions();
-    _paletteNodes = [...nodes].sort((a, b) => {
+    _paletteNodes = nodes.sort((a, b) => {
         if (a.type === 'stickyNote') return -1;
         if (b.type === 'stickyNote') return 1;
         if (a.type === 'agent') return -1;
@@ -111,34 +123,33 @@ function getPaletteNodes(): NodeDefinition[] {
 }
 
 // Two indexes: the nodes' own names, ready at once, and the full one with every
-// operation's schema, built once every schema has loaded.
+// operation, once the search catalog has landed.
 const _searchIndexes: Partial<Record<'names' | 'operations', Map<string, NodeSearchIndexEntry>>> = {};
-function getNodeSearchIndex(withOperations: boolean): Map<string, NodeSearchIndexEntry> {
-    const kind = withOperations ? 'operations' : 'names';
-    return (_searchIndexes[kind] ??= new Map(
-        getPaletteNodes().map((node) => [
-            node.type,
-            buildNodeSearchIndexEntry(node, withOperations),
-        ])
+function getNodeSearchIndex(catalog: NodeSearchCatalog | null): Map<string, NodeSearchIndexEntry> {
+    return (_searchIndexes[catalog ? 'operations' : 'names'] ??= new Map(
+        getPaletteNodes().map((node) => [node.type, nodeSearchIndexEntry(node, catalog?.text[node.type])])
     ));
 }
 
-/** The palette lists every node: their definitions (icons, labels) load with it, apart from the canvas. */
+/** The palette lists every node from the node catalog; searching their operations waits for the search catalog,
+ *  which it starts fetching as it opens. */
 export function NodesTabContent(props: NodesTabContentProps) {
-    if (!useNodeDefinitions(NODE_DEFINITION_TYPES)) {
+    const searchCatalog = useNodeSearchCatalog();
+    if (!getPaletteNodes().length) {
         return (
             <div className="flex h-full items-center justify-center text-muted-foreground" aria-label="Loading nodes">
                 <Loader2 className="h-4 w-4 animate-spin" />
             </div>
         );
     }
-    return <PaletteNodes {...props} />;
+    return <PaletteNodes {...props} searchCatalog={searchCatalog} />;
 }
 
 function PaletteNodes({
     searchQuery,
     onClearSearch,
-}: NodesTabContentProps) {
+    searchCatalog,
+}: NodesTabContentProps & { searchCatalog: NodeSearchCatalog | null }) {
     // Live catalog drives free-form model matching ("deepseek r1" → the newest
     // matching OpenRouter id). Hook returns [] while fetching, so the matcher
     // gracefully degrades to CLI-only matching during cold load.
@@ -149,25 +160,12 @@ function PaletteNodes({
 
     const trimmedQuery = searchQuery.trim();
 
-    // Searching operations takes every node's schema: they load once the palette
-    // is idle or a query is typed, off the canvas's path. Until then a query
-    // matches the nodes' own names.
-    const [wantSchemas, setWantSchemas] = useState(() => nodeSchemasLoaded(NODE_SCHEMA_TYPES));
-    useEffect(() => (wantSchemas ? undefined : onIdle(() => setWantSchemas(true))), [wantSchemas]);
-    useEffect(() => {
-        if (trimmedQuery) setWantSchemas(true);
-    }, [trimmedQuery]);
-    const schemasReady = useNodeSchemas(wantSchemas ? NODE_SCHEMA_TYPES : []) && wantSchemas;
-
-    // Warm the full index in the background so the first keystroke is instant,
-    // without ever blocking the browse-open path.
-    useEffect(() => (schemasReady && !_searchIndexes.operations ? onIdle(() => getNodeSearchIndex(true)) : undefined), [schemasReady]);
-
     const filteredMatches = useMemo<NodeSearchMatch[]>(() => {
         if (!trimmedQuery) return [];
         const q = trimmedQuery.toLowerCase();
         // Built lazily + cached at module scope; the browse path never reaches here.
-        const searchIndex = getNodeSearchIndex(schemasReady);
+        // Until the search catalog lands a query matches the nodes' own names.
+        const searchIndex = getNodeSearchIndex(searchCatalog);
         // Free-form CLI/model queries (e.g. "claude code", "codex", "opus",
         // "gpt-5.2", "deepseek r1") surface the Agent tile even though those
         // words don't appear in its label/description/type. The drop path
@@ -205,7 +203,7 @@ function PaletteNodes({
             if (nodeScore !== null) return [{ node, score: nodeScore }];
             return [];
         });
-    }, [trimmedQuery, availableNodes, models, schemasReady]).sort(
+    }, [trimmedQuery, availableNodes, models, searchCatalog]).sort(
         (a, b) => b.score - a.score || a.node.label.localeCompare(b.node.label)
     );
 
@@ -477,7 +475,7 @@ export function NodePreviewIcon({
     iconSize,
     className,
 }: {
-    node: NodeDefinition;
+    node: PaletteNode;
     /** Model the tile will seed into data.config.model (agent search hits). */
     seedModel?: string | null;
     iconSize: number;
@@ -538,7 +536,7 @@ function MiniNodePreview({
     node,
     seedModel,
 }: {
-    node: NodeDefinition;
+    node: PaletteNode;
     seedModel?: string | null;
 }) {
     const { bgGradient } = node;

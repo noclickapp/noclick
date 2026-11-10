@@ -5,21 +5,21 @@
 // Schedule trigger was only reachable by typing "trigger cron".
 import { buildWiringServices } from '~/components/workflow/AgentWiringPalette';
 import { filterNodeServices } from '~/utils/nodeServiceSearch';
+import { catalogActionText, loadNodeSearchCatalog } from '~/utils/nodeSearchCatalog';
 
 export default async function () {
-    // The services are read from every node's schema and definition, which load per type.
-    await (await import('~/utils/nodeSchemas')).loadAllNodeSchemas();
-    const { NODE_DEFINITION_TYPES, loadNodeDefinitions } = await import('~/components/workflow/nodes/nodeDefinitions');
-    await loadNodeDefinitions(NODE_DEFINITION_TYPES);
-    const triggers = buildWiringServices('trigger');
-    const tools = buildWiringServices('tool');
+    // The services and the actions they're searched by come from the server's search catalog, as in the palette.
+    const catalog = await loadNodeSearchCatalog();
+    const actionText = catalogActionText(catalog);
+    const triggers = buildWiringServices('trigger', catalog);
+    const tools = buildWiringServices('tool', catalog);
     if (triggers.length < 10 || tools.length < 10)
         throw new Error(
             `catalog looks empty: ${triggers.length} triggers, ${tools.length} tools`
         );
 
     const top = (role: 'trigger' | 'tool', q: string, n = 5) =>
-        filterNodeServices(role === 'trigger' ? triggers : tools, q, role)
+        filterNodeServices(role === 'trigger' ? triggers : tools, q, role, actionText)
             .slice(0, n)
             .map((s) => s.nodeType);
 

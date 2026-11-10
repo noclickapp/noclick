@@ -18,6 +18,8 @@ export interface SerializedNodeMeta {
     iconHtml: string;
     /** The category the node's definition declares (NodeDefinition.category); absent when none. */
     category?: string;
+    /** Search aliases the node's definition declares (NodeDefinition.keywords); absent when none. */
+    keywords?: string[];
     /** Default canvas placement size (used by the chat/MCP builders). */
     dimensions: SerializedNodeDimensions;
     /** Operation consts stamped `x-is-trigger` in the schema; absent when none.

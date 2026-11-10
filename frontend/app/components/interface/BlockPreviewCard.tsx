@@ -1,13 +1,12 @@
 // Shared preview card for UX blocks. Used in both the FlowHelperView palette
 // and as the drag overlay when dragging interface nodes onto the canvas.
 
-import type { NodeDefinition } from '~/components/workflow/nodes/types';
-import { BrandIcon } from '~/components/shared/BrandIcon';
+import { BrandIcon, type BrandIconComponent } from '~/components/shared/BrandIcon';
 
 interface BlockPreviewCardProps {
     blockType: string;
     label: string;
-    Icon: NodeDefinition['Icon'];
+    Icon: BrandIconComponent;
 }
 
 // Sized to scale with the active root-font-size tier.

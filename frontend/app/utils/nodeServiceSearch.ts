@@ -8,7 +8,7 @@
 // ("Trigger Cron"), which made the Schedule trigger unfindable by any word a
 // user would actually type.
 
-import { getAgentToolOperations, getTriggerOperations } from './nodeSchemas';
+import { getAgentToolOperations, getTriggerOperations, type AgentToolOperation, type TriggerOperation } from './nodeSchemas';
 import { scoreFields, type SearchField } from './fuzzySearch';
 
 export type ServiceSearchRole = 'trigger' | 'tool';
@@ -26,28 +26,35 @@ export interface NodeServiceTarget {
 // most ~1 per query token, so no realistic query can score into the band.
 const IDENTITY_BAND = 100;
 
+/** Lowercased haystack of what a node can DO in a role — operation display names, raw values and authored
+ *  `x-keywords` (and, for a tool, each action's category). */
+export function triggerActionText(ops: TriggerOperation[]): string {
+    return actionHaystack(ops.map((op) => `${op.displayName} ${op.operation} ${op.keywords}`));
+}
+
+export function toolActionText(ops: AgentToolOperation[]): string {
+    return actionHaystack(ops.map((op) => `${op.displayName} ${op.operation} ${op.keywords} ${op.category ?? ''}`));
+}
+
+function actionHaystack(parts: string[]): string {
+    return parts.join(' ').replace(/[_-]+/g, ' ').toLowerCase();
+}
+
+/** A node's action text in a role. */
+export type ActionTextOf = (nodeType: string, role: ServiceSearchRole) => string;
+
 const _actionText = new Map<string, string>();
 
-/** Lowercased haystack of what the node can DO in this role — operation display
- *  names, raw values and authored `x-keywords`. Memoized per (role, type): the
- *  schema walk is pure and the palette re-filters on every keystroke. */
-function actionText(nodeType: string, role: ServiceSearchRole): string {
+/** A node's action text read from its loaded schema. Memoized per (role, type): the schema walk is pure and the
+ *  palette re-filters on every keystroke. The palette itself reads the server's (utils/nodeSearchCatalog). */
+export const schemaActionText: ActionTextOf = (nodeType, role) => {
     const key = `${role}:${nodeType}`;
     const cached = _actionText.get(key);
     if (cached !== undefined) return cached;
-    const parts =
-        role === 'trigger'
-            ? getTriggerOperations(nodeType).map(
-                  (op) => `${op.displayName} ${op.operation} ${op.keywords}`
-              )
-            : getAgentToolOperations(nodeType).map(
-                  (op) =>
-                      `${op.displayName} ${op.operation} ${op.keywords} ${op.category ?? ''}`
-              );
-    const text = parts.join(' ').replace(/[_-]+/g, ' ').toLowerCase();
+    const text = role === 'trigger' ? triggerActionText(getTriggerOperations(nodeType)) : toolActionText(getAgentToolOperations(nodeType));
     _actionText.set(key, text);
     return text;
-}
+};
 
 function identityFields(target: NodeServiceTarget): SearchField[] {
     const fields: SearchField[] = [
@@ -75,7 +82,8 @@ function identityFields(target: NodeServiceTarget): SearchField[] {
 export function scoreNodeService(
     target: NodeServiceTarget,
     role: ServiceSearchRole,
-    query: string
+    query: string,
+    actionText: ActionTextOf = schemaActionText
 ): number | null {
     const identity = identityFields(target);
     const own = scoreFields(identity, query);
@@ -92,12 +100,13 @@ export function scoreNodeService(
 export function filterNodeServices<T extends NodeServiceTarget>(
     items: T[],
     query: string,
-    role: ServiceSearchRole
+    role: ServiceSearchRole,
+    actionText: ActionTextOf = schemaActionText
 ): T[] {
     if (!query.trim()) return items;
     const scored: { item: T; score: number }[] = [];
     for (const item of items) {
-        const score = scoreNodeService(item, role, query);
+        const score = scoreNodeService(item, role, query, actionText);
         if (score !== null) scored.push({ item, score });
     }
     // Array.prototype.sort is stable, so equal scores keep alphabetical order.

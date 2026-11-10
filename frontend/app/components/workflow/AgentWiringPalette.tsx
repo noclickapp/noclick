@@ -15,11 +15,15 @@ import { usePickerKeyboardNav } from '~/hooks/usePickerKeyboardNav';
 import { AgentToolOperationsPicker, SANDBOX_MOUNT_TYPES } from './AgentToolOperationsPicker';
 import { NodeConfig } from './NodeConfigLazy';
 import { NodeCredentials, providerCredentialsMissing } from './NodeCredentials';
-import { NODE_DEFINITION_TYPES, getNodeDefinition, nodeDisplayName } from './nodes/nodeDefinitions';
+import { getNodeDefinition, nodeDisplayName } from './nodes/nodeDefinitions';
 import { useNodeDefinitions } from '~/hooks/useNodeDefinitions';
-import { getAgentWirableCatalog, getNodeCredentialInfo, NODE_SCHEMA_TYPES, STRUCTURAL_AGENT_TOOL_TYPES, type TriggerOperation } from '~/utils/nodeSchemas';
+import { useNodeSearchCatalog } from '~/hooks/useNodeSearchCatalog';
+import { SerializedIcon } from '~/components/shared/SerializedIcon';
+import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
+import { getNodeCredentialInfo, STRUCTURAL_AGENT_TOOL_TYPES, type TriggerOperation } from '~/utils/nodeSchemas';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 import { filterNodeServices, type NodeServiceTarget } from '~/utils/nodeServiceSearch';
+import { catalogActionText, type NodeSearchCatalog } from '~/utils/nodeSearchCatalog';
 
 /** Existing wired node to edit — opens the palette directly in the config
  *  step (credentials for triggers; credentials + allowlist + mounts for
@@ -63,20 +67,19 @@ export interface ServiceEntry extends NodeServiceTarget {
 
 /**
  * The palette's service rows for a role, alphabetical by display name. Rows
- * carry the registry's own label/description/keywords so the palette names
+ * carry the node catalog's label/description/keywords so the palette names
  * services the way the node palette does and searches the same aliases — the
  * type-derived label alone left e.g. Schedule reachable only by typing
- * "trigger cron". Exported so tests exercise the real registry-backed rows.
+ * "trigger cron". Exported so tests exercise the real catalog-backed rows.
  */
-export function buildWiringServices(role: 'trigger' | 'tool'): ServiceEntry[] {
-    const catalog = getAgentWirableCatalog();
+export function buildWiringServices(role: 'trigger' | 'tool', catalog: NodeSearchCatalog): ServiceEntry[] {
     const wirable =
         role === 'trigger'
-            ? catalog.triggers.map(e => ({ nodeType: e.nodeType, triggerOps: e.triggerOps }))
-            : catalog.tools.map(nodeType => ({ nodeType, triggerOps: [] as TriggerOperation[] }));
+            ? catalog.wirable.triggers.map(e => ({ nodeType: e.nodeType, triggerOps: e.triggerOps }))
+            : catalog.wirable.tools.map(nodeType => ({ nodeType, triggerOps: [] as TriggerOperation[] }));
     return wirable
         .map(e => {
-            const meta = getNodeDefinition(e.nodeType);
+            const meta = getNodeIconMeta(e.nodeType);
             return {
                 ...e,
                 label: nodeDisplayName(e.nodeType),
@@ -156,17 +159,18 @@ export function AgentWiringPalette({
     const listRef = useRef<HTMLDivElement>(null);
     const searchRef = useRef<HTMLInputElement>(null);
 
-    // Which services can be wired, and the actions they're searched by, come from every node's schema and
-    // definition; a node being configured needs only its own.
+    // Which services can be wired, and the actions they're searched by, come from the search catalog (every node's
+    // schema, read once on the server); a node being configured loads its own schema and definition.
     const configTarget = configNode ?? configNodeProp ?? null;
-    const neededTypes = !open ? [] : configTarget ? [configTarget.nodeType] : NODE_SCHEMA_TYPES;
-    const schemasLoaded = useNodeSchemas(neededTypes);
-    const definitionsLoaded = useNodeDefinitions(!open ? [] : configTarget ? [configTarget.nodeType] : NODE_DEFINITION_TYPES);
-    const schemasReady = schemasLoaded && definitionsLoaded && open;
+    const searchCatalog = useNodeSearchCatalog(open);
+    const configTypes = open && configTarget ? [configTarget.nodeType] : [];
+    useNodeSchemas(configTypes);
+    useNodeDefinitions(configTypes);
     const services = useMemo<ServiceEntry[]>(
-        () => (schemasReady && !configTarget ? buildWiringServices(wiringRole) : []),
-        [schemasReady, configTarget, wiringRole],
+        () => (open && searchCatalog && !configTarget ? buildWiringServices(wiringRole, searchCatalog) : []),
+        [open, searchCatalog, configTarget, wiringRole],
     );
+    const actionText = useMemo(() => (searchCatalog ? catalogActionText(searchCatalog) : undefined), [searchCatalog]);
 
     const step: 'list' | 'trigger-ops' | 'node-config' = configNode
         ? 'node-config'
@@ -188,9 +192,9 @@ export function AgentWiringPalette({
         }
         // Services match on identity first, then on the actions they expose in
         // this role, so "issue" finds Linear and "schedule" finds Schedule.
-        if (step === 'list') return filterNodeServices(services, search, wiringRole);
+        if (step === 'list' && actionText) return filterNodeServices(services, search, wiringRole, actionText);
         return [];
-    }, [step, opsService, services, search, wiringRole]);
+    }, [step, opsService, services, search, wiringRole, actionText]);
 
     // After creating the node, continue into the in-palette config step:
     // tools get credentials + allowlist; triggers get credentials + their
@@ -500,9 +504,9 @@ export function AgentWiringPalette({
                             {step === 'trigger-ops' && opsService && (
                                 <span className="flex shrink-0 items-center gap-1.5 rounded-md bg-foreground/[0.06] px-2 py-1 text-xs text-foreground/80">
                                     {(() => {
-                                        const meta = getNodeDefinition(opsService.nodeType);
-                                        return meta?.Icon ? (
-                                            <BrandIcon Icon={meta.Icon} iconColor={meta.iconColor} className="h-3.5 w-3.5" />
+                                        const meta = getNodeIconMeta(opsService.nodeType);
+                                        return meta?.iconHtml ? (
+                                            <SerializedIcon html={meta.iconHtml} iconColor={meta.iconColor} className="h-3.5 w-3.5" />
                                         ) : null;
                                     })()}
                                     {opsService.label}
@@ -533,7 +537,7 @@ export function AgentWiringPalette({
                             />
                         </div>
                         <div ref={listRef} className="max-h-[38vh] overflow-y-auto scrollbar-subtle p-1.5">
-                            {!schemasReady ? (
+                            {!searchCatalog ? (
                                 <div className="flex justify-center px-3 py-8 text-muted-foreground" aria-label="Loading services">
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                 </div>
@@ -542,7 +546,7 @@ export function AgentWiringPalette({
                             )}
                             {step === 'list' &&
                                 (rows as ServiceEntry[]).map((s, idx) => {
-                                    const meta = getNodeDefinition(s.nodeType);
+                                    const meta = getNodeIconMeta(s.nodeType);
                                     return (
                                         <PaletteRow
                                             key={s.nodeType}
@@ -551,8 +555,8 @@ export function AgentWiringPalette({
                                             onHover={() => setHighlightedIndex(idx)}
                                             onSelect={() => commitIndex(idx)}
                                             icon={
-                                                meta?.Icon ? (
-                                                    <BrandIcon Icon={meta.Icon} iconColor={meta.iconColor} className="h-[18px] w-[18px] shrink-0" />
+                                                meta?.iconHtml ? (
+                                                    <SerializedIcon html={meta.iconHtml} iconColor={meta.iconColor} className="h-[18px] w-[18px] shrink-0" />
                                                 ) : (
                                                     <span className="h-[18px] w-[18px] shrink-0" />
                                                 )

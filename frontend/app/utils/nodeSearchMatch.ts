@@ -23,8 +23,19 @@ export interface OperationSearchIndexEntry {
     /** Operation identity: label, value, title, display-name, category. A hit
      *  here is a far stronger signal than a hit buried in field metadata. */
     nameHaystack: string;
-    /** Full text: operation identity + field/description metadata. */
-    haystack: string;
+    /** Its description and field metadata. A query term has no spaces, so it is in the operation's text exactly when
+     *  it is in one of the two. */
+    fieldHaystack: string;
+}
+
+/** What searching a node by name reads: its definition's words. */
+export type NodeSearchIdentity = Pick<NodeDefinition, 'type' | 'label' | 'description' | 'keywords'>;
+
+/** What a node's schema adds to its search entry: each operation's words, else (a node without operations) its
+ *  fields' words. Built on the server for every node at once (lib/nodeSearchCatalog.server). */
+export interface NodeSearchText {
+    operations: OperationSearchIndexEntry[];
+    fields: string;
 }
 
 export interface NodeSearchIndexEntry {
@@ -69,20 +80,20 @@ function addFieldSearchText(parts: string[], fieldKey: string, prop: unknown) {
     addSearchText(parts, schemaProp.enumLabels);
 }
 
-/** A node's search entry: its own name, description and keywords, and with `withOperations` (its schema loaded)
- *  each operation and field. */
-export function buildNodeSearchIndexEntry(node: NodeDefinition, withOperations = true): NodeSearchIndexEntry {
-    const identityHaystack = `${node.label} ${node.type}`.toLowerCase();
-    const baseParts: string[] = [node.label, node.description, node.type, ...(node.keywords ?? [])].map((value) => value.toLowerCase());
-    if (!withOperations) {
-        return { label: node.label.toLowerCase(), identityHaystack, baseHaystack: baseParts.join(' '), operations: [] };
+/** A node's search text, read from its loaded schema. */
+export function nodeSearchText(nodeType: string): NodeSearchText {
+    const schemaInfo = getSchemaInfo(nodeType);
+    const operations = getAvailableOperations(nodeType);
+    if (operations.length === 0) {
+        const fieldParts: string[] = [];
+        getFieldsForOption(nodeType).forEach(({ key, prop }) => {
+            addFieldSearchText(fieldParts, key, prop);
+        });
+        return { operations: [], fields: fieldParts.join(' ') };
     }
-    const schemaInfo = getSchemaInfo(node.type);
-    const operations = getAvailableOperations(node.type);
-    const operationEntries: OperationSearchIndexEntry[] = [];
-
-    if (operations.length > 0) {
-        operations.forEach((operation) => {
+    return {
+        fields: '',
+        operations: operations.map((operation) => {
             // nameParts = the operation's own identity (strong signal);
             // fieldParts = prose + field metadata (weak signal). Keeping them
             // apart lets scoring prefer an operation whose label/value matches
@@ -109,23 +120,31 @@ export function buildNodeSearchIndexEntry(node: NodeDefinition, withOperations =
             // applied to this hot path (per-keystroke scan over ~3.7k ops).
             addSearchText(nameParts, discriminatorProp?.['x-keywords']);
             addSearchText(fieldParts, resolved?.description);
-            getFieldsForOption(node.type, undefined, operation.value).forEach(({ key, prop }) => {
+            getFieldsForOption(nodeType, undefined, operation.value).forEach(({ key, prop }) => {
                 addFieldSearchText(fieldParts, key, prop);
             });
-            operationEntries.push({
+            return {
                 value: operation.value,
                 label: operation.label,
                 nameHaystack: nameParts.join(' '),
-                haystack: [...nameParts, ...fieldParts].join(' '),
-            });
-        });
-    } else {
-        getFieldsForOption(node.type).forEach(({ key, prop }) => {
-            addFieldSearchText(baseParts, key, prop);
-        });
-    }
+                fieldHaystack: fieldParts.join(' '),
+            };
+        }),
+    };
+}
 
-    return { label: node.label.toLowerCase(), identityHaystack, baseHaystack: baseParts.join(' '), operations: operationEntries };
+/** A node's search entry: its own name, description and keywords, and with `text` (its schema's search text) each
+ *  operation and field. */
+export function nodeSearchIndexEntry(node: NodeSearchIdentity, text?: NodeSearchText): NodeSearchIndexEntry {
+    const identityHaystack = `${node.label} ${node.type}`.toLowerCase();
+    const baseParts: string[] = [node.label, node.description, node.type, ...(node.keywords ?? [])].map((value) => value.toLowerCase());
+    if (text?.fields) baseParts.push(text.fields);
+    return { label: node.label.toLowerCase(), identityHaystack, baseHaystack: baseParts.join(' '), operations: text?.operations ?? [] };
+}
+
+/** A node's search entry from its loaded schema; names only without `withOperations`. */
+export function buildNodeSearchIndexEntry(node: NodeSearchIdentity, withOperations = true): NodeSearchIndexEntry {
+    return nodeSearchIndexEntry(node, withOperations ? nodeSearchText(node.type) : undefined);
 }
 
 function tokenize(query: string): string[] {
@@ -184,7 +203,7 @@ export function getOperationSearchMatch(
     for (const operation of entry.operations) {
         // Every intent term must appear somewhere in the operation, otherwise
         // the query doesn't reasonably describe it.
-        if (!intentTerms.every((term) => operation.haystack.includes(term))) continue;
+        if (!intentTerms.every((term) => operation.nameHaystack.includes(term) || operation.fieldHaystack.includes(term))) continue;
         // A query that names the operation (all intent terms hit its own name)
         // is a strong signal; one that only surfaces via field metadata is weak
         // and must sit below node-name matches. Banding both selects the best

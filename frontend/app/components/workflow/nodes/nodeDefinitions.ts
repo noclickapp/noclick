@@ -187,11 +187,6 @@ export function isOfferedNodeType(type: string): boolean {
     return type !== 'trigger-email' || !!inboundEmailDomain();
 }
 
-/** The nodes offered for adding, in palette order, once every definition has loaded. */
-export function offeredNodeDefinitions(): NodeDefinition[] {
-    return NODE_DEFINITION_TYPES.filter(isOfferedNodeType).flatMap((type) => getNodeDefinition(type) ?? []);
-}
-
 /** A node type's name for people: its definition's label, the catalog's (served with the dashboard) for one not
  *  loaded, else the type's own words. */
 export function nodeDisplayName(type: string): string {

@@ -115,6 +115,7 @@ function serialize(type: string): SerializedNodeMeta | undefined {
         },
     };
     if (node.category) meta.category = node.category;
+    if (node.keywords?.length) meta.keywords = node.keywords;
     const triggerOps = extractNodeOperations(type)
         .filter((o) => o.isTrigger)
         .map((o) => o.value);

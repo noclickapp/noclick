@@ -103,7 +103,7 @@ describe('node palette search ranking bands', () => {
     const siblingWithFieldHit: NodeSearchIndexEntry = {
         ...nodeNamed('Slack', 'automation-slack'),
         operations: [
-            { value: 'post', label: 'Post Message', nameHaystack: 'post message post_message', haystack: 'post message post_message subreddit reddit target field' },
+            { value: 'post', label: 'Post Message', nameHaystack: 'post message post_message', fieldHaystack: 'subreddit reddit target field' },
         ],
     };
 
@@ -125,7 +125,7 @@ describe('node palette search ranking bands', () => {
         const opNamed: NodeSearchIndexEntry = {
             ...nodeNamed('Mailer', 'automation-mailer'),
             operations: [
-                { value: 'send_invoice', label: 'Send Invoice', nameHaystack: 'send invoice send_invoice', haystack: 'send invoice send_invoice recipient' },
+                { value: 'send_invoice', label: 'Send Invoice', nameHaystack: 'send invoice send_invoice', fieldHaystack: 'recipient' },
             ],
         };
         // "invoice" is operation-intent here (not in Mailer's identity).
