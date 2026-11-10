@@ -1,0 +1,86 @@
+[
+  {
+    "operation": "create_invoice",
+    "classification": "d",
+    "defect": "Overlapping country-specific oneOf variants reject the documented generic request because it is valid under multiple alternatives. The node uses only documented generic fields.",
+    "source": "https://developer.alegra.com/reference/post_invoices.md",
+    "matching_branches": [
+      "Factura de venta simple",
+      "Factura de venta de México",
+      "Factura de venta de Colombia",
+      "Factura de venta Argentina",
+      "Factura de venta de Peru",
+      "Factura de venta de Panama",
+      "Factura de venta de Chile",
+      "Factura de venta República Dominicana",
+      "Factura ordinaria España",
+      "Factura de Ingreso con Carta Porte México"
+    ]
+  },
+  {
+    "operation": "update_invoice",
+    "classification": "d",
+    "defect": "Overlapping country-specific oneOf variants reject the documented generic request because it is valid under multiple alternatives. The node uses only documented generic fields.",
+    "source": "https://developer.alegra.com/reference/put_invoices-id.md",
+    "matching_branches": [
+      "Edición simple",
+      "Factura de venta México",
+      "Factura de venta Colombia",
+      "Factura de venta Argentina",
+      "Factura de venta Perú",
+      "Factura de venta Panama",
+      "Factura de venta Chile",
+      "Factura de venta República Dominicana",
+      "Factura ordinaria España"
+    ]
+  },
+  {
+    "operation": "create_payment",
+    "classification": "d",
+    "defect": "Overlapping country-specific oneOf variants reject the documented generic request because it is valid under multiple alternatives. The node uses only documented generic fields.",
+    "source": "https://developer.alegra.com/reference/post_payments-1.md",
+    "matching_branches": [
+      "Pago general",
+      "Pago México",
+      "Pago Colombia"
+    ]
+  },
+  {
+    "operation": "update_payment",
+    "classification": "d",
+    "defect": "Overlapping country-specific oneOf variants reject the documented generic request because it is valid under multiple alternatives. The node uses only documented generic fields.",
+    "source": "https://developer.alegra.com/reference/put_payments-id-1.md",
+    "matching_branches": [
+      "Edición simple",
+      "Edición pago México"
+    ]
+  },
+  {
+    "operation": "create_credit_note",
+    "classification": "d",
+    "defect": "Overlapping country-specific oneOf variants reject the documented generic request because it is valid under multiple alternatives. The node uses only documented generic fields.",
+    "source": "https://developer.alegra.com/reference/post_credit-notes.md",
+    "matching_branches": [
+      "Nota de crédito general",
+      "Nota de crédito México",
+      "Nota de crédito Colombia",
+      "Nota de crédito Argentina",
+      "Nota de crédito Perú",
+      "Nota de crédito Panamá"
+    ]
+  },
+  {
+    "operation": "update_credit_note",
+    "classification": "d",
+    "defect": "Overlapping country-specific oneOf variants reject the documented generic request because it is valid under multiple alternatives. The node uses only documented generic fields.",
+    "source": "https://developer.alegra.com/reference/put_credit-notes-id.md",
+    "matching_branches": [
+      "Edición general",
+      "Edición nota de crédito Colombia",
+      "Edición nota de crédito Argentina",
+      "Edición nota de crédito Perú",
+      "Edición nota de crédito Panamá",
+      "Edición nota de crédito Chile"
+    ]
+  }
+]
