@@ -10,6 +10,14 @@ from agents import set_tracing_disabled
 # OPENAI_API_KEY is set, whichever model ran. Nothing reads those traces; our own tracing is OpenTelemetry.
 set_tracing_disabled(True)
 
-from .agent import Agent  # noqa: E402
-
 __all__ = ["Agent"]
+
+
+def __getattr__(name):
+    # Agent (and LiteLLM under it) imports at its first use: importing a light
+    # submodule (guards, progress) shouldn't import the model client.
+    if name == "Agent":
+        from .agent import Agent
+
+        return Agent
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

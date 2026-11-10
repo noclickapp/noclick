@@ -24,6 +24,8 @@ from __future__ import annotations
 import logging
 from typing import Any, Dict, Optional
 
+from utils.lazy_import import Lazy
+
 logger = logging.getLogger(__name__)
 
 # Count the warm agent sandboxes a user currently has running.
@@ -464,14 +466,18 @@ _providers: Dict[str, Any] = {}
 
 
 def provide(name: str, implementation: Any) -> None:
-    """Register a capability. Call before serving traffic."""
+    """Register a capability: an implementation, or a ``Lazy`` reference to one, imported at the capability's first
+    lookup (``capability``), so a process that never asks for it never imports it. Call before serving traffic."""
     _providers[name] = implementation
     logger.info(f"[capabilities] {name} provided")
 
 
 def capability(name: str) -> Optional[Any]:
     """The registered implementation, or None. None is an ordinary answer."""
-    return _providers.get(name)
+    implementation = _providers.get(name)
+    if isinstance(implementation, Lazy):
+        implementation = _providers[name] = implementation.resolve()
+    return implementation
 
 
 def clear() -> None:

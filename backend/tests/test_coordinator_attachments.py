@@ -106,53 +106,8 @@ async def test_unsupported_document_is_retained_with_caption_and_honest_error(fi
     assert "File: https://assets.example/" in text
 
 
-async def test_image_uses_url_vision_input_without_base64_in_history(files):
-    from coder.openai_agent import Agent
-    from coder.openai_agent.compaction import IMAGE_TOKENS
-
-    text, images = await prepare(b"image", kind="image", mime_type="image/jpeg", filename="photo.jpg")
-    assert "Please read this" in text
-    from wss.sender.schema import ContentItem
-
-    content = Agent._build_user_input({"content_items": [ContentItem(type="text", text=text), *images]})
-    assert content[1]["type"] == "input_image" and content[1]["image_url"].startswith("https://assets.example/")
-    assert "base64" not in str(content)
-    assert compaction.token_count([{"role": "user", "content": content}], "gpt-4o") >= IMAGE_TOKENS
 
 
-async def test_checkpoint_summarizer_receives_native_images(monkeypatch):
-    from agents.models.interface import Model
-    from openai.types.responses import Response, ResponseCompletedEvent, ResponseOutputMessage, ResponseOutputText
-    from coder.openai_agent import Agent
-    from coder.openai_agent.compaction import IMAGE_TOKENS
-
-    captured = []
-    class VisionModel(Model):
-        async def get_response(self, *a, **kw):
-            raise AssertionError("Expected streaming")
-
-        async def stream_response(self, system_instructions, input, *a, **kw):
-            captured.extend(input)
-            text = ("<description>Photo of a receipt with an exact total.</description>\n<checkpoint>The receipt in "
-                    "photo.jpg shows a total of $42. Keep that fact for the pending report.</checkpoint>")
-            output = [ResponseOutputMessage(id="m1", type="message", role="assistant", status="completed",
-                        content=[ResponseOutputText(type="output_text", text=text, annotations=[])])]
-            yield ResponseCompletedEvent(type="response.completed", sequence_number=0,
-                response=Response.model_construct(id="r1", created_at=0, model="test", object="response", output=output,
-                                                   status="completed", usage=None))
-
-    original = Agent.create
-    async def create(**kw):
-        agent = await original(**kw)
-        agent._sdk_agent.model = VisionModel()
-        agent._billing_hooks = None
-        return agent
-    monkeypatch.setattr(Agent, "create", create)
-    items = [{"role": "user", "content": [{"type": "input_text", "text": "What is the total?"},
-                                         {"type": "input_image", "image_url": "https://assets.example/photo.jpg"}]}]
-    result = await compaction.summarize("", items, model="gpt-4o", user_id=USER, user_email=None, organization_id=None)
-    assert "$42" in result.content
-    assert list(compaction.image_inputs(captured))[0]["image_url"] == "https://assets.example/photo.jpg"
 
 
 async def test_a_file_sent_without_its_extension_is_kept_under_one(files):

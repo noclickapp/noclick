@@ -17,9 +17,10 @@ import json
 import logging
 import re
 from functools import lru_cache
-from typing import Any, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
-from litellm import ChatCompletionToolParam, ChatCompletionToolParamFunctionChunk
+if TYPE_CHECKING:  # the model client's types: LiteLLM costs ~200 MB to import, and a tool definition is a dict
+    from litellm import ChatCompletionToolParam
 
 logger = logging.getLogger(__name__)
 
@@ -748,7 +749,7 @@ def build_node_op_tools(
     provider_label: Optional[str] = None,
     credential_label: Optional[str] = None,
     tool_user: Optional[Dict[str, Any]] = None,
-) -> Tuple[List[ChatCompletionToolParam], Dict[str, Dict[str, Any]]]:
+) -> Tuple[List["ChatCompletionToolParam"], Dict[str, Dict[str, Any]]]:
     """
     Build agent tool definitions for the allowlisted operations of a node.
 
@@ -807,7 +808,7 @@ def build_node_op_tools(
     creatable_resource_types: set = {
         rt for op, rt, _path in resource_creators(node_type) if op in allowed
     }
-    tool_params: List[ChatCompletionToolParam] = []
+    tool_params: List["ChatCompletionToolParam"] = []
     tool_configs: Dict[str, Dict[str, Any]] = {}
     # Dynamic-option fields seen across allowlisted ops: config key →
     # {field_name (loader key), depends_on, label}. Drives the companion
@@ -891,16 +892,10 @@ def build_node_op_tools(
         parameters = {"type": "object", "properties": properties, "required": required}
 
         tool_name = f"{slug}__{operation}"
-        tool_params.append(
-            ChatCompletionToolParam(
-                type="function",
-                function=ChatCompletionToolParamFunctionChunk(
-                    name=tool_name,
-                    description=description,
-                    parameters=parameters,
-                ),
-            )
-        )
+        tool_params.append({
+            "type": "function",
+            "function": {"name": tool_name, "description": description, "parameters": parameters},
+        })
         tool_configs[tool_name] = {
             "node_id": node_id,
             "tool_type": "node_op",
@@ -965,16 +960,10 @@ def build_node_op_tools(
             },
             "required": ["field"],
         }
-        tool_params.append(
-            ChatCompletionToolParam(
-                type="function",
-                function=ChatCompletionToolParamFunctionChunk(
-                    name=lookup_tool_name,
-                    description=description,
-                    parameters=parameters,
-                ),
-            )
-        )
+        tool_params.append({
+            "type": "function",
+            "function": {"name": lookup_tool_name, "description": description, "parameters": parameters},
+        })
         # Drop entries where the union ended up None (unscoped) — keep only
         # fields where EVERY consuming op was scoped, so the lookup actually
         # filters there. (None entries are computed but only used as the
