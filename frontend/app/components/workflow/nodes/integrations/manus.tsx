@@ -18,7 +18,7 @@ ManusIcon.displayName = 'ManusIcon';
 export const ManusNode: NodeDefinition = {
     type: 'automation-manus',
     label: 'Manus',
-    description: 'Automate tasks, messages, projects, files and webhooks',
+    description: 'Start workflows from task events and automate tasks, messages, projects and files',
     category: 'ai',
     Icon: ManusIcon,
     iconColor: '',

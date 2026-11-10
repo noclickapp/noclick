@@ -6,6 +6,10 @@ and has_more fields; task creation returns an asynchronous task acknowledgement.
 """
 from __future__ import annotations
 
+import base64
+import hashlib
+import json
+import time
 from typing import Annotated, Any, Literal, Union
 
 import httpx
@@ -14,6 +18,10 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding, rsa
 
 BASE_URL = "https://api.manus.ai/v2/"
 
@@ -570,8 +578,27 @@ class ManusGetSkillConfig(ManusInput):
     )
 
 
+class ManusOnTaskEventConfig(WebhookTriggerConfigBase):
+    """Start a workflow or agent from Manus's documented task lifecycle events."""
+
+    operation: Literal["on_task_event"] = Field(
+        "on_task_event", title="On Task Event",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True,
+                           "x-category": "Triggers", "x-display-name": "On Task Event"},
+    )
+    event_type: Literal["all", "task_created", "task_stopped", "task_deleted"] = Field(
+        "task_stopped", title="Event", description="Task lifecycle event to receive, or all events.")
+    stop_reason: Literal["all", "finish", "ask"] = Field(
+        "all", title="Stop Reason", description="For task_stopped: completed (finish), needs input (ask), or both.")
+    webhook_url: str | None = Field(
+        None, title="Webhook URL", description="Registered with Manus automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True},
+    )
+
+
 ManusOperation = Annotated[
     Union[
+        ManusOnTaskEventConfig,
         ManusGetCurrentUserConfig,
         ManusCreateTaskConfig,
         ManusGetTaskConfig,
@@ -631,7 +658,8 @@ ROUTES = {
 }
 
 
-class ManusNode(WorkflowNode):
+class ManusNode(ExternalWebhookTriggerMixin, WorkflowNode):
+    webhook_replace_stale_endpoint = True
     integration_type = "automation-manus"
     connection_evidence = ConnectionEvidence(
         identity_operation="get_current_user",
@@ -643,17 +671,104 @@ class ManusNode(WorkflowNode):
     def get_config_model(cls):
         return ManusConfig
 
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        key = credential.get("api_key")
+        if not key:
+            raise ValueError("Connect a Manus API key")
+        # Cache the provider public key with this registration, before creating an endpoint.
+        public = await cls._request("GET", "webhook.publicKey", {}, key)
+        if not public.get("public_key") or public.get("algorithm") != "RSA-SHA256":
+            raise ValueError("Manus did not return its RSA-SHA256 webhook public key")
+        result = await cls._request("POST", "webhook.create", {"url": webhook_url}, key)
+        webhook_id = (result.get("webhook") or {}).get("id")
+        if not webhook_id:
+            raise ValueError("Manus did not return a webhook ID")
+        # The row's signing material is authoritative even before the config autosave.
+        return {"external_webhook_id": str(webhook_id), "signing_secret": json.dumps({
+            "public_key": public["public_key"], "url": webhook_url})}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        webhook_id = (config or {}).get("external_webhook_id")
+        if not webhook_id:
+            return
+        if not credential or not credential.get("api_key"):
+            raise ValueError("Connect a Manus API key to remove its webhook")
+        await cls._request("POST", "webhook.delete", {"webhook_id": str(webhook_id)}, credential["api_key"])
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        """RSA PKCS#1 v1.5 / SHA-256, exactly as Manus's webhook security guide."""
+        try:
+            lower = {k.lower(): v for k, v in headers.items()}
+            timestamp = lower.get("x-webhook-timestamp", "")
+            if not timestamp.isdigit() or abs(time.time() - int(timestamp)) > 300:
+                return False
+            material = json.loads((config or {}).get("signing_secret") or "{}")
+            key = serialization.load_pem_public_key(material["public_key"].encode())
+            if not isinstance(key, rsa.RSAPublicKey):
+                return False
+            content = f"{timestamp}.{material['url']}.{hashlib.sha256(body).hexdigest()}".encode()
+            key.verify(base64.b64decode(lower.get("x-webhook-signature", ""), validate=True),
+                       content, padding.PKCS1v15(), hashes.SHA256())
+            return True
+        except (ValueError, KeyError, TypeError, AttributeError, InvalidSignature):
+            return False
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        kind = payload.get("event_type")
+        if kind not in ("task_created", "task_stopped", "task_deleted"):
+            return False
+        selected = (config or {}).get("event_type", "task_stopped")
+        if selected != "all" and kind != selected:
+            return False
+        reason = (config or {}).get("stop_reason", "all")
+        return kind != "task_stopped" or reason == "all" or (payload.get("task_detail") or {}).get("stop_reason") == reason
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        kind = output.get("event_type")
+        detail = output.get("task_detail") or {}
+        task_id = detail.get("task_id")
+        if kind not in ("task_created", "task_stopped", "task_deleted") or not task_id:
+            return None
+        title = detail.get("task_title") or str(task_id)
+        action = {"task_created": "created a task", "task_deleted": "deleted a task",
+                  "task_stopped": "stopped a task"}[kind]
+        lines = [f"Manus {action}: {title}", f"Task ID: {task_id}",
+                 f"Event ID: {output.get('event_id')}", f"URL: {detail.get('task_url')}"]
+        if kind == "task_stopped":
+            lines += [f"Stop reason: {detail.get('stop_reason')}", str(detail.get("message") or "")]
+            for attachment in detail.get("attachments") or []:
+                lines.append(f"File: {attachment.get('file_name')} ({attachment.get('size_bytes')} bytes): {attachment.get('url')}")
+            if detail.get("stop_reason") == "ask":
+                question = detail.get("question_expectation") or {}
+                if question:
+                    lines.append("Question: " + json.dumps(question, ensure_ascii=False))
+                lines.append(f"Reply with send_message using task_id={task_id} and message.content; do not auto-confirm actions.")
+        return {"text": "\n".join(lines), "conversation_key": str(task_id), "title": title}
+
     async def execute(self, inputs):
         if not self.config.credentials:
             raise ValueError("Connect a Manus API key")
         config = self.config.config
+        if isinstance(config, ManusOnTaskEventConfig):
+            return inputs
         method, route = ROUTES[config.operation]
         payload = config.model_dump(
             mode="json", exclude={"operation", "clear_instruction"}, exclude_none=True
         )
         if isinstance(config, ManusUpdateProjectConfig) and config.clear_instruction:
             payload["instruction"] = ""
-        key = self.config.credentials.api_key
+        result = await self._request(method, route, payload, self.config.credentials.api_key)
+        if config.operation == "get_current_user" and not result.get("user_id"):
+            raise ValueError("Manus did not return the account ID")
+        return result
+
+    @classmethod
+    async def _request(cls, method, route, payload, key):
         async with httpx.AsyncClient(timeout=30, follow_redirects=False) as client:
             response = await client.request(
                 method,
@@ -680,6 +795,4 @@ class ManusNode(WorkflowNode):
             raise ValueError("Manus API error: " + detail)
         if result.get("ok") is not True:
             raise ValueError("Manus did not acknowledge the request")
-        if config.operation == "get_current_user" and not result.get("user_id"):
-            raise ValueError("Manus did not return the account ID")
         return result

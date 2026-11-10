@@ -1063,6 +1063,157 @@
       "title": "ManusMessage",
       "type": "object"
     },
+    "ManusOnTaskEventConfig": {
+      "description": "Start a workflow or agent from Manus's documented task lifecycle events.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_task_event",
+          "default": "on_task_event",
+          "title": "On Task Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Task Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "task_stopped",
+          "description": "Task lifecycle event to receive, or all events.",
+          "enum": [
+            "all",
+            "task_created",
+            "task_stopped",
+            "task_deleted"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "stop_reason": {
+          "default": "all",
+          "description": "For task_stopped: completed (finish), needs input (ask), or both.",
+          "enum": [
+            "all",
+            "finish",
+            "ask"
+          ],
+          "title": "Stop Reason",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Manus automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "ManusOnTaskEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "ManusSendMessageConfig": {
       "additionalProperties": false,
       "description": "Sends a follow-up message to a task for multi-turn conversation. Use this after [task.create](https://open.manus.ai/docs/v2/task.create) to continue talking, or to answer `messageAskUser` / `cascadeAskUser` questions with ordinary message.content. For supported action confirmations, review confirm_input_schema and the target tool event, then use [task.confirmAction](https://open.manus.ai/docs/v2/task.confirmAction). Do not automatically confirm unrecognized waiting types.",
@@ -1364,6 +1515,7 @@
           "list_skills": "#/$defs/ManusListSkillsConfig",
           "list_tasks": "#/$defs/ManusListTasksConfig",
           "list_webhooks": "#/$defs/ManusListWebhooksConfig",
+          "on_task_event": "#/$defs/ManusOnTaskEventConfig",
           "send_message": "#/$defs/ManusSendMessageConfig",
           "stop_task": "#/$defs/ManusStopTaskConfig",
           "update_project": "#/$defs/ManusUpdateProjectConfig",
@@ -1372,6 +1524,9 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/ManusOnTaskEventConfig"
+        },
         {
           "$ref": "#/$defs/ManusGetCurrentUserConfig"
         },
