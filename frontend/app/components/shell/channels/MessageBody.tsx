@@ -88,6 +88,14 @@ export function MessageBody({
                 </pre>
             ),
             code: ({ children }) => <code className="rounded-[5px] bg-foreground/[0.08] px-[5px] py-px font-mono text-[0.86em] text-foreground">{children}</code>,
+            // A table keeps its columns: one too wide for the message scrolls inside its own box, never the thread.
+            table: ({ children }) => (
+                <div className="max-w-full overflow-x-auto rounded-xl ring-1 ring-inset ring-foreground/[0.07] scrollbar-subtle">
+                    <table className="min-w-full border-collapse text-[13px] leading-snug [overflow-wrap:normal]">{children}</table>
+                </div>
+            ),
+            th: ({ children }) => <th className="border-b border-foreground/[0.08] px-3 py-1.5 text-left font-medium text-foreground">{children}</th>,
+            td: ({ children }) => <td className="border-t border-foreground/[0.06] px-3 py-1.5 align-top">{children}</td>,
             hr: () => <hr className="border-border dark:border-foreground/[0.1]" />,
             a: ({ href = '', children }) => {
                 if (href.startsWith(MENTION)) {
@@ -119,7 +127,8 @@ export function MessageBody({
     }, [members, channels, onChannel]);
 
     return (
-        <div className={cn('max-w-[100ch] break-words text-[15px] leading-[1.6] [&>*+*]:mt-2', muted ? 'text-muted-foreground' : 'text-foreground/90')}>
+        // Long unbroken text (a URL, a token) wraps anywhere rather than widening whatever lays the message out.
+        <div className={cn('min-w-0 max-w-[100ch] text-[15px] leading-[1.6] [overflow-wrap:anywhere] [&>*+*]:mt-2', muted ? 'text-muted-foreground' : 'text-foreground/90')}>
             <ReactMarkdown remarkPlugins={plugins} urlTransform={keepRefs} components={components}>
                 {text}
             </ReactMarkdown>
