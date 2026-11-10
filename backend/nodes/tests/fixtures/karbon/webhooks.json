@@ -1,0 +1,28 @@
+{
+  "contact": {
+    "ResourcePermaKey": "kCsVf7svWQw",
+    "ResourceType": "Contact",
+    "ActionType": "Updated",
+    "TimeStamp": "2024-08-01T21:54:36Z"
+  },
+  "work": {
+    "ResourcePermaKey": "kCsVf7svWQw",
+    "ResourceType": "Work",
+    "ActionType": "Updated",
+    "TimeStamp": "2024-08-01T21:54:36Z"
+  },
+  "note": {
+    "ResourcePermaKey": "kCsVf7svWQw",
+    "ResourceType": "Note",
+    "ActionType": "Updated",
+    "TimeStamp": "2024-08-01T21:54:36Z"
+  },
+  "note-comment": {
+    "ResourcePermaKey": "kCsVf7svWQw",
+    "ResourceType": "NoteComment",
+    "ActionType": "Updated",
+    "TimeStamp": "2024-08-01T21:54:36Z",
+    "ParentEntityType": "Note",
+    "ParentEntityKey": "2TTFWz8L5SSt"
+  }
+}

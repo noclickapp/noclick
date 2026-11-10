@@ -15,7 +15,7 @@ const KarbonIcon = ({ className, style }: { className?: string; style?: CSSPrope
 );
 export const KarbonNode: NodeDefinition = {
     type: 'automation-karbon', category: 'finance-accounting', label: 'Karbon',
-    description: 'Manage contacts, organizations, work items and notes in Karbon',
+    description: 'Start workflows from Karbon changes and manage contacts, work items and notes',
     keywords: ['accounting', 'practice management', 'clients', 'tasks'],
     Icon: KarbonIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

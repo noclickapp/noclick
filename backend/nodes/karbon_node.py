@@ -2,6 +2,9 @@
 Each operation maps to one published API endpoint and preserves its JSON data.
 """
 from __future__ import annotations
+import hashlib
+import hmac
+import secrets
 from datetime import datetime
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
@@ -9,6 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 BASE_URL = "https://api.karbonhq.com"
@@ -174,7 +178,30 @@ class KarbonGetNote(_Key):
 class KarbonGetTenantSettings(_Input):
     operation: Literal["get_tenant_settings"] = "get_tenant_settings"
 
+class _KarbonWebhook(WebhookTriggerConfigBase):
+    webhook_url: str | None = Field(None, title="Webhook URL",
+        description="Registered automatically. Karbon allows one workflow per webhook type per API application.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+class KarbonOnContactChanged(_KarbonWebhook):
+    operation: Literal["on_contact_changed"] = Field("on_contact_changed", title="On Contact Changed",
+        json_schema_extra={"ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On Contact Changed"})
+
+class KarbonOnWorkItemChanged(_KarbonWebhook):
+    operation: Literal["on_work_item_changed"] = Field("on_work_item_changed", title="On Work Item Changed",
+        json_schema_extra={"ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On Work Item Changed"})
+
+class KarbonOnNoteChanged(_KarbonWebhook):
+    operation: Literal["on_note_changed"] = Field("on_note_changed", title="On Note Changed",
+        json_schema_extra={"ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On Note Changed"})
+
 KarbonOperation = Annotated[Union[
+    KarbonOnContactChanged,
+    KarbonOnWorkItemChanged,
+    KarbonOnNoteChanged,
     KarbonCreateContact,
     KarbonUpdateContact,
     KarbonCreateOrganization,
@@ -222,7 +249,16 @@ def _body(config):
     return result
 
 
-class KarbonNode(WorkflowNode):
+# Single-event subscriptions deliberately omit preview batching. The provider's
+# payloads and registration contract are pinned in the webhook fixture manifest.
+TRIGGER_TYPES = {
+    "on_contact_changed": ("Contact", {"Contact", "Organization", "ClientGroup"}),
+    "on_work_item_changed": ("Work", {"Work"}),
+    "on_note_changed": ("Note", {"Note", "NoteComment"}),
+}
+
+
+class KarbonNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-karbon"
     connection_evidence = ConnectionEvidence(operation="list_users", noun="Karbon users",
         label_keys=("Name", "EmailAddress", "UserKey"))
@@ -231,8 +267,98 @@ class KarbonNode(WorkflowNode):
     def get_config_model(cls):
         return KarbonConfig
 
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, *, body=None):
+        credential = KarbonCredential.model_validate(credential)
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, BASE_URL + path,
+                headers={"Authorization": "Bearer " + credential.authorization_token,
+                    "AccessKey": credential.access_key, "Accept": "application/json"},
+                **({"json": body} if body is not None else {}))
+        if response.status_code == 404 and method in {"GET", "DELETE"}:
+            return None
+        if not 200 <= response.status_code < 300:
+            message = response.text
+            for secret in (credential.authorization_token, credential.access_key, (body or {}).get("SigningKey")):
+                if secret:
+                    message = message.replace(secret, "[redacted]")
+            raise ValueError(f"Karbon HTTP {response.status_code}: {message[:2000]}")
+        if response.status_code == 204:
+            return None
+        data = response.json()
+        if not isinstance(data, dict) or "error" in data:
+            raise ValueError("Expected a Karbon webhook subscription")
+        return data
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        subscription_type, _ = TRIGGER_TYPES[config["operation"]]
+        secret = secrets.token_hex(32)
+        # POST is only called by the lifecycle on activation, never per delivery.
+        # Karbon rejects a second subscription of the same type; don't delete it.
+        await cls._webhook_request(credential, "POST", "/v3/WebhookSubscriptions", body={
+            "TargetUrl": webhook_url, "WebhookType": subscription_type, "SigningKey": secret})
+        return {"external_webhook_id": subscription_type, "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        subscription_type = config.get("external_webhook_id")
+        if not credential or subscription_type not in {v[0] for v in TRIGGER_TYPES.values()}:
+            return
+        path = "/v3/WebhookSubscriptions/" + subscription_type
+        subscription = await cls._webhook_request(credential, "GET", path)
+        # The provider has no subscription id: the type is its address. Do not
+        # remove a subscription somebody has since moved to another endpoint.
+        if subscription and config.get("webhook_url") and subscription.get("TargetUrl") == config["webhook_url"]:
+            await cls._webhook_request(credential, "DELETE", path)
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # https://developers.karbonhq.com/guides/webhooks/#signature-verification
+        secret = config.get("signing_secret")
+        signature = next((v for k, v in headers.items() if k.lower() == "signature"), "")
+        if not secret or not isinstance(signature, str) or not signature.isascii() or len(signature) != 64:
+            return False
+        expected = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(signature, expected)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        types = TRIGGER_TYPES.get(config.get("operation"))
+        return bool(types and isinstance(payload, dict)
+            and payload.get("ResourceType") in types[1]
+            and payload.get("ActionType") in {"Inserted", "Updated", "Deleted"}
+            and payload.get("ResourcePermaKey"))
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict):
+            return None
+        resource_type = output.get("ResourceType")
+        key = output.get("ResourcePermaKey")
+        action = output.get("ActionType")
+        if not key or not resource_type or not action:
+            return None
+        noun = {"Work": "work item", "ClientGroup": "client group", "NoteComment": "note comment"}.get(
+            resource_type, resource_type.lower())
+        verb = {"Inserted": "created", "Updated": "updated", "Deleted": "deleted"}.get(action, action)
+        title = f"Karbon {noun} {verb}: {key}"
+        lines = [title, f"Resource type: {resource_type}; ResourcePermaKey: {key}"]
+        if output.get("TimeStamp"):
+            lines.append(f"Changed at: {output['TimeStamp']}")
+        if resource_type == "NoteComment" and output.get("ParentEntityKey"):
+            lines.append(f"Parent note key: {output['ParentEntityKey']}")
+        if action != "Deleted":
+            operation = {"Contact": "get_contact", "Organization": "get_organization",
+                "ClientGroup": "get_client_group", "Work": "get_work_item", "Note": "get_note"}.get(resource_type)
+            if operation:
+                lines.append(f"Read the record with {operation} key={key} for its content and people.")
+        return {"text": "\n".join(lines), "title": title, "conversation_key": f"{resource_type}:{key}"}
+
     async def execute(self, inputs):
         config = self.config.config
+        if isinstance(config, _KarbonWebhook):
+            return self.no_event_output(config.operation)
         credential = self.config.credentials
         if credential is None:
             raise ValueError("Connect Karbon API credentials")

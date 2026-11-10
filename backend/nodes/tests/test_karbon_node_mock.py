@@ -131,3 +131,85 @@ def test_editor_credential_metadata_is_not_an_api_field():
         "credentialIds": {"karbon_api_key": "saved-id"}, "key__label": "William Connor"})
     assert value.config.config.key == "4jgPTtcXxwC2"
     assert native._body(value.config.config) == {}
+
+
+@pytest.fixture
+def webhook_examples():
+    """Karbon's OpenAPI field examples, with source recorded beside the fixture."""
+    return json.loads((Path(__file__).parent / "fixtures/karbon/webhooks.json").read_text())
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,subscription_type", [
+    ("on_contact_changed", "Contact"), ("on_work_item_changed", "Work"), ("on_note_changed", "Note")])
+async def test_webhook_lifecycle_and_manual_run(monkeypatch, operation, subscription_type):
+    url = "https://example.com/webhook"
+    requests = transport(monkeypatch, {"TargetUrl": url, "WebhookType": subscription_type}, 201)
+    extra = await native.KarbonNode._register_external_webhook(webhook_url=url,
+        credential=CREDENTIAL, config={"operation": operation}, node_id="karbon-test")
+    assert extra["external_webhook_id"] == subscription_type
+    assert len(extra["signing_secret"]) >= 16
+    assert json.loads(requests[0].content) == {
+        "TargetUrl": url, "WebhookType": subscription_type, "SigningKey": extra["signing_secret"]}
+    assert requests[0].method == "POST" and requests[0].url.path == "/v3/WebhookSubscriptions"
+    assert requests[0].headers["Authorization"] == "Bearer synthetic-auth"
+    assert requests[0].headers["AccessKey"] == "synthetic-access"
+    await native.KarbonNode._unregister_external_webhook(credential=CREDENTIAL,
+        config={"operation": operation, "webhook_url": url, **extra}, node_id="karbon-test")
+    assert [r.method for r in requests] == ["POST", "GET", "DELETE"]
+    assert requests[-1].url.path == "/v3/WebhookSubscriptions/" + subscription_type
+    assert (await node({"operation": operation}).execute({}))["status"] == "no_event"
+    assert len(requests) == 3
+    parsed = node({"operation": operation, "webhook_url": url, **extra}).config.config
+    assert parsed.signing_secret == extra["signing_secret"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("body,status", [({"TargetUrl": "https://someone-else.example/webhook"}, 200), ({}, 404)])
+async def test_webhook_cleanup_does_not_delete_other_subscription(monkeypatch, body, status):
+    requests = transport(monkeypatch, body, status)
+    await native.KarbonNode._unregister_external_webhook(credential=CREDENTIAL,
+        config={"external_webhook_id": "Work", "webhook_url": "https://example.com/webhook"}, node_id="karbon-test")
+    assert [r.method for r in requests] == ["GET"]
+
+
+@pytest.mark.asyncio
+async def test_webhook_registration_does_not_replace_an_existing_subscription(monkeypatch):
+    requests = transport(monkeypatch, {"error": "subscription already exists"}, 400)
+    with pytest.raises(ValueError, match="already exists"):
+        await native.KarbonNode._register_external_webhook(webhook_url="https://example.com/webhook",
+            credential=CREDENTIAL, config={"operation": "on_contact_changed"}, node_id="karbon-test")
+    assert [r.method for r in requests] == ["POST"]
+
+
+@pytest.mark.parametrize("event,operation", [
+    ("contact", "on_contact_changed"), ("work", "on_work_item_changed"),
+    ("note", "on_note_changed"), ("note-comment", "on_note_changed")])
+def test_documented_webhook_delivery_and_signature(webhook_examples, event, operation):
+    import hashlib
+    import hmac
+    payload = webhook_examples[event]
+    body = json.dumps(payload).encode()
+    secret = "96434E14-3C96-4F07-9FC2-CCC736827309"
+    signature = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
+    config = {"operation": operation, "signing_secret": secret}
+    assert native.KarbonNode.verify_webhook_signature(body, {"sIgNaTuRe": signature}, config)
+    assert not native.KarbonNode.verify_webhook_signature(body + b" ", {"Signature": signature}, config)
+    assert not native.KarbonNode.verify_webhook_signature(body, {}, config)
+    assert not native.KarbonNode.verify_webhook_signature(body, {"Signature": signature}, {})
+    assert not native.KarbonNode.verify_webhook_signature(body, {"Signature": "é" * 64}, config)
+    assert native.KarbonNode.filter_trigger_payload(payload, config)
+    other = "on_work_item_changed" if operation != "on_work_item_changed" else "on_contact_changed"
+    assert not native.KarbonNode.filter_trigger_payload(payload, {"operation": other})
+    assert not native.KarbonNode.filter_trigger_payload({}, config)
+    result = native.KarbonNode.resolve_trigger_payload(payload, config)
+    agent = native.KarbonNode.resolve_agent_event(result)
+    assert payload["ResourcePermaKey"] in agent["text"]
+    assert payload["TimeStamp"] in agent["text"]
+    assert agent["conversation_key"] == payload["ResourceType"] + ":" + payload["ResourcePermaKey"]
+    if event == "note-comment":
+        assert payload["ParentEntityKey"] in agent["text"]
+    for action in ("Inserted", "Updated", "Deleted"):
+        assert native.KarbonNode.filter_trigger_payload({**payload, "ActionType": action}, config)
+    deleted = native.KarbonNode.resolve_agent_event({**payload, "ActionType": "Deleted"})
+    assert "Read the record" not in deleted["text"]
