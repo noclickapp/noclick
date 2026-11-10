@@ -1,0 +1,10 @@
+{
+  "path": "frontend/public/icons/openwa.svg",
+  "source": "https://raw.githubusercontent.com/rmyndharis/OpenWA/main/docs/logo/openwa.svg",
+  "source_page": "https://github.com/rmyndharis/OpenWA/tree/main/docs/logo",
+  "license": "MIT",
+  "sha256": "484c16c9d76ba384bc7a15222f8a78381c3bbdf144746c061c0b17759b29544f",
+  "date": "2026-11-11",
+  "edits": [],
+  "notes": "Official OpenWA app mark, also used unchanged as dashboard/public/favicon.svg. The publisher green #4ade80 is retained on transparent background; no wordmark, padding or background added."
+}
