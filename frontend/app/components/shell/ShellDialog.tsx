@@ -1,7 +1,8 @@
 // The app's dialog, which every popup that makes, renames, shares or deletes something is built from (and the
 // developer console's `ConsoleDialog`): the page's own surface (white in light, near-black in dark, never a lighter
 // grey) over a dimmed page, a header with an optional mark, the title in the brand face and one line under it, then
-// the body and pill buttons with no rules between them. Focus goes back to whatever opened it.
+// the body and pill buttons with no rules between them, its corners a multi-row box's (26px), and on a phone a sheet
+// from the bottom. Focus goes back to whatever opened it.
 import type { FormEvent, KeyboardEvent as ReactKeyboardEvent, ReactNode } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
@@ -9,6 +10,10 @@ import { cn } from '~/lib/utils';
 import { useReturnFocus } from '~/hooks/useReturnFocus';
 
 const SIZES = { sm: 'max-w-[440px]', md: 'max-w-[580px]', lg: 'max-w-[780px]' } as const;
+
+/** Centred on a laptop; on a phone a sheet from the bottom, its foot clear of the home indicator. */
+const PLACED =
+    'fixed left-1/2 top-1/2 z-[70] max-h-[calc(100dvh-32px)] w-[calc(100vw-32px)] -translate-x-1/2 -translate-y-1/2 max-sm:bottom-0 max-sm:left-0 max-sm:top-auto max-sm:max-h-[calc(100dvh-24px)] max-sm:w-full max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-b-none max-sm:border-x-0 max-sm:border-b-0 max-sm:pb-[env(safe-area-inset-bottom)]';
 
 export const DIALOG_OVERLAY = 'fixed inset-0 z-[70] bg-foreground/[0.08] data-[state=open]:animate-in data-[state=open]:fade-in-0 dark:bg-background/60';
 
@@ -67,8 +72,9 @@ export function ShellDialog({ open, onOpenChange, title, description, mark, mark
             onPointerDownOutside={hold}
             onInteractOutside={hold}
             className={cn(
-                'flex flex-col rounded-2xl border border-border bg-card text-foreground shadow-lg focus:outline-none dark:border-foreground/[0.12] dark:bg-sunken',
-                inline ? 'relative w-full' : 'fixed left-1/2 top-1/2 z-[70] max-h-[calc(100dvh-32px)] w-[calc(100vw-32px)] -translate-x-1/2 -translate-y-1/2',
+                // The corners of a box of several rows, as the composer's.
+                'flex flex-col rounded-[26px] border border-border bg-card text-foreground shadow-lg focus:outline-none dark:border-foreground/[0.12] dark:bg-sunken',
+                inline ? 'relative w-full' : PLACED,
                 SIZES[size],
                 className
             )}
