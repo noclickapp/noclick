@@ -32,7 +32,10 @@ import httpx
 
 from utils.async_helpers import spawn
 from nodes.core.oauth_refresh import (
+    CLIENT_SETUP_CODES,
     CredentialsTableStore,
+    OAuthRefreshError,
+    TokenEndpointError,
     ensure_fresh_oauth_token,
     is_token_expired,
 )
@@ -150,12 +153,13 @@ def oauth_expires_ms(
 
 
 def _raise_for_token_error(resp: httpx.Response, provider: str) -> None:
-    """Provider 4xx/5xx → ValueError so oauth_refresh classifies it provider_4xx
-    (deterministic — never retried) rather than a transient network error."""
+    """Provider 4xx/5xx → a ``TokenEndpointError`` (a ValueError: never retried) carrying the status, which
+    ``oauth_refresh.grant_ended`` judges by."""
     if resp.is_success:
         return
     body = resp.text[:300]
-    raise ValueError(f"{provider} token endpoint returned {resp.status_code}: {body}")
+    raise TokenEndpointError(f"{provider} token endpoint returned {resp.status_code}: {body}",
+                             status=resp.status_code)
 
 
 async def _refresh_claude_code(refresh_token: str) -> HarnessTokens:
@@ -331,27 +335,34 @@ async def ensure_fresh_harness_tokens(
             else None
         )
         before = env.get(spec.access_key)
-        await ensure_fresh_oauth_token(
-            pool=pool,
-            credential_id=credential_id,
-            user_id=user_id,
-            credential=env,
-            refresh=spec.build_refresh(env),
-            access_token_key=spec.access_key,
-            refresh_token_key=spec.refresh_key,
-            expires_at_key=spec.expires_at_key,
-            is_expired=lambda expires_at: is_token_expired(
-                expires_at, buffer_minutes=_EXPIRY_BUFFER_MINUTES
-            ),
-            stale=spec.stale,
-            # A refresh rotates the id token too; adopting a sibling's row must
-            # carry it, or the sandbox boots in API-key mode on a stale one.
-            additional_token_fields=spec.companion_keys,
-            force_refresh=force_refresh,
-            provider=spec.provider,
-            caller_path=caller_path,
-            store=store,
-        )
+        try:
+            await ensure_fresh_oauth_token(
+                pool=pool,
+                credential_id=credential_id,
+                user_id=user_id,
+                credential=env,
+                refresh=spec.build_refresh(env),
+                access_token_key=spec.access_key,
+                refresh_token_key=spec.refresh_key,
+                expires_at_key=spec.expires_at_key,
+                is_expired=lambda expires_at: is_token_expired(
+                    expires_at, buffer_minutes=_EXPIRY_BUFFER_MINUTES
+                ),
+                stale=spec.stale,
+                # A refresh rotates the id token too; adopting a sibling's row must
+                # carry it, or the sandbox boots in API-key mode on a stale one.
+                additional_token_fields=spec.companion_keys,
+                force_refresh=force_refresh,
+                provider=spec.provider,
+                caller_path=caller_path,
+                store=store,
+            )
+        except OAuthRefreshError as e:
+            if e.provider_error_code in CLIENT_SETUP_CODES:
+                # The client is NoClick's (the CLI's own), so this is our setup, never the person's sign-in.
+                logger.error("[harness_oauth] %s refused NoClick's client (%s, HTTP %s) refreshing credential %s",
+                             spec.provider, e.provider_error_code, e.status, credential_id)
+            raise
         if spec.provider == "codex_chatgpt" and store is not None and env.get(spec.access_key) != before:
             # After the refresh, never inside it: the refresh attempt is bounded, and the rotated token it minted
             # must persist whatever ChatGPT's list takes. Off the dispatch too: nothing waits on it.
