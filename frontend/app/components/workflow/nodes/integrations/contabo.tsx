@@ -15,7 +15,7 @@ const PreferredBrandIcon = ({ className, style }: { className?: string; style?: 
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={PreferredBrandIcon} iconColor="" />;
 export const ContaboNode: NodeDefinition = {
   type: 'automation-contabo', category: 'cloud-hosting', label: 'Contabo',
-  description: 'Read protected instance, image, snapshot and image-capacity metadata',
-  keywords: ['Contabo', 'cloud', 'VPS', 'compute', 'instance', 'image', 'snapshot', 'metadata'],
+  description: 'Read cloud metadata and trigger on new instances, image updates and new snapshots',
+  keywords: ['Contabo', 'cloud', 'VPS', 'compute', 'instance', 'image', 'snapshot', 'metadata', 'trigger', 'poll'],
   Icon: PreferredBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: Component,
 };

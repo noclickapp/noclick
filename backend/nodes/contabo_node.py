@@ -15,6 +15,7 @@ from opentelemetry.instrumentation.utils import suppress_http_instrumentation
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr, model_serializer
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from utils.ssrf import guarded_async_client
 
 TYPE = "contabo_bearer"
@@ -126,8 +127,34 @@ class ImageStats(Config):
     operation: Literal["image_stats"] = op("image_stats", "Get Custom Image Capacity", "Read documented currentImagesCount and total/used/free image MB only; no customer or tenant fields.")
 
 
-OPERATIONS = (ListInstances, GetInstance, ListImages, GetImage, ListSnapshots, GetSnapshot, ImageStats)
-ContaboConfig = Annotated[Union[ListInstances, GetInstance, ListImages, GetImage, ListSnapshots, GetSnapshot, ImageStats], Field(discriminator="operation")]
+def trigger_op(value, title, description):
+    return Field(value, title=title, description=description, json_schema_extra={
+        "const": value, "ui:hidden": True, "x-display-name": title,
+        "x-category": "Triggers", "x-is-trigger": True,
+    })
+
+
+class PollingConfig(Config, PollTriggerConfigBase):
+    # Canvas metadata must not prevent the family from hashing declared fields.
+    model_config = ConfigDict(extra="ignore")
+
+
+class OnNewInstance(PollingConfig):
+    operation: Literal["on_new_instance"] = trigger_op("on_new_instance", "On New Instance", "Poll instances ordered by createdDate. Existing resources form a quiet baseline. Watch the 100 most recently created resources; choose a schedule frequent enough to keep new resources in this window.")
+
+
+class OnNewOrUpdatedImage(PollingConfig):
+    operation: Literal["on_new_or_updated_image"] = trigger_op("on_new_or_updated_image", "On New or Updated Image", "Poll images ordered by lastModifiedDate. Emit each unseen image ID and modification timestamp after baselining. Watch the 100 most recent resources; choose a schedule frequent enough to keep changes in this window.")
+
+
+class OnNewSnapshot(PollingConfig):
+    operation: Literal["on_new_snapshot"] = trigger_op("on_new_snapshot", "On New Snapshot", "Poll snapshots ordered by createdDate within the selected instance. Existing snapshots form a quiet baseline. Watch the 100 most recent resources; choose a schedule frequent enough to keep changes in this window.")
+    instance_id: InstanceID = Field(..., title="Instance ID", description="Existing positive numeric parent instance to watch.")
+
+
+TRIGGERS = (OnNewInstance, OnNewOrUpdatedImage, OnNewSnapshot)
+OPERATIONS = (ListInstances, GetInstance, ListImages, GetImage, ListSnapshots, GetSnapshot, ImageStats) + TRIGGERS
+ContaboConfig = Annotated[Union[ListInstances, GetInstance, ListImages, GetImage, ListSnapshots, GetSnapshot, ImageStats, OnNewInstance, OnNewOrUpdatedImage, OnNewSnapshot], Field(discriminator="operation")]
 
 
 class ContaboNodeConfig(NodeConfig[ContaboConfig, ContaboBearerCredential]):
@@ -172,7 +199,11 @@ async def request(auth, route, params=None):
     if not re.fullmatch(r"/v1/compute/(?:instances(?:/[1-9][0-9]{0,18}(?:/snapshots(?:/" + OPAQUE_PATTERN + r")?)?)?|images(?:/(?:stats|" + OPAQUE_PATTERN + r"))?)", route):
         raise ValueError("Unsupported Contabo metadata route")
     params = params or {}
-    if set(params) - {"page", "size"} or any(type(value) is not int or not 1 <= value <= (100 if name == "size" else 1000000) for name, value in params.items()):
+    if set(params) - {"page", "size", "orderBy"} or any(
+        value not in {"createdDate:DESC", "lastModifiedDate:DESC"} if name == "orderBy"
+        else type(value) is not int or not 1 <= value <= (100 if name == "size" else 1000000)
+        for name, value in params.items()
+    ):
         raise ValueError("Contabo paging arguments are invalid")
     names = {"httpx", "httpcore", "httpcore.connection", "httpcore.http11", "httpcore.http2", "httpcore.proxy"}
     names |= {name for name in logging.Logger.manager.loggerDict if name.startswith(("httpx.", "httpcore."))}
@@ -367,7 +398,7 @@ async def operate(auth, cfg):
     return page_result(model, raw, cfg, parent)
 
 
-class ContaboNode(WorkflowNode):
+class ContaboNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-contabo"
     connection_evidence = ConnectionEvidence(operation="list_instances", noun="accessible Contabo instances", label_keys=("instanceId",), proves="reachability")
 
@@ -390,8 +421,57 @@ class ContaboNode(WorkflowNode):
         if not isinstance(self.config, ContaboNodeConfig) or self.config.credentials is None:
             raise ValueError("Contabo supplied access token is required")
         auth = self.config.credentials
-        result = await operate(auth, self.config.config)
-        return {"status": "success", "operation": self.config.config.operation, "data": result}
+        cfg = self.config.config
+        result = await self._poll_metadata(auth, cfg) if isinstance(cfg, TRIGGERS) else await operate(auth, cfg)
+        return {"status": "success", "operation": cfg.operation, "data": result}
+
+    async def _poll_metadata(self, auth, cfg):
+        if auth.expected_instance_id is not None:
+            await exact_detail(auth, Instance, f"/v1/compute/instances/{auth.expected_instance_id}", int(auth.expected_instance_id))
+        parent = None
+        if isinstance(cfg, OnNewInstance):
+            model, route, order = Instance, "/v1/compute/instances", "createdDate:DESC"
+        elif isinstance(cfg, OnNewOrUpdatedImage):
+            model, route, order = Image, "/v1/compute/images", "lastModifiedDate:DESC"
+        else:
+            parent = cfg.instance_id
+            model, route, order = Snapshot, f"/v1/compute/instances/{parent}/snapshots", "createdDate:DESC"
+        # A fixed recent window avoids unbounded reads and follows no returned links.
+        raw = await request(auth, route, {"page": 1, "size": 100, "orderBy": order})
+        items = records(model, raw, 100, cfg.include_names, parent)
+        def event_id(item):
+            key = str(item[IDS[model]])
+            return key + ":" + item["lastModifiedDate"] if model is Image else key
+        # Keep recent records at the end of the family's bounded seen set.
+        fresh = await self._filter_unseen(list(reversed(items)), event_id)
+        return {"items": fresh, "new_item_count": len(fresh)}
+
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in {"on_new_instance", "on_new_or_updated_image", "on_new_snapshot"}:
+            return bool((output.get("data") or {}).get("new_item_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if output.get("operation") not in {"on_new_instance", "on_new_or_updated_image", "on_new_snapshot"}:
+            return super().resolve_agent_event(output)
+        items = (output.get("data") or {}).get("items") or []
+        if not items:
+            return None
+        lines = []
+        for item in items[:10]:
+            kind = item["resource_type"]
+            identifier = item[{"instance": "instanceId", "image": "imageId", "snapshot": "snapshotId"}[kind]]
+            name = item.get("displayName") or item.get("name")
+            when = item.get("lastModifiedDate") or item.get("createdDate")
+            detail = f" in instance {item['instanceId']}" if kind == "snapshot" else ""
+            state = f", state {item['status']}" if "status" in item else ""
+            lines.append(f"- {kind} {identifier}" + (f" ({name})" if name else "") + f"{detail} at {when}{state}")
+        if len(items) > 10:
+            lines.append(f"- and {len(items) - 10} more")
+        action = "new or updated images" if output["operation"] == "on_new_or_updated_image" else "new resources"
+        return {"text": f"Contabo: {len(items)} {action}:\n" + "\n".join(lines), "conversation_key": None}
 
     @classmethod
     async def load_field_options(cls, *, field_name, credential_data=None, context=None, page_token=None, search=None):

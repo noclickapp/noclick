@@ -54,7 +54,7 @@ def transport(monkeypatch):
         assert request.headers["Authorization"] == "Bearer " + KEY["access_token"]
         assert UUID(request.headers["x-request-id"]).version == 4
         assert request.headers["x-request-id"] not in {r.headers["x-request-id"] for r in calls}
-        assert set(request.url.params) <= {"page", "size"}
+        assert set(request.url.params) <= {"page", "size", "orderBy"}
         calls.append(request)
         value = responses.pop(0)
         if callable(value): value = value(request)
@@ -271,3 +271,72 @@ async def test_published_contabo_responses(transport, operation, example, args):
     assert result["status"] == "success"
     if operation == "get_instance":
         assert result["data"]["ramMb"] == 1024
+
+
+# Payload fixtures are copied from the published Contabo list responses at
+# https://api.contabo.com/ (retrieveInstancesList/retrieveImageList/retrieveSnapshotList).
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,example,parent,order", [
+    ("on_new_instance", "retrieveInstancesList", None, "createdDate:DESC"),
+    ("on_new_or_updated_image", "retrieveImageList", None, "lastModifiedDate:DESC"),
+    ("on_new_snapshot", "retrieveSnapshotList", 1234, "createdDate:DESC"),
+])
+async def test_poll_documented_payload_baseline_new_items_and_agent_event(transport, monkeypatch, operation, example, parent, order):
+    import json
+    from pathlib import Path
+    from nodes.core.poll_trigger import poll_scope
+    payload = json.loads((Path(__file__).parent / "fixtures" / "contabo" / (example + "-examples.json")).read_text())[0]
+    args = {"instance_id": parent} if parent else {}
+    instance = node(operation, **args)
+    state = {}
+    async def update(mutator, **kwargs):
+        nonlocal state
+        changed, result = mutator(state)
+        if changed is not None:
+            state = changed
+        return result
+    monkeypatch.setattr(instance, "_update_node_state", update)
+    for rows, count in [([], 0), (payload["data"], len(payload["data"])), (payload["data"], 0)]:
+        reply = deepcopy(payload); reply["data"] = deepcopy(rows)
+        reply["_pagination"].update(totalElements=len(rows), totalPages=1)
+        transport[1].append(reply)
+        result = await instance.execute({})
+        assert result["data"]["new_item_count"] == count
+        assert instance.trigger_produced_no_event(result) is (count == 0)
+        assert instance.should_propagate_output(result, {"operation": operation}) is bool(count)
+        event = instance.resolve_agent_event(result)
+        if count:
+            assert "Contabo" in event["text"]
+            assert str(rows[0][{"on_new_instance": "instanceId", "on_new_or_updated_image": "imageId", "on_new_snapshot": "snapshotId"}[operation]]) in event["text"]
+        else:
+            assert event is None
+        assert transport[0][-1].url.params["orderBy"] == order
+    assert poll_scope(native.ContaboNode, {"operation": operation, **args}) == poll_scope(native.ContaboNode, {"operation": operation, **args, "label": "cosmetic", "goal": "irrelevant"})
+    if parent:
+        assert poll_scope(native.ContaboNode, {"operation": operation, "instance_id": parent}) != poll_scope(native.ContaboNode, {"operation": operation, "instance_id": parent + 1})
+    if operation == "on_new_or_updated_image":
+        changed = deepcopy(payload)
+        changed["_pagination"].update(totalElements=len(changed["data"]), totalPages=1)
+        changed["data"][0]["lastModifiedDate"] = "2026-11-10T12:00:00Z"
+        transport[1].append(changed)
+        assert (await instance.execute({}))["data"]["new_item_count"] == 1
+
+
+@pytest.mark.asyncio
+async def test_poll_bounded_window_and_failure_never_consume_state(transport, monkeypatch):
+    instance = node("on_new_instance")
+    filter_mock = AsyncMock(return_value=[])
+    monkeypatch.setattr(instance, "_filter_unseen", filter_mock)
+    transport[1].append(page([INSTANCE], size=100, total=200, pages=2))
+    await instance.execute({})
+    assert len(transport[0]) == 1
+    filter_mock.assert_awaited_once()
+    filter_mock.reset_mock()
+    transport[1].append(page([INSTANCE] * 101, size=100, total=200, pages=2))
+    with pytest.raises(native.OutcomeUnverified):
+        await instance.execute({})
+    filter_mock.assert_not_awaited()
+    transport[1].append(httpx.Response(401, json={"message": "private"}))
+    with pytest.raises(native.ApiError):
+        await instance.execute({})
+    filter_mock.assert_not_awaited()
