@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/youtube-transcript.svg",
-  "source": "https://www.youtubetranscript.dev/logo.svg (official info.x-logo.url in https://www.youtubetranscript.dev/api/v2/openapi.json)",
+  "source": "https://www.youtubetranscript.dev/logo.svg",
+  "source_url": "https://www.youtubetranscript.dev/logo.svg",
+  "page": "https://www.youtubetranscript.dev/api/v2/openapi.json",
+  "date": "2026-11-11",
+  "edits": [
+    "Removed the original dark rounded app-icon tile; cropped viewBox to existing mark.",
+    "Recoloured the off-white document black and its black interior lines off-white for the light theme."
+  ],
+  "notes": "Official provider app mark, identified by info.x-logo.url in the OpenAPI contract. All paths and polygon points preserved.",
   "license": "YouTubeTranscript.dev brand mark, used nominatively to identify the connected service; trademark rights remain with its owner.",
-  "sha256": "948e5fdb43508899cf2fa84aa62dfe56209e0525dc7dbf5a8ee7796d1f7ebc69"
+  "sha256": "23755771b4e58fe1d47f4ba67f83eb9e069f2dc9ca6119bedeff99dbf24b6bdc"
 }

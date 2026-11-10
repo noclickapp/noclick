@@ -46,5 +46,32 @@
       "credits_used": 6
     },
     "source": "https://www.youtubetranscript.dev/api-docs"
+  },
+  "GET /transcripts": {
+    "body": {
+      "history": [
+        {
+          "id": "b1f...",
+          "video_id": "dQw4w9WgXcQ",
+          "video_title": "Example video",
+          "language": "en",
+          "source_kind": "auto",
+          "status": "succeeded",
+          "created_at": "2026-07-06T12:00:00Z",
+          "word_count": 1234,
+          "segment_count": 88,
+          "credits_used": 1
+        }
+      ],
+      "count": 1,
+      "pagination": {
+        "page": 1,
+        "limit": 50,
+        "total": 1,
+        "totalPages": 1,
+        "hasMore": false
+      }
+    },
+    "source": "https://www.youtubetranscript.dev/api-docs"
   }
 }

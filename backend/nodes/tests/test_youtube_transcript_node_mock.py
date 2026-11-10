@@ -135,3 +135,109 @@ async def test_youtube_transcript_documented_responses(monkeypatch, operation, r
     result = await node(operation, CASES[operation]['config']).execute({})
     assert result['status'] == 'success'
     assert result['data'] == body
+
+
+# The provider's published GET /transcripts response is kept verbatim in this
+# fixture. Changed ids below simulate subsequent deliveries of that same shape.
+HISTORY = json.loads((Path(__file__).parent / 'fixtures/youtube-transcript/responses.json').read_text())['GET /transcripts']['body']
+
+
+def memory_state(instance, monkeypatch):
+    state = {}
+
+    async def update(mutator, *, skip_result):
+        replacement, result = mutator(state.copy())
+        if replacement is not None:
+            state.clear()
+            state.update(replacement)
+        return result
+
+    monkeypatch.setattr(instance, '_update_node_state', update)
+    return state
+
+
+@pytest.mark.asyncio
+async def test_youtube_transcript_poll_baseline_new_item_and_agent(monkeypatch):
+    from copy import deepcopy
+    payload = deepcopy(HISTORY)
+    calls = []
+
+    def handle(request):
+        calls.append(request)
+        assert request.url.path == '/api/v2/transcripts'
+        assert dict(request.url.params) == {
+            'page': '1', 'limit': '100', 'status': 'succeeded',
+            'language': 'en', 'search': 'Example', 'date_from': '2026-07-06T00:00:00Z'}
+        return httpx.Response(200, json=payload)
+
+    transport(monkeypatch, handle)
+    instance = node('on_new_transcript', {'language': 'en', 'search': 'Example', 'date_from': '2026-07-06T00:00:00Z'})
+    memory_state(instance, monkeypatch)
+    baseline = await instance.execute({})
+    assert baseline['transcripts'] == []
+    assert not instance.should_propagate_output(baseline, {'operation': 'on_new_transcript'})
+    assert instance.resolve_agent_event(baseline) is None
+    fresh = {**payload['history'][0], 'id': 'next-transcript'}
+    payload['history'].append(fresh)
+    result = await instance.execute({})
+    assert result['transcripts'] == [fresh]
+    assert result['new_transcript_count'] == 1
+    assert instance.should_propagate_output(result, {'operation': 'on_new_transcript'})
+    assert instance.trigger_emitted_event(result)
+    text = instance.resolve_agent_event(result)['text']
+    for value in ('Example video', 'next-transcript', 'dQw4w9WgXcQ', 'en', '2026-07-06'):
+        assert value in text
+    assert (await instance.execute({}))['new_transcript_count'] == 0
+    assert len(calls) == 3
+
+
+@pytest.mark.asyncio
+async def test_youtube_transcript_poll_pagination_and_scope(monkeypatch):
+    from copy import deepcopy
+    pages = []
+
+    def handle(request):
+        page = int(request.url.params['page'])
+        pages.append(page)
+        payload = deepcopy(HISTORY)
+        payload['history'][0]['id'] = f'transcript-{page}'
+        payload['pagination']['hasMore'] = page == 1
+        return httpx.Response(200, json=payload)
+
+    transport(monkeypatch, handle)
+    instance = node('on_new_transcript')
+    state = memory_state(instance, monkeypatch)
+    assert (await instance.execute({}))['new_transcript_count'] == 0
+    assert set(state['seen_ids']) == {'transcript-1', 'transcript-2'}
+    state['seen_ids'] = ['transcript-1']
+    assert (await instance.execute({}))['transcripts'][0]['id'] == 'transcript-2'
+    instance.config.config.language = 'es'
+    assert (await instance.execute({}))['new_transcript_count'] == 0
+    assert pages == [1, 2, 1, 2, 1, 2]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('payload,status', [
+    ({'error': 'invalid_api_key'}, 401),
+    ({'history': []}, 200),
+    ({'history': 'not a list', 'pagination': {'hasMore': False}}, 200),
+    ({'history': [{}], 'pagination': {'hasMore': False}}, 200),
+])
+async def test_youtube_transcript_poll_failure_preserves_baseline(monkeypatch, payload, status):
+    transport(monkeypatch, lambda request: httpx.Response(status, json=payload))
+    instance = node('on_new_transcript')
+    state = memory_state(instance, monkeypatch)
+    with pytest.raises(ValueError):
+        await instance.execute({})
+    assert state == {}
+
+
+@pytest.mark.asyncio
+async def test_youtube_transcript_poll_page_limit_preserves_baseline(monkeypatch):
+    transport(monkeypatch, lambda request: httpx.Response(200, json={
+        **HISTORY, 'pagination': {**HISTORY['pagination'], 'hasMore': True}}))
+    instance = node('on_new_transcript')
+    state = memory_state(instance, monkeypatch)
+    with pytest.raises(ValueError, match='2,000'):
+        await instance.execute({})
+    assert state == {}

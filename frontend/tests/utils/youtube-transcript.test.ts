@@ -3,7 +3,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { loadNodeSchemas, getNodeCredentialInfo, getAgentToolOperations } from '~/utils/nodeSchemas';
+import { loadNodeSchemas, getNodeCredentialInfo, getAgentToolOperations, isTriggerSource } from '~/utils/nodeSchemas';
 import { getCredentialTypeFromSchemaTitle } from '~/utils/credentialTypeMap';
 import { methodFromRequirement, requirementsFromSchema } from '~/components/credential/credentialMethods';
 
@@ -17,6 +17,13 @@ describe('YouTube Transcript integration', () => {
         expect(methodFromRequirement(requirementsFromSchema(schema)[0]).method_kind).toBe('api_key');
         expect(getCredentialTypeFromSchemaTitle('YoutubeTranscriptAPIKeyCredential')).toBe('youtube_transcript_api_key');
         expect(getCredentialTypeFromSchemaTitle('YouTube Transcript API Key')).toBe('youtube_transcript_api_key');
+    });
+    it('recognizes the polling trigger without exposing it as an agent tool', () => {
+        expect(isTriggerSource('automation-youtube-transcript', 'on_new_transcript')).toBe(true);
+        expect(isTriggerSource('automation-youtube-transcript', 'list_transcripts')).toBe(false);
+        expect(schema.$defs.OnNewTranscriptConfig.properties.operation['x-is-trigger']).toBe(true);
+        expect(schema.$defs.OnNewTranscriptConfig.properties.schedule).toBeDefined();
+        expect(getAgentToolOperations('automation-youtube-transcript').map(op => op.operation)).not.toContain('on_new_transcript');
     });
     it('discovers all 25 provider operations including reads and writes', () => {
         const operations = getAgentToolOperations('automation-youtube-transcript').map(op => op.operation);

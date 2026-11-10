@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -290,7 +291,23 @@ class ResolvePlaylistConfig(YoutubeTranscriptInput):
     limit: int | None = Field(None, ge=1, le=100)
 
 
-YoutubeTranscriptConfig = Annotated[Union[TranscribeVideoConfig, EstimateTranscriptionConfig, CreateBatchConfig, GetBatchConfig, ListJobsConfig, GetJobConfig, ListTranscriptsConfig, GetTranscriptConfig, DeleteTranscriptConfig, ListTranscriptLanguagesConfig, GetTranscriptThemesConfig, UnlockTranscriptThemesConfig, TranslateTranscriptConfig, BulkDeleteTranscriptsConfig, GetCreditsConfig, ListFoldersConfig, CreateFolderConfig, GetFolderConfig, RenameFolderConfig, DeleteFolderConfig, ListFolderVideosConfig, AddFolderVideosConfig, RemoveFolderVideosConfig, ListVideosConfig, ResolvePlaylistConfig], Field(discriminator="operation")]
+class OnNewTranscriptConfig(PollTriggerConfigBase):
+    """Watch successfully stored transcripts, with an initial silent baseline.
+
+    Evidence: GET /transcripts and TranscriptListResponse in the provider's
+    https://www.youtubetranscript.dev/api/v2/openapi.json (2.1.0).
+    """
+    operation: Literal["on_new_transcript"] = Field(
+        "on_new_transcript", title="On New Transcript", json_schema_extra={
+            "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On New Transcript",
+        })
+    language: str | None = Field(None, title="Language", description="Only watch transcripts in this language (for example en).")
+    search: str | None = Field(None, title="Search", description="Filter the stored transcript history.")
+    date_from: datetime | None = Field(None, title="Created after", description="Only watch transcripts created after this date and time.")
+
+
+YoutubeTranscriptConfig = Annotated[Union[TranscribeVideoConfig, EstimateTranscriptionConfig, CreateBatchConfig, GetBatchConfig, ListJobsConfig, GetJobConfig, ListTranscriptsConfig, GetTranscriptConfig, DeleteTranscriptConfig, ListTranscriptLanguagesConfig, GetTranscriptThemesConfig, UnlockTranscriptThemesConfig, TranslateTranscriptConfig, BulkDeleteTranscriptsConfig, GetCreditsConfig, ListFoldersConfig, CreateFolderConfig, GetFolderConfig, RenameFolderConfig, DeleteFolderConfig, ListFolderVideosConfig, AddFolderVideosConfig, RemoveFolderVideosConfig, ListVideosConfig, ResolvePlaylistConfig, OnNewTranscriptConfig], Field(discriminator="operation")]
 
 
 class YoutubeTranscriptFullConfig(NodeConfig[YoutubeTranscriptConfig, YoutubeTranscriptAPIKeyCredential]):
@@ -335,7 +352,7 @@ BODY_FIELDS = {'transcribe_video': ['video', 'language', 'mode', 'format', 'webh
  'resolve_playlist': ['playlist_id', 'limit']}
 
 
-class YoutubeTranscriptNode(WorkflowNode):
+class YoutubeTranscriptNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-youtube-transcript"
     connection_evidence = ConnectionEvidence(
         noun="stored transcripts", operation="list_transcripts",
@@ -346,11 +363,69 @@ class YoutubeTranscriptNode(WorkflowNode):
     def get_config_model(cls):
         return YoutubeTranscriptFullConfig
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") == "on_new_transcript":
+            return bool(output.get("new_transcript_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        transcripts = output.get("transcripts") if isinstance(output, dict) else None
+        if not isinstance(transcripts, list):
+            return super().resolve_agent_event(output)
+        if not transcripts:
+            return None
+        lines = []
+        for item in transcripts[:10]:
+            lines.append(
+                f"- {item.get('video_title') or 'Untitled video'} "
+                f"(transcript {item.get('id')}, video {item.get('video_id')}, "
+                f"language {item.get('language')}, created {item.get('created_at')})")
+        if len(transcripts) > 10:
+            lines.append(f"- … and {len(transcripts) - 10} more")
+        return {"text": f"YouTube Transcript: {len(transcripts)} new transcript(s) are ready. "
+                "Use the video and transcript ids to fetch the full transcript.\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _poll_new_transcripts(self, config):
+        transcripts = []
+        for page in range(1, 21):
+            result = await self._execute_operation(ListTranscriptsConfig(
+                page=page, limit=100, status="succeeded", language=config.language,
+                search=config.search, date_from=config.date_from))
+            if result["status"] != "success":
+                raise ValueError("Could not poll YouTube Transcript history: " + str(result.get("error")))
+            data = result["data"]
+            history = data["history"]
+            if any(not isinstance(item, dict) or not item.get("id") for item in history):
+                raise ValueError("YouTube Transcript history contains an invalid transcript")
+            transcripts.extend(history)
+            pagination = data.get("pagination")
+            if not isinstance(pagination, dict) or not isinstance(pagination.get("hasMore"), bool):
+                raise ValueError("YouTube Transcript history is missing pagination.hasMore")
+            if not pagination["hasMore"]:
+                break
+        else:
+            raise ValueError("More than 2,000 transcripts match; narrow the language, search or created-after filter")
+        fresh = await self._filter_unseen(transcripts, lambda item: str(item["id"]))
+        return {"status": "success", "transcripts": fresh, "new_transcript_count": len(fresh)}
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a YouTube Transcript API key")
+        config = self.config.config
+        if isinstance(config, OnNewTranscriptConfig):
+            output = await self._poll_new_transcripts(config)
+        else:
+            output = await self._execute_operation(config)
+        await self.emit(output)
+        return output
+
+    async def _execute_operation(self, op):
+        if self.config is None or self.config.credentials is None:
+            raise ValueError("Connect a YouTube Transcript API key")
         key = self.config.credentials.api_key
-        op = self.config.config
         method, path = ROUTES[op.operation]
         values = op.model_dump(mode="json", exclude_none=True, exclude={"operation"})
         for name in tuple(values):
@@ -376,15 +451,22 @@ class YoutubeTranscriptNode(WorkflowNode):
             if isinstance(value, str):
                 return value.replace(key, "[redacted]")
             if isinstance(value, list):
-                return [redact(v) for v in value]
+                for index, item in enumerate(value):
+                    value[index] = redact(item)
             if isinstance(value, dict):
-                return {k.replace(key, "[redacted]"): redact(v) for k, v in value.items()}
+                for name, item in list(value.items()):
+                    safe_name = name.replace(key, "[redacted]")
+                    value[safe_name] = redact(item)
+                    if safe_name != name:
+                        del value[name]
             return value
 
         data = redact(data)
         if not isinstance(data, dict):
             raise ValueError("YouTube Transcript returned an unexpected JSON envelope")
-        failed = response.status_code not in {200, 201, 202} or bool(data.get("error")) or data.get("status") == "failed"
+        failed = response.status_code not in {200, 201, 202}
+        if not failed and op.operation != "list_transcripts":
+            failed = bool(data.get("error")) or data.get("status") == "failed"
         if not failed and op.operation == "list_transcripts":
             if not isinstance(data.get("history"), list):
                 raise ValueError("YouTube Transcript response is missing transcript history")
@@ -395,5 +477,4 @@ class YoutubeTranscriptNode(WorkflowNode):
         # display the account's video titles through the shared list collector.
         if not failed and op.operation == "list_transcripts":
             output["items"] = data["history"]
-        await self.emit(output)
         return output
