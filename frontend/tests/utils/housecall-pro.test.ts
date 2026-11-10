@@ -8,6 +8,7 @@ import {
 import { HousecallProNode } from '../../app/components/workflow/nodes/integrations/housecall-pro';
 import {
     getAgentToolOperations,
+    getTriggerOperations,
     getNodeCredentialInfo,
     loadNodeSchemas,
 } from '../../app/utils/nodeSchemas';
@@ -30,6 +31,12 @@ describe('Housecall Pro integration', () => {
                 (o) => o.operation
             )
         ).toContain('create_job');
+    });
+    it('exposes four polling triggers separately from agent tools', () => {
+        expect(getTriggerOperations('automation-housecall-pro').map((o) => o.operation).sort()).toEqual([
+            'on_new_or_updated_customer', 'on_new_or_updated_estimate',
+            'on_new_or_updated_job', 'on_new_or_updated_lead',
+        ]);
     });
     it('offers a manually pasted API key', () => {
         expect(

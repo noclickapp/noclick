@@ -172,3 +172,103 @@ def test_required_fields_and_closed_body_shapes():
         {"operation": "get_company", "api_url": "https://other.test"},
     ]:
         with pytest.raises(ValueError): node(config)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("resource", ["customer", "job", "estimate", "lead"])
+async def test_poll_baseline_new_changed_and_unchanged_records(transport, resource):
+    from copy import deepcopy
+
+    requests, replies = transport
+    trigger = node({"operation": "on_new_or_updated_" + resource})
+    state = {}
+
+    async def update(mutator, **kwargs):
+        nonlocal state
+        replacement, result = mutator(deepcopy(state))
+        if replacement is not None:
+            state = replacement
+        return result
+
+    trigger._update_node_state = update
+    # Customer is the provider's published list example, which omits IDs.
+    # Other minimal records use only fields in the pinned resource schemas.
+    row = deepcopy(FIXTURE["responses"]["/customers"]["customers"][0]) if resource == "customer" else {"id": "string"}
+    key = resource + "s"
+
+    def reply(rows):
+        replies.append(httpx.Response(200, json={"page": 1, "page_size": 100,
+            "total_pages": 1, "total_items": len(rows), key: rows}))
+
+    reply([row])
+    baseline = await trigger.execute({})
+    assert baseline["items"] == []
+    assert trigger.trigger_produced_no_event(baseline)
+    changed = {**row, "first_name": "changed"} if resource == "customer" else {**row, "id": "new-record"}
+    reply([row, changed])
+    fresh = await trigger.execute({})
+    assert fresh["items"] == [changed]
+    assert trigger.trigger_emitted_event(fresh)
+    assert "Housecall Pro" in trigger.resolve_agent_event(fresh)["text"]
+    reply([row, changed])
+    assert (await trigger.execute({}))["items"] == []
+    # Change a documented field on an existing ID.
+    field = {"customer": "first_name", "job": "description", "estimate": "work_status", "lead": "status"}[resource]
+    prior = deepcopy(changed)
+    changed = {**changed, field: "updated"}
+    reply([row, changed])
+    assert (await trigger.execute({}))["items"] == [changed]
+    # Returning to the previous payload is a change, too (leads have no
+    # updated_at field in the published schema).
+    reverted = prior
+    reply([row, reverted])
+    assert (await trigger.execute({}))["items"] == [reverted]
+    assert all(r.url.path == "/" + key for r in requests)
+    assert all(set(r.url.params) == {"page", "page_size", "sort_by", "sort_direction"} for r in requests)
+
+
+@pytest.mark.asyncio
+async def test_poll_scans_pages_before_dedup_and_does_not_consume_on_error(transport):
+    requests, replies = transport
+    trigger = node({"operation": "on_new_or_updated_job"})
+    trigger._filter_unseen = AsyncMock(return_value=[])
+    replies.extend([httpx.Response(200, json={"page": 1, "total_pages": 2, "jobs": [{"id": "one"}]}),
+                    httpx.Response(503, json={"message": "Unavailable"})])
+    with pytest.raises(ValueError):
+        await trigger.execute({})
+    trigger._filter_unseen.assert_not_awaited()
+    assert [r.url.params["page"] for r in requests] == ["1", "2"]
+
+
+def test_poll_scope_ignores_canvas_metadata_and_tracks_operation():
+    cls = native.HousecallProNode
+    cfg = {"operation": "on_new_or_updated_job"}
+    assert cls.schedule_poll_scope(cfg) == cls.schedule_poll_scope({**cfg, "goal": "Monitor jobs"})
+    assert cls.schedule_poll_scope(cfg) != cls.schedule_poll_scope({"operation": "on_new_or_updated_lead"})
+
+
+@pytest.mark.asyncio
+async def test_poll_rejects_truncated_scan_without_advancing_baseline():
+    trigger = node({"operation": "on_new_or_updated_job"})
+    trigger._execute_operation = AsyncMock(return_value={"status": "success", "items": [], "has_more": True})
+    trigger._filter_unseen = AsyncMock()
+    with pytest.raises(ValueError, match="baseline was not advanced"):
+        await trigger.execute({})
+    assert trigger._execute_operation.await_count == 50
+    trigger._filter_unseen.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_arm_baseline_does_not_consume_an_unseen_update():
+    trigger = node({"operation": "on_new_or_updated_lead"})
+    state = {"seen_ids": ["old"], "scope": trigger.schedule_poll_scope({"operation": "on_new_or_updated_lead"})}
+
+    async def update(mutator, **kwargs):
+        replacement, result = mutator(state.copy())
+        assert replacement is None
+        return result
+
+    trigger._update_node_state = update
+    trigger._poll_baseline_only = True
+    assert await trigger._filter_unseen([{"id": "new"}], lambda row: row["id"]) == []
+    assert state["seen_ids"] == ["old"]

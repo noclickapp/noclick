@@ -1,8 +1,10 @@
 """Housecall Pro's published v1 API using a manually supplied Company API key.
 
-Each operation makes one documented request; paging is explicit and writes are
-reported as API acknowledgements, without claiming a later business outcome.
+Actions make one documented request, with explicit paging and API acknowledgements.
+Poll triggers compare complete, bounded snapshots from the time-sortable lists.
 """
+import hashlib
+import json
 from datetime import datetime
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
@@ -12,6 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -275,7 +278,36 @@ class ListLeadSources(_Page):
     q: Text | None = None
 
 
+class _ChangedResource(PollTriggerConfigBase):
+    model_config = ConfigDict(extra="ignore", json_schema_extra={"x-requires-webhook": True})
+
+
+class OnNewOrUpdatedCustomer(_ChangedResource):
+    operation: Literal["on_new_or_updated_customer"] = Field("on_new_or_updated_customer", title="On New or Updated Customer",
+        description="Checks all records every five minutes by default. Existing records form the initial baseline. Changes to listed fields fire again. Limited to 5,000 records; a larger account fails without advancing its baseline.",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New or Updated Customer"})
+
+
+class OnNewOrUpdatedJob(_ChangedResource):
+    operation: Literal["on_new_or_updated_job"] = Field("on_new_or_updated_job", title="On New or Updated Job",
+        description="Checks all records every five minutes by default. Existing records form the initial baseline. Changes to listed fields fire again. Limited to 5,000 records; a larger account fails without advancing its baseline.",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New or Updated Job"})
+
+
+class OnNewOrUpdatedEstimate(_ChangedResource):
+    operation: Literal["on_new_or_updated_estimate"] = Field("on_new_or_updated_estimate", title="On New or Updated Estimate",
+        description="Checks all records every five minutes by default. Existing records form the initial baseline. Changes to listed fields fire again. Limited to 5,000 records; a larger account fails without advancing its baseline.",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New or Updated Estimate"})
+
+
+class OnNewOrUpdatedLead(_ChangedResource):
+    operation: Literal["on_new_or_updated_lead"] = Field("on_new_or_updated_lead", title="On New or Updated Lead",
+        description="Checks all records every five minutes by default. Existing records form the initial baseline. Changes to listed fields fire again. Limited to 5,000 records; a larger account fails without advancing its baseline.",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New or Updated Lead"})
+
+
 HousecallProConfig = Annotated[Union[
+    OnNewOrUpdatedCustomer, OnNewOrUpdatedJob, OnNewOrUpdatedEstimate, OnNewOrUpdatedLead,
     GetCompany, ListCustomers, GetCustomer, CreateCustomer, UpdateCustomer,
     CreateCustomerAddress, ListEmployees, ListJobs, GetJob, CreateJob,
     ListJobLineItems, CreateJobLineItem, ListJobAppointments, CreateJobAppointment,
@@ -324,7 +356,7 @@ def _guard(config_data):
         raise ValueError("Supply a Housecall Pro API key credential")
 
 
-class HousecallProNode(WorkflowNode):
+class HousecallProNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-housecall-pro"
     connection_evidence = ConnectionEvidence(noun="company", identity_operation="get_company")
 
@@ -343,10 +375,79 @@ class HousecallProNode(WorkflowNode):
         except ValueError as exc: return {"valid": False, "errors": [str(exc)], "satisfied_set": None}
         return super().validate_config(config_data)
 
+    async def _poll_changes(self, config):
+        # The contract's subscription switch has no callback URL, event or signing
+        # contract. Poll the documented, time-sortable lists instead.
+        resource = config.operation.removeprefix("on_new_or_updated_") + "s"
+        list_config = {"customers": ListCustomers, "jobs": ListJobs,
+                       "estimates": ListEstimates, "leads": ListLeads}[resource]
+        rows = []
+        for page_number in range(1, 51):
+            operation = list_config(page=page_number, page_size=100,
+                                    sort_by="created_at" if resource == "customers" else "updated_at",
+                                    sort_direction="desc")
+            result = await self._execute_operation(operation)
+            if result["status"] != "success":
+                raise ValueError(result["error"])
+            rows.extend(result["items"])
+            if len(rows) > 5000:
+                raise ValueError("Housecall Pro polling supports at most 5,000 records")
+            if not result["has_more"]:
+                break
+        else:
+            raise ValueError("Housecall Pro polling supports at most 50 pages; baseline was not advanced")
+        # Fingerprint the complete published record. This detects changes even
+        # where the provider's customer example omits IDs and timestamps.
+        fresh = await self._filter_unseen(rows, lambda row: hashlib.sha256(
+            json.dumps(row, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+        ).hexdigest())
+        return {"operation": config.operation, "status": "success", "resource": resource,
+                "items": fresh, "new_or_updated_count": len(fresh)}
+
+    async def _filter_unseen(self, items, id_fn):
+        # Keep only the previous COMPLETE snapshot, rather than every historical
+        # fingerprint: reverting a lead's status is also an update. The shared
+        # poll family's arm-time baseline and compare-and-swap semantics remain.
+        scope = self.schedule_poll_scope(self.config.config.model_dump(mode="json"))
+        current = {id_fn(item): item for item in items}
+
+        def mutator(state):
+            baseline = "seen_ids" not in state or state.get("scope", scope) != scope
+            if getattr(self, "_poll_baseline_only", False) and not baseline:
+                return None, []
+            previous = set(state.get("seen_ids", []))
+            fresh = [] if baseline else [row for key, row in current.items() if key not in previous]
+            replacement = {"seen_ids": list(current), "scope": scope}
+            return (None if replacement == state else replacement), fresh
+
+        fresh = await self._update_node_state(mutator, skip_result=[])
+        self._poll_emitted_count = len(fresh)
+        return fresh
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        rows = output.get("items") or []
+        if not rows:
+            return None
+        resource = output.get("resource", "records")
+        # Preserve names, locations, content and IDs exactly as Housecall Pro
+        # supplied them, so an agent can choose the next action.
+        from nodes.core.agent_events import default_agent_event
+
+        event = default_agent_event({"items": rows})
+        return {"title": "New or updated Housecall Pro " + resource,
+                "text": "Housecall Pro reported new or updated " + resource + ":\n" + event["text"],
+                "conversation_key": None}
+
     async def execute(self, inputs):
         if not isinstance(self.config, HousecallProFullConfig) or not self.config.credentials:
             raise ValueError("Supply a Housecall Pro API key credential")
         config = self.config.config
+        if isinstance(config, _ChangedResource):
+            return await self._poll_changes(config)
+        return await self._execute_operation(config)
+
+    async def _execute_operation(self, config):
         method, path, expected, envelope = OPERATIONS[config.operation]
         values = config.model_dump(exclude_none=True, mode="json")
         values.pop("operation")

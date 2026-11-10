@@ -33,7 +33,7 @@ export const HousecallProNode: NodeDefinition = {
     category: 'industry',
     label: 'Housecall Pro',
     description:
-        'Manage customers, jobs, appointments, line items, leads and estimates',
+        'Manage customers, jobs, appointments, leads and estimates; trigger on new or updated records',
     keywords: ['field service', 'home services', 'contractor', 'Housecall'],
     Icon: HousecallProIcon,
     iconColor: '',
