@@ -25,7 +25,7 @@ export const PolymarketNode: NodeDefinition = {
     category: 'finance-accounting',
     label: 'Polymarket',
     description:
-        'Read market prices, manage open orders and track account activity',
+        'Read market prices, manage orders and trigger workflows or agents on new trades',
     Icon: PolymarketIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -18,6 +18,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -76,6 +77,22 @@ class ListTrades(_Page):
     market: str | None = Field(None, pattern=r"^0x[a-fA-F0-9]{64}$")
     before: str | None = Field(None, pattern=r"^\d+$")
     after: str | None = Field(None, pattern=r"^\d+$")
+
+
+class OnNewTrade(PollTriggerConfigBase):
+    """Watch new account trades; existing trades are baselined when enabled.
+
+    GET /data/trades in the published CLOB OpenAPI supports the after filter.
+    Narrow a busy account by market, token, or an earliest match timestamp.
+    """
+    operation: Literal["on_new_trade"] = Field("on_new_trade", title="On New Trade", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Trade", "ui:hidden": True,
+    })
+    maker_address: str = Field(..., title="Maker wallet address", pattern=r"^0x[a-fA-F0-9]{40}$")
+    market: str | None = Field(None, title="Market condition ID", pattern=r"^0x[a-fA-F0-9]{64}$")
+    asset_id: str | None = Field(None, title="Outcome token ID")
+    after: str | None = Field(None, title="Trades after", pattern=r"^\d+$",
+        description="Optional earliest match time as Unix seconds. Narrow this window for high-volume accounts.")
 
 
 class GetBalanceAllowance(_Input):
@@ -172,7 +189,7 @@ class GetPriceHistory(_Input):
     fidelity: int | None = Field(None, ge=1)
 
 
-Operation = Annotated[Union[ListOrders, GetOrder, ListTrades, GetBalanceAllowance, ListNotifications, GetClosedOnlyMode, CancelOrder, CancelOrders, CancelAllOrders, CancelMarketOrders, MarkNotificationsRead, GetOrderBook, GetPrice, GetMidpoint, GetSpread, GetLastTradePrice, GetFeeRate, GetTickSize, GetNegRisk, GetPriceHistory], Field(discriminator="operation")]
+Operation = Annotated[Union[ListOrders, GetOrder, ListTrades, GetBalanceAllowance, ListNotifications, GetClosedOnlyMode, CancelOrder, CancelOrders, CancelAllOrders, CancelMarketOrders, MarkNotificationsRead, GetOrderBook, GetPrice, GetMidpoint, GetSpread, GetLastTradePrice, GetFeeRate, GetTickSize, GetNegRisk, GetPriceHistory, OnNewTrade], Field(discriminator="operation")]
 
 
 class PolymarketConfig(NodeConfig[Operation, PolymarketAPIKeyCredential]):
@@ -219,13 +236,16 @@ def redact(value, credential):
         for secret in (credential.api_key, credential.api_secret, credential.api_passphrase):
             value = value.replace(secret, "[redacted]")
     elif isinstance(value, dict):
-        return {k: redact(v, credential) for k, v in value.items()}
+        # Preserve unchanged provider structures; copy only when a secret was removed.
+        cleaned = {k: redact(v, credential) for k, v in value.items()}
+        return value if cleaned == value else cleaned
     elif isinstance(value, list):
-        return [redact(v, credential) for v in value]
+        cleaned = [redact(v, credential) for v in value]
+        return value if cleaned == value else cleaned
     return value
 
 
-class PolymarketNode(WorkflowNode):
+class PolymarketNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-polymarket"
     connection_evidence = ConnectionEvidence(noun="open orders", operation="list_orders", label_keys=("id",))
 
@@ -233,11 +253,73 @@ class PolymarketNode(WorkflowNode):
     def get_config_model(cls):
         return PolymarketConfig
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") == "on_new_trade":
+            return bool(output.get("new_trade_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        trades = output.get("trades") if isinstance(output, dict) else None
+        if not isinstance(trades, list):
+            return super().resolve_agent_event(output)
+        if not trades:
+            return None
+        lines = [
+            f"- Wallet {trade.get('maker_address')}: {trade.get('side')} {trade.get('size')} "
+            f"{trade.get('outcome')} at {trade.get('price')}; market {trade.get('market')}, "
+            f"token {trade.get('asset_id')}, trade {trade.get('id')}, "
+            f"taker order {trade.get('taker_order_id')}, status {trade.get('status')}"
+            for trade in trades[:10]
+        ]
+        if len(trades) > 10:
+            lines.append(f"- … and {len(trades) - 10} more")
+        return {"text": f"Polymarket: {len(trades)} new trade(s):\n" + "\n".join(lines),
+            "conversation_key": None}
+
     async def execute(self, inputs):
+        op = self.config.config
+        if not isinstance(op, OnNewTrade):
+            return await self._execute_operation(op)
+        trades = []
+        cursors = set()
+        cursor = None
+        for _ in range(20):
+            page = await self._execute_operation(ListTrades(
+                maker_address=op.maker_address, market=op.market, asset_id=op.asset_id,
+                after=op.after, next_cursor=cursor,
+            ))
+            if page.get("status") == "error":
+                return page
+            trades.extend(page["data"])
+            if len(trades) > 10000:
+                raise ValueError("Too many Polymarket trades; narrow the market, token, or Trades after filter")
+            # CLOB cursors encode offsets and may still name a next offset on
+            # a short final page (as in the published trades example). A page
+            # below the server's limit has exhausted the current result set.
+            count, limit = page.get("count"), page.get("limit")
+            short_page = (isinstance(count, int) and isinstance(limit, int)
+                and limit > 0 and 0 <= count < limit)
+            if not page["has_more"] or short_page:
+                break
+            cursor = page["next_cursor"]
+            if cursor in cursors:
+                raise ValueError("Polymarket repeated a trade page cursor")
+            cursors.add(cursor)
+        else:
+            raise ValueError("Too many Polymarket trade pages; narrow the market, token, or Trades after filter")
+        if any(not isinstance(trade, dict) or not trade.get("id") for trade in trades):
+            raise ValueError("Polymarket returned a trade without an ID")
+        # A page boundary can overlap while trades arrive; emit each trade once.
+        trades = list({str(trade["id"]): trade for trade in trades}.values())
+        fresh = await self._filter_unseen(trades, lambda trade: str(trade["id"]))
+        return {"status": "success", "trades": fresh, "new_trade_count": len(fresh)}
+
+    async def _execute_operation(self, op):
         credential = self.config.credentials
         if credential is None:
             raise ValueError("Connect Polymarket CLOB API credentials")
-        op = self.config.config
         method, path, authenticated = ROUTES[op.operation]
         values = op.model_dump(exclude_none=True, exclude={"operation"})
         body = None
