@@ -6,12 +6,12 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const SymplaIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <img src="/icons/sympla.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const SymplaNode: NodeDefinition = {
     type: 'automation-sympla', category: 'bookings', label: 'Sympla',
-    description: 'Read events, orders, participants and presentations, and check in tickets',
+    description: 'Watch new or updated orders and participants, read events, and check in tickets',
     Icon: SymplaIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={SymplaIcon} iconColor="" />),

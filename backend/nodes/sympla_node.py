@@ -1,11 +1,12 @@
 """Sympla Public API v1.6.0: producer event, order, participant and check-in operations.
 
-Contract: https://developers.sympla.com.br/api-docs (version 2.0.68).
+Contract: https://developers.sympla.com.br/api-docs (version 2.0.71).
 Pagination is explicit: pass pagination.next_cursor as cursor to read another page.
 """
 from __future__ import annotations
 
 from datetime import datetime
+import json
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
 
@@ -14,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from utils.ssrf import guarded_async_client
 
 BASE_URL = "https://api.sympla.com.br/public"
@@ -224,7 +226,31 @@ class SymplaCheckInQrCodeConfig(_Input):
     qr_code: SymplaQrCode = Field(..., description="The signed QR payload from the ticket; preserve its values.")
 
 
+class _SymplaPollConfig(PollTriggerConfigBase):
+    model_config = ConfigDict(extra="ignore", json_schema_extra={"x-requires-webhook": True})
+    event_id: str = Field(..., min_length=1, max_length=512, pattern=r"^[A-Za-z0-9_-]+$", title="Event ID")
+    timezone: str = Field("America/Sao_Paulo", description="IANA timezone for returned dates.")
+
+
+class SymplaOnNewOrUpdatedOrderConfig(_SymplaPollConfig):
+    """Watch an event's orders. Existing orders form a baseline when armed."""
+    operation: Literal["on_new_or_updated_order"] = Field("on_new_or_updated_order", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "On New or Updated Order",
+    })
+
+
+class SymplaOnNewOrUpdatedParticipantConfig(_SymplaPollConfig):
+    """Watch an event's participants. Existing participants form a baseline when armed."""
+    operation: Literal["on_new_or_updated_participant"] = Field("on_new_or_updated_participant", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "On New or Updated Participant",
+    })
+
+
 SymplaConfig = Annotated[Union[
+    SymplaOnNewOrUpdatedOrderConfig,
+    SymplaOnNewOrUpdatedParticipantConfig,
     SymplaListEventsConfig,
     SymplaGetEventConfig,
     SymplaListOrdersConfig,
@@ -370,7 +396,7 @@ ROUTES = {'list_events': ('GET',
 
 
 
-class SymplaNode(WorkflowNode):
+class SymplaNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-sympla"
     connection_evidence = ConnectionEvidence(noun="events", operation="list_events")
 
@@ -378,10 +404,68 @@ class SymplaNode(WorkflowNode):
     def get_config_model(cls):
         return SymplaFullConfig
 
+    @classmethod
+    def resolve_agent_event(cls, output):
+        kind = output.get("sympla_trigger") if isinstance(output, dict) else None
+        if kind not in {"orders", "participants"}:
+            return super().resolve_agent_event(output)
+        items = output.get("data") or []
+        if not items:
+            return None
+        lines = []
+        for item in items[:10]:
+            if kind == "orders":
+                who = " ".join(filter(None, [item.get("buyer_first_name"), item.get("buyer_last_name")]))
+                content = f"{who or 'Buyer'} ({item.get('buyer_email') or 'no email'}), status {item.get('order_status') or 'unknown'}"
+            else:
+                who = " ".join(filter(None, [item.get("first_name"), item.get("last_name")]))
+                content = f"{who or 'Participant'} ({item.get('email') or 'no email'}), ticket {item.get('ticket_number')}, {item.get('ticket_name') or 'ticket'}, order {item.get('order_id')}"
+            lines.append(f"- {content}; id {item.get('id')}")
+        if len(items) > 10:
+            lines.append(f"- and {len(items) - 10} more (see data)")
+        return {"text": f"Sympla: {len(items)} new or updated {kind} in event {output.get('event_id')}:\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _poll_changes(self, config):
+        orders = isinstance(config, SymplaOnNewOrUpdatedOrderConfig)
+        kind = "orders" if orders else "participants"
+        updated_field = "updated_date" if orders else "ticket_updated_at"
+        cursor = None
+        cursors = set()
+        items = []
+        for _ in range(50):
+            list_config = (SymplaListOrdersConfig if orders else SymplaListParticipantsConfig)(
+                event_id=config.event_id, timezone=config.timezone, page_size=200,
+                field_sort=updated_field, sort="desc", cursor=cursor, cancelled_filter="include",
+            )
+            body = await self._execute_operation(list_config)
+            items.extend(body["data"])
+            if len(items) > 10000:
+                raise ValueError("Sympla polling supports at most 10,000 records per event")
+            cursor = (body.get("pagination") or {}).get("next_cursor")
+            if not cursor:
+                break
+            if cursor in cursors:
+                raise ValueError("Sympla returned a repeated pagination cursor")
+            cursors.add(cursor)
+        else:
+            raise ValueError("Sympla polling exceeded 50 pages; no baseline was changed")
+        # Both the identity and version come from the published response schema.
+        fresh = await self._filter_unseen(items, lambda item: json.dumps(
+            [str(item["id"]), item.get(updated_field)], separators=(",", ":")
+        ) if isinstance(item, dict) and item.get("id") is not None else None)
+        return {"status": "success", "data": fresh, "sympla_trigger": kind,
+                "event_id": config.event_id, "new_or_updated_count": len(fresh)}
+
     async def execute(self, inputs):
         if not self.config.credentials:
             raise ValueError("Connect a Sympla API token")
         config = self.config.config
+        if isinstance(config, (SymplaOnNewOrUpdatedOrderConfig, SymplaOnNewOrUpdatedParticipantConfig)):
+            return await self._poll_changes(config)
+        return await self._execute_operation(config)
+
+    async def _execute_operation(self, config):
         method, path, path_fields, query_fields = ROUTES[config.operation]
         for wire, name in path_fields.items():
             path = path.replace("{" + wire + "}", quote(str(getattr(config, name)), safe=""))

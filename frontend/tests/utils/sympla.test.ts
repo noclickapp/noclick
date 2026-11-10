@@ -16,6 +16,13 @@ describe('Sympla integration metadata', () => {
     expect(schema).toBeTruthy();
     expect(methodFromRequirement(requirementsFromSchema(schema)[0]).method_kind).toBe('api_key');
   });
+  it('marks the two polling operations as triggers', () => {
+    const schema = getNodeSchema('automation-sympla') as any;
+    for (const name of ['SymplaOnNewOrUpdatedOrderConfig', 'SymplaOnNewOrUpdatedParticipantConfig']) {
+      expect(schema.$defs[name]['x-requires-webhook']).toBe(true);
+      expect(schema.$defs[name].properties.operation['x-is-trigger']).toBe(true);
+    }
+  });
   it('offers the complete v1.6.0 read and check-in operation set', () => {
     const operations = getAgentToolOperations('automation-sympla').map(op => op.operation);
     expect(operations).toHaveLength(15);

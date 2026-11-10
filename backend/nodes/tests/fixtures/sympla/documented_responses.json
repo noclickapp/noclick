@@ -1,0 +1,100 @@
+{
+  "source": "https://developers.sympla.com.br/api-docs",
+  "version": "2.0.71",
+  "orders": {
+    "data": [
+      {
+        "approved_date": "2026-06-18 19:12:37",
+        "buyer_email": "string",
+        "buyer_first_name": "string",
+        "buyer_last_name": "string",
+        "discount_code": "string",
+        "event_id": "string",
+        "id": "string",
+        "invoice_info": {
+          "name": "string"
+        },
+        "order_date": "2026-06-18 19:12:37",
+        "order_status": "string",
+        "order_total_net_value": 0.1,
+        "order_total_sale_price": 0.1,
+        "presentation_id": 0,
+        "transaction_type": "string",
+        "updated_date": "2026-06-18 19:12:37",
+        "utm": {
+          "utm_source": "string"
+        }
+      }
+    ],
+    "pagination": {
+      "next_cursor": "string",
+      "page_size": 0,
+      "quantity": 0
+    },
+    "sort": {
+      "field_sort": "string",
+      "sort": "string"
+    }
+  },
+  "participants": {
+    "data": [
+      {
+        "access_information": "string",
+        "checkin": {
+          "date": "2026-06-18 19:12:37",
+          "id": "string"
+        },
+        "custom_form": {
+          "cpf": "string"
+        },
+        "email": "string",
+        "event_id": "string",
+        "first_name": "string",
+        "id": "string",
+        "included_items": [
+          {
+            "created_at": "2026-06-18 19:12:37",
+            "id": "string",
+            "image_url": "string",
+            "name": "string",
+            "quantity": 1,
+            "updated_at": "2026-06-18 19:12:37",
+            "variant_name": "string"
+          }
+        ],
+        "item_id": "string",
+        "last_name": "string",
+        "marked_place_name": "string",
+        "order_approved_date": "2026-06-18 19:12:37",
+        "order_date": "2026-06-18 19:12:37",
+        "order_discount": "string",
+        "order_id": "string",
+        "order_status": "string",
+        "order_updated_at": "2026-06-18 19:12:37",
+        "presentation_id": "string",
+        "sector_name": "string",
+        "ticket_created_at": "2026-06-18 19:12:37",
+        "ticket_group_id": 0,
+        "ticket_group_name": "string",
+        "ticket_name": "string",
+        "ticket_net_value": 0.1,
+        "ticket_num_qr_code": "string",
+        "ticket_number": "string",
+        "ticket_sale_price": 0.1,
+        "ticket_status": "string",
+        "ticket_subgroup_id": 0,
+        "ticket_subgroup_name": "string",
+        "ticket_updated_at": "2026-06-18 19:12:37"
+      }
+    ],
+    "pagination": {
+      "next_cursor": "string",
+      "page_size": 0,
+      "quantity": 0
+    },
+    "sort": {
+      "field_sort": "string",
+      "sort": "string"
+    }
+  }
+}
