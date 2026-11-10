@@ -1780,6 +1780,188 @@
       "title": "ModifySupplier",
       "type": "object"
     },
+    "OnEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "exclusiveMinimum": 0,
+          "title": "Company ID",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "company_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On Fatture in Cloud Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Fatture in Cloud Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "it.fattureincloud.webhooks.entities.clients.create",
+          "description": "Start when an invoice, received document, client, supplier or product is created, updated or deleted. Requires read access to that resource. One subscription per app, company and event type is allowed.",
+          "enum": [
+            "it.fattureincloud.webhooks.issued_documents.invoices.create",
+            "it.fattureincloud.webhooks.issued_documents.invoices.update",
+            "it.fattureincloud.webhooks.issued_documents.invoices.delete",
+            "it.fattureincloud.webhooks.received_documents.create",
+            "it.fattureincloud.webhooks.received_documents.update",
+            "it.fattureincloud.webhooks.received_documents.delete",
+            "it.fattureincloud.webhooks.entities.clients.create",
+            "it.fattureincloud.webhooks.entities.clients.update",
+            "it.fattureincloud.webhooks.entities.clients.delete",
+            "it.fattureincloud.webhooks.entities.suppliers.create",
+            "it.fattureincloud.webhooks.entities.suppliers.update",
+            "it.fattureincloud.webhooks.entities.suppliers.delete",
+            "it.fattureincloud.webhooks.products.create",
+            "it.fattureincloud.webhooks.products.update",
+            "it.fattureincloud.webhooks.products.delete"
+          ],
+          "enumNames": [
+            "Invoice created",
+            "Invoice updated",
+            "Invoice deleted",
+            "Received Document created",
+            "Received Document updated",
+            "Received Document deleted",
+            "Client created",
+            "Client updated",
+            "Client deleted",
+            "Supplier created",
+            "Supplier updated",
+            "Supplier deleted",
+            "Product created",
+            "Product updated",
+            "Product deleted"
+          ],
+          "title": "Event type",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically. Notifications contain resource IDs; use the matching Get operation to read content.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "OnEvent",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "PaymentAccount": {
       "additionalProperties": false,
       "properties": {
@@ -2018,11 +2200,15 @@
           "modify_client": "#/$defs/ModifyClient",
           "modify_issued_document": "#/$defs/ModifyIssuedDocument",
           "modify_product": "#/$defs/ModifyProduct",
-          "modify_supplier": "#/$defs/ModifySupplier"
+          "modify_supplier": "#/$defs/ModifySupplier",
+          "on_event": "#/$defs/OnEvent"
         },
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/OnEvent"
+        },
         {
           "$ref": "#/$defs/GetUserInfo"
         },

@@ -2,5 +2,12 @@
   "source": "https://raw.githubusercontent.com/fattureincloud/openapi-fattureincloud/master/openapi-enriched.yaml",
   "version": "2.1.8",
   "sha256": "538cf1f25af140b2f1a4e9f7ece2282031b75a648a4d954e51b757a380d97bdf",
-  "examples": "Provider-authored application/json examples from components.responses; no values modified."
+  "examples": "Provider-authored application/json examples from components.responses; no values modified.",
+  "webhooks": {
+    "registration": "https://raw.githubusercontent.com/fattureincloud/openapi-fattureincloud/master/openapi-enriched.yaml",
+    "delivery": "https://developers.fattureincloud.it/docs/webhooks/notifications/",
+    "types": "https://developers.fattureincloud.it/docs/webhooks/notification-types/",
+    "verification": "https://developers.fattureincloud.it/docs/webhooks/subscriptions/",
+    "examples": "ClientCreatedEvent.json copies the Binary example body and headers except placeholder Authorization; CreateWebhooksSubscriptionResponse.json copies the full provider response example."
+  }
 }

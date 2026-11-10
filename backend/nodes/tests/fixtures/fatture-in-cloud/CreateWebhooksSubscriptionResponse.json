@@ -1,0 +1,12 @@
+{
+  "data": {
+    "id": "SUB123",
+    "sink": "http://www.test.com",
+    "verified": true,
+    "types": [
+      "it.fattureincloud.webhooks.entities.create",
+      "it.fattureincloud.webhooks.issued_documents.create"
+    ]
+  },
+  "warnings": "The 'it.fattureincloud.webhooks.entities.clients.delete' event is already registered for this application"
+}

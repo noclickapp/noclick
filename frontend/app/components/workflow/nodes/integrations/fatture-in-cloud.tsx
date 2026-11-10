@@ -11,7 +11,7 @@ const FattureInCloudIcon = ({ className, style }: { className?: string; style?: 
 
 export const FattureInCloudNode: NodeDefinition = {
     type: 'automation-fatture-in-cloud', category: 'finance-accounting', label: 'Fatture in Cloud',
-    description: 'Manage clients, suppliers, products and invoices; read received documents and companies',
+    description: 'Manage clients, suppliers, products and invoices; read received documents and companies; start workflows from invoice, contact and product events',
     keywords: ['fatture', 'invoices', 'Italian accounting'],
     Icon: FattureInCloudIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

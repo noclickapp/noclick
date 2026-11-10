@@ -4,11 +4,15 @@ Operations make one request, return one page with provider pagination metadata,
 and never retry writes automatically.
 """
 from __future__ import annotations
+import base64
+from urllib.parse import quote
+import jwt
 from datetime import date
 from typing import Annotated, Literal, Union
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -255,7 +259,43 @@ class GetReceivedDocument(_Company):
     document_id: int = Field(..., gt=0)
 
 
+# Delivery format, public key and JWT claims: provider notifications documentation.
+WEBHOOK_DOCS = "https://developers.fattureincloud.it/docs/webhooks/notifications/"
+WEBHOOK_PUBLIC_KEY = base64.b64decode('LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFL1JvSElqZ1k3aGZYZlk1cC9KeStLL0ZndU1aNAozVHZaOXQ0ZU43K2t4UTBNSnpLdG93djRDY1lURnFyQm03aE1CNVpXS25xTHoyNEQ2bFFqU0wwWXN3PT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==')
+WEBHOOK_EVENTS = {
+    'it.fattureincloud.webhooks.issued_documents.invoices.create': ('invoice', 'created', 'get_issued_document', 'document_id'),
+    'it.fattureincloud.webhooks.issued_documents.invoices.update': ('invoice', 'updated', 'get_issued_document', 'document_id'),
+    'it.fattureincloud.webhooks.issued_documents.invoices.delete': ('invoice', 'deleted', 'get_issued_document', 'document_id'),
+    'it.fattureincloud.webhooks.received_documents.create': ('received document', 'created', 'get_received_document', 'document_id'),
+    'it.fattureincloud.webhooks.received_documents.update': ('received document', 'updated', 'get_received_document', 'document_id'),
+    'it.fattureincloud.webhooks.received_documents.delete': ('received document', 'deleted', 'get_received_document', 'document_id'),
+    'it.fattureincloud.webhooks.entities.clients.create': ('client', 'created', 'get_client', 'client_id'),
+    'it.fattureincloud.webhooks.entities.clients.update': ('client', 'updated', 'get_client', 'client_id'),
+    'it.fattureincloud.webhooks.entities.clients.delete': ('client', 'deleted', 'get_client', 'client_id'),
+    'it.fattureincloud.webhooks.entities.suppliers.create': ('supplier', 'created', 'get_supplier', 'supplier_id'),
+    'it.fattureincloud.webhooks.entities.suppliers.update': ('supplier', 'updated', 'get_supplier', 'supplier_id'),
+    'it.fattureincloud.webhooks.entities.suppliers.delete': ('supplier', 'deleted', 'get_supplier', 'supplier_id'),
+    'it.fattureincloud.webhooks.products.create': ('product', 'created', 'get_product', 'product_id'),
+    'it.fattureincloud.webhooks.products.update': ('product', 'updated', 'get_product', 'product_id'),
+    'it.fattureincloud.webhooks.products.delete': ('product', 'deleted', 'get_product', 'product_id'),
+}
+
+
+class OnEvent(WebhookTriggerConfigBase, _Company):
+    operation: Literal["on_event"] = Field("on_event", title="On Fatture in Cloud Event", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+        "x-display-name": "On Fatture in Cloud Event"})
+    event_type: Literal[*WEBHOOK_EVENTS] = Field(
+        "it.fattureincloud.webhooks.entities.clients.create", title="Event type",
+        description="Start when an invoice, received document, client, supplier or product is created, updated or deleted. Requires read access to that resource. One subscription per app, company and event type is allowed.",
+        json_schema_extra={"enumNames": [f"{noun.title()} {action}" for noun, action, _, _ in WEBHOOK_EVENTS.values()]})
+    webhook_url: str | None = Field(None, title="Webhook URL",
+        description="Registered automatically. Notifications contain resource IDs; use the matching Get operation to read content.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
 FattureInCloudConfig = Annotated[Union[
+    OnEvent,
     GetUserInfo,
     ListCompanies,
     GetCompanyInfo,
@@ -327,7 +367,9 @@ def _redact(value, token):
     return value
 
 
-class FattureInCloudNode(WorkflowNode):
+class FattureInCloudNode(ExternalWebhookTriggerMixin, WorkflowNode):
+    # Deliveries use a provider public key; registration never issues a shared secret.
+    webhook_signing_secret_not_issued = True
     integration_type = "automation-fatture-in-cloud"
     connection_evidence = ConnectionEvidence(noun="companies", field="company_id",
         operation="list_companies", identity_operation="get_user_info")
@@ -335,6 +377,102 @@ class FattureInCloudNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return FattureInCloudFullConfig
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {key: (config or {}).get(key) for key in ("company_id", "event_type")}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        parsed = OnEvent.model_validate({**config, "webhook_url": webhook_url})
+        token = FattureInCloudTokenCredential.model_validate(credential)
+        result = await cls._request(token, "POST", f"/c/{parsed.company_id}/subscriptions", body={"data": {
+            "sink": webhook_url, "types": [parsed.event_type], "verification_method": "header",
+            "config": {"mapping": "binary"}}})
+        subscription = result.get("data") or {}
+        if not subscription.get("id"):
+            raise ValueError("Fatture in Cloud did not return a subscription ID")
+        if result.get("warnings") and parsed.event_type not in subscription.get("types", []):
+            await cls._request(token, "DELETE", f"/c/{parsed.company_id}/subscriptions/{quote(str(subscription['id']), safe='')}")
+            raise ValueError("Fatture in Cloud could not subscribe to this event: " + str(result["warnings"]))
+        return {"external_webhook_id": str(subscription["id"])}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        if not (config or {}).get("external_webhook_id"):
+            return
+        token = FattureInCloudTokenCredential.model_validate(credential)
+        company_id = int(config["company_id"])
+        subscription_id = quote(str(config["external_webhook_id"]), safe="")
+        await cls._request(token, "DELETE", f"/c/{company_id}/subscriptions/{subscription_id}")
+
+    @classmethod
+    def _delivery_claims(cls, headers, config, *, handshake=False):
+        headers = {k.lower(): v for k, v in headers.items()}
+        authorization = headers.get("authorization", "")
+        audience = (config or {}).get("webhook_url")
+        if (not audience and not handshake) or not authorization.startswith("Bearer "):
+            return None
+        try:
+            claims = jwt.decode(authorization[7:], WEBHOOK_PUBLIC_KEY, algorithms=["ES256"],
+                audience=audience, issuer=BASE,
+                options={"require": ["exp", "iat", "iss", "aud", "jti", "sub", "aid"],
+                    "verify_aud": bool(audience)})
+            if claims["sub"] != f"company:{config.get('company_id')}":
+                return None
+            return claims
+        except (jwt.PyJWTError, ValueError, TypeError):
+            return None
+
+    @classmethod
+    def handle_webhook_handshake(cls, body, headers, config=None):
+        headers = {k.lower(): v for k, v in headers.items()}
+        challenge = headers.get("x-fic-verification-challenge")
+        if challenge and headers.get("__method__", "GET") == "GET" and cls._delivery_claims(headers, config or {}, handshake=True):
+            return {"verification": challenge}
+        return None
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # The provider signs JWT claims, not the request body. Pin its algorithm and public key.
+        headers = {k.lower(): v for k, v in headers.items()}
+        claims = cls._delivery_claims(headers, config)
+        return bool(claims and headers.get("ce-id") == claims["jti"]
+            and headers.get("ce-subject") == claims["sub"] and headers.get("ce-source") == BASE)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        headers = (payload.get("_webhook") or {}).get("headers") or {}
+        data = payload.get("data")
+        return (headers.get("ce-type") == config.get("event_type")
+            and headers.get("ce-subject") == f"company:{config.get('company_id')}"
+            and isinstance(data, dict) and isinstance(data.get("ids"), list) and bool(data["ids"])
+            and all(isinstance(i, int) and not isinstance(i, bool) and i > 0 for i in data["ids"]))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        headers = (payload.get("_webhook") or {}).get("headers") or {}
+        return {"event_type": headers.get("ce-type"), "company_id": config["company_id"],
+            "ids": payload["data"]["ids"], "event_id": headers.get("ce-id"), "occurred_at": headers.get("ce-time")}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        details = WEBHOOK_EVENTS.get(output.get("event_type"))
+        if not details:
+            return None
+        noun, action, operation, id_field = details
+        ids = output.get("ids") or []
+        if not ids:
+            return None
+        title = f"Fatture in Cloud: {noun} {action}"
+        text = (f"{title} in company {output['company_id']}. Resource IDs: {', '.join(map(str, ids[:100]))}. "
+            f"Occurred at {output.get('occurred_at')}. Event ID: {output.get('event_id')}. "
+            "Fatture in Cloud does not include the actor or record content in this notification. ")
+        if action == "deleted":
+            text += "The records were deleted and may no longer be available."
+        else:
+            text += f"Use {operation} with company_id={output['company_id']} and {id_field}=<resource ID> to read each record."
+        return {"text": text, "title": title, "conversation_key": None}
 
     @classmethod
     async def _request(cls, credential, method, path, *, params=None, body=None):
@@ -357,6 +495,8 @@ class FattureInCloudNode(WorkflowNode):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Fatture in Cloud access token")
         config = self.config.config
+        if isinstance(config, OnEvent):
+            return self.no_event_output(config.operation, "Waiting for a Fatture in Cloud notification")
         method, template = ROUTES[config.operation]
         values = config.model_dump(mode="json", exclude_none=True)
         path = template.format(**values)
