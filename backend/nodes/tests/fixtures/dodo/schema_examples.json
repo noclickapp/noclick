@@ -1,0 +1,845 @@
+{
+  "source": "https://api.nookipedia.com/static/doc.yaml",
+  "description": "Property examples copied from the published OpenAPI component schemas. Not live-recorded responses.",
+  "operations": {
+    "list_villagers": [
+      {
+        "url": "https://nookipedia.com/wiki/Ribbot",
+        "name": "Ribbot",
+        "alt_name": "",
+        "title_color": "bfbfbf",
+        "text_color": "5e5e5e",
+        "id": "flg01",
+        "image_url": "https://dodo.ac/np/images/9/94/Ribbot_NH.png",
+        "species": "Frog",
+        "personality": "Jock",
+        "gender": "Male",
+        "birthday_month": "February",
+        "birthday_day": "13",
+        "sign": "Aquarius",
+        "quote": "Never rest, never rust.",
+        "phrase": "zzrrbbit",
+        "prev_phrases": [
+          "toady"
+        ],
+        "clothing": "Simple Parka",
+        "islander": false,
+        "debut": "DNM",
+        "appearances": [
+          "DNM",
+          "AC",
+          "E_PLUS",
+          "WW",
+          "CF",
+          "NL",
+          "WA",
+          "NH",
+          "HHD",
+          "PC"
+        ]
+      }
+    ],
+    "list_events": [
+      {
+        "event": "May Day event begins",
+        "date": "2021-05-01",
+        "type": "Event",
+        "url": "https://nookipedia.com/wiki/May_Day"
+      }
+    ],
+    "list_fish": [
+      {
+        "url": "https://nookipedia.com/wiki/Cherry Salmon",
+        "name": "Cherry Salmon",
+        "number": 27,
+        "image_url": "https://dodo.ac/np/images/d/db/Cherry_Salmon_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/c/c0/Cherry_Salmon_NH.png",
+        "location": "River (clifftop)",
+        "shadow_size": "Small",
+        "rarity": "Uncommon",
+        "total_catch": 100,
+        "sell_nook": 1000,
+        "sell_cj": 1500,
+        "tank_width": 1,
+        "tank_length": 1,
+        "catchphrases": [
+          "I caught a cherry salmon! It's the perfect topper for a marlin sundae!"
+        ]
+      }
+    ],
+    "get_fish": {
+      "url": "https://nookipedia.com/wiki/Cherry Salmon",
+      "name": "Cherry Salmon",
+      "number": 27,
+      "image_url": "https://dodo.ac/np/images/d/db/Cherry_Salmon_NH_Icon.png",
+      "render_url": "https://dodo.ac/np/images/c/c0/Cherry_Salmon_NH.png",
+      "location": "River (clifftop)",
+      "shadow_size": "Small",
+      "rarity": "Uncommon",
+      "total_catch": 100,
+      "sell_nook": 1000,
+      "sell_cj": 1500,
+      "tank_width": 1,
+      "tank_length": 1,
+      "catchphrases": [
+        "I caught a cherry salmon! It's the perfect topper for a marlin sundae!"
+      ]
+    },
+    "list_bugs": [
+      {
+        "url": "https://nookipedia.com/wiki/Grasshopper",
+        "name": "Grasshopper",
+        "number": 19,
+        "image_url": "https://dodo.ac/np/images/3/37/Grasshopper_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/1d/Grasshopper_NH.png",
+        "location": "On the ground",
+        "weather": "Any except rain",
+        "rarity": "Uncommon",
+        "total_catch": 0,
+        "sell_nook": 160,
+        "sell_flick": 240,
+        "tank_width": 1,
+        "tank_length": 1,
+        "catchphrases": [
+          "I caught a grasshopper! They're a grass act!"
+        ]
+      }
+    ],
+    "get_bug": {
+      "url": "https://nookipedia.com/wiki/Grasshopper",
+      "name": "Grasshopper",
+      "number": 19,
+      "image_url": "https://dodo.ac/np/images/3/37/Grasshopper_NH_Icon.png",
+      "render_url": "https://dodo.ac/np/images/1/1d/Grasshopper_NH.png",
+      "location": "On the ground",
+      "weather": "Any except rain",
+      "rarity": "Uncommon",
+      "total_catch": 0,
+      "sell_nook": 160,
+      "sell_flick": 240,
+      "tank_width": 1,
+      "tank_length": 1,
+      "catchphrases": [
+        "I caught a grasshopper! They're a grass act!"
+      ]
+    },
+    "list_sea": [
+      {
+        "url": "https://nookipedia.com/wiki/Octopus_(fish)",
+        "name": "Octopus",
+        "number": 20,
+        "image_url": "https://dodo.ac/np/images/5/58/Octopus_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/2/27/Octopus_NH.png",
+        "shadow_size": "Medium",
+        "shadow_movement": "Slow",
+        "rarity": "Uncommon",
+        "total_catch": 0,
+        "sell_nook": 160,
+        "tank_width": 1,
+        "tank_length": 1,
+        "catchphrases": [
+          "I got an octopus! It can give four hugs at once!"
+        ]
+      }
+    ],
+    "get_sea_creature": {
+      "url": "https://nookipedia.com/wiki/Octopus_(fish)",
+      "name": "Octopus",
+      "number": 20,
+      "image_url": "https://dodo.ac/np/images/5/58/Octopus_NH_Icon.png",
+      "render_url": "https://dodo.ac/np/images/2/27/Octopus_NH.png",
+      "shadow_size": "Medium",
+      "shadow_movement": "Slow",
+      "rarity": "Uncommon",
+      "total_catch": 0,
+      "sell_nook": 160,
+      "tank_width": 1,
+      "tank_length": 1,
+      "catchphrases": [
+        "I got an octopus! It can give four hugs at once!"
+      ]
+    },
+    "list_art": [
+      {
+        "name": "Academic Painting",
+        "url": "https://nookipedia.com/wiki/Academic_Painting",
+        "has_fake": true,
+        "art_name": "Vitruvian Man",
+        "art_type": "Painting",
+        "author": "Leonardo da Vinci",
+        "year": "circa 1487",
+        "art_style": "Pen and ink on paper",
+        "buy": 4980,
+        "sell": 1245,
+        "availability": "Jolly Redd's Treasure Trawler",
+        "width": 1,
+        "length": 1
+      }
+    ],
+    "get_artwork": {
+      "name": "Academic Painting",
+      "url": "https://nookipedia.com/wiki/Academic_Painting",
+      "has_fake": true,
+      "art_name": "Vitruvian Man",
+      "art_type": "Painting",
+      "author": "Leonardo da Vinci",
+      "year": "circa 1487",
+      "art_style": "Pen and ink on paper",
+      "buy": 4980,
+      "sell": 1245,
+      "availability": "Jolly Redd's Treasure Trawler",
+      "width": 1,
+      "length": 1
+    },
+    "list_furniture": [
+      {
+        "name": "Antique Vanity",
+        "url": "https://nookipedia.com/wiki/Item:Antique_Vanity_(New_Horizons)",
+        "category": "Housewares",
+        "item_series": "Antique",
+        "item_set": "",
+        "themes": [
+          "Living Room",
+          "Expensive"
+        ],
+        "hha_category": "Dresser",
+        "hha_base": 251,
+        "tag": "Dresser",
+        "lucky": false,
+        "lucky_season": "",
+        "buy": [
+          {
+            "price": 31000,
+            "currency": "Bells"
+          }
+        ],
+        "sell": 7750,
+        "variation_total": 3,
+        "pattern_total": 0,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_kit_type": "",
+        "custom_body_part": "",
+        "custom_pattern_part": "",
+        "grid_width": 2.0,
+        "grid_length": 1.0,
+        "height": 15.98677,
+        "door_decor": false,
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "functions": [
+          "Dresser"
+        ],
+        "availability": [
+          {
+            "from": "Nook's Cranny (Upgraded)",
+            "note": ""
+          }
+        ],
+        "variations": [
+          {
+            "variation": "Brown",
+            "pattern": "",
+            "image_url": "https://dodo.ac/np/images/9/9e/Antique_Vanity_%28Brown%29_NH_Icon.png",
+            "colors": [
+              "Aqua",
+              "Brown"
+            ]
+          },
+          {
+            "variation": "Natural",
+            "pattern": "",
+            "image_url": "https://dodo.ac/np/images/a/ab/Antique_Vanity_%28Natural%29_NH_Icon.png",
+            "colors": [
+              "Aqua",
+              "Beige"
+            ]
+          },
+          {
+            "variation": "Black",
+            "pattern": "",
+            "image_url": "https://dodo.ac/np/images/5/55/Antique_Vanity_%28Black%29_NH_Icon.png",
+            "colors": [
+              "Aqua",
+              "Black"
+            ]
+          }
+        ],
+        "notes": ""
+      }
+    ],
+    "get_furniture": {
+      "name": "Antique Vanity",
+      "url": "https://nookipedia.com/wiki/Item:Antique_Vanity_(New_Horizons)",
+      "category": "Housewares",
+      "item_series": "Antique",
+      "item_set": "",
+      "themes": [
+        "Living Room",
+        "Expensive"
+      ],
+      "hha_category": "Dresser",
+      "hha_base": 251,
+      "tag": "Dresser",
+      "lucky": false,
+      "lucky_season": "",
+      "buy": [
+        {
+          "price": 31000,
+          "currency": "Bells"
+        }
+      ],
+      "sell": 7750,
+      "variation_total": 3,
+      "pattern_total": 0,
+      "customizable": false,
+      "custom_kits": 0,
+      "custom_kit_type": "",
+      "custom_body_part": "",
+      "custom_pattern_part": "",
+      "grid_width": 2.0,
+      "grid_length": 1.0,
+      "height": 15.98677,
+      "door_decor": false,
+      "version_added": "1.0.0",
+      "unlocked": true,
+      "functions": [
+        "Dresser"
+      ],
+      "availability": [
+        {
+          "from": "Nook's Cranny (Upgraded)",
+          "note": ""
+        }
+      ],
+      "variations": [
+        {
+          "variation": "Brown",
+          "pattern": "",
+          "image_url": "https://dodo.ac/np/images/9/9e/Antique_Vanity_%28Brown%29_NH_Icon.png",
+          "colors": [
+            "Aqua",
+            "Brown"
+          ]
+        },
+        {
+          "variation": "Natural",
+          "pattern": "",
+          "image_url": "https://dodo.ac/np/images/a/ab/Antique_Vanity_%28Natural%29_NH_Icon.png",
+          "colors": [
+            "Aqua",
+            "Beige"
+          ]
+        },
+        {
+          "variation": "Black",
+          "pattern": "",
+          "image_url": "https://dodo.ac/np/images/5/55/Antique_Vanity_%28Black%29_NH_Icon.png",
+          "colors": [
+            "Aqua",
+            "Black"
+          ]
+        }
+      ],
+      "notes": ""
+    },
+    "list_clothing": [
+      {
+        "name": "3D Glasses",
+        "url": "https://nookipedia.com/wiki/Item:3D_Glasses_(New_Horizons)",
+        "category": "Accessories",
+        "sell": 122,
+        "variation_total": 2,
+        "vill_equip": true,
+        "seasonality": "All year",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "label_themes": [
+          "Party"
+        ],
+        "styles": [
+          "Active"
+        ],
+        "availability": [
+          {
+            "from": "Able Sisters",
+            "note": ""
+          }
+        ],
+        "buy": [
+          {
+            "price": 490,
+            "currency": "Bells"
+          }
+        ],
+        "variations": [
+          {
+            "variation": "White",
+            "image_url": "https://dodo.ac/np/images/1/15/3D_Glasses_%28White%29_NH_Icon.png",
+            "colors": [
+              "White",
+              "Colorful"
+            ]
+          },
+          {
+            "variation": "Black",
+            "image_url": "https://dodo.ac/np/images/2/28/3D_Glasses_%28Black%29_NH_Icon.png",
+            "colors": [
+              "Colorful",
+              "Black"
+            ]
+          }
+        ]
+      }
+    ],
+    "get_clothing": {
+      "name": "3D Glasses",
+      "url": "https://nookipedia.com/wiki/Item:3D_Glasses_(New_Horizons)",
+      "category": "Accessories",
+      "sell": 122,
+      "variation_total": 2,
+      "vill_equip": true,
+      "seasonality": "All year",
+      "version_added": "1.0.0",
+      "unlocked": true,
+      "notes": "",
+      "label_themes": [
+        "Party"
+      ],
+      "styles": [
+        "Active"
+      ],
+      "availability": [
+        {
+          "from": "Able Sisters",
+          "note": ""
+        }
+      ],
+      "buy": [
+        {
+          "price": 490,
+          "currency": "Bells"
+        }
+      ],
+      "variations": [
+        {
+          "variation": "White",
+          "image_url": "https://dodo.ac/np/images/1/15/3D_Glasses_%28White%29_NH_Icon.png",
+          "colors": [
+            "White",
+            "Colorful"
+          ]
+        },
+        {
+          "variation": "Black",
+          "image_url": "https://dodo.ac/np/images/2/28/3D_Glasses_%28Black%29_NH_Icon.png",
+          "colors": [
+            "Colorful",
+            "Black"
+          ]
+        }
+      ]
+    },
+    "list_interior": [
+      {
+        "name": "Abstract Wall",
+        "url": "https://nookipedia.com/wiki/Item:Abstract_Wall_(New_Horizons)",
+        "image_url": "https://dodo.ac/np/images/2/2d/Abstract_Wall_NH_Icon.png",
+        "category": "Wallpaper",
+        "item_series": "",
+        "item_set": "",
+        "themes": [
+          "Shop",
+          "Facility"
+        ],
+        "hha_category": "Dresser",
+        "hha_base": 0,
+        "tag": "Dresser",
+        "sell": 200,
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 2.0,
+        "grid_length": 1.0,
+        "colors": [
+          "White",
+          "Colorful"
+        ],
+        "availability": [
+          {
+            "from": "Nook's",
+            "note": ""
+          }
+        ],
+        "buy": [
+          {
+            "price": 1560,
+            "currency": "Bells"
+          }
+        ]
+      }
+    ],
+    "get_interior_item": {
+      "name": "Abstract Wall",
+      "url": "https://nookipedia.com/wiki/Item:Abstract_Wall_(New_Horizons)",
+      "image_url": "https://dodo.ac/np/images/2/2d/Abstract_Wall_NH_Icon.png",
+      "category": "Wallpaper",
+      "item_series": "",
+      "item_set": "",
+      "themes": [
+        "Shop",
+        "Facility"
+      ],
+      "hha_category": "Dresser",
+      "hha_base": 0,
+      "tag": "Dresser",
+      "sell": 200,
+      "version_added": "1.0.0",
+      "unlocked": true,
+      "notes": "",
+      "grid_width": 2.0,
+      "grid_length": 1.0,
+      "colors": [
+        "White",
+        "Colorful"
+      ],
+      "availability": [
+        {
+          "from": "Nook's",
+          "note": ""
+        }
+      ],
+      "buy": [
+        {
+          "price": 1560,
+          "currency": "Bells"
+        }
+      ]
+    },
+    "list_tools": [
+      {
+        "name": "Axe",
+        "url": "https://nookipedia.com/wiki/Item:Axe_(New_Horizons)",
+        "uses": 100,
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+          {
+            "from": "Nook's Cranny",
+            "note": ""
+          },
+          {
+            "from": "Crafting",
+            "note": ""
+          }
+        ],
+        "buy": [
+          {
+            "price": 2550
+          },
+          {
+            "currency": "Bells"
+          }
+        ],
+        "variations": [
+          {
+            "variation": "",
+            "image_url": "https://dodo.ac/np/images/f/fa/Axe_NH_Icon.png"
+          }
+        ]
+      }
+    ],
+    "get_tool": {
+      "name": "Axe",
+      "url": "https://nookipedia.com/wiki/Item:Axe_(New_Horizons)",
+      "uses": 100,
+      "hha_base": 0,
+      "sell": 625,
+      "customizable": false,
+      "custom_kits": 0,
+      "custom_body_part": "",
+      "version_added": "1.0.0",
+      "unlocked": true,
+      "notes": "",
+      "availability": [
+        {
+          "from": "Nook's Cranny",
+          "note": ""
+        },
+        {
+          "from": "Crafting",
+          "note": ""
+        }
+      ],
+      "buy": [
+        {
+          "price": 2550
+        },
+        {
+          "currency": "Bells"
+        }
+      ],
+      "variations": [
+        {
+          "variation": "",
+          "image_url": "https://dodo.ac/np/images/f/fa/Axe_NH_Icon.png"
+        }
+      ]
+    },
+    "list_items": [
+      {
+        "name": "Acorn",
+        "url": "https://nookipedia.com/wiki/Item:Acorn_(New_Horizons)",
+        "image_url": "https://dodo.ac/np/images/9/9f/Acorn_NH_Icon.png",
+        "stack": 30,
+        "hha_base": 0,
+        "sell": 200,
+        "is_fence": false,
+        "material_type": "Tree",
+        "material_seasonality": "Autumn",
+        "material_sort": 3,
+        "material_name_sort": 0,
+        "material_seasonality_sort": 3,
+        "edible": false,
+        "plant_type": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+          {
+            "from": "Nook's",
+            "note": ""
+          }
+        ],
+        "buy": [
+          {
+            "price": 280,
+            "currency": "Bells"
+          }
+        ]
+      }
+    ],
+    "get_item": {
+      "name": "Acorn",
+      "url": "https://nookipedia.com/wiki/Item:Acorn_(New_Horizons)",
+      "image_url": "https://dodo.ac/np/images/9/9f/Acorn_NH_Icon.png",
+      "stack": 30,
+      "hha_base": 0,
+      "sell": 200,
+      "is_fence": false,
+      "material_type": "Tree",
+      "material_seasonality": "Autumn",
+      "material_sort": 3,
+      "material_name_sort": 0,
+      "material_seasonality_sort": 3,
+      "edible": false,
+      "plant_type": "",
+      "version_added": "1.0.0",
+      "unlocked": true,
+      "notes": "",
+      "availability": [
+        {
+          "from": "Nook's",
+          "note": ""
+        }
+      ],
+      "buy": [
+        {
+          "price": 280,
+          "currency": "Bells"
+        }
+      ]
+    },
+    "list_recipes": [
+      {
+        "name": "Flimsy Axe",
+        "url": "https://nookipedia.com/wiki/Item:Flimsy_Axe_(New_Horizons)",
+        "image_url": "https://dodo.ac/np/images/a/ac/Flimsy_Axe_NH_DIY_Icon.png",
+        "serial_id": 100,
+        "buy": [
+          {
+            "price": 280,
+            "currency": "Bells"
+          }
+        ],
+        "sell": 200,
+        "recipes_to_unlock": 0,
+        "availability": [
+          {
+            "from": "Tom Nook",
+            "note": "Obtained through Tom Nook's DIY Workshop at the beginning of the game."
+          },
+          {
+            "from": "Nook's Cranny",
+            "note": ""
+          }
+        ],
+        "materials": [
+          {
+            "name": "Tree Branch",
+            "count": 5
+          },
+          {
+            "name": "Stone",
+            "count": 1
+          }
+        ]
+      }
+    ],
+    "get_recipe": {
+      "name": "Flimsy Axe",
+      "url": "https://nookipedia.com/wiki/Item:Flimsy_Axe_(New_Horizons)",
+      "image_url": "https://dodo.ac/np/images/a/ac/Flimsy_Axe_NH_DIY_Icon.png",
+      "serial_id": 100,
+      "buy": [
+        {
+          "price": 280,
+          "currency": "Bells"
+        }
+      ],
+      "sell": 200,
+      "recipes_to_unlock": 0,
+      "availability": [
+        {
+          "from": "Tom Nook",
+          "note": "Obtained through Tom Nook's DIY Workshop at the beginning of the game."
+        },
+        {
+          "from": "Nook's Cranny",
+          "note": ""
+        }
+      ],
+      "materials": [
+        {
+          "name": "Tree Branch",
+          "count": 5
+        },
+        {
+          "name": "Stone",
+          "count": 1
+        }
+      ]
+    },
+    "list_gyroids": [
+      {
+        "name": "Aluminoid",
+        "url": "https://nookipedia.com/wiki/Item:Aluminoid_(New_Horizons)",
+        "hha_base": 207,
+        "sell": 828,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "Customization Kit",
+        "custom_body_part": "Color",
+        "cyrus_price": 1000,
+        "variation_total": 4,
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "sound": "Drum set",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+          {
+            "from": "dig spot",
+            "note": ""
+          }
+        ],
+        "buy": [
+          {
+            "price": 490,
+            "currency": "Bells"
+          }
+        ],
+        "variations": [
+          {
+            "variation": "Black",
+            "image_url": "https://dodo.ac/np/images/6/64/Aluminoid_%28Black%29_NH_Icon.png",
+            "colors": [
+              "Black",
+              "Gray"
+            ]
+          },
+          {
+            "variation": "Blue",
+            "image_url": "https://dodo.ac/np/images/5/52/Aluminoid_%28Blue%29_NH_Icon.png",
+            "colors": [
+              "Blue",
+              "Aqua"
+            ]
+          }
+        ]
+      }
+    ],
+    "get_gyroid": {
+      "name": "Aluminoid",
+      "url": "https://nookipedia.com/wiki/Item:Aluminoid_(New_Horizons)",
+      "hha_base": 207,
+      "sell": 828,
+      "customizable": true,
+      "custom_kits": 1,
+      "custom_kit_type": "Customization Kit",
+      "custom_body_part": "Color",
+      "cyrus_price": 1000,
+      "variation_total": 4,
+      "grid_width": 1.0,
+      "grid_length": 1.0,
+      "sound": "Drum set",
+      "version_added": "2.0.0",
+      "unlocked": true,
+      "notes": "",
+      "availability": [
+        {
+          "from": "dig spot",
+          "note": ""
+        }
+      ],
+      "buy": [
+        {
+          "price": 490,
+          "currency": "Bells"
+        }
+      ],
+      "variations": [
+        {
+          "variation": "Black",
+          "image_url": "https://dodo.ac/np/images/6/64/Aluminoid_%28Black%29_NH_Icon.png",
+          "colors": [
+            "Black",
+            "Gray"
+          ]
+        },
+        {
+          "variation": "Blue",
+          "image_url": "https://dodo.ac/np/images/5/52/Aluminoid_%28Blue%29_NH_Icon.png",
+          "colors": [
+            "Blue",
+            "Aqua"
+          ]
+        }
+      ]
+    },
+    "list_fossils": [
+      {
+        "name": "Spino Skull",
+        "url": "https://nookipedia.com/wiki/Spinosaurus",
+        "image_url": "https://dodo.ac/np/images/7/7b/Spino_Skull_NH_Icon.png",
+        "fossil_group": "Spinosaurus",
+        "interactable": false,
+        "sell": 4000,
+        "hha_base": 87,
+        "width": 2,
+        "length": 2,
+        "colors": [
+          "Brown"
+        ]
+      }
+    ]
+  }
+}
