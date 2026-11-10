@@ -1,0 +1,425 @@
+{
+  "source": "https://mobilemessage.com.au/api-documentation",
+  "contract_source": "https://mobilemessage.com.au/assets/openapi.json",
+  "responses": {
+    "POST /v1/messages": {
+      "status": "complete",
+      "send_id": 9271,
+      "ignore_unsubscribes": false,
+      "total_cost": 2,
+      "results": [
+        {
+          "to": "61412345678",
+          "message": "First message content.",
+          "sender": "MySenderID",
+          "status": "success",
+          "cost": 1,
+          "message_id": "123e4567-e89b-12d3-a456-426614174000",
+          "conversation": 0,
+          "scheduled_for": null
+        },
+        {
+          "to": "61487654321",
+          "message": "Second message content.",
+          "sender": "MySenderID",
+          "custom_ref": "Order123",
+          "status": "success",
+          "cost": 1,
+          "message_id": "123e4567-e89b-12d3-a456-426614174001",
+          "conversation": 0,
+          "scheduled_for": null
+        }
+      ]
+    },
+    "GET /v1/messages": {
+      "status": "complete",
+      "results": [
+        {
+          "to": "61412345678",
+          "message": "Hello, this is a test message.",
+          "sender": "MySenderID",
+          "custom_ref": "Order123",
+          "status": "delivered",
+          "cost": "1.00",
+          "message_id": "123e4567-e89b-12d3-a456-426614174000",
+          "requested_at": "2026-03-30 12:14:20",
+          "scheduled_for": null,
+          "send_id": 9271
+        }
+      ]
+    },
+    "DELETE /v1/messages": {
+      "status": "complete",
+      "message_id": "123e4567-e89b-12d3-a456-426614174000",
+      "cancelled": true,
+      "credits_refunded": 1
+    },
+    "POST /v1/list-send": {
+      "status": "complete",
+      "send_id": 9271,
+      "list_id": 42,
+      "total_recipients": 1180,
+      "total_blocked_unsubscribed": 14,
+      "total_skipped_too_long": 0,
+      "total_cost": 1180,
+      "scheduled_for": null,
+      "stagger_minutes": null,
+      "send_status": "queued"
+    },
+    "GET /v1/sends": {
+      "send_id": 4821,
+      "status": "sent",
+      "total_recipients": 4286,
+      "total_blocked_unsubscribed": 37,
+      "delivered_count": 4198,
+      "failed_count": 61,
+      "reply_count": 14,
+      "unsub_count": 9,
+      "total_cost": 4286,
+      "scheduled_for": null,
+      "created_at": "2026-09-15 01:12:44"
+    },
+    "GET /v1/link-tracking": {
+      "status": "complete",
+      "send_id": 42,
+      "link_tracking": true,
+      "total_recipients": 150,
+      "delivered_count": 148,
+      "total_clicks": 96,
+      "unique_clicks": 71,
+      "click_rate": 0.4797,
+      "urls": [
+        {
+          "url_set_id": 18,
+          "url_index": 1,
+          "url": "https://example.com/spring-sale",
+          "clicks": 96,
+          "unique_clicks": 71
+        }
+      ],
+      "recipients_total": 150,
+      "limit": 50,
+      "offset": 0,
+      "recipients": [
+        {
+          "message_id": "abcd1234-efgh-5678-ijkl-9876543210mn",
+          "to": "61412345678",
+          "clicked": true,
+          "click_count": 2,
+          "first_click": "2026-04-01 09:14:22",
+          "last_click": "2026-04-01 11:02:47"
+        }
+      ]
+    },
+    "GET /v1/contacts": {
+      "status": "complete",
+      "total": 2,
+      "limit": 50,
+      "offset": 0,
+      "results": [
+        {
+          "contact_id": 8812,
+          "number": "61412345678",
+          "first_name": "Jane",
+          "last_name": "Smith",
+          "company": "Acme",
+          "other": "",
+          "field_1": "",
+          "field_2": "",
+          "field_3": "",
+          "field_4": "",
+          "field_5": ""
+        }
+      ]
+    },
+    "POST /v1/contacts": {
+      "status": "complete",
+      "contact_id": 8812,
+      "number": "61412345678"
+    },
+    "PATCH /v1/contacts": {
+      "status": "complete",
+      "contact_id": 8812
+    },
+    "DELETE /v1/contacts": {
+      "status": "complete",
+      "contact_id": 8812,
+      "removed": true
+    },
+    "GET /v1/lists": {
+      "status": "complete",
+      "results": [
+        {
+          "list_id": 42,
+          "name": "VIP customers",
+          "created_at": "2026-02-11 04:12:00",
+          "contact_count": 1194
+        }
+      ]
+    },
+    "POST /v1/lists": {
+      "status": "complete",
+      "list_id": 42,
+      "name": "VIP customers",
+      "existing": false
+    },
+    "PATCH /v1/lists": {
+      "status": "complete",
+      "list_id": 42,
+      "name": "VIP customers 2026"
+    },
+    "DELETE /v1/lists": {
+      "status": "complete",
+      "list_id": 42,
+      "removed": true
+    },
+    "GET /v1/list-contacts": {
+      "status": "complete",
+      "list_id": 42,
+      "total": 1194,
+      "limit": 50,
+      "offset": 0,
+      "results": [
+        {
+          "contact_id": 8812,
+          "number": "61412345678",
+          "first_name": "Jane",
+          "last_name": "Smith",
+          "company": "Acme",
+          "other": "",
+          "field_1": "",
+          "field_2": "",
+          "field_3": "",
+          "field_4": "",
+          "field_5": "",
+          "added": "2026-02-11 04:15:22"
+        }
+      ]
+    },
+    "POST /v1/list-contacts": {
+      "status": "complete",
+      "list_id": 42,
+      "contact_id": 8812,
+      "added": true
+    },
+    "DELETE /v1/list-contacts": {
+      "status": "complete",
+      "list_id": 42,
+      "contact_id": 8812,
+      "removed": true
+    },
+    "GET /v1/unsubscribes": {
+      "status": "complete",
+      "total": 41,
+      "limit": 50,
+      "offset": 0,
+      "results": [
+        {
+          "number": "61412345678",
+          "updated_at": "2026-03-02 22:41:09"
+        }
+      ]
+    },
+    "POST /v1/unsubscribes": {
+      "status": "complete",
+      "number": "61412345678",
+      "added": true
+    },
+    "DELETE /v1/unsubscribes": {
+      "status": "complete",
+      "number": "61412345678",
+      "removed": true
+    },
+    "GET /v1/account": {
+      "status": "complete",
+      "credit_balance": 9981
+    },
+    "GET /v1/senders": {
+      "status": "complete",
+      "results": [
+        {
+          "sender": "MySenderID",
+          "type": "alpha",
+          "label": "Marketing",
+          "is_default": true
+        }
+      ]
+    },
+    "GET /v1/inbound": {
+      "status": "complete",
+      "total": 87,
+      "limit": 50,
+      "offset": 0,
+      "results": [
+        {
+          "message_id": "123e4567-e89b-12d3-a456-426614174000",
+          "from": "61412345678",
+          "to": "61480000000",
+          "message": "YES",
+          "type": "inbound",
+          "received_at": "2026-03-30 12:20:11",
+          "original_message_id": "db6190e1-1ce8-4cdd-b871-244257d57abc",
+          "original_custom_ref": "tracking001"
+        }
+      ]
+    },
+    "GET /v1/webhooks": {
+      "status": "complete",
+      "webhooks": {
+        "inbound": "https://example.com/hooks/inbound",
+        "status": null
+      },
+      "has_signing_secret": true
+    },
+    "POST /v1/webhooks": {
+      "status": "complete",
+      "message": "Webhook subscribed successfully",
+      "type": "inbound",
+      "url": "https://example.com/hooks/inbound"
+    },
+    "DELETE /v1/webhooks": {
+      "status": "complete",
+      "message": "Webhook unsubscribed successfully",
+      "type": "inbound"
+    }
+  },
+  "events": {
+    "inbound": {
+      "to": "61412345678",
+      "message": "Hello, this is message 1",
+      "sender": "61412345699",
+      "received_at": "2024-09-30 14:35:00",
+      "type": "inbound",
+      "original_message_id": "db6190e1-1ce8-4cdd-b871-244257d57abc",
+      "original_custom_ref": "tracking001"
+    },
+    "delivery": {
+      "to": "61412345678",
+      "message": "Hello, this is message 1",
+      "sender": "Mobile MSG",
+      "custom_ref": "tracking001",
+      "status": "delivered",
+      "message_id": "044b035f-0396-4a47-8428-12d5273ab04a",
+      "received_at": "2024-09-30 14:35:00",
+      "part_number": 1,
+      "total_parts": 1
+    },
+    "multipart": {
+      "to": "61412345678",
+      "message": "Hello, this is a longer message that was split into multiple parts",
+      "sender": "Mobile MSG",
+      "custom_ref": "tracking001",
+      "status": "delivered",
+      "message_id": "044b035f-0396-4a47-8428-12d5273ab04a",
+      "received_at": "2024-09-30 14:35:00",
+      "part_number": 2,
+      "total_parts": 3
+    }
+  },
+  "configs": {
+    "send_messages": {
+      "messages": [
+        {
+          "to": "+61412345678",
+          "message": "Hello, this is a test message.",
+          "sender": "MySenderID"
+        }
+      ]
+    },
+    "get_messages": {},
+    "cancel_scheduled_messages": {
+      "message_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "send_to_list": {
+      "list_id": 42,
+      "sender": "MySenderID",
+      "message": "Hi {first_name}, doors open at 7pm.{optout}",
+      "custom_ref": "launch-night"
+    },
+    "get_send": {
+      "send_id": 4821
+    },
+    "get_link_tracking": {
+      "send_id": 42
+    },
+    "list_contacts": {},
+    "create_contact": {
+      "number": "0412345678",
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "company": "Acme"
+    },
+    "update_contact": {
+      "contact_id": 8812,
+      "first_name": "Janet",
+      "field_1": "gold"
+    },
+    "delete_contact": {
+      "contact_id": 42
+    },
+    "list_lists": {},
+    "create_list": {
+      "name": "VIP Customers"
+    },
+    "rename_list": {
+      "list_id": 5,
+      "name": "VIP Customers 2026"
+    },
+    "delete_list": {
+      "list_id": 5
+    },
+    "list_members": {
+      "list_id": 5
+    },
+    "add_list_member": {
+      "list_id": 5,
+      "contact_id": 42
+    },
+    "remove_list_member": {
+      "list_id": 5,
+      "contact_id": 42
+    },
+    "list_unsubscribes": {},
+    "add_unsubscribe": {
+      "number": "0412345678"
+    },
+    "remove_unsubscribe": {
+      "number": "0412345678"
+    },
+    "get_account_balance": {},
+    "list_senders": {},
+    "list_inbound": {}
+  },
+  "partial_failure": {
+    "status": "complete",
+    "send_id": 9272,
+    "ignore_unsubscribes": false,
+    "total_cost": 1,
+    "results": [
+      {
+        "to": "61412345678",
+        "message": "Hello.",
+        "sender": "MySenderID",
+        "status": "success",
+        "cost": 1,
+        "message_id": "123e4567-e89b-12d3-a456-426614174002",
+        "conversation": 0,
+        "scheduled_for": null
+      },
+      {
+        "to": "61487654321",
+        "message": "Hello.",
+        "sender": "MySenderID",
+        "status": "blocked",
+        "error": "The recipient has unsubscribed and cannot receive messages."
+      },
+      {
+        "to": "notanumber",
+        "message": "Hello.",
+        "sender": "MySenderID",
+        "status": "error",
+        "error": "Invalid phone number format"
+      }
+    ]
+  }
+}
