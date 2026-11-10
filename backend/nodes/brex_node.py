@@ -3,10 +3,15 @@
 API: https://developer.brex.com/ (official OpenAPI descriptions).
 Auth: user-generated bearer token; no OAuth application required.
 List operations return one page and preserve next_cursor for explicit pagination.
-Brex supports webhooks through a separate API; this node exposes REST actions.
+Webhook registration and signed deliveries follow the official Webhooks API.
 """
+import base64
+import binascii
+import hashlib
+import hmac
 import json
 import time
+import uuid
 from typing import Annotated, Any, Dict, Literal, Optional, Union
 from urllib.parse import quote
 
@@ -22,6 +27,7 @@ from pydantic import (
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.scopes.brex import BREX_SCOPES
 
 BREX_API_BASE = "https://api.brex.com"
@@ -333,8 +339,40 @@ class BrexListVendorsConfig(BrexPageConfig):
     name: Optional[str] = Field(None, description="Match vendors by name.")
 
 
+BREX_TRIGGER_EVENTS = {
+    "on_expense_payment_updated": "EXPENSE_PAYMENT_UPDATED",
+    "on_transfer_processed": "TRANSFER_PROCESSED",
+}
+
+
+class BrexWebhookConfig(WebhookTriggerConfigBase):
+    webhook_url: Optional[str] = Field(
+        None, title="Webhook URL",
+        description="Registered automatically. Brex documents one endpoint per customer/client ID. Expense events require CARD_ADMIN and expenses.card.readonly.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True},
+    )
+
+
+class BrexOnExpensePaymentUpdatedConfig(BrexWebhookConfig):
+    operation: Literal["on_expense_payment_updated"] = Field(
+        "on_expense_payment_updated", title="On Expense Payment Updated",
+        json_schema_extra={"const": "on_expense_payment_updated", "ui:hidden": True,
+                           "x-category": "Triggers", "x-display-name": "On Expense Payment Updated", "x-is-trigger": True},
+    )
+
+
+class BrexOnTransferProcessedConfig(BrexWebhookConfig):
+    operation: Literal["on_transfer_processed"] = Field(
+        "on_transfer_processed", title="On Transfer Processed",
+        json_schema_extra={"const": "on_transfer_processed", "ui:hidden": True,
+                           "x-category": "Triggers", "x-display-name": "On Transfer Processed", "x-is-trigger": True},
+    )
+
+
 BrexConfig = Annotated[
     Union[
+        BrexOnExpensePaymentUpdatedConfig,
+        BrexOnTransferProcessedConfig,
         BrexListExpensesConfig,
         BrexGetExpenseConfig,
         BrexUpdateExpenseConfig,
@@ -393,7 +431,8 @@ def _split(value: Optional[str]):
     return [part.strip() for part in (value or "").split(",") if part.strip()]
 
 
-class BrexNode(WorkflowNode):
+class BrexNode(ExternalWebhookTriggerMixin, WorkflowNode):
+    webhook_replace_stale_endpoint = True
     integration_type = "automation-brex"
     scope_registry = BREX_SCOPES
     connection_evidence = ConnectionEvidence(
@@ -404,6 +443,91 @@ class BrexNode(WorkflowNode):
     def get_config_model(cls):
         return BrexNodeConfig
 
+    @staticmethod
+    async def _webhook_request(credential, method, path, *, body=None, idempotency_key=None):
+        token = (credential or {}).get("api_token")
+        if not token:
+            raise ValueError("Connect a Brex API token before activating this trigger")
+        headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+        if idempotency_key:
+            headers["Idempotency-Key"] = idempotency_key
+        async with httpx.AsyncClient(timeout=30) as client:
+            response = await client.request(method, BREX_API_BASE + path, headers=headers, json=body)
+        response.raise_for_status()
+        return response.json() if response.content else None
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event = BREX_TRIGGER_EVENTS[(config or {})["operation"]]
+        # Fetch before creating a subscription so a secrets failure cannot orphan it.
+        secrets = await cls._webhook_request(credential, "GET", "/v1/webhooks/secrets")
+        keys = [row["secret"] for row in secrets if row["status"] in ("ACTIVE", "PENDING_REVOKE")]
+        if not keys:
+            raise ValueError("Brex did not return an active webhook signing secret")
+        subscription = await cls._webhook_request(
+            credential, "POST", "/v1/webhooks", body={"url": webhook_url, "event_types": [event]},
+            idempotency_key=str(uuid.uuid4()),
+        )
+        if not subscription.get("id"):
+            raise ValueError("Brex did not return a webhook subscription ID")
+        # Base64 has no commas: keep every rotation key in the persisted secret slot.
+        return {"external_webhook_id": subscription["id"], "signing_secret": ",".join(keys)}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        subscription_id = (config or {}).get("external_webhook_id")
+        if subscription_id:
+            await cls._webhook_request(credential, "DELETE", "/v1/webhooks/" + quote(str(subscription_id), safe=""))
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        headers = {key.lower(): value for key, value in headers.items()}
+        timestamp = headers.get("webhook-timestamp", "")
+        message_id = headers.get("webhook-id", "")
+        if not message_id or not timestamp.isdigit() or abs(time.time() - int(timestamp)) > 60:
+            return False
+        message = f"{message_id}.{timestamp}.".encode() + body
+        signatures = [part[3:] for part in headers.get("webhook-signature", "").split() if part.startswith("v1,")]
+        for secret in ((config or {}).get("signing_secret") or "").split(","):
+            try:
+                key = base64.b64decode(secret)
+            except (ValueError, binascii.Error):
+                continue
+            if not key:
+                continue
+            expected = base64.b64encode(hmac.new(key, message, hashlib.sha256).digest()).decode()
+            if any(hmac.compare_digest(expected, signature) for signature in signatures):
+                return True
+        return False
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return payload.get("event_type") == BREX_TRIGGER_EVENTS.get((config or {}).get("operation"))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        return {"status": "success", "data": payload}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        payload = output["data"] if output.get("status") == "success" else output
+        event = payload.get("event_type")
+        if event == "EXPENSE_PAYMENT_UPDATED":
+            resource_id = payload.get("expense_id")
+            text = (f"Brex expense payment {payload.get('payment_status')}: {payload.get('payment_description')}\n"
+                    f"Company: {payload.get('company_id')}; expense_id: {resource_id}; payment type: {payload.get('payment_type')}.\n"
+                    f"Amount (minor currency units): {payload.get('amount')}. Use get_expense with expense_id={resource_id} for details.")
+        elif event == "TRANSFER_PROCESSED":
+            resource_id = payload.get("transfer_id")
+            text = (f"Brex transfer processed: {resource_id}\nCompany: {payload.get('company_id')}. "
+                    f"Use get_transfer with transfer_id={resource_id} for the transfer details.")
+        else:
+            return None
+        if not resource_id:
+            return None
+        return {"text": text, "conversation_key": f"{payload.get('company_id')}:{resource_id}",
+                "title": f"Brex {event.replace('_', ' ').lower()}"}
+
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         if not isinstance(self.config, BrexNodeConfig):
             raise ValueError("Brex configuration is required")
@@ -412,6 +536,8 @@ class BrexNode(WorkflowNode):
             raise ValueError("Connect a Brex API token in the credentials tab")
         config = self.config.config
         operation = config.operation
+        if operation in BREX_TRIGGER_EVENTS:
+            return self.no_event_output(operation)
         method, path = BREX_OPERATIONS[operation]
         values = config.model_dump(exclude_none=True)
         for field in ("expense_id", "card_id", "account_id", "transfer_id"):

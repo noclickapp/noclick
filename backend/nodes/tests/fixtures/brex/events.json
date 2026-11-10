@@ -1,0 +1,25 @@
+{
+  "EXPENSE_PAYMENT_UPDATED": {
+    "body": {
+      "event_type": "EXPENSE_PAYMENT_UPDATED",
+      "expense_id": "expense_cl3khzfnr00000k92bdjtmmes",
+      "payment_status": "PENDING",
+      "payment_type": "PURCHASE",
+      "company_id": "cuacc_ckwodfq7h000801q48qqsae5k",
+      "amount": {
+        "amount": 1030,
+        "currency": "string"
+      },
+      "payment_description": "Schrute Farms"
+    },
+    "source": "https://developer.brex.com/examples/webhook_examples.md"
+  },
+  "TRANSFER_PROCESSED": {
+    "body": {
+      "event_type": "TRANSFER_PROCESSED",
+      "transfer_id": "dptx_ckyypz30n000101kgzgnrtqlf",
+      "company_id": "cuacc_ckqckhadg000601r95ox48c2s"
+    },
+    "source": "https://developer.brex.com/guides/webhooks.md"
+  }
+}

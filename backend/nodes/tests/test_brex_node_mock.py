@@ -16,6 +16,7 @@ from pydantic import ValidationError
 
 from nodes.brex_node import (
     BREX_OPERATIONS,
+    BREX_TRIGGER_EVENTS,
     BrexAPITokenCredential,
     BrexNode,
     BrexNodeConfig,
@@ -100,7 +101,7 @@ async def test_documented_operation(monkeypatch, operation):
 def test_fixture_coverage_matches_all_operations():
     assert set(CASES) == set(RESPONSES) == set(BREX_OPERATIONS)
     schema = BrexNodeConfig.model_json_schema()
-    assert set(schema["properties"]["config"]["discriminator"]["mapping"]) == set(CASES)
+    assert set(schema["properties"]["config"]["discriminator"]["mapping"]) == set(CASES) | set(BREX_TRIGGER_EVENTS)
 
 
 @pytest.mark.asyncio

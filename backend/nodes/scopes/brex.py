@@ -11,6 +11,8 @@ from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 BREX_SCOPES = ScopeRegistry(
     "brex",
     {
+        "on_expense_payment_updated": ScopeRequirement(("expenses.card.readonly", "expenses.card")),
+        "on_transfer_processed": ScopeRequirement(("transfers.readonly", "transfers")),
         "list_expenses": ScopeRequirement(("expenses.card.readonly", "expenses.card")),
         "get_expense": ScopeRequirement(("expenses.card.readonly", "expenses.card")),
         "update_expense": ScopeRequirement("expenses.card"),

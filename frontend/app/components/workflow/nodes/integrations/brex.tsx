@@ -23,7 +23,6 @@ const BrexIcon = ({
             style={
                 {
                     ...style,
-                    '--brand-invert': 0,
                     objectFit: 'contain',
                 } as CSSProperties
             }
@@ -36,7 +35,6 @@ const BrexIcon = ({
             style={
                 {
                     ...style,
-                    '--brand-invert': 0,
                     objectFit: 'contain',
                 } as CSSProperties
             }
@@ -51,7 +49,7 @@ const BrexNodeComponent = (props: NodeProps) => (
 export const BrexNode: NodeDefinition = {
     type: 'automation-brex',
     label: 'Brex',
-    description: 'Manage expenses, cards, transactions and transfers',
+    description: 'Manage expenses, cards and transfers; trigger workflows from expense payments and processed transfers',
     category: 'finance-accounting',
     keywords: [
         'expenses',

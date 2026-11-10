@@ -1,21 +1,23 @@
 {
   "provider": "brex",
   "manifest": {
-    "file": "spec.json",
-    "sha256": "0d8e10bbd683afe9e123cf15c65943dfc05886493c479353b1b1f02b31530498",
-    "version": "expenses-0.1_team-1.0_transactions-1.0_payments-1.0",
-    "source_url": "https://developer.brex.com/",
     "node_type": "automation-brex",
     "credential": {
       "credential_type": "brex_api_token",
       "api_token": "<token>"
     },
-    "sources": [
+    "specs": [
       {
         "file": "expenses_api.yaml",
         "sha256": "ed51dbb5ef45663c6a615f3451c8a87a36097e3c99fb2f2d2856d97f6ee5d788",
         "version": "0.1",
         "source_url": "https://developer.brex.com/_spec/openapi/expenses_api.yaml"
+      },
+      {
+        "file": "payments_api.yaml",
+        "sha256": "a54432c16ba31160c632f1075a88ac8ba24d95c4a6b0716c34170d9b2566daaa",
+        "version": "1.0",
+        "source_url": "https://developer.brex.com/_spec/openapi/payments_api.yaml"
       },
       {
         "file": "team_api.yaml",
@@ -30,55 +32,74 @@
         "source_url": "https://developer.brex.com/_spec/openapi/transactions_api.yaml"
       },
       {
-        "file": "payments_api.yaml",
-        "sha256": "a54432c16ba31160c632f1075a88ac8ba24d95c4a6b0716c34170d9b2566daaa",
-        "version": "1.0",
-        "source_url": "https://developer.brex.com/_spec/openapi/payments_api.yaml"
+        "file": "webhooks_api.yaml",
+        "sha256": "bc197ebb855cf19c3261685045046459ae7b45ee339768cf577637fd7b37eed4",
+        "version": "0.1",
+        "source_url": "https://developer.brex.com/_spec/openapi/webhooks_api.yaml"
       }
     ],
-    "assembly": "bundle.py namespaces component names/references, security scheme names and operation IDs; paths and schemas preserved",
     "auth_override": {
       "scheme": "bearer",
       "source": "https://developer.brex.com/guides/authentication.md"
+    },
+    "webhook_signature": {
+      "header": "Webhook-Signature",
+      "algorithm": "sha256",
+      "encoding": "base64",
+      "message": "{id}.{timestamp}.{body}",
+      "prefix": "v1,",
+      "timestamp_header": "Webhook-Timestamp",
+      "id_header": "Webhook-Id",
+      "secret_encoding": "base64",
+      "source": "https://developer.brex.com/guides/webhooks.md"
     }
   },
-  "harness_sha256": "698d248e12609a0b675f0bacbcfbaba0716e93be70fac7559f42d60208c53503",
+  "harness_sha256": "1acb7fbb169ac16df08a66637cd9fe71d2d85051adcaf9733c2cb938d4d252d9",
   "harness_summary": {
     "provider": "brex",
     "node_type": "automation-brex",
-    "checked": 20,
-    "passed": 12,
+    "checked": 22,
+    "passed": 14,
     "failed": 0,
     "fixture_errors": 8,
-    "response_checked": 12,
-    "auth_checked": 20,
+    "response_checked": 14,
+    "auth_checked": 26,
     "scope_checked": 18,
     "skipped": 0,
     "coverage": {
-      "implemented": 20,
-      "total": 60
+      "implemented": 23,
+      "total": 73
+    },
+    "triggers": {
+      "checked": 2,
+      "passed": 2
     }
   },
   "verdict": {
     "provider": "brex",
     "ready": false,
     "blocking": [
-      "get_card: fixture error: ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness",
-      "unlock_card: fixture error: ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness",
+      "get_card: fixture error: ValueError: Cannot generate spec-valid response: ValueError: Recursive input schema requires a curated witness",
+      "unlock_card: fixture error: ValueError: Cannot generate spec-valid response: ValueError: Recursive input schema requires a curated witness",
       "create_card: fixture error: FixtureError: Recursive request schema cannot be validated offline / RecursionError: maximum recursion depth exceeded",
-      "update_card: fixture error: ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness",
-      "lock_card: fixture error: ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness",
-      "terminate_card: fixture error: ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness",
-      "get_transfer: fixture error: ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness",
+      "update_card: fixture error: ValueError: Cannot generate spec-valid response: ValueError: Recursive input schema requires a curated witness",
+      "lock_card: fixture error: ValueError: Cannot generate spec-valid response: ValueError: Recursive input schema requires a curated witness",
+      "terminate_card: fixture error: ValueError: Cannot generate spec-valid response: ValueError: Recursive input schema requires a curated witness",
+      "get_transfer: fixture error: ValueError: Cannot generate spec-valid response: ValueError: Recursive input schema requires a curated witness",
       "create_transfer: fixture error: FixtureError: Recursive request schema cannot be validated offline / RecursionError: maximum recursion depth exceeded"
     ],
     "advisory": [],
     "stats": {
-      "operations": 20,
+      "operations": 22,
       "skipped": 0,
       "request_ok": 20,
       "authored_parser_ok": 0,
-      "generated_only": 20
+      "generated_only": 20,
+      "local_ok": 0
+    },
+    "triggers": {
+      "on_expense_payment_updated": "passed",
+      "on_transfer_processed": "passed"
     }
   },
   "spec_defects": [
@@ -86,57 +107,65 @@
       "operation": "get_card",
       "doc_url": "https://developer.brex.com/openapi/team_api/cards/getcardbyid.md",
       "spec_url": "https://developer.brex.com/_spec/openapi/team_api.yaml",
-      "note": "Pinned provider schema uses circular discriminator inheritance: CardOwner -> UserOwner.allOf -> CardOwner. Updated unmodified harness classifies this as a fixture error, not a rejected request or node parsing defect.",
-      "harness_error": "ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness"
+      "note": "The provider schema cycles from the discriminated parent oneOf to the concrete subtype allOf and back to the same parent, requiring infinite recursion even for the finite objects documented in the provider example guide. The unchanged harness cannot generate or validate these schemas.",
+      "harness_error": "ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness",
+      "example_url": "https://developer.brex.com/examples/team_examples.md"
     },
     {
       "operation": "unlock_card",
       "doc_url": "https://developer.brex.com/openapi/team_api/cards/unlockcard.md",
       "spec_url": "https://developer.brex.com/_spec/openapi/team_api.yaml",
-      "note": "Pinned provider schema uses circular discriminator inheritance: CardOwner -> UserOwner.allOf -> CardOwner. Updated unmodified harness classifies this as a fixture error, not a rejected request or node parsing defect.",
-      "harness_error": "ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness"
+      "note": "The provider schema cycles from the discriminated parent oneOf to the concrete subtype allOf and back to the same parent, requiring infinite recursion even for the finite objects documented in the provider example guide. The unchanged harness cannot generate or validate these schemas.",
+      "harness_error": "ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness",
+      "example_url": "https://developer.brex.com/examples/team_examples.md"
     },
     {
       "operation": "create_card",
       "doc_url": "https://developer.brex.com/openapi/team_api/cards/createcard.md",
       "spec_url": "https://developer.brex.com/_spec/openapi/team_api.yaml",
-      "note": "Pinned provider schema uses circular discriminator inheritance: CardOwner -> UserOwner.allOf -> CardOwner. Updated unmodified harness classifies this as a fixture error, not a rejected request or node parsing defect.",
-      "harness_error": "FixtureError: Recursive request schema cannot be validated offline / RecursionError: maximum recursion depth exceeded"
+      "note": "The provider schema cycles from the discriminated parent oneOf to the concrete subtype allOf and back to the same parent, requiring infinite recursion even for the finite objects documented in the provider example guide. The unchanged harness cannot generate or validate these schemas.",
+      "harness_error": "FixtureError: Recursive request schema cannot be validated offline / RecursionError: maximum recursion depth exceeded",
+      "example_url": "https://developer.brex.com/examples/team_examples.md"
     },
     {
       "operation": "update_card",
       "doc_url": "https://developer.brex.com/openapi/team_api/cards/updatecard.md",
       "spec_url": "https://developer.brex.com/_spec/openapi/team_api.yaml",
-      "note": "Pinned provider schema uses circular discriminator inheritance: CardOwner -> UserOwner.allOf -> CardOwner. Updated unmodified harness classifies this as a fixture error, not a rejected request or node parsing defect.",
-      "harness_error": "ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness"
+      "note": "The provider schema cycles from the discriminated parent oneOf to the concrete subtype allOf and back to the same parent, requiring infinite recursion even for the finite objects documented in the provider example guide. The unchanged harness cannot generate or validate these schemas.",
+      "harness_error": "ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness",
+      "example_url": "https://developer.brex.com/examples/team_examples.md"
     },
     {
       "operation": "lock_card",
       "doc_url": "https://developer.brex.com/openapi/team_api/cards/lockcard.md",
       "spec_url": "https://developer.brex.com/_spec/openapi/team_api.yaml",
-      "note": "Pinned provider schema uses circular discriminator inheritance: CardOwner -> UserOwner.allOf -> CardOwner. Updated unmodified harness classifies this as a fixture error, not a rejected request or node parsing defect.",
-      "harness_error": "ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness"
+      "note": "The provider schema cycles from the discriminated parent oneOf to the concrete subtype allOf and back to the same parent, requiring infinite recursion even for the finite objects documented in the provider example guide. The unchanged harness cannot generate or validate these schemas.",
+      "harness_error": "ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness",
+      "example_url": "https://developer.brex.com/examples/team_examples.md"
     },
     {
       "operation": "terminate_card",
       "doc_url": "https://developer.brex.com/openapi/team_api/cards/terminatecard.md",
       "spec_url": "https://developer.brex.com/_spec/openapi/team_api.yaml",
-      "note": "Pinned provider schema uses circular discriminator inheritance: CardOwner -> UserOwner.allOf -> CardOwner. Updated unmodified harness classifies this as a fixture error, not a rejected request or node parsing defect.",
-      "harness_error": "ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness"
+      "note": "The provider schema cycles from the discriminated parent oneOf to the concrete subtype allOf and back to the same parent, requiring infinite recursion even for the finite objects documented in the provider example guide. The unchanged harness cannot generate or validate these schemas.",
+      "harness_error": "ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness",
+      "example_url": "https://developer.brex.com/examples/team_examples.md"
     },
     {
       "operation": "get_transfer",
       "doc_url": "https://developer.brex.com/openapi/payments_api/transfers/gettransfersbyid.md",
       "spec_url": "https://developer.brex.com/_spec/openapi/payments_api.yaml",
-      "note": "Pinned provider schema uses circular discriminator inheritance: CounterParty/OriginatingAccount -> concrete allOf subtype -> parent. Updated unmodified harness classifies this as a fixture error, not a rejected request or node parsing defect.",
-      "harness_error": "ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness"
+      "note": "The provider schema cycles from the discriminated parent oneOf to the concrete subtype allOf and back to the same parent, requiring infinite recursion even for the finite objects documented in the provider example guide. The unchanged harness cannot generate or validate these schemas.",
+      "harness_error": "ValueError: Cannot generate spec-valid response: ValueError: Recursive schema requires a curated witness",
+      "example_url": "https://developer.brex.com/examples/payments_examples.md"
     },
     {
       "operation": "create_transfer",
       "doc_url": "https://developer.brex.com/openapi/payments_api/transfers/createtransfer.md",
       "spec_url": "https://developer.brex.com/_spec/openapi/payments_api.yaml",
-      "note": "Pinned provider schema uses circular discriminator inheritance: CounterParty/OriginatingAccount -> concrete allOf subtype -> parent. Updated unmodified harness classifies this as a fixture error, not a rejected request or node parsing defect.",
-      "harness_error": "FixtureError: Recursive request schema cannot be validated offline / RecursionError: maximum recursion depth exceeded"
+      "note": "The provider schema cycles from the discriminated parent oneOf to the concrete subtype allOf and back to the same parent, requiring infinite recursion even for the finite objects documented in the provider example guide. The unchanged harness cannot generate or validate these schemas.",
+      "harness_error": "FixtureError: Recursive request schema cannot be validated offline / RecursionError: maximum recursion depth exceeded",
+      "example_url": "https://developer.brex.com/examples/payments_examples.md"
     }
   ],
   "fixture_provenance": {
@@ -145,10 +174,49 @@
     "note": "Official guide examples and Postman saved examples are kept verbatim. Four operations have no published complete body and are explicitly schema-generated in mock fixtures. Conformance reports no provider-authored parser proof; its 12 successful responses are generated."
   },
   "tests": {
-    "mock": "55 passed",
-    "ratchets": "710 passed",
-    "provenance": "2 passed",
-    "frontend": "typecheck passed; 3 credential tests passed"
+    "registry": "automation-brex registry import passed",
+    "hooks_discovery_and_native": "79 passed",
+    "backend_brex_selection": "64 passed, 64784 deselected",
+    "oauth": "82 passed",
+    "frontend": "locked typecheck passed; 33 tests passed across 8 files",
+    "connect_catalog": "No brex_api_token violation; existing bookeo_oauth required credential_type finding only",
+    "provenance": "3 passed",
+    "icon": "icon_check exit 0",
+    "scope": "committed-head integration scope passed"
   },
-  "remaining_blockers": "Only the eight documented recursive provider-schema fixture errors. No node failures, rejected requests, source-audit failures, or parser advisories."
+  "remaining_blockers": "Only eight provider-schema cycles: CardOwner.oneOf UserOwner.allOf CardOwner and CounterParty/OriginatingAccount equivalent cycles. Both triggers pass. Provider guide examples show finite owner/account objects; the pinned cyclic schemas cannot validate them.",
+  "trigger_brief": 1,
+  "triggers": [
+    "on_expense_payment_updated",
+    "on_transfer_processed"
+  ],
+  "trigger_evidence": {
+    "events": {
+      "EXPENSE_PAYMENT_UPDATED": {
+        "body": {
+          "event_type": "EXPENSE_PAYMENT_UPDATED",
+          "expense_id": "expense_cl3khzfnr00000k92bdjtmmes",
+          "payment_status": "PENDING",
+          "payment_type": "PURCHASE",
+          "company_id": "cuacc_ckwodfq7h000801q48qqsae5k",
+          "amount": {
+            "amount": 1030,
+            "currency": "string"
+          },
+          "payment_description": "Schrute Farms"
+        },
+        "source": "https://developer.brex.com/examples/webhook_examples.md"
+      },
+      "TRANSFER_PROCESSED": {
+        "body": {
+          "event_type": "TRANSFER_PROCESSED",
+          "transfer_id": "dptx_ckyypz30n000101kgzgnrtqlf",
+          "company_id": "cuacc_ckqckhadg000601r95ox48c2s"
+        },
+        "source": "https://developer.brex.com/guides/webhooks.md"
+      }
+    },
+    "signature_source": "https://developer.brex.com/guides/webhooks.md",
+    "signature_test": "Provider verified HMAC vector; timestamp tolerance, rotation keys, tampering and event filtering."
+  }
 }
