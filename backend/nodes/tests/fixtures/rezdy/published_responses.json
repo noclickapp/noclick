@@ -425,5 +425,107 @@
       "vouchers": [],
       "barcodeType": "QR_CODE"
     }
+  },
+  "get /v1/bookings": {
+    "requestStatus": {
+      "success": true,
+      "version": "v1"
+    },
+    "bookings": [
+      {
+        "orderNumber": "RX1N6HC",
+        "status": "CONFIRMED",
+        "supplierId": 13398,
+        "supplierName": "API specification demo supplier (DO NOT EDIT)",
+        "supplierAlias": "apispecificationdemosupplierdonotedit",
+        "resellerId": 13399,
+        "resellerName": "API specification demo agent (DO NOT EDIT)",
+        "resellerAlias": "apispecificationdemoagentdonotedit",
+        "customer": {
+          "id": 29650,
+          "firstName": "Rick",
+          "lastName": "Sanchez",
+          "name": "Rick Sanchez",
+          "phone": "+61484123456"
+        },
+        "items": [
+          {
+            "productName": "Double dive with sharks",
+            "productCode": "PWQF1Y",
+            "startTime": "2025-09-04T23:00:00Z",
+            "endTime": "2025-09-05T02:00:00Z",
+            "startTimeLocal": "2025-09-05 09:00:00",
+            "endTimeLocal": "2025-09-05 12:00:00",
+            "quantities": [
+              {
+                "optionLabel": "Adult",
+                "optionPrice": 250.0,
+                "value": 1
+              }
+            ],
+            "totalQuantity": 1,
+            "amount": 250.0,
+            "extras": [],
+            "participants": [
+              {
+                "fields": [
+                  {
+                    "label": "First Name",
+                    "value": "Rick"
+                  },
+                  {
+                    "label": "Last Name",
+                    "value": "Sanchez"
+                  },
+                  {
+                    "label": "Certification level"
+                  },
+                  {
+                    "label": "Certification number"
+                  },
+                  {
+                    "label": "Certification agency"
+                  }
+                ]
+              }
+            ],
+            "subtotal": 250.0,
+            "pickupLocation": {
+              "locationName": "Hotel by the sea",
+              "pickupInstructions": "Call us on +61123456 to arrange a pickup from a custom pickup request not listed among the pickup locations.\r\nPlease be ready 15 minute before the pickup time."
+            }
+          }
+        ],
+        "totalAmount": 250.0,
+        "totalCurrency": "AUD",
+        "totalPaid": 250.0,
+        "totalDue": 0.0,
+        "dateCreated": "2025-09-03T00:00:04Z",
+        "dateConfirmed": "2025-09-03T00:00:04Z",
+        "datePaid": "2025-09-03T00:00:04Z",
+        "payments": [
+          {
+            "type": "CASH",
+            "amount": 250.0,
+            "currency": "AUD",
+            "date": "2025-09-03T00:00:04Z",
+            "label": "Paid in cash to API specification demo company",
+            "recipient": "RESELLER"
+          }
+        ],
+        "fields": [
+          {
+            "label": "Barcode",
+            "value": "RX1N6HC"
+          }
+        ],
+        "source": "MARKETPLACE_PREF_RATE",
+        "resellerSource": "API",
+        "sourceChannel": "APISPECIFICATIONDEMOAGENTDONOTEDIT",
+        "commission": 25.0,
+        "vouchers": [],
+        "barcodeType": "QR_CODE"
+      }
+    ]
   }
 }

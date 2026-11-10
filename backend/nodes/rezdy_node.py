@@ -1,7 +1,8 @@
 """Rezdy Supplier API v1 operations, authenticated with a manually supplied API key.
 
 Contract: https://developers.rezdy.com/rezdyapi/swagger-supplier.json
-Each operation makes exactly one API call. Writes are never retried automatically.
+Actions make one API call. Booking triggers page through a creation-date window.
+Writes are never retried automatically.
 """
 from __future__ import annotations
 
@@ -12,6 +13,7 @@ import httpx
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client, SSRFError
 
@@ -53,6 +55,8 @@ class Input(BaseModel):
     @field_validator("productCode", "orderNumber", "voucherCode", mode="before", check_fields=False)
     @classmethod
     def safe_identifiers(cls, value):
+        if value is None:
+            return value
         for item in value if isinstance(value, list) else [value]:
             if not isinstance(item, str) or not item.strip() or item in {".", ".."} or any(ord(c) < 32 for c in item):
                 raise ValueError("Use a Rezdy resource code without path traversal or control characters")
@@ -223,7 +227,33 @@ class ListRates(Input):
     productCode: str | None = None
 
 
+class BookingPollConfig(PollTriggerConfigBase, Input):
+    # Canvas metadata must not invalidate or change the declared poll scope.
+    model_config = ConfigDict(extra="ignore", hide_input_in_errors=True,
+        json_schema_extra={"x-requires-webhook": True})
+    minDateCreated: AwareDatetime | None = Field(None, title="Bookings created since",
+        description="Watch bookings created on or after this date. If omitted, Rezdy defaults to the past year. Choose an earlier date to watch updates to older bookings. Existing bookings are recorded when armed and do not fire. At most 10,000 bookings can be watched; narrow the date window if needed.")
+    productCode: list[str] | None = Field(None, title="Product codes",
+        description="Optionally watch bookings for these Rezdy products.")
+
+
+class OnNewBooking(BookingPollConfig):
+    """Poll for bookings created after the trigger was armed."""
+    operation: Literal["on_new_booking"] = Field("on_new_booking", title="On New Booking",
+        json_schema_extra={"ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On New Booking"})
+
+
+class OnNewOrUpdatedBooking(BookingPollConfig):
+    """Poll for new bookings and changed booking timestamps in the watched window."""
+    operation: Literal["on_new_or_updated_booking"] = Field("on_new_or_updated_booking", title="On New or Updated Booking",
+        json_schema_extra={"ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On New or Updated Booking"})
+
+
 RezdyConfig = Annotated[Union[
+    OnNewBooking,
+    OnNewOrUpdatedBooking,
     ListProducts,
     GetProduct,
     ListBookings,
@@ -287,7 +317,7 @@ def _redact(value, secret):
     return value
 
 
-class RezdyNode(WorkflowNode):
+class RezdyNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-rezdy"
     connection_evidence = ConnectionEvidence(noun="Rezdy categories", operation="list_categories")
 
@@ -300,6 +330,71 @@ class RezdyNode(WorkflowNode):
             raise ValueError("Supply a Rezdy API key")
         op = self.config.config
         key = self.config.credentials.api_key
+        if isinstance(op, BookingPollConfig):
+            return await self._poll_bookings(op, key)
+        return await self._execute_operation(op, key)
+
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in {"on_new_booking", "on_new_or_updated_booking"}:
+            return bool(output.get("booking_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or "bookings" not in output:
+            return super().resolve_agent_event(output)
+        bookings = output["bookings"]
+        if not bookings:
+            return None
+        kind = "new" if output.get("event_type") == "on_new_booking" else "new or updated"
+        lines = []
+        for booking in bookings[:10]:
+            customer = booking.get("customer") or {}
+            who = customer.get("name") or " ".join(filter(None, [customer.get("firstName"), customer.get("lastName")])) or "Customer"
+            contact = ", ".join(str(customer[k]) for k in ("id", "email", "phone") if customer.get(k))
+            tours = "; ".join(
+                f"{item.get('productName') or 'Tour'} ({item.get('productCode') or 'no product code'}), {item.get('startTimeLocal') or item.get('startTime') or 'undated'}"
+                for item in (booking.get("items") or [])
+            )
+            lines.append(f"- {who}{' (' + contact + ')' if contact else ''}: booking {booking['orderNumber']}, {booking.get('status') or 'status unavailable'}; {tours or 'tour details unavailable'}; supplier {booking.get('supplierName') or booking.get('supplierId') or 'unavailable'}; created {booking.get('dateCreated') or 'unavailable'}, updated {booking.get('dateUpdated') or 'not yet updated'}")
+        if len(bookings) > 10:
+            lines.append(f"- … and {len(bookings) - 10} more; full bookings are in the trigger output.")
+        return {"text": f"Rezdy: {len(bookings)} {kind} booking(s):\n" + "\n".join(lines), "conversation_key": None}
+
+    async def _poll_bookings(self, op, key):
+        # updatedSince excludes bookings that have never been edited. Listing the
+        # creation window catches both those new orders and edited/cancelled ones.
+        bookings = []
+        for page in range(101):
+            result = await self._execute_operation(ListBookings(
+                minDateCreated=op.minDateCreated, productCode=op.productCode,
+                limit=100, offset=page * 100), key)
+            if result.get("status") != "success":
+                return result  # Never advance dedup state after a failed page.
+            bookings.extend(result["items"])
+            if len(bookings) > 10000:
+                raise ValueError("More than 10,000 Rezdy bookings; narrow Bookings created since or Product codes")
+            if not result["has_more"]:
+                break
+        def identity(booking):
+            order = booking.get("orderNumber")
+            if not order:
+                raise ValueError("Rezdy booking is missing its order number")
+            if op.operation == "on_new_booking":
+                return str(order)
+            version = booking.get("dateUpdated") or booking.get("dateCreated")
+            if not version:
+                raise ValueError("Rezdy booking is missing its created/updated date")
+            return f"{order}:{version}"
+        # A full, successfully fetched window is required before committing seen ids.
+        # Offset pages can overlap while bookings change; emit each version once.
+        unique = {identity(booking): booking for booking in bookings}
+        fresh = await self._filter_unseen(list(unique.values()), identity)
+        return {"status": "success", "event_type": op.operation,
+            "bookings": fresh, "booking_count": len(fresh)}
+
+    async def _execute_operation(self, op, key):
         method, path, result_key = ROUTES[op.operation]
         values = op.model_dump(mode="json", exclude_none=True, exclude={"operation"})
         for field in ("productCode", "orderNumber", "customerId", "categoryId", "voucherCode"):

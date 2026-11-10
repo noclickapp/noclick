@@ -1,4 +1,8 @@
-"""Validate Rezdy's operations using the native factory and a mock HTTP transport."""
+"""Validate Rezdy actions and scheduled booking triggers with mock HTTP transport.
+
+Booking fixtures are copied from the publisher's examples at
+https://developers.rezdy.com/rezdyapi/swagger-supplier.json.
+"""
 import json
 from pathlib import Path
 from unittest.mock import AsyncMock
@@ -121,3 +125,133 @@ async def test_rezdy_iso_times_are_json_and_query_strings(transport):
     replies.append((200, {'requestStatus': {'success': True}, 'bookings': []}))
     assert (await run({'operation': 'list_bookings', 'updatedSince': '2025-10-01T09:00:00Z'}))['status'] == 'success'
     assert requests[1].url.params['updatedSince'] == '2025-10-01T09:00:00Z'
+
+
+def poll_node(operation, **config):
+    node = NodeFactory.create_node(node_id="rezdy-poll", node_type="automation-rezdy",
+        node_data={"config": {"operation": operation, **config}, "credentials": AUTH})
+    state = {}
+    async def update(mutator, **kwargs):
+        new, result = mutator(dict(state))
+        if new is not None:
+            state.clear()
+            state.update(new)
+        return result
+    node._update_node_state = update
+    return node, state
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["on_new_booking", "on_new_or_updated_booking"])
+async def test_rezdy_poll_baselines_and_emits_documented_booking(transport, operation):
+    from copy import deepcopy
+    requests, replies = transport
+    node, state = poll_node(operation, minDateCreated="2014-03-01T00:00:00Z", productCode=["P12345"])
+    empty = {"requestStatus": {"success": True}, "bookings": []}
+    replies.append((200, empty))
+    baseline = await node.execute({})
+    assert baseline["bookings"] == []
+    assert node.trigger_produced_no_event(baseline)
+    replies.append((200, deepcopy(EXAMPLES["get /v1/bookings"])))
+    fresh = await node.execute({})
+    booking = EXAMPLES["get /v1/bookings"]["bookings"][0]
+    assert fresh["bookings"] == [booking]
+    assert node.trigger_emitted_event(fresh)
+    assert node.should_propagate_output(fresh, {"operation": operation})
+    event = node.resolve_agent_event(fresh)
+    assert booking["orderNumber"] in event["text"]
+    assert booking["customer"]["name"] in event["text"]
+    assert booking["items"][0]["productCode"] in event["text"]
+    assert booking["items"][0]["startTimeLocal"] in event["text"]
+    assert booking["status"] in event["text"]
+    assert booking["supplierName"] in event["text"]
+    replies.append((200, deepcopy(EXAMPLES["get /v1/bookings"])))
+    again = await node.execute({})
+    assert again["bookings"] == []
+    assert node.resolve_agent_event(again) is None
+    assert node.should_propagate_output(again, {"operation": operation}) is False
+    assert all(r.url.params["minDateCreated"] == "2014-03-01T00:00:00Z" for r in requests)
+    assert all(r.url.params.get_list("productCode") == ["P12345"] for r in requests)
+    assert all("schedule" not in r.url.params for r in requests)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,expected", [("on_new_booking", 0), ("on_new_or_updated_booking", 1)])
+async def test_rezdy_poll_updated_timestamp_and_scope(transport, operation, expected):
+    from copy import deepcopy
+    from nodes.core.poll_trigger import poll_scope
+    requests, replies = transport
+    node, state = poll_node(operation)
+    payload = deepcopy(EXAMPLES["get /v1/bookings"])
+    replies.append((200, payload))
+    assert (await node.execute({}))["booking_count"] == 0
+    # A later edit changes the documented dateUpdated field, keeping the order id.
+    payload = deepcopy(payload)
+    payload["bookings"][0]["dateUpdated"] = "2025-09-04T00:00:04Z"
+    replies.append((200, payload))
+    assert (await node.execute({}))["booking_count"] == expected
+    assert poll_scope(db.RezdyNode, {"operation": operation}) == poll_scope(db.RezdyNode, {"operation": operation, "label": "Cosmetic"})
+    assert poll_scope(db.RezdyNode, {"operation": operation}) != poll_scope(db.RezdyNode, {"operation": operation, "productCode": ["PWQF1Y"]})
+    node._config = db.RezdyNode.parse_config({"config": {"operation": operation, "productCode": ["PWQF1Y"]}, "credentials": AUTH})
+    replies.append((200, payload))
+    assert (await node.execute({}))["booking_count"] == 0  # Repoint re-baselines.
+
+
+@pytest.mark.asyncio
+async def test_rezdy_poll_pages_before_advancing_state_and_retries_failures(transport):
+    from copy import deepcopy
+    requests, replies = transport
+    node, state = poll_node("on_new_or_updated_booking")
+    page = deepcopy(EXAMPLES["get /v1/bookings"])
+    # A full first page must be followed before the baseline is committed.
+    page["bookings"] *= 100
+    replies.extend([(200, page), (503, {"requestStatus": {"success": False}})])
+    assert (await node.execute({}))["status"] == "error"
+    assert state == {}
+    assert requests[1].url.params["offset"] == "100"
+    replies.extend([(200, page), (200, {"requestStatus": {"success": True}, "bookings": []})])
+    assert (await node.execute({}))["booking_count"] == 0
+    assert state["seen_ids"]
+    assert requests[2].url.params["offset"] == "0"
+
+
+@pytest.mark.asyncio
+async def test_rezdy_poll_refuses_overflow_without_advancing_state(transport):
+    from copy import deepcopy
+    requests, replies = transport
+    node, state = poll_node("on_new_booking")
+    page = deepcopy(EXAMPLES["get /v1/bookings"])
+    page["bookings"] *= 100
+    replies.extend((200, page) for _ in range(101))
+    with pytest.raises(ValueError, match="10,000"):
+        await node.execute({})
+    assert state == {}
+
+
+def test_rezdy_trigger_schema_and_declared_scope_validation():
+    from nodes.core.poll_trigger import PollTriggerConfigBase
+    for model in (db.OnNewBooking, db.OnNewOrUpdatedBooking):
+        assert issubclass(model, PollTriggerConfigBase)
+        assert model.model_json_schema()["properties"]["operation"]["x-is-trigger"] is True
+        with pytest.raises(ValueError):
+            model(productCode=[".."])
+        with pytest.raises(ValueError):
+            model(minDateCreated="2025-09-04")
+
+
+def test_rezdy_optional_product_filter_accepts_none():
+    assert db.ListBookings(productCode=None).productCode is None
+    assert db.OnNewBooking(productCode=None).productCode is None
+
+
+@pytest.mark.asyncio
+async def test_rezdy_poll_deduplicates_overlapping_pages(transport):
+    from copy import deepcopy
+    requests, replies = transport
+    node, state = poll_node("on_new_booking")
+    replies.append((200, {"requestStatus": {"success": True}, "bookings": []}))
+    await node.execute({})
+    page = deepcopy(EXAMPLES["get /v1/bookings"])
+    page["bookings"] *= 100
+    replies.extend([(200, page), (200, deepcopy(EXAMPLES["get /v1/bookings"]))])
+    assert (await node.execute({}))["booking_count"] == 1
