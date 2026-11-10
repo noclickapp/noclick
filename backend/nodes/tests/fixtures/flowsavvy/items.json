@@ -1,0 +1,6 @@
+{
+  "source": "https://my.flowsavvy.app/api/docs/public/openapi.json",
+  "description": "Synthetic values exercising the provider's Item, Task and Event schemas; not a recorded live response.",
+  "task": {"itemType": "task", "id": "task-1", "title": "Prepare launch", "notes": "<p>Call Alex</p>", "dateCreated": "2026-11-10T09:00:00Z", "lastModified": "2026-11-10T10:00:00Z", "completed": false, "listId": "work", "url": "https://my.flowsavvy.app"},
+  "event": {"itemType": "event", "id": "event-1", "title": "Launch review", "lastModified": "2026-11-10T10:00:00Z", "dateCreated": "2026-11-10T09:00:00Z", "calendarId": "work", "startDateTime": "2026-11-10T14:00:00", "endDateTime": "2026-11-10T15:00:00", "location": "Office", "url": "https://my.flowsavvy.app"}
+}
