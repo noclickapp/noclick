@@ -1,0 +1,23 @@
+{
+  "id": "018e1e57-8e96-7695-895e-34bb1f5c0614",
+  "subscriber_id": "018e1e57-8e96-7695-895e-34bb1f5c1578",
+  "status": "active",
+  "createdAt": "2019-08-24T14:15:22Z",
+  "updatedAt": "2020-08-24T14:15:22Z",
+  "status_changed_at": "2020-08-24T14:15:22Z",
+  "source": "pim",
+  "subject": "https://mypim.cloud.akeneo.com",
+  "events": [
+    "com.akeneo.pim.v1.product.deleted"
+  ],
+  "type": "https",
+  "config": {
+    "url": "https://whatever.target",
+    "secret": {
+      "primary": "aSecretSecret"
+    },
+    "headers": {
+      "X-API-Key": "***redacted***"
+    }
+  }
+}

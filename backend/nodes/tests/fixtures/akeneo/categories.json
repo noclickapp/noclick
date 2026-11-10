@@ -1,0 +1,141 @@
+{
+  "_links": {
+    "self": {
+      "href": "https://demo.akeneo.com/api/rest/v1/categories?page=2&limit=5&with_count=true"
+    },
+    "first": {
+      "href": "https://demo.akeneo.com/api/rest/v1/categories?page=1&limit=5&with_count=true"
+    },
+    "previous": {
+      "href": "https://demo.akeneo.com/api/rest/v1/categories?page=1&limit=5&with_count=true"
+    },
+    "next": {
+      "href": "https://demo.akeneo.com/api/rest/v1/categories?page=3&limit=5&with_count=true"
+    }
+  },
+  "current_page": 2,
+  "items_count": 10,
+  "_embedded": {
+    "items": [
+      {
+        "_links": {
+          "self": {
+            "href": "https://demo.akeneo.com/api/rest/v1/categories/winter_collection"
+          }
+        },
+        "code": "winter_collection",
+        "parent": null,
+        "updated": "2021-05-21T11:32:00+02:00",
+        "position": 1,
+        "labels": {
+          "en_US": "Winter collection",
+          "fr_FR": "Collection hiver",
+          "de_DE": "Winter-Kollektion"
+        },
+        "values": {
+          "description|96b88bf4-c2b7-4b64-a1f9-5d4876c02c26|ecommerce|en_US": {
+            "data": "<p>Winter collection description</p>\\n",
+            "type": "textarea",
+            "channel": "ecommerce",
+            "locale": "en_US",
+            "attribute_code": "description|96b88bf4-c2b7-4b64-a1f9-5d4876c02c26"
+          },
+          "image_1|871b8686-79b5-415c-9c6f-a38f8732dfb7|ecommerce|en_US": {
+            "data": {
+              "size": 1401359,
+              "extension": "jpg",
+              "file_path": "2/d/c/7/2dc791671d726e7438219d5dc7fd51a53d6bf2bb_IMG_7860.jpg",
+              "mime_type": "image/jpeg",
+              "original_filename": "IMG_7860.jpg"
+            },
+            "type": "image",
+            "channel": "ecommerce",
+            "locale": "en_US",
+            "attribute_code": "image_1|871b8686-79b5-415c-9c6f-a38f8732dfb7"
+          }
+        },
+        "channel_requirements": [
+          "ecommerce",
+          "mobile"
+        ]
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "https://demo.akeneo.com/api/rest/v1/categories/woman"
+          }
+        },
+        "code": "woman",
+        "parent": "winter_collection",
+        "updated": "2021-04-21T10:41:02+02:00",
+        "position": 1,
+        "labels": {
+          "en_US": "Woman",
+          "fr_FR": "Femme",
+          "de_DE": "Damen"
+        },
+        "values": {},
+        "channel_requirements": [
+          "ecommerce",
+          "mobile"
+        ]
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "https://demo.akeneo.com/api/rest/v1/categories/man"
+          }
+        },
+        "code": "man",
+        "parent": "winter_collection",
+        "updated": "2021-03-02T12:59:59+02:00",
+        "position": 2,
+        "labels": {
+          "en_US": "Man",
+          "fr_FR": "Homme",
+          "de_DE": "Herren"
+        },
+        "values": {},
+        "channel_requirements": []
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "https://demo.akeneo.com/api/rest/v1/categories/kids"
+          }
+        },
+        "code": "kids",
+        "parent": "winter_collection",
+        "updated": "2021-01-03T12:40:00+02:00",
+        "position": 3,
+        "labels": {
+          "en_US": "kids",
+          "fr_FR": "Enfant",
+          "de_DE": "Kinder"
+        },
+        "values": {},
+        "channel_requirements": []
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "https://demo.akeneo.com/api/rest/v1/categories/summer_collection"
+          }
+        },
+        "code": "summer_collection",
+        "parent": null,
+        "updated": "2021-04-04T09:42:00+02:00",
+        "position": 1,
+        "labels": {
+          "en_US": "Summer collection",
+          "fr_FR": "Collection \u00e9t\u00e9",
+          "de_DE": "Sommer-Kollektion"
+        },
+        "values": {},
+        "channel_requirements": [
+          "print"
+        ]
+      }
+    ]
+  }
+}

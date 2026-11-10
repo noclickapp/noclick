@@ -1,0 +1,1639 @@
+{
+  "$defs": {
+    "AkeneoCreateEventSubscriberConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "pim_client_id": {
+          "minLength": 1,
+          "title": "PIM client ID",
+          "type": "string"
+        },
+        "name": {
+          "default": "NoClick",
+          "title": "Subscriber name",
+          "type": "string"
+        },
+        "technical_email": {
+          "format": "email",
+          "title": "Technical contact email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_event_subscriber",
+          "default": "create_event_subscriber",
+          "title": "Create Event Subscriber",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Write",
+          "x-display-name": "Create Event Subscriber",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "pim_client_id",
+        "technical_email"
+      ],
+      "title": "AkeneoCreateEventSubscriberConfig",
+      "type": "object"
+    },
+    "AkeneoCreateProductConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enabled"
+        },
+        "family": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Family"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Categories"
+        },
+        "groups": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Groups"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attribute codes mapped to arrays of {data, locale, scope}. Supply writable values only.",
+          "title": "Values"
+        },
+        "uuid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uuid"
+        },
+        "operation": {
+          "const": "create_product",
+          "default": "create_product",
+          "title": "Create Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Write",
+          "x-display-name": "Create Product",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AkeneoCreateProductConfig",
+      "type": "object"
+    },
+    "AkeneoCreateProductModelConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Exact Akeneo resource code",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "family": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Family"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Categories"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Values"
+        },
+        "family_variant": {
+          "minLength": 1,
+          "title": "Family Variant",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_product_model",
+          "default": "create_product_model",
+          "title": "Create Product Model",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Write",
+          "x-display-name": "Create Product Model",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "code",
+        "family_variant"
+      ],
+      "title": "AkeneoCreateProductModelConfig",
+      "type": "object"
+    },
+    "AkeneoDeleteProductConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "title": "Product UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_product",
+          "default": "delete_product",
+          "title": "Delete Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Write",
+          "x-display-name": "Delete Product",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "AkeneoDeleteProductConfig",
+      "type": "object"
+    },
+    "AkeneoDeleteProductModelConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Exact Akeneo resource code",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_product_model",
+          "default": "delete_product_model",
+          "title": "Delete Product Model",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Write",
+          "x-display-name": "Delete Product Model",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "AkeneoDeleteProductModelConfig",
+      "type": "object"
+    },
+    "AkeneoGetAttributeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Exact Akeneo resource code",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_attribute",
+          "default": "get_attribute",
+          "title": "Get Attribute",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Read",
+          "x-display-name": "Get Attribute",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "AkeneoGetAttributeConfig",
+      "type": "object"
+    },
+    "AkeneoGetCategoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Exact Akeneo resource code",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_category",
+          "default": "get_category",
+          "title": "Get Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Read",
+          "x-display-name": "Get Category",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "AkeneoGetCategoryConfig",
+      "type": "object"
+    },
+    "AkeneoGetFamilyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Exact Akeneo resource code",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_family",
+          "default": "get_family",
+          "title": "Get Family",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Read",
+          "x-display-name": "Get Family",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "AkeneoGetFamilyConfig",
+      "type": "object"
+    },
+    "AkeneoGetMediaFileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Exact Akeneo resource code",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_media_file",
+          "default": "get_media_file",
+          "title": "Get Media File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Read",
+          "x-display-name": "Get Media File",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "AkeneoGetMediaFileConfig",
+      "type": "object"
+    },
+    "AkeneoGetProductConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "title": "Product UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Get Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Read",
+          "x-display-name": "Get Product",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "AkeneoGetProductConfig",
+      "type": "object"
+    },
+    "AkeneoGetProductModelConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Exact Akeneo resource code",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_product_model",
+          "default": "get_product_model",
+          "title": "Get Product Model",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Read",
+          "x-display-name": "Get Product Model",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "AkeneoGetProductModelConfig",
+      "type": "object"
+    },
+    "AkeneoListAttributeOptionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Product lists beyond 10,000 items require search-after pagination.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "attribute_code": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Attribute Code",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_attribute_options",
+          "default": "list_attribute_options",
+          "title": "List Attribute Options",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Read",
+          "x-display-name": "List Attribute Options",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "attribute_code"
+      ],
+      "title": "AkeneoListAttributeOptionsConfig",
+      "type": "object"
+    },
+    "AkeneoListAttributesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Product lists beyond 10,000 items require search-after pagination.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_attributes",
+          "default": "list_attributes",
+          "title": "List Attributes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Read",
+          "x-display-name": "List Attributes",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AkeneoListAttributesConfig",
+      "type": "object"
+    },
+    "AkeneoListCategoriesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Product lists beyond 10,000 items require search-after pagination.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "List Categories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Read",
+          "x-display-name": "List Categories",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AkeneoListCategoriesConfig",
+      "type": "object"
+    },
+    "AkeneoListChannelsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Product lists beyond 10,000 items require search-after pagination.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_channels",
+          "default": "list_channels",
+          "title": "List Channels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Read",
+          "x-display-name": "List Channels",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AkeneoListChannelsConfig",
+      "type": "object"
+    },
+    "AkeneoListFamiliesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Product lists beyond 10,000 items require search-after pagination.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_families",
+          "default": "list_families",
+          "title": "List Families",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Read",
+          "x-display-name": "List Families",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AkeneoListFamiliesConfig",
+      "type": "object"
+    },
+    "AkeneoListLocalesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Product lists beyond 10,000 items require search-after pagination.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_locales",
+          "default": "list_locales",
+          "title": "List Locales",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Read",
+          "x-display-name": "List Locales",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AkeneoListLocalesConfig",
+      "type": "object"
+    },
+    "AkeneoListProductModelsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Product lists beyond 10,000 items require search-after pagination.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Akeneo JSON search object. Supports updated/created filters.",
+          "title": "Search",
+          "ui:widget": "textarea"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        },
+        "locales": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated locale codes",
+          "title": "Locales"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated attribute codes",
+          "title": "Attributes"
+        },
+        "search_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor returned by a previous search-after page. Leave empty for the first page.",
+          "title": "Search After"
+        },
+        "pagination_type": {
+          "default": "page",
+          "enum": [
+            "page",
+            "search_after"
+          ],
+          "title": "Pagination Type",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_product_models",
+          "default": "list_product_models",
+          "title": "List Product Models",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Read",
+          "x-display-name": "List Product Models",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AkeneoListProductModelsConfig",
+      "type": "object"
+    },
+    "AkeneoListProductsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Product lists beyond 10,000 items require search-after pagination.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Akeneo JSON search object. Supports updated/created filters.",
+          "title": "Search",
+          "ui:widget": "textarea"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        },
+        "locales": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated locale codes",
+          "title": "Locales"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated attribute codes",
+          "title": "Attributes"
+        },
+        "search_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor returned by a previous search-after page. Leave empty for the first page.",
+          "title": "Search After"
+        },
+        "pagination_type": {
+          "default": "page",
+          "enum": [
+            "page",
+            "search_after"
+          ],
+          "title": "Pagination Type",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "List Products",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Read",
+          "x-display-name": "List Products",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AkeneoListProductsConfig",
+      "type": "object"
+    },
+    "AkeneoProductEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_product_event",
+          "default": "on_product_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Product Created, Updated or Deleted",
+          "x-is-trigger": true
+        },
+        "pim_client_id": {
+          "description": "The connection or App client ID that issued your PIM token. Enable Event Platform permission for this connection in Akeneo.",
+          "minLength": 1,
+          "title": "PIM client ID",
+          "type": "string"
+        },
+        "subscriber_id": {
+          "description": "Choose a subscriber linked to this PIM connection. Use Create Event Subscriber once if none exists. NoClick removes only this workflow's HTTPS subscription.",
+          "format": "uuid",
+          "title": "Event Platform subscriber ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "pim_client_id",
+            "field_name": "subscriber_id",
+            "placeholder": "Choose an Event Platform subscriber"
+          }
+        },
+        "events": {
+          "default": [
+            "com.akeneo.pim.v1.product.created",
+            "com.akeneo.pim.v1.product.updated",
+            "com.akeneo.pim.v1.product.deleted"
+          ],
+          "items": {
+            "enum": [
+              "com.akeneo.pim.v1.product.created",
+              "com.akeneo.pim.v1.product.updated",
+              "com.akeneo.pim.v1.product.deleted"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Product events",
+          "type": "array"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "pim_client_id",
+        "subscriber_id"
+      ],
+      "title": "AkeneoProductEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AkeneoTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "akeneo_token",
+          "default": "akeneo_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "pim_url": {
+          "description": "Your Akeneo PIM origin, for example https://my-pim.cloud.akeneo.com",
+          "title": "PIM URL",
+          "type": "string"
+        },
+        "access_token": {
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "pim_url",
+        "access_token"
+      ],
+      "title": "Akeneo Bearer Token",
+      "type": "object",
+      "x-credential-instructions": "Enter your Akeneo PIM HTTPS URL and an existing bearer access token. Connector tokens normally expire after one hour: replace an expired token here. An existing App token can also be pasted. NoClick does not generate or refresh tokens. Grant read access to products for connection verification and the permissions needed for your operations.",
+      "x-credential-url": "https://api.akeneo.com/documentation/authentication.html"
+    },
+    "AkeneoUpsertAttributeOptionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Exact Akeneo resource code",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "attribute_code": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Attribute Code",
+          "type": "string"
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Order"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        },
+        "operation": {
+          "const": "upsert_attribute_option",
+          "default": "upsert_attribute_option",
+          "title": "Upsert Attribute Option",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Write",
+          "x-display-name": "Upsert Attribute Option",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "code",
+        "attribute_code"
+      ],
+      "title": "AkeneoUpsertAttributeOptionConfig",
+      "type": "object"
+    },
+    "AkeneoUpsertCategoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Exact Akeneo resource code",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        },
+        "operation": {
+          "const": "upsert_category",
+          "default": "upsert_category",
+          "title": "Upsert Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Write",
+          "x-display-name": "Upsert Category",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "AkeneoUpsertCategoryConfig",
+      "type": "object"
+    },
+    "AkeneoUpsertFamilyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Exact Akeneo resource code",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        },
+        "attribute_as_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attribute As Label"
+        },
+        "attribute_as_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attribute As Image"
+        },
+        "attribute_requirements": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attribute Requirements"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        },
+        "operation": {
+          "const": "upsert_family",
+          "default": "upsert_family",
+          "title": "Upsert Family",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Write",
+          "x-display-name": "Upsert Family",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "AkeneoUpsertFamilyConfig",
+      "type": "object"
+    },
+    "AkeneoUpsertProductConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enabled"
+        },
+        "family": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Family"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Categories"
+        },
+        "groups": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Groups"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attribute codes mapped to arrays of {data, locale, scope}. Supply writable values only.",
+          "title": "Values"
+        },
+        "uuid": {
+          "title": "Product UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "upsert_product",
+          "default": "upsert_product",
+          "title": "Upsert Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Write",
+          "x-display-name": "Upsert Product",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "AkeneoUpsertProductConfig",
+      "type": "object"
+    },
+    "AkeneoUpsertProductModelConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Exact Akeneo resource code",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "family": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Family"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Categories"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Values"
+        },
+        "family_variant": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Family Variant"
+        },
+        "operation": {
+          "const": "upsert_product_model",
+          "default": "upsert_product_model",
+          "title": "Upsert Product Model",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Write",
+          "x-display-name": "Upsert Product Model",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "AkeneoUpsertProductModelConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_event_subscriber": "#/$defs/AkeneoCreateEventSubscriberConfig",
+          "create_product": "#/$defs/AkeneoCreateProductConfig",
+          "create_product_model": "#/$defs/AkeneoCreateProductModelConfig",
+          "delete_product": "#/$defs/AkeneoDeleteProductConfig",
+          "delete_product_model": "#/$defs/AkeneoDeleteProductModelConfig",
+          "get_attribute": "#/$defs/AkeneoGetAttributeConfig",
+          "get_category": "#/$defs/AkeneoGetCategoryConfig",
+          "get_family": "#/$defs/AkeneoGetFamilyConfig",
+          "get_media_file": "#/$defs/AkeneoGetMediaFileConfig",
+          "get_product": "#/$defs/AkeneoGetProductConfig",
+          "get_product_model": "#/$defs/AkeneoGetProductModelConfig",
+          "list_attribute_options": "#/$defs/AkeneoListAttributeOptionsConfig",
+          "list_attributes": "#/$defs/AkeneoListAttributesConfig",
+          "list_categories": "#/$defs/AkeneoListCategoriesConfig",
+          "list_channels": "#/$defs/AkeneoListChannelsConfig",
+          "list_families": "#/$defs/AkeneoListFamiliesConfig",
+          "list_locales": "#/$defs/AkeneoListLocalesConfig",
+          "list_product_models": "#/$defs/AkeneoListProductModelsConfig",
+          "list_products": "#/$defs/AkeneoListProductsConfig",
+          "on_product_event": "#/$defs/AkeneoProductEventConfig",
+          "upsert_attribute_option": "#/$defs/AkeneoUpsertAttributeOptionConfig",
+          "upsert_category": "#/$defs/AkeneoUpsertCategoryConfig",
+          "upsert_family": "#/$defs/AkeneoUpsertFamilyConfig",
+          "upsert_product": "#/$defs/AkeneoUpsertProductConfig",
+          "upsert_product_model": "#/$defs/AkeneoUpsertProductModelConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AkeneoCreateEventSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoGetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoCreateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoUpsertProductConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoDeleteProductConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoListProductModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoGetProductModelConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoCreateProductModelConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoUpsertProductModelConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoDeleteProductModelConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoListCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoGetCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoUpsertCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoListFamiliesConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoGetFamilyConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoUpsertFamilyConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoListAttributesConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoGetAttributeConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoListAttributeOptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoUpsertAttributeOptionConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoListChannelsConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoListLocalesConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoGetMediaFileConfig"
+        },
+        {
+          "$ref": "#/$defs/AkeneoProductEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AkeneoTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Akeneo Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
