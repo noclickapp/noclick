@@ -1,0 +1,84 @@
+{
+  "test.created": {
+    "body": {
+      "type": "test.created",
+      "timestamp": "2026-01-21T10:30:00Z",
+      "data": {
+        "test": {
+          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "number": 1,
+          "name": "No duplicate rows",
+          "description": "This test checks for duplicate rows in the dataset.",
+          "type": "integrity",
+          "subtype": "duplicateRowCount",
+          "dateCreated": "2026-01-21T10:30:00Z",
+          "dateUpdated": "2026-01-21T10:30:00Z",
+          "creatorId": "589ece63-49a2-41b4-98e1-10547761d4b0",
+          "originProjectVersionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "thresholds": [
+            {
+              "measurement": "duplicateRowCount",
+              "insightName": "duplicateRowCount",
+              "insightParameters": [],
+              "operator": "<=",
+              "value": 0
+            }
+          ],
+          "evaluationWindow": 3600,
+          "delayWindow": 0,
+          "suggested": false,
+          "archived": false
+        }
+      }
+    },
+    "source": "https://openlayer.com/docs/security/webhooks/events.md"
+  },
+  "test.updated": {
+    "body": {
+      "type": "test.updated",
+      "timestamp": "2026-01-21T10:30:00Z",
+      "data": {
+        "test": {
+          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "number": 1,
+          "name": "No duplicate rows",
+          "type": "integrity",
+          "subtype": "duplicateRowCount",
+          "dateUpdated": "2026-01-21T10:35:00Z"
+        }
+      }
+    },
+    "source": "https://openlayer.com/docs/security/webhooks/events.md"
+  },
+  "test.deleted": {
+    "body": {
+      "type": "test.deleted",
+      "timestamp": "2026-01-21T10:30:00Z",
+      "data": {
+        "test": {
+          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
+      }
+    },
+    "source": "https://openlayer.com/docs/security/webhooks/events.md"
+  },
+  "tests.result.updated": {
+    "body": {
+      "type": "tests.result.updated",
+      "timestamp": "2026-01-21T10:30:00Z",
+      "data": {
+        "tests": {
+          "projectId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "projectVersionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "inferencePipelineId": null,
+          "total": 6,
+          "passing": 4,
+          "failing": 1,
+          "skipped": 1,
+          "running": 0
+        }
+      }
+    },
+    "source": "https://openlayer.com/docs/security/webhooks/events.md"
+  }
+}

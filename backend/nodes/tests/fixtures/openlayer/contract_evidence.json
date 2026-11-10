@@ -1,0 +1,178 @@
+{
+  "evidence": "openapi",
+  "provider": "Openlayer",
+  "version": "1.0",
+  "source_url": "https://www.openlayer.com/docs/api-reference/openapi.yaml",
+  "sha256": "ba9427654165602058cba7e0502c0b85465a69548e364a130b43de50acb266b1",
+  "spec_defects": [
+    {
+      "defect": "The security alternatives on PATCH/DELETE /projects/{projectId}, GET /versions/{projectVersionId}, POST /tests/{testId}/evaluate and GET /tests/{testId}/results reference an undefined apiKey scheme. The documented authentication is Bearer API key. The conformance catalog uses the harness-supported documented Bearer auth override; the pin is unchanged.",
+      "source": "https://openlayer.com/docs/api-reference/rest/overview.md"
+    },
+    {
+      "defect": "The published LLM data-stream example matches both LLMData and TabularRegressionData, so the oneOf rejects the provider\u2019s own valid example. The node sends that example unchanged.",
+      "source": "https://openlayer.com/docs/api-reference/rest/monitoring/stream-data.md"
+    },
+    {
+      "defect": "The pinned OpenAPI omits POST /workspaces/{workspaceId}/webhooks and DELETE /workspaces/{workspaceId}/webhooks/{webhookId}. Both routes, their fields and responses are documented by the provider. Native mock tests execute their complete lifecycle using the documented creation response.",
+      "source": "https://openlayer.com/docs/security/webhooks/manage-webhooks.md"
+    }
+  ],
+  "conformance_summary": {
+    "checked": 26,
+    "passed": 21,
+    "failed": 5,
+    "fixture_errors": 0,
+    "response_checked": 22,
+    "auth_checked": 22,
+    "coverage": {
+      "implemented": 22,
+      "total": 63
+    },
+    "triggers": {
+      "checked": 4,
+      "passed": 0
+    }
+  },
+  "verdict": {
+    "provider": "openlayer",
+    "ready": false,
+    "blocking": [
+      "publish_inferences: request: InvalidRequestBody: Request body validation error: Value {'rows': [{'user_query': 'what is the meaning of life?', 'output': '42', 'tokens': 7, 'cost': 0.02, 'timestamp': 1620000000}], 'config",
+      "on_event: trigger: registration: ValueError: No spec operation for POST https://api.openlayer.com/v1/workspaces/3fa85f64-5717-4562-b3fc-2c963f66afa6/webhooks",
+      "on_event: ValueError: No spec operation for POST https://api.openlayer.com/v1/workspaces/3fa85f64-5717-4562-b3fc-2c963f66afa6/webhooks",
+      "on_event: trigger: registration: ValueError: No spec operation for POST https://api.openlayer.com/v1/workspaces/3fa85f64-5717-4562-b3fc-2c963f66afa6/webhooks",
+      "on_event: ValueError: No spec operation for POST https://api.openlayer.com/v1/workspaces/3fa85f64-5717-4562-b3fc-2c963f66afa6/webhooks",
+      "on_event: trigger: registration: ValueError: No spec operation for POST https://api.openlayer.com/v1/workspaces/3fa85f64-5717-4562-b3fc-2c963f66afa6/webhooks",
+      "on_event: ValueError: No spec operation for POST https://api.openlayer.com/v1/workspaces/3fa85f64-5717-4562-b3fc-2c963f66afa6/webhooks",
+      "on_event: trigger: registration: ValueError: No spec operation for POST https://api.openlayer.com/v1/workspaces/3fa85f64-5717-4562-b3fc-2c963f66afa6/webhooks",
+      "on_event: ValueError: No spec operation for POST https://api.openlayer.com/v1/workspaces/3fa85f64-5717-4562-b3fc-2c963f66afa6/webhooks"
+    ],
+    "advisory": [],
+    "stats": {
+      "operations": 26,
+      "skipped": 0,
+      "request_ok": 21,
+      "authored_parser_ok": 0,
+      "generated_only": 22,
+      "local_ok": 0
+    },
+    "triggers": {
+      "on_event": "failed"
+    }
+  },
+  "trigger_deliveries": [
+    {
+      "scenario": "on_event",
+      "events": [
+        {
+          "event": "test.created",
+          "outcome": "delivered",
+          "failures": []
+        },
+        {
+          "event": "test.updated",
+          "outcome": "filtered out",
+          "failures": []
+        },
+        {
+          "event": "test.deleted",
+          "outcome": "filtered out",
+          "failures": []
+        },
+        {
+          "event": "tests.result.updated",
+          "outcome": "filtered out",
+          "failures": []
+        }
+      ]
+    },
+    {
+      "scenario": "on_event_test_updated",
+      "events": [
+        {
+          "event": "test.created",
+          "outcome": "filtered out",
+          "failures": []
+        },
+        {
+          "event": "test.updated",
+          "outcome": "delivered",
+          "failures": []
+        },
+        {
+          "event": "test.deleted",
+          "outcome": "filtered out",
+          "failures": []
+        },
+        {
+          "event": "tests.result.updated",
+          "outcome": "filtered out",
+          "failures": []
+        }
+      ]
+    },
+    {
+      "scenario": "on_event_test_deleted",
+      "events": [
+        {
+          "event": "test.created",
+          "outcome": "filtered out",
+          "failures": []
+        },
+        {
+          "event": "test.updated",
+          "outcome": "filtered out",
+          "failures": []
+        },
+        {
+          "event": "test.deleted",
+          "outcome": "delivered",
+          "failures": []
+        },
+        {
+          "event": "tests.result.updated",
+          "outcome": "filtered out",
+          "failures": []
+        }
+      ]
+    },
+    {
+      "scenario": "on_event_tests_result_updated",
+      "events": [
+        {
+          "event": "test.created",
+          "outcome": "filtered out",
+          "failures": []
+        },
+        {
+          "event": "test.updated",
+          "outcome": "filtered out",
+          "failures": []
+        },
+        {
+          "event": "test.deleted",
+          "outcome": "filtered out",
+          "failures": []
+        },
+        {
+          "event": "tests.result.updated",
+          "outcome": "delivered",
+          "failures": []
+        }
+      ]
+    }
+  ],
+  "node_sha256": "3d31cde0fbed13ccc50b53ce19c4ce96ed7dfbf4fb84dd7ae2630be4020bff71",
+  "validation": {
+    "registry": "automation-openlayer registered",
+    "targeted": "59 passed",
+    "repository_selection": "44 passed; 64628 deselected",
+    "credential_requests_and_generic_oauth": "82 passed",
+    "hosted": "no openlayer_api_key violations; only unrelated bookeo_oauth is listed",
+    "typescript": "passed under /tmp/nc-tsc.lock",
+    "credential_reviews": "2 passed",
+    "frontend": "12 passed including categories",
+    "provenance": "3 passed"
+  }
+}

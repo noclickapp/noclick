@@ -1,0 +1,1484 @@
+{
+  "$defs": {
+    "OpenlayerAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "openlayer_api_key",
+          "default": "openlayer_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Openlayer API Key",
+      "type": "object",
+      "x-credential-instructions": "In Openlayer, open your user menu, choose API Keys, then Create API key. Copy the key and paste it here. Webhook triggers require a workspace admin's key. NoClick checks the connection by listing your projects.",
+      "x-credential-url": "https://openlayer.com/docs/workspace-and-projects/find-your-api-key"
+    },
+    "OpenlayerCreateCommitConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_commit",
+          "default": "create_commit",
+          "title": "Create Project Commit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Development",
+          "x-display-name": "Create Project Commit",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "format": "uuid",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "storage_uri": {
+          "minLength": 1,
+          "title": "Uploaded bundle storage URI",
+          "type": "string"
+        },
+        "commit_message": {
+          "minLength": 1,
+          "title": "Commit message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "storage_uri",
+        "commit_message"
+      ],
+      "title": "OpenlayerCreateCommitConfig",
+      "type": "object"
+    },
+    "OpenlayerCreateInferencePipelineConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_inference_pipeline",
+          "default": "create_inference_pipeline",
+          "title": "Create Inference Pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitoring",
+          "x-display-name": "Create Inference Pipeline",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "format": "uuid",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Pipeline name",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "name"
+      ],
+      "title": "OpenlayerCreateInferencePipelineConfig",
+      "type": "object"
+    },
+    "OpenlayerCreateProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Create Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Create Project",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Project name",
+          "type": "string"
+        },
+        "task_type": {
+          "enum": [
+            "llm-base",
+            "tabular-classification",
+            "tabular-regression",
+            "text-classification"
+          ],
+          "title": "Task type",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 280,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name",
+        "task_type"
+      ],
+      "title": "OpenlayerCreateProjectConfig",
+      "type": "object"
+    },
+    "OpenlayerDeleteInferencePipelineConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_inference_pipeline",
+          "default": "delete_inference_pipeline",
+          "title": "Delete Inference Pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitoring",
+          "x-display-name": "Delete Inference Pipeline",
+          "x-is-trigger": false
+        },
+        "inference_pipeline_id": {
+          "format": "uuid",
+          "title": "Inference pipeline ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inference_pipeline_id"
+      ],
+      "title": "OpenlayerDeleteInferencePipelineConfig",
+      "type": "object"
+    },
+    "OpenlayerDeleteProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Delete Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Delete Project",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "format": "uuid",
+          "title": "Project ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "OpenlayerDeleteProjectConfig",
+      "type": "object"
+    },
+    "OpenlayerDeleteRowConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_row",
+          "default": "delete_row",
+          "title": "Delete Inference Row",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inference Data",
+          "x-display-name": "Delete Inference Row",
+          "x-is-trigger": false
+        },
+        "inference_pipeline_id": {
+          "format": "uuid",
+          "title": "Inference pipeline ID",
+          "type": "string"
+        },
+        "inference_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Inference ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inference_pipeline_id",
+        "inference_id"
+      ],
+      "title": "OpenlayerDeleteRowConfig",
+      "type": "object"
+    },
+    "OpenlayerEvaluateTestConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "evaluate_test",
+          "default": "evaluate_test",
+          "title": "Evaluate Test",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tests",
+          "x-display-name": "Evaluate Test",
+          "x-is-trigger": false
+        },
+        "test_id": {
+          "format": "uuid",
+          "title": "Test ID",
+          "type": "string"
+        },
+        "start_timestamp": {
+          "title": "Start Unix timestamp",
+          "type": "integer"
+        },
+        "end_timestamp": {
+          "title": "End Unix timestamp",
+          "type": "integer"
+        },
+        "inference_pipeline_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inference pipeline ID"
+        },
+        "overwrite_results": {
+          "default": false,
+          "title": "Overwrite existing results",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "test_id",
+        "start_timestamp",
+        "end_timestamp"
+      ],
+      "title": "OpenlayerEvaluateTestConfig",
+      "type": "object"
+    },
+    "OpenlayerGetCommitConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_commit",
+          "default": "get_commit",
+          "title": "Get Project Commit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Development",
+          "x-display-name": "Get Project Commit",
+          "x-is-trigger": false
+        },
+        "project_version_id": {
+          "format": "uuid",
+          "title": "Project commit ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_version_id"
+      ],
+      "title": "OpenlayerGetCommitConfig",
+      "type": "object"
+    },
+    "OpenlayerGetInferencePipelineConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_inference_pipeline",
+          "default": "get_inference_pipeline",
+          "title": "Get Inference Pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitoring",
+          "x-display-name": "Get Inference Pipeline",
+          "x-is-trigger": false
+        },
+        "inference_pipeline_id": {
+          "format": "uuid",
+          "title": "Inference pipeline ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inference_pipeline_id"
+      ],
+      "title": "OpenlayerGetInferencePipelineConfig",
+      "type": "object"
+    },
+    "OpenlayerGetRowConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_row",
+          "default": "get_row",
+          "title": "Get Inference Row",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inference Data",
+          "x-display-name": "Get Inference Row",
+          "x-is-trigger": false
+        },
+        "inference_pipeline_id": {
+          "format": "uuid",
+          "title": "Inference pipeline ID",
+          "type": "string"
+        },
+        "inference_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Inference ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inference_pipeline_id",
+        "inference_id"
+      ],
+      "title": "OpenlayerGetRowConfig",
+      "type": "object"
+    },
+    "OpenlayerListCommitTestResultsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_commit_test_results",
+          "default": "list_commit_test_results",
+          "title": "List Commit Test Results",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Development",
+          "x-display-name": "List Commit Test Results",
+          "x-is-trigger": false
+        },
+        "project_version_id": {
+          "format": "uuid",
+          "title": "Project commit ID",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "test_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "integrity",
+                "consistency",
+                "performance",
+                "fairness",
+                "robustness"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Test type",
+          "enum": [
+            "integrity",
+            "consistency",
+            "performance",
+            "fairness",
+            "robustness"
+          ],
+          "x-enum-searchable": true
+        },
+        "result_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "running",
+                "passing",
+                "failing",
+                "skipped",
+                "error"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Result status",
+          "enum": [
+            "running",
+            "passing",
+            "failing",
+            "skipped",
+            "error"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_version_id"
+      ],
+      "title": "OpenlayerListCommitTestResultsConfig",
+      "type": "object"
+    },
+    "OpenlayerListCommitsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_commits",
+          "default": "list_commits",
+          "title": "List Project Commits",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Development",
+          "x-display-name": "List Project Commits",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "format": "uuid",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "OpenlayerListCommitsConfig",
+      "type": "object"
+    },
+    "OpenlayerListInferencePipelinesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_inference_pipelines",
+          "default": "list_inference_pipelines",
+          "title": "List Inference Pipelines",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitoring",
+          "x-display-name": "List Inference Pipelines",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "format": "uuid",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pipeline name"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "OpenlayerListInferencePipelinesConfig",
+      "type": "object"
+    },
+    "OpenlayerListPipelineTestResultsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_pipeline_test_results",
+          "default": "list_pipeline_test_results",
+          "title": "List Pipeline Test Results",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tests",
+          "x-display-name": "List Pipeline Test Results",
+          "x-is-trigger": false
+        },
+        "inference_pipeline_id": {
+          "format": "uuid",
+          "title": "Inference pipeline ID",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "test_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "integrity",
+                "consistency",
+                "performance",
+                "fairness",
+                "robustness"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Test type",
+          "enum": [
+            "integrity",
+            "consistency",
+            "performance",
+            "fairness",
+            "robustness"
+          ],
+          "x-enum-searchable": true
+        },
+        "result_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "running",
+                "passing",
+                "failing",
+                "skipped",
+                "error"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Result status",
+          "enum": [
+            "running",
+            "passing",
+            "failing",
+            "skipped",
+            "error"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "inference_pipeline_id"
+      ],
+      "title": "OpenlayerListPipelineTestResultsConfig",
+      "type": "object"
+    },
+    "OpenlayerListProjectsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Projects",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project name"
+        },
+        "task_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "llm-base",
+                "tabular-classification",
+                "tabular-regression",
+                "text-classification"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task type",
+          "enum": [
+            "llm-base",
+            "tabular-classification",
+            "tabular-regression",
+            "text-classification"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "OpenlayerListProjectsConfig",
+      "type": "object"
+    },
+    "OpenlayerListRowsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_rows",
+          "default": "list_rows",
+          "title": "List Inference Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inference Data",
+          "x-display-name": "List Inference Rows",
+          "x-is-trigger": false
+        },
+        "inference_pipeline_id": {
+          "format": "uuid",
+          "title": "Inference pipeline ID",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "filter_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Dataset filter JSON",
+          "ui:options": {
+            "language": "json"
+          },
+          "ui:widget": "code_editor"
+        },
+        "sort_column": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort column"
+        },
+        "ascending": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ascending"
+        }
+      },
+      "required": [
+        "inference_pipeline_id"
+      ],
+      "title": "OpenlayerListRowsConfig",
+      "type": "object"
+    },
+    "OpenlayerListTestResultsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_test_results",
+          "default": "list_test_results",
+          "title": "List Test Results",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tests",
+          "x-display-name": "List Test Results",
+          "x-is-trigger": false
+        },
+        "test_id": {
+          "format": "uuid",
+          "title": "Test ID",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "start_timestamp": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Unix timestamp"
+        },
+        "end_timestamp": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Unix timestamp"
+        },
+        "inference_pipeline_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inference pipeline ID"
+        }
+      },
+      "required": [
+        "test_id"
+      ],
+      "title": "OpenlayerListTestResultsConfig",
+      "type": "object"
+    },
+    "OpenlayerListTestsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tests",
+          "default": "list_tests",
+          "title": "List Tests",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tests",
+          "x-display-name": "List Tests",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "format": "uuid",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "test_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "integrity",
+                "consistency",
+                "performance",
+                "fairness",
+                "robustness"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Test type",
+          "enum": [
+            "integrity",
+            "consistency",
+            "performance",
+            "fairness",
+            "robustness"
+          ],
+          "x-enum-searchable": true
+        },
+        "include_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include archived"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "OpenlayerListTestsConfig",
+      "type": "object"
+    },
+    "OpenlayerOnEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On Openlayer Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Openlayer Event",
+          "x-is-trigger": true
+        },
+        "workspace_id": {
+          "description": "Workspace UUID from Openlayer workspace settings. An admin's key is required to register webhooks.",
+          "format": "uuid",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "event_type": {
+          "default": "tests.result.updated",
+          "enum": [
+            "test.created",
+            "test.updated",
+            "test.deleted",
+            "tests.result.updated"
+          ],
+          "title": "Event type",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "OpenlayerOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OpenlayerPublishInferencesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "publish_inferences",
+          "default": "publish_inferences",
+          "title": "Publish Inferences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitoring",
+          "x-display-name": "Publish Inferences",
+          "x-is-trigger": false
+        },
+        "inference_pipeline_id": {
+          "format": "uuid",
+          "title": "Inference pipeline ID",
+          "type": "string"
+        },
+        "rows_json": {
+          "description": "Array of inference records with input and output columns.",
+          "title": "Rows JSON",
+          "type": "string",
+          "ui:options": {
+            "language": "json"
+          },
+          "ui:widget": "code_editor"
+        },
+        "stream_config_json": {
+          "description": "Column mapping for the project's task type, as documented by Openlayer.",
+          "title": "Stream configuration JSON",
+          "type": "string",
+          "ui:options": {
+            "language": "json"
+          },
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "inference_pipeline_id",
+        "rows_json",
+        "stream_config_json"
+      ],
+      "title": "OpenlayerPublishInferencesConfig",
+      "type": "object"
+    },
+    "OpenlayerUpdateInferencePipelineConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_inference_pipeline",
+          "default": "update_inference_pipeline",
+          "title": "Update Inference Pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitoring",
+          "x-display-name": "Update Inference Pipeline",
+          "x-is-trigger": false
+        },
+        "inference_pipeline_id": {
+          "format": "uuid",
+          "title": "Inference pipeline ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pipeline name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "reference_dataset_uri": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference dataset storage URI"
+        }
+      },
+      "required": [
+        "inference_pipeline_id"
+      ],
+      "title": "OpenlayerUpdateInferencePipelineConfig",
+      "type": "object"
+    },
+    "OpenlayerUpdateProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Update Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Update Project",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "format": "uuid",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 280,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "purpose": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purpose"
+        },
+        "model_developer": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model developer"
+        },
+        "data_retention_days": {
+          "anyOf": [
+            {
+              "minimum": 3,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data retention days"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "OpenlayerUpdateProjectConfig",
+      "type": "object"
+    },
+    "OpenlayerUpdateRowConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_row",
+          "default": "update_row",
+          "title": "Update Inference Row",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inference Data",
+          "x-display-name": "Update Inference Row",
+          "x-is-trigger": false
+        },
+        "inference_pipeline_id": {
+          "format": "uuid",
+          "title": "Inference pipeline ID",
+          "type": "string"
+        },
+        "inference_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Inference ID",
+          "type": "string"
+        },
+        "row_json": {
+          "description": "",
+          "title": "Row changes JSON",
+          "type": "string",
+          "ui:options": {
+            "language": "json"
+          },
+          "ui:widget": "code_editor"
+        },
+        "stream_config_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Column configuration JSON",
+          "ui:options": {
+            "language": "json"
+          },
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "inference_pipeline_id",
+        "inference_id",
+        "row_json"
+      ],
+      "title": "OpenlayerUpdateRowConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_commit": "#/$defs/OpenlayerCreateCommitConfig",
+          "create_inference_pipeline": "#/$defs/OpenlayerCreateInferencePipelineConfig",
+          "create_project": "#/$defs/OpenlayerCreateProjectConfig",
+          "delete_inference_pipeline": "#/$defs/OpenlayerDeleteInferencePipelineConfig",
+          "delete_project": "#/$defs/OpenlayerDeleteProjectConfig",
+          "delete_row": "#/$defs/OpenlayerDeleteRowConfig",
+          "evaluate_test": "#/$defs/OpenlayerEvaluateTestConfig",
+          "get_commit": "#/$defs/OpenlayerGetCommitConfig",
+          "get_inference_pipeline": "#/$defs/OpenlayerGetInferencePipelineConfig",
+          "get_row": "#/$defs/OpenlayerGetRowConfig",
+          "list_commit_test_results": "#/$defs/OpenlayerListCommitTestResultsConfig",
+          "list_commits": "#/$defs/OpenlayerListCommitsConfig",
+          "list_inference_pipelines": "#/$defs/OpenlayerListInferencePipelinesConfig",
+          "list_pipeline_test_results": "#/$defs/OpenlayerListPipelineTestResultsConfig",
+          "list_projects": "#/$defs/OpenlayerListProjectsConfig",
+          "list_rows": "#/$defs/OpenlayerListRowsConfig",
+          "list_test_results": "#/$defs/OpenlayerListTestResultsConfig",
+          "list_tests": "#/$defs/OpenlayerListTestsConfig",
+          "on_event": "#/$defs/OpenlayerOnEventConfig",
+          "publish_inferences": "#/$defs/OpenlayerPublishInferencesConfig",
+          "update_inference_pipeline": "#/$defs/OpenlayerUpdateInferencePipelineConfig",
+          "update_project": "#/$defs/OpenlayerUpdateProjectConfig",
+          "update_row": "#/$defs/OpenlayerUpdateRowConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OpenlayerListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerCreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerUpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerDeleteProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerListCommitsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerCreateCommitConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerGetCommitConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerListCommitTestResultsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerListInferencePipelinesConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerCreateInferencePipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerGetInferencePipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerUpdateInferencePipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerDeleteInferencePipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerPublishInferencesConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerListRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerGetRowConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerUpdateRowConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerDeleteRowConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerListTestsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerEvaluateTestConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerListTestResultsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerListPipelineTestResultsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenlayerOnEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OpenlayerAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Openlayer Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Publish inference data to Openlayer",
+    "Evaluate an Openlayer test",
+    "Alert when an Openlayer test suite finishes",
+    "Create an Openlayer project"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
