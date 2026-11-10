@@ -1,0 +1,1603 @@
+{
+  "$defs": {
+    "AudiencefulAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "audienceful_api_key",
+          "default": "audienceful_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Audienceful API Key",
+      "type": "object",
+      "x-credential-instructions": "In Audienceful Settings, generate a workspace API key and paste it here. Grant people:read for connection verification, plus the read/write scopes for your chosen actions. Triggers need webhooks:write. Write scopes do not include read scopes.",
+      "x-credential-url": "https://www.audienceful.com/help/api/authentication"
+    },
+    "AudiencefulConfirmPersonOptInConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "confirm_person_opt_in",
+          "default": "confirm_person_opt_in",
+          "title": "Confirm Contact Opt In",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Consent",
+          "x-display-name": "Confirm Contact Opt In",
+          "x-is-trigger": false
+        },
+        "email": {
+          "format": "email",
+          "minLength": 1,
+          "title": "Contact Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "AudiencefulConfirmPersonOptInConfig",
+      "type": "object"
+    },
+    "AudiencefulCreateFieldConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_field",
+          "default": "create_field",
+          "title": "Create Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Fields",
+          "x-display-name": "Create Custom Field",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Field Name",
+          "type": "string"
+        },
+        "data_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Data Name",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "boolean",
+            "string",
+            "tag",
+            "number",
+            "datetime",
+            "phone"
+          ],
+          "title": "Field Type",
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "data_name",
+        "type"
+      ],
+      "title": "AudiencefulCreateFieldConfig",
+      "type": "object"
+    },
+    "AudiencefulCreatePublicationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_publication",
+          "default": "create_publication",
+          "title": "Create Publication",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Publications",
+          "x-display-name": "Create Publication",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Publication Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "emoji": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emoji"
+        },
+        "default_subscribed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Subscribed"
+        },
+        "auto_subscribe_new": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Auto Subscribe New"
+        },
+        "visible_on_preferences": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visible On Preferences"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "AudiencefulCreatePublicationConfig",
+      "type": "object"
+    },
+    "AudiencefulDeleteFieldConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_field",
+          "default": "delete_field",
+          "title": "Delete Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Fields",
+          "x-display-name": "Delete Custom Field",
+          "x-is-trigger": false
+        },
+        "field_id": {
+          "minLength": 1,
+          "title": "Field ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field_id"
+      ],
+      "title": "AudiencefulDeleteFieldConfig",
+      "type": "object"
+    },
+    "AudiencefulDeletePersonConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_person",
+          "default": "delete_person",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Delete Contact",
+          "x-is-trigger": false
+        },
+        "email": {
+          "format": "email",
+          "minLength": 1,
+          "title": "Contact Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "AudiencefulDeletePersonConfig",
+      "type": "object"
+    },
+    "AudiencefulGetOperationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_operation",
+          "default": "get_operation",
+          "title": "Get Async Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Operations",
+          "x-display-name": "Get Async Operation",
+          "x-is-trigger": false
+        },
+        "operation_id": {
+          "minLength": 1,
+          "title": "Operation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "title": "AudiencefulGetOperationConfig",
+      "type": "object"
+    },
+    "AudiencefulGetPersonConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_person",
+          "default": "get_person",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Contact",
+          "x-is-trigger": false
+        },
+        "person_id": {
+          "description": "The opaque contact ID returned by Audienceful.",
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "person_id"
+      ],
+      "title": "AudiencefulGetPersonConfig",
+      "type": "object"
+    },
+    "AudiencefulGetPublicationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_publication",
+          "default": "get_publication",
+          "title": "Get Publication",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Publications",
+          "x-display-name": "Get Publication",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "minLength": 1,
+          "title": "Publication ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "AudiencefulGetPublicationConfig",
+      "type": "object"
+    },
+    "AudiencefulListAudienceMembersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_audience_members",
+          "default": "list_audience_members",
+          "title": "List Audience Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audiences",
+          "x-display-name": "List Audience Members",
+          "x-is-trigger": false
+        },
+        "audience_id": {
+          "description": "An audience ID, or all for active subscribers.",
+          "minLength": 1,
+          "title": "Audience ID",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Cursor"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "audience_id"
+      ],
+      "title": "AudiencefulListAudienceMembersConfig",
+      "type": "object"
+    },
+    "AudiencefulListAudiencesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_audiences",
+          "default": "list_audiences",
+          "title": "List Audiences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audiences",
+          "x-display-name": "List Audiences",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AudiencefulListAudiencesConfig",
+      "type": "object"
+    },
+    "AudiencefulListAutomationEventsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_automation_events",
+          "default": "list_automation_events",
+          "title": "List Automation Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "List Automation Events",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Cursor"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "AudiencefulListAutomationEventsConfig",
+      "type": "object"
+    },
+    "AudiencefulListFieldsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "List Custom Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Fields",
+          "x-display-name": "List Custom Fields",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Cursor"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "AudiencefulListFieldsConfig",
+      "type": "object"
+    },
+    "AudiencefulListPeopleConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_people",
+          "default": "list_people",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contacts",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Cursor"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "AudiencefulListPeopleConfig",
+      "type": "object"
+    },
+    "AudiencefulListPublicationSubscribersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_publication_subscribers",
+          "default": "list_publication_subscribers",
+          "title": "List Publication Subscribers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Publications",
+          "x-display-name": "List Publication Subscribers",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "minLength": 1,
+          "title": "Publication ID",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Cursor"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "AudiencefulListPublicationSubscribersConfig",
+      "type": "object"
+    },
+    "AudiencefulListPublicationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_publications",
+          "default": "list_publications",
+          "title": "List Publications",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Publications",
+          "x-display-name": "List Publications",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Cursor"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "AudiencefulListPublicationsConfig",
+      "type": "object"
+    },
+    "AudiencefulListSendReportsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_send_reports",
+          "default": "list_send_reports",
+          "title": "List Send Reports",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Send Reports",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Cursor"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "AudiencefulListSendReportsConfig",
+      "type": "object"
+    },
+    "AudiencefulOnEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On Audienceful Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Audienceful Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "person.created",
+          "enum": [
+            "person.created",
+            "person.updated",
+            "person.unsubscribed",
+            "person.deleted",
+            "audience.member_added",
+            "audience.member_removed",
+            "bulk_email.sent"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "AudiencefulOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AudiencefulPersonPublicationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "person_publications",
+          "default": "person_publications",
+          "title": "Read or Update Contact Consent",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Consent",
+          "x-display-name": "Read or Update Contact Consent",
+          "x-is-trigger": false
+        },
+        "email": {
+          "format": "email",
+          "minLength": 1,
+          "title": "Contact Email",
+          "type": "string"
+        },
+        "publications_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object. Only supplied values are sent.",
+          "title": "Publication Consent Map",
+          "ui:widget": "textarea",
+          "x-audienceful-json-kind": "object"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "AudiencefulPersonPublicationsConfig",
+      "type": "object"
+    },
+    "AudiencefulSendTransactionalEmailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_transactional_email",
+          "default": "send_transactional_email",
+          "title": "Send Transactional Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "Send Transactional Email",
+          "x-is-trigger": false
+        },
+        "email": {
+          "format": "email",
+          "minLength": 1,
+          "title": "Email Address",
+          "type": "string"
+        },
+        "draft": {
+          "minLength": 1,
+          "title": "Draft ID or Slug",
+          "type": "string"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject Override"
+        },
+        "preheader": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preheader"
+        },
+        "event_properties_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object. Only supplied values are sent.",
+          "title": "Event Properties",
+          "ui:widget": "textarea",
+          "x-audienceful-json-kind": "object"
+        },
+        "fields_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object. Only supplied values are sent.",
+          "title": "Contact Field Updates",
+          "ui:widget": "textarea",
+          "x-audienceful-json-kind": "object"
+        },
+        "add_contact": {
+          "default": false,
+          "title": "Add Contact to Subscriber List",
+          "type": "boolean"
+        },
+        "idempotency_key": {
+          "description": "Reuse the same key when retrying this send to prevent duplicates.",
+          "minLength": 1,
+          "title": "Idempotency Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "draft",
+        "idempotency_key"
+      ],
+      "title": "AudiencefulSendTransactionalEmailConfig",
+      "type": "object"
+    },
+    "AudiencefulTriggerAutomationEventConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "trigger_automation_event",
+          "default": "trigger_automation_event",
+          "title": "Trigger Automation Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "Trigger Automation Event",
+          "x-is-trigger": false
+        },
+        "email": {
+          "format": "email",
+          "minLength": 1,
+          "title": "Email Address",
+          "type": "string"
+        },
+        "event": {
+          "minLength": 1,
+          "title": "Event Name",
+          "type": "string"
+        },
+        "event_properties_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object. Only supplied values are sent.",
+          "title": "Event Properties",
+          "ui:widget": "textarea",
+          "x-audienceful-json-kind": "object"
+        },
+        "fields_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object. Only supplied values are sent.",
+          "title": "Contact Field Updates",
+          "ui:widget": "textarea",
+          "x-audienceful-json-kind": "object"
+        },
+        "add_person": {
+          "default": false,
+          "title": "Add Contact If Missing",
+          "type": "boolean"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key when retrying this event.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "email",
+        "event"
+      ],
+      "title": "AudiencefulTriggerAutomationEventConfig",
+      "type": "object"
+    },
+    "AudiencefulUnsubscribePersonConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_person",
+          "default": "unsubscribe_person",
+          "title": "Unsubscribe Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Consent",
+          "x-display-name": "Unsubscribe Contact",
+          "x-is-trigger": false
+        },
+        "email": {
+          "format": "email",
+          "minLength": 1,
+          "title": "Contact Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "AudiencefulUnsubscribePersonConfig",
+      "type": "object"
+    },
+    "AudiencefulUpdateFieldConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_field",
+          "default": "update_field",
+          "title": "Update Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Fields",
+          "x-display-name": "Update Custom Field",
+          "x-is-trigger": false
+        },
+        "field_id": {
+          "minLength": 1,
+          "title": "Field ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Name"
+        },
+        "data_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Name"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "boolean",
+                "string",
+                "tag",
+                "number",
+                "datetime",
+                "phone"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Type",
+          "enum": [
+            "boolean",
+            "string",
+            "tag",
+            "number",
+            "datetime",
+            "phone"
+          ],
+          "x-enum-searchable": true
+        },
+        "required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required"
+        }
+      },
+      "required": [
+        "field_id"
+      ],
+      "title": "AudiencefulUpdateFieldConfig",
+      "type": "object"
+    },
+    "AudiencefulUpdatePersonConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_person",
+          "default": "update_person",
+          "title": "Update Contact by ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Update Contact by ID",
+          "x-is-trigger": false
+        },
+        "person_id": {
+          "description": "The opaque contact ID returned by Audienceful.",
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "extra_data_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object. Only supplied values are sent.",
+          "title": "Custom Fields",
+          "ui:widget": "textarea",
+          "x-audienceful-json-kind": "object"
+        },
+        "tags_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array. Only supplied values are sent.",
+          "title": "Tags to Add",
+          "ui:widget": "textarea",
+          "x-audienceful-json-kind": "array"
+        },
+        "publications_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array. Only supplied values are sent.",
+          "title": "Publications to Add",
+          "ui:widget": "textarea",
+          "x-audienceful-json-kind": "array"
+        },
+        "double_opt_in": {
+          "anyOf": [
+            {
+              "enum": [
+                "not_required",
+                "required",
+                "pending",
+                "complete"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Double Opt In",
+          "enum": [
+            "not_required",
+            "required",
+            "pending",
+            "complete"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "person_id"
+      ],
+      "title": "AudiencefulUpdatePersonConfig",
+      "type": "object"
+    },
+    "AudiencefulUpdatePublicationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_publication",
+          "default": "update_publication",
+          "title": "Update Publication",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Publications",
+          "x-display-name": "Update Publication",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "minLength": 1,
+          "title": "Publication ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publication Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "emoji": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emoji"
+        },
+        "default_subscribed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Subscribed"
+        },
+        "auto_subscribe_new": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Auto Subscribe New"
+        },
+        "visible_on_preferences": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visible On Preferences"
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "AudiencefulUpdatePublicationConfig",
+      "type": "object"
+    },
+    "AudiencefulUpsertPersonConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "upsert_person",
+          "default": "upsert_person",
+          "title": "Create or Update Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Create or Update Contact",
+          "x-is-trigger": false
+        },
+        "email": {
+          "format": "email",
+          "minLength": 1,
+          "title": "Email Address",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "extra_data_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object. Only supplied values are sent.",
+          "title": "Custom Fields",
+          "ui:widget": "textarea",
+          "x-audienceful-json-kind": "object"
+        },
+        "tags_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array. Only supplied values are sent.",
+          "title": "Tags to Add",
+          "ui:widget": "textarea",
+          "x-audienceful-json-kind": "array"
+        },
+        "publications_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array. Only supplied values are sent.",
+          "title": "Publications to Add",
+          "ui:widget": "textarea",
+          "x-audienceful-json-kind": "array"
+        },
+        "double_opt_in": {
+          "anyOf": [
+            {
+              "enum": [
+                "not_required",
+                "required",
+                "pending",
+                "complete"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Double Opt In",
+          "enum": [
+            "not_required",
+            "required",
+            "pending",
+            "complete"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "AudiencefulUpsertPersonConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "confirm_person_opt_in": "#/$defs/AudiencefulConfirmPersonOptInConfig",
+          "create_field": "#/$defs/AudiencefulCreateFieldConfig",
+          "create_publication": "#/$defs/AudiencefulCreatePublicationConfig",
+          "delete_field": "#/$defs/AudiencefulDeleteFieldConfig",
+          "delete_person": "#/$defs/AudiencefulDeletePersonConfig",
+          "get_operation": "#/$defs/AudiencefulGetOperationConfig",
+          "get_person": "#/$defs/AudiencefulGetPersonConfig",
+          "get_publication": "#/$defs/AudiencefulGetPublicationConfig",
+          "list_audience_members": "#/$defs/AudiencefulListAudienceMembersConfig",
+          "list_audiences": "#/$defs/AudiencefulListAudiencesConfig",
+          "list_automation_events": "#/$defs/AudiencefulListAutomationEventsConfig",
+          "list_fields": "#/$defs/AudiencefulListFieldsConfig",
+          "list_people": "#/$defs/AudiencefulListPeopleConfig",
+          "list_publication_subscribers": "#/$defs/AudiencefulListPublicationSubscribersConfig",
+          "list_publications": "#/$defs/AudiencefulListPublicationsConfig",
+          "list_send_reports": "#/$defs/AudiencefulListSendReportsConfig",
+          "on_event": "#/$defs/AudiencefulOnEventConfig",
+          "person_publications": "#/$defs/AudiencefulPersonPublicationsConfig",
+          "send_transactional_email": "#/$defs/AudiencefulSendTransactionalEmailConfig",
+          "trigger_automation_event": "#/$defs/AudiencefulTriggerAutomationEventConfig",
+          "unsubscribe_person": "#/$defs/AudiencefulUnsubscribePersonConfig",
+          "update_field": "#/$defs/AudiencefulUpdateFieldConfig",
+          "update_person": "#/$defs/AudiencefulUpdatePersonConfig",
+          "update_publication": "#/$defs/AudiencefulUpdatePublicationConfig",
+          "upsert_person": "#/$defs/AudiencefulUpsertPersonConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AudiencefulListPeopleConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulGetPersonConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulUpsertPersonConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulUpdatePersonConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulDeletePersonConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulUnsubscribePersonConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulConfirmPersonOptInConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulPersonPublicationsConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulListAudiencesConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulListAudienceMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulListFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulCreateFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulUpdateFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulDeleteFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulListPublicationsConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulGetPublicationConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulCreatePublicationConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulUpdatePublicationConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulListPublicationSubscribersConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulListAutomationEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulTriggerAutomationEventConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulSendTransactionalEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulGetOperationConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulListSendReportsConfig"
+        },
+        {
+          "$ref": "#/$defs/AudiencefulOnEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AudiencefulAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Audienceful Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Sync a contact to Audienceful",
+    "Unsubscribe a contact",
+    "Send a transactional email",
+    "When an Audienceful contact changes"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

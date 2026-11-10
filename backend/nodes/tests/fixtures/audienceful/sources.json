@@ -1,0 +1,9 @@
+{
+  "create-person.json": "https://www.audienceful.com/help/api/create-person",
+  "create-webhook.json": "https://www.audienceful.com/help/api/create-webhook",
+  "list-people.json": "https://www.audienceful.com/help/api/list-people",
+  "create-field.json": "https://www.audienceful.com/help/api/create-field",
+  "trigger-event.json": "https://www.audienceful.com/help/api/trigger-event",
+  "send-transactional-email.json": "https://www.audienceful.com/help/api/send-transactional-email",
+  "events.json": "https://www.audienceful.com/help/api/webhooks-overview"
+}
