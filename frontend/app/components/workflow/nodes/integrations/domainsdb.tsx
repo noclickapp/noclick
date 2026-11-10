@@ -6,12 +6,12 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const DomainsdbIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/domainsdb.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <img ref={ref} src="/icons/domainsdb.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
     ),
 );
 DomainsdbIcon.displayName = 'DomainsdbIcon';
 
-// Exact publisher asset; provenance is recorded beside the PNG.
+// Official symbol paths, cropped from the provider logo; provenance is beside the SVG.
 export const DomainsdbNode: NodeDefinition = {
     type: 'automation-domainsdb',
     label: 'Domains-Index API',
