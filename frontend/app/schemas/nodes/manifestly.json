@@ -1,0 +1,1372 @@
+{
+  "$defs": {
+    "ManifestlyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "manifestly_api_key",
+          "default": "manifestly_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "webhook_signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Signing Secret",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Manifestly API Key",
+      "type": "object",
+      "x-credential-instructions": "An account admin creates an API key in Account Settings \u2192 Integrations and selects its department. Paste that key here. Calls act as the integration identity. For webhook triggers, also paste the separate signing secret from Workflow Hooks \u2192 Generate signing secret. Rotating that secret requires updating this connection.",
+      "x-credential-url": "https://www.manifest.ly/api"
+    },
+    "ManifestlyAssignRunStepConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "assign_run_step",
+          "default": "assign_run_step",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Assign Run Step",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run ID",
+          "type": "integer"
+        },
+        "run_step_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run Step ID",
+          "type": "integer"
+        },
+        "assignee_membership_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee Membership ID"
+        }
+      },
+      "required": [
+        "run_id",
+        "run_step_id"
+      ],
+      "title": "ManifestlyAssignRunStepConfig",
+      "type": "object"
+    },
+    "ManifestlyChangeRunStepStateConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "change_run_step_state",
+          "default": "change_run_step_state",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Change Run Step State",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run ID",
+          "type": "integer"
+        },
+        "run_step_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run Step ID",
+          "type": "integer"
+        },
+        "action": {
+          "enum": [
+            "complete",
+            "uncomplete",
+            "skip",
+            "unskip",
+            "start",
+            "stop"
+          ],
+          "title": "Action",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id",
+        "run_step_id",
+        "action"
+      ],
+      "title": "ManifestlyChangeRunStepStateConfig",
+      "type": "object"
+    },
+    "ManifestlyCloseRunConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "close_run",
+          "default": "close_run",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Close Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ManifestlyCloseRunConfig",
+      "type": "object"
+    },
+    "ManifestlyCreateCommentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Add Run Step Comment",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run ID",
+          "type": "integer"
+        },
+        "run_step_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run Step ID",
+          "type": "integer"
+        },
+        "comment": {
+          "minLength": 1,
+          "title": "Comment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id",
+        "run_step_id",
+        "comment"
+      ],
+      "title": "ManifestlyCreateCommentConfig",
+      "type": "object"
+    },
+    "ManifestlyCreateRunConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_run",
+          "default": "create_run",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Start Run",
+          "x-is-trigger": false
+        },
+        "checklist_id": {
+          "exclusiveMinimum": 0,
+          "title": "Workflow ID",
+          "type": "integer"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Run Title",
+          "type": "string"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External ID"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "due_at": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due At (ISO 8601)"
+        }
+      },
+      "required": [
+        "checklist_id",
+        "title"
+      ],
+      "title": "ManifestlyCreateRunConfig",
+      "type": "object"
+    },
+    "ManifestlyCreateRunStepConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_run_step",
+          "default": "create_run_step",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Run Step",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run ID",
+          "type": "integer"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Step Title",
+          "type": "string"
+        },
+        "parent_run_step_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Section ID"
+        },
+        "due_at": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due At (ISO 8601)"
+        }
+      },
+      "required": [
+        "run_id",
+        "title"
+      ],
+      "title": "ManifestlyCreateRunStepConfig",
+      "type": "object"
+    },
+    "ManifestlyGetRunConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_run",
+          "default": "get_run",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ManifestlyGetRunConfig",
+      "type": "object"
+    },
+    "ManifestlyGetRunStepConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_run_step",
+          "default": "get_run_step",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Run Step",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run ID",
+          "type": "integer"
+        },
+        "run_step_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run Step ID",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "run_id",
+        "run_step_id"
+      ],
+      "title": "ManifestlyGetRunStepConfig",
+      "type": "object"
+    },
+    "ManifestlyGetRunSummaryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_run_summary",
+          "default": "get_run_summary",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Run Progress",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ManifestlyGetRunSummaryConfig",
+      "type": "object"
+    },
+    "ManifestlyGetWorkflowConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_workflow",
+          "default": "get_workflow",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Workflow",
+          "x-is-trigger": false
+        },
+        "workflow_id": {
+          "exclusiveMinimum": 0,
+          "title": "Workflow ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "ManifestlyGetWorkflowConfig",
+      "type": "object"
+    },
+    "ManifestlyListCommentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Run Step Comments",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run ID",
+          "type": "integer"
+        },
+        "run_step_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run Step ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "run_id",
+        "run_step_id"
+      ],
+      "title": "ManifestlyListCommentsConfig",
+      "type": "object"
+    },
+    "ManifestlyListDepartmentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_departments",
+          "default": "list_departments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Departments",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results Per Page",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ManifestlyListDepartmentsConfig",
+      "type": "object"
+    },
+    "ManifestlyListRunStepFieldsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_run_step_fields",
+          "default": "list_run_step_fields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Run Step Fields",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run ID",
+          "type": "integer"
+        },
+        "run_step_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run Step ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "run_id",
+        "run_step_id"
+      ],
+      "title": "ManifestlyListRunStepFieldsConfig",
+      "type": "object"
+    },
+    "ManifestlyListRunStepsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_run_steps",
+          "default": "list_run_steps",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Run Steps",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run ID",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results Per Page",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "completed",
+                "not_completed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "completed",
+            "not_completed"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ManifestlyListRunStepsConfig",
+      "type": "object"
+    },
+    "ManifestlyListRunsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_runs",
+          "default": "list_runs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Runs",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results Per Page",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "workflow_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workflow ID"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "closed",
+                "late",
+                "in-progress",
+                "upcoming"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "closed",
+            "late",
+            "in-progress",
+            "upcoming"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ManifestlyListRunsConfig",
+      "type": "object"
+    },
+    "ManifestlyListUsersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Users",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results Per Page",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "ManifestlyListUsersConfig",
+      "type": "object"
+    },
+    "ManifestlyListWorkflowFieldsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_workflow_fields",
+          "default": "list_workflow_fields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Workflow Fields",
+          "x-is-trigger": false
+        },
+        "workflow_id": {
+          "exclusiveMinimum": 0,
+          "title": "Workflow ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "ManifestlyListWorkflowFieldsConfig",
+      "type": "object"
+    },
+    "ManifestlyListWorkflowStepsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_workflow_steps",
+          "default": "list_workflow_steps",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Workflow Steps",
+          "x-is-trigger": false
+        },
+        "workflow_id": {
+          "exclusiveMinimum": 0,
+          "title": "Workflow ID",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "ManifestlyListWorkflowStepsConfig",
+      "type": "object"
+    },
+    "ManifestlyListWorkflowsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_workflows",
+          "default": "list_workflows",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Workflows",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results Per Page",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "department_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department ID"
+        }
+      },
+      "title": "ManifestlyListWorkflowsConfig",
+      "type": "object"
+    },
+    "ManifestlyOnRunEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_run_event",
+          "default": "on_run_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "On Run Started, Completed or Late",
+          "x-is-trigger": true
+        },
+        "event": {
+          "default": "completed",
+          "enum": [
+            "started",
+            "completed",
+            "late"
+          ],
+          "title": "Run Event",
+          "type": "string"
+        },
+        "hookable": {
+          "default": "checklist",
+          "enum": [
+            "checklist",
+            "run"
+          ],
+          "title": "Watch Workflow or Run",
+          "type": "string"
+        },
+        "hookable_id": {
+          "exclusiveMinimum": 0,
+          "title": "Workflow or Run ID",
+          "type": "integer"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "hookable_id"
+      ],
+      "title": "ManifestlyOnRunEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ManifestlyOnStepEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_step_event",
+          "default": "on_step_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "On Step Completed, Skipped or Late",
+          "x-is-trigger": true
+        },
+        "event": {
+          "default": "step_completed",
+          "enum": [
+            "step_completed",
+            "step_skipped",
+            "step_late"
+          ],
+          "title": "Step Event",
+          "type": "string"
+        },
+        "hookable": {
+          "default": "step",
+          "enum": [
+            "step",
+            "run_step"
+          ],
+          "title": "Watch Workflow Step or Run Step",
+          "type": "string"
+        },
+        "hookable_id": {
+          "exclusiveMinimum": 0,
+          "title": "Step or Run Step ID",
+          "type": "integer"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "hookable_id"
+      ],
+      "title": "ManifestlyOnStepEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ManifestlyUpdateRunConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_run",
+          "default": "update_run",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run ID",
+          "type": "integer"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Run Title",
+          "type": "string"
+        },
+        "due_at": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due At (ISO 8601)"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "completed",
+                "started"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "completed",
+            "started"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "run_id",
+        "title"
+      ],
+      "title": "ManifestlyUpdateRunConfig",
+      "type": "object"
+    },
+    "ManifestlyUpdateRunStepFieldConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_run_step_field",
+          "default": "update_run_step_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Set Run Step Field Value",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run ID",
+          "type": "integer"
+        },
+        "run_step_id": {
+          "exclusiveMinimum": 0,
+          "title": "Run Step ID",
+          "type": "integer"
+        },
+        "field_id": {
+          "exclusiveMinimum": 0,
+          "title": "Field ID",
+          "type": "integer"
+        },
+        "value": {
+          "description": "Text value. File, image and signature uploads require the provider's upload endpoint.",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id",
+        "run_step_id",
+        "field_id",
+        "value"
+      ],
+      "title": "ManifestlyUpdateRunStepFieldConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "assign_run_step": "#/$defs/ManifestlyAssignRunStepConfig",
+          "change_run_step_state": "#/$defs/ManifestlyChangeRunStepStateConfig",
+          "close_run": "#/$defs/ManifestlyCloseRunConfig",
+          "create_comment": "#/$defs/ManifestlyCreateCommentConfig",
+          "create_run": "#/$defs/ManifestlyCreateRunConfig",
+          "create_run_step": "#/$defs/ManifestlyCreateRunStepConfig",
+          "get_run": "#/$defs/ManifestlyGetRunConfig",
+          "get_run_step": "#/$defs/ManifestlyGetRunStepConfig",
+          "get_run_summary": "#/$defs/ManifestlyGetRunSummaryConfig",
+          "get_workflow": "#/$defs/ManifestlyGetWorkflowConfig",
+          "list_comments": "#/$defs/ManifestlyListCommentsConfig",
+          "list_departments": "#/$defs/ManifestlyListDepartmentsConfig",
+          "list_run_step_fields": "#/$defs/ManifestlyListRunStepFieldsConfig",
+          "list_run_steps": "#/$defs/ManifestlyListRunStepsConfig",
+          "list_runs": "#/$defs/ManifestlyListRunsConfig",
+          "list_users": "#/$defs/ManifestlyListUsersConfig",
+          "list_workflow_fields": "#/$defs/ManifestlyListWorkflowFieldsConfig",
+          "list_workflow_steps": "#/$defs/ManifestlyListWorkflowStepsConfig",
+          "list_workflows": "#/$defs/ManifestlyListWorkflowsConfig",
+          "on_run_event": "#/$defs/ManifestlyOnRunEventConfig",
+          "on_step_event": "#/$defs/ManifestlyOnStepEventConfig",
+          "update_run": "#/$defs/ManifestlyUpdateRunConfig",
+          "update_run_step_field": "#/$defs/ManifestlyUpdateRunStepFieldConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ManifestlyListWorkflowsConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyGetWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyListWorkflowStepsConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyListWorkflowFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyListRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyGetRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyCreateRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyUpdateRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyCloseRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyGetRunSummaryConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyListRunStepsConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyGetRunStepConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyChangeRunStepStateConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyAssignRunStepConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyCreateRunStepConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyListRunStepFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyUpdateRunStepFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyListDepartmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyOnRunEventConfig"
+        },
+        {
+          "$ref": "#/$defs/ManifestlyOnStepEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ManifestlyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Manifestly Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,114 @@
+{
+  "source": "https://help.manifest.ly/article/55-using-checklist-webhooks-for-automations",
+  "body": {
+    "participants": "philip@manifest.ly, mark@manifest.ly",
+    "workflow_name": "Employee Onboarding",
+    "checklist_run_detailed_name": "John Smith - Employee Onboarding",
+    "checklist_run_name": "John Smith",
+    "completed_at": "2022-08-30T15:37:53.565Z",
+    "completed_by_email": "philip@manifest.ly",
+    "completed_by_name": "Philip Crawford",
+    "run_id": 43682,
+    "run_url": "http://app.manifest.ly/runs/43682/edit",
+    "external_id": null,
+    "tags": [
+      "Management"
+    ],
+    "archive_url": "http://app.manifest.ly/runs/archives/2f9ccd4ff927cc8a32c295c50ddb1d97.pdf",
+    "started_at": "2022-08-30T15:00:25.084Z",
+    "late_at": null,
+    "data_first_name": "John",
+    "steps": {
+      "step_2051": {
+        "title": "Before First Day",
+        "header": "Header",
+        "assigned_to": null,
+        "assigned_to_email": null,
+        "completed_at": null,
+        "completed_by_email": null,
+        "completed_by_name": null,
+        "data": {},
+        "late_at": null,
+        "run_step_id": 30845218,
+        "skipped": false,
+        "step_id": 2051
+      },
+      "step_2052": {
+        "title": "Add to Slack",
+        "add_to_slack": "Add to Slack",
+        "assigned_to": null,
+        "assigned_to_email": null,
+        "completed_at": null,
+        "completed_by_email": null,
+        "completed_by_name": null,
+        "data": {},
+        "late_at": null,
+        "run_step_id": 30845219,
+        "skipped": false,
+        "step_id": 2052
+      },
+      "step_2054": {
+        "title": "Enter in HRIS",
+        "enter_in_hris": "Enter in HRIS",
+        "assigned_to": null,
+        "assigned_to_email": null,
+        "completed_at": "2022-08-30T16:32:40.296Z",
+        "completed_by_email": "philip@manifest.ly",
+        "completed_by_name": "Philip Crawford",
+        "data": {
+          "data_223": {
+            "value": "John",
+            "first_name": "John",
+            "label": "First Name",
+            "valid_values": null
+          }
+        },
+        "late_at": null,
+        "run_step_id": 30845220,
+        "skipped": false,
+        "step_id": 2054
+      },
+      "step_2059": {
+        "title": "Create email address",
+        "create_email_address": "Create email address",
+        "assigned_to": null,
+        "assigned_to_email": null,
+        "completed_at": null,
+        "completed_by_email": null,
+        "completed_by_name": null,
+        "data": {},
+        "late_at": null,
+        "run_step_id": 30845221,
+        "skipped": false,
+        "step_id": 2059
+      }
+    },
+    "step": {
+      "title": "Enter in HRIS",
+      "enter_in_hris": "Enter in HRIS",
+      "assigned_to": null,
+      "assigned_to_email": null,
+      "completed_at": "2022-08-30T16:32:40.296Z",
+      "completed_by_email": "philip@manifest.ly",
+      "completed_by_name": "Philip Crawford",
+      "data": {
+        "data_223": {
+          "value": "John",
+          "first_name": "John",
+          "label": "First Name",
+          "valid_values": null
+        }
+      },
+      "late_at": null,
+      "run_step_id": 30845220,
+      "skipped": false,
+      "step_id": 2054
+    },
+    "step_title": "Enter in HRIS",
+    "skipped": false,
+    "data": "John",
+    "data_label": "First Name",
+    "data_required": true,
+    "run_step_id": 30845220
+  }
+}
