@@ -1,0 +1,121 @@
+{
+  "source": "https://docs.formaloo.com/openapi-v3.0.yaml",
+  "version": "3.0.0",
+  "operations": {
+    "get_profile": {
+      "method": "GET",
+      "path": "/v3.0/profile/",
+      "operationId": "profileRetrieve"
+    },
+    "list_forms": {
+      "method": "GET",
+      "path": "/v3.0/forms/",
+      "operationId": "formsList"
+    },
+    "get_form": {
+      "method": "GET",
+      "path": "/v3.0/forms/{slug}/",
+      "operationId": "formsRetrieve"
+    },
+    "create_form": {
+      "method": "POST",
+      "path": "/v3.0/forms/",
+      "operationId": "formsCreate"
+    },
+    "update_form": {
+      "method": "PATCH",
+      "path": "/v3.0/forms/{slug}/",
+      "operationId": "formsPartialUpdate"
+    },
+    "delete_form": {
+      "method": "DELETE",
+      "path": "/v3.0/forms/{slug}/",
+      "operationId": "formsDestroy"
+    },
+    "get_form_fields": {
+      "method": "GET",
+      "path": "/v3.0/form-fields/{slug}/",
+      "operationId": "formFieldsRetrieve"
+    },
+    "get_form_stats": {
+      "method": "GET",
+      "path": "/v3.0/forms/{slug}/stats/",
+      "operationId": "formsStatsRetrieve"
+    },
+    "list_submissions": {
+      "method": "GET",
+      "path": "/v3.0/forms/{slug}/rows/",
+      "operationId": "formsRowsList"
+    },
+    "get_submission": {
+      "method": "GET",
+      "path": "/v3.0/rows/{slug}/",
+      "operationId": "rowsRetrieve"
+    },
+    "create_submission": {
+      "method": "POST",
+      "path": "/v3.0/forms/{slug}/rows/",
+      "operationId": "formsRowsCreate"
+    },
+    "update_submission": {
+      "method": "PATCH",
+      "path": "/v3.0/rows/{slug}/",
+      "operationId": "rowsPartialUpdate"
+    },
+    "delete_submission": {
+      "method": "DELETE",
+      "path": "/v3.0/rows/{slug}/",
+      "operationId": "rowsDestroy"
+    },
+    "list_folders": {
+      "method": "GET",
+      "path": "/v3.0/folders/",
+      "operationId": "foldersList"
+    },
+    "get_folder": {
+      "method": "GET",
+      "path": "/v3.0/folders/{slug}/",
+      "operationId": "foldersRetrieve"
+    },
+    "create_folder": {
+      "method": "POST",
+      "path": "/v3.0/folders/",
+      "operationId": "foldersCreate"
+    },
+    "update_folder": {
+      "method": "PATCH",
+      "path": "/v3.0/folders/{slug}/",
+      "operationId": "foldersPartialUpdate"
+    },
+    "list_row_tags": {
+      "method": "GET",
+      "path": "/v3.0/forms/{slug}/row-tags/",
+      "operationId": "formsRowTagsList"
+    },
+    "create_row_tag": {
+      "method": "POST",
+      "path": "/v3.0/forms/{slug}/row-tags/",
+      "operationId": "formsRowTagsCreate"
+    },
+    "update_row_tag": {
+      "method": "PATCH",
+      "path": "/v3.0/forms/{slug}/row-tags/{tagSlug}/",
+      "operationId": "formsRowTagsPartialUpdate"
+    },
+    "delete_row_tag": {
+      "method": "DELETE",
+      "path": "/v3.0/forms/{slug}/row-tags/{tagSlug}/",
+      "operationId": "formsRowTagsDestroy"
+    },
+    "get_field": {
+      "method": "GET",
+      "path": "/v3.0/fields/{slug}/",
+      "operationId": "fieldsRetrieve"
+    },
+    "list_field_choices": {
+      "method": "GET",
+      "path": "/v3.0/fields/{slug}/choices/",
+      "operationId": "fieldsChoicesList"
+    }
+  }
+}

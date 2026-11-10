@@ -1,0 +1,1139 @@
+{
+  "$defs": {
+    "FormalooCreateFolderConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Create Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Folder",
+          "x-is-trigger": false
+        },
+        "title": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "parent_folder": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent folder slug"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "FormalooCreateFolderConfig",
+      "type": "object"
+    },
+    "FormalooCreateFormConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_form",
+          "default": "create_form",
+          "title": "Create Form",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Form",
+          "x-is-trigger": false
+        },
+        "title": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "folder": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder slug"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "FormalooCreateFormConfig",
+      "type": "object"
+    },
+    "FormalooCreateRowTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_row_tag",
+          "default": "create_row_tag",
+          "title": "Create Row Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Row Tag",
+          "x-is-trigger": false
+        },
+        "form_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Form slug",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 63,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        }
+      },
+      "required": [
+        "form_slug",
+        "title"
+      ],
+      "title": "FormalooCreateRowTagConfig",
+      "type": "object"
+    },
+    "FormalooCreateSubmissionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_submission",
+          "default": "create_submission",
+          "title": "Create Submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Submission",
+          "x-is-trigger": false
+        },
+        "form_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Form slug",
+          "type": "string"
+        },
+        "values_json": {
+          "description": "JSON object mapping field slugs to submitted values.",
+          "title": "Field values JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "form_slug",
+        "values_json"
+      ],
+      "title": "FormalooCreateSubmissionConfig",
+      "type": "object"
+    },
+    "FormalooCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "formaloo_api_token",
+          "default": "formaloo_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "authorization_token": {
+          "minLength": 1,
+          "title": "Authorization token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "workspace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional business_identifier, sent as x-workspace.",
+          "title": "Workspace identifier"
+        }
+      },
+      "required": [
+        "api_key",
+        "authorization_token"
+      ],
+      "title": "Formaloo API Token",
+      "type": "object",
+      "x-credential-instructions": "Open your profile menu in Formaloo and choose API Key & Token. Paste your API key and an existing authorization token. To obtain a token, follow the direct API access instructions at https://docs.formaloo.com. Paste only the values, without header prefixes. An optional workspace identifier selects a workspace you can access.",
+      "x-credential-url": "https://dash.formaloo.net/u"
+    },
+    "FormalooDeleteFormConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_form",
+          "default": "delete_form",
+          "title": "Delete Form",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Form",
+          "x-is-trigger": false
+        },
+        "form_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Form slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_slug"
+      ],
+      "title": "FormalooDeleteFormConfig",
+      "type": "object"
+    },
+    "FormalooDeleteRowTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_row_tag",
+          "default": "delete_row_tag",
+          "title": "Delete Row Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Row Tag",
+          "x-is-trigger": false
+        },
+        "form_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Form slug",
+          "type": "string"
+        },
+        "tag_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Tag slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_slug",
+        "tag_slug"
+      ],
+      "title": "FormalooDeleteRowTagConfig",
+      "type": "object"
+    },
+    "FormalooDeleteSubmissionConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_submission",
+          "default": "delete_submission",
+          "title": "Delete Submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Submission",
+          "x-is-trigger": false
+        },
+        "row_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Submission slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "row_slug"
+      ],
+      "title": "FormalooDeleteSubmissionConfig",
+      "type": "object"
+    },
+    "FormalooGetFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_field",
+          "default": "get_field",
+          "title": "Get Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Field",
+          "x-is-trigger": false
+        },
+        "field_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Field slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field_slug"
+      ],
+      "title": "FormalooGetFieldConfig",
+      "type": "object"
+    },
+    "FormalooGetFolderConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "title": "Get Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Folder",
+          "x-is-trigger": false
+        },
+        "folder_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Folder slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_slug"
+      ],
+      "title": "FormalooGetFolderConfig",
+      "type": "object"
+    },
+    "FormalooGetFormConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_form",
+          "default": "get_form",
+          "title": "Get Form",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Form",
+          "x-is-trigger": false
+        },
+        "form_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Form slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_slug"
+      ],
+      "title": "FormalooGetFormConfig",
+      "type": "object"
+    },
+    "FormalooGetFormFieldsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_form_fields",
+          "default": "get_form_fields",
+          "title": "Get Form Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Form Fields",
+          "x-is-trigger": false
+        },
+        "form_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Form slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_slug"
+      ],
+      "title": "FormalooGetFormFieldsConfig",
+      "type": "object"
+    },
+    "FormalooGetFormStatsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_form_stats",
+          "default": "get_form_stats",
+          "title": "Get Form Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Form Stats",
+          "x-is-trigger": false
+        },
+        "form_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Form slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_slug"
+      ],
+      "title": "FormalooGetFormStatsConfig",
+      "type": "object"
+    },
+    "FormalooGetProfileConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Get Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Profile",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FormalooGetProfileConfig",
+      "type": "object"
+    },
+    "FormalooGetSubmissionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_submission",
+          "default": "get_submission",
+          "title": "Get Submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Submission",
+          "x-is-trigger": false
+        },
+        "row_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Submission slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "row_slug"
+      ],
+      "title": "FormalooGetSubmissionConfig",
+      "type": "object"
+    },
+    "FormalooListFieldChoicesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_field_choices",
+          "default": "list_field_choices",
+          "title": "List Field Choices",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Field Choices",
+          "x-is-trigger": false
+        },
+        "field_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Field slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field_slug"
+      ],
+      "title": "FormalooListFieldChoicesConfig",
+      "type": "object"
+    },
+    "FormalooListFoldersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "List Folders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Folders",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "FormalooListFoldersConfig",
+      "type": "object"
+    },
+    "FormalooListFormsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_forms",
+          "default": "list_forms",
+          "title": "List Forms",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Forms",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort fields"
+        }
+      },
+      "title": "FormalooListFormsConfig",
+      "type": "object"
+    },
+    "FormalooListRowTagsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_row_tags",
+          "default": "list_row_tags",
+          "title": "List Row Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Row Tags",
+          "x-is-trigger": false
+        },
+        "form_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Form slug",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "required": [
+        "form_slug"
+      ],
+      "title": "FormalooListRowTagsConfig",
+      "type": "object"
+    },
+    "FormalooListSubmissionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_submissions",
+          "default": "list_submissions",
+          "title": "List Submissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Submissions",
+          "x-is-trigger": false
+        },
+        "form_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Form slug",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort fields"
+        },
+        "updated_at_gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated since"
+        }
+      },
+      "required": [
+        "form_slug"
+      ],
+      "title": "FormalooListSubmissionsConfig",
+      "type": "object"
+    },
+    "FormalooOnSubmissionEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_submission_event",
+          "default": "on_submission_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "On Submission Event",
+          "x-is-trigger": true
+        },
+        "form_slug": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Form slug",
+          "type": "string"
+        },
+        "event_type": {
+          "default": "form_submit",
+          "enum": [
+            "form_submit",
+            "row_update",
+            "row_payment"
+          ],
+          "title": "Event type",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "form_slug"
+      ],
+      "title": "FormalooOnSubmissionEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FormalooUpdateFolderConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_folder",
+          "default": "update_folder",
+          "title": "Update Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Folder",
+          "x-is-trigger": false
+        },
+        "folder_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Folder slug",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_slug",
+        "title"
+      ],
+      "title": "FormalooUpdateFolderConfig",
+      "type": "object"
+    },
+    "FormalooUpdateFormConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_form",
+          "default": "update_form",
+          "title": "Update Form",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Form",
+          "x-is-trigger": false
+        },
+        "form_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Form slug",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "form_slug",
+        "title"
+      ],
+      "title": "FormalooUpdateFormConfig",
+      "type": "object"
+    },
+    "FormalooUpdateRowTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_row_tag",
+          "default": "update_row_tag",
+          "title": "Update Row Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Row Tag",
+          "x-is-trigger": false
+        },
+        "form_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Form slug",
+          "type": "string"
+        },
+        "tag_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Tag slug",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_slug",
+        "tag_slug",
+        "title"
+      ],
+      "title": "FormalooUpdateRowTagConfig",
+      "type": "object"
+    },
+    "FormalooUpdateSubmissionConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_submission",
+          "default": "update_submission",
+          "title": "Update Submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Submission",
+          "x-is-trigger": false
+        },
+        "row_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Submission slug",
+          "type": "string"
+        },
+        "values_json": {
+          "description": "JSON object mapping field slugs to submitted values.",
+          "title": "Field values JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "row_slug",
+        "values_json"
+      ],
+      "title": "FormalooUpdateSubmissionConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_folder": "#/$defs/FormalooCreateFolderConfig",
+          "create_form": "#/$defs/FormalooCreateFormConfig",
+          "create_row_tag": "#/$defs/FormalooCreateRowTagConfig",
+          "create_submission": "#/$defs/FormalooCreateSubmissionConfig",
+          "delete_form": "#/$defs/FormalooDeleteFormConfig",
+          "delete_row_tag": "#/$defs/FormalooDeleteRowTagConfig",
+          "delete_submission": "#/$defs/FormalooDeleteSubmissionConfig",
+          "get_field": "#/$defs/FormalooGetFieldConfig",
+          "get_folder": "#/$defs/FormalooGetFolderConfig",
+          "get_form": "#/$defs/FormalooGetFormConfig",
+          "get_form_fields": "#/$defs/FormalooGetFormFieldsConfig",
+          "get_form_stats": "#/$defs/FormalooGetFormStatsConfig",
+          "get_profile": "#/$defs/FormalooGetProfileConfig",
+          "get_submission": "#/$defs/FormalooGetSubmissionConfig",
+          "list_field_choices": "#/$defs/FormalooListFieldChoicesConfig",
+          "list_folders": "#/$defs/FormalooListFoldersConfig",
+          "list_forms": "#/$defs/FormalooListFormsConfig",
+          "list_row_tags": "#/$defs/FormalooListRowTagsConfig",
+          "list_submissions": "#/$defs/FormalooListSubmissionsConfig",
+          "on_submission_event": "#/$defs/FormalooOnSubmissionEventConfig",
+          "update_folder": "#/$defs/FormalooUpdateFolderConfig",
+          "update_form": "#/$defs/FormalooUpdateFormConfig",
+          "update_row_tag": "#/$defs/FormalooUpdateRowTagConfig",
+          "update_submission": "#/$defs/FormalooUpdateSubmissionConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FormalooGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooListFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooGetFormConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooCreateFormConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooUpdateFormConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooDeleteFormConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooGetFormFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooGetFormStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooListSubmissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooGetSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooCreateSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooUpdateSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooDeleteSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooListFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooGetFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooUpdateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooListRowTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooCreateRowTagConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooUpdateRowTagConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooDeleteRowTagConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooGetFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooListFieldChoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/FormalooOnSubmissionEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FormalooCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Formaloo Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
