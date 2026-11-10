@@ -1,0 +1,11 @@
+{
+  "source_url": "https://portal.credasdemo.com/swagger/v2-ci/swagger.json",
+  "version": "v2-ci",
+  "sha256": "b0c9f1746edc1063ace1b8a0a43bb1e0c6daa14897205c18c17d5d6c29134ca9",
+  "environment_docs": "https://apisupport.credas.com/support/solutions/articles/44002476031-credas-api-overview-api",
+  "triggers_absent": "No independently managed webhook subscription API or created/updated-time list filter is published. Process callbacks are set only when a verification process is created (production checks may be chargeable) and cannot be removed independently. Portal-wide result webhooks are configured by a Credas technical contact. Creating/deleting verification processes to manage a workflow subscription would create/delete customer data.",
+  "trigger_sources": [
+    "https://apisupport.credas.com/support/solutions/articles/44002465055-process-webhooks-api",
+    "https://apisupport.credas.com/support/solutions/articles/44002475149-status-update-webhooks-api"
+  ]
+}

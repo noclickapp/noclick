@@ -1,0 +1,1120 @@
+{
+  "$defs": {
+    "Address": {
+      "additionalProperties": false,
+      "properties": {
+        "addressLine1": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addressline1"
+        },
+        "addressLine2": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addressline2"
+        },
+        "town": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Town"
+        },
+        "county": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "County"
+        },
+        "postcode": {
+          "anyOf": [
+            {
+              "maxLength": 10,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postcode"
+        }
+      },
+      "title": "Address",
+      "type": "object"
+    },
+    "ApproveEntity": {
+      "additionalProperties": false,
+      "description": "Set approval status to approved.",
+      "properties": {
+        "operation": {
+          "const": "approve_entity",
+          "default": "approve_entity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "format": "uuid",
+          "title": "Entityid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entityId"
+      ],
+      "title": "ApproveEntity",
+      "type": "object"
+    },
+    "CreateEntity": {
+      "additionalProperties": false,
+      "description": "Create an individual profile.",
+      "properties": {
+        "operation": {
+          "const": "create_entity",
+          "default": "create_entity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "firstName": {
+          "title": "Firstname",
+          "type": "string"
+        },
+        "surname": {
+          "title": "Surname",
+          "type": "string"
+        },
+        "emailAddress": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emailaddress"
+        },
+        "phoneNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phonenumber"
+        },
+        "middleName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Middlename"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "dateOfBirth": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dateofbirth"
+        },
+        "userGroupId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Usergroupid"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Address"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "folderId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folderid"
+        }
+      },
+      "required": [
+        "firstName",
+        "surname"
+      ],
+      "title": "CreateEntity",
+      "type": "object"
+    },
+    "CreateProcess": {
+      "additionalProperties": false,
+      "description": "Start a verification journey; invitations may be sent and checks may be chargeable.",
+      "properties": {
+        "operation": {
+          "const": "create_process",
+          "default": "create_process",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "journeyId": {
+          "format": "uuid",
+          "title": "Journeyid",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "userGroupId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Usergroupid"
+        },
+        "processEntities": {
+          "items": {
+            "$ref": "#/$defs/ProcessEntity"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Processentities",
+          "type": "array"
+        },
+        "skipSendingEntityInvites": {
+          "default": false,
+          "description": "Suppress invitations when creating the process",
+          "title": "Skipsendingentityinvites",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "journeyId",
+        "processEntities"
+      ],
+      "title": "CreateProcess",
+      "type": "object"
+    },
+    "CredasAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "credas_api_key",
+          "default": "credas_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "environment": {
+          "default": "production",
+          "enum": [
+            "production",
+            "demo"
+          ],
+          "title": "Environment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Credas API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Credas API key and choose the matching environment. Demo and production use different keys. Request API access from your Credas technical contact. Production checks may be chargeable.",
+      "x-credential-url": "https://apisupport.credas.com/support/solutions/articles/44002476031-credas-api-overview-api"
+    },
+    "ExpireInvite": {
+      "additionalProperties": false,
+      "description": "Expire an entity invitation.",
+      "properties": {
+        "operation": {
+          "const": "expire_invite",
+          "default": "expire_invite",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "format": "uuid",
+          "title": "Entityid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entityId"
+      ],
+      "title": "ExpireInvite",
+      "type": "object"
+    },
+    "GetEntity": {
+      "additionalProperties": false,
+      "description": "Read an entity profile.",
+      "properties": {
+        "operation": {
+          "const": "get_entity",
+          "default": "get_entity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "format": "uuid",
+          "title": "Entityid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entityId"
+      ],
+      "title": "GetEntity",
+      "type": "object"
+    },
+    "GetEntitySummary": {
+      "additionalProperties": false,
+      "description": "Read the verification results summary.",
+      "properties": {
+        "operation": {
+          "const": "get_entity_summary",
+          "default": "get_entity_summary",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "format": "uuid",
+          "title": "Entityid",
+          "type": "string"
+        },
+        "includeArchived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includearchived"
+        }
+      },
+      "required": [
+        "entityId"
+      ],
+      "title": "GetEntitySummary",
+      "type": "object"
+    },
+    "GetIdvEntry": {
+      "additionalProperties": false,
+      "description": "Read an identity verification entry.",
+      "properties": {
+        "operation": {
+          "const": "get_idv_entry",
+          "default": "get_idv_entry",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "format": "uuid",
+          "title": "Entityid",
+          "type": "string"
+        },
+        "entryId": {
+          "format": "uuid",
+          "title": "Entryid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entityId",
+        "entryId"
+      ],
+      "title": "GetIdvEntry",
+      "type": "object"
+    },
+    "GetJourney": {
+      "additionalProperties": false,
+      "description": "Read journey configuration and actor IDs.",
+      "properties": {
+        "operation": {
+          "const": "get_journey",
+          "default": "get_journey",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "journeyId": {
+          "format": "uuid",
+          "title": "Journeyid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "journeyId"
+      ],
+      "title": "GetJourney",
+      "type": "object"
+    },
+    "GetLatestProcess": {
+      "additionalProperties": false,
+      "description": "Read the latest process for an entity.",
+      "properties": {
+        "operation": {
+          "const": "get_latest_process",
+          "default": "get_latest_process",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "format": "uuid",
+          "title": "Entityid",
+          "type": "string"
+        },
+        "journeyId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Journeyid"
+        },
+        "actorId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actorid"
+        }
+      },
+      "required": [
+        "entityId"
+      ],
+      "title": "GetLatestProcess",
+      "type": "object"
+    },
+    "GetProcess": {
+      "additionalProperties": false,
+      "description": "Read process status.",
+      "properties": {
+        "operation": {
+          "const": "get_process",
+          "default": "get_process",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "processId": {
+          "format": "uuid",
+          "title": "Processid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "processId"
+      ],
+      "title": "GetProcess",
+      "type": "object"
+    },
+    "GetProcessDetails": {
+      "additionalProperties": false,
+      "description": "Read detailed process results.",
+      "properties": {
+        "operation": {
+          "const": "get_process_details",
+          "default": "get_process_details",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "processId": {
+          "format": "uuid",
+          "title": "Processid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "processId"
+      ],
+      "title": "GetProcessDetails",
+      "type": "object"
+    },
+    "ListActiveChecks": {
+      "additionalProperties": false,
+      "description": "Read current data checks.",
+      "properties": {
+        "operation": {
+          "const": "list_active_checks",
+          "default": "list_active_checks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "format": "uuid",
+          "title": "Entityid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entityId"
+      ],
+      "title": "ListActiveChecks",
+      "type": "object"
+    },
+    "ListDocuments": {
+      "additionalProperties": false,
+      "description": "List electronic signature documents.",
+      "properties": {
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "format": "uuid",
+          "title": "Entityid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entityId"
+      ],
+      "title": "ListDocuments",
+      "type": "object"
+    },
+    "ListEntityEvidence": {
+      "additionalProperties": false,
+      "description": "List evidence attached to an entity.",
+      "properties": {
+        "operation": {
+          "const": "list_entity_evidence",
+          "default": "list_entity_evidence",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "format": "uuid",
+          "title": "Entityid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entityId"
+      ],
+      "title": "ListEntityEvidence",
+      "type": "object"
+    },
+    "ListIdvEntries": {
+      "additionalProperties": false,
+      "description": "List identity verification entries.",
+      "properties": {
+        "operation": {
+          "const": "list_idv_entries",
+          "default": "list_idv_entries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "format": "uuid",
+          "title": "Entityid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entityId"
+      ],
+      "title": "ListIdvEntries",
+      "type": "object"
+    },
+    "ListJourneys": {
+      "additionalProperties": false,
+      "description": "List journeys available to this account.",
+      "properties": {
+        "operation": {
+          "const": "list_journeys",
+          "default": "list_journeys",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListJourneys",
+      "type": "object"
+    },
+    "LockProcess": {
+      "additionalProperties": false,
+      "description": "Lock a process.",
+      "properties": {
+        "operation": {
+          "const": "lock_process",
+          "default": "lock_process",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "processId": {
+          "format": "uuid",
+          "title": "Processid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "processId"
+      ],
+      "title": "LockProcess",
+      "type": "object"
+    },
+    "NewInvite": {
+      "additionalProperties": false,
+      "description": "Create a new invitation and select email or SMS delivery.",
+      "properties": {
+        "operation": {
+          "const": "new_invite",
+          "default": "new_invite",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "format": "uuid",
+          "title": "Entityid",
+          "type": "string"
+        },
+        "contactByEmail": {
+          "default": true,
+          "title": "Contactbyemail",
+          "type": "boolean"
+        },
+        "contactBySms": {
+          "default": false,
+          "title": "Contactbysms",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "entityId"
+      ],
+      "title": "NewInvite",
+      "type": "object"
+    },
+    "ProcessEntity": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "actorId": {
+          "description": "Actor ID from the selected journey",
+          "title": "Actorid",
+          "type": "integer"
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "middleName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Middlename"
+        },
+        "surname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Surname"
+        },
+        "emailAddress": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emailaddress"
+        },
+        "phoneNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phonenumber"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "contactViaEmail": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contactviaemail"
+        },
+        "contactViaSms": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contactviasms"
+        },
+        "inPerson": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inperson"
+        },
+        "dateOfBirth": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dateofbirth"
+        }
+      },
+      "required": [
+        "actorId"
+      ],
+      "title": "ProcessEntity",
+      "type": "object"
+    },
+    "RejectEntity": {
+      "additionalProperties": false,
+      "description": "Set approval status to rejected.",
+      "properties": {
+        "operation": {
+          "const": "reject_entity",
+          "default": "reject_entity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "format": "uuid",
+          "title": "Entityid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entityId"
+      ],
+      "title": "RejectEntity",
+      "type": "object"
+    },
+    "ResendInvite": {
+      "additionalProperties": false,
+      "description": "Resend an entity invitation.",
+      "properties": {
+        "operation": {
+          "const": "resend_invite",
+          "default": "resend_invite",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "format": "uuid",
+          "title": "Entityid",
+          "type": "string"
+        },
+        "contactByEmail": {
+          "default": true,
+          "title": "Contactbyemail",
+          "type": "boolean"
+        },
+        "contactBySms": {
+          "default": false,
+          "title": "Contactbysms",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "entityId"
+      ],
+      "title": "ResendInvite",
+      "type": "object"
+    },
+    "ResetEntityApproval": {
+      "additionalProperties": false,
+      "description": "Reset an entity approval status.",
+      "properties": {
+        "operation": {
+          "const": "reset_entity_approval",
+          "default": "reset_entity_approval",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "format": "uuid",
+          "title": "Entityid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entityId"
+      ],
+      "title": "ResetEntityApproval",
+      "type": "object"
+    },
+    "SearchEntities": {
+      "additionalProperties": false,
+      "description": "Search entities matching a name, email, reference or process.",
+      "properties": {
+        "operation": {
+          "const": "search_entities",
+          "default": "search_entities",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "searchText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Searchtext"
+        },
+        "pageNumber": {
+          "default": 1,
+          "description": "Page to read; call again for subsequent pages",
+          "minimum": 1,
+          "title": "Pagenumber",
+          "type": "integer"
+        }
+      },
+      "title": "SearchEntities",
+      "type": "object"
+    },
+    "UnlockProcess": {
+      "additionalProperties": false,
+      "description": "Unlock a process.",
+      "properties": {
+        "operation": {
+          "const": "unlock_process",
+          "default": "unlock_process",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "processId": {
+          "format": "uuid",
+          "title": "Processid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "processId"
+      ],
+      "title": "UnlockProcess",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "approve_entity": "#/$defs/ApproveEntity",
+          "create_entity": "#/$defs/CreateEntity",
+          "create_process": "#/$defs/CreateProcess",
+          "expire_invite": "#/$defs/ExpireInvite",
+          "get_entity": "#/$defs/GetEntity",
+          "get_entity_summary": "#/$defs/GetEntitySummary",
+          "get_idv_entry": "#/$defs/GetIdvEntry",
+          "get_journey": "#/$defs/GetJourney",
+          "get_latest_process": "#/$defs/GetLatestProcess",
+          "get_process": "#/$defs/GetProcess",
+          "get_process_details": "#/$defs/GetProcessDetails",
+          "list_active_checks": "#/$defs/ListActiveChecks",
+          "list_documents": "#/$defs/ListDocuments",
+          "list_entity_evidence": "#/$defs/ListEntityEvidence",
+          "list_idv_entries": "#/$defs/ListIdvEntries",
+          "list_journeys": "#/$defs/ListJourneys",
+          "lock_process": "#/$defs/LockProcess",
+          "new_invite": "#/$defs/NewInvite",
+          "reject_entity": "#/$defs/RejectEntity",
+          "resend_invite": "#/$defs/ResendInvite",
+          "reset_entity_approval": "#/$defs/ResetEntityApproval",
+          "search_entities": "#/$defs/SearchEntities",
+          "unlock_process": "#/$defs/UnlockProcess"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SearchEntities"
+        },
+        {
+          "$ref": "#/$defs/GetEntity"
+        },
+        {
+          "$ref": "#/$defs/CreateEntity"
+        },
+        {
+          "$ref": "#/$defs/GetEntitySummary"
+        },
+        {
+          "$ref": "#/$defs/ListActiveChecks"
+        },
+        {
+          "$ref": "#/$defs/ListIdvEntries"
+        },
+        {
+          "$ref": "#/$defs/GetIdvEntry"
+        },
+        {
+          "$ref": "#/$defs/ListEntityEvidence"
+        },
+        {
+          "$ref": "#/$defs/ListDocuments"
+        },
+        {
+          "$ref": "#/$defs/ListJourneys"
+        },
+        {
+          "$ref": "#/$defs/GetJourney"
+        },
+        {
+          "$ref": "#/$defs/CreateProcess"
+        },
+        {
+          "$ref": "#/$defs/GetProcess"
+        },
+        {
+          "$ref": "#/$defs/GetProcessDetails"
+        },
+        {
+          "$ref": "#/$defs/GetLatestProcess"
+        },
+        {
+          "$ref": "#/$defs/LockProcess"
+        },
+        {
+          "$ref": "#/$defs/UnlockProcess"
+        },
+        {
+          "$ref": "#/$defs/ApproveEntity"
+        },
+        {
+          "$ref": "#/$defs/RejectEntity"
+        },
+        {
+          "$ref": "#/$defs/ResetEntityApproval"
+        },
+        {
+          "$ref": "#/$defs/ExpireInvite"
+        },
+        {
+          "$ref": "#/$defs/NewInvite"
+        },
+        {
+          "$ref": "#/$defs/ResendInvite"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CredasAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Credas Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
