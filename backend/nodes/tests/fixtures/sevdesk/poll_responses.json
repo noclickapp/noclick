@@ -1,0 +1,37 @@
+{
+  "Invoice": {
+    "body": {
+      "objects": [
+        {
+          "id": "1",
+          "update": "2024-04-08T00:00:00+02:00",
+          "invoiceNumber": "RE-1000",
+          "contact": {
+            "id": "1",
+            "objectName": "Contact"
+          },
+          "status": "100"
+        }
+      ]
+    },
+    "source": "https://api.sevdesk.de/openapi.yaml#/components/schemas/Model_InvoiceResponse"
+  },
+  "Voucher": {
+    "body": {
+      "objects": [
+        {
+          "id": "0",
+          "update": "01.01.2020",
+          "description": "Voucher-1000",
+          "supplier": {
+            "id": "0",
+            "objectName": "Contact"
+          },
+          "supplierName": "John Snow",
+          "status": "50"
+        }
+      ]
+    },
+    "source": "https://api.sevdesk.de/openapi.yaml#/components/schemas/Model_VoucherResponse"
+  }
+}

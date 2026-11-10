@@ -11,7 +11,7 @@ const SevdeskIcon = ({ className, style }: { className?: string; style?: CSSProp
 
 export const SevdeskNode: NodeDefinition = {
     type: 'automation-sevdesk', category: 'finance-accounting', label: 'Sevdesk',
-    description: 'Manage contacts, parts and tags; read invoices, orders, vouchers and check accounts',
+    description: 'Trigger on new or updated contacts, invoices, orders and vouchers; manage Sevdesk accounting records',
     keywords: ['sevdesk', 'accounting', 'invoices', 'bookkeeping'],
     Icon: SevdeskIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

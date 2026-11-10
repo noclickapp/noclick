@@ -1,17 +1,20 @@
 """Sevdesk REST v1 operations pinned to the publisher's OpenAPI 2.0.0 contract.
 
-Each operation makes one request. Lists return one bounded page; writes return
-provider acknowledgements, without claiming delivery or independent readback.
+Each action makes one request. Poll triggers page through updated records.
+Lists return one bounded page; writes acknowledge without claiming independent readback.
 """
 from __future__ import annotations
 
 from typing import Annotated, Literal, Union
+
+import json
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -229,7 +232,37 @@ class UpdateTag(_Input):
     name: Text
 
 
+class _UpdatedPoll(PollTriggerConfigBase):
+    updated_after: int = Field(0, ge=0, title="Updated after",
+        description="Only watch records updated after this Unix timestamp (0 watches all). Existing records are baselined when armed. At most 10,000 records may match; narrow this time if needed.")
+
+
+class OnNewOrUpdatedContact(_UpdatedPoll):
+    operation: Literal["on_new_or_updated_contact"] = Field("on_new_or_updated_contact", title="On New or Updated Contact",
+        json_schema_extra={"const": "on_new_or_updated_contact", "ui:hidden": True, "x-category": "Triggers",
+            "x-is-trigger": True, "x-display-name": "On New or Updated Contact"})
+
+
+class OnNewOrUpdatedInvoice(_UpdatedPoll):
+    operation: Literal["on_new_or_updated_invoice"] = Field("on_new_or_updated_invoice", title="On New or Updated Invoice",
+        json_schema_extra={"const": "on_new_or_updated_invoice", "ui:hidden": True, "x-category": "Triggers",
+            "x-is-trigger": True, "x-display-name": "On New or Updated Invoice"})
+
+
+class OnNewOrUpdatedOrder(_UpdatedPoll):
+    operation: Literal["on_new_or_updated_order"] = Field("on_new_or_updated_order", title="On New or Updated Order",
+        json_schema_extra={"const": "on_new_or_updated_order", "ui:hidden": True, "x-category": "Triggers",
+            "x-is-trigger": True, "x-display-name": "On New or Updated Order"})
+
+
+class OnNewOrUpdatedVoucher(_UpdatedPoll):
+    operation: Literal["on_new_or_updated_voucher"] = Field("on_new_or_updated_voucher", title="On New or Updated Voucher",
+        json_schema_extra={"const": "on_new_or_updated_voucher", "ui:hidden": True, "x-category": "Triggers",
+            "x-is-trigger": True, "x-display-name": "On New or Updated Voucher"})
+
+
 SevdeskConfig = Annotated[Union[
+    OnNewOrUpdatedContact, OnNewOrUpdatedInvoice, OnNewOrUpdatedOrder, OnNewOrUpdatedVoucher,
     ListContacts, GetContact, CreateContact, UpdateContact, DeleteContact,
     ListParts, GetPart, CreatePart, UpdatePart, ListInvoices, GetInvoice,
     ListInvoicePositions, ListOrders, GetOrder, ListVouchers, GetVoucher,
@@ -306,7 +339,15 @@ def _redact(value, token):
     return value
 
 
-class SevdeskNode(WorkflowNode):
+POLL_RESOURCES = {
+    "on_new_or_updated_contact": "Contact",
+    "on_new_or_updated_invoice": "Invoice",
+    "on_new_or_updated_order": "Order",
+    "on_new_or_updated_voucher": "Voucher",
+}
+
+
+class SevdeskNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-sevdesk"
     connection_evidence = ConnectionEvidence(noun="contacts", operation="list_contacts",
         label_keys=("name", "familyname", "surename", "customerNumber", "id"))
@@ -322,11 +363,74 @@ class SevdeskNode(WorkflowNode):
             raise ValueError("Attach a Sevdesk API token credential")
         return super().parse_config(config_data)
 
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or "resource" not in output:
+            return super().resolve_agent_event(output)
+        rows = output.get("objects", [])
+        if not rows:
+            return None
+        resource = output["resource"]
+        lines = []
+        for row in rows[:10]:
+            if resource == "Contact":
+                label = row.get("name") or " ".join(filter(None, [row.get("surename"), row.get("familyname")]))
+                detail = row.get("description") or ""
+            elif resource == "Voucher":
+                label = row.get("description") or "Voucher"
+                supplier = row.get("supplier") or {}
+                detail = f"Supplier: {row.get('supplierName') or supplier.get('id') or 'unspecified'}"
+            else:
+                label = row.get("invoiceNumber" if resource == "Invoice" else "orderNumber") or resource
+                contact = row.get("contact") or {}
+                detail = f"Contact ID: {contact.get('id') or 'unspecified'}"
+            lines.append(f"- {label or resource} (id {row['id']}, updated {row['update']}, status {row.get('status')}); {detail}")
+        if len(rows) > 10:
+            lines.append(f"- … and {len(rows) - 10} more; all records are in the trigger output")
+        return {"text": f"Sevdesk: {len(rows)} new or updated {resource.lower()} record(s):\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _poll_updated(self, config, token):
+        # updateAfter is documented in each resource tag's filter table in the
+        # pinned OpenAPI. Identity and revision come from its response schema.
+        resource = POLL_RESOURCES[config.operation]
+        rows = []
+        async with guarded_async_client(timeout=30.0, follow_redirects=False, trust_env=False) as client:
+            for offset in range(0, 10_001, 1000):
+                params = {"limit": 1000, "offset": offset, "updateAfter": config.updated_after}
+                if resource == "Contact":
+                    params["depth"] = "1"  # Include people as well as organizations.
+                response = await client.request("GET", BASE_URL + "/" + resource,
+                    params=params,
+                    headers={"Authorization": token, "Accept": "application/json", "User-Agent": "NoClick Sevdesk integration"})
+                response.raise_for_status()
+                payload = response.json()
+                if not isinstance(payload, dict):
+                    raise ValueError("Invalid Sevdesk response envelope")
+                page = payload.get("objects")
+                if not isinstance(page, list) or len(page) > 1000:
+                    raise ValueError("Invalid Sevdesk poll page")
+                if any(not isinstance(row, dict) or row.get("id") is None or not row.get("update") for row in page):
+                    raise ValueError("Sevdesk poll records require an id and update revision")
+                rows.extend(page)
+                if len(rows) > 10_000:
+                    raise ValueError("More than 10,000 Sevdesk records match; narrow Updated after")
+                if len(page) < 1000:
+                    break
+        revisions = {json.dumps([str(row["id"]), row["update"]]): row for row in rows}
+        fresh = await self._filter_unseen(list(revisions.values()), lambda row: json.dumps([str(row["id"]), row["update"]]))
+        result = {"status": "success", "success": True, "resource": resource,
+                  "objects": fresh, "new_or_updated_count": len(fresh)}
+        await self.emit(result)
+        return result
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Sevdesk API token")
         config = self.config.config
         token = self.config.credentials.api_token
+        if isinstance(config, _UpdatedPoll):
+            return await self._poll_updated(config, token)
         method, template = ROUTES[config.operation]
         path = template.format(**config.model_dump())
         params, body = {}, None

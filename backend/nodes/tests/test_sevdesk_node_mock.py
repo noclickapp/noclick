@@ -194,3 +194,102 @@ async def test_connection_evidence_uses_http_rejection_status(monkeypatch, statu
     result = await collect_evidence(node_type="automation-sevdesk", user_id="fixture",
         credential_data={"credential_type": native.CREDENTIAL_TYPE, "api_token": TOKEN})
     assert result.reachable is reachable
+
+
+# Published response-property examples from Model_InvoiceResponse and
+# Model_VoucherResponse, including the provider's differently formatted revisions.
+POLL_EXAMPLES = json.loads((Path(__file__).parent / "fixtures/sevdesk/poll_responses.json").read_text())
+
+
+def poll_state(instance, monkeypatch, initial=None):
+    state = {} if initial is None else dict(initial)
+
+    async def update(mutator, **kwargs):
+        new_state, result = mutator(dict(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+
+    monkeypatch.setattr(instance, "_update_node_state", update)
+    return state
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("resource", ["Contact", "Invoice", "Order", "Voucher"])
+async def test_poll_routes_config_and_scope(monkeypatch, resource):
+    from nodes.core.poll_trigger import poll_scope
+    operation = "on_new_or_updated_" + resource.lower()
+    config = {"operation": operation, "updated_after": 0}
+    instance = node(config)
+    requests = transport(monkeypatch)
+    poll_state(instance, monkeypatch)
+    result = await instance.execute({})
+    assert result["objects"] == []
+    assert instance.trigger_produced_no_event(result)
+    assert requests[0].url.path == "/api/v1/" + resource
+    expected = {"limit": "1000", "offset": "0", "updateAfter": "0"}
+    if resource == "Contact":
+        expected["depth"] = "1"
+    assert dict(requests[0].url.params) == expected
+    assert poll_scope(native.SevdeskNode, config) == poll_scope(native.SevdeskNode, {**config, "label": "Changed"})
+    assert poll_scope(native.SevdeskNode, config) != poll_scope(native.SevdeskNode, {**config, "updated_after": 1})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("resource", ["Invoice", "Voucher"])
+async def test_poll_baseline_new_revision_and_agent_event(monkeypatch, resource):
+    body = POLL_EXAMPLES[resource]["body"]
+    original = body["objects"][0]
+    operation = "on_new_or_updated_" + resource.lower()
+    instance = node({"operation": operation})
+    state = poll_state(instance, monkeypatch)
+    transport(monkeypatch, body)
+    assert (await instance.execute({}))["objects"] == []  # Baseline never emits history.
+    assert state["seen_ids"]
+    assert (await instance.execute({}))["objects"] == []
+    # A prior empty baseline sees the documented record as new.
+    state["seen_ids"] = []
+    result = await instance.execute({})
+    assert result["objects"] == [original]
+    event = native.SevdeskNode.resolve_agent_event(result)
+    assert "id " + original["id"] in event["text"]
+    assert original["update"] in event["text"]
+    assert resource.lower() in event["text"]
+    assert instance.trigger_emitted_event(result)
+    assert (await instance.execute({}))["objects"] == []
+    # Simulate an older revision of the same ID, then feed the documented current revision.
+    state["seen_ids"] = [json.dumps([original["id"], "older revision"])]
+    assert (await instance.execute({}))["objects"] == [original]
+    assert native.SevdeskNode.resolve_agent_event({"resource": resource, "objects": []}) is None
+    # Repointing the declared filter baselines again.
+    instance.config.config.updated_after = 1
+    assert (await instance.execute({}))["objects"] == []
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("body,status", [({"objects": [{}]}, 200), ({"error": "rejected"}, 200), ({"objects": []}, 401)])
+async def test_poll_failure_does_not_consume_state(monkeypatch, body, status):
+    instance = node({"operation": "on_new_or_updated_invoice"})
+    state = poll_state(instance, monkeypatch)
+    transport(monkeypatch, body, status)
+    with pytest.raises((ValueError, httpx.HTTPStatusError)):
+        await instance.execute({})
+    assert state == {}
+
+
+@pytest.mark.asyncio
+async def test_poll_paginates_before_marking_seen(monkeypatch):
+    body = POLL_EXAMPLES["Invoice"]["body"]
+    requests = []
+
+    def reply(request):
+        requests.append(request)
+        return httpx.Response(200, json={"objects": body["objects"] * 1000 if len(requests) == 1 else []})
+
+    monkeypatch.setattr(native, "guarded_async_client", lambda **kw: httpx.AsyncClient(transport=httpx.MockTransport(reply), **kw))
+    instance = node({"operation": "on_new_or_updated_invoice"})
+    poll_state(instance, monkeypatch, {"seen_ids": []})
+    result = await instance.execute({})
+    assert [r.url.params["offset"] for r in requests] == ["0", "1000"]
+    assert result["objects"] == body["objects"]
