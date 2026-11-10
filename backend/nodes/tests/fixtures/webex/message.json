@@ -1,0 +1,11 @@
+{
+  "body": {
+    "id": "Y2lzY29zcGFyazovL3VzL01FU1NBR0UvMzIzZWUyZjAtOWFhZC0xMWU1LTg1YmYtMWRhZjhkNDJlZjlj",
+    "roomId": "Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0",
+    "personId": "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY",
+    "personEmail": "matt@example.com",
+    "text": "Something interesting and potentially sensitive",
+    "created": "2015-12-04T17:33:56.767Z"
+  },
+  "source": "https://developer.webex.com/docs/receive-and-verify-webhooks"
+}

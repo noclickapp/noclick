@@ -32,8 +32,13 @@ def _scope_for(operation: dict) -> str:
 WEBEX_SCOPES = ScopeRegistry(
     provider="webex",
     requirements={
-        operation["name"]: ScopeRequirement(scopes=(_scope_for(operation),))
-        for operation in _catalog["operations"]
+        "on_new_message": ScopeRequirement(scopes=("spark:webhooks_write", "spark:messages_read")),
+        "on_meeting_ended": ScopeRequirement(scopes=("spark:webhooks_write", "meeting:schedules_read")),
+        "on_new_recording": ScopeRequirement(scopes=("spark:webhooks_write", "meeting:recordings_read")),
+        **{
+            operation["name"]: ScopeRequirement(scopes=(_scope_for(operation),))
+            for operation in _catalog["operations"]
+        },
     },
     enforcement=Enforcement.STRICT,
     # Webex requires this scope for access to encrypted message content when

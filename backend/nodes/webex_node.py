@@ -1,9 +1,12 @@
-"""Webex messaging, meeting, invitee, and recording workflow actions."""
+"""Webex actions and signed message, meeting, and recording event triggers."""
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 import re
+import secrets
 import time
 from typing import Annotated, Any, Literal, Optional, Union
 from urllib.parse import quote
@@ -14,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.scopes.webex import WEBEX_SCOPES
 from nodes.webex_operations import WEBEX_CATALOG
 
@@ -92,7 +96,50 @@ def _make_config(op: dict[str, Any]) -> type[BaseModel]:
 
 CONFIG_MODELS = {name: _make_config(op) for name, op in OPERATIONS.items()}
 globals().update({model.__name__: model for model in CONFIG_MODELS.values()})
-WebexConfig = Annotated[Union[tuple(CONFIG_MODELS.values())], Discriminator("operation")]
+
+# Registration: the pinned Webex Messaging OpenAPI's POST /webhooks.
+# Event bodies: https://developer.webex.com/docs/receive-and-verify-webhooks,
+# https://developer.webex.com/meeting/docs/api/guides/access-meeting-resources-guide,
+# https://developer.webex.com/blog/webex-rest-api-adds-compliance-officer-webhooks.
+TRIGGER_EVENTS = {
+    "on_new_message": ("messages", "created"),
+    "on_meeting_ended": ("meetings", "ended"),
+    "on_new_recording": ("recordings", "created"),
+}
+
+
+class WebexWebhookConfig(WebhookTriggerConfigBase):
+    webhook_url: Optional[str] = Field(
+        None, title="Webhook URL", description="Registered with Webex automatically",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True},
+    )
+
+
+class WebexOnNewMessageConfig(WebexWebhookConfig):
+    operation: Literal["on_new_message"] = Field("on_new_message", title="On New Message", json_schema_extra={
+        "const": "on_new_message", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On New Message",
+    })
+    room_id: Optional[str] = Field(None, title="Space ID", description="Watch one space, or leave blank for all accessible spaces")
+
+
+class WebexOnMeetingEndedConfig(WebexWebhookConfig):
+    operation: Literal["on_meeting_ended"] = Field("on_meeting_ended", title="On Meeting Ended", json_schema_extra={
+        "const": "on_meeting_ended", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On Meeting Ended",
+    })
+
+
+class WebexOnNewRecordingConfig(WebexWebhookConfig):
+    operation: Literal["on_new_recording"] = Field("on_new_recording", title="On New Recording", json_schema_extra={
+        "const": "on_new_recording", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On New Recording",
+    })
+    meeting_id: Optional[str] = Field(None, title="Meeting ID", description="Watch recordings for one meeting, or leave blank for all your recordings")
+
+
+TRIGGER_CONFIGS = (WebexOnNewMessageConfig, WebexOnMeetingEndedConfig, WebexOnNewRecordingConfig)
+WebexConfig = Annotated[Union[tuple(CONFIG_MODELS.values()) + TRIGGER_CONFIGS], Discriminator("operation")]
 
 
 class WebexNodeConfig(NodeConfig[WebexConfig, WebexOAuthCredential]):
@@ -108,11 +155,12 @@ def _parse_json(raw: Optional[str], label: str) -> Any:
         raise ValueError(f"{label} must contain valid JSON") from exc
 
 
-class WebexNode(WorkflowNode):
-    """Run one of the supported Webex messaging or meeting actions."""
+class WebexNode(ExternalWebhookTriggerMixin, WorkflowNode):
+    """Run Webex actions or subscribe workflows and agents to Webex events."""
 
     integration_type = "automation-webex"
     scope_registry = WEBEX_SCOPES
+    webhook_replace_stale_endpoint = True
     connection_evidence = ConnectionEvidence(
         operation="list_rooms", noun="spaces",
         identity_operation="get_my_own_details",
@@ -120,11 +168,149 @@ class WebexNode(WorkflowNode):
     edit_examples = [
         "List my Webex spaces", "Post a message to a Webex space",
         "Schedule a Webex meeting", "List my Webex recordings",
+        "Start an agent when a Webex message arrives", "Follow up after a Webex meeting ends",
     ]
 
     @classmethod
     def get_config_model(cls):
         return WebexNodeConfig
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event = TRIGGER_EVENTS.get(config.get("operation"))
+        if event is None:
+            raise ValueError("Choose a Webex trigger before registering a webhook")
+        if not credential or not credential.get("access_token"):
+            raise ValueError("Connect Webex before activating this trigger")
+        secret = secrets.token_hex(32)
+        body = {"name": f"NoClick {node_id}", "targetUrl": webhook_url,
+                "resource": event[0], "event": event[1], "secret": secret}
+        filters = cls.registration_fingerprint_fields(config)
+        if filters.get("room_id"):
+            body["filter"] = "roomId=" + str(filters["room_id"])
+        if filters.get("meeting_id"):
+            body["filter"] = "meetingId=" + str(filters["meeting_id"])
+        result = await cls._request(credential["access_token"], "webhooks_create_a_webhook", {"body_json": json.dumps(body)})
+        endpoint_id = result["data"].get("id")
+        if not endpoint_id:
+            raise ValueError("Webex did not return a webhook ID")
+        return {"external_webhook_id": str(endpoint_id), "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = config.get("external_webhook_id")
+        if not endpoint_id:
+            return
+        if not credential or not credential.get("access_token"):
+            raise ValueError("Connect Webex to remove its webhook")
+        try:
+            await cls._request(credential["access_token"], "webhooks_delete_a_webhook", {"path_webhookid": endpoint_id})
+        except ValueError as exc:
+            if not str(exc).startswith("Webex API error 404:"):
+                raise
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        if config.get("operation") == "on_new_message":
+            return {"room_id": config.get("room_id") or None}
+        if config.get("operation") == "on_new_recording":
+            return {"meeting_id": config.get("meeting_id") or None}
+        return {}
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # https://developer.webex.com/docs/receive-and-verify-webhooks#authenticating-requests
+        secret = config.get("signing_secret")
+        if not secret:
+            return False
+        headers = {key.lower(): value for key, value in headers.items()}
+        if "x-webex-signature" in headers:
+            for pair in headers["x-webex-signature"].split(","):
+                algorithm, sep, received = pair.strip().partition("=")
+                digest = {"SHA-256": hashlib.sha256, "SHA-512": hashlib.sha512}.get(algorithm)
+                if (sep and digest and re.fullmatch(r"[0-9a-f]+", received)
+                        and hmac.compare_digest(hmac.new(secret.encode(), body, digest).hexdigest(), received)):
+                    return True
+            return False
+        expected = hmac.new(secret.encode(), body, hashlib.sha1).hexdigest()
+        received = headers.get("x-spark-signature", "")
+        return bool(re.fullmatch(r"[0-9a-f]{40}", received)) and hmac.compare_digest(expected, received)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event = TRIGGER_EVENTS.get(config.get("operation"))
+        if event is None or (payload.get("resource"), payload.get("event")) != event:
+            return False
+        data = payload.get("data")
+        if not isinstance(data, dict) or not data.get("id"):
+            return False
+        if event[0] == "messages" and config.get("room_id"):
+            return data.get("roomId") == config["room_id"]
+        if event[0] == "recordings" and config.get("meeting_id"):
+            return data.get("meetingId") == config["meeting_id"]
+        return True
+
+    @classmethod
+    async def transform_trigger_payload(cls, payload, config, *, pool, workflow_id, node_id):
+        # Enrich before either workflows or platform agents receive the event.
+        # A failed read leaves the metadata usable via the family's fallback.
+        if config.get("operation") != "on_new_message" or not workflow_id:
+            return None
+        from utils.inbound_media import resolve_delivery_credential
+
+        credential, owner_id = await resolve_delivery_credential(pool, config, str(workflow_id), "webex_oauth")
+        if not credential:
+            return None
+        credential = await cls.freshen_credential(
+            credential, pool=pool, user_id=owner_id,
+            credential_id=(config.get("credentialIds") or {}).get("webex_oauth"),
+        )
+        result = await cls._request(credential["access_token"], "messages_get_message_details",
+                                    {"path_messageid": payload["data"]["id"]})
+        return {**payload, "_message": result["data"]}
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        # Keep delivery headers out of the wrapped output and carry enriched
+        # message content once, beside the provider's unchanged event fields.
+        envelope = {key: value for key, value in payload.items() if key not in {"_webhook", "_message"}}
+        return {"status": "success", "operation": config.get("operation"), "data": envelope,
+                "message": payload.get("_message")}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if isinstance(output, dict) and output.get("status") == "no_event":
+            return None
+        if not isinstance(output, dict) or output.get("operation") not in TRIGGER_EVENTS:
+            return super().resolve_agent_event(output)
+        envelope = output.get("data") or {}
+        data = envelope.get("data") or {}
+        if not isinstance(data, dict) or not data.get("id"):
+            return None
+        item_id = data["id"]
+        operation = output["operation"]
+        if operation == "on_new_message":
+            message = output.get("message") or {}
+            who = data.get("personEmail") or data.get("personId")
+            room = data.get("roomId")
+            lines = [f"New Webex message from {who} in space {room}",
+                     str(message.get("text") or "Message content is unavailable; retrieve it using the message ID."),
+                     f"Message ID: {item_id}", f"Space ID: {room}", f"Sent: {data.get('created')}",
+                     f"To reply: messages_create_a_message with body_json containing roomId={room} and text."]
+            key, title = room or item_id, f"Webex message from {who}"
+        elif operation == "on_meeting_ended":
+            lines = [f"Webex meeting ended, hosted by {data.get('hostEmail')} at {data.get('siteUrl')}",
+                     f"Started: {data.get('start')}; ended: {data.get('end')}", f"Meeting ID: {item_id}",
+                     f"To find recordings: recordings_listrecordings with query_json containing meetingId={item_id}."]
+            key, title = item_id, "Webex meeting ended"
+        else:
+            meeting = data.get("meetingId")
+            lines = [f"New Webex recording at {data.get('siteUrl')}, hosted by user {data.get('hostUserId')}",
+                     f"Recording ID: {item_id}", f"Meeting ID: {meeting}",
+                     f"Created: {data.get('createTime')}; format: {data.get('format')}; duration: {data.get('durationSeconds')} seconds",
+                     f"To retrieve it: recordings_getrecordbyrecordid path_recordingid={item_id}."]
+            key, title = meeting or item_id, "New Webex recording"
+        return {"text": "\n".join(lines), "conversation_key": str(key), "title": title}
 
     @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
@@ -206,6 +392,11 @@ class WebexNode(WorkflowNode):
         }
 
     async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
+        if not isinstance(self.config, WebexNodeConfig):
+            raise ValueError("Webex configuration required")
+        config = self.config.config
+        if config.operation in TRIGGER_EVENTS:
+            return self.no_event_output(config.operation)
         if not isinstance(self.config, WebexNodeConfig) or not self.config.credentials:
             raise ValueError("Connect a Webex account before running this action")
         credential = self.config.credentials

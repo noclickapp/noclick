@@ -1,0 +1,82 @@
+{
+  "messages.created": {
+    "body": {
+      "id": "Y2lzY29zcGFyazovL3VzL1dFQkhPT0svZjRlNjA1NjAtNjYwMi00ZmIwLWEyNWEtOTQ5ODgxNjA5NDk3",
+      "name": "New message in 'Project Unicorn' room",
+      "resource": "messages",
+      "event": "created",
+      "filter": "roomId=Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0",
+      "orgId": "OTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh",
+      "createdBy": "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY",
+      "appId": "Y2lzY29zcGFyazovL3VzL0FQUExJQ0FUSU9OL0MyNzljYjMwYzAyOTE4MGJiNGJkYWViYjA2MWI3OTY1Y2RhMzliNjAyOTdjODUwM2YyNjZhYmY2NmM5OTllYzFm",
+      "ownedBy": "creator",
+      "status": "active",
+      "actorId": "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY",
+      "data": {
+        "id": "Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk",
+        "roomId": "Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0",
+        "personId": "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY",
+        "personEmail": "matt@example.com",
+        "created": "2015-10-18T14:26:16.000Z"
+      }
+    },
+    "source": "https://developer.webex.com/docs/receive-and-verify-webhooks"
+  },
+  "meetings.ended": {
+    "body": {
+      "id": "Y2lzY29zcGFyazovL3VybjpURUFNOnVzLXdlc3QtMl9yL1dFQkhPT0svNDk5ZjkxZjItY2QxMi00NTk2LWEzYjctNDY4NTA1OGQ2NTlm",
+      "name": "Meeting Ended Webhook",
+      "targetUrl": "https://webhook.site/c231a24c-8a04-42b6-a7ed-85ff1a51b60b",
+      "resource": "meetings",
+      "event": "ended",
+      "orgId": "Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi81NWM1YWUzZi04ZDdmLTQyN2ItYTRmOS01ZTNjYjNkZGRmN2I",
+      "createdBy": "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9hYzAxZjUzMi1kMDIyLTRmOGUtYTQ5NC1mMGE0ZDc5ZTUyMjc",
+      "appId": "Y2lzY29zcGFyazovL3VzL0FQUExJQ0FUSU9OL0NmMzkyNWU5NDFmMzhhYTc0M2Y0MmFiNzcwZmZhZjFhNTIyMjcxZDI5OTQ4NDhjNjk2YWMwYTEwN2Q2YTg5MjI3",
+      "ownedBy": "creator",
+      "status": "active",
+      "created": "2021-05-14T20:20:01.024Z",
+      "data": {
+        "id": "501e995485e2460bb129410116757b13_I_194316955237236650",
+        "meetingType": "meeting",
+        "timezone": "UTC",
+        "start": "2021-05-14T20:25:19Z",
+        "end": "2021-05-14T20:26:54Z",
+        "hostUserId": "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9hYzAxZjUzMi1kMDIyLTRmOGUtYTQ5NC1mMGE0ZDc5ZTUyMjc",
+        "state": "ended",
+        "hostEmail": "spouliottes@gmail.com",
+        "siteUrl": "spouliottes-test.webex.com",
+        "orgId": "55c5ae3f-8d7f-427b-a4f9-5e3cb3dddf7b"
+      }
+    },
+    "source": "https://developer.webex.com/meeting/docs/api/guides/access-meeting-resources-guide"
+  },
+  "recordings.created": {
+    "body": {
+      "id": "Y2lzY29zcGFyazovL3VybjpURUFNOnVzLXdlc3QtMl9yL1dFQkhPT0svNTI0NDVhMGYtYWE3MS00NzRlLWJhOTMtOGJjOTIxMTlkODdm",
+      "name": "Recording Created",
+      "targetUrl": "https://webhook.site/181fd885-a88c-46bd-8cf4-fe0b097dbe0f",
+      "resource": "recordings",
+      "event": "created",
+      "orgId": "Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi82MzgwNDY5Yy0zNWVlLTQ3OGYtYTRmOS0wYTFkMzZiNmNiOTc",
+      "createdBy": "Y2lzY29zcGFyazovL3VzL1BFT1BMRS8xMjFmZmQ5MS0xZjZlLTQxJEDItYmQ1NC04ODNkYjlkMzEwNT",
+      "appId": "Y2lzY29zcGFyazovL3VzSITHUExJQ0FUSU9OL0NmMzkyNWU5NDFmMzhhYTc0M2Y0MmFiNzcwZmZhZjFhNTIyMjcxZDI5OTQ4NDhjNjk2YWMwYTEwN2Q2YTg5MjI3",
+      "ownedBy": "org",
+      "status": "active",
+      "created": "2022-08-05T01:19:23.311Z",
+      "data": {
+        "id": "346949fff8e6103ab9dd0050568105fb",
+        "meetingId": "c9646f52613c4dbe8e2f7fb5cd554e6e_I_235103136776202975",
+        "scheduledMeetingId": "c9646f52613c4dbe8e2f7fb5cd554e6e_20721231T090000Z",
+        "meetingSeriesId": "c9646f52613c4dbe8e2f7fb5cd554e6e",
+        "hostUserId": " Y2lzY29zcGFyazovL3VzL1BFT1BMRS8xMjFmZmQ5MS0xZjZlLTQxJEDItYmQ1NC04ODNkYjlkMzEwNT",
+        "createTime": "2022-08-05T01:22:25.000+00:00",
+        "format": "MP4",
+        "durationSeconds": 30,
+        "sizeBytes": 1384068,
+        "siteUrl": "edsample-5xyn.webex.com",
+        "orgId": "6380469c-35ee-478f-a4f9-0a1d36b6cb97"
+      }
+    },
+    "source": "https://developer.webex.com/blog/webex-rest-api-adds-compliance-officer-webhooks"
+  }
+}

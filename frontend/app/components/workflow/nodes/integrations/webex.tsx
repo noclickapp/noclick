@@ -27,7 +27,7 @@ const WebexNodeComponent = (props: NodeProps) => (
 export const WebexNode: NodeDefinition = {
     type: 'automation-webex',
     label: 'Webex',
-    description: 'Spaces, messages, teams, meetings, invitees, and recordings',
+    description: 'Spaces, messages, teams, meetings, recordings, and event triggers',
     category: 'meetings',
     Icon: WebexIcon,
     iconColor: '',
