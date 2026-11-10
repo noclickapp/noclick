@@ -1,0 +1,10 @@
+{
+  "path": "frontend/public/icons/mineskin.svg",
+  "source": "https://docs.mineskin.org/img/logo.svg",
+  "source_page": "https://docs.mineskin.org/",
+  "license": "Trademark; official MineSkin brand asset, used to identify the service",
+  "sha256": "e2c4b785ef2c68fcb12d269e1aab28d370985580ec258bac36a401a9e83367f7",
+  "date": "2026-11-11",
+  "edits": [],
+  "notes": "Official docs navbar app mark: Minecraft skin cube, not a wordmark."
+}

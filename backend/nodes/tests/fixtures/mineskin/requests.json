@@ -1,0 +1,16 @@
+{
+  "source": "https://api.mineskin.org/v2/openapi.json",
+  "url": {
+    "url": "https://i.imgur.com/kQPrtYw.png"
+  },
+  "batch": {
+    "batch": [
+      {
+        "url": "https://i.imgur.com/kQPrtYw.png"
+      },
+      {
+        "user": "61699b2ed3274a019f1e0ea8c3f06bc6"
+      }
+    ]
+  }
+}

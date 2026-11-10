@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/mineskin-dark.svg",
+  "source": "https://docs.mineskin.org/img/logo.svg",
+  "source_page": "https://docs.mineskin.org/",
+  "license": "Trademark; official MineSkin brand asset, used to identify the service",
+  "sha256": "f9ab9ddb299cf5a9d4a34bba68d0f190a2324f3bbd49bcae8217596b2c508d20",
+  "date": "2026-11-11",
+  "edits": [
+    "Recolour the six darkest brown fills #261A0A, #281B0B, #2C1E0D, #43220E, #2E1E0E, #492512 to white for dark tiles; geometry unchanged."
+  ],
+  "notes": "Official docs navbar app mark. Only dark palette entries changed."
+}
