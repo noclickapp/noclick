@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/imagerouter.png",
-  "source": "https://imagerouter.io/apple-touch-icon.png",
+  "source": "https://imagerouter.io/android-chrome-512x512.png",
+  "found_at": "https://imagerouter.io/site.webmanifest (linked from https://imagerouter.io/)",
+  "source_kind": "company site (web app manifest icon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "ImageRouter's SVGs (/original-images/imagerouter-black-transparent.svg and -white-transparent.svg, src2/src3) are auto-traces: vectorizer output with rgb() fills and translate(0,0) on every path, and its 'straight' frame edge wanders (y = 86.43, 86.44, 86.50, 86.51, 86.45 along one top edge), so rule 3 rejects them. The white tile is part of the published app icon (both apple-touch-icon and android-chrome), so it stays; it reads as a white tile on dark and disappears into the light well.",
   "license": "ImageRouter brand mark, used nominatively to identify the connected service; trademark rights remain with ImageRouter.",
-  "sha256": "34cf859c170a96d08b2a19d4a6fb5eb09c20c901b3c2db4ef3fee1a8fd305061"
+  "sha256": "6460b2f8cd6299b11ef31f00cadc59b1dc8f3ef35e47c28f9748d1fc56d84994"
 }

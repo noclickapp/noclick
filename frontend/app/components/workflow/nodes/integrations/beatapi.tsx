@@ -10,14 +10,23 @@ const BeatapiIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <img
-        ref={ref}
-        src="/icons/beatapi.png"
-        alt=""
-        className={className}
-        style={{ ...style, objectFit: 'contain' }}
-        {...props}
-    />
+    <>
+        <img
+            ref={ref}
+            src="/icons/beatapi.png"
+            alt=""
+            className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, objectFit: 'contain' }}
+            {...props}
+        />
+        <img
+            src="/icons/beatapi-dark.png"
+            alt=""
+            className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, objectFit: 'contain' }}
+            {...props}
+        />
+    </>
 ));
 BeatapiIcon.displayName = 'BeatapiIcon';
 

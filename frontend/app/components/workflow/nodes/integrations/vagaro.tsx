@@ -9,7 +9,7 @@ import { NodeDefinition } from '~/components/workflow/nodes/types';
 
 // Official logo from Vagaro API documentation.
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/vagaro.svg" alt="" aria-hidden="true" className={className}
+    <img src="/icons/vagaro.png" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
 );
 

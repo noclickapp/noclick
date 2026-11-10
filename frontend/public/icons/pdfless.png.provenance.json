@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/pdfless.png",
-  "source": "https://www.pdfless.com/brand/favicon.png (official website favicon)",
-  "license": "Pdfless brand mark used nominatively to identify the connected service; trademark rights remain with Pdfless.",
-  "sha256": "45ff56d695a63077d744f3c63dd015cf4bebe7569a40a0d02f9fe73e49bffe77"
+  "source": "https://pdfless.com/favicons/android-chrome-512x512.png",
+  "found_at": "https://pdfless.com/favicons/site.webmanifest (the web app manifest linked from pdfless.com)",
+  "source_kind": "company site (web app manifest icon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "DECISION: Pdfless has no symbol; its favicon and app icons are the PDFLESS wordmark on a navy tile, so this is its own icon mark (rule 1's wordmark-only case). The navy tile is that icon's own tile. No SVG qualified: the n8n node's SVGs wrap a base64 PNG. The manifest names /android-chrome-512x512.png at the root; the file is served from /favicons/.",
+  "license": "Pdfless brand mark, used nominatively to identify the connected service; trademark rights remain with Pdfless.",
+  "sha256": "32af6afcd9991836157905609746af082c47a364c0babf77707e7f2c9e3b2a9f"
 }

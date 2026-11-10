@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/rkvst.png",
-  "source": "https://docs.datatrails.ai/DataTrails_Favicon_32x32.png",
-  "license": "DataTrails official brand icon, used nominatively to identify Rkvst (now DataTrails). Trademark rights remain with DataTrails.",
-  "sha256": "bb7725ce91b06ad8319d9bf9edd4d9a12ca47490866478a2f9627dd72c9089f0"
+  "source": "https://raw.githubusercontent.com/datatrails/datatrails-docs/main/static/DataTrails_Favicon.png",
+  "found_at": "https://github.com/datatrails/datatrails-docs/tree/main/static (the docs site's static folder; docs.datatrails.ai serves the 16 and 32px copies)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "DECISION: only a small step up: 49px against 32px, and both are pixel-level small. No bigger copy of the DataTrails mark exists in the repo: android-chrome-192/512, apple-touch-icon.png and favicon-*.png there are the retired RKVST blue tick (downloads/rkvst/s2-3/legacy-android-512.png), and the only vectors are the DataTrails and RKVST wordmarks. Also: www.datatrails.ai now redirects to onid.co, an unrelated company (never use the batch's homepage reference); only docs.datatrails.ai still serves DataTrails content, so the service may be winding down.",
+  "license": "DataTrails (formerly RKVST) brand mark, used nominatively to identify the connected service; trademark rights remain with DataTrails (formerly RKVST).",
+  "sha256": "3b7d74ac3432c7054ae9354d252a536c1093a783e8c1381fd3ec6559da78b6c6"
 }

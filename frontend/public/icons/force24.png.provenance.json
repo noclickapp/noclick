@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/force24.png",
-  "source": "https://force24.co.uk/wp-content/uploads/2026/04/cropped-Force24pill-192x192.png",
-  "license": "Force24 brand mark, used nominatively to identify the connected service. Trademark rights remain with Force24.",
-  "sha256": "1088d0ff097a1bc21136af71bae0730cdbe51180c9542eec4b109f428ca61b88"
+  "source": "https://force24.co.uk/wp-content/uploads/2026/04/Force24pill.png",
+  "found_at": "https://force24.co.uk/ (its site icons cropped-Force24pill-32/180/192/270.png are cut from this upload)",
+  "source_kind": "company site (app icon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "No SVG qualifies. The only SVG of the pill, the Force24 portal's https://platform.data-crypt.com/favicon.svg (s2-3), is an auto-trace: dense, uneven cubics around the pill's ends, straight strokes encoded as near-collinear curves (the F's \"s0-67.66,0-67.66\"), closing artefacts (\"h.02v.02\"). It is also the inverse colourway (navy pill, white letters over a white rect) and vanishes on the dark theme. Only the \"Force24\" wordmark exists as a clean vector (first pass). This is the same tile as the current file at 2215px instead of 192px.",
+  "license": "Force24 brand mark, used nominatively to identify the connected service; trademark rights remain with Force24.",
+  "sha256": "3e7d84114653f3faa7f9a3a651a1397354fc9db9c716c0105e6e9140aa171036"
 }

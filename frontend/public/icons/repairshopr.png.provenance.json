@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/repairshopr.png",
-  "source": "https://www.repairshopr.com/wp-content/uploads/2020/04/cropped-logo-R-1-192x192.png (official homepage rel=icon)",
-  "license": "RepairShopr trademark, used nominatively to identify the connected service. All trademark rights remain with RepairShopr.",
-  "sha256": "8ce5c6bf15af2e96ff613cf090d6988aa69ce1bb9a80f1409e6c3a2ce1adb416"
+  "source": "https://www.repairshopr.com/wp-content/uploads/2020/04/logo-R-1.png",
+  "found_at": "https://www.repairshopr.com/ (og:image, 512x512; its WordPress crops cropped-logo-R-1-32/180/192/270 are the favicons)",
+  "source_kind": "company site (favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "RepairShopr publishes its mark only as PNG: no SVG on its site, app, docs or GitHub. This is the full-size original (512px against the current 192px crop). The blue gradient tile is the brand's own app icon.",
+  "license": "RepairShopr brand mark, used nominatively to identify the connected service; trademark rights remain with RepairShopr.",
+  "sha256": "a3ffd668dce6501e7228adf92a6405abbdcea3eae9fd3ceb363735382050a1fc"
 }

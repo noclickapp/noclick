@@ -46,8 +46,8 @@ it('selects an owned Freshteam key through the actual cache', () => {
     expect(autoSelectCredentialFromCache(TYPE)).toEqual({ freshteam: 'ft-own' });
 });
 
-it('initializes the actual icon registry with exact official developer wordmark', () => {
-    expect(createHash('sha256').update(vendorSvg).digest('hex')).toBe('dd8a2973d0fe5f06067d93dd4513ea2038fc49c3a9406cdb78f9b10ed90b673e');
+it('initializes the actual icon registry with exact official Freshteam mark', () => {
+    expect(createHash('sha256').update(vendorSvg).digest('hex')).toBe('aaa3064b4eb4aa7da8c9809a11e08f1575c21e6ea2970ea401cbf4100c163fb6');
     setNodeIconData({ [TYPE]: { type: TYPE, label: FreshteamNode.label, description: FreshteamNode.description, iconColor: '', credentialKeys: ['freshteam'], iconHtml: renderToStaticMarkup(<FreshteamNode.Icon />), dimensions: FreshteamNode.dimensions! } });
     const icon = getCredentialIcon('freshteam');
     expect(icon.hasServiceIcon).toBe(true);

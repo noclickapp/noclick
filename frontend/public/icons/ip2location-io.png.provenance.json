@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/ip2location-io.png",
-  "source": "https://cdn.ip2location.io/assets/img/icons/apple-touch-icon.png",
-  "license": "Provider brand asset; used for identification of the IP2Location.io integration. All rights remain with IP2Location.",
-  "sha256": "e3f04daca3c8f6d63dff5a6ddc083a394f3a014d757f3ef6f38c8457e5630f1d"
+  "source": "https://cdn.ip2location.io/assets/img/icons/android-chrome-512x512.png",
+  "found_at": "https://www.ip2location.io/site.webmanifest",
+  "source_kind": "company site (web app manifest icon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "The only SVG (cdn.ip2location.io/assets/img/logo.svg, src3) is a potrace auto-trace of the wordmark (potrace's translate/scale(0.1,-0.1) group, wobbly polygon letters), so rule 3 rejects it. The purple square is the brand's own app-icon tile.",
+  "license": "IP2Location.io brand mark, used nominatively to identify the connected service; trademark rights remain with IP2Location.io.",
+  "sha256": "ced7dc1a42504a901a8693723b39ba4839e72906b4434d7a89c97ef4fb2efafe"
 }

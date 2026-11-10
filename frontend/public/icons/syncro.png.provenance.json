@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/syncro.png",
-  "source": "https://syncrosecure.com/wp-content/uploads/2024/09/Favicon-300x300.png",
-  "license": "Syncro trademark; used to identify the Syncro integration",
-  "sha256": "25ea6eeceabdd8deb302a3d829fb7fd7edfd33e4288b6548e9cf6299f090f84b"
+  "source": "https://syncrosecure.com/wp-content/uploads/2024/12/Syncro-Logo-Package.zip",
+  "found_at": "https://syncrosecure.com/about/media-room/ (Syncro logo package; file \"Syncro_S Logo Orange_800.png\" extracted unchanged)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "DECISION: the brand kit's S is cream on #9C3502, while the site favicon (the current 300px file) is a lighter #BC4A17 circle with the S cut out, so on the dark theme the current icon shows a black S. The brand-kit file is correct on both themes and larger. The kit also has 'Syncro_S Logo Black_800.png'. Every Syncro SVG is the SYNCRO wordmark; no vector of the S-in-circle exists.",
+  "license": "Syncro brand mark, used nominatively to identify the connected service; trademark rights remain with Syncro.",
+  "sha256": "8bcd5d53e527517adafd4800f6c8e215263de89a4800fea951c8d76fbf95e54f"
 }

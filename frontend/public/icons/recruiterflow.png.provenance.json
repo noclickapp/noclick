@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/recruiterflow.png",
-  "source": "https://d30417wqrqt2r9.cloudfront.net/static/css/images/recruiterflow_favicon_new.png (linked by https://recruiterflow.com/)",
-  "license": "Recruiterflow brand mark used nominatively to identify the connected service; trademark rights remain with Recruiterflow.",
-  "sha256": "1246128718b75622f848acfb7b97622118013c248a2eebcb9c85992262c322de"
+  "source": "https://cdn.prod.website-files.com/6800ca1bb715268c2682855e/68ad89c36e599845a12e06f9_rf_webclip.png",
+  "found_at": "https://recruiterflow.com/ (<link rel=\"apple-touch-icon\"> webclip)",
+  "source_kind": "company site (favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "Every Recruiterflow logo is raster (header webp, favicons and webclip PNG, the app's recruiterflow-new-logo.png). The webclip is the largest copy of the app mark: 256px against the current 144px.",
+  "license": "Recruiterflow brand mark, used nominatively to identify the connected service; trademark rights remain with Recruiterflow.",
+  "sha256": "2af5691112ce3361887cc76125a1c18c6199af1925a040a268ed88babca7d708"
 }

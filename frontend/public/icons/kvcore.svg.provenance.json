@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/kvcore.svg",
+  "source": "https://boldtrail.com/platform/",
+  "found_at": "https://boldtrail.com/platform/ (inline <svg> header logo; reached from kvcore.com/login \"Learn More Today\" -> insiderealestate.com/kvcore -> 301 -> boldtrail.com/platform)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the gradient tile and the white B (elements 0-1); removed the BOLDTRAIL wordmark (elements 2-11)",
+    "cropped the viewBox to the tile (no pad: it is the app-icon tile)",
+    "cleaned editor metadata"
+  ],
+  "notes": "DECISION: Inside Real Estate now sells kvCORE as BoldTrail, so the current mark is BoldTrail's gradient 'B' tile; the old 'kvCORE PLATFORM' logo is a raster wordmark only (kv-logo-white.png, white, invisible on light). The node is still labelled kvCORE: consider relabelling it 'BoldTrail (kvCORE)' so the B reads right. The tile is BoldTrail's own app icon shape, so it stays; icon_check passes both themes with one file.",
+  "license": "kvCORE (now BoldTrail, Inside Real Estate) brand mark, used nominatively to identify the connected service; trademark rights remain with kvCORE (now BoldTrail, Inside Real Estate).",
+  "sha256": "9ee4874cacd910c5b0895ffbd779c17e83f5d2671642558e1dd7143a3cd6dfc9"
+}

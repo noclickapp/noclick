@@ -28,6 +28,6 @@ describe('native Ragic scoped reads',()=>{
     });
     it('renders the exact unchanged official WebP asset',()=>{
         const Icon = RagicNode.Icon;
-        expect(renderToStaticMarkup(<Icon />)).toContain('/icons/ragic.webp');
+        expect(renderToStaticMarkup(<Icon />)).toContain('/icons/ragic.png');
     });
 });

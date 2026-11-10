@@ -7,7 +7,7 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
 const VectaraIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
-    ({ style, ...props }, ref) => <img {...props} ref={ref} alt="" src="/icons/vectara.svg" style={{ ...style, objectFit: 'contain' }} />,
+    ({ style, ...props }, ref) => <img {...props} ref={ref} alt="" src="/icons/vectara.png" style={{ ...style, objectFit: 'contain' }} />,
 );
 VectaraIcon.displayName = 'VectaraIcon';
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={VectaraIcon} iconColor="" />;

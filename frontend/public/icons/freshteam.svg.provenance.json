@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/freshteam.svg",
-  "source": "https://developers.freshteam.com/docs/custom-apps/ (official Freshteam developer wordmark, preserved from original noclickapp/noclick4#2878)",
-  "license": "Brand mark of its owner, shown nominatively to identify the service; no trademark rights are claimed or granted",
-  "sha256": "dd8a2973d0fe5f06067d93dd4513ea2038fc49c3a9406cdb78f9b10ed90b673e"
+  "source": "https://d3oc9eyfpjcc28.cloudfront.net/universal-apps/shared-assets/product-logos/freshteam-dew.svg",
+  "found_at": "https://www.freshworks.com/apps/freshteam/ (Freshworks Marketplace product filter, which loads every Freshworks product's logo from its shared-assets/product-logos folder)",
+  "source_kind": "parent company site",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: the two paths as published (purple leaf tile #7052CC, white person cut-out)",
+    "stripped the width/height attributes",
+    "cropped the viewBox to the mark (pad 0.02)"
+  ],
+  "notes": "The current file (the developer portal's 'freshteam Developers' wordmark with <text>, coral mark) is replaced. The leaf tile is the brand's own app-icon shape (one square corner, top right), not an added background, so it stays. White person sits inside the purple shape; purple reads on both themes, so one file serves both.",
+  "license": "Freshteam (Freshworks) brand mark, used nominatively to identify the connected service; trademark rights remain with Freshteam (Freshworks).",
+  "sha256": "aaa3064b4eb4aa7da8c9809a11e08f1575c21e6ea2970ea401cbf4100c163fb6"
 }

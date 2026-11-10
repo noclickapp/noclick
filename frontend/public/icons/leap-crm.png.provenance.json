@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/leap-crm.png",
-  "source": "https://leaptodigital.com/apple-touch-icon.png",
-  "license": "Leap brand mark used nominatively to identify the connected service; trademark rights remain with Leap.",
-  "sha256": "addc70bcacb3392ae54e6efbbf85bccbe30c395ba647e9f4be4cfc3dcbe47d2c"
+  "source": "https://leaptodigital.com/android-chrome-512x512.png",
+  "found_at": "https://leaptodigital.com/manifest.json?ver=1.4 (the web app manifest linked from leaptodigital.com)",
+  "source_kind": "company site (web app manifest icon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "No SVG qualified: the only Leap vectors (leaptodigital.com and jobprogress.com safari-pinned-tab.svg) are potrace auto-traces of the bitmap. 'leap' is the same company (both call api.jobprogress.com) and should get this same 512px file (its own second-pass search found the same URL).",
+  "license": "Leap (Leap CRM, formerly JobProgress) brand mark, used nominatively to identify the connected service; trademark rights remain with Leap (Leap CRM, formerly JobProgress).",
+  "sha256": "dfb4bac3a896c948d6953fc1ef3a0ae56779462eaa4e33f27af3b96ed1214e02"
 }

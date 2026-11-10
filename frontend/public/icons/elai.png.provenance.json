@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/elai.png",
-  "source": "https://static.elai.io/favicon.ico",
-  "license": "Elai brand icon, used to identify the connected service. Trademark rights remain with Elai. Linked from https://app.elai.io/. Format converted from the official favicon ICO to PNG with sips; design unchanged.",
-  "sha256": "9d92e6a4d19708f98dbbce5cb21a12e5696353a0a8f6e275ded47704327aac0b"
+  "source": "https://elai.io/wp-content/uploads/2022/08/android-chrome-512x512-1.png",
+  "found_at": "https://elai.io/ (<link rel=\"apple-touch-icon\"> and <link rel=\"shortcut icon\"> both point at it; downloads/elai/src1/home.html)",
+  "source_kind": "company site (app icon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "The \"e.\" mark exists only as raster: every Elai SVG is the \"elai.\" wordmark or the \"elai. powered by Panopto\" lockup (first pass; search2 agrees; the press kit link is a dead Google Drive folder). This is the same tile at 512px instead of a 48px ICO conversion. icon_check flags the black background; it is Elai's own app tile. On the dark theme the tile merges with the background and the white \"e.\" stays.",
+  "license": "Elai brand mark, used nominatively to identify the connected service; trademark rights remain with Elai.",
+  "sha256": "a58afc1dd9389e04eaecd13f00e24f4a56c90cee580589379ec73864153f7140"
 }

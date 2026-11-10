@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/breezy-hr.png",
-  "source": "https://files.readme.io/7ce9a2c-small-favicon_192.png (official Breezy HR API documentation favicon, https://developer.breezy.hr/reference/overview)",
-  "license": "Breezy HR brand mark used nominatively to identify the integration; trademark rights remain with Breezy HR.",
-  "sha256": "88214cc9f4b62e16566fc43f19abf3a68b3e32c294421f59c75970a90b27663c"
+  "source": "https://cdn.prod.website-files.com/6127d83f257132e4fe0bddc6/620bbab0cc5dd2869894749c_breezyhr-icon-large.png",
+  "found_at": "https://breezy.hr/ (<link rel=\"apple-touch-icon\">)",
+  "source_kind": "company site (apple-touch icon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "No SVG qualifies (the site's SVGs are the Hire/Perform product wordmarks and partner badges). The 256px homepage icon is larger and the current colour; it reads on both themes.",
+  "license": "Breezy HR brand mark, used nominatively to identify the connected service; trademark rights remain with Breezy HR.",
+  "sha256": "0d999dc7fd04a17cc8784f66cd87359116b0e62150536570129753a63399075c"
 }

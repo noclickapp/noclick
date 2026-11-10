@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/vagaro.png",
+  "source": "https://vagaro.azureedge.net/static-content/PublicImages/Images/vagaro-small-logo-2x-new.png",
+  "found_at": "https://www.vagaro.com/ (the mobile header logo, <img id=\"ctl00_imgLogoMobile\" alt=\"Vagaro\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "No SVG qualifies: every Vagaro vector is the 'vagaro' wordmark (vagaro-logo-new.svg, /_next_assets/logos/logo.svg, the docs and Zendesk theme logos), and the only vector of the V, /_next_assets/favicon/safari-pinned-tab.svg, is a potrace auto-trace ('Created by potrace 1.14'). This 500x456 PNG is the bare V as vagaro.com shows it in its mobile header: transparent, no tile, red that reads on both themes (checked on the dark and light wells). It replaces the current red wordmark. The search's pick, the Vagaro Pro app icon (white V on a red-to-dark gradient tile), is the business app's tile; the bare mark is Vagaro's own logo and fits both apps.",
+  "license": "Vagaro brand mark, used nominatively to identify the connected service; trademark rights remain with Vagaro.",
+  "sha256": "85b4e0379e2ff90c9992976df911ba5e3c28c238f168e929c845baf5c6ec4960"
+}

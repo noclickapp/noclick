@@ -7,14 +7,14 @@ import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nod
 import type { CSSProperties as BrandCSSProperties } from 'react';
 // Vector brand artwork from https://iconlogovector.com/logo/teachable
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/teachable.svg" alt="" aria-hidden="true" className={className}
+    <img src="/icons/teachable.png" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
 export const TeachableIcon: SvgIconComponent = forwardRef<
     HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>
 >(({ style, ...props }, ref) => (
-    <img {...props} ref={ref} src="/icons/teachable.svg" alt=""
+    <img {...props} ref={ref} src="/icons/teachable.png" alt=""
         style={{ ...style, objectFit: 'contain' }} />
 ));
 TeachableIcon.displayName = 'TeachableIcon';

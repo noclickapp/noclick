@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/vybit-notifications.png",
-  "source": "https://vybit.net/images/vybit_logo100px.png",
-  "license": "Vybit trademark; official provider asset used to identify the Vybit Notifications integration",
-  "sha256": "91df53407c58b3cc24845a105c4c3d09242d6bb28314644648e6cda046fb5528"
+  "source": "https://vybit.net/images/vybit_logo.png",
+  "found_at": "https://vybit.net/ (referenced by its /js/vybit.js; the homepage shows the 100px derivative, the current file)",
+  "source_kind": "company site (app logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "The 496px original of the 100px logo the current file is. The orange square is Vybit's own app tile. No SVG exists anywhere Vybit publishes (web app, developer site, SDK repos, npm packages).",
+  "license": "Vybit brand mark, used nominatively to identify the connected service; trademark rights remain with Vybit.",
+  "sha256": "7565a511e5fa04f57e39efa28d6756bf9eaa524ea008f1819efa1ca27d872b9c"
 }

@@ -4,7 +4,7 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
 const RagicIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
-    ({ className, style, ...props }, ref) => <img ref={ref} src="/icons/ragic.webp" alt="" className={className} style={style} {...props} />
+    ({ className, style, ...props }, ref) => <img ref={ref} src="/icons/ragic.png" alt="" className={className} style={style} {...props} />
 );
 RagicIcon.displayName = 'RagicIcon';
 const RagicNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={RagicIcon} iconColor="#19191b" />;

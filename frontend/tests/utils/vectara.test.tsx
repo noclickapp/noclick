@@ -43,7 +43,7 @@ const fixture = {
     "list_corpus_jobs",
     "get_corpus_job"
   ],
-  "iconSha256": "f130ea1998718ea828497d31de90e24af53d1e7c5b1ec24656d568f7bc174e50"
+  "iconSha256": "fddadeaa32add07c912fac4fb41cc69e43779e35ab9dd18d578668b117b86019"
 };
 
 beforeAll(() => loadNodeSchemas([fixture.nodeType]));
@@ -124,13 +124,13 @@ describe('native Vectara', () => {
         expect(result.sidecar).toBe('retained platform metadata');
         expect(JSON.stringify(result)).not.toContain('"api_key":');
     });
-    it('renders the exact official SVG with contain layout', () => {
+    it('renders the exact official icon with contain layout', () => {
         const { container } = render(<VectaraNode.Icon />);
         expect(container.querySelector('img')?.getAttribute('src')).toBe(
-            '/icons/vectara.svg'
+            '/icons/vectara.png'
         );
         expect(container.querySelector('img')?.style.objectFit).toBe('contain');
-        const asset = readFileSync(resolve('public/icons/vectara.svg'));
+        const asset = readFileSync(resolve('public/icons/vectara.png'));
         expect(createHash('sha256').update(asset).digest('hex')).toBe(
             fixture.iconSha256
         );

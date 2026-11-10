@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/smtp2go.ico",
+  "source": "https://www.smtp2go.com/favicon.ico",
+  "found_at": "https://www.smtp2go.com/ (<link rel=\"icon\" href=\"/favicon.ico\">)",
+  "source_kind": "company site (favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "DECISION: an ICO whose largest frame is 48x48: small for a 48px canvas icon on a 2x screen, but it is SMTP2GO's own favicon mark, and the current file (160x50 PNG) is the 'SMTP2GO' wordmark, whose dark text vanishes on the dark theme (rule 1 and 4). Every SMTP2GO vector is the wordmark (app-login logo-alt.svg, the API-docs SVG, the WordPress plugin icon.svg), and so are its GitHub org avatar and plugin icon PNGs; no envelope larger than 48px exists anywhere (no apple-touch / android / manifest icons). The other option is the blue '2' cut from the official wordmark SVG (src2 element 0), which SMTP2GO never shows alone. The file ships as .ico unchanged (never re-encoded).",
+  "license": "SMTP2GO brand mark, used nominatively to identify the connected service; trademark rights remain with SMTP2GO.",
+  "sha256": "b7753c9db8f2e343189367a8233cc844f71ad10b3d4d9d44c578080a824b5c8e"
+}

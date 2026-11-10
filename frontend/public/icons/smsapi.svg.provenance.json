@@ -1,7 +1,0 @@
-{
-  "path": "frontend/public/icons/smsapi.svg",
-  "source": "https://www.smsapi.com/blog/wp-content/themes/smsapi-blog-2021/assets/images/logo.svg",
-  "license": "SMSAPI brand mark, used nominatively to identify the connected service; trademark rights remain with SMSAPI.",
-  "sha256": "9f255d10c15ff1bae02e9851b98fc5eb49027acc247d28f1d940f2ecfb445fe6",
-  "modifications": "Removed trailing ASCII whitespace only; the official vector artwork is unchanged."
-}

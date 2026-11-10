@@ -5,7 +5,7 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const SMSAPIIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/smsapi.svg" alt="" aria-hidden="true" className={className}
+    <img src="/icons/smsapi.png" alt="" aria-hidden="true" className={className}
         style={{ ...style, objectFit: 'contain' } as CSSProperties} />
 );
 export const SMSAPINode: NodeDefinition = {

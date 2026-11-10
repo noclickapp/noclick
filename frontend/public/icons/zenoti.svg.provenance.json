@@ -1,7 +1,0 @@
-{
-  "path": "frontend/public/icons/zenoti.svg",
-  "source": "https://www.zenoti.com/zenoti-logo.svg",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no trademark rights are claimed or granted.",
-  "sha256": "3c4dd4a172e690cc6af21af968e2da12ea89234f24842bb3b4d0f40ab075e475",
-  "modifications": "Trimmed trailing whitespace; vector paths and colors unchanged."
-}

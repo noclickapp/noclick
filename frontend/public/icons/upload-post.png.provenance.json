@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/upload-post.png",
-  "source": "https://upload-post.com/favicon-192.png",
-  "license": "Upload Post trademark; official brand icon used to identify the integration. Copyright Upload Post.",
-  "sha256": "b270599088302ced97221b71c1443a9eddbb5277c71828ec3918fc12f8871d27"
+  "source": "https://docs.upload-post.com/img/upload-post-cloud-transparent.png",
+  "found_at": "https://docs.upload-post.com/ (its <link rel=\"icon\"> and schema.org Organization logo)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "The same transparent cloud mark at 678x594 instead of the 192px favicon; reads on both themes. The only SVG (the n8n node icon) is a 266-path auto-trace on a navy square, rule 3.",
+  "license": "Upload-Post brand mark, used nominatively to identify the connected service; trademark rights remain with Upload-Post.",
+  "sha256": "a1b4271d6ca538c3eccb11f8bc194135ce32a9b5261ca88cb7acc7f615fa1381"
 }

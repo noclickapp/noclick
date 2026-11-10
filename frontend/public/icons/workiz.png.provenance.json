@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/workiz.png",
-  "source": "https://developer.workiz.com/v2/Workiz_Logox500.png",
-  "license": "Workiz trademark; official API documentation logo used to identify the integration",
-  "sha256": "6ec251c1ae1f98114d136bde2663a3e86360a89f995949e5bf3640e4c8100578"
+  "source": "https://www.workiz.com/icon.png",
+  "found_at": "https://www.workiz.com/ (link rel icon / apple-touch-icon)",
+  "source_kind": "company site (favicon / apple-touch icon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "Replaces the current 'WORKIZ' pill wordmark PNG (rule 1). The only Workiz SVGs are that pill wordmark. On the dark theme the thin dark outer ring (about 22% of the pixels) merges into the tile, but the yellow disc and W stay clear; Workiz publishes no version for dark backgrounds.",
+  "license": "Workiz brand mark, used nominatively to identify the connected service; trademark rights remain with Workiz.",
+  "sha256": "4a2d17c94b4c5110a8d90821db5f92b7dda1854914a0fbb4f471f8cace473f60"
 }

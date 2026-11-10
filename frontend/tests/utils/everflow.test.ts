@@ -40,7 +40,7 @@ describe('Everflow native consumers', () => {
     expect(operations.some(op => /conversion|payout|tracking_link|payment|export/.test(op))).toBe(false);
     expect(schema['x-agent-tool-provider']).toBe(true);
     const svg = readFileSync(join(__dirname, '../../public/icons/everflow.svg'), 'utf8');
-    expect(svg).toContain('viewBox="0 0 12 10"');
+    expect(svg).toContain('viewBox="-0.628 -0.726 37.766 35.453"');
     expect(svg.match(/<path /g)).toHaveLength(3);
     expect(svg).not.toMatch(/<script|<image|href=/);
   });

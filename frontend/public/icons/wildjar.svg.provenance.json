@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/wildjar.svg",
+  "source": "https://app.wildjar.com/assets/brand/wildjar-logo.svg",
+  "found_at": "https://app.wildjar.com/login",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the WILDJAR wordmark paths (elements 0 and 1: grey WILD, orange JAR)",
+    "kept the low-poly bear (elements 2-42, incl. its gradient overlay)",
+    "stripped editor metadata",
+    "cropped the viewBox to the bear (pad 0.02)"
+  ],
+  "notes": "DECISION: the bear is a wide logomark (2.08:1), so it sits small in a square tile, and icon_check reports 'wordmark-shape' (it is not a wordmark). WildJar's favicon puts the bear on a slate square, but that tile exists only as JPG/PNG, so the vector has no tile. Its yellows (#FDCD0A/#F59E1E) are a touch lighter than the favicon JPG's.",
+  "license": "WildJar brand mark, used nominatively to identify the connected service; trademark rights remain with WildJar.",
+  "sha256": "cedec3958bb23bf64dd11d2486035ceb3cb00756fa395aaa75d05585d544ef7a"
+}

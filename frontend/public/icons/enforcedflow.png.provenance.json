@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/enforcedflow.png",
-  "source": "https://enforcedflow.com/_astro/favicon.B74aPzYi.png",
-  "license": "EnforcedFlow brand mark used nominatively to identify the service; trademark rights remain with EnforcedFlow.",
-  "sha256": "f3a730c6e3f386c3f298aeaa0a530a07defe46d97aacc0c982a1e451e04d6743"
+  "source": "https://app.enforcedflow.com/android-chrome-512x512.png",
+  "found_at": "https://app.enforcedflow.com/site.webmanifest (icons: android-chrome-192x192.png, android-chrome-512x512.png)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "No SVG of the mark exists (first pass; the docs favicon.svg is Starlight's default star). Same mark as the current file at 512px instead of 255px; transparent around the diamond.",
+  "license": "EnforcedFlow brand mark, used nominatively to identify the connected service; trademark rights remain with EnforcedFlow.",
+  "sha256": "43c0aadf5c518fbb06b6bb2aa879dbce52c2b3e861a738958102976dca394f21"
 }

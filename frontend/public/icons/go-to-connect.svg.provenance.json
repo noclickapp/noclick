@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/go-to-connect.svg",
-  "source": "https://edge.sitecorecloud.io/gototechnol00e8-mktglobalxm07e7-mktglobalpr9498-b870/media/goto/images/shared/logos/goto/sub-nav-logos/connect.svg?iar=0",
-  "license": "GoTo trademark; official provider logo used to identify this integration.",
-  "sha256": "c4f5510c15df9265ee35d1d5f3cc407a1882754f3da7a1237fa8f487adbc4e47"
+  "source": "https://app.goto.com/index.2e321728887d010ebfd1.js",
+  "found_at": "https://app.goto.com/ (GoTo's web app; the bundle's goto-logo component, GoTo's Chameleon design system, 'compact' variant: getSelectedSvg returns the dark-mode or light-mode 32x32 mark)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "extracted verbatim from the bundle's light-mode compact string literal (downloads/go-to-connect/src6/index.js) into goto-logo-compact-light.svg",
+    "stripped nothing drawn: both paths kept (yellow #FFE900 bar, black G)",
+    "cropped the viewBox to the mark (pad 0.02)"
+  ],
+  "variant": "light mode",
+  "notes": "The current file is the product wordmark ('Connect', black, invisible on dark). GoTo's products all wear the GoTo master mark now (product names appear only as wordmarks beside it), and this compact G-and-yellow-bar mark is the one GoTo draws itself for small square spaces, in its own light (black G) and dark (white G) versions, so no recolouring was needed. The G's stem dips into the bar's top edge: that is GoTo's own drawing (the same in the Play Store icon).",
+  "license": "GoTo (GoTo Connect) brand mark, used nominatively to identify the connected service; trademark rights remain with GoTo (GoTo Connect).",
+  "sha256": "66647c6f917a41eddf496903d2f74b2179a397bad86fcf67e52a8dc9f352a2ba"
 }

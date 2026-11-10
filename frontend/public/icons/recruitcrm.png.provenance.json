@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/recruitcrm.png",
-  "source": "https://recruitcrm.io/apple-icon.png",
-  "license": "Recruit CRM trademark; used to identify the Recruit CRM integration",
-  "sha256": "391ff9642f9acf01700762bc10ab69a139aa25162109afb04cd81afc50e0460f"
+  "source": "https://app.recruitcrm.io/assets/images/icon-512.png",
+  "found_at": "https://app.recruitcrm.io/manifest.json (the web app's manifest, linked from https://app.recruitcrm.io/login)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "No SVG qualifies: the only one, rcrm_logo.svg in RecruitCRM-Dev/JobPortal-frontend, is an auto-traced full wordmark, and the press page's media kit is behind a form. This 512px app icon is about 3x the current file and in the exact brand blue. DECISION: it is a full-bleed square (Android masks it), where the current apple-icon is a rounded squircle with transparent corners; keep the current file if the squircle shape matters more than size and colour.",
+  "license": "Recruit CRM brand mark, used nominatively to identify the connected service; trademark rights remain with Recruit CRM.",
+  "sha256": "78cd9b7123d4c7f7f09fe2b24d32e9a3b793994ab471e21b6a87cb7269df4849"
 }

@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/anakin-io-dark.png",
+  "source": "https://anakin.io/anakin_dark.png",
+  "found_at": "https://anakin.io/ (the site's logo component switches /anakin.png and /anakin_dark.png by theme)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published",
+    "none: the company's own dark-theme file as published"
+  ],
+  "variant": "dark mode",
+  "notes": "No SVG qualifies: every SVG in the Anakin-Inc GitHub org is the same auto-trace (962 short cubic curves, wobbly square edges). The current icon's dark green circle vanishes on the dark theme (icon_check: 70% lost); Anakin publishes its own white version for dark backgrounds, so the pair is that version plus its light counterpart, per rule 4. DECISION: the light file could stay the current 256px favicon (anakin.io/favicon.png, byte-identical to the current file) instead of the 221x231 anakin.png; I used the matched pair so both themes have the same size and framing.",
+  "license": "Anakin brand mark, used nominatively to identify the connected service; trademark rights remain with Anakin.",
+  "sha256": "27f4089c946a9fa2b55cb3f5bdc5061b7e18d2c315b836b5e6ac76849cd38410"
+}

@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/ragic.png",
+  "source": "https://raw.githubusercontent.com/ragic/public/master/Press%20Kit/Icons/Ragic_Icon_iTunesArtwork%402x.png",
+  "found_at": "https://github.com/ragic/public/tree/master/Press%20Kit/Icons (Ragic's own press kit)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "No SVG of any Ragic logo exists (the press kit and the site are raster only). This replaces the current 'Ragic!' wordmark webp with the app mark. The white square is the iOS app icon's own tile (iTunesArtwork is square; iOS rounds it): it shows as a white tile on the dark theme and blends into the light one, and the red R! reads on both. DECISION: the kit's 'Rounded Icons/Ragic_Icon_Rounded_200x200.png' (downloads/ragic/src2) has transparent rounded corners but is only 200px and its red is #D62027, not the kit's #D40E0E; 'Rounded Icons/Ragic_Icon_Rounded_iTunesArtwork.png' (downloads/ragic/src1, 512px) is in fact square, not rounded.",
+  "license": "Ragic brand mark, used nominatively to identify the connected service; trademark rights remain with Ragic.",
+  "sha256": "71a33fa279f367786bc03d73eceae4fcea0e995ad7988d1b0d39c002a43b56b4"
+}

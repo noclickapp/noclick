@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/dnsfilter.svg",
+  "source": "inline <svg aria-label=\"DNSFilter\" viewBox=\"0 0 515 120\"> on https://app.dnsfilter.com/login; the same paths ship in https://app.dnsfilter.com/_next/static/chunks/65338-30b5038997452201.js and loading-5fccb3d2a2441a25.js",
+  "found_at": "https://app.dnsfilter.com/login (logo in the sign-in page h1)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the blue swoosh (element 10, fill #3527fd); removed the \"DNSFilter\" letter paths (elements 0-9)",
+    "cropped the viewBox to the swoosh, made square (--square, pad 0.02) so the source's preserveAspectRatio=\"xMinYMid meet\" cannot left-align it",
+    "clean"
+  ],
+  "notes": "First SVG of the mark: the second-pass browser search found it in the app login page's rendered DOM. The blue reads on both themes, so there is no dark variant. Replaces the WEBP.",
+  "license": "DNSFilter brand mark, used nominatively to identify the connected service; trademark rights remain with DNSFilter.",
+  "sha256": "78dffe41a28ad6ac00fe11bf9ac60912b65c7bd5314167bc8793e35e903f4b0c"
+}

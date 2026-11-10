@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/casebook.png",
-  "source": "https://gohub.casebook.net/hs-fs/hubfs/logo-raspberry-1-1.png",
-  "license": "Official Casebook brand mark, used nominatively to identify the connected service. Trademark rights remain with Casebook PBC.",
-  "sha256": "0d3070a07259041c0a520d8db58795c9db57f0196fa928080005f402ffa4eadb"
+  "source": "https://gohub.casebook.net/hubfs/logo-raspberry-square-2.png",
+  "found_at": "https://gohub.casebook.net/knowledge (<link rel=\"shortcut icon\">)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "No SVG qualifies: casebook.net's two SVG logos (Logo-2-1.svg, Logos-small.svg) wrap embedded bitmaps. The 536px file is the largest copy; the overlap is a knockout (transparent), as in the current file, and the mark reads on both themes.",
+  "license": "Casebook brand mark, used nominatively to identify the connected service; trademark rights remain with Casebook.",
+  "sha256": "a15d04dd87655a5d5839842d9f91911b02cf5ff71a3ef1aba19ece85448c133b"
 }

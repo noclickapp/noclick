@@ -7,8 +7,8 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const KvcoreIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/kvcore.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain', backgroundColor: '#263746', borderRadius: 4 } as CSSProperties} />
+    <img src="/icons/kvcore.svg" alt="" aria-hidden="true" className={className}
+        style={{ ...style, objectFit: 'contain' } as CSSProperties} />
 );
 
 export const KvcoreNode: NodeDefinition = {

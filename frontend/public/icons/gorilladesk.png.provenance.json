@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/gorilladesk.png",
-  "source": "https://cdn.gorilladesk.com/assets/images/gorilladesk.png",
-  "license": "GorillaDesk brand mark used nominatively to identify the integration; trademark rights remain with GorillaDesk. Official logo referenced by https://api.gorilladesk.com/v1/specs.",
-  "sha256": "3dad228164f37dc0cabec499f29951f27560649dd81486d9e08034285c515839"
+  "source": "https://gorilladesk.com/brand/gorilladesk-app-icon.png",
+  "found_at": "https://gorilladesk.com/ (header: the gorilla app mark beside the text wordmark; the file sits in /brand/)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "The gorilla app mark exists only as PNG/WebP (gorilladesk.com/brand/ holds only PNGs); the site's inline SVGs are UI arrows, menu and flag icons. 643px, rounded tile as published.",
+  "license": "GorillaDesk brand mark, used nominatively to identify the connected service; trademark rights remain with GorillaDesk.",
+  "sha256": "6c6bd0c933e58a574f0c9f6f748339763d6ef87f5551bb01542f8cbc68ab87e0"
 }

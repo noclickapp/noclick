@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/spydra.png",
-  "source": "https://www.spydra.app/ (official favicon: https://cdn.prod.website-files.com/63c7842c42c0ed530e0e43b5/6406efaff3b880b2dec6d1b4_spydra_favicon.png)",
-  "license": "Spydra brand mark used nominatively to identify the connected service; trademark rights remain with Spydra.",
-  "sha256": "23390b8ad9f4c5a16b4752f58ca6b0b97d52720ec965b11b807152b890c30080"
+  "source": "https://640808362-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F5jDaQI2dLzXe5VgQBNFE%2Ficon%2FQLijTys7gzoTuPfct6dt%2FLogo%20circle%20(1).png?alt=media&token=a1e216da-c4af-4509-bcd7-855ebac883fc",
+  "found_at": "https://docs.spydra.app/ (the GitBook space icon, \"Logo circle (1).png\")",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "DECISION: the current file is Spydra's 32x32 favicon, far too small. The 400px docs icon puts the mark on a pale lavender (#F1F2FC) circle with transparent corners, which is Spydra's own icon treatment there; it reads on both themes. The only other larger file is the homepage's 256x256 webclip, the same mark on an opaque white square. No transparent large mark and no SVG exist (Webflow and GitBook serve PNG/AVIF only).",
+  "license": "Spydra brand mark, used nominatively to identify the connected service; trademark rights remain with Spydra.",
+  "sha256": "243c802c3749b2da7cab54a39c29d70239b1f182851fd0539c6da55b837c12f6"
 }

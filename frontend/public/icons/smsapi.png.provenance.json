@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/smsapi.png",
+  "source": "https://play-lh.googleusercontent.com/XGUtGHZSYmHVCcw6VRkAjmt2lfqai9Zz6FBhDEIyFXLRn2v4yRFdAozbyFobrwoVoD4bRvD40OGk8uATjRoU9A=s0",
+  "found_at": "https://play.google.com/store/apps/details?id=com.smsapi.app (SMSAPI's own app, publisher SMSAPI, linking smsapi.com / smsapi.pl)",
+  "source_kind": "company app (Google Play listing icon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published (fetched at =s0, the icon as SMSAPI uploaded it, square; the search's s2-1 copy is the same icon with Google's =br30 corner rounding applied)"
+  ],
+  "notes": "No SVG qualifies. SMSAPI's official logo kit (https://cdn.smsapi.com/static/files/SMSAPI_Logo_kit.zip, linked from the archived smsapi.com/en/press; saved downloads/smsapi/src5, PDFs and PNGs extracted to src5/kit) has only AI/EPS/PDF/PNG files of two things: the 'SMSAPI' wordmark (Logo/) and a long key visual of speed lines ending in an envelope (KV/). The app mark (a compact envelope with two short blue lines) is drawn differently from the key visual's end (other line lengths and splits), so it can't be cut from the kit's vectors without new geometry. smsapi.com's own 180px apple-touch-icon is yet another, tighter crop of the key visual that bleeds off the tile's left edge. The current file is the 'SMSAPI powered by LINK Mobility' wordmark (white letters, vanishes on light). The navy tile is the brand's app-icon tile and reads on both themes. www.smsapi.com and smsapi.pl are geo-blocked from here (/not-supported-country), but cdn.smsapi.com serves the same public files.",
+  "license": "SMSAPI (LINK Mobility) brand mark, used nominatively to identify the connected service; trademark rights remain with SMSAPI (LINK Mobility).",
+  "sha256": "852021d6731be60cead75ca67e8d2979d02dc62a18b816ce247ec1c9b7d51675"
+}

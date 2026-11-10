@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/shorten-rest.jpg",
+  "source": "https://app.shorten.rest/assets/favicon/270x270.jpg",
+  "found_at": "https://app.shorten.rest/auth (<meta name=\"msapplication-TileImage\" content=\"./assets/favicon/270x270.jpg\">; the same page links 32, 180 and 192px copies)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "Replaces the current file, a 'Shorten.REST' wordmark PNG in black that vanishes on the dark theme, with the app mark. 270px is the largest copy (the search found the 192px one, downloads/shorten-rest/s2-2); it is a JPG, so its white square is part of the file: it shows as a white tile on the dark theme with the black S on it. DECISION: two marks exist. The marketing site shorten.rest uses a different one, a white 'S' on a blue #3b82f6 rounded tile, but only as favicon.svg/apple-touch-icon.svg drawing the S as live <text> in IBM Plex Mono (not outlined), with no raster copy; the app and docs use this black S. If the reviewer prefers the blue tile, nothing usable exists yet.",
+  "license": "Shorten.REST brand mark, used nominatively to identify the connected service; trademark rights remain with Shorten.REST.",
+  "sha256": "7f68765bb521f4de67638319b40d6cd318910cb8c1cab472620a86b1a92283ed"
+}

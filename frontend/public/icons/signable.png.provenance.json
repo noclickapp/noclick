@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/signable.png",
-  "source": "https://developers.signable.app/assets/favicon.cd7c3658de386116db0d2bcad83e1f98b11b02a14c381bfd59b880c7ae849c5e.9c1bb791.png",
-  "license": "Signable brand mark, used nominatively to identify the service; trademark rights remain with Signable.",
-  "sha256": "cd7c3658de386116db0d2bcad83e1f98b11b02a14c381bfd59b880c7ae849c5e"
+  "source": "https://signable.app/img/icons/apple-touch-icon-180x180.png",
+  "found_at": "https://signable.app/ (the web app's icon folder /img/icons/; its login page links /img/icons/favicon-32x32.png and its manifest.json lists android-chrome-192/512)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "No SVG qualifies: signable.app's /img/icons/safari-pinned-tab.svg is a potrace auto-trace (pt units, translate/scale(0.1,-0.1), one black path; downloads/signable/src4), signable.com's logo SVG wraps a PNG, and the login page's SVG is the whole wordmark. DECISION: the current file (developers.signable.app's 304px favicon) is larger but is a square tile in #0095E6, not the brand's #0098CE, while the live app uses this circle. The app's android-chrome-512x512.png (downloads/signable/src3) is larger still but its blue is shifted to #3A98CB, so it was not taken. Keep the current file if size matters more than colour and shape.",
+  "license": "Signable brand mark, used nominatively to identify the connected service; trademark rights remain with Signable.",
+  "sha256": "9ccda867802120bedc1fcf1d38fd460d8490f1c905eead8b9c1b94c4820f9464"
 }

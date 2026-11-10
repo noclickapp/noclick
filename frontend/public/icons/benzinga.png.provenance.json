@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/benzinga.png",
-  "source": "https://docs.benzinga.com/mintlify-assets/_mintlify/favicons/benzinga-2/V8d4ez746bj-8rpo/_generated/favicon/android-chrome-192x192.png",
-  "license": "Benzinga brand mark from its official documentation; nominative identification only. Trademark rights remain with Benzinga.",
-  "sha256": "3e843623abfe093b5d52cb74ba4adf79fdcd726331582ee7f1b2e7ca1b020440"
+  "source": "https://www.benzinga.com/next-assets/images/android-chrome-384x384.png",
+  "found_at": "https://www.benzinga.com/next-assets/site.webmanifest (the web app manifest linked from benzinga.com)",
+  "source_kind": "company site (web app manifest icon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "The only BZ vector, www.benzinga.com/next-assets/images/safari-pinned-tab.svg (downloads/benzinga/s2-6), is a potrace auto-trace: its header is potrace's own output (width=\"400.000000pt\", <g transform=\"translate(0,400) scale(0.1,-0.1)\">, integer relative curves) and its B counters have sloping \"flat\" edges; it is also the monochrome pinned-tab mask. Rejected under rule 3. The search saved this icon as AVIF (s2-5) because Cloudflare negotiates the format; requesting it with Accept: image/png returns the original 384x384 PNG, which is what src5 is. DECISION: the tile is the app icon (rule 1); if the reviewer prefers the letters without a tile, the current docs favicon stays.",
+  "license": "Benzinga brand mark, used nominatively to identify the connected service; trademark rights remain with Benzinga.",
+  "sha256": "efd482a29768de6c6f66e8e3cfd7959aeca0fec60cb99360460d048de8bfdee2"
 }

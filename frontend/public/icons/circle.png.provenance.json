@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/circle.png",
+  "source": "https://circle.so/apple-icon.png?apple-icon.3stk_m8u92mp7.png",
+  "found_at": "https://circle.so/ (link rel apple-touch-icon)",
+  "source_kind": "company site (apple-touch icon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "Replaces the current 'Circle' wordmark SVG (rule 1; it also vanished on dark). No vector of the C exists. DECISION: status.circle.so's favicon Circle_Primary.png (downloads/circle/s2-2, 512px) is the same C on a blue rounded-square tile, i.e. the app-store icon shape; I chose the disc because it is what circle.so itself serves, but the 512px tile is larger if the reviewer prefers it. Reads on both themes.",
+  "license": "Circle (circle.so) brand mark, used nominatively to identify the connected service; trademark rights remain with Circle (circle.so).",
+  "sha256": "e3b45de1323b546254fbba34b4e95cd549bdced3a6b9f66b012513e43923f80d"
+}
