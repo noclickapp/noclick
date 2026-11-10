@@ -1,0 +1,577 @@
+{
+  "GET /videos": {
+    "body": {
+      "data": [
+        {
+          "videoId": "vi4blUQJFrYWbaG44NChkH27",
+          "playerId": "pl45KFKdlddgk654dspkze",
+          "title": "Maths video",
+          "description": "An amazing video explaining the string theory",
+          "language": "en",
+          "languageOrigin": "api",
+          "public": false,
+          "panoramic": false,
+          "mp4Support": true,
+          "tags": [
+            "maths",
+            "string theory",
+            "video"
+          ],
+          "metadata": [
+            {
+              "key": "Author",
+              "value": "John Doe"
+            },
+            {
+              "key": "Format",
+              "value": "Tutorial"
+            }
+          ],
+          "publishedAt": "2019-12-16T08:25:51+00:00",
+          "updatedAt": "2019-12-16T08:48:49+00:00",
+          "discarded": false,
+          "discardedAt": null,
+          "deletesAt": null,
+          "source": {
+            "uri": "/videos/c188ed58-3403-46a2-b91b-44603d10b2c9/source"
+          },
+          "assets": {
+            "iframe": "<iframe src=\"https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27\" width=\"100%\" height=\"100%\" frameborder=\"0\" scrolling=\"no\" allowfullscreen=\"\"></iframe>",
+            "player": "https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27",
+            "hls": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8",
+            "thumbnail": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg",
+            "mp4": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4"
+          }
+        },
+        {
+          "videoId": "vi4blUQJFrYWbaG44NChkH27",
+          "title": "Video Title",
+          "description": "A description for your video.",
+          "language": "en",
+          "languageOrigin": "api",
+          "public": false,
+          "panoramic": false,
+          "mp4Support": true,
+          "tags": [
+            "books",
+            "short stories"
+          ],
+          "metadata": [
+            {
+              "key": "Author",
+              "value": "John Doe"
+            },
+            {
+              "key": "Science Fiction",
+              "value": "Cyberpunk"
+            },
+            {
+              "key": "Technology",
+              "value": "Computers"
+            }
+          ],
+          "publishedAt": "2019-12-16T08:25:51+00:00",
+          "updatedAt": "2019-12-16T08:48:49+00:00",
+          "discarded": false,
+          "discardedAt": null,
+          "deletesAt": null,
+          "source": {
+            "uri": "/videos/vi4blUQJFrYWbaG44NChkH27/source"
+          },
+          "assets": {
+            "iframe": "<iframe src=\"https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27\" width=\"100%\" height=\"100%\" frameborder=\"0\" scrolling=\"no\" allowfullscreen=\"\"></iframe>",
+            "player": "https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27",
+            "hls": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8",
+            "thumbnail": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg",
+            "mp4": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4"
+          }
+        },
+        {
+          "videoId": "vi4blUQJFrYWbaG44NChkH27",
+          "playerId": "pl45KFKdlddgk654dspkze",
+          "title": "My Video Title",
+          "description": "A brief description of the video.",
+          "language": "fr",
+          "languageOrigin": "api",
+          "public": false,
+          "panoramic": false,
+          "mp4Support": true,
+          "tags": [
+            "General",
+            "Videos"
+          ],
+          "metadata": [
+            {
+              "key": "Length",
+              "value": "Short"
+            }
+          ],
+          "publishedAt": "2019-12-16T08:25:51+00:00",
+          "updatedAt": "2019-12-16T08:48:49+00:00",
+          "discarded": false,
+          "discardedAt": null,
+          "deletesAt": null,
+          "source": {
+            "uri": "/videos/vi4blUQJFrYWbaG44NChkH27/source"
+          },
+          "assets": {
+            "iframe": "<iframe src=\"https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27\" width=\"100%\" height=\"100%\" frameborder=\"0\" scrolling=\"no\" allowfullscreen=\"\"></iframe>",
+            "player": "https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27",
+            "hls": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8",
+            "thumbnail": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg",
+            "mp4": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4"
+          }
+        }
+      ],
+      "pagination": {
+        "currentPage": 1,
+        "pageSize": 25,
+        "pagesTotal": 1,
+        "itemsTotal": 11,
+        "currentPageItems": 11,
+        "links": [
+          {
+            "rel": "self",
+            "uri": "https://ws.api.video/videos?currentPage=1"
+          },
+          {
+            "rel": "first",
+            "uri": "https://ws.api.video/videos?currentPage=1"
+          },
+          {
+            "rel": "last",
+            "uri": "https://ws.api.video/videos?currentPage=1"
+          }
+        ]
+      }
+    },
+    "source": "https://raw.githubusercontent.com/apivideo/api.video-documentation/main/openapi.yaml",
+    "status": 200
+  },
+  "POST /videos": {
+    "body": {
+      "videoId": "vi4blUQJFrYWbaG44NChkH27",
+      "title": "Maths video",
+      "description": "An amazing video explaining the string theory",
+      "language": "en",
+      "languageOrigin": "api",
+      "public": false,
+      "panoramic": false,
+      "mp4Support": true,
+      "playerId": "pl4k0jvEUuaTdRAEjQ4Jfrgz",
+      "tags": [
+        "maths",
+        "string theory",
+        "video"
+      ],
+      "metadata": [
+        {
+          "key": "Author",
+          "value": "John Doe"
+        },
+        {
+          "key": "Format",
+          "value": "Tutorial"
+        }
+      ],
+      "publishedAt": "2024-07-14T23:36:07+00:00",
+      "discarded": false,
+      "discardedAt": null,
+      "deletesAt": null,
+      "source": {
+        "uri": "/videos/vi4blUQJFrYWbaG44NChkH27/source"
+      },
+      "assets": {
+        "iframe": "<iframe src=\"https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27\" width=\"100%\" height=\"100%\" frameborder=\"0\" scrolling=\"no\" allowfullscreen=\"\"></iframe>",
+        "player": "https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27",
+        "hls": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8",
+        "thumbnail": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg",
+        "mp4": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4"
+      }
+    },
+    "source": "https://raw.githubusercontent.com/apivideo/api.video-documentation/main/openapi.yaml",
+    "status": 201
+  },
+  "PATCH /videos/{videoId}/thumbnail": {
+    "body": {
+      "videoId": "vi4blUQJFrYWbaG44NChkH27",
+      "playerId": "pl45KFKdlddgk654dspkze",
+      "title": "Maths video",
+      "description": "An amazing video explaining string theory",
+      "public": false,
+      "panoramic": false,
+      "mp4Support": true,
+      "tags": [
+        "maths",
+        "string theory",
+        "video"
+      ],
+      "metadata": [
+        {
+          "key": "Author",
+          "value": "John Doe"
+        },
+        {
+          "key": "Format",
+          "value": "Tutorial"
+        }
+      ],
+      "publishedAt": "2024-07-14T23:36:07+00:00",
+      "discarded": false,
+      "discardedAt": null,
+      "deletesAt": null,
+      "source": {
+        "uri": "/videos/vi4blUQJFrYWbaG44NChkH27/source"
+      },
+      "assets": {
+        "iframe": "<iframe src=\"https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27\" width=\"100%\" height=\"100%\" frameborder=\"0\" scrolling=\"no\" allowfullscreen=\"\"></iframe>",
+        "player": "https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27",
+        "hls": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8",
+        "thumbnail": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg",
+        "mp4": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4"
+      }
+    },
+    "source": "https://raw.githubusercontent.com/apivideo/api.video-documentation/main/openapi.yaml",
+    "status": 200
+  },
+  "GET /videos/{videoId}": {
+    "body": {
+      "videoId": "vi4blUQJFrYWbaG44NChkH27",
+      "playerId": "pl45KFKdlddgk654dspkze",
+      "title": "Maths video",
+      "description": "An amazing video explaining string theory",
+      "language": "en",
+      "languageOrigin": "api",
+      "public": false,
+      "panoramic": false,
+      "mp4Support": true,
+      "tags": [
+        "maths",
+        "string theory",
+        "video"
+      ],
+      "metadata": [
+        {
+          "key": "Author",
+          "value": "John Doe"
+        },
+        {
+          "key": "Format",
+          "value": "Tutorial"
+        }
+      ],
+      "publishedAt": "2019-12-16T08:25:51+00:00",
+      "updatedAt": "2019-12-16T08:48:49+00:00",
+      "discarded": false,
+      "discardedAt": null,
+      "deletesAt": null,
+      "source": {
+        "uri": "/videos/vi4blUQJFrYWbaG44NChkH27/source"
+      },
+      "assets": {
+        "iframe": "<iframe src=\"https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27\" width=\"100%\" height=\"100%\" frameborder=\"0\" scrolling=\"no\" allowfullscreen=\"\"></iframe>",
+        "player": "https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27",
+        "hls": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8",
+        "thumbnail": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg",
+        "mp4": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4"
+      }
+    },
+    "source": "https://raw.githubusercontent.com/apivideo/api.video-documentation/main/openapi.yaml",
+    "status": 200
+  },
+  "PATCH /videos/{videoId}": {
+    "body": {
+      "videoId": "vi4blUQJFrYWbaG44NChkH27",
+      "playerId": "pl45KFKdlddgk654dspkze",
+      "title": "Maths video",
+      "description": "An amazing video explaining the string theory",
+      "language": "en",
+      "languageOrigin": "api",
+      "public": false,
+      "panoramic": false,
+      "mp4Support": true,
+      "tags": [
+        "maths",
+        "string theory",
+        "video"
+      ],
+      "metadata": [
+        {
+          "key": "Author",
+          "value": "John Doe"
+        },
+        {
+          "key": "Format",
+          "value": "Tutorial"
+        }
+      ],
+      "publishedAt": "2019-12-16T08:25:51+00:00",
+      "updatedAt": "2019-12-16T08:48:49+00:00",
+      "discarded": false,
+      "discardedAt": null,
+      "deletesAt": null,
+      "source": {
+        "uri": "/videos/vi4blUQJFrYWbaG44NChkH27/source"
+      },
+      "assets": {
+        "iframe": "<iframe src=\"https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27\" width=\"100%\" height=\"100%\" frameborder=\"0\" scrolling=\"no\" allowfullscreen=\"\"></iframe>",
+        "player": "https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27",
+        "hls": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8",
+        "thumbnail": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg",
+        "mp4": "https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4"
+      }
+    },
+    "source": "https://raw.githubusercontent.com/apivideo/api.video-documentation/main/openapi.yaml",
+    "status": 200
+  },
+  "GET /videos/{videoId}/status": {
+    "body": {
+      "ingest": {
+        "status": "uploaded",
+        "filesize": 273579401,
+        "receivedBytes": [
+          {
+            "to": 134217727,
+            "from": 0,
+            "total": 273579401
+          },
+          {
+            "to": 268435455,
+            "from": 134217728,
+            "total": 273579401
+          },
+          {
+            "to": 273579400,
+            "from": 268435456,
+            "total": 273579401
+          }
+        ]
+      },
+      "encoding": {
+        "playable": true,
+        "qualities": [
+          {
+            "quality": "360p",
+            "status": "encoded"
+          },
+          {
+            "quality": "480p",
+            "status": "encoded"
+          },
+          {
+            "quality": "720p",
+            "status": "encoded"
+          },
+          {
+            "quality": "1080p",
+            "status": "encoding"
+          },
+          {
+            "quality": "2160p",
+            "status": "waiting"
+          }
+        ],
+        "metadata": {
+          "width": 424,
+          "height": 240,
+          "bitrate": 411.218,
+          "duration": 4176,
+          "framerate": 24,
+          "samplerate": 48000,
+          "videoCodec": "h264",
+          "audioCodec": "aac",
+          "aspectRatio": "16/9"
+        }
+      }
+    },
+    "source": "https://raw.githubusercontent.com/apivideo/api.video-documentation/main/openapi.yaml",
+    "status": 200
+  },
+  "GET /upload-tokens": {
+    "body": {
+      "data": [
+        {
+          "token": "to37YfoPDRR2pcDKa6LsUE0M",
+          "ttl": 3600,
+          "createdAt": "2020-12-02T10:26:46+00:00",
+          "expiresAt": "2020-12-02T11:26:46+00:00"
+        },
+        {
+          "token": "to1W3ZS9PdUBZWzzTEZr1B79",
+          "ttl": 0,
+          "createdAt": "2020-12-02T10:26:28+00:00"
+        }
+      ],
+      "pagination": {
+        "currentPage": 1,
+        "currentPageItems": 2,
+        "pageSize": 25,
+        "pagesTotal": 1,
+        "itemsTotal": 2,
+        "links": [
+          {
+            "rel": "self",
+            "uri": "/upload-tokens?currentPage=1&pageSize=25"
+          },
+          {
+            "rel": "first",
+            "uri": "/upload-tokens?currentPage=1&pageSize=25"
+          },
+          {
+            "rel": "last",
+            "uri": "/upload-tokens?currentPage=1&pageSize=25"
+          }
+        ]
+      }
+    },
+    "source": "https://raw.githubusercontent.com/apivideo/api.video-documentation/main/openapi.yaml",
+    "status": 200
+  },
+  "POST /upload-tokens": {
+    "body": {
+      "token": "to1tcmSFHeYY5KzyhOqVKMKb",
+      "ttl": 3600,
+      "createdAt": "2020-12-02T10:13:19+00:00",
+      "expiresAt": "2020-12-02T11:13:19+00:00"
+    },
+    "source": "https://raw.githubusercontent.com/apivideo/api.video-documentation/main/openapi.yaml",
+    "status": 200
+  },
+  "GET /live-streams": {
+    "body": {
+      "data": [
+        {
+          "liveStreamId": "li400mYKSgQ6xs7taUeSaEKr",
+          "createdAt": "2020-01-31T10:17:47+00:00",
+          "updatedAt": "2020-03-09T13:19:43+00:00",
+          "streamKey": "30087931-229e-42cf-b5f9-e91bcc1f7332",
+          "restreams": [
+            {
+              "name": "YouTube",
+              "serverUrl": "rtmp://youtube.broadcast.example.com",
+              "streamKey": "cc1b4df0-d1c5-4064-a8f9-9f0368385188"
+            },
+            {
+              "name": "Twitch",
+              "serverUrl": "rtmp://twitch.broadcast.example.com",
+              "streamKey": "cc1b4df0-d1c5-4064-a8f9-9f0368385188"
+            }
+          ],
+          "name": "Live Stream From the browser",
+          "public": true,
+          "broadcasting": false,
+          "assets": {
+            "iframe": "<iframe src=\"https://embed.api.video/live/li400mYKSgQ6xs7taUeSaEKr\" width=\"100%\" height=\"100%\" frameborder=\"0\" scrolling=\"no\" allowfullscreen=\"\"></iframe>",
+            "player": "https://embed.api.video/live/li400mYKSgQ6xs7taUeSaEKr",
+            "hls": "https://live.api.video/li400mYKSgQ6xs7taUeSaEKr.m3u8",
+            "thumbnail": "https://live.api.video/li400mYKSgQ6xs7taUeSaEKr/thumbnail.jpg"
+          }
+        },
+        {
+          "liveStreamId": "li4pqNqGUkhKfWcBGpZVLRY5",
+          "createdAt": "2020-07-29T10:45:35+00:00",
+          "updatedAt": "2020-07-29T10:45:35+00:00",
+          "streamKey": "cc1b4df0-d1c5-4064-a8f9-9f0368385135",
+          "restreams": [
+            {
+              "name": "YouTube",
+              "serverUrl": "rtmp://youtube.broadcast.example.com",
+              "streamKey": "cc1b4df0-d1c5-4064-a8f9-9f0368385135"
+            },
+            {
+              "name": "Twitch",
+              "serverUrl": "rtmp://twitch.broadcast.example.com",
+              "streamKey": "cc1b4df0-d1c5-4064-a8f9-9f0368385135"
+            }
+          ],
+          "name": "Live From New York",
+          "public": true,
+          "broadcasting": false,
+          "assets": {
+            "iframe": "<iframe src=\"https://embed.api.video/live/li4pqNqGUkhKfWcBGpZVLRY5\" width=\"100%\" height=\"100%\" frameborder=\"0\" scrolling=\"no\" allowfullscreen=\"\"></iframe>",
+            "player": "https://embed.api.video/live/li4pqNqGUkhKfWcBGpZVLRY5",
+            "hls": "https://live.api.video/li4pqNqGUkhKfWcBGpZVLRY5.m3u8",
+            "thumbnail": "https://live.api.video/li4pqNqGUkhKfWcBGpZVLRY5/thumbnail.jpg"
+          }
+        }
+      ],
+      "pagination": {
+        "currentPage": 1,
+        "currentPageItems": 19,
+        "pageSize": 25,
+        "pagesTotal": 1,
+        "itemsTotal": 19,
+        "links": [
+          {
+            "rel": "self",
+            "uri": "/live-streams?currentPage=1&pageSize=25"
+          },
+          {
+            "rel": "first",
+            "uri": "/live-streams?currentPage=1&pageSize=25"
+          },
+          {
+            "rel": "last",
+            "uri": "/live-streams?currentPage=1&pageSize=25"
+          }
+        ]
+      }
+    },
+    "source": "https://raw.githubusercontent.com/apivideo/api.video-documentation/main/openapi.yaml",
+    "status": 200
+  },
+  "GET /videos/{videoId}/captions/{language}": {
+    "body": {
+      "uri": "/videos/vi3N6cDinStg3oBbN79GklWS/captions/en",
+      "src": "https://cdn.api.video/vod/vi3N6cDinStg3oBbN79GklWS/captions/en.vtt",
+      "srclang": "en",
+      "languageName": "English",
+      "default": false
+    },
+    "source": "https://raw.githubusercontent.com/apivideo/api.video-documentation/main/openapi.yaml",
+    "status": 200
+  },
+  "GET /videos/{videoId}/captions": {
+    "body": {
+      "data": [
+        {
+          "uri": "/videos/vi3N6cDinStg3oBbN79GklWS/captions/en",
+          "src": "https://cdn.api.video/vod/vi3N6cDinStg3oBbN79GklWS/captions/en.vtt",
+          "srclang": "en",
+          "languageName": "English",
+          "default": false
+        },
+        {
+          "uri": "/videos/vi3N6cDinStg3oBbN79GklWS/captions/fr",
+          "src": "https://cdn.api.video/vod/vi3N6cDinStg3oBbN79GklWS/captions/fr.vtt",
+          "srclang": "fr",
+          "languageName": "Fran\u00e7aise",
+          "default": false
+        }
+      ],
+      "pagination": {
+        "currentPage": 1,
+        "currentPageItems": 2,
+        "pageSize": 25,
+        "pagesTotal": 1,
+        "itemsTotal": 2,
+        "links": [
+          {
+            "rel": "self",
+            "uri": "/videos/vi3N6cDinStg3oBbN79GklWS/captions?currentPage=1&pageSize=25"
+          },
+          {
+            "rel": "first",
+            "uri": "/videos/vi3N6cDinStg3oBbN79GklWS/captions?currentPage=1&pageSize=25"
+          },
+          {
+            "rel": "last",
+            "uri": "/videos/vi3N6cDinStg3oBbN79GklWS/captions?currentPage=1&pageSize=25"
+          }
+        ]
+      }
+    },
+    "source": "https://raw.githubusercontent.com/apivideo/api.video-documentation/main/openapi.yaml",
+    "status": 200
+  }
+}

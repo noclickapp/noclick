@@ -1,0 +1,1946 @@
+{
+  "$defs": {
+    "Metadata": {
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "value"
+      ],
+      "title": "Metadata",
+      "type": "object"
+    },
+    "VideoAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "video_api_key",
+          "default": "video_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "environment": {
+          "default": "production",
+          "enum": [
+            "production",
+            "sandbox"
+          ],
+          "title": "Environment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "api.video API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your api.video production or sandbox API key from the dashboard. Choose the matching environment. NoClick sends the key as the HTTP Basic username with an empty password. Video imports, encoding and streaming can incur api.video usage charges.",
+      "x-credential-url": "https://dashboard.api.video/overview"
+    },
+    "VideoCompleteLiveStreamConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "complete_live_stream",
+          "default": "complete_live_stream",
+          "title": "Complete Live Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Streams",
+          "x-display-name": "Complete Live Stream",
+          "x-is-trigger": false
+        },
+        "liveStreamId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Live Stream ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "liveStreamId"
+      ],
+      "title": "VideoCompleteLiveStreamConfig",
+      "type": "object"
+    },
+    "VideoCreateLiveStreamConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_live_stream",
+          "default": "create_live_stream",
+          "title": "Create Live Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Streams",
+          "x-display-name": "Create Live Stream",
+          "x-is-trigger": false
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Stream"
+        },
+        "playerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Player ID"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "VideoCreateLiveStreamConfig",
+      "type": "object"
+    },
+    "VideoCreateUploadTokenConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_upload_token",
+          "default": "create_upload_token",
+          "title": "Create Upload Token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Upload Tokens",
+          "x-display-name": "Create Upload Token",
+          "x-is-trigger": false
+        },
+        "ttl": {
+          "default": 3600,
+          "description": "0 creates a token without expiration",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Lifetime in Seconds",
+          "type": "integer"
+        }
+      },
+      "title": "VideoCreateUploadTokenConfig",
+      "type": "object"
+    },
+    "VideoCreateVideoConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_video",
+          "default": "create_video",
+          "title": "Create or Import Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Videos",
+          "x-display-name": "Create or Import Video",
+          "x-is-trigger": false
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Video"
+        },
+        "panoramic": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "360 Video"
+        },
+        "mp4Support": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enable MP4"
+        },
+        "playerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Player ID"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the complete tag list when updating",
+          "title": "Tags"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Metadata"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the complete metadata list when updating",
+          "title": "Metadata"
+        },
+        "transcript": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Generate Transcript"
+        },
+        "transcriptSummary": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Generate Summary"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Import a video URL or copy a video already in this account; encoding is asynchronous",
+          "title": "Source URL or Video ID"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "VideoCreateVideoConfig",
+      "type": "object"
+    },
+    "VideoDeleteCaptionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_caption",
+          "default": "delete_caption",
+          "title": "Delete Caption",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Captions",
+          "x-display-name": "Delete Caption",
+          "x-is-trigger": false
+        },
+        "videoId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video ID",
+          "type": "string"
+        },
+        "language": {
+          "description": "IETF language tag, such as en or fr",
+          "title": "Caption Language",
+          "type": "string"
+        }
+      },
+      "required": [
+        "videoId",
+        "language"
+      ],
+      "title": "VideoDeleteCaptionConfig",
+      "type": "object"
+    },
+    "VideoDeleteLiveStreamConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_live_stream",
+          "default": "delete_live_stream",
+          "title": "Delete Live Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Streams",
+          "x-display-name": "Delete Live Stream",
+          "x-is-trigger": false
+        },
+        "liveStreamId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Live Stream ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "liveStreamId"
+      ],
+      "title": "VideoDeleteLiveStreamConfig",
+      "type": "object"
+    },
+    "VideoDeleteUploadTokenConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_upload_token",
+          "default": "delete_upload_token",
+          "title": "Delete Upload Token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Upload Tokens",
+          "x-display-name": "Delete Upload Token",
+          "x-is-trigger": false
+        },
+        "uploadToken": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Upload Token",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uploadToken"
+      ],
+      "title": "VideoDeleteUploadTokenConfig",
+      "type": "object"
+    },
+    "VideoDeleteVideoConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_video",
+          "default": "delete_video",
+          "title": "Delete Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Videos",
+          "x-display-name": "Delete Video",
+          "x-is-trigger": false
+        },
+        "videoId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "videoId"
+      ],
+      "title": "VideoDeleteVideoConfig",
+      "type": "object"
+    },
+    "VideoGetCaptionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_caption",
+          "default": "get_caption",
+          "title": "Get Caption",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Captions",
+          "x-display-name": "Get Caption",
+          "x-is-trigger": false
+        },
+        "videoId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video ID",
+          "type": "string"
+        },
+        "language": {
+          "description": "IETF language tag, such as en or fr",
+          "title": "Caption Language",
+          "type": "string"
+        }
+      },
+      "required": [
+        "videoId",
+        "language"
+      ],
+      "title": "VideoGetCaptionConfig",
+      "type": "object"
+    },
+    "VideoGetLiveStreamConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_live_stream",
+          "default": "get_live_stream",
+          "title": "Get Live Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Streams",
+          "x-display-name": "Get Live Stream",
+          "x-is-trigger": false
+        },
+        "liveStreamId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Live Stream ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "liveStreamId"
+      ],
+      "title": "VideoGetLiveStreamConfig",
+      "type": "object"
+    },
+    "VideoGetVideoConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_video",
+          "default": "get_video",
+          "title": "Get Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Videos",
+          "x-display-name": "Get Video",
+          "x-is-trigger": false
+        },
+        "videoId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "videoId"
+      ],
+      "title": "VideoGetVideoConfig",
+      "type": "object"
+    },
+    "VideoGetVideoStatusConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_video_status",
+          "default": "get_video_status",
+          "title": "Get Video Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Videos",
+          "x-display-name": "Get Video Status",
+          "x-is-trigger": false
+        },
+        "videoId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "videoId"
+      ],
+      "title": "VideoGetVideoStatusConfig",
+      "type": "object"
+    },
+    "VideoListCaptionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_captions",
+          "default": "list_captions",
+          "title": "List Video Captions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Captions",
+          "x-display-name": "List Video Captions",
+          "x-is-trigger": false
+        },
+        "videoId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video ID",
+          "type": "string"
+        },
+        "currentPage": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "videoId"
+      ],
+      "title": "VideoListCaptionsConfig",
+      "type": "object"
+    },
+    "VideoListLiveStreamsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_live_streams",
+          "default": "list_live_streams",
+          "title": "List Live Streams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Streams",
+          "x-display-name": "List Live Streams",
+          "x-is-trigger": false
+        },
+        "currentPage": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name Filter"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "name",
+                "createdAt",
+                "updatedAt"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By",
+          "enum": [
+            "name",
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-enum-searchable": true
+        },
+        "sortOrder": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "VideoListLiveStreamsConfig",
+      "type": "object"
+    },
+    "VideoListUploadTokensConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_upload_tokens",
+          "default": "list_upload_tokens",
+          "title": "List Upload Tokens",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Upload Tokens",
+          "x-display-name": "List Upload Tokens",
+          "x-is-trigger": false
+        },
+        "currentPage": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "VideoListUploadTokensConfig",
+      "type": "object"
+    },
+    "VideoListVideosConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_videos",
+          "default": "list_videos",
+          "title": "List Videos",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Videos",
+          "x-display-name": "List Videos",
+          "x-is-trigger": false
+        },
+        "currentPage": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title Filter"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description Filter"
+        },
+        "liveStreamId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Live Stream ID Filter"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "title",
+                "createdAt",
+                "publishedAt",
+                "updatedAt"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By",
+          "enum": [
+            "title",
+            "createdAt",
+            "publishedAt",
+            "updatedAt"
+          ],
+          "x-enum-searchable": true
+        },
+        "sortOrder": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "VideoListVideosConfig",
+      "type": "object"
+    },
+    "VideoOnLiveStreamEndedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_live_stream_ended",
+          "default": "on_live_stream_ended",
+          "title": "On Live Stream Ended",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Live Stream Ended",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "VideoOnLiveStreamEndedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "VideoOnLiveStreamStartedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_live_stream_started",
+          "default": "on_live_stream_started",
+          "title": "On Live Stream Started",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Live Stream Started",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "VideoOnLiveStreamStartedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "VideoOnVideoCaptionGeneratedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_video_caption_generated",
+          "default": "on_video_caption_generated",
+          "title": "On Video Caption Generated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Video Caption Generated",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "VideoOnVideoCaptionGeneratedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "VideoOnVideoEncodingCompletedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_video_encoding_completed",
+          "default": "on_video_encoding_completed",
+          "title": "On Video Encoding Completed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Video Encoding Completed",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "VideoOnVideoEncodingCompletedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "VideoOnVideoSourceRecordedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_video_source_recorded",
+          "default": "on_video_source_recorded",
+          "title": "On Video Source Recorded",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Video Source Recorded",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "VideoOnVideoSourceRecordedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "VideoOnVideoSummaryGeneratedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_video_summary_generated",
+          "default": "on_video_summary_generated",
+          "title": "On Video Summary Generated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Video Summary Generated",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "VideoOnVideoSummaryGeneratedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "VideoSetVideoThumbnailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "set_video_thumbnail",
+          "default": "set_video_thumbnail",
+          "title": "Select Video Thumbnail",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Videos",
+          "x-display-name": "Select Video Thumbnail",
+          "x-is-trigger": false
+        },
+        "videoId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video ID",
+          "type": "string"
+        },
+        "timecode": {
+          "description": "For example 00:01:00.000",
+          "pattern": "^\\d{2}:\\d{2}:\\d{2}(\\.\\d{2,3})?$",
+          "title": "Frame Timecode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "videoId",
+        "timecode"
+      ],
+      "title": "VideoSetVideoThumbnailConfig",
+      "type": "object"
+    },
+    "VideoUpdateLiveStreamConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_live_stream",
+          "default": "update_live_stream",
+          "title": "Update Live Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Streams",
+          "x-display-name": "Update Live Stream",
+          "x-is-trigger": false
+        },
+        "liveStreamId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Live Stream ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Stream"
+        },
+        "playerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Player ID"
+        }
+      },
+      "required": [
+        "liveStreamId"
+      ],
+      "title": "VideoUpdateLiveStreamConfig",
+      "type": "object"
+    },
+    "VideoUpdateVideoConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_video",
+          "default": "update_video",
+          "title": "Update Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Videos",
+          "x-display-name": "Update Video",
+          "x-is-trigger": false
+        },
+        "videoId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Video"
+        },
+        "panoramic": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "360 Video"
+        },
+        "mp4Support": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enable MP4"
+        },
+        "playerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Player ID"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the complete tag list when updating",
+          "title": "Tags"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Metadata"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the complete metadata list when updating",
+          "title": "Metadata"
+        },
+        "transcript": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Generate Transcript"
+        },
+        "transcriptSummary": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Generate Summary"
+        }
+      },
+      "required": [
+        "videoId"
+      ],
+      "title": "VideoUpdateVideoConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "complete_live_stream": "#/$defs/VideoCompleteLiveStreamConfig",
+          "create_live_stream": "#/$defs/VideoCreateLiveStreamConfig",
+          "create_upload_token": "#/$defs/VideoCreateUploadTokenConfig",
+          "create_video": "#/$defs/VideoCreateVideoConfig",
+          "delete_caption": "#/$defs/VideoDeleteCaptionConfig",
+          "delete_live_stream": "#/$defs/VideoDeleteLiveStreamConfig",
+          "delete_upload_token": "#/$defs/VideoDeleteUploadTokenConfig",
+          "delete_video": "#/$defs/VideoDeleteVideoConfig",
+          "get_caption": "#/$defs/VideoGetCaptionConfig",
+          "get_live_stream": "#/$defs/VideoGetLiveStreamConfig",
+          "get_video": "#/$defs/VideoGetVideoConfig",
+          "get_video_status": "#/$defs/VideoGetVideoStatusConfig",
+          "list_captions": "#/$defs/VideoListCaptionsConfig",
+          "list_live_streams": "#/$defs/VideoListLiveStreamsConfig",
+          "list_upload_tokens": "#/$defs/VideoListUploadTokensConfig",
+          "list_videos": "#/$defs/VideoListVideosConfig",
+          "on_live_stream_ended": "#/$defs/VideoOnLiveStreamEndedConfig",
+          "on_live_stream_started": "#/$defs/VideoOnLiveStreamStartedConfig",
+          "on_video_caption_generated": "#/$defs/VideoOnVideoCaptionGeneratedConfig",
+          "on_video_encoding_completed": "#/$defs/VideoOnVideoEncodingCompletedConfig",
+          "on_video_source_recorded": "#/$defs/VideoOnVideoSourceRecordedConfig",
+          "on_video_summary_generated": "#/$defs/VideoOnVideoSummaryGeneratedConfig",
+          "set_video_thumbnail": "#/$defs/VideoSetVideoThumbnailConfig",
+          "update_live_stream": "#/$defs/VideoUpdateLiveStreamConfig",
+          "update_video": "#/$defs/VideoUpdateVideoConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/VideoListVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoGetVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoCreateVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoUpdateVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoDeleteVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoGetVideoStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoSetVideoThumbnailConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoListLiveStreamsConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoGetLiveStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoCreateLiveStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoUpdateLiveStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoDeleteLiveStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoCompleteLiveStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoListCaptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoGetCaptionConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoDeleteCaptionConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoListUploadTokensConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoCreateUploadTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoDeleteUploadTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoOnVideoEncodingCompletedConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoOnLiveStreamStartedConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoOnLiveStreamEndedConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoOnVideoSourceRecordedConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoOnVideoCaptionGeneratedConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoOnVideoSummaryGeneratedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VideoAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Video Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
