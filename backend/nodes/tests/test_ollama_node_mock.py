@@ -1,5 +1,6 @@
 """Real factory execution against the provider's published response examples."""
 import json
+from copy import deepcopy
 from pathlib import Path
 import httpx
 import pytest
@@ -178,3 +179,94 @@ async def test_server_connection_evidence_lists_models_without_cloud_request(mon
     assert await native.OllamaNode.load_field_options('model', {'credential_type': 'ollama_server', 'server_url': 'https://models.example.com'}) == [{"value": "gemma4", "label": "gemma4"}]
     assert len(requests) == 1 and requests[0].url.path == '/api/tags'
     assert 'Authorization' not in requests[0].headers
+
+
+def poll_state(monkeypatch, state=None):
+    """Exercise the real poll-family mutator with durable state between ticks."""
+    state = {} if state is None else state
+    async def update(self, mutator, **kwargs):
+        updated, result = mutator(deepcopy(state))
+        if updated is not None:
+            state.clear()
+            state.update(updated)
+        return result
+    monkeypatch.setattr(native.OllamaNode, '_update_node_state', update)
+    return state
+
+
+@pytest.mark.asyncio
+async def test_model_poll_baselines_detects_new_and_updated_versions_and_deduplicates(monkeypatch):
+    # The initial delivery is copied from Ollama's published /api/tags example.
+    body = deepcopy(EXAMPLES['GET /api/tags'])
+    requests, _ = transport(monkeypatch, body)
+    state = poll_state(monkeypatch)
+    config = {'operation': 'on_new_or_updated_model'}
+    first = node(config)
+    assert (await first.execute({}))['models'] == []
+    assert first.trigger_produced_no_event({})
+    assert state['seen_ids'] and state['scope']
+    assert (await node(config).execute({}))['new_or_updated_model_count'] == 0
+
+    # Simulate a later version of the documented model without changing its name.
+    body['models'][0]['modified_at'] = '2025-10-04T23:34:03.409490317-07:00'
+    changed = node(config)
+    output = await changed.execute({})
+    assert output['models'] == body['models']
+    assert output['new_or_updated_model_count'] == 1
+    assert changed.trigger_emitted_event(output)
+    event = native.OllamaNode.resolve_agent_event(output)
+    assert all(value in event['text'] for value in [body['models'][0]['name'], body['models'][0]['digest'],
+        body['models'][0]['modified_at'], 'https://models.example.com'])
+    assert (await node(config).execute({}))['models'] == []
+
+    # A new name also fires, even when its contents match an existing model.
+    body['models'].append({**body['models'][0], 'name': 'gemma4-backup', 'model': 'gemma4-backup'})
+    assert [row['name'] for row in (await node(config).execute({}))['models']] == ['gemma4-backup']
+    assert all(req.method == 'GET' and req.url.path == '/api/tags' and not req.url.query for req in requests)
+    assert native.OllamaNode.resolve_agent_event({'models': [], 'new_or_updated_model_count': 0}) is None
+
+
+@pytest.mark.asyncio
+async def test_model_poll_uses_documented_example_after_empty_baseline(monkeypatch):
+    body = EXAMPLES['GET /api/tags']
+    requests, _ = transport(monkeypatch, body)
+    poll_state(monkeypatch, {'seen_ids': []})
+    result = await node({'operation': 'on_new_or_updated_model'}).execute({})
+    assert result['models'] == body['models'] and result['new_or_updated_model_count'] == 1
+    assert len(requests) == 1
+
+
+@pytest.mark.asyncio
+async def test_model_poll_scope_uses_declared_model_and_ignores_canvas_metadata(monkeypatch):
+    transport(monkeypatch, EXAMPLES['GET /api/tags'])
+    poll_state(monkeypatch)
+    config = {'operation': 'on_new_or_updated_model', 'model': 'another-model'}
+    assert (await node(config).execute({}))['models'] == []
+    # Repointing quietly baselines the selected model instead of replaying it.
+    config['model'] = 'gemma4'
+    assert (await node(config).execute({}))['models'] == []
+    before = native.OllamaNode.schedule_poll_scope(config)
+    assert before == native.OllamaNode.schedule_poll_scope({**config, 'label': 'Renamed', 'goal': 'Watch models'})
+    assert before != native.OllamaNode.schedule_poll_scope({**config, 'model': 'gemma4-backup'})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('body', [{}, {'models': {}}, {'models': [{}]}, {'models': [{'name': 'gemma4'}]},
+    {'models': [{'name': 'gemma4', 'modified_at': 'invalid'}]},
+    {'models': [{'name': 'gemma4', 'modified_at': '2025-10-04T12:00:00'}]}])
+async def test_model_poll_never_advances_state_on_malformed_snapshot(monkeypatch, body):
+    transport(monkeypatch, body)
+    state = poll_state(monkeypatch)
+    with pytest.raises(ValueError):
+        await node({'operation': 'on_new_or_updated_model'}).execute({})
+    assert state == {}
+
+
+@pytest.mark.asyncio
+async def test_model_poll_requires_server_connection_before_request(monkeypatch):
+    requests, _ = transport(monkeypatch, EXAMPLES['GET /api/tags'])
+    n = node({'operation': 'on_new_or_updated_model'})
+    n.config.credentials = native.OllamaAPIKeyCredential(api_key=TOKEN)
+    with pytest.raises(ValueError, match='Ollama Server'):
+        await n.execute({})
+    assert not requests

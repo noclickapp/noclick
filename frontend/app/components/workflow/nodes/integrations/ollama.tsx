@@ -11,7 +11,7 @@ const OllamaIcon = ({ className, style }: { className?: string; style?: CSSPrope
 
 export const OllamaNode: NodeDefinition = {
     type: 'automation-ollama', category: 'ai', label: 'Ollama',
-    description: 'Generate text and embeddings, manage models, and read cloud usage',
+    description: 'Watch for new or updated models, generate text and embeddings, and manage Ollama models',
     Icon: OllamaIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={OllamaIcon} iconColor="" />),

@@ -5,11 +5,14 @@ Ollama server, optionally behind an HTTPS bearer-auth proxy. Localhost is not
 the user's Mac when a workflow runs remotely. Every operation makes one provider request.
 References: https://docs.ollama.com/api/introduction and /api/authentication.
 """
+import json
+from datetime import datetime, timezone
 from typing import Annotated, Any, Literal, Union
 from urllib.parse import urlsplit
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, TypeAdapter, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret, https_origin
 from utils.ssrf import guarded_async_client
 
@@ -128,6 +131,20 @@ class OllamaListRunningConfig(_Input):
     operation: Literal["list_running_models"] = Field("list_running_models", json_schema_extra={"ui:hidden": True})
 
 
+class OllamaOnNewOrUpdatedModelConfig(PollTriggerConfigBase):
+    """Watch a reachable Ollama server for newly available or modified models.
+
+    Polls the complete /api/tags snapshot and compares each model's documented
+    modified_at timestamp. Existing models establish a quiet initial baseline.
+    """
+    operation: Literal["on_new_or_updated_model"] = Field("on_new_or_updated_model", title="On New or Updated Model",
+        json_schema_extra={"ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On New or Updated Model"})
+    model: str | None = Field(None, min_length=1, title="Model",
+        description="Watch one exact model name, or leave empty to watch every model on this Ollama server.",
+        json_schema_extra={"x-dynamic-options": {"field_name": "model", "allow_custom": True, "searchable": True}})
+
+
 class OllamaShowConfig(_ModelInput):
     """Show a model's metadata, capabilities and template."""
     operation: Literal["show_model"] = Field("show_model", json_schema_extra={"ui:hidden": True})
@@ -189,7 +206,8 @@ class OllamaBalanceConfig(_Input):
 OllamaConfig = Annotated[Union[OllamaGenerateConfig, OllamaChatConfig, OllamaEmbedConfig,
     OllamaListModelsConfig, OllamaListRunningConfig, OllamaShowConfig, OllamaCreateConfig,
     OllamaCopyConfig, OllamaPullConfig, OllamaPushConfig, OllamaDeleteConfig,
-    OllamaVersionConfig, OllamaUsageConfig, OllamaBalanceConfig], Field(discriminator="operation")]
+    OllamaVersionConfig, OllamaUsageConfig, OllamaBalanceConfig,
+    OllamaOnNewOrUpdatedModelConfig], Field(discriminator="operation")]
 
 
 class OllamaFullConfig(NodeConfig[OllamaConfig, Union[OllamaAPIKeyCredential, OllamaServerCredential]]):
@@ -211,11 +229,12 @@ ROUTES = {
     "get_version": ("GET", "/api/version"),
     "get_usage": ("GET", "/api/usage"),
     "get_balance": ("GET", "/api/balance"),
+    "on_new_or_updated_model": ("GET", "/api/tags"),
 }
 STREAMING = {"generate_response", "generate_chat", "create_model", "pull_model", "push_model"}
 
 
-class OllamaNode(WorkflowNode):
+class OllamaNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-ollama"
     credential_provider_labels = {"ollama": "Ollama"}
     connection_evidence = ConnectionEvidence(field="model", noun="available models", proves="reachability")
@@ -223,6 +242,47 @@ class OllamaNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return OllamaFullConfig
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or "new_or_updated_model_count" not in output:
+            return super().resolve_agent_event(output)
+        models = output.get("models", [])
+        if not models:
+            return None
+        lines = [f"- {row['name']} (modified {row['modified_at']}, digest {row.get('digest') or 'unavailable'})"
+                 for row in models[:10]]
+        if len(models) > 10:
+            lines.append(f"- … and {len(models) - 10} more")
+        return {"text": f"Ollama at {output['server_url']}: {len(models)} new or updated model(s):\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _poll_models(self, body, server_url, config):
+        # /api/tags has no time-query parameters or pagination. Read its full
+        # snapshot, order locally by the documented timestamp, and deduplicate
+        # model versions rather than names so an update also fires.
+        models = body.get("models")
+        if not isinstance(models, list):
+            raise ValueError("Expected the Ollama models array")
+        watched = []
+        for row in models:
+            if not isinstance(row, dict) or not isinstance(row.get("name"), str) or not row["name"]:
+                raise ValueError("Expected an Ollama model name")
+            if config.model is not None and row["name"] != config.model:
+                continue
+            try:
+                modified = datetime.fromisoformat(row["modified_at"].replace("Z", "+00:00"))
+                if modified.tzinfo is None:
+                    raise ValueError("Timestamp needs a timezone")
+            except (KeyError, AttributeError, TypeError, ValueError) as exc:
+                raise ValueError("Expected the Ollama model modified_at timestamp") from exc
+            watched.append((modified.astimezone(timezone.utc), row))
+        if len(watched) > 10000:
+            raise ValueError("More than 10,000 Ollama models; choose one model to watch")
+        watched.sort(key=lambda pair: pair[0])
+        fresh = await self._filter_unseen([row for _, row in watched],
+            lambda row: json.dumps([row["name"], row["modified_at"]]))
+        return {"models": fresh, "new_or_updated_model_count": len(fresh), "server_url": server_url}
 
     @classmethod
     async def load_field_options(cls, field_name, credential_data, context=None, *, page_token=None, search=None):
@@ -259,11 +319,11 @@ class OllamaNode(WorkflowNode):
         server_url = "https://ollama.com" if cloud else credential.server_url
         if operation in {"get_usage", "get_balance"} and not cloud:
             raise ValueError("Cloud usage and balance need an Ollama API Key connection")
-        if operation in {"create_model", "copy_model", "pull_model", "push_model", "delete_model", "list_running_models", "get_version"} and cloud:
+        if operation in {"create_model", "copy_model", "pull_model", "push_model", "delete_model", "list_running_models", "get_version", "on_new_or_updated_model"} and cloud:
             raise ValueError("This operation needs an Ollama Server connection")
         if credential.api_key and urlsplit(server_url).scheme != "https":
             raise ValueError("Bearer tokens require HTTPS")
-        fields = op.model_dump(by_alias=True, exclude={"operation"}, exclude_none=True)
+        fields = {} if isinstance(op, OllamaOnNewOrUpdatedModelConfig) else op.model_dump(by_alias=True, exclude={"operation"}, exclude_none=True)
         if operation in STREAMING:
             fields["stream"] = False
         kwargs = {"params": fields} if method == "GET" else {"json": fields}
@@ -290,6 +350,8 @@ class OllamaNode(WorkflowNode):
         if "error" in body:
             message = (str(body["error"]).replace(credential.api_key, "[redacted]") if credential.api_key else str(body["error"]))[:2000]
             return {"status": "error", "http_status": 200, "error": message}
+        if isinstance(op, OllamaOnNewOrUpdatedModelConfig):
+            return await self._poll_models(body, server_url, op)
         if operation in {"list_models", "list_running_models"}:
             if not isinstance(body.get("models"), list):
                 raise ValueError("Expected the Ollama models array")
