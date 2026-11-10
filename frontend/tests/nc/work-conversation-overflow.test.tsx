@@ -3,7 +3,6 @@
 // file path, a long word and a long command in your bubble), laid out at a laptop's width and a phone's: the thread
 // never scrolls sideways. A table or code block too wide scrolls inside its own box instead. Nothing real is called:
 // the platform client runs over the fixture.
-import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { flushSync } from 'react-dom';
 import { AgentConversation } from '~/cloud/components/work/conversation/AgentConversation';
@@ -21,10 +20,9 @@ async function at(width: number) {
     try {
         flushSync(() =>
             root.render(
-                createElement(WorkProviders, {
-                    client: fake.client,
-                    children: createElement(AgentConversation, { agentId: AGENT_ID, conversation: 'main', onOpenProfile: () => undefined, onOpenMachine: () => undefined, onOpenConversation: () => undefined }),
-                })
+                <WorkProviders client={fake.client}>
+                    <AgentConversation agentId={AGENT_ID} conversation="main" onOpenProfile={() => undefined} onOpenMachine={() => undefined} onOpenConversation={() => undefined} />
+                </WorkProviders>
             )
         );
         await nc.wait.until(() => !!host.querySelector('table') && !!host.querySelector('[data-row="user"]'), 10000);
