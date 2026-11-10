@@ -1,0 +1,1892 @@
+{
+  "$defs": {
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "SprigAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "sprig_api_key",
+          "default": "sprig_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Sprig API Key",
+      "type": "object",
+      "x-credential-instructions": "In Sprig, open Integrations > Sources > Enrichment > Data Import API and copy the API key for your Production or Development environment. Study API availability and export access depend on your Sprig account. Use the key alone, without API-Key or Bearer.",
+      "x-credential-url": "https://app.sprig.com/integrations"
+    },
+    "SprigClearTargetingConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "clear_targeting",
+          "default": "clear_targeting",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Targeting",
+          "x-display-name": "Clear Study Targeting",
+          "x-is-trigger": false
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        },
+        "version": {
+          "description": "Study.version from your last read. Sent as a quoted If-Match header; stale writes are refused.",
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "study_id",
+        "version"
+      ],
+      "title": "SprigClearTargetingConfig",
+      "type": "object"
+    },
+    "SprigCreateInvitationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_invitations",
+          "default": "create_invitations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invitations",
+          "x-display-name": "Create Invitations",
+          "x-is-trigger": false
+        },
+        "count": {
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "minLength": 1,
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "count",
+        "idempotency_key",
+        "study_id"
+      ],
+      "title": "SprigCreateInvitationsConfig",
+      "type": "object"
+    },
+    "SprigCreateQuestionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_question",
+          "default": "create_question",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Questions",
+          "x-display-name": "Create Open Text Question",
+          "x-is-trigger": false
+        },
+        "required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required"
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "version": {
+          "description": "Study.version from your last read. Sent as a quoted If-Match header; stale writes are refused.",
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "study_id",
+        "title",
+        "version"
+      ],
+      "title": "SprigCreateQuestionConfig",
+      "type": "object"
+    },
+    "SprigCreateStudyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_study",
+          "default": "create_study",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Studies",
+          "x-display-name": "Create Draft Study",
+          "x-is-trigger": false
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "platform": {
+          "anyOf": [
+            {
+              "enum": [
+                "WEB",
+                "MOBILE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Platform",
+          "enum": [
+            "WEB",
+            "MOBILE"
+          ],
+          "x-enum-searchable": true
+        },
+        "type": {
+          "enum": [
+            "SURVEY",
+            "IN_PRODUCT_SURVEY"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "title": "SprigCreateStudyConfig",
+      "type": "object"
+    },
+    "SprigDeleteQuestionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_question",
+          "default": "delete_question",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Questions",
+          "x-display-name": "Delete Question",
+          "x-is-trigger": false
+        },
+        "cascade": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cascade",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        },
+        "question_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Question Id",
+          "type": "string"
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        },
+        "version": {
+          "description": "Study.version from your last read. Sent as a quoted If-Match header; stale writes are refused.",
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "question_id",
+        "study_id",
+        "version"
+      ],
+      "title": "SprigDeleteQuestionConfig",
+      "type": "object"
+    },
+    "SprigDeleteStudyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_study",
+          "default": "delete_study",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Studies",
+          "x-display-name": "Delete Draft Study",
+          "x-is-trigger": false
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        },
+        "version": {
+          "description": "Study.version from your last read. Sent as a quoted If-Match header; stale writes are refused.",
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "study_id",
+        "version"
+      ],
+      "title": "SprigDeleteStudyConfig",
+      "type": "object"
+    },
+    "SprigEditTargetingConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "edit_targeting",
+          "default": "edit_targeting",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Targeting",
+          "x-display-name": "Replace Study Targeting",
+          "x-is-trigger": false
+        },
+        "audience_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON audience rule from the Study API; omit to target every visitor.",
+          "title": "Audience Json",
+          "ui:widget": "textarea"
+        },
+        "delay_seconds": {
+          "anyOf": [
+            {
+              "maximum": 999,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Targeting display delay, or purge delay. Omit purge delay to retain Sprig's ten day default.",
+          "title": "Delay Seconds"
+        },
+        "event_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Event Id",
+          "type": "string"
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        },
+        "version": {
+          "description": "Study.version from your last read. Sent as a quoted If-Match header; stale writes are refused.",
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id",
+        "study_id",
+        "version"
+      ],
+      "title": "SprigEditTargetingConfig",
+      "type": "object"
+    },
+    "SprigGetLayoutConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_layout",
+          "default": "get_layout",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Studies",
+          "x-display-name": "Get Study Layout",
+          "x-is-trigger": false
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "study_id"
+      ],
+      "title": "SprigGetLayoutConfig",
+      "type": "object"
+    },
+    "SprigGetQuestionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_question",
+          "default": "get_question",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Questions",
+          "x-display-name": "Get Question",
+          "x-is-trigger": false
+        },
+        "question_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Question Id",
+          "type": "string"
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "question_id",
+        "study_id"
+      ],
+      "title": "SprigGetQuestionConfig",
+      "type": "object"
+    },
+    "SprigGetStudyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_study",
+          "default": "get_study",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Studies",
+          "x-display-name": "Get Study",
+          "x-is-trigger": false
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "study_id"
+      ],
+      "title": "SprigGetStudyConfig",
+      "type": "object"
+    },
+    "SprigGetTargetingConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_targeting",
+          "default": "get_targeting",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Targeting",
+          "x-display-name": "Get Study Targeting",
+          "x-is-trigger": false
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "study_id"
+      ],
+      "title": "SprigGetTargetingConfig",
+      "type": "object"
+    },
+    "SprigGetUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get User",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "SprigGetUserConfig",
+      "type": "object"
+    },
+    "SprigListInvitationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_invitations",
+          "default": "list_invitations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invitations",
+          "x-display-name": "List Invitations",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 999,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "status": {
+          "enum": [
+            "OPEN",
+            "SPENT",
+            "EXPIRED"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "study_id"
+      ],
+      "title": "SprigListInvitationsConfig",
+      "type": "object"
+    },
+    "SprigListQuestionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_questions",
+          "default": "list_questions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Questions",
+          "x-display-name": "List Questions",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 999,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "study_id"
+      ],
+      "title": "SprigListQuestionsConfig",
+      "type": "object"
+    },
+    "SprigListResponsesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_responses",
+          "default": "list_responses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Exports",
+          "x-display-name": "List Responses",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 999,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latest creation time, Unix milliseconds.",
+          "title": "End"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "sid": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sid"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Earliest creation time, Unix milliseconds. Omit for all available history.",
+          "title": "Start"
+        },
+        "with_custom_metadata": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "With Custom Metadata"
+        },
+        "with_deleted_responses": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "With Deleted Responses"
+        },
+        "with_meta": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "With Meta"
+        },
+        "with_snapshots": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "With Snapshots"
+        },
+        "with_urls": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "With Urls"
+        }
+      },
+      "title": "SprigListResponsesConfig",
+      "type": "object"
+    },
+    "SprigListStudiesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_studies",
+          "default": "list_studies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Studies",
+          "x-display-name": "List Studies",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 999,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "platform": {
+          "anyOf": [
+            {
+              "enum": [
+                "WEB",
+                "MOBILE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Platform",
+          "enum": [
+            "WEB",
+            "MOBILE"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "DRAFT",
+                "IN_PROGRESS",
+                "PAUSED",
+                "COMPLETED",
+                "ARCHIVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "DRAFT",
+            "IN_PROGRESS",
+            "PAUSED",
+            "COMPLETED",
+            "ARCHIVED"
+          ],
+          "x-enum-searchable": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "SURVEY",
+                "IN_PRODUCT_SURVEY"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "SURVEY",
+            "IN_PRODUCT_SURVEY"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "SprigListStudiesConfig",
+      "type": "object"
+    },
+    "SprigListSurveysConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_surveys",
+          "default": "list_surveys",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Exports",
+          "x-display-name": "Export Surveys",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 999,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latest creation time, Unix milliseconds.",
+          "title": "End"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Earliest creation time, Unix milliseconds. Omit for all available history.",
+          "title": "Start"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "DRAFT",
+                "IN_PROGRESS",
+                "PAUSED",
+                "COMPLETED",
+                "ARCHIVED",
+                "NEW"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "DRAFT",
+            "IN_PROGRESS",
+            "PAUSED",
+            "COMPLETED",
+            "ARCHIVED",
+            "NEW"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "SprigListSurveysConfig",
+      "type": "object"
+    },
+    "SprigListThemesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_themes",
+          "default": "list_themes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Exports",
+          "x-display-name": "List Themes",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 999,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latest creation time, Unix milliseconds.",
+          "title": "End"
+        },
+        "sid": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sid"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Earliest creation time, Unix milliseconds. Omit for all available history.",
+          "title": "Start"
+        }
+      },
+      "title": "SprigListThemesConfig",
+      "type": "object"
+    },
+    "SprigOnNewResponseConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_response",
+          "default": "on_new_response",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Response",
+          "x-is-trigger": true
+        },
+        "sid": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Survey ID"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional creation-time lower bound. Set for large accounts to keep the poll under 10,000 responses.",
+          "title": "Created Since (Unix Milliseconds)"
+        }
+      },
+      "title": "SprigOnNewResponseConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "SprigPurgeVisitorsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "purge_visitors",
+          "default": "purge_visitors",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Purge Visitors",
+          "x-is-trigger": false
+        },
+        "delay_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Targeting display delay, or purge delay. Omit purge delay to retain Sprig's ten day default.",
+          "title": "Delay Seconds"
+        },
+        "user_ids_json": {
+          "description": "JSON array of 1 to 100 external user IDs. Purges users and their related data.",
+          "minLength": 1,
+          "title": "User Ids Json",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "user_ids_json"
+      ],
+      "title": "SprigPurgeVisitorsConfig",
+      "type": "object"
+    },
+    "SprigUpdateQuestionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_question",
+          "default": "update_question",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Questions",
+          "x-display-name": "Update Question",
+          "x-is-trigger": false
+        },
+        "cascade": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cascade",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        },
+        "question_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Question Id",
+          "type": "string"
+        },
+        "required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required"
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "version": {
+          "description": "Study.version from your last read. Sent as a quoted If-Match header; stale writes are refused.",
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "question_id",
+        "study_id",
+        "version"
+      ],
+      "title": "SprigUpdateQuestionConfig",
+      "type": "object"
+    },
+    "SprigUpdateStudyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_study",
+          "default": "update_study",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Studies",
+          "x-display-name": "Update Study",
+          "x-is-trigger": false
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "IN_PROGRESS",
+                "PAUSED",
+                "COMPLETED",
+                "ARCHIVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "IN_PROGRESS",
+            "PAUSED",
+            "COMPLETED",
+            "ARCHIVED"
+          ],
+          "x-enum-searchable": true
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        },
+        "version": {
+          "description": "Study.version from your last read. Sent as a quoted If-Match header; stale writes are refused.",
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "study_id",
+        "version"
+      ],
+      "title": "SprigUpdateStudyConfig",
+      "type": "object"
+    },
+    "SprigUpsertUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "upsert_user",
+          "default": "upsert_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Upsert User",
+          "x-is-trigger": false
+        },
+        "attributes_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of user attributes.",
+          "title": "Attributes Json",
+          "ui:widget": "textarea"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Address"
+        },
+        "events_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of historical events: event (existing event name) and timestamp (Unix milliseconds). Does not trigger SDK studies.",
+          "title": "Events Json",
+          "ui:widget": "textarea"
+        },
+        "user_id": {
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "SprigUpsertUserConfig",
+      "type": "object"
+    },
+    "SprigValidateStudyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "validate_study",
+          "default": "validate_study",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Studies",
+          "x-display-name": "Validate Study",
+          "x-is-trigger": false
+        },
+        "study_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Study Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "study_id"
+      ],
+      "title": "SprigValidateStudyConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "clear_targeting": "#/$defs/SprigClearTargetingConfig",
+          "create_invitations": "#/$defs/SprigCreateInvitationsConfig",
+          "create_question": "#/$defs/SprigCreateQuestionConfig",
+          "create_study": "#/$defs/SprigCreateStudyConfig",
+          "delete_question": "#/$defs/SprigDeleteQuestionConfig",
+          "delete_study": "#/$defs/SprigDeleteStudyConfig",
+          "edit_targeting": "#/$defs/SprigEditTargetingConfig",
+          "get_layout": "#/$defs/SprigGetLayoutConfig",
+          "get_question": "#/$defs/SprigGetQuestionConfig",
+          "get_study": "#/$defs/SprigGetStudyConfig",
+          "get_targeting": "#/$defs/SprigGetTargetingConfig",
+          "get_user": "#/$defs/SprigGetUserConfig",
+          "list_invitations": "#/$defs/SprigListInvitationsConfig",
+          "list_questions": "#/$defs/SprigListQuestionsConfig",
+          "list_responses": "#/$defs/SprigListResponsesConfig",
+          "list_studies": "#/$defs/SprigListStudiesConfig",
+          "list_surveys": "#/$defs/SprigListSurveysConfig",
+          "list_themes": "#/$defs/SprigListThemesConfig",
+          "on_new_response": "#/$defs/SprigOnNewResponseConfig",
+          "purge_visitors": "#/$defs/SprigPurgeVisitorsConfig",
+          "update_question": "#/$defs/SprigUpdateQuestionConfig",
+          "update_study": "#/$defs/SprigUpdateStudyConfig",
+          "upsert_user": "#/$defs/SprigUpsertUserConfig",
+          "validate_study": "#/$defs/SprigValidateStudyConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SprigListResponsesConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigListSurveysConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigListThemesConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigUpsertUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigPurgeVisitorsConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigListStudiesConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigCreateStudyConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigGetStudyConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigUpdateStudyConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigDeleteStudyConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigGetTargetingConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigEditTargetingConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigClearTargetingConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigGetLayoutConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigListQuestionsConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigCreateQuestionConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigGetQuestionConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigUpdateQuestionConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigDeleteQuestionConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigValidateStudyConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigListInvitationsConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigCreateInvitationsConfig"
+        },
+        {
+          "$ref": "#/$defs/SprigOnNewResponseConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SprigAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Sprig Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Upsert a Sprig user",
+    "Export Sprig responses",
+    "Create a draft Sprig study",
+    "Watch for new Sprig responses"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
