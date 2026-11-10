@@ -2,6 +2,7 @@
 // colour (the colour its @-mentions read in too), you are your account avatar,
 // and anyone else is their initial on a quiet disc.
 import { AccountAvatar, type AccountMenuUser } from '~/components/nav/AccountMenu';
+import { LogoMark, MARK_IN_A_SHAPE } from '~/components/shared/LogoMark';
 import { cn } from '~/lib/utils';
 import { AGENT_HUES, YOU_ID } from './model';
 import type { AgentHue, ChannelMember } from './types';
@@ -39,6 +40,12 @@ export type AvatarSize = keyof typeof SIZE;
 /** `user` draws you; a card with no one signed in to show (the chat's agent and channel cards) draws agents alone. */
 export function MemberAvatar({ member, user, size = 32, className }: { member: ChannelMember; user?: AccountMenuUser; size?: AvatarSize; className?: string }) {
     if (member.id === YOU_ID && user) return <AccountAvatar user={user} className={cn(SIZE[size], 'shrink-0', className)} />;
+    if (member.noclick)
+        return (
+            <span aria-hidden data-noclick-mark className={cn('inline-flex shrink-0 items-center justify-center rounded-full bg-foreground/[0.07]', SIZE[size], className)}>
+                <LogoMark alt="" className={cn('h-1/2 w-1/2', MARK_IN_A_SHAPE)} />
+            </span>
+        );
     return (
         <span
             aria-hidden

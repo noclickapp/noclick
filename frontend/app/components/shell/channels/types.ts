@@ -28,6 +28,8 @@ export interface ChannelMember {
     role?: string;
     /** Taking a turn right now. */
     busy?: boolean;
+    /** NoClick itself (the account's coordinator): drawn with NoClick's mark, as a channel draws NoClick. */
+    noclick?: boolean;
 }
 
 /** Who posted: the account, a person, an agent (a platform agent, or one from your Automations), an agent from elsewhere, NoClick, or an app's event. */
