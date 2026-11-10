@@ -1,15 +1,18 @@
 """DoorLoop account automation with a user-supplied API key.
 
-Each operation issues one request to DoorLoop's published v1 contract. Lists
-return one explicit page, and writes use typed bodies instead of arbitrary JSON.
+Actions issue one request to DoorLoop's published v1 contract. Lists return one
+explicit page; new-record triggers page their creation-date scope before deduping.
+Writes use typed bodies instead of arbitrary JSON.
 """
 from __future__ import annotations
 from datetime import date
+import json
 from typing import Annotated, Literal, Union
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -280,7 +283,54 @@ class DoorLoopCreateNote(_Input):
     tags: list[Id] | None = None
 
 
+class _NewRecord(PollTriggerConfigBase):
+    """Watch a creation-date scope; existing records are baselined on arming."""
+    model_config = ConfigDict(extra="forbid", json_schema_extra={"x-requires-webhook": True})
+    created_since: date | None = Field(None, description="Only watch records created on or after this date. Narrow this scope if it exceeds 10,000 records.")
+
+
+class DoorLoopOnNewTask(_NewRecord):
+    """On New Task: poll the documented creation-date-filtered list."""
+    operation: Literal["on_new_task"] = Field("on_new_task", title="On New Task", json_schema_extra={
+        "const": "on_new_task", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On New Task",
+    })
+    filter_property: Id | None = None
+    filter_type: Literal["INTERNAL_TASK", "WORK_ORDER", "TENANT_REQUEST", "OWNER_REQUEST"] | None = None
+
+
+class DoorLoopOnNewOwner(_NewRecord):
+    """On New Owner: poll the documented creation-date-filtered list."""
+    operation: Literal["on_new_owner"] = Field("on_new_owner", title="On New Owner", json_schema_extra={
+        "const": "on_new_owner", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On New Owner",
+    })
+    filter_property: Id | None = None
+
+
+class DoorLoopOnNewVendor(_NewRecord):
+    """On New Vendor: poll the documented creation-date-filtered list."""
+    operation: Literal["on_new_vendor"] = Field("on_new_vendor", title="On New Vendor", json_schema_extra={
+        "const": "on_new_vendor", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On New Vendor",
+    })
+    filter_property: Id | None = None
+
+
+class DoorLoopOnNewNote(_NewRecord):
+    """On New Note: poll the documented creation-date-filtered list."""
+    operation: Literal["on_new_note"] = Field("on_new_note", title="On New Note", json_schema_extra={
+        "const": "on_new_note", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On New Note",
+    })
+    filter_resourceId: Id | None = None
+
+
 DoorLoopConfig = Annotated[Union[
+    DoorLoopOnNewTask,
+    DoorLoopOnNewOwner,
+    DoorLoopOnNewVendor,
+    DoorLoopOnNewNote,
     DoorLoopGetCurrentUser,
     DoorLoopListProperties,
     DoorLoopGetProperty,
@@ -316,7 +366,7 @@ class DoorLoopFullConfig(NodeConfig[DoorLoopConfig, DoorLoopAPIKeyCredential]):
 ROUTES = {'get_current_user': ('GET', '/users/me'), 'list_properties': ('GET', '/properties'), 'get_property': ('GET', '/properties/{propertyId}'), 'list_units': ('GET', '/units'), 'get_unit': ('GET', '/units/{unitId}'), 'list_leases': ('GET', '/leases'), 'get_lease': ('GET', '/leases/{leaseId}'), 'list_tenants': ('GET', '/tenants'), 'get_tenant': ('GET', '/tenants/{tenantId}'), 'list_tasks': ('GET', '/tasks'), 'get_task': ('GET', '/tasks/{taskId}'), 'list_owners': ('GET', '/owners'), 'get_owner': ('GET', '/owners/{ownerId}'), 'list_vendors': ('GET', '/vendors'), 'get_vendor': ('GET', '/vendors/{vendorId}'), 'list_lease_payments': ('GET', '/lease-payments'), 'get_lease_payment': ('GET', '/lease-payments/{leasePaymentId}'), 'list_notes': ('GET', '/notes'), 'get_note': ('GET', '/notes/{noteId}'), 'create_prospect': ('POST', '/tenants'), 'create_owner': ('POST', '/owners'), 'create_task': ('POST', '/tasks'), 'update_task': ('PUT', '/tasks/{taskId}'), 'delete_task': ('DELETE', '/tasks/{taskId}'), 'create_note': ('POST', '/notes')}
 
 
-class DoorLoopNode(WorkflowNode):
+class DoorLoopNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-doorloop"
     connection_evidence = ConnectionEvidence(noun="DoorLoop account", identity_operation="get_current_user", identity_keys=("loginEmail", "name", "id"))
 
@@ -324,11 +374,81 @@ class DoorLoopNode(WorkflowNode):
     def get_config_model(cls):
         return DoorLoopFullConfig
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation", "").startswith("on_new_"):
+            return bool(output.get("new_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or "new_records" not in output:
+            return super().resolve_agent_event(output)
+        records = output["new_records"]
+        if not records:
+            return None
+        kind = output["record_type"]
+        lines = []
+        for record in records[:10]:
+            if kind == "task":
+                label = record.get("subject") or "Task"
+                details = {key: record.get(key) for key in (
+                    "type", "status", "description", "requestedByUser", "requestedByTenant",
+                    "requestedByOwner", "property", "unit", "assignedToUsers", "workOrder")
+                    if record.get(key) is not None}
+            elif kind == "note":
+                label = record.get("title") or "Note"
+                details = {key: record.get(key) for key in ("body", "createdBy", "linkedResource")
+                           if record.get(key) is not None}
+            else:
+                label = " ".join(value for value in (record.get("firstName"), record.get("lastName")) if value) or kind.title()
+                details = {key: record.get(key) for key in ("companyName", "emails", "phones")
+                           if record.get(key) is not None}
+            lines.append(f"- {label} (id {record['id']}): {json.dumps(details, ensure_ascii=False)}")
+        if len(records) > 10:
+            lines.append(f"… and {len(records) - 10} more records in the trigger output")
+        return {"text": f"DoorLoop: {len(records)} new {output['record_type']} record(s):\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _poll_new_records(self, config):
+        # DoorLoop documents filter_createdAt_from on these four list routes:
+        # https://api.doorloop.com/reference/get-tasks (and get-owners/vendors/notes).
+        lists = {"on_new_task": DoorLoopListTasks, "on_new_owner": DoorLoopListOwners,
+                 "on_new_vendor": DoorLoopListVendors, "on_new_note": DoorLoopListNotes}
+        filters = {key: value for key, value in config.model_dump(mode="json", exclude_none=True).items()
+                   if key.startswith("filter_")}
+        if config.created_since:
+            filters["filter_createdAt_from"] = config.created_since.isoformat()
+        records = []
+        for page in range(1, 11):
+            result = await self._execute_operation(lists[config.operation](
+                page_number=page, page_size=1000, **filters), poll=True)
+            if result.get("status") == "error":
+                raise ValueError(result["error"])
+            records.extend(result["items"])
+            if any(not isinstance(item, dict) or not isinstance(item.get("id"), str) or not item["id"]
+                   for item in records):
+                raise ValueError("DoorLoop poll returned a record without an ID; no baseline was changed")
+            if result["total"] > 10000:
+                raise ValueError("DoorLoop poll scope exceeds 10,000 records; narrow created since or the resource filter")
+            if not result["has_more"]:
+                break
+        else:
+            raise ValueError("DoorLoop poll pagination did not finish; narrow the trigger scope")
+        fresh = await self._filter_unseen(records, lambda record: record["id"])
+        return {"status": "success", "record_type": config.operation.removeprefix("on_new_"),
+                "new_records": fresh, "new_count": len(fresh)}
+
     async def execute(self, inputs):
+        config = self.config.config
+        if isinstance(config, _NewRecord):
+            return await self._poll_new_records(config)
+        return await self._execute_operation(config)
+
+    async def _execute_operation(self, config, *, poll=False):
         credential = self.config.credentials
         if not credential:
             raise ValueError("Connect a DoorLoop API key")
-        config = self.config.config
         method, path = ROUTES[config.operation]
         values = config.model_dump(mode="json", exclude_none=True, exclude={"operation"})
         for field in ("propertyId", "unitId", "leaseId", "tenantId", "taskId", "ownerId", "vendorId", "leasePaymentId", "noteId"):
@@ -366,7 +486,7 @@ class DoorLoopNode(WorkflowNode):
         body = response.json()
         if not isinstance(body, dict):
             raise ValueError("Expected a DoorLoop JSON object")
-        if body.get("error") or body.get("success") is False:
+        if not poll and (body.get("error") or body.get("success") is False):
             raise ValueError("DoorLoop returned an error envelope with a success HTTP status")
         if isinstance(config, _Page):
             if not isinstance(body.get("data"), list) or type(body.get("total")) not in (int, float):

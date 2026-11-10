@@ -162,3 +162,116 @@ def test_invalid_config_is_rejected(config):
 @pytest.mark.parametrize("key", ["Bearer some-key", "https://example.com", "key\nheader", "<token>"])
 def test_invalid_manual_secret_is_rejected(key):
     with pytest.raises(ValidationError): native.DoorLoopAPIKeyCredential(api_key=key)
+
+
+# Fixtures follow the task/person/note response schemas in DoorLoop API Reference 1.0:
+# https://api.doorloop.com/reference/get-tasks (and get-owners/vendors/notes).
+# Resource IDs are copied from the published mongoId examples.
+POLL_RECORDS = {
+    "task": {"id": ID, "type": "TENANT_REQUEST", "subject": "Repair request", "status": "RECEIVED",
+             "requestedByTenant": ID, "property": ID, "unit": ID, "description": "The sink leaks"},
+    "owner": {"id": ID, "firstName": "Ada", "lastName": "Lovelace", "active": True},
+    "vendor": {"id": ID, "firstName": "Ada", "lastName": "Lovelace", "active": True},
+    "note": {"id": ID, "title": "Repair request", "body": "The sink leaks",
+             "linkedResource": {"resourceId": ID, "resourceType": "TASK"}},
+}
+
+
+def state_store(instance, initial=None):
+    state = {} if initial is None else dict(initial)
+    async def update(mutator, **kwargs):
+        new_state, result = mutator(dict(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+    instance._update_node_state = update
+    return state
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("kind,path", [("task", "tasks"), ("owner", "owners"),
+                                       ("vendor", "vendors"), ("note", "notes")])
+async def test_poll_baselines_deduplicates_and_delivers_agent_event(monkeypatch, kind, path):
+    record = POLL_RECORDS[kind]
+    body = {"total": 1, "data": [record]}
+    requests = transport(monkeypatch, body)
+    instance = node({"operation": "on_new_" + kind, "created_since": "2026-11-01"})
+    state_store(instance)
+    baseline = await instance.execute({})
+    assert baseline["new_records"] == []
+    assert instance.trigger_produced_no_event(baseline)
+    assert instance.resolve_agent_event(baseline) is None
+    new_record = {**record, "id": "00000020f51bb4362eee2a4d"}
+    body["data"].append(new_record)
+    body["total"] = 2
+    output = await instance.execute({})
+    assert output["new_records"] == [new_record]
+    assert instance.trigger_emitted_event(output)
+    assert instance.should_propagate_output(output, {"operation": "on_new_" + kind})
+    event = instance.resolve_agent_event(output)
+    assert kind in event["text"] and new_record["id"] in event["text"]
+    assert all(str(value) in event["text"] for value in new_record.values() if isinstance(value, str))
+    repeat = await instance.execute({})
+    assert repeat["new_count"] == 0
+    assert not instance.should_propagate_output(repeat, {"operation": "on_new_" + kind})
+    assert requests[0].url.path == "/api/" + path
+    assert dict(requests[0].url.params) == {"page_number": "1", "page_size": "1000",
+                                          "filter_createdAt_from": "2026-11-01"}
+
+
+@pytest.mark.asyncio
+async def test_poll_reads_all_pages_before_advancing_state(monkeypatch):
+    instance = node({"operation": "on_new_task", "filter_property": ID, "filter_type": "TENANT_REQUEST"})
+    state_store(instance, {"seen_ids": []})
+    requests = []
+    original = httpx.AsyncClient
+    def respond(request):
+        requests.append(request)
+        page = int(request.url.params["page_number"])
+        record = {**POLL_RECORDS["task"], "id": ID if page == 1 else "00000020f51bb4362eee2a4d"}
+        return httpx.Response(200, json={"total": 1001, "data": [record]})
+    monkeypatch.setattr(native, "guarded_async_client", lambda **kw: original(transport=httpx.MockTransport(respond), **kw))
+    output = await instance.execute({})
+    assert output["new_count"] == 2
+    assert [r.url.params["page_number"] for r in requests] == ["1", "2"]
+    assert all(r.url.params["filter_property"] == ID for r in requests)
+    assert all(r.url.params["filter_type"] == "TENANT_REQUEST" for r in requests)
+    assert "schedule" not in requests[0].url.params
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("body,status,match", [
+    ({"total": 10001, "data": [POLL_RECORDS["task"]]}, 200, "10,000"),
+    ({"total": 1, "data": [{"subject": "No ID"}]}, 200, "without an ID"),
+    ({"total": 1}, 200, "data array"),
+    ({"message": "Denied"}, 403, "Denied"),
+])
+async def test_poll_failure_preserves_baseline(monkeypatch, body, status, match):
+    transport(monkeypatch, body, status)
+    instance = node({"operation": "on_new_task"})
+    state = state_store(instance, {"seen_ids": [ID]})
+    with pytest.raises(ValueError, match=match):
+        await instance.execute({})
+    assert state == {"seen_ids": [ID]}
+
+
+@pytest.mark.asyncio
+async def test_poll_filter_change_rebaselines(monkeypatch):
+    transport(monkeypatch, {"total": 1, "data": [POLL_RECORDS["task"]]})
+    instance = node({"operation": "on_new_task", "filter_property": ID})
+    state = state_store(instance, {"seen_ids": [], "scope": "previous-scope"})
+    assert (await instance.execute({}))["new_count"] == 0
+    assert state["scope"] != "previous-scope"
+
+
+@pytest.mark.asyncio
+async def test_arm_time_poll_does_not_consume_new_records(monkeypatch):
+    transport(monkeypatch, {"total": 1, "data": [POLL_RECORDS["task"]]})
+    instance = node({"operation": "on_new_task"})
+    state = state_store(instance, {"seen_ids": []})
+    instance._poll_baseline_only = True
+    assert (await instance.execute({}))["new_count"] == 0
+    assert state == {"seen_ids": []}
+    instance._poll_baseline_only = False
+    assert (await instance.execute({}))["new_count"] == 1

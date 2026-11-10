@@ -7,13 +7,12 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const DoorLoopIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/doorloop.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+    <img src="/icons/doorloop.svg" alt="" aria-hidden="true" className={className} style={style} />
 );
 
 export const DoorLoopNode: NodeDefinition = {
     type: 'automation-doorloop', category: 'industry', label: 'DoorLoop',
-    description: 'Manage properties, units, leases, prospects, owners, tasks, payments and notes',
+    description: 'Start workflows from new tasks, owners, vendors or notes, and manage rental operations',
     keywords: ['property management', 'rental', 'tenant', 'landlord', 'maintenance'],
     Icon: DoorLoopIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
