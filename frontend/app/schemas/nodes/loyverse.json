@@ -1418,6 +1418,134 @@
       "x-credential-instructions": "Create a personal access token in Loyverse Back Office \u2192 Integrations \u2192 Access tokens. Paste the token only. Grant read access for the resources you use and write access for customer, category or supplier saves. Store reads verify access to your account; they do not verify write permissions.",
       "x-credential-url": "https://r.loyverse.com/dashboard/#/integrations/tokens"
     },
+    "OnInventoryUpdatedConfig": {
+      "description": "Receive the inventory webhook payload published in the v1.0 contract.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_inventory_updated",
+          "default": "on_inventory_updated",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Inventory Updated",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically. Loyverse personal-token webhooks are unsigned; keep this URL private.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "OnInventoryUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "SaveCategoryConfig": {
       "additionalProperties": false,
       "description": "POST /categories \u2014 omit id to create, supply id to update.",
@@ -1876,6 +2004,7 @@
           "list_suppliers": "#/$defs/ListSuppliersConfig",
           "list_taxes": "#/$defs/ListTaxesConfig",
           "list_variants": "#/$defs/ListVariantsConfig",
+          "on_inventory_updated": "#/$defs/OnInventoryUpdatedConfig",
           "save_category": "#/$defs/SaveCategoryConfig",
           "save_customer": "#/$defs/SaveCustomerConfig",
           "save_supplier": "#/$defs/SaveSupplierConfig"
@@ -1883,6 +2012,9 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/OnInventoryUpdatedConfig"
+        },
         {
           "$ref": "#/$defs/ListCustomersConfig"
         },

@@ -92,3 +92,66 @@ async def test_malformed_list_and_secret_redaction(monkeypatch):
 ])
 def test_invalid_inputs_rejected(config):
     with pytest.raises(ValueError): node(config)
+
+
+# Exact inventory delivery example from https://developer.loyverse.com/docs/#section/Webhooks-overview
+INVENTORY_EVENT = {'merchant_id': '5fk4f446-01d2-8787-4fd5-7b7b1995df85', 'type': 'inventory_levels.update', 'created_at': '2020-06-07T17:23:48.562Z', 'inventory_levels': [{'variant_id': '5fk4f446-01d2-8787-4fd5-7b7b1995df85', 'store_id': '5fk4f446-01d2-8787-4fd5-7b7b1995df85', 'in_stock': 0, 'updated_at': '2019-08-24T14:15:22Z'}]}
+
+@pytest.mark.asyncio
+async def test_inventory_webhook_registration_and_cleanup(monkeypatch):
+    import json
+    webhook_id = '42dc2cec-6f40-11ea-bde9-1269e7c5a22d'
+    seen = transport(monkeypatch, {'id': webhook_id})
+    credential = {'credential_type': 'loyverse_token', 'access_token': TOKEN}
+    config = {'operation': 'on_inventory_updated'}
+    extra = await native.LoyverseNode._register_external_webhook(
+        webhook_url='https://hooks.example.test/inventory', credential=credential, config=config, node_id='test')
+    assert extra == {'external_webhook_id': webhook_id}
+    assert seen[0].url.path == '/v1.0/webhooks/'
+    assert seen[0].method == 'POST'
+    assert json.loads(seen[0].content) == {'url': 'https://hooks.example.test/inventory',
+        'type': 'inventory_levels.update', 'status': 'ENABLED'}
+    assert seen[0].headers['Authorization'] == 'Bearer ' + TOKEN
+    await native.LoyverseNode._unregister_external_webhook(
+        credential=credential, config={**config, **extra}, node_id='test')
+    assert seen[1].method == 'DELETE'
+    assert seen[1].url.path == '/v1.0/webhooks/' + webhook_id
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('body,status', [({},200), ({'errors': []},200), ({},401), ({},500)])
+async def test_inventory_registration_failure_never_claims_success(monkeypatch, body, status):
+    transport(monkeypatch, body, status)
+    with pytest.raises(ValueError):
+        await native.LoyverseNode._register_external_webhook(
+            webhook_url='https://hooks.example.test/inventory',
+            credential={'credential_type': 'loyverse_token', 'access_token': TOKEN},
+            config={'operation': 'on_inventory_updated'}, node_id='test')
+
+def test_documented_unsigned_inventory_delivery_and_agent_summary():
+    cls = native.LoyverseNode
+    config = {'operation': 'on_inventory_updated'}
+    assert cls.verify_webhook_signature(b'{}', {}, config)
+    assert cls.filter_trigger_payload(INVENTORY_EVENT, config)
+    output = cls.resolve_trigger_payload(INVENTORY_EVENT, config)
+    assert output['inventory_levels'] == INVENTORY_EVENT['inventory_levels']
+    assert output['merchant_id'] == INVENTORY_EVENT['merchant_id']
+    text = cls.resolve_agent_event(output)['text']
+    for key in ('variant_id', 'store_id', 'updated_at'):
+        assert str(INVENTORY_EVENT['inventory_levels'][0][key]) in text
+    assert '0 in stock' in text and INVENTORY_EVENT['merchant_id'] in text
+    for payload in ({}, {'type': 'customers.update'}, {**INVENTORY_EVENT, 'inventory_levels': []},
+                    {**INVENTORY_EVENT, 'inventory_levels': [{}]}):
+        assert not cls.filter_trigger_payload(payload, config)
+    assert not cls.filter_trigger_payload(INVENTORY_EVENT, {'operation': 'list_inventory'})
+
+@pytest.mark.asyncio
+async def test_inventory_trigger_execution_uses_delivery():
+    result = await node({'operation': 'on_inventory_updated'}).execute(INVENTORY_EVENT)
+    assert result['inventory_levels'] == INVENTORY_EVENT['inventory_levels']
+
+@pytest.mark.asyncio
+async def test_inventory_trigger_without_delivery_does_not_fire():
+    instance = node({'operation': 'on_inventory_updated'})
+    result = await instance.execute({})
+    assert result['status'] == 'no_event'
+    assert instance.trigger_produced_no_event(result)

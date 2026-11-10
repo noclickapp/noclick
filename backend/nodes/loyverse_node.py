@@ -3,13 +3,14 @@
 Contract: https://developer.loyverse.com/docs/API-Reference__v1.0.yaml
 Lists return one page and the provider cursor; writes never retry automatically.
 """
-from typing import Annotated, Literal, Optional, Union
+from typing import Any, Annotated, Literal, Optional, Union
 from urllib.parse import quote
 from uuid import UUID
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -234,14 +235,25 @@ class SaveSupplierConfig(Input):
     country_code: Optional[str] = Field(None, description='The two-letter country code corresponding to the supplier country in ISO 3166-1-alpha-2 format.')
     note: Optional[str] = Field(None, max_length=500)
 
-LoyverseOperation = Annotated[Union[ListCustomersConfig, GetCustomerConfig, ListItemsConfig, GetItemConfig, ListVariantsConfig, GetVariantConfig, ListReceiptsConfig, GetReceiptConfig, ListStoresConfig, GetStoreConfig, ListCategoriesConfig, GetCategoryConfig, ListSuppliersConfig, GetSupplierConfig, ListInventoryConfig, ListEmployeesConfig, ListPaymentTypesConfig, ListTaxesConfig, GetMerchantConfig, SaveCustomerConfig, SaveCategoryConfig, SaveSupplierConfig], Field(discriminator="operation")]
+class OnInventoryUpdatedConfig(WebhookTriggerConfigBase):
+    """Receive the inventory webhook payload published in the v1.0 contract."""
+    operation: Literal["on_inventory_updated"] = Field("on_inventory_updated", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "On Inventory Updated"})
+    webhook_url: Optional[str] = Field(None, title="Webhook URL",
+        description="Registered automatically. Loyverse personal-token webhooks are unsigned; keep this URL private.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+LoyverseOperation = Annotated[Union[OnInventoryUpdatedConfig, ListCustomersConfig, GetCustomerConfig, ListItemsConfig, GetItemConfig, ListVariantsConfig, GetVariantConfig, ListReceiptsConfig, GetReceiptConfig, ListStoresConfig, GetStoreConfig, ListCategoriesConfig, GetCategoryConfig, ListSuppliersConfig, GetSupplierConfig, ListInventoryConfig, ListEmployeesConfig, ListPaymentTypesConfig, ListTaxesConfig, GetMerchantConfig, SaveCustomerConfig, SaveCategoryConfig, SaveSupplierConfig], Field(discriminator="operation")]
 
 class LoyverseConfig(NodeConfig[LoyverseOperation, LoyverseTokenCredential]):
     pass
 
 ROUTES = {'list_customers': ('GET', '/customers', None), 'get_customer': ('GET', '/customers/{customer_id}', 'customer_id'), 'list_items': ('GET', '/items', None), 'get_item': ('GET', '/items/{item_id}', 'item_id'), 'list_variants': ('GET', '/variants', None), 'get_variant': ('GET', '/variants/{variant_id}', 'variant_id'), 'list_receipts': ('GET', '/receipts', None), 'get_receipt': ('GET', '/receipts/{receipt_number}', 'receipt_number'), 'list_stores': ('GET', '/stores', None), 'get_store': ('GET', '/stores/{store_id}', 'store_id'), 'list_categories': ('GET', '/categories', None), 'get_category': ('GET', '/categories/{category_id}', 'category_id'), 'list_suppliers': ('GET', '/suppliers/', None), 'get_supplier': ('GET', '/suppliers/{supplier_id}', 'supplier_id'), 'list_inventory': ('GET', '/inventory', None), 'list_employees': ('GET', '/employees', None), 'list_payment_types': ('GET', '/payment_types', None), 'list_taxes': ('GET', '/taxes', None), 'get_merchant': ('GET', '/merchant/', None), 'save_customer': ('POST', '/customers', None), 'save_category': ('POST', '/categories', None), 'save_supplier': ('POST', '/suppliers/', None)}
 
-class LoyverseNode(WorkflowNode):
+class LoyverseNode(ExternalWebhookTriggerMixin, WorkflowNode):
+    # The provider explicitly does not sign personal-access-token webhooks.
+    webhook_signing_secret_not_issued = True
     integration_type = "automation-loyverse"
     connection_evidence = ConnectionEvidence(noun="stores", operation="list_stores", label_keys=("name", "id"))
 
@@ -249,10 +261,83 @@ class LoyverseNode(WorkflowNode):
     def get_config_model(cls):
         return LoyverseConfig
 
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, body=None):
+        token = LoyverseTokenCredential.model_validate(credential).access_token
+        try:
+            async with guarded_async_client(timeout=30, trust_env=False, follow_redirects=False) as client:
+                response = await client.request(method, BASE + path,
+                    headers={"Authorization": "Bearer " + token, "Accept": "application/json"},
+                    **({"json": body} if body is not None else {}))
+            if response.status_code != 200:
+                raise ValueError("Loyverse webhook request failed")
+            data = response.json()
+            if not isinstance(data, dict) or "errors" in data:
+                raise ValueError("Loyverse returned an invalid webhook response")
+            return data
+        except (httpx.HTTPError, ValueError):
+            raise ValueError("Loyverse webhook request failed; check the webhook in Back Office before retrying") from None
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        if (config or {}).get("operation") != "on_inventory_updated":
+            raise ValueError("Choose the Loyverse inventory trigger")
+        data = await cls._webhook_request(credential, "POST", "/webhooks/",
+            {"url": webhook_url, "type": "inventory_levels.update", "status": "ENABLED"})
+        identifier = data.get("id")
+        if not isinstance(identifier, str) or not identifier:
+            raise ValueError("Loyverse did not return a webhook ID")
+        return {"external_webhook_id": identifier}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        identifier = (config or {}).get("external_webhook_id")
+        if identifier and credential:
+            await cls._webhook_request(credential, "DELETE", "/webhooks/" + quote(str(identifier), safe=""))
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # https://developer.loyverse.com/docs/#section/Webhooks-overview
+        # Only OAuth-app webhooks carry a signature; this node accepts PATs.
+        return True
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return (config or {}).get("operation") == "on_inventory_updated" and isinstance(payload, dict) and (
+            payload.get("type") == "inventory_levels.update" and
+            isinstance(payload.get("inventory_levels"), list) and
+            bool(payload["inventory_levels"]) and
+            all(isinstance(level, dict) and all(key in level for key in
+                ("variant_id", "store_id", "in_stock", "updated_at")) for level in payload["inventory_levels"]))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if not cls.filter_trigger_payload(payload, config):
+            return None
+        return {"status": "success", "event_type": payload["type"],
+                "merchant_id": payload.get("merchant_id"), "created_at": payload.get("created_at"),
+                "inventory_levels": payload["inventory_levels"]}
+
+    @classmethod
+    def resolve_agent_event(cls, output: dict[str, Any]):
+        if output.get("event_type") != "inventory_levels.update":
+            return super().resolve_agent_event(output)
+        levels = output.get("inventory_levels") or []
+        if not levels:
+            return None
+        lines = [f"- Variant {level['variant_id']} at store {level['store_id']}: "
+                 f"{level['in_stock']} in stock (updated {level['updated_at']})" for level in levels]
+        return {"text": f"Loyverse inventory updated for merchant {output.get('merchant_id')} "
+                f"at {output.get('created_at')}:\n" + "\n".join(lines), "conversation_key": None}
+
     async def execute(self, inputs):
         if not self.config or not self.config.credentials:
             raise ValueError("Connect a Loyverse personal access token")
         op = self.config.config
+        if isinstance(op, OnInventoryUpdatedConfig):
+            payload = (self.node_data.get("config") or {}).get("_triggerPayload", inputs)
+            result = self.resolve_trigger_payload(payload, op.model_dump())
+            return result or self.no_event_output(op.operation)
         method, path, identifier = ROUTES[op.operation]
         values = op.model_dump(mode="json", exclude_none=True, exclude_unset=method == "POST", exclude={"operation"})
         if identifier:
