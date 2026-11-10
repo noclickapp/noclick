@@ -1,0 +1,8 @@
+{
+  "path": "frontend/public/icons/appcenter.png",
+  "source": "https://appcenter.ms/favicon.ico",
+  "license": "Microsoft App Center trademark; used to identify the App Center integration",
+  "sha256": "b9ca15a6ff0b6fb2005ab7f59d6febbff29df759d370b777fde0292fc5257bd6",
+  "source_sha256": "47c529923257f1bc7c937a6c357e76651cc7df53c47cc0d743d7cf3e4b1756e5",
+  "transformation": "Lossless PNG encoding of the favicon largest 32x32 frame; no redraw or resizing."
+}

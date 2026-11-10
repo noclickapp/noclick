@@ -1,0 +1,21 @@
+{
+  "source": "https://api.appcenter.ms/preview/swagger.json#/paths/~1v0.1~1apps~1{owner_name}~1{app_name}~1crash_groups/get/responses/200",
+  "note": "Synthetic values shaped by the provider's published response schema; not a live recording or a copied example.",
+  "body": {
+    "limited_result_set": false,
+    "crash_groups": [{
+      "crash_group_id": "group-1",
+      "new_crash_group_id": "new-group-1",
+      "display_id": "1",
+      "app_version": "1.0",
+      "build": "42",
+      "status": "open",
+      "count": 2,
+      "first_occurrence": "2025-01-01T00:00:00Z",
+      "last_occurrence": "2025-01-02T00:00:00Z",
+      "crash_reason": "NullPointerException",
+      "fatal": true,
+      "annotation": "Investigating"
+    }]
+  }
+}

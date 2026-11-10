@@ -1,0 +1,1613 @@
+{
+  "$defs": {
+    "AddGroupMembers": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "distribution_group_name": {
+          "minLength": 1,
+          "title": "Distribution group name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_group_members",
+          "default": "add_group_members",
+          "title": "Operation",
+          "type": "string"
+        },
+        "user_emails": {
+          "description": "Tester email addresses; App Center may send invitations.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "User Emails",
+          "type": "array"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name",
+        "distribution_group_name",
+        "user_emails"
+      ],
+      "title": "AddGroupMembers",
+      "type": "object"
+    },
+    "AppCenterTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "appcenter_api_token",
+          "default": "appcenter_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "App Center User API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing App Center User API token. Read-only tokens support reads; writes need Full Access and the corresponding account permissions. The token is sent in X-API-Token to api.appcenter.ms. Microsoft has retired App Center; this integration targets its legacy API contract.",
+      "x-credential-url": "https://learn.microsoft.com/en-us/appcenter/api-docs/#creating-an-app-center-user-api-token"
+    },
+    "CreateApp": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_app",
+          "default": "create_app",
+          "title": "Operation",
+          "type": "string"
+        },
+        "display_name": {
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        },
+        "os": {
+          "enum": [
+            "Android",
+            "iOS",
+            "macOS",
+            "Tizen",
+            "tvOS",
+            "Windows",
+            "Linux",
+            "Custom"
+          ],
+          "title": "Os",
+          "type": "string"
+        },
+        "platform": {
+          "enum": [
+            "Java",
+            "Objective-C-Swift",
+            "UWP",
+            "Cordova",
+            "React-Native",
+            "Xamarin",
+            "Unity",
+            "Electron",
+            "WPF",
+            "WinForms",
+            "Custom"
+          ],
+          "title": "Platform",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "release_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release Type"
+        }
+      },
+      "required": [
+        "display_name",
+        "os",
+        "platform"
+      ],
+      "title": "CreateApp",
+      "type": "object"
+    },
+    "CreateDistributionGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_distribution_group",
+          "default": "create_distribution_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name",
+        "name"
+      ],
+      "title": "CreateDistributionGroup",
+      "type": "object"
+    },
+    "Destination": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Destination ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Destination",
+      "type": "object"
+    },
+    "DistributeRelease": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "distribute_release",
+          "default": "distribute_release",
+          "title": "Operation",
+          "type": "string"
+        },
+        "release_id": {
+          "minimum": 1,
+          "title": "Release Id",
+          "type": "integer"
+        },
+        "destinations": {
+          "description": "Distribution group or store IDs; sends the release to these destinations.",
+          "items": {
+            "$ref": "#/$defs/Destination"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Destinations",
+          "type": "array"
+        },
+        "notify_testers": {
+          "default": true,
+          "description": "Email testers about the release.",
+          "title": "Notify Testers",
+          "type": "boolean"
+        },
+        "mandatory_update": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mandatory Update"
+        },
+        "release_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release Notes"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name",
+        "release_id",
+        "destinations"
+      ],
+      "title": "DistributeRelease",
+      "type": "object"
+    },
+    "GetApp": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_app",
+          "default": "get_app",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name"
+      ],
+      "title": "GetApp",
+      "type": "object"
+    },
+    "GetCrashGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_crash_group",
+          "default": "get_crash_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "crash_group_id": {
+          "minLength": 1,
+          "title": "Crash Group Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name",
+        "crash_group_id"
+      ],
+      "title": "GetCrashGroup",
+      "type": "object"
+    },
+    "GetDistributionGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "distribution_group_name": {
+          "minLength": 1,
+          "title": "Distribution group name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_distribution_group",
+          "default": "get_distribution_group",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name",
+        "distribution_group_name"
+      ],
+      "title": "GetDistributionGroup",
+      "type": "object"
+    },
+    "GetOrganization": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string"
+        },
+        "org_name": {
+          "minLength": 1,
+          "title": "Org Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "org_name"
+      ],
+      "title": "GetOrganization",
+      "type": "object"
+    },
+    "GetRelease": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_release",
+          "default": "get_release",
+          "title": "Operation",
+          "type": "string"
+        },
+        "release_id": {
+          "description": "Numeric release ID or latest.",
+          "minLength": 1,
+          "pattern": "^(latest|[1-9][0-9]*)$",
+          "title": "Release Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name",
+        "release_id"
+      ],
+      "title": "GetRelease",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetUser",
+      "type": "object"
+    },
+    "ListApps": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_apps",
+          "default": "list_apps",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "display_name",
+                "name"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order By",
+          "enum": [
+            "display_name",
+            "name"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListApps",
+      "type": "object"
+    },
+    "ListCrashGroups": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "last_occurrence_from": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Occurrence From"
+        },
+        "last_occurrence_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Occurrence To"
+        },
+        "app_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "App Version"
+        },
+        "group_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "closed",
+                "ignored"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Status",
+          "enum": [
+            "open",
+            "closed",
+            "ignored"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_crash_groups",
+          "default": "list_crash_groups",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_by": {
+          "default": "last_occurrence desc",
+          "enum": [
+            "last_occurrence asc",
+            "last_occurrence desc",
+            "count asc",
+            "count desc",
+            "display_id asc",
+            "display_id desc",
+            "impacted_users asc",
+            "impacted_users desc"
+          ],
+          "title": "Order By",
+          "type": "string"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation Token"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name"
+      ],
+      "title": "ListCrashGroups",
+      "type": "object"
+    },
+    "ListDistributionGroups": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_distribution_groups",
+          "default": "list_distribution_groups",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name"
+      ],
+      "title": "ListDistributionGroups",
+      "type": "object"
+    },
+    "ListGroupMembers": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "distribution_group_name": {
+          "minLength": 1,
+          "title": "Distribution group name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_group_members",
+          "default": "list_group_members",
+          "title": "Operation",
+          "type": "string"
+        },
+        "exclude_pending_invitations": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclude Pending Invitations"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name",
+        "distribution_group_name"
+      ],
+      "title": "ListGroupMembers",
+      "type": "object"
+    },
+    "ListOrganizations": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListOrganizations",
+      "type": "object"
+    },
+    "ListReleases": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_releases",
+          "default": "list_releases",
+          "title": "Operation",
+          "type": "string"
+        },
+        "published_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Published Only"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "tester",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        },
+        "top": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Top",
+          "type": "integer"
+        },
+        "release_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional releaseId filter.",
+          "title": "Release Id"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name"
+      ],
+      "title": "ListReleases",
+      "type": "object"
+    },
+    "OnNewOrUpdatedCrashGroup": {
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "last_occurrence_from": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Occurrence From"
+        },
+        "last_occurrence_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Occurrence To"
+        },
+        "app_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "App Version"
+        },
+        "group_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "closed",
+                "ignored"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Status",
+          "enum": [
+            "open",
+            "closed",
+            "ignored"
+          ],
+          "x-enum-searchable": true
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_crash_group",
+          "default": "on_new_or_updated_crash_group",
+          "title": "On New or Updated Crash Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New or Updated Crash Group",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name"
+      ],
+      "title": "OnNewOrUpdatedCrashGroup",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "UpdateApp": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_app",
+          "default": "update_app",
+          "title": "Operation",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "release_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release Type"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name"
+      ],
+      "title": "UpdateApp",
+      "type": "object"
+    },
+    "UpdateCrashGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_crash_group",
+          "default": "update_crash_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "crash_group_id": {
+          "minLength": 1,
+          "title": "Crash Group Id",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "closed",
+                "ignored"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "open",
+            "closed",
+            "ignored"
+          ],
+          "x-enum-searchable": true
+        },
+        "annotation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Annotation"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name",
+        "crash_group_id"
+      ],
+      "title": "UpdateCrashGroup",
+      "type": "object"
+    },
+    "UpdateDistributionGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "distribution_group_name": {
+          "minLength": 1,
+          "title": "Distribution group name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_distribution_group",
+          "default": "update_distribution_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "is_public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Making a group public changes who can access its releases.",
+          "title": "Is Public"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name",
+        "distribution_group_name"
+      ],
+      "title": "UpdateDistributionGroup",
+      "type": "object"
+    },
+    "UpdateRelease": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_name": {
+          "description": "User or organization name from the App Center app URL.",
+          "minLength": 1,
+          "title": "Owner name",
+          "type": "string"
+        },
+        "app_name": {
+          "description": "App URL name, rather than its display name.",
+          "minLength": 1,
+          "title": "App name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_release",
+          "default": "update_release",
+          "title": "Operation",
+          "type": "string"
+        },
+        "release_id": {
+          "minimum": 1,
+          "title": "Release Id",
+          "type": "integer"
+        },
+        "release_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release Notes"
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enabled"
+        }
+      },
+      "required": [
+        "owner_name",
+        "app_name",
+        "release_id"
+      ],
+      "title": "UpdateRelease",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_group_members": "#/$defs/AddGroupMembers",
+          "create_app": "#/$defs/CreateApp",
+          "create_distribution_group": "#/$defs/CreateDistributionGroup",
+          "distribute_release": "#/$defs/DistributeRelease",
+          "get_app": "#/$defs/GetApp",
+          "get_crash_group": "#/$defs/GetCrashGroup",
+          "get_distribution_group": "#/$defs/GetDistributionGroup",
+          "get_organization": "#/$defs/GetOrganization",
+          "get_release": "#/$defs/GetRelease",
+          "get_user": "#/$defs/GetUser",
+          "list_apps": "#/$defs/ListApps",
+          "list_crash_groups": "#/$defs/ListCrashGroups",
+          "list_distribution_groups": "#/$defs/ListDistributionGroups",
+          "list_group_members": "#/$defs/ListGroupMembers",
+          "list_organizations": "#/$defs/ListOrganizations",
+          "list_releases": "#/$defs/ListReleases",
+          "on_new_or_updated_crash_group": "#/$defs/OnNewOrUpdatedCrashGroup",
+          "update_app": "#/$defs/UpdateApp",
+          "update_crash_group": "#/$defs/UpdateCrashGroup",
+          "update_distribution_group": "#/$defs/UpdateDistributionGroup",
+          "update_release": "#/$defs/UpdateRelease"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/ListApps"
+        },
+        {
+          "$ref": "#/$defs/GetApp"
+        },
+        {
+          "$ref": "#/$defs/CreateApp"
+        },
+        {
+          "$ref": "#/$defs/UpdateApp"
+        },
+        {
+          "$ref": "#/$defs/ListOrganizations"
+        },
+        {
+          "$ref": "#/$defs/GetOrganization"
+        },
+        {
+          "$ref": "#/$defs/ListReleases"
+        },
+        {
+          "$ref": "#/$defs/GetRelease"
+        },
+        {
+          "$ref": "#/$defs/UpdateRelease"
+        },
+        {
+          "$ref": "#/$defs/DistributeRelease"
+        },
+        {
+          "$ref": "#/$defs/ListDistributionGroups"
+        },
+        {
+          "$ref": "#/$defs/GetDistributionGroup"
+        },
+        {
+          "$ref": "#/$defs/CreateDistributionGroup"
+        },
+        {
+          "$ref": "#/$defs/UpdateDistributionGroup"
+        },
+        {
+          "$ref": "#/$defs/ListGroupMembers"
+        },
+        {
+          "$ref": "#/$defs/AddGroupMembers"
+        },
+        {
+          "$ref": "#/$defs/ListCrashGroups"
+        },
+        {
+          "$ref": "#/$defs/GetCrashGroup"
+        },
+        {
+          "$ref": "#/$defs/UpdateCrashGroup"
+        },
+        {
+          "$ref": "#/$defs/OnNewOrUpdatedCrashGroup"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AppCenterTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Appcenter Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
