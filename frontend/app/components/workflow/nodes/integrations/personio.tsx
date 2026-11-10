@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 // Unmodified current Personio wordmark published in its official Developer Hub.
 const PersonioIcon = ({
@@ -12,13 +13,7 @@ const PersonioIcon = ({
     className?: string;
     style?: CSSProperties;
 }) => (
-    <img
-        src="/icons/personio-brand.png"
-        alt=""
-        aria-hidden="true"
-        className={className}
-        style={{ ...style, objectFit: 'contain' }}
-    />
+    <ThemedBrandImg light="/icons/personio-brand.svg" dark="/icons/personio-brand-dark.svg" className={className} style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const PersonioNode: NodeDefinition = {

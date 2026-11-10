@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/rippling.svg",
+  "source": "https://images.ctfassets.net/k0itp0ir7ty4/4i37XzdCRbVinbFGqPMT2o/be6e27b72cec29148ca6d08255f534fa/Rippling-icon_berry__Logo_-_Default_.svg",
+  "found_at": "https://www.rippling.com/ (embedded via Rippling's Contentful space; asset titled \"Rippling App Icon\", description \"Rippling logo\")",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "none to the drawing",
+    "cropped the viewBox from 0 0 56 64 to the 56x56 tile (pad 0)",
+    "cleaned"
+  ],
+  "notes": "Rippling's site header draws the symbol + RIPPLING wordmark in black, but its app icon and favicon are the berry tile, so the brand is not monochrome; the berry symbol alone would vanish on the dark tile, hence the app-icon tile as one file for both themes (colour rule 2b). Alternative: downloads/rippling/c1/favicon.svg (square corners).",
+  "license": "Rippling brand mark, used nominatively to identify the connected service; trademark rights remain with Rippling.",
+  "sha256": "7a9af61c7f64c442885d51580e94de84c105cdd766f5e5453f7335ced83de987"
+}

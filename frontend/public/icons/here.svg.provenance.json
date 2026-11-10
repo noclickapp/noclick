@@ -1,12 +1,15 @@
 {
   "path": "frontend/public/icons/here.svg",
-  "source": "https://images.here.com/x7rx8ayph7ee/45Ulm6tVkVRD5dpdtWx9Ea/99128403e01460a9e824f4b871869c5d/HERE_logo_32px.svg",
-  "source_kind": "the current official file (edited)",
-  "retrieved": "2026-11-10",
+  "source": "https://www.here.com/favicon.svg",
+  "found_at": "https://www.here.com/ (<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\">; /apple-touch-icon.png is the same h on a white tile)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
   "edits": [
-    "none: the source file as published"
+    "cropped the viewBox to the h and triangle (2% pad)",
+    "cleaned"
   ],
   "variant": "light mode",
-  "license": "HERE brand mark, used nominatively to identify the connected service. Trademark rights remain with HERE Technologies.",
-  "sha256": "be01fe6b4f91f52854220043fb7a905208f60132d7c10af070d6d847fba9d7dc"
+  "notes": "Text rule: HERE uses its own single-letter form (the 'h' + triangle) as favicon and app icon, so it replaces the 4-letter wordmark. DECISION: the h's #092732 is a dark teal that vanishes on the dark tile; HERE publishes no dark 'h', and its dark logo (logo-white.svg) makes the same change for the wordmark (dark teal -> white, aqua kept) but its letters are one merged path, so its h can't be cut out. So the dark file recolours the h white (colour rule 2c). Alternative if Dhruv prefers the wordmark: HERE_logo_32px.svg (light) + HERE's own logo-white.svg (dark), both in downloads/here/c2src1/.",
+  "license": "HERE Technologies brand mark, used nominatively to identify the connected service; trademark rights remain with HERE Technologies.",
+  "sha256": "1d7100549243881ff82d292a92a018725dd4caaafa4273f87407b634d59fc4e7"
 }

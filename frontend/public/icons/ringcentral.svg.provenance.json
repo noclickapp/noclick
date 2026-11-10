@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/ringcentral.svg",
+  "source": "https://app.ringcentral.com/public/icons/icon.svg?version=26.3.32&buildNumber=8329",
+  "found_at": "https://app.ringcentral.com/ (the RingCentral web app loads it as its brand icon, @ui_common/brand/assets/icons/icon.svg)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "none to the drawing: the app's icon as published (it is the app-icon tile)",
+    "viewBox already tight (pad 0)",
+    "cleaned (title removed)"
+  ],
+  "notes": "The current file is the 'RingCentral' wordmark. The icon file is drawn on a 16px grid (icon_16) but is clean vector paths. The App Store icon has a full orange square behind the white tile rather than a frame; the web favicon matches this file exactly.",
+  "license": "RingCentral brand mark, used nominatively to identify the connected service; trademark rights remain with RingCentral.",
+  "sha256": "48a1ce20be150567c8d4cc7fc4244b9f3f88ad31d42e9cfd9d94d497d86e95c4"
+}

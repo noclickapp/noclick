@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/pdfco-brand.svg",
+  "source": "https://pdf.co/_next/static/immutable/media/main_logo.20-meh3u918j3.svg",
+  "found_at": "https://pdf.co/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "removed the 'PDF.co' wordmark paths (elements 2-7), kept the two orange polygons (elements 0-1)",
+    "cropped the viewBox to the symbol (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "The current lockup's #333 'PDF.co' text vanished on dark; the symbol alone is orange and reads on both. pdf.co's favicon/touch icon is instead white 'PDF' text on an orange tile (PNG only). The file keeps a top-level Illustrator comment that svgtool clean doesn't reach (outside the root element); harmless.",
+  "license": "PDF.co brand mark, used nominatively to identify the connected service; trademark rights remain with PDF.co.",
+  "sha256": "2eb35cffb3f6d4529e646057e1bc62a58f26110af6c9f6c4bf8492daf2e4751e"
+}

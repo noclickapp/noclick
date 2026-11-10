@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/personio-brand-dark.svg",
+  "source": "https://www.personio.com/marketplace/personio-favicon-white.svg",
+  "found_at": "https://www.personio.com/ (<link rel=\"icon\"> for light mode)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "none to the drawing",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned",
+    "none: Personio's own white favicon, cropped and cleaned the same way"
+  ],
+  "variant": "dark mode",
+  "notes": "personio.com sits behind a Vercel security checkpoint: plain curl gets 429, so the two SVGs were fetched from inside a browser page that had passed the checkpoint (no sign-in). simple-icons' Personio icon is the retired signature 'P.' mark, not used.",
+  "license": "Personio brand mark, used nominatively to identify the connected service; trademark rights remain with Personio.",
+  "sha256": "759e4970e740c2245528c9b430a76d6648d04c4227373c18f7cbfd3820e74025"
+}

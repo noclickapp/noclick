@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/ramp.svg",
+  "source": "https://assets.ramp.com/nextjs/ramp_september_2026_media_kit.zip (logos/ramp-logo-black.svg)",
+  "found_at": "https://ramp.com/press (media kit link)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "removed the 'ramp' wordmark path (element 0), kept the glyph (element 1)",
+    "cropped the viewBox to the glyph (pad 0.02)",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: two things. (1) Ramp's own app icon and favicon are the glyph on lime yellow #E4F222, but that tile exists only as PNG/ICO (ramp.com, docs.ramp.com, app.ramp.com); the only vectors are the black/white lockups, so the glyph ships black/white. (2) The media kit README says to use the full wordmark-and-glyph lockup; Ramp itself uses the glyph alone for its favicon and app icon, which is what this follows. If Dhruv prefers the lockup, it is ramp-logo-black.svg / ramp-logo-white.svg uncut (verdict keep-lockup).",
+  "license": "Ramp brand mark, used nominatively to identify the connected service; trademark rights remain with Ramp.",
+  "sha256": "8f0077d2dcee41dfb1e8e9e4e740e23430b8d37c6a56b6fde72b24eb1fe221d6"
+}

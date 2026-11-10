@@ -4,10 +4,10 @@ import { memo, type CSSProperties } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const RampIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/ramp.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <ThemedBrandImg light="/icons/ramp.svg" dark="/icons/ramp-dark.svg" className={className} style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const RampNode: NodeDefinition = {

@@ -2,11 +2,11 @@ import { memo, type CSSProperties } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 // Unmodified Okta Aura Stack from the official newsroom's logo archive.
 const OktaIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/okta-brand.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <ThemedBrandImg light="/icons/okta-brand.svg" dark="/icons/okta-brand-dark.svg" className={className} style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const OktaNode: NodeDefinition = {
