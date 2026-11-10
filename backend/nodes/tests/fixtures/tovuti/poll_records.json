@@ -1,0 +1,7 @@
+{
+  "source": "https://api.tovuti.io/schema.yml#/components/schemas",
+  "note": "Schema-shaped test records; User id/name/username/email and CourseProgress language use property examples. Other values are synthetic, not provider-authored full response witnesses.",
+  "on_updated_user": {"id": 1714926, "name": "John Doe", "username": "johndoe", "email": "johndoe@gmail.com", "status": "active", "timestamp_modified": "2023-01-12T15:30:00Z"},
+  "on_updated_course": {"id": 1, "title": "MyCourse", "timestamp_modified": "2023-01-12T15:30:00Z"},
+  "on_updated_course_progress": {"id": 1, "user_id": 1714926, "course_id": 1, "language": "en-GB", "progress": 100, "status": "complete", "timestamp_modified": "2023-01-12T15:30:00Z"}
+}
