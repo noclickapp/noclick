@@ -22,7 +22,7 @@ import { AccountPage } from './connections/AccountPage';
 import { AiMark, useAiCompanies, type AiCompany } from './connections/aiAccounts';
 import { AiProviderDialog } from './connections/AiProviderDialog';
 import { ConnectedList } from './connections/ConnectedList';
-import { Tile, TileSkeletons, VirtualTileGrid } from './Tile';
+import { TILE_GRID, Tile, TileSkeletons } from './Tile';
 import { useCatalogServices, useConnectedAccounts, type AccountSource, type ConnectedAccount } from './connections/accounts';
 import { CONNECTIONS_VIEWS, connectionsViews, type ConnectionsView } from './connections/views';
 import { PageFrame } from './PageFrame';
@@ -206,10 +206,8 @@ function Catalog({
     if (!services.length) return <TileSkeletons />;
     if (!shown.length) return <p className="py-16 text-center text-[14px] text-muted-foreground">Nothing matches “{query.trim()}”.</p>;
     return (
-        <VirtualTileGrid
-            items={shown}
-            testId="app-catalog"
-            renderTile={(entry) => {
+        <div className={TILE_GRID} data-testid="app-catalog">
+            {shown.map((entry) => {
                 const own = accountsOf(entry);
                 return 'company' in entry ? (
                     <CatalogTile
@@ -236,8 +234,8 @@ function Catalog({
                         onConnect={() => openCreateCredential({ credentialType: entry.service.primaryCredentialType })}
                     />
                 );
-            }}
-        />
+            })}
+        </div>
     );
 }
 
