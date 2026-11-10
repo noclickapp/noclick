@@ -89,9 +89,6 @@
         "receive_webhook"
       ]
     },
-    "automation-brex": {
-      "agentToolProvider": true
-    },
     "automation-cal-com": {
       "agentToolProvider": true,
       "triggerOperations": [
