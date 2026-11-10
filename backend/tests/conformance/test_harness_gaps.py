@@ -459,16 +459,15 @@ def test_oas31_binary_media_without_schema_generates_valid_png(monkeypatch):
     image.verify()
 
 
-def test_oas31_string_binary_annotation_does_not_bypass_string_constraint(monkeypatch):
-    # OAS 3.1 section 4.8.14.3: format no longer specifies content encoding.
-    # Customer.io's pin uses the OAS 3.0 binary schema for raw images in 3.1.
+def test_oas31_binary_response_uses_bytes_convention(monkeypatch):
     monkeypatch.setattr(harness, "WITNESSES", {})
     contract, request, op = response_contract(
         {"image/png": {"schema": {"type": "string", "format": "binary"}}},
         version="3.1.0",
     )
-    with pytest.raises(ValueError, match="not of type 'string'"):
-        contract.response(request, op)
+    response = contract.response(request, op)
+    assert response.content.startswith(b"\x89PNG\r\n\x1a\n")
+    assert response.headers["content-type"] == "image/png"
 
 
 def test_error_only_responses_do_not_invent_a_success_shape():

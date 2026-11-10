@@ -166,15 +166,24 @@ scenarios.
 
 ## Scalar parameter unions
 
-OpenAPI 3.1 parameter type lists may contain several non-null scalar types
-(string, integer, number, boolean). Input sampling uses the documented example
-or default when available, then the first member deterministically. After normal
+Parameter `oneOf`/`anyOf` alternatives and OpenAPI 3.1 type lists may contain
+several non-null scalar types (string, integer, number, boolean). Input sampling
+uses the documented example or default when available, then the first member
+deterministically. After normal
 style deserialization, casting tries each member and validates the candidate
 against the complete original schema, including enum, bounds and patterns.
-Mixed object/array and untyped parameter unions remain blockers. JSON request
-bodies are never parameter-cast. Wildcard request content keys select their
+Mixed scalar/object/array and unconstrained parameter unions remain blockers.
+JSON request bodies are never parameter-cast. Wildcard request content keys select their
 schema through openapi-core; decoding uses the captured concrete Content-Type,
 so application/json under application/* is still checked against that schema.
+
+Multipart decoding preserves each part's bytes and Content-Type, including
+repeated file parts. Binary fields validate as bytes; structured and text parts
+use their actual media type and charset, with declared `encoding.contentType`
+constraints checked. OpenAPI 3.1 `string/binary` schemas use the same bytes
+convention as openapi-core's OpenAPI 3.0 validator for request files and binary
+responses. Other string schemas remain strict, and the original schema still
+checks constraints on the decoded body.
 
 ## Synthetic files
 

@@ -21,6 +21,7 @@ import zlib
 from contextlib import ExitStack, contextmanager
 from functools import lru_cache
 from dataclasses import asdict, dataclass, field
+from email.parser import BytesParser
 from pathlib import Path
 from http.cookies import SimpleCookie
 from types import SimpleNamespace
@@ -53,8 +54,11 @@ from openapi_core.deserializing.media_types.util import plain_loads
 from openapi_core.deserializing.media_types.factories import (
     MediaTypeDeserializersFactory,
 )
+from openapi_core.deserializing.media_types.deserializers import MediaTypeDeserializer
+from jsonschema.validators import extend
 from openapi_schema_validator import oas30_format_checker
 from werkzeug.datastructures import MultiDict
+from werkzeug.http import parse_options_header
 
 from tests.conformance.files import file_values, is_file
 from tests.conformance.postman import PostmanContract, is_postman, validate_collection
@@ -763,12 +767,14 @@ def cookie_values(request):
 
 
 def request_adapter(request):
+    media, separator, parameters = request.headers.get("content-type", "").partition(";")
     return SimpleNamespace(
         host_url=f"{request.url.scheme}://{request.url.netloc.decode()}",
         path=wire_path(request),
         method=request.method.lower(),
         body=request.content or None,
-        content_type=request.headers.get("content-type", "").lower(),
+        # MIME names are case-insensitive; multipart boundaries are not.
+        content_type=media.lower() + separator + parameters,
         parameters=RequestParameters(
             query=MultiDict(request.url.params.multi_items()),
             header=request.headers,
@@ -1184,8 +1190,33 @@ def wire_type(schema):
             return non_null[0]
         return scalar_union_types(typ)[0]
     if typ is None and any(key in schema for key in ("oneOf", "anyOf")):
-        raise FixtureError("Ambiguous parameter serialization for untyped union")
+        return parameter_union_types(schema)[0]
     return typ
+
+
+def parameter_union_types(schema, depth=0):
+    """Only scalar alternatives share an unambiguous OpenAPI style decoder."""
+    if depth > MAX_DEPTH:
+        raise FixtureError("Ambiguous parameter serialization for untyped union")
+    typ = (schema / "type").read_str_or_list(None)
+    if typ is not None:
+        return scalar_union_types(typ if isinstance(typ, list) else [typ])
+    types = []
+    for keyword in ("oneOf", "anyOf"):
+        if keyword in schema:
+            for choice in schema / keyword:
+                # A null alternative has no scalar wire representation.
+                if (choice / "type").read_str_or_list(None) == "null":
+                    continue
+                try:
+                    types.extend(parameter_union_types(choice, depth + 1))
+                except FixtureError as exc:
+                    raise FixtureError(
+                        "Ambiguous parameter serialization for untyped union"
+                    ) from exc
+    if not types:
+        raise FixtureError("Ambiguous parameter serialization for untyped union")
+    return list(dict.fromkeys(types))
 
 
 class ConcreteMediaTypeValidator:
@@ -1200,11 +1231,19 @@ class ConcreteMediaTypeValidator:
 class NullableSchemaCaster(SchemaCaster):
     def cast(self, value):
         types = (self.schema / "type").read_str_or_list(None)
+        untyped = types is None and any(k in self.schema for k in ("oneOf", "anyOf"))
+        if untyped:
+            try:
+                types = parameter_union_types(self.schema)
+            except FixtureError:
+                # Object body compositions still use openapi-core's caster.
+                # Parameter styles reject these earlier, in wire_type().
+                return super().cast(value)
         if isinstance(types, list):
             if value is None:
                 return None
             non_null = [t for t in types if t != "null"]
-            if len(non_null) == 1:
+            if len(non_null) == 1 and not untyped:
                 return self.get_type_caster(wire_type(self.schema))(value)
             for typ in scalar_union_types(types):
                 try:
@@ -1213,7 +1252,9 @@ class NullableSchemaCaster(SchemaCaster):
                     continue
                 if self.schema_validator.validator.is_valid(candidate):
                     return candidate
-            raise ValueError(f"Value {value!r} is invalid for every scalar union member")
+            raise ValueError(
+                f"Value {value!r} is invalid for every scalar union member"
+            )
         return super().cast(value)
 
 
@@ -1227,14 +1268,182 @@ class NullableSchemaCastersFactory(SchemaCastersFactory):
 
 class NullableStyleDeserializersFactory(StyleDeserializersFactory):
     def create(self, spec, schema, style, explode, name):
+        decoder = self.style_deserializers.get(style)
+        typ = (schema / "type").read_str_or_list(None)
+        union = isinstance(typ, list) or (
+            typ is None and any(k in schema for k in ("oneOf", "anyOf"))
+        )
+        if union and style in {"label", "matrix"}:
+            original_decoder = decoder
+
+            def decoder(explode, name, schema_type, location):
+                # Our matched path adapter uses the OpenAPI parameter name;
+                # openapi-core's RFC6570 decoders expect its style prefix too.
+                key = (
+                    ("." if style == "label" else ";") + name + ("*" if explode else "")
+                )
+                if key not in location and name in location:
+                    location = {**location, key: location[name]}
+                return original_decoder(explode, name, schema_type, location)
+
         return StyleDeserializer(
             style,
             explode,
             name,
             wire_type(schema) or "",
             self.schema_casters_factory.create(spec, schema),
-            self.style_deserializers.get(style),
+            decoder,
         )
+
+
+@dataclass(frozen=True)
+class MultipartPart:
+    data: bytes
+    content_type: str | None
+
+
+def multipart_loads(value, **parameters):
+    """Parse bytes directly, preserving each part's media type and octets."""
+    boundary = parameters.get("boundary", "")
+    if not boundary or "\r" in boundary or "\n" in boundary:
+        raise ValueError("Multipart body requires a boundary")
+    message = BytesParser().parsebytes(
+        f'Content-Type: multipart/form-data; boundary="{boundary}"\r\n\r\n'.encode()
+        + value
+    )
+    if not message.is_multipart():
+        raise ValueError("Invalid multipart body")
+    parts = MultiDict()
+    for part in message.get_payload():
+        name = part.get_param("name", header="content-disposition")
+        payload = part.get_payload(decode=True)
+        if not isinstance(name, str) or not isinstance(payload, bytes):
+            raise ValueError("Invalid multipart part")
+        parts.add(name, MultipartPart(payload, part.get("Content-Type")))
+    return parts
+
+
+class WireMediaTypeDeserializer(MediaTypeDeserializer):
+    def deserialize(self, value):
+        if isinstance(value, MultipartPart):
+            if self.schema is not None and self.schema.get("format") == "binary":
+                return value.data
+            if value.content_type:
+                media, parameters = parse_options_header(value.content_type)
+                decoder = self.evolve(self.schema, mimetype=media)
+                decoder.parameters = parameters
+                return decoder.deserialize(value.data)
+            value = value.data
+        return super().deserialize(value)
+
+    def decode_property_style(self, prop_name, prop_schema, location, prop_encoding):
+        if self.mimetype.startswith("multipart"):
+            values = MultiDict()
+            for name, part in location.items(multi=True):
+                _, parameters = parse_options_header(part.content_type or "text/plain")
+                values.add(
+                    name,
+                    part.data
+                    if prop_schema.get("format") == "binary"
+                    else plain_loads(part.data, **parameters),
+                )
+            location = values
+        return super().decode_property_style(
+            prop_name, prop_schema, location, prop_encoding
+        )
+
+    def decode_property_content_type(
+        self, prop_name, prop_schema, location, prop_encoding=None
+    ):
+        if not self.mimetype.startswith("multipart"):
+            return super().decode_property_content_type(
+                prop_name, prop_schema, location, prop_encoding
+            )
+        if prop_name not in location:
+            raise KeyError(prop_name)
+        parts = location.getlist(prop_name)
+        if prop_encoding is not None and "contentType" in prop_encoding:
+            allowed = [
+                parse_options_header(t.strip())[0]
+                for t in prop_encoding["contentType"].split(",")
+            ]
+            for part in parts:
+                actual = parse_options_header(
+                    part.content_type or "application/octet-stream"
+                )[0]
+                if not any(fnmatch.fnmatchcase(actual, media) for media in allowed):
+                    raise ValueError(
+                        f"Multipart part {prop_name} Content-Type {actual} is not declared"
+                    )
+        if (prop_schema / "type").read_str_or_list(None) == "array":
+            decoder = self.evolve(prop_schema / "items", mimetype="text/plain")
+            return [decoder.deserialize(part) for part in parts]
+        return super().decode_property_content_type(
+            prop_name, prop_schema, location, prop_encoding
+        )
+
+
+class WireMediaTypeDeserializersFactory(MediaTypeDeserializersFactory):
+    def create(self, *args, **kwargs):
+        decoder = super().create(*args, **kwargs)
+        return WireMediaTypeDeserializer(
+            decoder.spec,
+            decoder.style_deserializers_factory,
+            decoder.media_types_deserializer,
+            decoder.mimetype,
+            schema=decoder.schema,
+            schema_validator=decoder.schema_validator,
+            schema_caster=decoder.schema_caster,
+            encoding=decoder.encoding,
+            **decoder.parameters,
+        )
+
+
+class BinarySchemaValidatorsFactory:
+    """Use openapi-core's OAS 3.0 bytes convention for binary schemas in 3.1 too."""
+
+    def __init__(self, factory):
+        self.factory = factory
+
+    @staticmethod
+    @lru_cache
+    def validator_class(base):
+        def binary_type(validator, types, value, schema):
+            if isinstance(value, bytes) and schema.get("format") == "binary":
+                if types == "string" or isinstance(types, list) and "string" in types:
+                    return
+            yield from base.VALIDATORS["type"](validator, types, value, schema)
+
+        def string_constraint(keyword):
+            def validate(validator, constraint, value, schema):
+                if isinstance(value, bytes) and schema.get("format") == "binary":
+                    value = value.decode("latin-1")
+                yield from base.VALIDATORS[keyword](
+                    validator, constraint, value, schema
+                )
+
+            return validate
+
+        return extend(
+            base,
+            {
+                "type": binary_type,
+                **{
+                    k: string_constraint(k)
+                    for k in ("minLength", "maxLength", "pattern")
+                },
+            },
+        )
+
+    def create(self, *args, **kwargs):
+        schema_validator = self.factory.create(*args, **kwargs)
+        validator = schema_validator.validator
+        schema_validator.validator = self.validator_class(type(validator))(
+            validator.schema,
+            _resolver=validator._resolver,
+            format_checker=validator.format_checker,
+        )
+        return schema_validator
 
 
 def unsupported_dialect(doc):
@@ -1358,18 +1567,15 @@ class Contract:
             )
         styles = dict(style_deserializers)
         styles["deepObject"] = bracket_loads
-        casters = oas30_write_schema_casters_factory
-        factory = StyleDeserializersFactory
         nullable_types = doc["openapi"].startswith("3.1.")
-        if nullable_types:
-            casters = NullableSchemaCastersFactory(
-                oas31_schema_casters_factory.schema_validators_factory,
-                oas31_schema_casters_factory.types_caster,
-            )
-            factory = NullableStyleDeserializersFactory
-        style_factory = factory(casters, styles)
+        base_casters = oas31_schema_casters_factory if nullable_types else oas30_write_schema_casters_factory
+        casters = NullableSchemaCastersFactory(
+            base_casters.schema_validators_factory, base_casters.types_caster,
+        )
+        style_factory = NullableStyleDeserializersFactory(casters, styles)
         media_decoders = copy.copy(media_type_deserializers)
         media_decoders["text/csv"] = plain_loads
+        media_decoders["multipart/form-data"] = multipart_loads
         # RFC 6839: a +json suffix (application/scim+json, application/vnd.x.v2+json, application/hal+json) is
         # JSON on the wire; openapi-core only knows application/json and would validate the raw bytes.
         for media in json_suffix_media_types(doc):
@@ -1383,9 +1589,13 @@ class Contract:
             config=Config(
                 spec_validator_cls=None,
                 schema_casters_factory=casters if nullable_types else None,
+                schema_validators_factory=(
+                    BinarySchemaValidatorsFactory(oas31_schema_validators_factory)
+                    if nullable_types else None
+                ),
                 path_finder_cls=ContractPathFinder,
                 style_deserializers_factory=style_factory,
-                media_type_deserializers_factory=MediaTypeDeserializersFactory(
+                media_type_deserializers_factory=WireMediaTypeDeserializersFactory(
                     style_factory,
                     media_decoders,
                 ),
