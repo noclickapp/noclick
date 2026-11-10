@@ -1,0 +1,10 @@
+{
+  "source": "https://github.com/cyberark/conjur-openapi-spec/blob/main/spec/status.yml",
+  "body": {
+    "client_ip": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
+    "account": "dev",
+    "username": "admin",
+    "token_issued_at": "2017-08-04T22:27:20+00:00"
+  }
+}

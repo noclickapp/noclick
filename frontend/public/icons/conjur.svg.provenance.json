@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/conjur.svg",
+  "source": "https://raw.githubusercontent.com/cyberark/conjur/master/docs/img/cybr_c_icon.svg",
+  "license": "CyberArk brand mark, used nominatively to identify Conjur. Trademark rights remain with CyberArk.",
+  "sha256": "579ee1b50144803dc237340ebaff0036876f9bc877c4e17bf71406264d916ef9"
+}
