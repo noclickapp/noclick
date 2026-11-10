@@ -1,0 +1,9 @@
+{
+  "source": "https://www.geodatasource.com/web-service/neighboring-countries",
+  "body": {
+    "error": {
+      "error_code": 10000,
+      "error_message": "Missing parameter."
+    }
+  }
+}

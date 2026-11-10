@@ -1,0 +1,47 @@
+{
+  "source": "https://www.geodatasource.com/web-service",
+  "body": [
+    {
+      "country": "US",
+      "region": "California",
+      "city": "Mountain View",
+      "latitude": 37.3861,
+      "longitude": -122.084,
+      "currency_code": "USD",
+      "currency_name": "United States Dollar",
+      "currency_symbol": "$",
+      "sunrise": "06:21",
+      "sunset": "19:51",
+      "time_zone": "-08:00",
+      "distance_km": 0.0001
+    },
+    {
+      "country": "US",
+      "region": "California",
+      "city": "Cuesta Park",
+      "latitude": 37.3775,
+      "longitude": -122.082,
+      "currency_code": "USD",
+      "currency_name": "United States Dollar",
+      "currency_symbol": "$",
+      "sunrise": "06:21",
+      "sunset": "19:51",
+      "time_zone": "-08:00",
+      "distance_km": 0.9726
+    },
+    {
+      "country": "US",
+      "region": "California",
+      "city": "Saint Francis Acres",
+      "latitude": 37.3883,
+      "longitude": -122.095,
+      "currency_code": "USD",
+      "currency_name": "United States Dollar",
+      "currency_symbol": "$",
+      "sunrise": "06:21",
+      "sunset": "19:51",
+      "time_zone": "-08:00",
+      "distance_km": 1.0023
+    }
+  ]
+}
