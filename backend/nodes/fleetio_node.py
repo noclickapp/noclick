@@ -5,6 +5,9 @@ no readback, delivery, or downstream side effect is claimed.
 """
 from __future__ import annotations
 
+import hashlib
+import hmac
+import json
 from typing import Annotated, Literal, Union
 
 import httpx
@@ -13,6 +16,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 BASE_URL = "https://secure.fleetio.com/api"
@@ -310,7 +314,55 @@ class FleetioReopenIssue(_Input):
     issue_id: str = Field(..., pattern=r"^[0-9]+$", max_length=32, title="Issue ID", description="Fleetio numeric record ID.")
 
 
+# POST /webhooks flags in the pinned 2025-05-05 OpenAPI. Event examples:
+# https://developer.fleetio.com/docs/overview/webhook-event-reference
+TRIGGER_EVENTS = {
+    "on_vehicle_event": ("vehicle_updated", "vehicle_created", "vehicle_status_changed", "vehicle_assigned", "vehicle_archived", "vehicle_deleted", "vehicle_group_changed"),
+    "on_issue_event": ("issue_created", "issue_updated", "issue_closed", "issue_resolved", "issue_deleted"),
+    "on_fuel_entry_event": ("fuel_entry_created", "fuel_entry_updated", "fuel_entry_deleted"),
+    "on_service_entry_event": ("service_entry_created", "service_entry_updated", "service_entry_deleted"),
+}
+
+
+class _FleetioTrigger(WebhookTriggerConfigBase):
+    model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with Fleetio automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+class FleetioOnVehicleEvent(_FleetioTrigger):
+    """Start when a vehicle is created, updated, assigned or changes status."""
+    operation: Literal["on_vehicle_event"] = Field("on_vehicle_event", title="On Vehicle Event", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True, "x-display-name": "On Vehicle Event"})
+    event_type: Literal["vehicle_updated", "vehicle_created", "vehicle_status_changed", "vehicle_assigned", "vehicle_archived", "vehicle_deleted", "vehicle_group_changed"] = Field("vehicle_updated", title="Event Type")
+
+
+class FleetioOnIssueEvent(_FleetioTrigger):
+    """Start when an issue is reported, updated, resolved or closed."""
+    operation: Literal["on_issue_event"] = Field("on_issue_event", title="On Issue Event", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True, "x-display-name": "On Issue Event"})
+    event_type: Literal["issue_created", "issue_updated", "issue_closed", "issue_resolved", "issue_deleted"] = Field("issue_created", title="Event Type")
+
+
+class FleetioOnFuelEntryEvent(_FleetioTrigger):
+    """Start when a fuel entry is created, updated or deleted."""
+    operation: Literal["on_fuel_entry_event"] = Field("on_fuel_entry_event", title="On Fuel Entry Event", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True, "x-display-name": "On Fuel Entry Event"})
+    event_type: Literal["fuel_entry_created", "fuel_entry_updated", "fuel_entry_deleted"] = Field("fuel_entry_created", title="Event Type")
+
+
+class FleetioOnServiceEntryEvent(_FleetioTrigger):
+    """Start when a service entry is created, updated or deleted."""
+    operation: Literal["on_service_entry_event"] = Field("on_service_entry_event", title="On Service Entry Event", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True, "x-display-name": "On Service Entry Event"})
+    event_type: Literal["service_entry_created", "service_entry_updated", "service_entry_deleted"] = Field("service_entry_created", title="Event Type")
+
+
 FleetioConfig = Annotated[Union[
+    FleetioOnVehicleEvent,
+    FleetioOnIssueEvent,
+    FleetioOnFuelEntryEvent,
+    FleetioOnServiceEntryEvent,
     FleetioListVehicles,
     FleetioGetVehicle,
     FleetioListContacts,
@@ -384,7 +436,7 @@ def _redact(value, credential):
     return value
 
 
-class FleetioNode(WorkflowNode):
+class FleetioNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-fleetio"
     connection_evidence = ConnectionEvidence(noun="vehicles", operation="list_vehicles", label_keys=("name", "license_plate", "vin", "id"))
 
@@ -392,11 +444,115 @@ class FleetioNode(WorkflowNode):
     def get_config_model(cls):
         return FleetioNodeConfig
 
+    @classmethod
+    def _event_type(cls, config):
+        events = TRIGGER_EVENTS.get((config or {}).get("operation"))
+        if events is None:
+            raise ValueError("Choose a Fleetio trigger operation")
+        event = (config or {}).get("event_type", events[0])
+        if event not in events:
+            raise ValueError("Choose a supported Fleetio event")
+        return event
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"event_type": cls._event_type(config)}
+
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, body=None):
+        credential = FleetioApiKeyCredential.model_validate(credential)
+        headers = {"Authorization": "Token " + credential.api_key,
+            "Account-Token": credential.account_token, "X-Api-Version": API_VERSION,
+            "Accept": "application/json"}
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, BASE_URL + path, json=body, headers=headers)
+        if method == "DELETE" and response.status_code == 404:
+            return None  # Already absent: teardown has converged.
+        if not response.is_success:
+            raise ValueError(f"Fleetio webhook {method} failed (HTTP {response.status_code})")
+        return response.json() if method == "POST" else None
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event = cls._event_type(config)
+        endpoint = await cls._webhook_request(credential, "POST", "/webhooks", {
+            "url": webhook_url, "enabled": True, "all_events": False, event: True,
+            "description": f"NoClick {node_id}",
+        })
+        if not isinstance(endpoint, dict) or type(endpoint.get("id")) is not int or endpoint["id"] < 1:
+            raise ValueError("Fleetio did not return a webhook ID")
+        secret = endpoint.get("shared_key")
+        if not isinstance(secret, str) or not secret:
+            raise ValueError("Fleetio did not return a webhook signing key")
+        return {"external_webhook_id": str(endpoint["id"]), "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = (config or {}).get("external_webhook_id")
+        if endpoint_id is None:
+            return
+        if not str(endpoint_id).isdigit() or int(endpoint_id) < 1:
+            raise ValueError("Fleetio webhook ID must be numeric")
+        await cls._webhook_request(credential, "DELETE", f"/webhooks/{endpoint_id}")
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # Official receiving-a-webhook-event-payload guide: hexadecimal
+        # HMAC-SHA256 of the unmodified body, keyed by the returned shared_key.
+        secret = (config or {}).get("signing_secret")
+        signature = next((value for key, value in headers.items()
+                          if key.lower() == "x-fleetio-webhook-signature"), "")
+        if not isinstance(secret, str) or not secret or not isinstance(signature, str):
+            return False
+        expected = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
+        return signature.isascii() and hmac.compare_digest(signature, expected)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return (isinstance(payload, dict) and payload.get("event") == cls._event_type(config)
+                and type(payload.get("id")) is int and isinstance(payload.get("payload"), dict)
+                and type(payload["payload"].get("id")) is int)
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict):
+            return None
+        kind = output.get("event")
+        record = output.get("payload")
+        if not isinstance(kind, str) or kind not in {event for events in TRIGGER_EVENTS.values() for event in events} or not isinstance(record, dict):
+            return None
+        record_id = record.get("id")
+        if record_id is None:
+            return None
+        resource = kind.rsplit("_", 1)[0]
+        if kind.startswith("vehicle_"):
+            resource = "vehicle"
+            label = record.get("name")
+            location = record.get("group_name")
+        elif resource == "issue":
+            label = record.get("summary")
+            location = record.get("vehicle_name")
+        else:
+            label = record.get("vehicle_name")
+            location = record.get("vendor_name")
+        heading = f"Fleetio {kind.replace('_', ' ')}: {label or record_id}"
+        lines = [heading, f"By: {output.get('triggered_by') or 'Fleetio'}",
+                 f"At: {output.get('timestamp')}", f"{resource}_id: {record_id}",
+                 f"Event ID: {output.get('id')}"]
+        if location:
+            lines.append(f"Where: {location}")
+        # Retain content and IDs needed to act on the record, bounded for an agent turn.
+        lines.extend(["Record:", json.dumps(record, ensure_ascii=False, default=str)[:14000]])
+        return {"text": "\n".join(lines), "title": heading[:200],
+                "conversation_key": f"fleetio:{resource}:{record_id}"}
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Fleetio API key and account token")
         credential = self.config.credentials
         op = self.config.config
+        if op.operation in TRIGGER_EVENTS:
+            return self.no_event_output(op.operation, "Waiting for a signed Fleetio event")
         method, template, body_id = ROUTES[op.operation]
         values = op.model_dump(exclude_none=True, exclude={"operation"})
         route = template.format(**values)

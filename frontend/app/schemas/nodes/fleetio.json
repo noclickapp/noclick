@@ -1064,6 +1064,568 @@
       "title": "FleetioListVendors",
       "type": "object"
     },
+    "FleetioOnFuelEntryEvent": {
+      "additionalProperties": false,
+      "description": "Start when a fuel entry is created, updated or deleted.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Fleetio automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_fuel_entry_event",
+          "default": "on_fuel_entry_event",
+          "title": "On Fuel Entry Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Fuel Entry Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "fuel_entry_created",
+          "enum": [
+            "fuel_entry_created",
+            "fuel_entry_updated",
+            "fuel_entry_deleted"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        }
+      },
+      "title": "FleetioOnFuelEntryEvent",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FleetioOnIssueEvent": {
+      "additionalProperties": false,
+      "description": "Start when an issue is reported, updated, resolved or closed.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Fleetio automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_issue_event",
+          "default": "on_issue_event",
+          "title": "On Issue Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Issue Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "issue_created",
+          "enum": [
+            "issue_created",
+            "issue_updated",
+            "issue_closed",
+            "issue_resolved",
+            "issue_deleted"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        }
+      },
+      "title": "FleetioOnIssueEvent",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FleetioOnServiceEntryEvent": {
+      "additionalProperties": false,
+      "description": "Start when a service entry is created, updated or deleted.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Fleetio automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_service_entry_event",
+          "default": "on_service_entry_event",
+          "title": "On Service Entry Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Service Entry Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "service_entry_created",
+          "enum": [
+            "service_entry_created",
+            "service_entry_updated",
+            "service_entry_deleted"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        }
+      },
+      "title": "FleetioOnServiceEntryEvent",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FleetioOnVehicleEvent": {
+      "additionalProperties": false,
+      "description": "Start when a vehicle is created, updated, assigned or changes status.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Fleetio automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_vehicle_event",
+          "default": "on_vehicle_event",
+          "title": "On Vehicle Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Vehicle Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "vehicle_updated",
+          "enum": [
+            "vehicle_updated",
+            "vehicle_created",
+            "vehicle_status_changed",
+            "vehicle_assigned",
+            "vehicle_archived",
+            "vehicle_deleted",
+            "vehicle_group_changed"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        }
+      },
+      "title": "FleetioOnVehicleEvent",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "FleetioReopenIssue": {
       "additionalProperties": false,
       "description": "Reopen issue.",
@@ -1812,6 +2374,10 @@
           "list_vehicle_types": "#/$defs/FleetioListVehicleTypes",
           "list_vehicles": "#/$defs/FleetioListVehicles",
           "list_vendors": "#/$defs/FleetioListVendors",
+          "on_fuel_entry_event": "#/$defs/FleetioOnFuelEntryEvent",
+          "on_issue_event": "#/$defs/FleetioOnIssueEvent",
+          "on_service_entry_event": "#/$defs/FleetioOnServiceEntryEvent",
+          "on_vehicle_event": "#/$defs/FleetioOnVehicleEvent",
           "reopen_issue": "#/$defs/FleetioReopenIssue",
           "resolve_issue": "#/$defs/FleetioResolveIssue",
           "update_contact": "#/$defs/FleetioUpdateContact",
@@ -1822,6 +2388,18 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/FleetioOnVehicleEvent"
+        },
+        {
+          "$ref": "#/$defs/FleetioOnIssueEvent"
+        },
+        {
+          "$ref": "#/$defs/FleetioOnFuelEntryEvent"
+        },
+        {
+          "$ref": "#/$defs/FleetioOnServiceEntryEvent"
+        },
         {
           "$ref": "#/$defs/FleetioListVehicles"
         },

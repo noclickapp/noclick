@@ -15,7 +15,7 @@ const FleetioIcon = ({ className, style }: { className?: string; style?: CSSProp
 
 export const FleetioNode: NodeDefinition = {
     type: 'automation-fleetio', category: 'industry', label: 'Fleetio',
-    description: 'Manage fleet vehicles, contacts, vendors and maintenance issues',
+    description: 'Manage fleet records and start workflows from vehicle, issue, fuel and service events',
     Icon: FleetioIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={FleetioIcon} iconColor="" />),
