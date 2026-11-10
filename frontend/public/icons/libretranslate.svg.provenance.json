@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/libretranslate.svg",
+  "source": "https://raw.githubusercontent.com/LibreTranslate/LibreTranslate/main/libretranslate/static/icon.svg",
+  "license": "AGPL-3.0-only",
+  "sha256": "349efd12802b8886a7823ad23da74d8b48745960ea0f8ce7cc87f8646ba96688"
+}

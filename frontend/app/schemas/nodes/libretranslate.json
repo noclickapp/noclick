@@ -1,0 +1,571 @@
+{
+  "$defs": {
+    "CheckConnection": {
+      "description": "Check key access with a read-only language detection sample.",
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "DetectLanguage": {
+      "description": "Detect candidate languages and their confidence scores.",
+      "properties": {
+        "operation": {
+          "const": "detect_language",
+          "default": "detect_language",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "minLength": 1,
+          "title": "Text to detect",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "DetectLanguage",
+      "type": "object"
+    },
+    "GetFrontendSettings": {
+      "description": "Read server limits, file formats and enabled capabilities.",
+      "properties": {
+        "operation": {
+          "const": "get_frontend_settings",
+          "default": "get_frontend_settings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetFrontendSettings",
+      "type": "object"
+    },
+    "GetHealth": {
+      "description": "Read the translation server's health status.",
+      "properties": {
+        "operation": {
+          "const": "get_health",
+          "default": "get_health",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetHealth",
+      "type": "object"
+    },
+    "LibreTranslateAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "libretranslate_api_key",
+          "default": "libretranslate_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "LibreTranslate API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your LibreTranslate API key from the LibreTranslate portal. Requests go to libretranslate.com. Connecting detects the language of a short sample to check API access; it does not identify your account.",
+      "x-credential-url": "https://portal.libretranslate.com/"
+    },
+    "ListLanguages": {
+      "description": "List supported source languages and translation targets.",
+      "properties": {
+        "operation": {
+          "const": "list_languages",
+          "default": "list_languages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListLanguages",
+      "type": "object"
+    },
+    "SuggestTranslation": {
+      "description": "Submit a translation correction when suggestions are enabled.",
+      "properties": {
+        "operation": {
+          "const": "suggest_translation",
+          "default": "suggest_translation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "minLength": 1,
+          "title": "Original text",
+          "type": "string"
+        },
+        "s": {
+          "minLength": 1,
+          "title": "Suggested translation",
+          "type": "string"
+        },
+        "source": {
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q",
+        "s",
+        "source",
+        "target"
+      ],
+      "title": "SuggestTranslation",
+      "type": "object"
+    },
+    "TranslateAlternatives": {
+      "description": "Request preferred alternative translations for plain text.",
+      "properties": {
+        "q": {
+          "minLength": 1,
+          "title": "Text to translate",
+          "type": "string"
+        },
+        "source": {
+          "default": "en",
+          "description": "Source language code, or auto.",
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "minLength": 1,
+          "title": "Target language code",
+          "type": "string"
+        },
+        "alternatives": {
+          "default": 3,
+          "minimum": 1,
+          "title": "Alternatives",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "translate_alternatives",
+          "default": "translate_alternatives",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "q",
+        "target"
+      ],
+      "title": "TranslateAlternatives",
+      "type": "object"
+    },
+    "TranslateAutoHTML": {
+      "description": "Detect the source language and translate HTML.",
+      "properties": {
+        "q": {
+          "minLength": 1,
+          "title": "Text to translate",
+          "type": "string"
+        },
+        "source": {
+          "const": "auto",
+          "default": "auto",
+          "title": "Source",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "target": {
+          "minLength": 1,
+          "title": "Target language code",
+          "type": "string"
+        },
+        "alternatives": {
+          "default": 0,
+          "description": "Preferred number of alternative translations.",
+          "minimum": 0,
+          "title": "Alternatives",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "translate_auto_html",
+          "default": "translate_auto_html",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "q",
+        "target"
+      ],
+      "title": "TranslateAutoHTML",
+      "type": "object"
+    },
+    "TranslateAutoText": {
+      "description": "Detect the source language and translate plain text.",
+      "properties": {
+        "q": {
+          "minLength": 1,
+          "title": "Text to translate",
+          "type": "string"
+        },
+        "source": {
+          "const": "auto",
+          "default": "auto",
+          "title": "Source",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "target": {
+          "minLength": 1,
+          "title": "Target language code",
+          "type": "string"
+        },
+        "alternatives": {
+          "default": 0,
+          "description": "Preferred number of alternative translations.",
+          "minimum": 0,
+          "title": "Alternatives",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "translate_auto_text",
+          "default": "translate_auto_text",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "q",
+        "target"
+      ],
+      "title": "TranslateAutoText",
+      "type": "object"
+    },
+    "TranslateBatchHTML": {
+      "description": "Translate a list of HTML fragments in one request.",
+      "properties": {
+        "q": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Texts to translate",
+          "type": "array"
+        },
+        "source": {
+          "default": "en",
+          "description": "Source language code, or auto.",
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "minLength": 1,
+          "title": "Target language code",
+          "type": "string"
+        },
+        "alternatives": {
+          "default": 0,
+          "description": "Preferred number of alternative translations.",
+          "minimum": 0,
+          "title": "Alternatives",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "translate_batch_html",
+          "default": "translate_batch_html",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "q",
+        "target"
+      ],
+      "title": "TranslateBatchHTML",
+      "type": "object"
+    },
+    "TranslateBatchText": {
+      "description": "Translate a list of plain text strings in one request.",
+      "properties": {
+        "q": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Texts to translate",
+          "type": "array"
+        },
+        "source": {
+          "default": "en",
+          "description": "Source language code, or auto.",
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "minLength": 1,
+          "title": "Target language code",
+          "type": "string"
+        },
+        "alternatives": {
+          "default": 0,
+          "description": "Preferred number of alternative translations.",
+          "minimum": 0,
+          "title": "Alternatives",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "translate_batch_text",
+          "default": "translate_batch_text",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "q",
+        "target"
+      ],
+      "title": "TranslateBatchText",
+      "type": "object"
+    },
+    "TranslateFile": {
+      "description": "Upload an inline file and return the provider's translated-file URL.",
+      "properties": {
+        "operation": {
+          "const": "translate_file",
+          "default": "translate_file",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "file_base64": {
+          "contentEncoding": "base64",
+          "maxLength": 14000000,
+          "minLength": 1,
+          "title": "File content (base64)",
+          "type": "string"
+        },
+        "file_name": {
+          "default": "document.txt",
+          "description": "Original file name with its extension, e.g. document.txt.",
+          "maxLength": 255,
+          "pattern": "^[^/\\\\\\r\\n]+$",
+          "title": "File Name",
+          "type": "string"
+        },
+        "source": {
+          "default": "auto",
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_base64",
+        "target"
+      ],
+      "title": "TranslateFile",
+      "type": "object"
+    },
+    "TranslateHTML": {
+      "description": "Translate HTML while preserving markup.",
+      "properties": {
+        "q": {
+          "minLength": 1,
+          "title": "Text to translate",
+          "type": "string"
+        },
+        "source": {
+          "default": "en",
+          "description": "Source language code, or auto.",
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "minLength": 1,
+          "title": "Target language code",
+          "type": "string"
+        },
+        "alternatives": {
+          "default": 0,
+          "description": "Preferred number of alternative translations.",
+          "minimum": 0,
+          "title": "Alternatives",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "translate_html",
+          "default": "translate_html",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "q",
+        "target"
+      ],
+      "title": "TranslateHTML",
+      "type": "object"
+    },
+    "TranslateText": {
+      "description": "Translate plain text with a chosen source language.",
+      "properties": {
+        "q": {
+          "minLength": 1,
+          "title": "Text to translate",
+          "type": "string"
+        },
+        "source": {
+          "default": "en",
+          "description": "Source language code, or auto.",
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "minLength": 1,
+          "title": "Target language code",
+          "type": "string"
+        },
+        "alternatives": {
+          "default": 0,
+          "description": "Preferred number of alternative translations.",
+          "minimum": 0,
+          "title": "Alternatives",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "translate_text",
+          "default": "translate_text",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "q",
+        "target"
+      ],
+      "title": "TranslateText",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_connection": "#/$defs/CheckConnection",
+          "detect_language": "#/$defs/DetectLanguage",
+          "get_frontend_settings": "#/$defs/GetFrontendSettings",
+          "get_health": "#/$defs/GetHealth",
+          "list_languages": "#/$defs/ListLanguages",
+          "suggest_translation": "#/$defs/SuggestTranslation",
+          "translate_alternatives": "#/$defs/TranslateAlternatives",
+          "translate_auto_html": "#/$defs/TranslateAutoHTML",
+          "translate_auto_text": "#/$defs/TranslateAutoText",
+          "translate_batch_html": "#/$defs/TranslateBatchHTML",
+          "translate_batch_text": "#/$defs/TranslateBatchText",
+          "translate_file": "#/$defs/TranslateFile",
+          "translate_html": "#/$defs/TranslateHTML",
+          "translate_text": "#/$defs/TranslateText"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TranslateText"
+        },
+        {
+          "$ref": "#/$defs/TranslateHTML"
+        },
+        {
+          "$ref": "#/$defs/TranslateAutoText"
+        },
+        {
+          "$ref": "#/$defs/TranslateAutoHTML"
+        },
+        {
+          "$ref": "#/$defs/TranslateBatchText"
+        },
+        {
+          "$ref": "#/$defs/TranslateBatchHTML"
+        },
+        {
+          "$ref": "#/$defs/TranslateAlternatives"
+        },
+        {
+          "$ref": "#/$defs/DetectLanguage"
+        },
+        {
+          "$ref": "#/$defs/TranslateFile"
+        },
+        {
+          "$ref": "#/$defs/SuggestTranslation"
+        },
+        {
+          "$ref": "#/$defs/ListLanguages"
+        },
+        {
+          "$ref": "#/$defs/GetFrontendSettings"
+        },
+        {
+          "$ref": "#/$defs/GetHealth"
+        },
+        {
+          "$ref": "#/$defs/CheckConnection"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LibreTranslateAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Libretranslate Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

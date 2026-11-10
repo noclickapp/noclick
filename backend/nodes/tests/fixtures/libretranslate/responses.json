@@ -1,0 +1,8 @@
+{
+  "source": "https://docs.libretranslate.com/guides/api_usage/",
+  "text": {"translatedText": "¡Hola!"},
+  "auto": {"detectedLanguage": {"confidence": 90.0, "language": "fr"}, "translatedText": "Hello!"},
+  "html": {"translatedText": "<p class=\"green\">¡Hola!</p>"},
+  "alternatives": {"alternatives": ["Salve", "Pronto"], "translatedText": "Ciao"},
+  "detect": [{"confidence": 90.0, "language": "fr"}]
+}
