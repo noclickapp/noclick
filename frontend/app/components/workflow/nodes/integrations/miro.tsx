@@ -13,7 +13,7 @@ const PreferredBrandIcon = ({ className, style }: { className?: string; style?: 
 export const MiroNode: NodeDefinition = {
     type: 'automation-miro',
     label: 'Miro',
-    description: 'Manage boards, sticky notes, cards, text and tags',
+    description: 'Watch board activity and manage boards, sticky notes, cards, text and tags',
     category: 'productivity',
     Icon: PreferredBrandIcon,
     iconColor: 'text-yellow-400',

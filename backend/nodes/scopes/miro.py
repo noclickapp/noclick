@@ -5,6 +5,7 @@ from nodes.miro_operations import OPERATIONS as BOARD_API_OPERATIONS
 
 
 READ_OPERATIONS = (
+    "on_new_board", "on_new_or_updated_board",
     "get_token_context", "list_boards", "get_board", "list_board_members",
     "list_items", "get_item", "list_tags", "get_tag", "list_item_tags",
 )

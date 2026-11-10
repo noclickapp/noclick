@@ -13,6 +13,7 @@ from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.oauth.miro_oauth import get_token_context
 from nodes.scopes.miro import MIRO_SCOPES
 
@@ -265,12 +266,28 @@ BOARD_API_CONFIGS = {name: _make_board_api_config(name, op) for name, op in BOAR
 globals().update({model.__name__: model for model in BOARD_API_CONFIGS.values()})
 
 
+class MiroOnNewBoardConfig(PollTriggerConfigBase):
+    """Watch team boards: https://developers.miro.com/reference/get-boards-1"""
+    operation: Literal["on_new_board"] = _operation(
+        "on_new_board", "On New Board", "Triggers", **{"x-is-trigger": True})
+    team_id: str = Field(..., min_length=1, title="Team ID",
+                         description="The Miro team whose accessible boards to monitor.")
+
+
+class MiroOnNewOrUpdatedBoardConfig(PollTriggerConfigBase):
+    """Watch team board changes: https://developers.miro.com/reference/get-boards-1"""
+    operation: Literal["on_new_or_updated_board"] = _operation(
+        "on_new_or_updated_board", "On New or Updated Board", "Triggers", **{"x-is-trigger": True})
+    team_id: str = Field(..., min_length=1, title="Team ID",
+                         description="The Miro team whose accessible boards to monitor.")
+
+
 MiroConfig = Annotated[Union[tuple([
     GetTokenContext, ListBoards, GetBoard, CreateBoard, UpdateBoard, DeleteBoard,
     ListBoardMembers, ShareBoard, ListItems, GetItem, CreateStickyNote,
     UpdateStickyNote, CreateCard, UpdateCard, CreateText, DeleteItem,
     ListTags, GetTag, ListItemTags, CreateTag, AttachTag, RemoveTag,
-    *BOARD_API_CONFIGS.values(),
+    MiroOnNewBoardConfig, MiroOnNewOrUpdatedBoardConfig, *BOARD_API_CONFIGS.values(),
 ])], Discriminator("operation")]
 
 
@@ -278,7 +295,7 @@ class MiroNodeConfig(NodeConfig[MiroConfig, MiroCredential]):
     pass
 
 
-class MiroNode(WorkflowNode):
+class MiroNode(ScheduledPollTriggerMixin, WorkflowNode):
     """Run Miro board and item operations with the connected user's OAuth token."""
 
     integration_type = "automation-miro"
@@ -294,6 +311,59 @@ class MiroNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return MiroNodeConfig
+
+    @classmethod
+    def should_propagate_output(cls, output: dict[str, Any], config: dict[str, Any]) -> bool:
+        if config.get("operation") in {"on_new_board", "on_new_or_updated_board"}:
+            return bool(output.get("board_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output: dict[str, Any]) -> Optional[dict[str, Any]]:
+        if output.get("operation") not in {"on_new_board", "on_new_or_updated_board"}:
+            return super().resolve_agent_event(output)
+        boards = output.get("boards", [])
+        if not boards:
+            return None
+        updated = output["operation"] == "on_new_or_updated_board"
+        lines = []
+        for board in boards[:10]:
+            actor = (board.get("modifiedBy" if updated else "createdBy") or {}).get("name") or "Someone"
+            action = "created or updated" if updated else "created"
+            lines.append(f"- {actor} {action} {board.get('name') or 'Untitled board'} "
+                         f"(board ID: {board['id']}, team ID: {output['team_id']}). "
+                         f"{board.get('description') or ''} {board.get('viewLink') or ''}")
+        if len(boards) > 10:
+            lines.append(f"- … and {len(boards) - 10} more boards")
+        return {"text": "Miro board activity:\n" + "\n".join(lines), "conversation_key": None}
+
+    async def _poll_boards(self, token: str, config) -> dict[str, Any]:
+        # Miro retired experimental webhooks on December 5, 2025:
+        # https://developers.miro.com/changelog/removed-experimental-webhooks-support
+        # Sorting requires a team or project: always send the declared team.
+        updated = isinstance(config, MiroOnNewOrUpdatedBoardConfig)
+        boards = []
+        offset = 0
+        while True:
+            payload = await self._request(token, "GET", "/boards", params={
+                "team_id": config.team_id, "sort": "last_modified" if updated else "last_created",
+                "limit": 50, "offset": offset,
+            })
+            page = payload.get("data", [])
+            boards.extend(board for board in page if isinstance(board, dict))
+            offset += len(page)
+            total = payload.get("total")
+            if not page or (isinstance(total, int) and offset >= total) or (total is None and len(page) < 50):
+                break
+            if offset >= 10000:
+                raise ValueError("Miro team has too many boards to monitor safely (maximum 10,000)")
+        if len(boards) > 10000:
+            raise ValueError("Miro team has too many boards to monitor safely (maximum 10,000)")
+        fresh = await self._filter_unseen(
+            boards, lambda board: (json.dumps([board["id"], board.get("modifiedAt")])
+                                   if updated else str(board["id"])) if board.get("id") else None)
+        return {"operation": config.operation, "boards": fresh, "board_count": len(fresh),
+                "team_id": config.team_id}
 
     @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
@@ -385,6 +455,8 @@ class MiroNode(WorkflowNode):
         name = op.operation
         self.scope_registry.require(name)
         token = await self._token(credential)
+        if isinstance(op, (MiroOnNewBoardConfig, MiroOnNewOrUpdatedBoardConfig)):
+            return await self._poll_boards(token, op)
         if isinstance(op, GetTokenContext):
             return {"status": "success", "operation": name, "data": await get_token_context(token)}
 
