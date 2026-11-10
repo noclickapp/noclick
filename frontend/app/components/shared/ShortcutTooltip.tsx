@@ -12,6 +12,9 @@ import {
 } from '~/components/ui/tooltip';
 import { KeyHint, SequenceKeyHint } from '~/components/shared/KeyHint';
 
+/** The app's tooltip surface (the sidebar's, the palette's): any tooltip that isn't a ShortcutTooltip wears it too. */
+export const TOOLTIP_SURFACE = 'border-border dark:border-white/10 bg-background dark:bg-[#0a0a0b] text-xs text-foreground shadow-xl dark:shadow-black/60';
+
 export function ShortcutTooltip({
     label,
     keys,
@@ -44,7 +47,7 @@ export function ShortcutTooltip({
                 <TooltipContent
                     side={side}
                     sideOffset={sideOffset}
-                    className="flex items-center gap-2 border-border dark:border-white/10 bg-background dark:bg-[#0a0a0b] text-xs text-foreground shadow-xl dark:shadow-black/60"
+                    className={`flex items-center gap-2 ${TOOLTIP_SURFACE}`}
                 >
                     {label && <span>{label}</span>}
                     {keys &&
