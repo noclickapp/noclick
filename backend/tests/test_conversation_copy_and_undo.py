@@ -125,3 +125,12 @@ def test_a_file_that_changed_since_is_left_whole(tmp_path):
     [back] = undo_edits([{"path": str(tmp_path / "gone.py"), "change": "delete", "diff": "@@ -1,2 +0,0 @@\n-a\n-b\n"}],
                         Path("/nonexistent"))
     assert back["restored"] and (tmp_path / "gone.py").read_text() == "a\nb\n"
+
+
+def test_a_whole_write_whose_prior_content_is_unknown_is_left_as_it_is(tmp_path):
+    from nodes.agent.interchange.undo import WROTE_WHOLE, undo_edits
+
+    (tmp_path / "notes.txt").write_text("PELICAN")
+    [verdict] = undo_edits([{"path": "notes.txt", "change": "write", "diff": "PELICAN"}], tmp_path)
+    assert verdict == {"path": "notes.txt", "restored": False, "why": WROTE_WHOLE}
+    assert (tmp_path / "notes.txt").read_text() == "PELICAN", "never deleted as if it were new"

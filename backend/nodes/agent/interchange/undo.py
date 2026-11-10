@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple
 _HUNK = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@")
 CHANGED_SINCE = "It changed after that edit, so it was left as it is."
 NOTHING_KEPT = "Its edit kept no content to go back to."
+WROTE_WHOLE = "Its harness wrote it whole without what it held before, so it was left as it is."
 
 
 def _hunks(diff: str) -> List[Tuple[int, List[str], List[str]]]:
@@ -67,6 +68,8 @@ def _same(a: str, b: str) -> bool:
 def _undo_one(path: Path, edit: Dict[str, Any]) -> Optional[str]:
     """Take one edit of ``path`` back; why not, or None when it went back."""
     change, diff = edit.get("change") or "update", edit.get("diff") or ""
+    if change == "write":
+        return WROTE_WHOLE
     if change == "add":
         if not path.exists():
             return None  # gone already
