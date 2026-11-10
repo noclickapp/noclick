@@ -6,6 +6,7 @@ Contract: https://api.apis.guru/v2/specs/polygon.io/1.0.0/swagger.json
 """
 from __future__ import annotations
 
+import json
 import re
 from datetime import date as Date
 from typing import Annotated, Literal, Union
@@ -16,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -123,12 +125,23 @@ class PolygonLastStockQuoteConfig(_Symbol):
     operation: Literal["get_last_stock_quote"] = Field("get_last_stock_quote", json_schema_extra={"ui:hidden": True})
 
 
+class PolygonOnNewOrUpdatedCompanyConfig(PollTriggerConfigBase):
+    operation: Literal["on_new_or_updated_company"] = Field(
+        "on_new_or_updated_company", title="On New or Updated Company",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True,
+                           "x-category": "Triggers", "x-display-name": "On New or Updated Company"},
+    )
+    perpage: int = Field(100, ge=1, le=1000, title="Recent company window",
+        description="Watch this many most recently updated companies each poll. Increase the window or poll more frequently for busy markets. Existing records are baselined when armed.")
+
+
 PolygonConfig = Annotated[Union[
     PolygonListCompaniesConfig, PolygonListCurrenciesConfig,
     PolygonHistoricAggregatesConfig, PolygonHistoricForexConfig,
     PolygonHistoricQuotesConfig, PolygonHistoricTradesConfig,
     PolygonLastForexTradeConfig, PolygonLastStockTradeConfig,
     PolygonLastForexQuoteConfig, PolygonLastStockQuoteConfig,
+    PolygonOnNewOrUpdatedCompanyConfig,
 ], Field(discriminator="operation")]
 
 
@@ -150,7 +163,7 @@ ROUTES = {
 }
 
 
-class PolygonNode(WorkflowNode):
+class PolygonNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-polygon"
     connection_evidence = ConnectionEvidence(
         operation="list_currencies", noun="available currencies", proves="reachability",
@@ -160,11 +173,44 @@ class PolygonNode(WorkflowNode):
     def get_config_model(cls):
         return PolygonFullConfig
 
+    @classmethod
+    def resolve_agent_event(cls, output):
+        data = output.get("data") if isinstance(output, dict) else None
+        if not isinstance(data, dict) or "companies" not in data:
+            return super().resolve_agent_event(output)
+        companies = data["companies"]
+        if not companies:
+            return None
+        lines = ["Polygon: new or updated company information"]
+        for company in companies:
+            lines.append(f"{company.get('name') or company['symbol']} ({company['symbol']}) "
+                         f"updated {company['updated']}")
+            lines.append("Company details: " + json.dumps(company, ensure_ascii=False))
+            lines.append(f"Use symbol={company['symbol']} with Polygon stock trade, quote or aggregate operations.")
+        return {"text": "\n".join(lines), "title": "Polygon company updates"}
+
+    async def _poll_companies(self, cfg):
+        # The pinned contract documents generic sort-by-field, the updated
+        # timestamp and symbol. Poll only the declared bounded recent window;
+        # versioned identities emit both newly listed and changed records.
+        result = await self._read(PolygonListCompaniesConfig(
+            sort="-updated", perpage=cfg.perpage, page=1), self.config.credentials.api_key)
+        companies = result["data"]
+        if any(not isinstance(item, dict) or not item.get("symbol") or not item.get("updated")
+               for item in companies):
+            raise ValueError("Polygon company polling requires symbol and updated on every record")
+        fresh = await self._filter_unseen(companies, lambda item: json.dumps([item["symbol"], item["updated"]]))
+        return {"status": "success", "data": {"companies": fresh, "new_or_updated_company_count": len(fresh)}}
+
     async def execute(self, inputs):
         if not self.config or not self.config.credentials:
             raise ValueError("Connect a Polygon API key")
         cfg = self.config.config
-        key = self.config.credentials.api_key
+        if isinstance(cfg, PolygonOnNewOrUpdatedCompanyConfig):
+            return await self._poll_companies(cfg)
+        return await self._read(cfg, self.config.credentials.api_key)
+
+    async def _read(self, cfg, key):
         values = cfg.model_dump(exclude_none=True)
         route = ROUTES[cfg.operation]
         path = route.format(**{name: quote(str(value), safe="") for name, value in values.items()})

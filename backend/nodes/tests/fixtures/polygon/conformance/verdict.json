@@ -4,11 +4,14 @@
  "blocking": [],
  "advisory": [],
  "stats": {
-  "operations": 10,
+  "operations": 11,
   "skipped": 0,
-  "request_ok": 10,
+  "request_ok": 11,
   "authored_parser_ok": 0,
-  "generated_only": 10,
+  "generated_only": 11,
   "local_ok": 0
+ },
+ "triggers": {
+  "on_new_or_updated_company": "passed"
  }
 }

@@ -11,7 +11,7 @@ const PolygonIcon = ({ className, style }: { className?: string; style?: CSSProp
 
 export const PolygonNode: NodeDefinition = {
     type: 'automation-polygon', category: 'finance-accounting', label: 'Polygon',
-    description: 'Read stock and forex trades, quotes, aggregates and market reference data',
+    description: 'Watch company updates and read stock and forex trades, quotes, aggregates and market reference data',
     Icon: PolygonIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={PolygonIcon} iconColor="" />),
