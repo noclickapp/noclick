@@ -456,7 +456,11 @@ class FleetioNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     @classmethod
     def registration_fingerprint_fields(cls, config):
-        return {"event_type": cls._event_type(config)}
+        # Fingerprints are declarative and must also accept incomplete editor
+        # configs. Registration validates the operation and event via _event_type.
+        config = config or {}
+        events = TRIGGER_EVENTS.get(config.get("operation"), (None,))
+        return {"event_type": config.get("event_type", events[0])}
 
     @classmethod
     async def _webhook_request(cls, credential, method, path, body=None):

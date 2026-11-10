@@ -118,3 +118,23 @@ def test_trigger_config_rejects_unrelated_fields_and_events():
             native.FleetioNode.parse_config({"config": config, "credentials": CREDENTIAL})
     for output in ({}, {"event": {}}, {"event": "issue_created", "payload": []}):
         assert native.FleetioNode.resolve_agent_event(output) is None
+
+
+@pytest.mark.parametrize("config", [{}, None, {"event_type": "probe-event_type"}])
+def test_fleetio_fingerprint_accepts_incomplete_declarative_configs(config):
+    result = native.FleetioNode.registration_fingerprint_fields(config)
+    assert set(result) == {"event_type"}
+    assert result["event_type"] == (config or {}).get("event_type")
+    with pytest.raises(ValueError, match="Choose a Fleetio trigger operation"):
+        native.FleetioNode._event_type(config)
+
+
+@pytest.mark.parametrize("operation", native.TRIGGER_EVENTS)
+def test_fleetio_fingerprint_normalizes_default_event_without_validating(operation):
+    event = native.TRIGGER_EVENTS[operation][0]
+    assert native.FleetioNode.registration_fingerprint_fields({"operation": operation}) == \
+        native.FleetioNode.registration_fingerprint_fields({"operation": operation, "event_type": event})
+    invalid = {"operation": operation, "event_type": "unsupported-event"}
+    assert native.FleetioNode.registration_fingerprint_fields(invalid) == {"event_type": "unsupported-event"}
+    with pytest.raises(ValueError, match="Choose a supported Fleetio event"):
+        native.FleetioNode._event_type(invalid)
