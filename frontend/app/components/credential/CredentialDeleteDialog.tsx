@@ -48,7 +48,18 @@ export function credentialDeleteMessage(
     return lines.length ? lines.join(' ') : undefined;
 }
 
-export function CredentialDeleteDialog({ credential, onClose, onDeleted }: { credential: DeletableCredential | null; onClose: () => void; onDeleted?: () => void }) {
+export function CredentialDeleteDialog({
+    credential,
+    onClose,
+    onDeleted,
+    removing,
+}: {
+    credential: DeletableCredential | null;
+    onClose: () => void;
+    onDeleted?: () => void;
+    /** Said as removing it (its access ends everywhere), where a page's button says Remove. */
+    removing?: boolean;
+}) {
     const [affected, setAffected] = useState<Affected>(NOTHING);
 
     // Dry-run while the dialog is open: the backend lists the workflows and
@@ -105,6 +116,8 @@ export function CredentialDeleteDialog({ credential, onClose, onDeleted }: { cre
         <DeleteConfirmPopup
             itemType="Credential"
             itemName={credential?.name}
+            title={removing && credential ? `Remove ${credential.name}?` : undefined}
+            confirmLabel={removing ? 'Remove' : undefined}
             isOpen={!!credential}
             onOpenChange={(open) => {
                 if (!open) onClose();

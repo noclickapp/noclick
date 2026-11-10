@@ -2,9 +2,9 @@
 // Kept apart from the model so the sidebar can list them without loading it.
 // An automation's published interface is one of its apps, and an automation's
 // tables are a database: there is one kind of each.
-import { AppWindow, BookOpen, Brain, Database, FileText, FolderGit2, Globe, HardDrive, Mail, Phone, Server, type LucideIcon } from 'lucide-react';
+import { AppWindow, BookOpen, Brain, Database, FileText, FolderGit2, Globe, HardDrive, KeyRound, Mail, Phone, Server, type LucideIcon } from 'lucide-react';
 
-export type KindId = 'numbers' | 'domains' | 'email' | 'apps' | 'databases' | 'storage' | 'skills' | 'memories' | 'machines' | 'repos' | 'files';
+export type KindId = 'numbers' | 'domains' | 'email' | 'apps' | 'databases' | 'storage' | 'skills' | 'memories' | 'machines' | 'secrets' | 'repos' | 'files';
 
 export interface KindDef {
     id: KindId;
@@ -126,6 +126,15 @@ export const KINDS: KindDef[] = [
         platform: true,
         keywords: 'machine machines sandbox sandboxes compute computer computers server servers vm laptop',
         manual: { label: 'Add your computer', short: 'Add', bought: false },
+    },
+    {
+        id: 'secrets',
+        label: 'Secrets',
+        icon: KeyRound,
+        empty: 'Keys and tokens your agents hold, in their environment or in a file, and the ones that came over when an agent moved from a computer. Only their names are shown, never a value.',
+        noun: ['secret', 'secrets'],
+        platform: true,
+        keywords: 'secret secrets env environment variables keys api keys tokens credentials dotenv moved',
     },
     {
         id: 'repos',

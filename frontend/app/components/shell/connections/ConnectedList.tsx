@@ -1,7 +1,8 @@
 // The accounts on one Connections tab (yours, your organization's, or shared
 // with you) as the same tiles the app catalog uses: the app, then the account
-// in words you'd recognise. A broken account says what's wrong and puts
-// Reconnect in reach; any tile opens the account.
+// in words you'd recognise, and the computer an agent's move brought it from.
+// A broken account says what's wrong and puts Reconnect in reach; any tile
+// opens the account.
 import type { ReactNode } from 'react';
 import { Building2, ChevronRight, Plug, Users, type LucideIcon } from 'lucide-react';
 import { BrandIcon } from '~/components/shared/BrandIcon';
@@ -10,6 +11,7 @@ import type { CredentialInfo } from '~/types/socket-events.generated';
 import { getCredentialIcon } from '~/utils/credentialIcons';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 import { lastConnectionProbe } from '~/hooks/useConnectionProbe';
+import { movedFrom } from '~/lib/movedFrom';
 import { cn } from '~/lib/utils';
 import { BUTTON_PRIMARY } from '../buttons';
 import type { AccountSource, ConnectedAccount } from './accounts';
@@ -61,11 +63,13 @@ export function AccountTile({ account, onOpen, trailing, badge }: { account: Con
     const probe = lastConnectionProbe(credential.id);
     const problem = account.problem ?? (probe?.status === 'done' && probe.result.reachable === false ? `${app} turned it down` : undefined);
     const sharer = account.source === 'shared' ? credential.shared_by_name || credential.shared_by_email : null;
+    // One an agent's move brought over says so, so it's found to take its access away.
+    const moved = movedFrom(credential.metadata?.moved_from);
     return (
         <Tile
             mark={<AccountMark credential={credential} />}
             title={app}
-            detail={problem ? <span className="text-red-600 dark:text-red-400">{problem}</span> : sharer ? `${sharer} · ${account.line}` : account.line}
+            detail={problem ? <span className="text-red-600 dark:text-red-400">{problem}</span> : [sharer, account.line, moved ? `moved from ${moved.host ?? 'a computer'}` : null].filter(Boolean).join(' · ')}
             badge={badge}
             label={`${app}, ${account.line}`}
             onOpen={onOpen}

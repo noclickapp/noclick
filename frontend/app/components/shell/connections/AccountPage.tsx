@@ -2,7 +2,8 @@
 // (your channels, your repositories), the automations that depend on it, who
 // else can use it, and which of its actions wait for your approval. Rename,
 // reconnect and delete live here too, so nothing about an account is two
-// clicks away.
+// clicks away. One an agent's move from a computer brought over says so, with
+// a Remove that takes its access away everywhere.
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
@@ -16,6 +17,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Skeleton } from '~/components/ui/skeleton';
 import { useConnectionProbe, type ConnectionProbe } from '~/hooks/useConnectionProbe';
 import { leaveSharedCredential } from '~/lib/credentialAccess';
+import { movedDate, movedFrom, movedLine, type MovedFrom } from '~/lib/movedFrom';
 import { socketCall } from '~/lib/socketCall';
 import { cn } from '~/lib/utils';
 import type { ShareInfo } from '~/types/socket-events.generated';
@@ -221,6 +223,30 @@ function Access({ account, onLeft }: { account: ConnectedAccount; onLeft: () => 
     );
 }
 
+/** Where an agent's move brought it from, and the way to take its access away. */
+function Moved({ moved, owner, onRemove }: { moved: MovedFrom; owner: boolean; onRemove: () => void }) {
+    const where = [moved.host ?? 'a computer', moved.folder ? `in ${moved.folder}` : null].filter(Boolean).join(', ');
+    return (
+        <Section title="Moved here">
+            <Surface className="flex flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3.5 sm:px-5">
+                <div className="min-w-0 flex-1" data-testid="account-moved">
+                    <p className="text-[14px] leading-snug text-foreground/90">
+                        It came over from {where}
+                        {moved.at ? ` on ${movedDate(moved.at)}` : ''}, when an agent moved here.
+                    </p>
+                    <p className="mt-0.5 text-[13.5px] text-muted-foreground">Removing it takes its access away from every agent and automation that uses it.</p>
+                </div>
+                {owner && (
+                    <button type="button" onClick={onRemove} className={cn(BUTTON_SECONDARY, 'hover:text-red-600 dark:hover:text-red-400')}>
+                        <Trash2 className="h-4 w-4" />
+                        Remove
+                    </button>
+                )}
+            </Surface>
+        </Section>
+    );
+}
+
 function Title({ name, renaming, onRename, onDone }: { name: string; renaming: boolean; onRename: (next: string) => Promise<boolean>; onDone: () => void }) {
     const input = useRef<HTMLInputElement>(null);
     const [draft, setDraft] = useState(name);
@@ -286,8 +312,10 @@ export function AccountPage({
     // A revoked account can't be loaded at run time, so there's nothing to ask the provider.
     const { probe, check, canCheck } = useConnectionProbe(credential.id, revoked ? undefined : account.service?.value);
     const [renaming, setRenaming] = useState(false);
-    const [deleting, setDeleting] = useState(false);
+    // Deleting from the menu, or removing a moved one from its Moved here section.
+    const [deleting, setDeleting] = useState<'delete' | 'remove' | null>(null);
     const rejected = probe?.status === 'done' && verdictState(probe.result) === 'rejected';
+    const moved = movedFrom(credential.metadata?.moved_from);
 
     const rename = async (name: string) => {
         try {
@@ -302,7 +330,7 @@ export function AccountPage({
     // Choosing Rename closes the menu, which would hand focus back to its trigger and blur the new input.
     const renameChosen = useRef(false);
 
-    const subtitle = [app, sourceLine(account), addedLabel(credential.created_at)].filter(Boolean).join(' · ');
+    const subtitle = [app, sourceLine(account), moved ? movedLine(moved) : addedLabel(credential.created_at)].filter(Boolean).join(' · ');
 
     return (
         <div className="h-full overflow-y-auto scrollbar-subtle" data-testid="account-page">
@@ -375,7 +403,7 @@ export function AccountPage({
                                     <>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
-                                            onSelect={() => setDeleting(true)}
+                                            onSelect={() => setDeleting('delete')}
                                             className={cn(MENU_ITEM, 'text-red-600 focus:bg-red-500/10 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400')}
                                         >
                                             <Trash2 className="h-4 w-4" />
@@ -403,6 +431,8 @@ export function AccountPage({
                         )}
                     </div>
                 )}
+
+                {moved && <Moved moved={moved} owner={owner} onRemove={() => setDeleting('remove')} />}
 
                 {!revoked && (
                     <Section
@@ -451,7 +481,7 @@ export function AccountPage({
                 </Section>
             </div>
 
-            <CredentialDeleteDialog credential={deleting ? { id: credential.id, name: credential.name } : null} onClose={() => setDeleting(false)} onDeleted={onGone} />
+            <CredentialDeleteDialog credential={deleting ? { id: credential.id, name: credential.name } : null} removing={deleting === 'remove'} onClose={() => setDeleting(null)} onDeleted={onGone} />
         </div>
     );
 }

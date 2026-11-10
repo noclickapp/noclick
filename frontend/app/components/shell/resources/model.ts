@@ -106,7 +106,7 @@ export function useResourceItems() {
     const platform = usePlatformResources();
 
     const items = useMemo(() => {
-        const byKind: Record<KindId, ResourceItem[]> = { numbers: [], domains: [], email: [], apps: [], databases: [], storage: [], skills: [], memories: [], machines: [], repos: [], files: [] };
+        const byKind: Record<KindId, ResourceItem[]> = { numbers: [], domains: [], email: [], apps: [], databases: [], storage: [], skills: [], memories: [], machines: [], secrets: [], repos: [], files: [] };
         for (const c of overview?.credentials ?? []) {
             if (c.credentialType !== 'phone_number') continue;
             const dropped = c.health === 'disconnected' || c.health === 'revoked';
