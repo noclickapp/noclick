@@ -344,7 +344,7 @@ class PolymarketNode(ScheduledPollTriggerMixin, WorkflowNode):
         except ValueError:
             return {"status": "error", "http_status": response.status_code, "error": "Polymarket returned a non-JSON response"}
         payload = redact(payload, credential)
-        if not 200 <= response.status_code < 300 or (isinstance(payload, dict) and (payload.get("error") or payload.get("success") is False)):
+        if not 200 <= response.status_code < 300 or (isinstance(payload, dict) and (("error" in payload and payload["error"]) or ("success" in payload and payload["success"] is False))):
             return {"status": "error", "http_status": response.status_code, "error": payload}
         if op.operation in {"list_orders", "list_trades"}:
             if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):
