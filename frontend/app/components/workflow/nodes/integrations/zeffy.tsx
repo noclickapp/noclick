@@ -11,7 +11,7 @@ const ZeffyIcon = ({ className, style }: { className?: string; style?: CSSProper
 
 export const ZeffyNode: NodeDefinition = {
     type: 'automation-zeffy', category: 'nonprofit', label: 'Zeffy',
-    description: 'Manage nonprofit contacts and offline payments; read campaigns and team members',
+    description: 'Start workflows from new payments and donor contacts; manage contacts, offline payments and campaigns',
     Icon: ZeffyIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={ZeffyIcon} iconColor="" />),

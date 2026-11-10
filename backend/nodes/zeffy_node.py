@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator, 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import SSRFError, guarded_async_client
 
@@ -239,6 +240,7 @@ ZeffyConfig = Annotated[Union[
     ZeffyListContactsConfig, ZeffyGetContactConfig, ZeffyCreateContactConfig, ZeffyUpsertContactConfig,
     ZeffyUpdateContactConfig, ZeffyDeleteContactConfig, ZeffyListCampaignsConfig, ZeffyGetCampaignConfig,
     ZeffyListUsersConfig, ZeffyGetUserConfig,
+    ZeffyOnNewPaymentConfig, ZeffyOnNewContactConfig, ZeffyOnNewOrUpdatedContactConfig,
 ], Field(discriminator="operation")]
 
 
@@ -275,7 +277,7 @@ def _redact(value, secret):
     return value
 
 
-class ZeffyNode(WorkflowNode):
+class ZeffyNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-zeffy"
     credential_provider_labels = {"zeffy": "Zeffy Account"}
     connection_evidence = ConnectionEvidence(noun="campaigns", operation="list_campaigns", label_keys=("title", "id"))
@@ -284,12 +286,85 @@ class ZeffyNode(WorkflowNode):
     def get_config_model(cls):
         return ZeffyFullConfig
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in POLL_RESOURCES:
+            return bool(output.get("new_item_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("operation") not in POLL_RESOURCES:
+            return super().resolve_agent_event(output)
+        records = output.get("data")
+        if not isinstance(records, list) or not records:
+            return None
+        operation = output["operation"]
+        lines = []
+        for row in records[:10]:
+            if operation == "on_new_payment":
+                buyer = row.get("buyer") or {}
+                who = buyer.get("email") or "Unknown donor"
+                lines.append(f"- {who}: {row.get('amount')} cents {row.get('currency')} ({row.get('status')}); {row.get('description') or 'payment'}; payment {row['id']}, contact {row.get('contact')}, campaign {row.get('campaign_id')}")
+            else:
+                who = " ".join(filter(None, [row.get("first_name"), row.get("last_name")])) or "Unnamed contact"
+                lines.append(f"- {who} ({row.get('email') or 'no email'}), contact {row['id']}, updated {row.get('updated')}")
+        if len(records) > 10:
+            lines.append(f"- … and {len(records) - 10} more (all records are in data)")
+        label = {"on_new_payment": "new payments", "on_new_contact": "new contacts",
+                 "on_new_or_updated_contact": "new or updated contacts"}[operation]
+        return {"text": f"Zeffy: {len(records)} {label}:\n" + "\n".join(lines), "conversation_key": None}
+
+    async def _poll(self, config, credential):
+        resource = POLL_RESOURCES[config.operation]
+        params = {"limit": 100, "created[gte]": config.created_gte}
+        if isinstance(config, ZeffyOnNewPaymentConfig) and config.campaign:
+            params["campaign"] = config.campaign
+        records, cursors = {}, set()
+        # Read the entire scope before deduplication: partial polls never consume events.
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+            for _ in range(100):
+                response = await client.get(BASE + "/" + resource, params=params,
+                    headers={"Authorization": "Bearer " + credential.api_key, "Accept": "application/json"})
+                if response.status_code != 200:
+                    raise ValueError(f"Zeffy poll failed (HTTP {response.status_code})")
+                if len(response.content) > 2_000_000 or "json" not in response.headers.get("Content-Type", ""):
+                    raise ValueError("Expected bounded JSON")
+                page = response.json()
+                if (not isinstance(page, dict) or page.get("object") != "list"
+                        or not isinstance(page.get("data"), list) or type(page.get("has_more")) is not bool
+                        or "next_cursor" not in page):
+                    raise ValueError("Invalid Zeffy poll page")
+                for row in page["data"]:
+                    self._record(row, resource)
+                    if config.operation == "on_new_or_updated_contact" and type(row.get("updated")) not in (int, float):
+                        raise ValueError("Zeffy contact is missing its updated timestamp")
+                    records[row["id"]] = row
+                if len(records) > 10000:
+                    raise ValueError("Narrow the created date to monitor at most 10,000 Zeffy resources")
+                if not page["has_more"]:
+                    break
+                cursor = page["next_cursor"]
+                if not isinstance(cursor, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,127}", cursor) or cursor in cursors:
+                    raise ValueError("Invalid or repeated Zeffy poll cursor")
+                cursors.add(cursor)
+                params["starting_after"] = cursor
+            else:
+                raise ValueError("Narrow the created date: Zeffy polling exceeded 100 pages")
+        updated = config.operation == "on_new_or_updated_contact"
+        fresh = await self._filter_unseen(list(records.values()),
+            lambda row: f"{row['id']}:{row['updated']}" if updated else row["id"])
+        return _redact({"status": "success", "operation": config.operation,
+                        "data": fresh, "new_item_count": len(fresh)}, credential.api_key)
+
     async def execute(self, inputs):
         if not self.config.credentials:
             raise ValueError("Connect a Zeffy API key")
         credential = self.config.credentials
         config = self.config.config
         operation = config.operation
+        if operation in POLL_RESOURCES:
+            return await self._poll(config, credential)
         method, resource, id_field = ROUTES[operation]
         path = "/" + resource
         if id_field:
