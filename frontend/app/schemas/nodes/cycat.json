@@ -298,7 +298,8 @@
           },
           "description": "JSON object to submit to CyCAT's review queue. CyCAT publishes no proposal field schema. A successful submission does not confirm publication.",
           "title": "Proposal JSON",
-          "type": "object"
+          "type": "object",
+          "ui:widget": "state_editor"
         }
       },
       "required": [

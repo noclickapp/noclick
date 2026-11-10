@@ -114,7 +114,7 @@ class ListNamespaceIDs(_Namespace):
 
 class ProposeResource(_Input):
     operation: Literal["propose_resource"] = _operation("propose_resource", "Propose Resource for Review")
-    proposal: dict[str, JsonValue] = Field(..., title="Proposal JSON", description="JSON object to submit to CyCAT's review queue. CyCAT publishes no proposal field schema. A successful submission does not confirm publication.")
+    proposal: dict[str, JsonValue] = Field(..., title="Proposal JSON", description="JSON object to submit to CyCAT's review queue. CyCAT publishes no proposal field schema. A successful submission does not confirm publication.", json_schema_extra={"ui:widget": "state_editor"})
 
 
 class GenerateUUID(_Input):
