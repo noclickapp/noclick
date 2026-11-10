@@ -1,0 +1,61 @@
+{
+  "source": "https://api.easybizy.net/documentation-assets/webhooks-console.js",
+  "contract_source": "https://api.easybizy.net/custom-swagger",
+  "note": "Customer and Lead are the documentation console samples, evaluated with the provider sampleOf function against the pinned schemas. They are schema examples, not live API recordings.",
+  "Customer": {
+    "id": 0,
+    "mobile": "string",
+    "firstName": "string",
+    "lastName": "string",
+    "email": "string",
+    "dateOfBirth": "1990-05-12",
+    "identificationNumber": "string",
+    "remarks": "string",
+    "gender": "female",
+    "optInForMarketing": true,
+    "arrivalSource": "string",
+    "tags": "string",
+    "punchcards": [
+      {
+        "id": 3,
+        "title": "Punchcard for a child haircut, 1 + 4.",
+        "totalPrice": 600,
+        "totalQuantity": 10,
+        "balance": 7,
+        "expirationTime": "2026-08-15T06:29:03.000Z",
+        "isExpired": false
+      }
+    ],
+    "imageUrl": "https://files.easybizy.net/files/easybizy3/public/Images/Employees/portrait.jpeg",
+    "leadId": 17,
+    "timeCreated": "2026-08-15T06:29:03.000Z",
+    "timeUpdated": "2026-08-15T06:29:03.000Z",
+    "loyalty": {
+      "enabled": true,
+      "points": 120
+    },
+    "financials": {
+      "debt": 250,
+      "receiptsBalance": -300
+    }
+  },
+  "Lead": {
+    "id": 0,
+    "mobile": "string",
+    "firstName": "string",
+    "lastName": "string",
+    "email": "string",
+    "dateOfBirth": "1990-05-12",
+    "gender": "female",
+    "remarks": "string",
+    "address": "string",
+    "utm": "string",
+    "optInForMarketing": true,
+    "arrivalSource": "string",
+    "status": "new",
+    "subStatus": "Waiting for callback",
+    "tags": "string",
+    "timeCreated": "2026-08-15T06:29:03.000Z",
+    "timeUpdated": "2026-08-15T06:29:03.000Z"
+  }
+}
