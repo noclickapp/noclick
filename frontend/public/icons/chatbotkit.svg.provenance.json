@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/chatbotkit.svg",
+  "source": "https://chatbotkit.com/",
+  "found_at": "https://chatbotkit.com/ (inline <svg aria-label=\"ChatBotKit\"> in the header home link)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "fill currentColor -> #000000 (the header link is text-black in light mode)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "Monochrome mark: the company shows it black on light and white on dark.",
+  "license": "ChatBotKit brand mark, used nominatively to identify the connected service; trademark rights remain with ChatBotKit.",
+  "sha256": "52dac78440b2b2bb2bdfe3f8b68e4b3c5cd98b5669ed4c56547226a4aea3cb8a"
+}

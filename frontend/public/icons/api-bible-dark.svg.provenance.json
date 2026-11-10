@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/api-bible-dark.svg",
+  "source": "https://api.bible/assets/api-logo-white.svg",
+  "found_at": "https://api.bible/ (header logo; same file in github.com/americanbible/api-bible-demo public/assets/)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the 'API.Bible' wordmark paths (elements 0-8), kept the open-book symbol (element 9)",
+    "cropped the viewBox to the book",
+    "dark file is the book symbol (element 9) of the company's own white logo api-logo-white.svg, wordmark removed, viewBox cropped"
+  ],
+  "variant": "dark mode",
+  "notes": "The app icon on api.bible is this book in white on a blue (#2563EB) circle, but it exists only as PNG favicons (favicon.ico, favicon-192/512, apple-touch-icon; docs.api.bible ships PNGs too). The vector mark is the bare book glyph from the logo, black for light and the company's white version for dark. Reviewer may prefer to keep looking for a vector of the blue-circle tile; I found none (api.bible /favicon.svg, /icon.svg, /brand, /press 404; americanbible GitHub repos ship only these two logos and an old 2017 Sketch logo).",
+  "license": "API.Bible brand mark, used nominatively to identify the connected service; trademark rights remain with API.Bible.",
+  "sha256": "fadb21639ec15bb6263785a36a8e72b3b47960f83fcdce1fc206b8469599c681"
+}

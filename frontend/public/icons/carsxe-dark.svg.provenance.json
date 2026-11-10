@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/carsxe-dark.svg",
+  "source": "https://raw.githubusercontent.com/carsxe/design-system/main/apps/web/public/brand/carsxe-vertical-on-dark.svg",
+  "found_at": "https://github.com/carsxe/design-system (CarsXE's own design system; its docs page apps/web/src/routes/docs/brand.tsx is the 'Brand assets' page offering these lockups as PNG + SVG and a carsxe-brand-assets.zip)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the two-car mark only: the slate car with the forward arrow (element 1, #333E48) and the teal car with the back arrow (element 0, #065774)",
+    "removed the 'CarsXE' letters (elements 2-9)",
+    "cropped the viewBox with a 2% pad",
+    "cleaned",
+    "none: the dark file is the same two elements from CarsXE's own 'Vertical on dark' lockup, where the slate car is #F2F2F3 and the teal car stays #065774"
+  ],
+  "variant": "dark mode",
+  "notes": "icon_check flags 'wordmark-shape 2.24:1': that's a false positive, the file has no text; CarsXE's own icon is this wide two-car symbol (its CarsXE_Logo_Icon PNGs are the same shape). The teal car is dim on the dark tile but passes the check, and CarsXE keeps it teal in its own on-dark lockup.",
+  "license": "CarsXE brand mark, used nominatively to identify the connected service; trademark rights remain with CarsXE.",
+  "sha256": "209c85c7d37b012ff6b88ff2912e5cdc1ec242d02f386c5bc4161b8b494df7a2"
+}

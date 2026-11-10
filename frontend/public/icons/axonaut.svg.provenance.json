@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/axonaut.svg",
-  "source": "https://axonaut.com/",
-  "license": "Axonaut vendor brand asset; no independent permissive license asserted",
-  "sha256": "f0d3f3215dab2dcbb6b51ad67d591be1d8cd2bfe3d5a06c07f3a3fe0746f27ef"
+  "source": "https://drive.usercontent.google.com/download?id=1P6gxOIV2ADCxSLiFalM6xMm0hFUqEHzc&export=download&confirm=t (Kit media axonaut 2025.zip, file 'Logo - PDF/ axonaut-bleu-icon.pdf')",
+  "found_at": "https://axonaut.com/content/presse (\"T\u00e9l\u00e9charger le kit m\u00e9dia\" -> Google Drive folder 1iI4O8H5sRpyRhTVmAGd0FZccJur2r_1K)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "converted the kit's vector PDF 'axonaut-bleu-icon.pdf' to SVG with pdftocairo -svg (one path, no images)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The current file was a potrace of a black circle, not Axonaut's colours. The kit's blue is #1464B1; the axonaut.com favicon still shows the mark in white on an older navy tile. The kit ships logos only as PNG and PDF (no SVG), so the SVG is a lossless pdftocairo conversion of the kit's vector PDF (the extracted PDFs are kept in src5/'Logo - PDF'). The kit also has a white-on-blue square version (axonaut-fondbleu-icon); I shipped the bare mark since the square is a full-bleed background, not a rounded app tile. Blue reads on both themes.",
+  "license": "Axonaut brand mark, used nominatively to identify the connected service; trademark rights remain with Axonaut.",
+  "sha256": "e50f596d5bf663563c47abe468de436dd3fcb35a774f8abc4a1f2e4a2a6f1a83"
 }

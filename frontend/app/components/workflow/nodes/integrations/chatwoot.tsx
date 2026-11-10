@@ -4,7 +4,7 @@ import type { CSSProperties } from 'react';
 
 // Unmodified icon mark from https://www.chatwoot.com/brand.
 const ChatwootIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/chatwoot.png" alt="" aria-hidden="true" className={className}
+    <img src="/icons/chatwoot.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
 );
 

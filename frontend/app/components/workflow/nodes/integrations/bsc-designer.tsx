@@ -12,7 +12,7 @@ const BscDesignerIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/bsc-designer.png"
+        src="/icons/bsc-designer.svg"
         alt=""
         aria-hidden="true"
         className={className}

@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/airwallex.svg",
+  "source": "https://www.airwallex.com/ (inline header <svg> inside <a href=\"/global\">, copied verbatim)",
+  "found_at": "https://www.airwallex.com/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the gradient mark (element 1, #FF4244 -> #FF8E3C); dropped the black 'Airwallex' wordmark (element 0, a <use>)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The gradient reads on both themes; one file. The <defs> still holds the wordmark's path definition (unused, never drawn, left by svgtool keep/clean); harmless, but a reviewer could ask for it to be pruned. No brand/press kit page (airwallex.com/brand, /press, /media-kit are 404; the newsroom offers only Airwallex_Logo_-_Black.png).",
+  "license": "Airwallex brand mark, used nominatively to identify the connected service; trademark rights remain with Airwallex.",
+  "sha256": "1e55da170b494cdf32f9f9f642c4945debabc79ce61da9da93c614df256703c4"
+}

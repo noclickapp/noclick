@@ -6,7 +6,10 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const AviatoIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/aviato.webp" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <>
+            <img ref={ref} src="/icons/aviato.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} {...props} />
+            <img src="/icons/aviato-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} {...props} />
+        </>
     ),
 );
 AviatoIcon.displayName = 'AviatoIcon';

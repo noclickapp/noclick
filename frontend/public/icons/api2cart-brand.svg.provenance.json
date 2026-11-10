@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/api2cart-brand.svg",
+  "source": "https://app.api2cart.com/images/new-design/logo-big.svg",
+  "found_at": "https://app.api2cart.com/ (the API2Cart app's sign-in page logo)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the four arrow tiles (elements 8-11), removed the 'API2CART' wordmark and tagline (elements 0-7, 12-42)",
+    "cropped the viewBox to the mark",
+    "recoloured the tiles #FFFFFF \u2192 #3F89E0 (API2Cart blue, from the press kit's logo-blue.png at https://api2cart.com/press-kit/); the arrows stay cut-outs as in the favicon"
+  ],
+  "notes": "The only vector API2Cart publishes is this white logo (the press kit zip holds two PNGs only). One blue file works on both themes, like the app icon. The blue is the press kit's #3F89E0; the older 2022 favicon is a slightly greyer #4B85C5, reviewer may prefer that. The untouched white mark (the company's own on-dark version) is at work/agents/b02/alt/api2cart-white.svg if a white dark-mode file is wanted.",
+  "license": "API2Cart brand mark, used nominatively to identify the connected service; trademark rights remain with API2Cart.",
+  "sha256": "c8be6d8e7513df2e79dc505110ac0acc21bccfe2455d6feeb26c66e8e83f1b15"
+}

@@ -12,7 +12,7 @@ const CanopyConnectIcon: SvgIconComponent = forwardRef<
 >(({ className, style, ...props }, ref) => (
     <img
         ref={ref}
-        src="/icons/canopy-connect.png"
+        src="/icons/canopy-connect.svg"
         alt=""
         className={className}
         style={{ ...style, objectFit: 'contain' }}

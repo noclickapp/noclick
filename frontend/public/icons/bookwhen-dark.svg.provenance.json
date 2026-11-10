@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/bookwhen-dark.svg",
+  "source": "https://api.bookwhen.com/images/svg/bookwhen_api_logo.svg",
+  "found_at": "https://api.bookwhen.com/v2/openapi.yaml (info.x-logo.url), Bookwhen's own API docs",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the green ring and the green dot (elements 6, 7); removed the 'bookwhen' letters, 'API' (elements 0-4, 8) and the white b-shaped fill behind the mark (element 5)",
+    "cropped the viewBox to the mark",
+    "stripped editor metadata",
+    "the dark file also keeps the logo's own white b-shaped fill (element 5) under the green ring and dot, exactly as Bookwhen's apple-touch icon draws it on a transparent background"
+  ],
+  "variant": "dark mode",
+  "notes": "Bookwhen's own vectors (API logo, homepage header) draw the mark as a white b-silhouette under the green ring and dot, and its app icon PNG is that badge on transparency. On the dark theme the dark file reproduces that badge (white gap between ring and dot, white notch beside the stem). On the light theme the white fill would sit white-on-white (icon_check flagged 36% lost), so the light file leaves it out, which looks the same there. If the reviewer prefers the dark-gap look on dark too, use the light file for both. Not used: cdn.bookwhen.com/safari-pinned-tab.svg is a potrace trace.",
+  "license": "Bookwhen brand mark, used nominatively to identify the connected service; trademark rights remain with Bookwhen.",
+  "sha256": "2f6130bc31b874e6c802fe8756d1369ded91dc488c2d1b24c6f3c14d7c87f599"
+}

@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/aviato.svg",
+  "source": "https://data.aviato.co/assets/logo-white.svg",
+  "found_at": "https://data.aviato.co/login (Aviato's data app; its page references /assets/logo-white.svg)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the bird mark (element 2, #033E34), removed the white square, the lime square under it and the #ECECEC border (elements 0, 1, 3)",
+    "cropped the viewBox to the bird"
+  ],
+  "variant": "light mode",
+  "notes": "Aviato's app icon is a lime bird on a dark green circle, which exists only as ICO/webp; the company's vector is the bare bird in dark green. Dark mode uses the brand lime rather than white, matching its app icon; the reviewer may prefer white. data.aviato.co/assets/logo.svg is a blue placeholder square, not Aviato's mark; www.aviato.co/icon.svg is a testimonial quote icon.",
+  "license": "Aviato brand mark, used nominatively to identify the connected service; trademark rights remain with Aviato.",
+  "sha256": "0030c9c378017c1202d72130e64e2c2fcf45eb46931ecb14bc3122b3a383671f"
+}

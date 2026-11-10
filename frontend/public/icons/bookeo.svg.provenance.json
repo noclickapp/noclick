@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/bookeo.svg",
   "source": "https://www.bookeo.com/wp-content/themes/bookeo/images/logo.svg",
-  "license": "Bookeo vendor brand asset; no independent permissive license asserted",
-  "sha256": "ef2ff9a18588875e097cbb7de7fefe6eecfd331002ef5fa584761ed2644b6090"
+  "found_at": "https://www.bookeo.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the grid and the orange 'o' swirl (elements 4-8); removed the 'booke' letters (elements 0-3 and 9)",
+    "cropped the viewBox to the mark",
+    "stripped Sketch metadata"
+  ],
+  "notes": "The favicon sets this mark on a plain white square; that square is not part of the mark, so it is left out. The grid lines are the logo's own grey #606163, which reads on both themes (icon_check lost 0%).",
+  "license": "Bookeo brand mark, used nominatively to identify the connected service; trademark rights remain with Bookeo.",
+  "sha256": "b77c7fc38a3efaa97116dbd92a97c8a5cef6b2fad1f9fd74ce35c69796be0755"
 }

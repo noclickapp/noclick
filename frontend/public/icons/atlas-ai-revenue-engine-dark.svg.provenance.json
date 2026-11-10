@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/atlas-ai-revenue-engine-dark.svg",
+  "source": "https://youratlas.com/ (inline <svg id=\"svg1054609764_4085\"> header logo, the symbol the nav's <use> references)",
+  "found_at": "https://youratlas.com/ (site header logo, Framer inline SVG)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "the header logo is one compound path (bolt-in-circle + 'ATLAS'); kept subpaths 0, 1, 2 (outer circle, inner circle, bolt) and dropped the wordmark's subpaths 3-9",
+    "cropped the viewBox to the circle",
+    "fill url(#svg1054609764_4085_paint0_radial_1003_13916) \u2192 #FFFFFF on the mark (svgtool recolor), then deleted the now-unreferenced radialGradient (work/agents/b02/bin/prune_defs.py)"
+  ],
+  "variant": "dark mode",
+  "notes": "source_file is the verbatim inline <svg> sliced from the saved page downloads/atlas-ai-revenue-engine/src1/home.html (extract_svg.py's copy lowercases viewBox/gradient attributes, which breaks the gradient). Reviewer decision: the header logo paints the whole lockup with one radial gradient (black \u2192 #D22EFF \u2192 white) centred on the circle, so the mark alone renders near-black with a faint purple rim, which is how it looks in the site header; dark mode is white, the colour of the glyph in Atlas's app icon. Atlas's purple-gradient app tile exists only as PNG (framerusercontent favicons), and the docs logo is a webp; no brand page, favicon.svg or company GitHub/npm asset exists. If the reviewer finds the near-black light mark too far from the purple brand feel, the alternative is no-official-svg.",
+  "license": "Atlas brand mark, used nominatively to identify the connected service; trademark rights remain with Atlas.",
+  "sha256": "26444c727a48c3bf09d7b2143aa5d9f0c588d31ec37962255f2f54aa9dfc62fa"
+}

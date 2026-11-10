@@ -7,7 +7,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 // Unmodified logo from https://www.adyen.com/press-and-media/presskit
 import type { CSSProperties as BrandCSSProperties } from 'react';
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/adyen.svg" alt="" aria-hidden="true" className={`${className || ''} dark:invert`}
+    <img src="/icons/adyen.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
 );
 

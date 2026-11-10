@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/callfire.svg",
+  "source": "https://developers.callfire.com/assets/images/cf-logo.svg",
+  "found_at": "https://developers.callfire.com/ (CallFire's developer site; referenced as the sidebar logo in https://developers.callfire.com/assets/css/theme.css)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the flame (element 0, #F6A21C)",
+    "removed the 'CallFire' letters (elements 1-8)",
+    "cropped the viewBox with a 2% pad",
+    "cleaned (Sketch metadata)"
+  ],
+  "notes": "Reviewer decision: www.callfire.com and the CallFire web app draw this flame with a glossy yellow-to-red gradient, but only as PNGs (no SVG found on www, the app login page, or the status page). The only vector is the developer site's flat flame in one orange (#F6A21C): same shape, flat colour. The favicon is an orange flame on a navy square (16px ICO/GIF only).",
+  "license": "CallFire brand mark, used nominatively to identify the connected service; trademark rights remain with CallFire.",
+  "sha256": "8fa58036cb17ea2d72921f22c167656f73aa6072c43f8b26705423620f6780d7"
+}

@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/blitz-api.svg",
+  "source": "https://www.blitz-api.ai/brand/logo/blitzapi-mark.svg",
+  "found_at": "https://www.blitz-api.ai/brand (brand assets page; brand.md: 'Mark alone: blitzapi-mark.svg (blue)')",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing (the kit's mark has no wordmark or background)",
+    "cropped the viewBox with a 2% pad",
+    "cleaned"
+  ],
+  "notes": "BlitzAPI's kit also has an app icon (blitzapi-app-icon.svg: the mark in white on a full-bleed Blitz Blue square, no rounding; kept in src3). I shipped the bare blue mark, which reads on both themes; the reviewer can swap in the app-icon square if a tile is wanted.",
+  "license": "BlitzAPI brand mark, used nominatively to identify the connected service; trademark rights remain with BlitzAPI.",
+  "sha256": "28e76a7847ae8812268efa42a22a751e9bea2adb98446cac3daa442e38a0fe67"
+}

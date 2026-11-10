@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/btcpay-server.svg",
-  "source": "https://raw.githubusercontent.com/btcpayserver/btcpayserver/master/BTCPayServer/wwwroot/img/logo.svg",
-  "license": "MIT; BTCPay Server project logo used to identify the integration (https://github.com/btcpayserver/btcpayserver/blob/master/LICENSE)",
-  "sha256": "77bb7df5cb77328dd710053ed18a3a92228f8fe0c39fddf0a91c016703a9d019"
+  "source": "https://raw.githubusercontent.com/btcpayserver/btcpayserver-media/master/btcpay-logo.svg",
+  "found_at": "https://github.com/btcpayserver/btcpayserver-media (the project's own media kit repository)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: the green/lime B symbol alone, as published",
+    "cropped the viewBox to the mark",
+    "stripped editor metadata"
+  ],
+  "notes": "The previous file (BTCPayServer/wwwroot/img/logo.svg) had no viewBox and drew nothing in an <img>. The symbol is 0.56:1 (tall), as the brand draws it. A white rect in the source sits wholly under the lime stem and never shows. The media repo also has 'BTCPay Server Icon.svg' (same symbol, Inkscape) in downloads/btcpay-server/src1.",
+  "license": "BTCPay Server brand mark, used nominatively to identify the connected service; trademark rights remain with BTCPay Server.",
+  "sha256": "deec3e415725df05f7a7c469bf6335422353d4826e2e6b6edb460fc25d0a56b4"
 }

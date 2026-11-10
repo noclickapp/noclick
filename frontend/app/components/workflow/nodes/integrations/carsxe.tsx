@@ -7,7 +7,10 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const CarsxeIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/carsxe.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <>
+            <img ref={ref} src="/icons/carsxe.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} {...props} />
+            <img src="/icons/carsxe-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} {...props} />
+        </>
     ),
 );
 CarsxeIcon.displayName = 'CarsxeIcon';

@@ -1,6 +1,17 @@
 {
   "path": "frontend/public/icons/bulksmscom.svg",
-  "source": "https://www.bulksms.com/developer/images/bulksms-logo-main.svg",
-  "license": "BulkSMS.com brand mark used nominatively to identify the connected service; trademark rights remain with BulkSMS.com.",
-  "sha256": "490ec6a709daa65be98a8d0b7c7e92196278ef8fdfab4f5a42e26a698755c80e"
+  "source": "https://www.bulksms.com/images/logos/BulkSMS-Powered-by.svg",
+  "found_at": "https://www.bulksms.com/ (header logo, a.site-header__logo, desktop <img>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the speech-bubble outline (element 11, navy #09354F, outer + inner subpaths, centre left open) and the orange check (element 12, #EC661A)",
+    "removed the 'bulksms' letters, the '.com' and the 'POWERED BY CELERITY' line (elements 0-10, 13-29)",
+    "cropped the viewBox with a 2% pad",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The favicon draws the bubble with a white inside and a thin white rim; the SVG logos leave the inside open, so it shows the tile. Colours are the current homepage header's (navy #09354F, orange #EC661A); the older developer-site file used #003B5E / #FF7900.",
+  "license": "BulkSMS.com brand mark, used nominatively to identify the connected service; trademark rights remain with BulkSMS.com.",
+  "sha256": "bfd559d7eea975dbbee19ead437274b169bcb9a9e88bd456b795e9943f6fb7b9"
 }

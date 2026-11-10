@@ -5,7 +5,10 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const AssemblyComIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/assemblycom.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <>
+            <img ref={ref} src="/icons/assemblycom.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} {...props} />
+            <img src="/icons/assemblycom-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} {...props} />
+        </>
     ),
 );
 AssemblyComIcon.displayName = 'AssemblyComIcon';

@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/bulksmscom-dark.svg",
+  "source": "https://www.bulksms.com/images/logos/BulkSMS-Lite-Powered-by.svg",
+  "found_at": "https://www.bulksms.com/ (header logo, a.site-header__logo, desktop <img>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the speech-bubble outline (element 11, navy #09354F, outer + inner subpaths, centre left open) and the orange check (element 12, #EC661A)",
+    "removed the 'bulksms' letters, the '.com' and the 'POWERED BY CELERITY' line (elements 0-10, 13-29)",
+    "cropped the viewBox with a 2% pad",
+    "cleaned",
+    "none: the dark file is the same two elements (11, 12) from the company's own white version of the logo, BulkSMS-Lite-Powered-by.svg (white #F9FBFB bubble, same orange #EC661A check), cropped and cleaned the same way"
+  ],
+  "variant": "dark mode",
+  "notes": "The favicon draws the bubble with a white inside and a thin white rim; the SVG logos leave the inside open, so it shows the tile. Colours are the current homepage header's (navy #09354F, orange #EC661A); the older developer-site file used #003B5E / #FF7900.",
+  "license": "BulkSMS.com brand mark, used nominatively to identify the connected service; trademark rights remain with BulkSMS.com.",
+  "sha256": "86e514a9fb6264992922206508ed20828a68c1e48312f367ae3c519086a61355"
+}

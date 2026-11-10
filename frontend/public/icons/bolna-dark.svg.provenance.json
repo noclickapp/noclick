@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/bolna-dark.svg",
+  "source": "https://www.bolna.ai/logos/logo-white.svg",
+  "found_at": "https://www.bolna.ai/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "light file: the BOLNA letters (elements 45-49) #FFFFFF -> #000000, matching Bolna's own black logo (https://www.bolna.ai/logos/logo-black.png, saved as downloads/bolna/src2/logo-black.png)",
+    "cropped the viewBox to the mark",
+    "stripped editor metadata",
+    "none: the dark file is Bolna's white logo as published (white letters, #575757 waveform bars)"
+  ],
+  "variant": "dark mode",
+  "notes": "Bolna has no separate symbol: its only logo is the BOLNA letters set inside a waveform, and its favicon is that same lockup on a blue square (no SVG of the blue tile exists). So the mark keeps its letters; it is a compact 1.6:1 lockup, not a wide wordmark. The previous file was the white logo alone, whose letters vanished on the light theme.",
+  "license": "Bolna brand mark, used nominatively to identify the connected service; trademark rights remain with Bolna.",
+  "sha256": "d536502f58a758d40911b1670f7b0bccd82673caa2cb27c59bcf5c19937c0b66"
+}

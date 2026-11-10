@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/certifier-dark.svg",
+  "source": "https://certifier.io/ (inline <svg> at the top of the footer, white)",
+  "found_at": "https://certifier.io/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the badge (element 1, black, open centre) and the chevron under it (element 2, black)",
+    "removed the 'Certifier' letters (element 0, one compound path)",
+    "fixed the viewBox attribute (the HTML parser had lowercased it to 'viewbox') and cropped it with a 2% pad",
+    "cleaned",
+    "none: the dark file is the same two elements from Certifier's own white logo, the inline <svg> in the footer of certifier.io (fill #fff on the #252525 footer), cropped and cleaned the same way"
+  ],
+  "variant": "dark mode",
+  "notes": "The reviewer's note is right: the previous file (res.cloudinary.com/certifier/.../logo_usyzm8.svg) is the Penn State Nittany Lion shield, a customer logo in Certifier's homepage carousel, not Certifier's mark. certifier.io/favicon/safari-pinned-tab.svg, linked as mask-icon, returns the site's HTML 404 page. The light file keeps a harmless Tailwind class attribute from the inline source.",
+  "license": "Certifier brand mark, used nominatively to identify the connected service; trademark rights remain with Certifier.",
+  "sha256": "534726d10d6aba71c064beae19af5ec1afce5a3e6a6b593224141b0730b2cb01"
+}

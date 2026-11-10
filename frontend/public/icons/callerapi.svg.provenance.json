@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/callerapi.svg",
+  "source": "https://callerapi.com/favicon.ico?v=2",
+  "found_at": "https://callerapi.com/ (<link rel=\"icon\" href=\"/favicon.ico?v=2\">, served as image/svg+xml; the same three paths are the inline header logo a[aria-label=CallerAPI] in currentColor)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the mark: three #747EF6 paths (the smile and two eyes)",
+    "cropped the viewBox with a 2% pad (was a 500x500 canvas)",
+    "cleaned (dropped width=\"100%\")"
+  ],
+  "notes": "The file carries an online PNG-to-SVG converter's signature (6-decimal coordinates, opacity=\"1.000000\", enable-background), so CallerAPI likely made it from a bitmap. It is clean, though: 3 smooth paths, no fringe, no stepped edges, and it is the vector CallerAPI ships as both favicon and header logo, so it was used.",
+  "license": "CallerAPI brand mark, used nominatively to identify the connected service; trademark rights remain with CallerAPI.",
+  "sha256": "f07361ad4f64792e008345ad74bab67e29a2b97a1c40fd4c177e6592c522d6e5"
+}

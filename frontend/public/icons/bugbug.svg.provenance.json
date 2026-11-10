@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/bugbug.svg",
-  "source": "https://api.bugbug.io/static/images/logo.svg",
-  "license": "BugBug trademark; official publisher asset used to identify the BugBug integration",
-  "sha256": "7b928aa40d23655e2b99606ac6bfcaea7818f7b909044b6d74fc4ac82e46d39d"
+  "source": "https://bugbug.io/_next/static/media/bugbug-logo.2c6na_2a9comn.svg",
+  "found_at": "https://bugbug.io/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the pixel smiley mark (elements 0, 1, 8); removed the 'bugbug' letters (elements 2-7)",
+    "cropped the viewBox to the mark",
+    "stripped editor metadata"
+  ],
+  "notes": "The header logo's purple is #4C2B8B (also in the site's bugbug-logotype-dark-purple.svg); the older apple-touch PNGs use a darker plum. #4C2B8B reads on both themes (0% lost).",
+  "license": "BugBug brand mark, used nominatively to identify the connected service; trademark rights remain with BugBug.",
+  "sha256": "a0aa01207e89c90a6e3f4ccbece9ed8a7d53f4e9cd103df7f1e8827c436a0c10"
 }

@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/ai-ml-api-dark.svg",
+  "source": "https://cdn.prod.website-files.com/65b8f36fa600366bc7cf9a67/6ae38478e79e7248da886193_home-v2-20261029-aimlapi-logo-mark-dark.svg",
+  "found_at": "https://aimlapi.com/ (<link rel=\"icon\" type=\"image/svg+xml\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "#FFFFFF -> #000000 on the hexagon for the light-mode file (white vanishes on the light tile)",
+    "cropped the viewBox to the hexagon",
+    "cleaned",
+    "none: the dark file is the source as published (white hexagon, wave cut out)"
+  ],
+  "variant": "dark mode",
+  "notes": "The site publishes only the white (on-dark) version of the new mark; the light file recolours the hexagon black, its wave staying a cut-out. Replaces the CSS brand-mono inversion with two files. The older gradient hexagon (68b1c66b..._Logo.svg, src5) is the retired logo.",
+  "license": "AI/ML API brand mark, used nominatively to identify the connected service; trademark rights remain with AI/ML API.",
+  "sha256": "d28776bd79ae4689d435fd0d7eff4b6a8381c1e01747f9b6366b136e008875e2"
+}

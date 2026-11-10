@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/clickfunnels-dark.svg",
+  "source": "https://files.readme.io/af33b876406c67e5cb8092a039592b322bab679145be4cc2048f0c4f3ad7db55-CF_Mark_Light.svg",
+  "found_at": "https://developers.myclickfunnels.com/ (ClickFunnels' developer docs: header logo and SVG favicon CF_Mark_Dark.svg; CF_Mark_Light.svg for its dark theme)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "dark file is the company's own light version CF_Mark_Light.svg (off-white #FAFAF9 cursor), cropped and cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "brand.clickfunnels.com now redirects to the homepage. The BIMI logo (etison_llc_847017382.svg) is the retired funnel-gear mark and was not used.",
+  "license": "ClickFunnels brand mark, used nominatively to identify the connected service; trademark rights remain with ClickFunnels.",
+  "sha256": "80228ba5a41aa147d26706ca952bdd270b8fbdc366020e57c43a0078c8def03a"
+}

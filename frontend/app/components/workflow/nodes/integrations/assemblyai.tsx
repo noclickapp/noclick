@@ -9,8 +9,12 @@ import type { CSSProperties as BrandCSSProperties } from 'react';
 
 // Sourced brand artwork: https://logos.composio.dev/api/assemblyai
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/assemblyai-preferred-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+    <>
+        <img src="/icons/assemblyai-preferred-brand.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        <img src="/icons/assemblyai-preferred-brand-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+    </>
 );
 
 const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };

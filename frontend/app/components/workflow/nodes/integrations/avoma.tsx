@@ -12,7 +12,7 @@ const AvomaIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/avoma.png"
+        src="/icons/avoma.svg"
         alt=""
         aria-hidden="true"
         className={className}

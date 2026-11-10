@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/adobe-analytics.svg",
-  "source": "https://github.com/noclickapp/noclick-cloud/blob/776dcb95a6dba5a1e90f69025f08df059e2ddeee/frontend/public/icons/adobe-analytics.svg",
-  "license": "Adobe vendor trademark; original Adobe Illustrator asset preserved from noclickapp/noclick-cloud#2919; not covered by the code license.",
-  "sha256": "1a28155372f4bb58a9682d4c540615c82062e78c895a0028dbfa1ede904b9395"
+  "source": "https://cdn.experience.adobe.net/assets/AdobeExperienceCloud.bfdb429e.svg",
+  "found_at": "https://experience.adobe.com/ (Adobe Experience Cloud sign-in, where Adobe Analytics runs; <link rel=\"icon\" type=\"image/svg+xml\">)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned (kept Adobe's red rounded app tile, which is the brand's own app icon)"
+  ],
+  "notes": "DECISION: Adobe red #FA0F00 (as Experience Cloud's favicon has it) or the current file's #EB1000. Tile colour differs from the current file: Adobe's Experience Cloud favicon uses #FA0F00, the current file #EB1000. I kept the source's #FA0F00. icon_check's 'background coloured 95%' is the brand's own red app tile, so it stays. No Analytics-specific product icon is published as SVG (experience.adobe.com bundles, Experience League and developer.adobe.com carry none; adobe.com and business.adobe.com refuse automated fetches).",
+  "license": "Adobe brand mark, used nominatively to identify the connected service; trademark rights remain with Adobe.",
+  "sha256": "84d5bf559101507a1dc4aa7bc5a6aa0c47b030fd7f49fa247c64f07180df60e3"
 }

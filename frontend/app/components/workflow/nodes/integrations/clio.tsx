@@ -6,7 +6,10 @@ import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nod
 
 const ClioIcon: SvgIconComponent = forwardRef<HTMLImageElement, ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/clio-brand-vector.svg" alt="" className={className} style={style} {...props} />
+        <>
+            <img ref={ref} src="/icons/clio-brand-vector.svg" alt="" className={`${className ?? ''} dark:hidden`} style={style} {...props} />
+            <img src="/icons/clio-brand-vector-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={style} {...props} />
+        </>
     ),
 );
 ClioIcon.displayName = 'ClioIcon';

@@ -5,8 +5,8 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const AutotaskIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/autotask.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain', backgroundColor: '#1a345a', borderRadius: 4, padding: 3 } as CSSProperties} />
+    <img src="/icons/autotask.svg" alt="" aria-hidden="true" className={className}
+        style={{ ...style, objectFit: 'contain' } as CSSProperties} />
 );
 
 export const AutotaskNode: NodeDefinition = {

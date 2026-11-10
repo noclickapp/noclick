@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/birdeye.svg",
+  "source": "https://d3cnqzq0ivprch.cloudfront.net/support-api/production/brand-assets/birdeye-logos-1617788030719.zip (file Birdeye_icon_Color.svg)",
+  "found_at": "https://birdeye.com/press/ ('Brand assets: download logos and brand photography', Logos download)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing (the kit's icon is the mark alone)",
+    "cropped the viewBox with a 2% pad",
+    "cleaned"
+  ],
+  "notes": "The kit zip is dated 2021 but its icon is identical to the mark in birdeye.com's 2025 header logo. Blue reads on both themes.",
+  "license": "Birdeye brand mark, used nominatively to identify the connected service; trademark rights remain with Birdeye.",
+  "sha256": "aaa448bd5681cc5ec281ef418cf1e4b9875f4f95935e934ce051ebde7f71e98f"
+}

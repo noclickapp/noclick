@@ -5,7 +5,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 // Unmodified compact brand asset from https://api2cart.com
 import type { CSSProperties as BrandCSSProperties } from 'react';
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/api2cart-brand.png" alt="" aria-hidden="true" className={className}
+    <img src="/icons/api2cart-brand.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 

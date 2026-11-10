@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/chatgpt-dark.svg",
+  "source": "https://developers.openai.com/",
+  "found_at": "https://developers.openai.com/ (inline header logo <svg viewBox=\"100 100 411 411\">); same blossom as https://chatgpt.com/cdn/assets/favicon.6a33781f61.svg",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "fill currentColor -> #000000",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "#000000 -> #FFFFFF on the blossom (element 0); chatgpt.com's own SVG favicon (downloads/chatgpt/src2/favicon.svg) fills #000 in light and #fff under prefers-color-scheme: dark"
+  ],
+  "variant": "dark mode",
+  "notes": "Dropped the blue circle of the developers-site favicon: OpenAI's mark is the monochrome blossom. Used the developers.openai.com header copy because the chatgpt.com favicon paints only through a :root CSS rule.",
+  "license": "OpenAI brand mark, used nominatively to identify the connected service; trademark rights remain with OpenAI.",
+  "sha256": "ba176946ca5b09b5fa784e520d96bcb20f0889a8e981f628f253d88b8c3bf418"
+}

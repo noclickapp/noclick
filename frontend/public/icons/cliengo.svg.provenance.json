@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/cliengo.svg",
   "source": "https://www.cliengo.com/hubfs/website-cliengo/cliengo-logo-nuevo.svg",
+  "found_at": "https://www.cliengo.com/ (header logo; the current file's recorded source, re-downloaded byte-identical)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the 'Cliengo' wordmark paths (elements 2-8)",
+    "cropped the viewBox to the purple hand circle",
+    "cleaned"
+  ],
+  "notes": "The circle is the brand's own mark; the near-black wordmark that vanished on dark is gone, so one file serves both themes.",
   "license": "Cliengo brand mark, used nominatively to identify the connected service; trademark rights remain with Cliengo.",
-  "sha256": "f8f881201e20677137c1970dc83c97bd0233b96e77cd34612099bef01d66d448"
+  "sha256": "49eb1c6a83606a93c8189ab3b40137ac46fe8f9894d310b617adcca3c9546605"
 }

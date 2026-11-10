@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/cin7-core.svg",
-  "source": "https://www.cin7.com/hubfs/Cin7-u4/images/cin7-blue.svg",
-  "license": "Cin7 trademark; official publisher asset used nominatively to identify the Cin7 Core integration. Trademark rights remain with Cin7.",
-  "sha256": "6fb17d75373bb41deae08d3833111e92097803c5c31b91378819ad830c289dbf"
+  "source": "https://drive.google.com/uc?export=download&id=17j6NbnrMZ46amABvWdtPBAtfY1ElW2sy",
+  "found_at": "https://www.cin7.com/brand/ -> brand Drive folder 'Cin7 Logos' (1VvyUiId8Q-DSvgPlKII_iZYHxpkfba5w) -> 'Logo Mark' (1XxaObBTSE7EEAZ2xGHwYxZCQlSvHx1c0) -> Cin7_LogoMark_MidnightBlue.svg",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned (Illustrator comment)"
+  ],
+  "variant": "light mode",
+  "notes": "The Cin7 Core product folder in the kit only has wordmark lockups ('Cin7 Core'), so the company's own logo mark is used. The kit has no white mark on its own, hence the dark file taken from the white horizontal logo.",
+  "license": "Cin7 brand mark, used nominatively to identify the connected service; trademark rights remain with Cin7.",
+  "sha256": "94167aa1d12471a81b7f3f4ec065d3c8d7d9e52a15ba88c7f7c0d5452595ece2"
 }

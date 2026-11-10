@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/bugsnag-brand-vector.svg",
-  "source": "https://bugsnag.com/ (BugSnag vector brand artwork)",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "d93bef411d05f68afc028f31512d969547389bf2546061cba23d72e6c0e9856c"
+  "source": "https://dbd6j53uzcole.cloudfront.net/assets/images/logos/logo-full-color.a7df41c7cec6e875bb02.svg",
+  "found_at": "https://app.bugsnag.com/user/sign_in (BugSnag's own sign-in page, <img> logo)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the framed b icon (elements 1-4: #84A7FF square, #173647 frame, b and dot); removed the 'BugSnag' and 'SMARTBEAR' letters (elements 0, 5)",
+    "cropped the viewBox to the icon's frame (no pad: the framed square is the app icon)",
+    "stripped editor metadata"
+  ],
+  "notes": "Answers the reviewer: the framed light-blue b is BugSnag's current (SmartBear) product icon, used in the site header, app sign-in and favicon. The framed square is the brand's own app-icon tile, so it stays. The triage's vanishes-dark flag does not reproduce on this file (0% lost on both themes: the light-blue square carries the shape on dark); a variant with the frame recoloured white was tried (work/agents/b04/alt/bugsnag-dark-whiteframe.svg) but reads as an added white border, so it was not shipped. The previous file was a 256-grid redraw that does not derive from any BugSnag file.",
+  "license": "BugSnag (SmartBear) brand mark, used nominatively to identify the connected service; trademark rights remain with BugSnag (SmartBear).",
+  "sha256": "1351c499b6c9bb6697c3bb7ab39e0fe7a7c40c9ef7f5df377d237fcfce4aed89"
 }

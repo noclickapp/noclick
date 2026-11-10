@@ -7,7 +7,7 @@ import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nod
 
 const AudiobookshelfIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/audiobookshelf.png" alt="" className={className} style={{ ...style, objectFit: "contain" }} {...props} />
+        <img ref={ref} src="/icons/audiobookshelf.svg" alt="" className={className} style={{ ...style, objectFit: "contain" }} {...props} />
     ),
 );
 AudiobookshelfIcon.displayName = 'AudiobookshelfIcon';

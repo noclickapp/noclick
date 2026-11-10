@@ -47,7 +47,10 @@ describe('Bookwhen native configuration', () => {
     expect(saved.credentialIds).toEqual({ bookwhen_api_token: 'owned-key' });
     expect(updated.data).not.toHaveProperty('ticket_id');
   });
-  it('keeps exact complete official API wordmark bytes', () => {
-    expect(createHash('sha256').update(readFileSync(resolve(process.cwd(), 'public/icons/bookwhen.svg'))).digest('hex')).toBe('3f747e2f72eea03a99feb9785c30f3217c15308567917e9e2b8f2ca84a4be90e');
+  it('keeps the official mark bytes its provenance records', () => {
+    const sha = createHash('sha256').update(readFileSync(resolve(process.cwd(), 'public/icons/bookwhen.svg'))).digest('hex');
+    const provenance = JSON.parse(readFileSync(resolve(process.cwd(), 'public/icons/bookwhen.svg.provenance.json'), 'utf8'));
+    expect(sha).toBe('569b419939ff9751a7452bf28b58a3e6844fd43d7ec3cc9fab2a60942c174d0e');
+    expect(provenance.sha256).toBe(sha);
   });
 });

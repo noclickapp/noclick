@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/aryeo.svg",
-  "source": "https://raw.githubusercontent.com/jarrodparkes/images/master/aryeo-square.svg (Aryeo published OpenAPI info.x-logo.url)",
+  "source": "https://cdn.aryeo.com/static/safari-pinned-tab.svg",
+  "found_at": "https://cdn.aryeo.com/static/ (Aryeo app's static icon set, beside favicon-32x32.png and manifest.json linked from https://app.aryeo.com/login)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the drop-shadow element (element 1, a <use> of an embedded base64 PNG) and then the now-unreferenced <image id=img1> in <defs> (work/agents/b02/bin/prune_defs.py: deletion only)",
+    "kept the purple gradient rounded square (#6061F6 \u2192 #5146CD) and the white chevron mark: Aryeo's own app-icon tile",
+    "cropped the viewBox tight to the tile (no pad)"
+  ],
+  "notes": "Re-sourced from Aryeo's own CDN (the current file came from a personal GitHub repo, jarrodparkes/images). The company file adds a soft drop shadow under the mark as an embedded PNG; that raster was removed, so the mark is flat (as in the 32px favicon). The tile is the brand's app icon, so the background check flag is expected.",
   "license": "Aryeo brand mark, used nominatively to identify the connected service; trademark rights remain with Aryeo.",
-  "sha256": "3f72fc76119fd4dc46dc2c763a25bd8d929b51240f8397c39c656082ef700913"
+  "sha256": "318a4beb43c1dc6a0da6b7448d9cf1f8e0e5f80ad197889af3f607c9ae5f5a38"
 }

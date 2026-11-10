@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/autotask.svg",
+  "source": "https://www.kaseya.com/ (inline <svg> product icon beside 'Autotask PSA' in the site's products menu, linking /products/psa-software/)",
+  "found_at": "https://www.kaseya.com/ (products menu, 'Helpdesk & Service desk automation' \u2192 Autotask PSA)",
+  "source_kind": "parent company site",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: navy #14477B rounded tile, white 'A' and red #E41D38 check, as Kaseya draws the Autotask PSA product icon",
+    "viewBox tightened to the drawn area (crop, no pad)"
+  ],
+  "notes": "source_file is the verbatim inline <svg> sliced from the saved page downloads/autotask/src5/kaseya.html (only xmlns added). The tile is Kaseya's product-icon tile for Autotask PSA, so it stays (works on both themes). The Autotask login's own logo file is a PNG wrapped in an SVG <pattern> (not usable), and the app's favicon.ico is an older Datto-era blue segmented ring; the reviewer may want to confirm which mark Autotask users see today, but the A-with-check matches both the login wordmark and Kaseya's current product menu.",
+  "license": "Autotask PSA (Kaseya) brand mark, used nominatively to identify the connected service; trademark rights remain with Autotask PSA (Kaseya).",
+  "sha256": "5ffdae9aad80ba54bbb0a5a007a31307638384294e2481f78cfc0c153bb45a2d"
+}

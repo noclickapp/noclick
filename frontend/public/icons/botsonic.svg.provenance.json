@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/botsonic.svg",
+  "source": "https://cdn.prod.website-files.com/6643307d563d3d1613330141/6643307d563d3d1613330329_Logo.svg",
+  "found_at": "https://botsonic.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the robot chat-bubble mark (elements 0-4: gradient bubble, antenna, dark visor, white eyes); removed the white 'Botsonic' letters (elements 5-13)",
+    "cropped the viewBox to the mark",
+    "stripped editor metadata"
+  ],
+  "notes": "The homepage's apple-touch-icon ('Frame 1116605940.svg') is the parent company Writesonic's WS mark, not Botsonic's, so it was not used. The dark visor sits inside the bubble, so one file works on both themes.",
+  "license": "Botsonic brand mark, used nominatively to identify the connected service; trademark rights remain with Botsonic.",
+  "sha256": "871864580c3cdef4115bc513070305255a441bcbbfca3e15a5c0c51e2e44908c"
+}

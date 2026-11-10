@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/cabinpanda.svg",
+  "source": "https://www.cabinpanda.com/v2-assets/img/logoNew.svg",
+  "found_at": "https://www.cabinpanda.com/ (<img alt=\"CabinPanda logo\"> served through /_next/image?url=/v2-assets/img/logoNew.svg; the header's black version is /v2-assets/img/Black_logo.svg)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the panda face only: the stroked loop (element 11) and the two eye dots (elements 12, 13), all #F2B02F",
+    "removed the 'cabinpanda' letters (elements 0-10)",
+    "cropped the viewBox with a 2% pad",
+    "cleaned"
+  ],
+  "notes": "The loop is a stroked path (stroke-width 3.67), kept as in the source. The PNG favicon draws it with a slightly thinner line and smaller dots than the SVG logo. Yellow #F2B02F reads on both themes (icon_check: nothing lost), so one file.",
+  "license": "CabinPanda brand mark, used nominatively to identify the connected service; trademark rights remain with CabinPanda.",
+  "sha256": "59764651e6ccd5d3d159ae066ddd3eba6b070120414155b755de5c4b570cb580"
+}

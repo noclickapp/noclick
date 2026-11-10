@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/attentive.svg",
+  "source": "https://ui.attentivemobile.com/assets/AttentiveLogo-C-YLQMCTFI.svg",
+  "found_at": "https://ui.attentivemobile.com/signin (Attentive's app; its bundle chunk-C-CTKWPRCG.js renders this file as the logo in its creative dialogs, id 'Attentive_Logo_Black_RGB')",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the 'A' mark (file is the mark alone, #1A1E22)"
+  ],
+  "variant": "light mode",
+  "notes": "Attentive's app icon is this A in black on a yellow (#FFD60B) circle, but that tile exists only as PNG (attentive.com favicons, docs Circle.png). The company's vector of the mark is the bare black A, so light ships it black and dark white. attentive.com has no brand/press kit download (only the wordmark Attentive_Logotype_Black_RGB.svg).",
+  "license": "Attentive brand mark, used nominatively to identify the connected service; trademark rights remain with Attentive.",
+  "sha256": "97758221a8841e3d4fd465d7253285eaaa1dd156f25a4724028ec82eae7e2910"
+}

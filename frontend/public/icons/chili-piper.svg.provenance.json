@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/chili-piper.svg",
+  "source": "https://www.chilipiper.com/brand/logos/CP_Symbol_Red.svg",
+  "found_at": "https://www.chilipiper.com/brand (logo downloads: Symbol, Red)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The red symbol reads on both themes, so no dark variant; the kit also has Dark (navy) and White symbol versions in src2.",
+  "license": "Chili Piper brand mark, used nominatively to identify the connected service; trademark rights remain with Chili Piper.",
+  "sha256": "31f60c74c3f2884c9488091c53af417c4050eec3f2a6a65e1af3b2a29e2c7b0b"
+}

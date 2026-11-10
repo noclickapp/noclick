@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/apptoto-dark.svg",
+  "source": "https://ik.imagekit.io/apptoto/v20260818/dist/marketing/images/apptoto-logo-v1.svg?cache=1668817993000",
+  "found_at": "https://www.apptoto.com/ (header logo, img alt 'Apptoto', served from Apptoto's ImageKit account)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the 'apptoto' wordmark path (element 0), kept the calendar-and-clock symbol (elements 1, 2)",
+    "cropped the viewBox to the symbol",
+    "#3C495A \u2192 #FFFFFF on the calendar and clock outline (element 1); the green #17C666 clock hand stays"
+  ],
+  "variant": "dark mode",
+  "notes": "The batch's company_domain_guess (ik.imagekit.io) is just Apptoto's image CDN; the company is apptoto.com. Apptoto's mark PNG fills the calendar and clock faces white; the SVG leaves them open (transparent), which is how it ships in the logo. No standalone SVG mark, brand page or white logo exists (apptoto-logo-mark-v*.svg, /brand, /press, /press-kit, favicon.svg all 404; favicon is .ico).",
+  "license": "Apptoto brand mark, used nominatively to identify the connected service; trademark rights remain with Apptoto.",
+  "sha256": "c38aa56d36a031eaa45de1231e620c95b494a17f296505881808f90fac66ba5b"
+}

@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/browserbase-tool.svg",
+  "source": "https://www.browserbase.com/favicon.svg",
+  "found_at": "https://www.browserbase.com/ (<link rel=icon type=image/svg+xml>)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: the orange (#FF4500) square with the white block B (white rect under the B's knockout)",
+    "viewBox already the tile (0 0 200 200); stripped editor metadata"
+  ],
+  "notes": "The orange square is Browserbase's own app icon (site and docs favicons), so it stays (icon_check notes the 100% coloured tile). Browserbase's /brand, /press and /media-kit redirect to sign-in.",
+  "license": "Browserbase brand mark, used nominatively to identify the connected service; trademark rights remain with Browserbase.",
+  "sha256": "090e39d5bae830638f8d223613436f1a43093e679093dc21a144796f4b4a1518"
+}

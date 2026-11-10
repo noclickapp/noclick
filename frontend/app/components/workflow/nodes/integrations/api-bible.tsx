@@ -5,7 +5,10 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const ApiBibleIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/api-bible.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <>
+            <img ref={ref} src="/icons/api-bible.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} {...props} />
+            <img src="/icons/api-bible-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} {...props} />
+        </>
     ),
 );
 ApiBibleIcon.displayName = 'ApiBibleIcon';

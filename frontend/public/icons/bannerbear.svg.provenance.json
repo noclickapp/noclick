@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/bannerbear.svg",
-  "source": "https://www.bannerbear.com/images/favicon.svg (unmodified official Bannerbear brand icon linked by https://www.bannerbear.com/v5/developers/libraries-sdks/)",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "fdb2554c262758b2ef555c12ebd621021264f44816061a8bb21d67f6b1bce0c9"
+  "source": "https://developers.bannerbear.com/images/bannerbear_logo.svg",
+  "found_at": "https://developers.bannerbear.com/ (header <img>; also on https://www.bannerbear.com/about/)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the bear (elements 0-3), removed the 'Bannerbear' wordmark (element 4)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "Bannerbear's app icon is this bear with a white face on a yellow (#FFD800-ish) tile, but that version exists only as a bitmap (favicon.svg wraps a PNG; the apple-touch and app favicons are PNG), so this ships the brand's own monochrome bear: black on light, white in the dark file, face left open. The reviewer may prefer to keep looking for a yellow vector; none is on bannerbear.com, the docs, the app sign-in page or BannerbearHQ's GitHub repos (wp-bannerbear and the n8n fork carry PNGs only).",
+  "license": "Bannerbear brand mark, used nominatively to identify the connected service; trademark rights remain with Bannerbear.",
+  "sha256": "0f42325f6602dbc1df4f8a71a6ee85f9759df48bad9b21186f89171d2f0b95b3"
 }

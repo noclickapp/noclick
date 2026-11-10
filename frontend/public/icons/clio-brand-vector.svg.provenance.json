@@ -1,6 +1,17 @@
 {
   "path": "frontend/public/icons/clio-brand-vector.svg",
-  "source": "https://iconlogovector.com/logo/clio",
-  "license": "Clio trademark artwork used to identify the integration; no trademark rights granted.",
-  "sha256": "7ba5658311c4426e3e6c9f1f9dec47295d2a6f77a99c481b6fc8ef5ae635efc3"
+  "source": "https://account.clio.com/",
+  "found_at": "https://account.clio.com/ (Clio's sign-in page, where app.clio.com redirects: inline <svg data-test-id=\"clio-logo\"> brand logotype)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the 'Clio' wordmark (element 8), kept the eight-dot gem (elements 0-7)",
+    "fill var(--fill-logo-brand-mark) -> #383838, the --clio-fill-logo-default value the page's own stylesheet gives the logo in light mode",
+    "cropped the viewBox to the gem",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "REVIEWER: Clio has rebranded. The current file (blue check in a circle, from an aggregator) is the retired mark; it still appears only in Clio's BIMI record (themis_solutions_inc__dba_clio_435336175.svg). www.clio.com itself returns 403 to scripted fetches, so the rebrand was confirmed on account.clio.com, app.clio.com and the developer docs. The new logo is monochrome (#383838 light / white dark). If the app-icon form is preferred, account.clio.com/favicon.svg (downloads/clio/src3/favicon.svg) is the gem in a black circle.",
+  "license": "Clio brand mark, used nominatively to identify the connected service; trademark rights remain with Clio.",
+  "sha256": "56d1aa9ec6b9cb7494dd7f7cd3cc5b94927287f52f65bff42ce9ef5db22b7dc7"
 }

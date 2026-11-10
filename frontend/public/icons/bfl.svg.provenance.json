@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/bfl.svg",
+  "source": "https://bfl.ai/brand/symbol-black.svg",
+  "found_at": "https://bfl.ai/brand (Black Forest Labs brand page: symbol and logotype in black and white)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing (the kit's symbol has no wordmark or background)",
+    "cropped the viewBox with a 2% pad",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The symbol is wide (1.41:1) by design.",
+  "license": "Black Forest Labs brand mark, used nominatively to identify the connected service; trademark rights remain with Black Forest Labs.",
+  "sha256": "53adbf53cdf3aff582e6cf8751250dd68b2397524ec4ecee1b28d7ef0ddea73e"
+}

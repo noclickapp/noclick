@@ -16,10 +16,10 @@ describe('Beaconchain credential and assets', () => {
     expect(credential.properties.api_key['ui:widget']).toBe('password');
   });
   it('pins the official icon and categorizes the definition', () => {
-    const icon = readFileSync('public/icons/beaconchain.png');
-    const provenance = JSON.parse(readFileSync('public/icons/beaconchain.png.provenance.json', 'utf8'));
+    const icon = readFileSync('public/icons/beaconchain.svg');
+    const provenance = JSON.parse(readFileSync('public/icons/beaconchain.svg.provenance.json', 'utf8'));
     expect(createHash('sha256').update(icon).digest('hex')).toBe(provenance.sha256);
-    expect(provenance.source).toContain('gobitfly/eth2-beaconchain-explorer/');
+    expect(provenance.source).toContain('gobitfly/beaconchain/');
     expect(readFileSync('app/components/workflow/nodes/integrations/beaconchain.tsx', 'utf8')).toContain("category: 'developer-tools'");
   });
 });

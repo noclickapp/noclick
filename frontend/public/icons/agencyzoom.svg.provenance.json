@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/agencyzoom.svg",
+  "source": "https://app.agencyzoom.com/img/gamma/az-logo-symbol.svg",
+  "found_at": "https://app.agencyzoom.com/login (<img src=\"/img/gamma/az-logo-symbol.svg\" alt=\"Agency Zoom Logo\">)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the orange symbol (element 0); dropped the white logotype paths that sat outside the 24x18 viewBox (elements 1-10)",
+    "cropped the viewBox to the symbol",
+    "cleaned"
+  ],
+  "notes": "The marketing site's header logo is a PNG and its only logo SVG (az-logo-white.svg, downloads/agencyzoom/src2) is the retired triangle-A logo, so I used the app login page's symbol. Orange reads on both themes; one file.",
+  "license": "AgencyZoom brand mark, used nominatively to identify the connected service; trademark rights remain with AgencyZoom.",
+  "sha256": "01401549fa3b8a1e933e13c46503f907342dd7f4fb5cdb45767f746263fe5e56"
+}

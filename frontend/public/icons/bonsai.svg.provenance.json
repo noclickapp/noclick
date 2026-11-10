@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/bonsai.svg",
-  "source": "https://cdn.prod.website-files.com/67db1ca556342937e18be8b9/67dbd9a990eb89a585bf3064_a87293eb0a4d42fc955fd300fce999da_logo-full.svg",
-  "license": "Bonsai trademark; official logo from https://www.hellobonsai.com, used to identify the Bonsai integration",
-  "sha256": "76348440a13db844bfbc56074ab24ce729f64711e17aacf06df4369554dd61dd"
+  "source": "https://app.hellobonsai.com/assets/connect/zoom-bonsai-logos-5115d791c6ca5deb0e03dc6267c053e50d6db90bc7c23fdcc6526cee7c4a783a.svg",
+  "found_at": "https://app.hellobonsai.com/users/sign_in (the app's stylesheet /packs/css/*.css references it)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the green mark (element 0); removed the 'bonsai' letters and 'by zoom' (elements 1-9)",
+    "cropped the viewBox to the mark",
+    "stripped editor metadata"
+  ],
+  "notes": "Single file: the green mark reads on both themes.",
+  "license": "Bonsai brand mark, used nominatively to identify the connected service; trademark rights remain with Bonsai.",
+  "sha256": "303a44e502b161bb5b5d3996b2187458d557e59391d170bdb99da7ee7e7b43fe"
 }

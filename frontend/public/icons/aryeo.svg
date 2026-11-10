@@ -1,37 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>Artboard@512w</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="12.817 12.817 3726.196 3726.196">
     <defs>
-        <rect id="path-1" x="0" y="0" width="1024" height="1024" rx="195"></rect>
-        <linearGradient x1="50%" y1="99.9964392%" x2="50%" y2="3.19290738e-05%" id="linearGradient-3">
-            <stop stop-color="#5146CD" offset="0%"></stop>
-            <stop stop-color="#6061F6" offset="100%"></stop>
+        <linearGradient id="grd1" gradientUnits="userSpaceOnUse" x1="1875.699" y1="13.6" x2="1875.699" y2="3739.001">
+            <stop offset="0" stop-color="#636363"/>
+            <stop offset="0" stop-color="#6061f6"/>
+            <stop offset="1" stop-color="#5146cd"/>
         </linearGradient>
-        <rect id="path-4" x="-2.86665464" y="0" width="1027" height="1024"></rect>
-        <path d="M764,408.05124 L764,775.790969 C764,783.1728 517.568611,592.587756 517.568611,592.587756 C513.393034,589.178023 507.605426,589.178023 503.431389,592.587756 C503.431389,592.587756 257,783.1728 257,775.790969 L257,408.083684 C257,404.168749 258.713649,400.480923 261.629778,398.121765 L504.58306,201.523726 C508.757097,198.146438 514.52007,198.160343 518.68179,201.55617 L759.410253,398.12022 C762.301747,400.482468 764,404.154844 764,408.05124 Z M656.675215,579.684531 L657,437.722788 C657.003055,436.052343 656.223287,434.477088 654.893546,433.468373 L510.60895,324.077241 C508.687872,322.620207 506.028389,322.643237 504.131822,324.134048 L365.031379,433.472979 C363.749128,434.480159 363,436.023171 363,437.658304 L363,579.443483 C363,583.816119 367.969679,586.320252 371.471739,583.713252 L504.202293,484.899047 C506.055964,483.520316 508.586762,483.498821 510.461881,484.848381 L648.273946,583.992683 C651.779071,586.515239 656.666024,584.011107 656.675215,579.684531 Z" id="path-5"></path>
-        <filter x="-11.9%" y="-5.6%" width="120.3%" height="118.2%" filterUnits="objectBoundingBox" id="filter-6">
-            <feMorphology radius="1" operator="erode" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
-            <feOffset dx="-9" dy="19" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
-            <feGaussianBlur stdDeviation="15" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
-            <feColorMatrix values="0 0 0 0 0.117647059   0 0 0 0 0.117647059   0 0 0 0 0.117647059  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
-        </filter>
-    </defs>
-    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Group-8">
-            <g id="Rectangle">
-                <mask id="mask-2" fill="white">
-                    <use xlink:href="#path-1"></use>
-                </mask>
-                <use id="Mask" fill="#FFFFFF" xlink:href="#path-1"></use>
-                <g mask="url(#mask-2)">
-                    <use fill="#D8D8D8" xlink:href="#path-4"></use>
-                    <use fill="url(#linearGradient-3)" xlink:href="#path-4"></use>
-                </g>
-            </g>
-            <g id="Purple">
-                <use fill="black" fill-opacity="1" filter="url(#filter-6)" xlink:href="#path-5"></use>
-                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-5"></use>
-            </g>
-        </g>
-    </g>
+        </defs>
+    <style>
+        tspan { white-space:pre }
+        .shp0 { fill: url(#grd1) }
+        .shp1 { fill: #ffffff }
+    </style>
+    <path id="Path 1" class="shp0" d="M204.24 13.6C99.06 13.6 13 99.66 13 204.84L13 3547.76C13 3652.94 99.06 3739 204.24 3739L3547.16 3739C3652.34 3739 3738.4 3652.94 3738.4 3547.76L3738.4 204.84C3738.4 99.66 3652.34 13.6 3547.16 13.6L204.24 13.6Z"/>
+    <path id="Path 3" fill-rule="evenodd" class="shp1" d="M2763.15 1539.35L2763.15 2825.66C2763.15 2851.48 1898.2 2184.84 1898.2 2184.84C1883.55 2172.91 1863.23 2172.91 1848.58 2184.84C1848.58 2184.84 983.63 2851.48 983.63 2825.66L983.63 1539.47C983.63 1525.77 989.65 1512.87 999.88 1504.62L1852.62 816.95C1867.27 805.13 1887.5 805.18 1902.11 817.06L2747.04 1504.62C2757.19 1512.88 2763.15 1525.72 2763.15 1539.35ZM2401.31 2148.4L2402.45 1648.73C2402.46 1642.85 2399.71 1637.3 2395.02 1633.75L1886.05 1248.71C1879.27 1243.59 1869.89 1243.67 1863.2 1248.91L1372.51 1633.76C1367.99 1637.31 1365.35 1642.75 1365.35 1648.5L1365.35 2147.55C1365.35 2162.94 1382.88 2171.76 1395.23 2162.58L1863.45 1814.78C1869.99 1809.92 1878.91 1809.85 1885.53 1814.6L2371.67 2163.57C2384.04 2172.44 2401.27 2163.63 2401.31 2148.4Z"/>
 </svg>

@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/avoma.svg",
+  "source": "https://help.avoma.com/hubfs/Avoma%20lcon%20-%20svg.svg",
+  "found_at": "https://help.avoma.com/ (<link rel=\"SHORTCUT ICON\"> on Avoma's own help center)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The mark is red on both themes, so no dark variant. Avoma's app icon is this mark in white on a red tile, but Avoma publishes that tile only as PNG (Avoma-Icon-Color-256.png), so this ships the bare red symbol. The app's own safari-pinned-tab.svg is a potrace trace, so it wasn't used.",
+  "license": "Avoma brand mark, used nominatively to identify the connected service; trademark rights remain with Avoma.",
+  "sha256": "dee935af2413bb6f1dc3d01ee58336d3595f81bc03e639eb4351c57907d40470"
+}

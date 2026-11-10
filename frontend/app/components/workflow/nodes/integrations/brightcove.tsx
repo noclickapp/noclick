@@ -4,8 +4,12 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { type NodeDefinition } from '~/components/workflow/nodes/types';
 
 const BrightcoveIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/brightcove.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <>
+        <img src="/icons/brightcove.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, objectFit: 'contain' }} />
+        <img src="/icons/brightcove-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, objectFit: 'contain' }} />
+    </>
 );
 
 const BrightcoveNodeComponent = (props: NodeProps) => (

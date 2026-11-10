@@ -1,6 +1,17 @@
 {
   "path": "frontend/public/icons/buildium.svg",
-  "source": "https://github.com/noclickapp/noclick-cloud/blob/a3074230441d15798b83d577df5902e049393db7/frontend/public/icons/buildium.svg",
-  "license": "Buildium vendor trademark; retained from the original integration for provider identification.",
-  "sha256": "1b3595253a85e5c2fcdd1951e7ffb5dbc1f2e89f709b86c68a5a9ca1d8b04a42"
+  "source": "https://www.buildium.com/wp-content/uploads/2023/08/buildium-logo-1.svg",
+  "found_at": "https://www.buildium.com/ (header logo, <img class=\"logo_img\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the green square tile subpath (subpath 17) of the green compound path, dropping the 'Buildium' wordmark subpaths",
+    "removed the grey 'A RealPage Company' tagline path (element 0)",
+    "kept the white mark path unchanged",
+    "cropped the viewBox to the tile (the source had no viewBox, only width/height)",
+    "cleaned"
+  ],
+  "notes": "The green tile is Buildium's own app-icon tile (its favicon is the same green square with the white mark), so it stays. svgtool crop gave a 60.078-wide viewBox; the 0.078 sliver is transparent.",
+  "license": "Buildium brand mark, used nominatively to identify the connected service; trademark rights remain with Buildium.",
+  "sha256": "737815a1a672624c995048f7dc11a29b93a767d66e47af299b83db13379271e1"
 }

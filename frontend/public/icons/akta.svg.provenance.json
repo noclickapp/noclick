@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/akta.svg",
+  "source": "https://www.akta.pro/ (inline header <svg class=\"h-5 w-25\"> inside <a href=\"/\">, copied verbatim)",
+  "found_at": "https://www.akta.pro/ (akta.pro itself serves a Cloudflare challenge to curl; www.akta.pro serves the page)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the second 'a' and the period of the 'akta.pro' wordmark (elements 3-4), which sit together as 'a.'; dropped 'a', 'k', 't' (elements 0-2) and the gradient 'pro' (elements 5-7)",
+    "period: white -> url(#_R_1c9bqlb_-p), the file's own green-teal gradient used on 'pro' (sampled at the period it gives #4FACAD, the exact colour of the favicon's dot)",
+    "cropped the viewBox to 'a.'",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: there is no SVG of the favicon mark, so this is the wordmark's own 'a.' with the period painted in the wordmark's own gradient. It matches the favicon's letter, colours and layout, but the favicon's dot is smaller relative to the 'a' than the wordmark's period, so it is not pixel-identical to the app icon. The favicon's black square is dropped (triage: remove it). The <defs> keeps two unused copies of the gradient from the source.",
+  "license": "akta.pro (by Wokelo) brand mark, used nominatively to identify the connected service; trademark rights remain with akta.pro (by Wokelo).",
+  "sha256": "2a8340ce443a3c89069214da029d3408a0c8f92d0c043a37265c2d47dfbe37f3"
+}

@@ -1,6 +1,17 @@
 {
   "path": "frontend/public/icons/certifier.svg",
-  "source": "https://res.cloudinary.com/certifier/image/upload/v1789573689/logo_usyzm8.svg",
-  "license": "Certifier trademark; official website icon used for identification",
-  "sha256": "263b01cb2a610cad80c9dd1d149322f360fe57122189f3b7f956abf4bff190a1"
+  "source": "https://certifier.io/ (inline <svg> in the header link a[aria-label=\"Certifier logo\"])",
+  "found_at": "https://certifier.io/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the badge (element 1, black, open centre) and the chevron under it (element 2, black)",
+    "removed the 'Certifier' letters (element 0, one compound path)",
+    "fixed the viewBox attribute (the HTML parser had lowercased it to 'viewbox') and cropped it with a 2% pad",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The reviewer's note is right: the previous file (res.cloudinary.com/certifier/.../logo_usyzm8.svg) is the Penn State Nittany Lion shield, a customer logo in Certifier's homepage carousel, not Certifier's mark. certifier.io/favicon/safari-pinned-tab.svg, linked as mask-icon, returns the site's HTML 404 page. The light file keeps a harmless Tailwind class attribute from the inline source.",
+  "license": "Certifier brand mark, used nominatively to identify the connected service; trademark rights remain with Certifier.",
+  "sha256": "9a7ecfe4f5e626f01cedb7f3ba651497525ece1e03c2d6d9fcc9acb703667dd6"
 }

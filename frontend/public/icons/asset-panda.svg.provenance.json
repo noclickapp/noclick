@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/asset-panda.svg",
-  "source": "https://www.assetpanda.com/wp-content/uploads/2026/08/Logo-Asset-Panda.svg",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "5a1bb334512c79fe49d9749a68f6f854f6f2ccbe074a3729737d6fc977d1e4cd"
+  "source": "https://www.assetpanda.com/wp-content/plugins/asset-panda-ui-kit/components/site-header/assets/app-icon.svg?ver=1.3.195",
+  "found_at": "https://www.assetpanda.com/ (site header, img alt 'Asset Panda app icon')",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the panda (the file is already the mark alone)"
+  ],
+  "notes": "The company's own app-icon file carries a thin white sticker outline around the panda, so its black ears and outline stay readable on the dark theme; one file works in both themes. (The panda cut from the wordmark logo lacked that outline and lost 25% on dark; recolouring wasn't possible there because one black path also forms the eye patches.) assetpanda.com blocks curl for HTML (Cloudflare); the page was read with WebFetch and the SVG downloaded directly.",
+  "license": "Asset Panda brand mark, used nominatively to identify the connected service; trademark rights remain with Asset Panda.",
+  "sha256": "8ab81aeb039043a803e1c7cabd6e7471b1bbd50095189fa9659641feda7c1d28"
 }

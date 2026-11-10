@@ -12,7 +12,7 @@ const CatsIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/cats.png"
+        src="/icons/cats.svg"
         alt=""
         aria-hidden="true"
         className={className}

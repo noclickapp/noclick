@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/avaza.svg",
+  "source": "https://www.avaza.com/avaza-mark.svg",
+  "found_at": "https://www.avaza.com/ (<img src=\"/avaza-mark.svg\">, same artwork as the site's SVG favicon /favicon.svg)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: blue #2F9AEA squircle with the '//.' strokes cut out over a white disc (Avaza's app icon as shipped)",
+    "viewBox tightened to the drawn area (crop, no pad)"
+  ],
+  "notes": "The blue squircle is Avaza's own app-icon tile, so it stays; it reads on both themes, one file.",
+  "license": "Avaza brand mark, used nominatively to identify the connected service; trademark rights remain with Avaza.",
+  "sha256": "caaf2c534d45576a93b0a5fccf3d8c378d5358dcb3746dd0934e3019cc040d28"
+}

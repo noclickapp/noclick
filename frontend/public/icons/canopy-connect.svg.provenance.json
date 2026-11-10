@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/canopy-connect.svg",
+  "source": "https://dashboard.usecanopy.com/icon.svg?icon.3___a1sqd7a6a.svg?dpl=36b3c77c58057714dea32831ddea066fe1a058d5",
+  "found_at": "https://app.usecanopy.com/ (redirects to https://dashboard.usecanopy.com/login; <link rel=\"icon\" type=\"image/svg+xml\" href=\"/icon.svg?...\">)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the mark: the blue #1B1CD6 square tile with the white tree (17 elements) is kept as published",
+    "dropped the width/height attributes (viewBox unchanged, 0 0 154 154)",
+    "cleaned"
+  ],
+  "notes": "The blue tile is Canopy Connect's own app icon (every favicon of theirs is this tile), so it stays. The dashboard's SVG tile has square corners; the website's PNG favicon has rounded corners. If a tile-less mark is preferred, the header logo's blue tree (elements 0-15 of downloads/canopy-connect/src1/logo-canopyconnect-2023.svg) is the alternative.",
+  "license": "Canopy Connect brand mark, used nominatively to identify the connected service; trademark rights remain with Canopy Connect.",
+  "sha256": "a48fa10934a8f49a46d8156329469c464cbf8f1c2f083120c89de5ce6f624ae9"
+}

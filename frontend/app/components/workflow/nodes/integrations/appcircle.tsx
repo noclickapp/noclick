@@ -7,7 +7,7 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const AppcircleIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/appcircle.png" alt="" aria-hidden="true" className={className}
+    <img src="/icons/appcircle.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, objectFit: 'contain' }} />
 );
 

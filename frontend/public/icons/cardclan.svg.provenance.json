@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/cardclan.svg",
   "source": "https://docs.cardclan.io/icons/logo.svg",
-  "license": "Cardclan brand mark, used nominatively to identify the connected service; trademark rights remain with Cardclan.",
-  "sha256": "b6d6d9994bb54ae2251f5ea790795a875cb0a5c4323c65ba0a425fbc952be30b"
+  "found_at": "https://docs.cardclan.io/ (Mintlify docs header logo, served as https://mintcdn.com/cardclan/.../icons/logo.svg)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the C mark: the blue C (elements 0, 1), the gradient dot (element 10) and the gradient shading pieces (elements 11-14)",
+    "removed the 'CardClan' letters (elements 2-9)",
+    "cropped the viewBox with a 2% pad",
+    "cleaned"
+  ],
+  "notes": "cardclan.io itself refused automated fetches (HTTP/2 and TLS resets), so its header logo could not be checked; the docs logo is the company's own and matches its favicon. Blue reads on both themes, so one file.",
+  "license": "CardClan brand mark, used nominatively to identify the connected service; trademark rights remain with CardClan.",
+  "sha256": "349f46c88eed70ebb95982ecca76b0881433c88b295a3b47e3637a6404305297"
 }

@@ -13,10 +13,10 @@ describe('Birdeye connection', () => {
     expect(schema.$defs.BirdeyeAPIKeyCredential.properties.credential_type.default).toBe('birdeye_api_key');
   });
   it('uses the official icon and marketing category', () => {
-    const icon = readFileSync('public/icons/birdeye.png');
-    const provenance = JSON.parse(readFileSync('public/icons/birdeye.png.provenance.json', 'utf8'));
+    const icon = readFileSync('public/icons/birdeye.svg');
+    const provenance = JSON.parse(readFileSync('public/icons/birdeye.svg.provenance.json', 'utf8'));
     expect(createHash('sha256').update(icon).digest('hex')).toBe(provenance.sha256);
-    expect(provenance.source).toContain('cdn2.birdeye.com');
+    expect(provenance.source).toContain('Birdeye_icon_Color.svg');
     expect(readFileSync('app/components/workflow/nodes/integrations/birdeye.tsx', 'utf8')).toContain("category: 'marketing'");
   });
 });

@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/cleverreach.svg",
+  "source": "https://www.cleverreach.com/wp-content/uploads/2023/05/cleverreach-bildmarke.zip",
+  "found_at": "https://www.cleverreach.com/en/press/ (press kit download 'Bildmarke' = image mark)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "Orange #FF6633 reads on both themes, so no dark variant.",
+  "license": "CleverReach brand mark, used nominatively to identify the connected service; trademark rights remain with CleverReach.",
+  "sha256": "6b3bfe3a2853e66335891f9dafea2b5c33f8fabea3ac3663edfd7ed32423b211"
+}

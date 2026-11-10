@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/chaser.svg",
   "source": "https://www.chaserhq.com/hubfs/09%20CHASCEND%20THEME/Logos/Chaser%20Logo/Chaser-logo-new-orange.svg",
-  "license": "Chaser brand mark used nominatively to identify the connected service. Trademark rights remain with Chaser.",
-  "sha256": "a27672b3102b17929d59c3f29adf7220cb2444d78699563e62060668b4053a0d"
+  "found_at": "https://www.chaserhq.com/ (header logo; also the header of https://help.chaserhq.com/)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the C (element 0, #EF683E) of the 'CHASER' wordmark; removed 'HASER' (elements 1-5)",
+    "cropped the viewBox with a 2% pad",
+    "cleaned"
+  ],
+  "notes": "Chaser's logo is a wordmark only; the marketing site's favicon is a JPG of the whole wordmark, but its web app (my.chaserhq.com) uses the C alone, so the C is the app mark. The orange reads on both themes, so one file.",
+  "license": "Chaser brand mark, used nominatively to identify the connected service; trademark rights remain with Chaser.",
+  "sha256": "3dcfa4c5b0cb841445041c15d097324a4c90de8b28c3090053b37c1fa29fcdf1"
 }

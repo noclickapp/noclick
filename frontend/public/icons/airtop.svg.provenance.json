@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/airtop.svg",
   "source": "https://www.airtop.ai/_next/static/media/airtop-logo-v2.a6e24bc9.svg",
-  "license": "Airtop brand mark used nominatively to identify the integration; trademark rights remain with Airtop.",
-  "sha256": "6126224bd701240d54fd1b525583ca4b51f905a2cd276d481466c41ce529468b"
+  "found_at": "https://www.airtop.ai/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the cloud mark (elements 0-1); dropped the 'airtop' wordmark paths (elements 2-7)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The favicon's gradient tile exists only as ICO, so the mark ships bare: slate in light mode, Airtop's own white version (its docs logo) in dark mode.",
+  "license": "Airtop brand mark, used nominatively to identify the connected service; trademark rights remain with Airtop.",
+  "sha256": "8eb7af6e6c77a145b532d35bbc884ea7cd40a04522f27784757a0ab35cde38bd"
 }

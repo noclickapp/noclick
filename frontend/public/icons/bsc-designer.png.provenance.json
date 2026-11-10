@@ -1,8 +1,0 @@
-{
-  "path": "frontend/public/icons/bsc-designer.png",
-  "source": "https://bscdesigner.com/favicon.ico",
-  "license": "BSC Designer brand mark, used nominatively to identify the connected service; trademark rights remain with BSC Designer.",
-  "sha256": "71a0de689c627ec61f560e6e937650044bc3dce744f15a35c2b18cd100a01e71",
-  "source_sha256": "ea5a52054c1aab11109a687f2bb53035a4fe05cce07ed3087560dcb4ba470333",
-  "transformation": "Lossless PNG encoding of the official favicon ICO 48x48 frame with Pillow; pixels unchanged."
-}

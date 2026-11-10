@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/blinq.svg",
+  "source": "https://cdn.prod.website-files.com/617ac0d059899a9a3c8216e9/698ea4124eb49a21590736ca_BLINQ%20INLINE%20LOGO%20ARTWORKED.svg",
+  "found_at": "https://blinq.me/ (Webflow asset 'BLINQ INLINE LOGO ARTWORKED.svg' on the homepage; the nav itself plays a Lottie of the same logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "the logo is one compound path: kept only the mark's two halves (subpaths 3 and 4 of element 0), dropping the 'BLINQ' letters (subpaths 0-2, 5-9)",
+    "cropped the viewBox with a 2% pad",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "Blinq's app icon is this mark in near-black on a coral (#FF6A55-ish) rounded tile, but the tile exists only as PNG (Webclip.png, favicon PNG, docs favicon.png), so this ships the bare mark: near-black on light, white in the dark file. The reviewer may want to keep the coral tile look; no vector of it exists on blinq.me or docs.blinq.me.",
+  "license": "Blinq brand mark, used nominatively to identify the connected service; trademark rights remain with Blinq.",
+  "sha256": "48ecf6f8613223383372c1f3878bfe414989a698e9f1503d0f40b689cb6c9eb2"
+}

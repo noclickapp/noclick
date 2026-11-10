@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/appcircle.svg",
+  "source": "https://appcircle.io/icon-header-short.svg",
+  "found_at": "https://appcircle.io/ (header logo, short form shown at the lg breakpoint, alt 'Appcircle Logo')",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark (already symbol only, flat #FD790C, centre ring cut out)"
+  ],
+  "notes": "Appcircle's press kit (https://appcircle.io/press-kit, logo_light.svg / logo_dark.svg) draws the same symbol with a #FFBD59 \u2192 #FF780B vertical gradient; the live header, favicon and app icon use the flat #FD790C, so I used that. Swap to the gradient symbol (press kit element 0) if the reviewer prefers the brand-kit rendering.",
+  "license": "Appcircle brand mark, used nominatively to identify the connected service; trademark rights remain with Appcircle.",
+  "sha256": "800206bb13771ba392867c678535d8b0d2936bcf97704c7935ec7c159b209442"
+}

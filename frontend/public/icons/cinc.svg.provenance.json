@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/cinc.svg",
-  "source": "https://public.cincapi.com/v2/docs/images/logo-8ff82030.svg",
-  "license": "CINC brand mark used nominatively to identify the service; trademark rights remain with CINC.",
-  "sha256": "1abad3b57cf0bd608a541b8b050c1e3b6fbc5391e1ed36c1ddb763d9314ab2f6"
+  "source": "https://www.cincpro.com/hubfs/CINC_2021_Image/Logo_Primary-1.svg",
+  "found_at": "https://www.cincpro.com/ (header logo; byte-identical to https://public.cincapi.com/v2/docs/images/logo-8ff82030.svg, the current file's source)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the \"cinc\" wordmark paths (elements 0-3)",
+    "cropped the viewBox to the bars mark",
+    "cleaned"
+  ],
+  "notes": "The light grey (#D5D5D5) bar caps are the brand's own colour on white too; icon_check reports nothing lost on light. The wordmark-free hexagon in hubfs/select_logo.svg is a different mark (CINC Select) and was not used.",
+  "license": "CINC brand mark, used nominatively to identify the connected service; trademark rights remain with CINC.",
+  "sha256": "9502ac947b823acb17784db0a6d6e456a60212ac46eee5f7517a8361f6f38296"
 }

@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/assemblycom-dark.svg",
+  "source": "https://assembly.com/images/logo-mark.svg",
+  "found_at": "https://assembly.com/ (header logo mark, beside /images/logo-lockup.svg)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the three-bar mark (the file is the mark alone, black, no tile)",
+    "black \u2192 #FFFFFF on all three bars (elements 0-2)"
+  ],
+  "variant": "dark mode",
+  "notes": "The favicon.svg draws the mark white inside a black rounded square; the brand kit's own small logos are the bare mark in black (light) and white (dark), so I used the bare mark and no tile, which also removes the black background the triage flagged. The brand kit itself is PNG only.",
+  "license": "Assembly brand mark, used nominatively to identify the connected service; trademark rights remain with Assembly.",
+  "sha256": "55a70dee15156e34f8c0abed2c4f506a03a058efc68328f74a8c9bded57da6bd"
+}

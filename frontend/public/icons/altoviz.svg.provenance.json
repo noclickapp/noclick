@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/altoviz.svg",
+  "source": "https://altoviz.com/favicon.svg",
+  "found_at": "https://altoviz.com/fr (<link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned (kept the purple #331E57 rounded tile: it is Altoviz's own app icon, identical to its apple-touch-icon.png and android-chrome-512x512.png)"
+  ],
+  "notes": "icon_check notes the tile fills 97% of the canvas: it is the brand's own app-icon tile, so it stays. The dark purple tile still separates from the dark theme (lost_dark 0).",
+  "license": "Altoviz brand mark, used nominatively to identify the connected service; trademark rights remain with Altoviz.",
+  "sha256": "c27a2e92b87915ff571cdbe34768529ac39f8a46f100e5510ff6e4c5b1f5a082"
+}

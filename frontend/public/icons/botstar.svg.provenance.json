@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/botstar.svg",
+  "source": "https://botstar.com/image/botstar-horizontal-logo-blue.svg",
+  "found_at": "https://botstar.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the blue circle and the white chat-bot bubble (elements 1, 2); removed the 'BotStar' letters (element 0)",
+    "cropped the viewBox to the mark",
+    "stripped editor metadata"
+  ],
+  "notes": "The blue circle is part of BotStar's own mark (its favicon and app icons are this circle), so it stays.",
+  "license": "BotStar brand mark, used nominatively to identify the connected service; trademark rights remain with BotStar.",
+  "sha256": "84576ee6fa91616ada785a9c84b3a01e555415835bb97dac45c1e0e57450925e"
+}
