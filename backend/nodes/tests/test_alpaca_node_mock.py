@@ -1,6 +1,7 @@
 """Offline wire-contract and trading outcome regressions for Alpaca."""
 import json
 from pathlib import Path
+from uuid import UUID
 
 import httpx
 import pytest
@@ -169,3 +170,114 @@ async def test_bad_object_response_fails_closed(monkeypatch, payload):
     transport(monkeypatch, lambda r: httpx.Response(200, json=payload))
     with pytest.raises(ValueError, match="unexpected|invalid"):
         await node({"operation": "get_account"}).execute({})
+
+
+@pytest.fixture
+def poll_examples():
+    return json.loads((Path(__file__).parent / "fixtures/alpaca/poll_examples.json").read_text())
+
+
+def poll_state(monkeypatch):
+    state = {}
+    async def update(self, mutator, *, skip_result):
+        replacement, result = mutator(state)
+        if replacement is not None:
+            state.clear()
+            state.update(replacement)
+        return result
+    monkeypatch.setattr(native.AlpacaNode, "_update_node_state", update)
+    return state
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,example", [("on_new_order", "order"), ("on_new_activity", "fill"), ("on_new_activity", "dividend")])
+async def test_poll_baseline_new_item_dedup_and_agent(monkeypatch, poll_examples, operation, example):
+    poll_state(monkeypatch)
+    record = poll_examples[example]
+    records = []
+    requests = transport(monkeypatch, lambda request: httpx.Response(200, json=records))
+    instance = node({"operation": operation})
+    assert (await instance.execute({}))["data"] == []
+    records.append(record)
+    output = await instance.execute({})
+    assert output["data"] == [record]
+    assert output["new_item_count"] == 1
+    event = native.AlpacaNode.resolve_agent_event(output)
+    assert record["id"] in event["text"]
+    assert record["symbol"] in event["text"]
+    assert (await instance.execute({}))["data"] == []
+    assert native.AlpacaNode.resolve_agent_event(await instance.execute({})) is None
+    if operation == "on_new_order":
+        assert dict(requests[0].url.params) == {"status": "all", "direction": "desc", "limit": "500", "nested": "false"}
+    else:
+        assert dict(requests[0].url.params) == {"direction": "desc", "page_size": "100"}
+
+
+@pytest.mark.asyncio
+async def test_poll_existing_history_is_baselined_and_repointed(monkeypatch, poll_examples):
+    state = poll_state(monkeypatch)
+    transport(monkeypatch, lambda r: httpx.Response(200, json=[poll_examples["fill"]]))
+    assert (await node({"operation": "on_new_activity", "activity_types": "FILL"}).execute({}))["data"] == []
+    assert state["seen_ids"] == [poll_examples["fill"]["id"]]
+    prior_scope = state["scope"]
+    assert (await node({"operation": "on_new_activity", "activity_types": "FILL,DIV"}).execute({}))["data"] == []
+    assert state["scope"] != prior_scope
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,example,size,cursor", [("on_new_order", "order", 500, "before_order_id"), ("on_new_activity", "fill", 100, "page_token")])
+async def test_poll_paginates_before_baseline(monkeypatch, poll_examples, operation, example, size, cursor):
+    state = poll_state(monkeypatch)
+    records = [{**poll_examples[example], "id": str(UUID(int=i + 1))} for i in range(size)]
+    def reply(request):
+        return httpx.Response(200, json=[] if cursor in request.url.params else records)
+    requests = transport(monkeypatch, reply)
+    output = await node({"operation": operation}).execute({})
+    assert output["data"] == []
+    assert len(state["seen_ids"]) == size
+    assert requests[1].url.params[cursor] == records[-1]["id"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("failure", ["repeat", "http", "missing"])
+async def test_poll_failure_never_writes_partial_baseline(monkeypatch, poll_examples, failure):
+    state = poll_state(monkeypatch)
+    records = [{**poll_examples["fill"], "id": str(i)} for i in range(100)]
+    def reply(request):
+        if "page_token" not in request.url.params:
+            return httpx.Response(200, json=records)
+        if failure == "http":
+            return httpx.Response(429, json={"message": "rate limited"})
+        return httpx.Response(200, json=[records[0] if failure == "repeat" else {}])
+    transport(monkeypatch, reply)
+    with pytest.raises(ValueError):
+        await node({"operation": "on_new_activity"}).execute({})
+    assert state == {}
+
+
+@pytest.mark.asyncio
+async def test_poll_filters_and_live_environment(monkeypatch, poll_examples):
+    poll_state(monkeypatch)
+    requests = transport(monkeypatch, lambda r: httpx.Response(200, json=[]))
+    await node({"operation": "on_new_order", "symbols": "AAPL,TSLA", "side": "buy"}, "live").execute({})
+    assert requests[0].url.host == "api.alpaca.markets"
+    assert requests[0].url.params["symbols"] == "AAPL,TSLA"
+    assert requests[0].url.params["side"] == "buy"
+    await node({"operation": "on_new_activity", "activity_types": "FILL,DIV", "after": "2022-02-02T18:55:09Z"}).execute({})
+    assert requests[1].url.params["activity_types"] == "FILL,DIV"
+    assert requests[1].url.params["after"] == "2022-02-02T18:55:09+00:00"
+
+
+@pytest.mark.asyncio
+async def test_poll_page_bound_does_not_write_baseline(monkeypatch, poll_examples):
+    state = poll_state(monkeypatch)
+    page = 0
+    def reply(request):
+        nonlocal page
+        records = [{**poll_examples["fill"], "id": str(page * 100 + i)} for i in range(100)]
+        page += 1
+        return httpx.Response(200, json=records)
+    transport(monkeypatch, reply)
+    with pytest.raises(ValueError, match="page bound"):
+        await node({"operation": "on_new_activity"}).execute({})
+    assert state == {}

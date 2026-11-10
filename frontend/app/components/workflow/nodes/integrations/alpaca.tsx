@@ -12,7 +12,7 @@ const AlpacaIcon = ({ className, style }: { className?: string; style?: CSSPrope
 export const AlpacaNode: NodeDefinition = {
     type: 'automation-alpaca', label: 'Alpaca',
     category: 'finance-accounting',
-    description: 'Manage trading accounts, orders, positions, assets and watchlists',
+    description: 'Trigger on new orders and account activities; manage trading accounts, orders, positions, assets and watchlists',
     Icon: AlpacaIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={AlpacaIcon} iconColor="" />),

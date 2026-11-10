@@ -7,6 +7,7 @@ https://docs.alpaca.markets/us/openapi/trading-api.json
 from __future__ import annotations
 
 import re
+from datetime import datetime
 from decimal import Decimal
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
@@ -17,6 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, AfterValidator, f
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -284,12 +286,30 @@ class DeleteWatchlist(_Input):
     watchlist_id: UUID
 
 
+class OnNewOrder(PollTriggerConfigBase):
+    """New submissions, including orders already closed between polls; not status updates."""
+    operation: Literal["on_new_order"] = Field("on_new_order", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Order",
+    })
+    symbols: str | None = Field(None, max_length=2000, description="Comma-separated symbols. Polls up to 10,000 orders; narrow this scope for larger histories.")
+    side: Literal["buy", "sell"] | None = None
+
+
+class OnNewActivity(PollTriggerConfigBase):
+    """New fills, dividends, transfers and other account activities, deduplicated by ID."""
+    operation: Literal["on_new_activity"] = Field("on_new_activity", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Account Activity",
+    })
+    activity_types: str | None = Field(None, max_length=1000, description="Comma-separated activity types, for example FILL,DIV. Use FILL to watch trade executions.")
+    after: datetime | None = Field(None, description="Only activities created after this timestamp. Polls up to 2,000 activities; narrow this scope for larger histories.")
+
+
 AlpacaConfig = Annotated[Union[
     GetAccount, GetAccountConfig, UpdateAccountConfig, GetPortfolioHistory,
     ListActivities, ListAssets, GetAsset, GetCalendar, GetClock, ListOrders,
     CreateOrder, GetOrder, ReplaceOrder, CancelOrder, GetOrderByClientID,
     ListPositions, GetPosition, ClosePosition, ListWatchlists, CreateWatchlist,
-    GetWatchlist, UpdateWatchlist, AddWatchlistAsset, RemoveWatchlistAsset, DeleteWatchlist,
+    GetWatchlist, UpdateWatchlist, AddWatchlistAsset, RemoveWatchlistAsset, DeleteWatchlist, OnNewOrder, OnNewActivity,
 ], Field(discriminator="operation")]
 
 
@@ -340,7 +360,7 @@ def _redact(value, credential):
     return value
 
 
-class AlpacaNode(WorkflowNode):
+class AlpacaNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-alpaca"
     connection_evidence = ConnectionEvidence(noun="Alpaca account", identity_operation="get_account", identity_keys=("account_number", "id"))
 
@@ -348,14 +368,9 @@ class AlpacaNode(WorkflowNode):
     def get_config_model(cls):
         return AlpacaNodeConfig
 
-    async def execute(self, inputs):
-        if not self.config or not self.config.credentials:
-            raise ValueError("Connect an Alpaca API key ID and secret")
+    async def _request(self, action, values):
         credential = self.config.credentials
-        op = self.config.config
-        action = op.operation
         method, route = REQUESTS[action]
-        values = op.model_dump(mode="json", exclude_none=True, exclude={"operation"})
         for name in re.findall(r"\{([^}]+)\}", route):
             route = route.replace("{" + name + "}", quote(str(values.pop(name)), safe=""))
         base = "https://paper-api.alpaca.markets" if credential.environment == "paper" else "https://api.alpaca.markets"
@@ -387,7 +402,77 @@ class AlpacaNode(WorkflowNode):
                     raise ValueError("Alpaca returned an unexpected list response")
             elif not isinstance(data, dict) or not data:
                 raise ValueError("Alpaca returned an unexpected object response; inspect write outcome before retrying")
-        output = {"status": "success", "operation": action, "data": _redact(data, credential), "http_status": response.status_code}
+        return data, response.status_code, method
+
+    async def _poll(self, op):
+        orders = isinstance(op, OnNewOrder)
+        action = "list_orders" if orders else "list_activities"
+        size = 500 if orders else 100
+        params = {"direction": "desc", "limit" if orders else "page_size": size}
+        if orders:
+            params.update(status="all", nested=False)
+            for name in ("symbols", "side"):
+                if getattr(op, name) is not None:
+                    params[name] = getattr(op, name)
+        else:
+            if op.activity_types is not None:
+                params["activity_types"] = op.activity_types
+            if op.after is not None:
+                params["after"] = op.after.isoformat()
+        items = []
+        ids = set()
+        for _ in range(20):
+            page, _, _ = await self._request(action, dict(params))
+            for item in page:
+                identifier = item.get("id")
+                if not isinstance(identifier, str) or not identifier or identifier in ids:
+                    raise ValueError("Alpaca poll returned a missing or repeated ID; baseline was not changed")
+                ids.add(identifier)
+                items.append(item)
+            if len(page) < size:
+                break
+            params["before_order_id" if orders else "page_token"] = page[-1]["id"]
+        else:
+            raise ValueError("Alpaca poll history exceeds its page bound; narrow the trigger scope before arming")
+        # Baseline only after every page succeeds. Oldest first for agent/workflow consumption.
+        fresh = await self._filter_unseen(list(reversed(items)), lambda item: item["id"])
+        output = {"status": "success", "operation": op.operation, "data": _redact(fresh, self.config.credentials), "new_item_count": len(fresh)}
+        await self.emit(output)
+        return output
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("operation") not in {"on_new_order", "on_new_activity"}:
+            return super().resolve_agent_event(output)
+        items = output.get("data") or []
+        if not items:
+            return None
+        orders = output["operation"] == "on_new_order"
+        title = "New Alpaca orders" if orders else "New Alpaca account activities"
+        lines = [f"{title} in the connected trading account: {len(items)}"]
+        for item in items:
+            facts = [f"{name}={item[name]}" for name in (
+                ("id", "client_order_id", "symbol", "side", "qty", "notional", "status", "submitted_at") if orders else
+                ("id", "activity_type", "symbol", "side", "qty", "price", "net_amount", "currency", "transaction_time", "created_at", "date", "order_id")
+            ) if item.get(name) is not None]
+            lines.append("; ".join(facts))
+        if orders:
+            lines.append("Use get_order with order_id=id to check the current order; a submission is not a confirmed fill.")
+        else:
+            lines.append("Use get_order with order_id when present to inspect the related order.")
+        return {"text": "\n".join(lines), "title": title}
+
+    async def execute(self, inputs):
+        if not self.config or not self.config.credentials:
+            raise ValueError("Connect an Alpaca API key ID and secret")
+        credential = self.config.credentials
+        op = self.config.config
+        if isinstance(op, (OnNewOrder, OnNewActivity)):
+            return await self._poll(op)
+        action = op.operation
+        values = op.model_dump(mode="json", exclude_none=True, exclude={"operation"})
+        data, http_status, method = await self._request(action, values)
+        output = {"status": "success", "operation": action, "data": _redact(data, credential), "http_status": http_status}
         if method != "GET":
             output["request_accepted"] = True
             if action in {"create_order", "replace_order", "close_position", "cancel_order"}:
