@@ -21,6 +21,7 @@ import {
     NODE_SCHEMA_TYPES,
     resolveNodeType,
     isAgentToolProviderType,
+    isListedNodeType,
     isTriggerSource,
     borrowsCredentialType,
 } from '~/utils/nodeMeta';
@@ -463,15 +464,15 @@ let _wirableCatalog: { triggers: Array<{ nodeType: string; triggerOps: TriggerOp
  * types (minus the manual Run button) + integrations with ≥1 trigger
  * operation, and tool-provider-capable types — both operation-allowlist
  * providers (~58 integrations exposing node_op tools) AND the four
- * structural tool types in STRUCTURAL_AGENT_TOOL_TYPES. Schema walk over
- * every type (after loadAllNodeSchemas) — computed once and cached.
+ * structural tool types in STRUCTURAL_AGENT_TOOL_TYPES, retired services left out.
+ * Schema walk over every type (after loadAllNodeSchemas) — computed once and cached.
  */
 export function getAgentWirableCatalog(): { triggers: Array<{ nodeType: string; triggerOps: TriggerOperation[] }>; tools: string[] } {
     if (_wirableCatalog) return _wirableCatalog;
     requireAllLoaded('getAgentWirableCatalog');
     const triggers: Array<{ nodeType: string; triggerOps: TriggerOperation[] }> = [];
     const tools: string[] = [];
-    for (const nodeType of NODE_SCHEMA_TYPES) {
+    for (const nodeType of NODE_SCHEMA_TYPES.filter(isListedNodeType)) {
         if (nodeType.startsWith('trigger-') && nodeType !== 'trigger-run') {
             triggers.push({ nodeType, triggerOps: [] });
         } else {

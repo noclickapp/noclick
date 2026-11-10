@@ -13,7 +13,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.base import NodeConfig, Retirement, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -372,6 +372,10 @@ def _safe_output(value, secret):
 
 class StartonNode(WorkflowNode):
     integration_type = "automation-starton"
+    retired = Retirement(
+        reason="Starton's API, app and docs no longer answer (api.starton.com returns Cloudflare error 1016); it announced no shutdown.",
+        since="2026-11-10",
+    )
     connection_evidence = ConnectionEvidence(noun="smart contracts", operation="list_smart_contracts")
 
     @classmethod

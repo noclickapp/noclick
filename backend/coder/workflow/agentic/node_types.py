@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Union, get_args, get_origin
 
-from nodes.core.registry import NODE_REGISTRY
+from nodes.core.registry import NODE_REGISTRY, is_listed
 from ..operation_catalog import get_native_agent_tools_for_node_type
 from ..structural_tools import STRUCTURAL_AGENT_TOOL_PROVIDERS, STRUCTURAL_AGENT_TOOL_TYPES
 
@@ -75,8 +75,8 @@ def _get_available_node_types() -> str:
     } | STRUCTURAL_AGENT_TOOL_TYPES
 
     for node_type in NODE_REGISTRY.keys():
-        if node_type.startswith('test-'):
-            continue  # Skip test nodes
+        if node_type.startswith('test-') or not is_listed(node_type):
+            continue  # test nodes, and retired services saved nodes still run on
         elif node_type.startswith('trigger-'):
             triggers.append(node_type)
         elif node_type in processing_types:

@@ -40,6 +40,12 @@ export function resolveNodeType(nodeType: string): string {
     return LEGACY_NODE_TYPE_ALIASES[nodeType] ?? nodeType;
 }
 
+/** Whether a listing (the palette, Connections, the integration pages, the sitemap) offers the type for new work
+ *  (backend `registry.is_listed`). A retired type is still drawn, edited and run where a workflow has one. */
+export function isListedNodeType(nodeType: string): boolean {
+    return !NODE_META[resolveNodeType(nodeType)]?.retired;
+}
+
 /**
  * Whether a node type can act as an agent tool provider — i.e. be wired to
  * an AI agent's bottom handle to expose its operations as node_op tools.

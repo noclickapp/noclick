@@ -81,10 +81,11 @@ def operation_catalog(credential_type, node_type=None):
 def _connectable_operations():
     """Public operation metadata, not executable tools or account access."""
     from nodes.agent.node_op_tools import list_node_operations
+    from nodes.core.registry import is_listed
 
     _, providers = connection_catalog()
     return tuple({"node_type": provider, **operation, "credential_types": types}
-                 for provider, types in providers.items()
+                 for provider, types in providers.items() if is_listed(provider)
                  for operation in list_node_operations(provider))
 
 

@@ -192,6 +192,18 @@ class TestWorkflowMCPHandlerBackendOnly(BaseHandlerTest):
         # Should NOT find unrelated nodes
         assert "automation-whatsapp" not in node_types
 
+    async def test_search_nodes_leaves_out_retired_services(self, frontend_sio, sid):
+        """A retired service (its API shut down) is never offered, even searched by name."""
+        for i, query in enumerate(["", "humanloop"]):
+            await send_event(frontend_sio, sid, WorkflowMCPSearchNodesRequest(request_id=f"test-retired-{i}", query=query))
+            response_events = await self.wait_for_main_api_events("response", count=i + 1)
+            assert len(response_events) == i + 1
+            response_data = self.reassemble_if_chunked(response_events[i][1])
+            node_types = {n["type"] for n in response_data["data"]["nodes"]}
+            assert not node_types & {"automation-humanloop", "automation-starton", "automation-rkvst"}
+            if not query:
+                assert {"automation-freshteam", "automation-toneden"} <= node_types
+
     async def test_search_nodes_excludes_test_nodes(self, frontend_sio, sid):
         """Test search_nodes excludes test-* nodes."""
         request = WorkflowMCPSearchNodesRequest(

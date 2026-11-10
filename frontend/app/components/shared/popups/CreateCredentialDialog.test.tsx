@@ -13,10 +13,11 @@ vi.mock('~/utils/credentialAutoSelect', async (importOriginal) => ({
     getAllCredentialsFromCache: () => cache.rows,
     prefetchCredentials: async () => undefined,
 }));
-// The catalog the picker lists is loaded at runtime; here it holds Stripe alone.
+// The catalog the picker lists is loaded at runtime; here it holds Stripe and a retired service.
 vi.mock('~/hooks/useServiceCredentialOptions', () => ({
     useServiceCredentialOptions: () => [
-        { value: 'automation-stripe', label: 'Stripe', primaryCredentialType: 'stripe_api_key', acceptedCredentialTypes: ['stripe_api_key'], Icon: () => null, iconColor: '' },
+        { value: 'automation-stripe', label: 'Stripe', primaryCredentialType: 'stripe_api_key', acceptedCredentialTypes: ['stripe_api_key'], Icon: () => null, iconColor: '', listed: true },
+        { value: 'automation-humanloop', label: 'Humanloop', primaryCredentialType: 'humanloop_api_key', acceptedCredentialTypes: ['humanloop_api_key'], Icon: () => null, iconColor: '', listed: false },
     ],
 }));
 vi.mock('~/lib/navigation', async (importOriginal) => ({
@@ -63,5 +64,22 @@ describe('opening an existing account', () => {
         expect(navigateToAccount).not.toHaveBeenCalled();
         expect(await screen.findByText('Connect Stripe')).toBeTruthy();
         expect(await screen.findByText('Paste it here', {}, { timeout: 5000 })).toBeTruthy();
+    });
+});
+
+describe('a retired service', () => {
+    it('is not offered in the picker', async () => {
+        cache.rows = [];
+        render(<GlobalCreateCredentialDialog />);
+        await act(async () => openCreateCredential());
+        const rows = await screen.findAllByTestId('credential-service-row');
+        expect(rows.map((row) => row.textContent)).toEqual(['Stripe']);
+    });
+
+    it('still reconnects an account already connected to it', async () => {
+        cache.rows = [{ id: 'cred-2', name: 'Humanloop', credential_type: 'humanloop_api_key', access_type: 'owner', revoked_at: '2026-10-17T00:00:00Z' }];
+        render(<GlobalCreateCredentialDialog />);
+        await act(async () => openCreateCredential({ credentialType: 'humanloop_api_key', credentialId: 'cred-2' }));
+        expect(await screen.findByText('Connect Humanloop')).toBeTruthy();
     });
 });

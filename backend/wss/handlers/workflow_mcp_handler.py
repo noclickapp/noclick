@@ -64,7 +64,7 @@ from utils.activity import signal_activity
 from utils.database_pool import DatabasePoolMixin
 from utils.access_control import check_resource_access, Permission
 from wss.handlers.workflow_handler import get_user_org_context
-from nodes.core.registry import NODE_REGISTRY
+from nodes.core.registry import NODE_REGISTRY, is_listed
 from wss.handlers.workflow_execution_handler import WorkflowExecutionHandler
 from repositories.workflow import WorkflowRepo
 from repositories.organization import OrgRepo
@@ -761,8 +761,8 @@ class WorkflowMCPHandler(DatabasePoolMixin, SocketIOHandler):
             results = []
 
             for node_type, node_class in NODE_REGISTRY.items():
-                # Skip test nodes
-                if node_type.startswith('test-'):
+                # Test nodes, and retired services saved nodes still run on
+                if node_type.startswith('test-') or not is_listed(node_type):
                     continue
 
                 # Extract metadata from node class

@@ -1569,5 +1569,9 @@
   "title": "Humanloop Node Configuration",
   "type": "object",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-retired": {
+    "reason": "Humanloop shut its platform down on 8 September 2025 when its team joined Anthropic; api.humanloop.com no longer resolves.",
+    "since": "2025-09-08"
+  },
   "x-agent-tool-provider": true
 }

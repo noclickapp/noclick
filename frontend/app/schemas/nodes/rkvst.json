@@ -1020,5 +1020,9 @@
   "title": "Rkvst Node Configuration",
   "type": "object",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-retired": {
+    "reason": "DataTrails (formerly RKVST) was acquired by OnID in August 2025; datatrails.ai now redirects to onid.co and its API host app.datatrails.ai no longer resolves.",
+    "since": "2026-11-10"
+  },
   "x-agent-tool-provider": true
 }

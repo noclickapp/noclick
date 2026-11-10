@@ -32,6 +32,7 @@ import {
     getFieldsForOption,
 } from '~/utils/schemaFieldExtractor';
 import { credentialMarks, getNodeCredentialInfo } from '~/utils/nodeSchemas';
+import { isListedNodeType } from '~/utils/nodeMeta';
 import type {
     SerializedNodeMeta,
     OperationInfo,
@@ -276,15 +277,16 @@ function buildAllSerializedNodeMeta(): Record<string, SerializedNodeMeta> {
     return map;
 }
 
-/** Node types that represent external integrations (automation + trigger nodes). */
+/** Node types that represent external integrations (automation + trigger nodes), retired services left out. */
 export function listIntegrationNodeTypes(): string[] {
     return AVAILABLE_NODES.filter(
         (node) =>
-            node.type.startsWith('automation-') ||
-            node.type.startsWith('trigger-') ||
-            // The unified form node absorbed trigger-form-input; keep its
-            // integrations page (slug 'form-input') listed.
-            node.type === 'interface-form'
+            isListedNodeType(node.type) &&
+            (node.type.startsWith('automation-') ||
+                node.type.startsWith('trigger-') ||
+                // The unified form node absorbed trigger-form-input; keep its
+                // integrations page (slug 'form-input') listed.
+                node.type === 'interface-form')
     ).map((node) => node.type);
 }
 
@@ -450,7 +452,7 @@ export function listTriggerOptions(): TriggerOption[] {
     }
 
     const integration = AVAILABLE_NODES.filter((n) =>
-        n.type.startsWith('automation-')
+        n.type.startsWith('automation-') && isListedNodeType(n.type)
     )
         .map((n): TriggerOption | null => {
             const trigOps = getNodeTriggerOperations(n.type);
@@ -480,14 +482,14 @@ export function listTriggerOptions(): TriggerOption[] {
 /** Every integration node type that can be wired in as an agent tool provider. */
 export function listAgentToolProviderTypes(): string[] {
     return AVAILABLE_NODES.map((n) => n.type).filter(
-        (t) => t.startsWith('automation-') && isAgentToolProvider(t)
+        (t) => t.startsWith('automation-') && isAgentToolProvider(t) && isListedNodeType(t)
     );
 }
 
 /** Resolve a provider URL slug ('slack') to its provider node type, or null. */
 export function resolveProviderTypeFromSlug(slug: string): string | null {
     const type = `automation-${slug}`;
-    return isAgentToolProvider(type) ? type : null;
+    return isAgentToolProvider(type) && isListedNodeType(type) ? type : null;
 }
 
 /** Serialized provider integration (meta + slug + exposable operations) for the
@@ -515,7 +517,7 @@ export function listProviderIntegrations(): ProviderIntegration[] {
         .filter((x): x is ProviderIntegration => x !== null);
 }
 
-/** Resolve an integration URL slug to its node type, or null if unknown. */
+/** Resolve an integration URL slug to its node type, or null if unknown or retired (its pages answer 404). */
 export function resolveNodeTypeFromSlug(slug: string): string | null {
     // Pre-merge trigger slug: the unified form node kept the indexed URL.
     if (slug === 'form-input') return 'interface-form';
@@ -527,7 +529,7 @@ export function resolveNodeTypeFromSlug(slug: string): string | null {
             n.type === triggerType ||
             n.type === slug
     );
-    return node?.type || null;
+    return node && isListedNodeType(node.type) ? node.type : null;
 }
 
 /** Whether a node type exists in the registry. */

@@ -201,6 +201,21 @@ def provider_dataflow_conflict(
     return None
 
 
+def retired_node_refusal(node_type: str) -> Optional[str]:
+    """Why a NEW node of a retired type can't be added, or None. Nodes of it
+    already in a workflow are left alone: they keep running until the
+    vendor's API refuses them."""
+    from nodes.core.registry import retirement_of
+
+    retired = retirement_of(node_type)
+    if retired is None:
+        return None
+    return (
+        f"'{node_type}' is retired and can't be added: {retired.reason} "
+        f"Pick another node type; existing {node_type} nodes keep running."
+    )
+
+
 def trigger_provider_conflict(
     node_type: str,
     operation: Optional[Any],

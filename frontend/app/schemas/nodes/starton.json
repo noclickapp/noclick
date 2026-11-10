@@ -1860,5 +1860,9 @@
   "title": "Starton Node Configuration",
   "type": "object",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-retired": {
+    "reason": "Starton's API, app and docs no longer answer (api.starton.com returns Cloudflare error 1016); it announced no shutdown.",
+    "since": "2026-11-10"
+  },
   "x-agent-tool-provider": true
 }

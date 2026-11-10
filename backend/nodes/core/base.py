@@ -7,6 +7,8 @@ Each node type (Telegram, Agent, etc.) should inherit from this class.
 
 import json
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from datetime import date
 from decimal import Decimal
 from functools import lru_cache
 from typing import (

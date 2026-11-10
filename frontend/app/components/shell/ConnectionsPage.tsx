@@ -174,7 +174,9 @@ function Catalog({
     const entries = useMemo<CatalogEntry[]>(
         () => [
             ...companies.map((company) => ({ key: `ai:${company.id}`, title: company.title, fields: companyFields(company), company })),
-            ...services.map((service) => ({ key: service.value, title: service.label, fields: [service.label, service.acceptedCredentialTypes.join(' ')], service })),
+            ...services
+                .filter((service) => service.listed)
+                .map((service) => ({ key: service.value, title: service.label, fields: [service.label, service.acceptedCredentialTypes.join(' ')], service })),
         ],
         [companies, services]
     );

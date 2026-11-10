@@ -116,10 +116,12 @@ export function CreateCredentialDialog({ isOpen, onOpenChange, onCreated, initia
         if (initialCredentialId) setReconnect({ service: svc.value, credentialId: initialCredentialId, credentialType: initialCredentialType });
     }, [isOpen, initialCredentialType, initialCredentialId, services]);
 
+    // The picker offers live services; a retired one is still opened by name above, to reconnect its account.
     const filtered = useMemo(() => {
+        const listed = services.filter((s) => s.listed);
         const q = search.trim();
-        if (!q) return services;
-        return services
+        if (!q) return listed;
+        return listed
             .map((s) => ({ s, score: scoreFields(q, [s.label, s.acceptedCredentialTypes.join(' ')]) }))
             .filter((x) => x.score !== null)
             .sort((a, b) => (a.score as number) - (b.score as number))

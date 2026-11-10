@@ -1027,6 +1027,8 @@ def generate_node_schemas():
                 schema['title'] = f"{schema_name.capitalize()} Node Configuration"
                 if getattr(node_class, 'connectionless', False):
                     schema['x-connectionless'] = True
+                if node_class.retired:
+                    schema['x-retired'] = node_class.retired.as_json()
 
                 # Mark nodes whose operations can be exposed as agent tools
                 # (node_op) — the frontend uses this to render the top
@@ -1042,6 +1044,8 @@ def generate_node_schemas():
                     meta_entry['agentToolProvider'] = True
                 if schema.get('x-connectionless'):
                     meta_entry['connectionless'] = True
+                if schema.get('x-retired'):
+                    meta_entry['retired'] = schema['x-retired']
                 trigger_ops = _trigger_operations(schema)
                 if trigger_ops:
                     meta_entry['triggerOperations'] = trigger_ops

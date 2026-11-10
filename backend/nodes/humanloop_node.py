@@ -11,7 +11,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.base import NodeConfig, Retirement, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -316,6 +316,10 @@ def _redact(value, secret):
 
 class HumanloopNode(WorkflowNode):
     integration_type = "automation-humanloop"
+    retired = Retirement(
+        reason="Humanloop shut its platform down on 8 September 2025 when its team joined Anthropic; api.humanloop.com no longer resolves.",
+        since="2025-09-08",
+    )
     connection_evidence = ConnectionEvidence(noun="prompts", operation="list_prompts", label_keys=("name", "path", "id"))
 
     @classmethod

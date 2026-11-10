@@ -6,7 +6,7 @@
 import { inboundEmailDomain } from '~/lib/inboundEmail';
 import { createLazyTypeStore, type LazyTypeStore } from '~/lib/lazyTypeStore';
 import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
-import { resolveNodeType } from '~/utils/nodeMeta';
+import { isListedNodeType, resolveNodeType } from '~/utils/nodeMeta';
 import { getDefaultLabelFromType } from './base/NodeLabel';
 import { displayStrategyOf } from './strategyDefaults';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
@@ -182,9 +182,9 @@ export function loadNodeDefinitions(types: Iterable<string | null | undefined>):
 }
 
 /** Whether a new node of the type is offered: drawing an imported inbound-email trigger stays possible, but a
- *  new one waits until this installation has a mail domain of its own. */
+ *  new one waits until this installation has a mail domain of its own; a retired service's is never offered. */
 export function isOfferedNodeType(type: string): boolean {
-    return type !== 'trigger-email' || !!inboundEmailDomain();
+    return isListedNodeType(type) && (type !== 'trigger-email' || !!inboundEmailDomain());
 }
 
 /** A node type's name for people: its definition's label, the catalog's (served with the dashboard) for one not

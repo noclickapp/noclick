@@ -1,5 +1,11 @@
 // Small generated integration facts, shared by schema-free readers. This leaf imports
 // JSON only: credentialTypeMap must never acquire an edge back into nodeSchemas.
+/** A node whose service shut down (`WorkflowNode.retired`): why, and since when (an ISO date). */
+export interface NodeRetirement {
+    reason: string;
+    since: string;
+}
+
 export interface NodeMetaEntry {
     agentToolProvider?: boolean;
     connectionless?: boolean;

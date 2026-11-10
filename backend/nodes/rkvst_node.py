@@ -11,7 +11,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, Json, StrictBool, field_validator, model_validator
 
-from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.base import NodeConfig, Retirement, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -208,6 +208,10 @@ def _redact(value, token):
 
 class RkvstNode(WorkflowNode):
     integration_type = "automation-rkvst"
+    retired = Retirement(
+        reason="DataTrails (formerly RKVST) was acquired by OnID in August 2025; datatrails.ai now redirects to onid.co and its API host app.datatrails.ai no longer resolves.",
+        since="2026-11-10",
+    )
     connection_evidence = ConnectionEvidence(noun="assets", operation="list_assets",
         label_keys=("attributes.arc_display_name", "identity"))
 

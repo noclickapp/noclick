@@ -79,6 +79,8 @@ export interface ServiceCredentialOption {
     Icon: ServiceIconType;
     /** Tailwind text-color class for the icon's brand color (e.g. 'text-sky-500'). */
     iconColor?: string;
+    /** False for a retired service: catalogs leave it out, while an account already connected to it still finds it. */
+    listed: boolean;
 }
 
 let _serviceCredentialCache: ServiceCredentialOption[] | null = null;
@@ -110,6 +112,7 @@ export function getServiceCredentialOptions(): ServiceCredentialOption[] {
             acceptedCredentialTypes: acceptedTypes,
             Icon: serializedIconComponent(node.iconHtml),
             iconColor: node.iconColor,
+            listed: isListedNodeType(node.type),
         });
     }
 

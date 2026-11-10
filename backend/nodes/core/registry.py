@@ -276,6 +276,19 @@ def is_connectionless(node_type: str) -> bool:
     return bool(getattr(cls, 'connectionless', False))
 
 
+def retirement_of(node_type: Optional[str]) -> Optional[Retirement]:
+    """Why the type's service is gone, or None while it's live (or unknown)."""
+    node_class = NODE_REGISTRY.get(node_type) if node_type else None
+    return node_class.retired if node_class else None
+
+
+def is_listed(node_type: Optional[str]) -> bool:
+    """Whether a listing (a catalog, a search, a builder's or MCP's node list)
+    offers the type for new work. A retired type stays registered, so a saved
+    node of it still loads, renders and runs."""
+    return retirement_of(node_type) is None
+
+
 def validate_edge(source_type: str, target_type: str) -> str | None:
     """Return an error string if this edge is invalid, or None if OK."""
     if is_connectionless(source_type):
