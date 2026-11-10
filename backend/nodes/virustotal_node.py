@@ -9,6 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin, _scope_of_op_config
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -150,8 +151,27 @@ class ListIPVotes(_IP, _Page):
     operation: Literal["list_ip_votes"] = "list_ip_votes"
 
 
+class OnNewIOCNotification(PollTriggerConfigBase):
+    """Watch new IoC Stream notifications; requires IoC Stream access on your plan."""
+    operation: Literal["on_new_ioc_notification"] = Field("on_new_ioc_notification", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "New IoC Notification",
+    })
+    filter: str | None = Field(None, title="Notification filter", description=
+        "Optional IoC Stream filter, for example entity_type:file or source_id:7926136120. "
+        "Existing notifications are recorded when armed; only later notifications start runs.")
+
+
+class OnNewLivehuntMatch(PollTriggerConfigBase):
+    """Watch new Livehunt YARA matches; requires Livehunt access on your plan."""
+    operation: Literal["on_new_livehunt_match"] = Field("on_new_livehunt_match", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "New Livehunt Match",
+    })
+    ruleset_id: str | None = Field(None, title="Ruleset ID", description=
+        "Optional Livehunt ruleset ID. Leave empty to watch all your Livehunt rulesets.")
+
+
 Operation = Annotated[Union[
-    GetAccount, GetFile, GetURL, GetDomain, GetIP, GetAnalysis, ScanURL, RescanFile, RescanURL, GetFileBehaviorSummary, ListFileComments, ListFileVotes, ListURLComments, ListURLVotes, ListDomainComments, ListDomainVotes, ListIPComments, ListIPVotes
+    GetAccount, GetFile, GetURL, GetDomain, GetIP, GetAnalysis, ScanURL, RescanFile, RescanURL, GetFileBehaviorSummary, ListFileComments, ListFileVotes, ListURLComments, ListURLVotes, ListDomainComments, ListDomainVotes, ListIPComments, ListIPVotes, OnNewIOCNotification, OnNewLivehuntMatch
 ], Field(discriminator="operation")]
 
 
@@ -199,7 +219,7 @@ def _redact(value, token):
     return value
 
 
-class VirusTotalNode(WorkflowNode):
+class VirusTotalNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-virustotal"
     connection_evidence = ConnectionEvidence(noun="VirusTotal account", identity_operation="get_account",
         identity_keys=("name", "id"))
@@ -208,25 +228,105 @@ class VirusTotalNode(WorkflowNode):
     def get_config_model(cls):
         return VirusTotalConfig
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in {"on_new_ioc_notification", "on_new_livehunt_match"}:
+            return bool(output.get("new_notification_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        notifications = output.get("notifications") if isinstance(output, dict) else None
+        if not isinstance(notifications, list):
+            return super().resolve_agent_event(output)
+        if not notifications:
+            return None
+        lines = []
+        for item in notifications[:10]:
+            context = item["context_attributes"]
+            sources = ", ".join(f"{source.get('label') or source.get('type')} (id {source.get('id')})"
+                                for source in context.get("sources", []))
+            rule = context.get("hunting_info", {}).get("rule_name")
+            lines.append(f"- {context.get('origin', 'IoC Stream')} notification {context['notification_id']}: "
+                         f"{item.get('type')} {item.get('id')} at {context.get('notification_date')}"
+                         + (f"; matched rule {rule}" if rule else "")
+                         + (f"; source {sources}" if sources else "")
+                         + (f"; tags {', '.join(context['tags'])}" if context.get("tags") else ""))
+        if len(notifications) > 10:
+            lines.append(f"… and {len(notifications) - 10} more notifications in the output.")
+        return {"text": f"VirusTotal: {len(notifications)} new notification(s):\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _poll_notifications(self, op):
+        # Snapshot only the latest page when arming. Subsequent polls walk
+        # newest-first until the previous window, so bursts span multiple pages.
+        state = await self._update_node_state(lambda state: (None, state), skip_result=None)
+        if state is None:
+            raise ValueError("Could not read VirusTotal trigger state; retry the poll")
+        baseline = "seen_ids" not in state or state.get("scope", _scope_of_op_config(op)) != _scope_of_op_config(op)
+        known = set(state.get("seen_ids", [])) if not baseline else set()
+        params = {"limit": 40, "order": "date-", "descriptors_only": True}
+        if isinstance(op, OnNewLivehuntMatch):
+            params["filter"] = "origin:hunting source_type:hunting_ruleset"
+            if op.ruleset_id:
+                params["filter"] += " source_id:" + _segment(op.ruleset_id)
+        elif op.filter:
+            params["filter"] = op.filter
+        items, collected = [], set()
+        for _ in range(100):
+            result = await self._request("GET", "/ioc_stream", params=params, check_error=False, redact=False)
+            if result.get("status") == "error":
+                return result
+            page = result.get("data")
+            if not isinstance(page, list):
+                raise ValueError("Expected a VirusTotal IoC Stream list")
+            reached_known = False
+            for item in page:
+                context = item.get("context_attributes") if isinstance(item, dict) else None
+                notification_id = context.get("notification_id") if isinstance(context, dict) else None
+                if not isinstance(notification_id, str) or not notification_id:
+                    raise ValueError("Expected a VirusTotal notification ID")
+                if notification_id in known or notification_id in collected:
+                    reached_known = True
+                if notification_id not in collected:
+                    items.append(item)
+                    collected.add(notification_id)
+            if baseline or reached_known or not page or not result.get("links", {}).get("next"):
+                break
+            cursor = result.get("meta", {}).get("cursor")
+            if not cursor or cursor == params.get("cursor"):
+                raise ValueError("VirusTotal returned a missing or repeated continuation cursor")
+            params["cursor"] = cursor
+        else:
+            raise ValueError("More than 4,000 new notifications; narrow the trigger filter and retry")
+        fresh = await self._filter_unseen(items, lambda item: item["context_attributes"]["notification_id"])
+        return {"status": "success", "notifications": _redact(fresh, self.config.credentials.api_key), "new_notification_count": len(fresh)}
+
     async def execute(self, inputs):
+        op = self.config.config
+        if isinstance(op, (OnNewIOCNotification, OnNewLivehuntMatch)):
+            return await self._poll_notifications(op)
+        method, route = ROUTES[op.operation]
+        return await self._request(method, route, values=op.model_dump(exclude_none=True), scan_url=op.url if isinstance(op, ScanURL) else None,
+                                   account=isinstance(op, GetAccount))
+
+    async def _request(self, method, route, *, values=None, params=None, scan_url=None, account=False, check_error=True, redact=True):
         config = self.config
         if not config.credentials:
             raise ValueError("Attach a VirusTotal API key")
         token = config.credentials.api_key
-        op = config.config
-        method, route = ROUTES[op.operation]
-        values = op.model_dump(exclude_none=True)
+        values = dict(values or {})
         values["api_key"] = token
         for field in ("file_id", "url_id", "domain", "ip", "analysis_id", "api_key"):
             if "{" + field + "}" in route:
                 route = route.replace("{" + field + "}", _segment(values[field]))
-        params = {name: values[name] for name in ("limit", "cursor") if name in values}
+        params = params if params is not None else {name: values[name] for name in ("limit", "cursor") if name in values}
         request_args = {}
-        if isinstance(op, ScanURL):
-            parsed = urlsplit(op.url)
+        if scan_url is not None:
+            parsed = urlsplit(scan_url)
             if parsed.scheme not in {"http", "https"} or not parsed.hostname:
                 raise ValueError("Use a complete HTTP(S) URL")
-            request_args["data"] = {"url": op.url}
+            request_args["data"] = {"url": scan_url}
         try:
             async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
                 response = await client.request(method, BASE_URL + route, params=params,
@@ -241,10 +341,10 @@ class VirusTotalNode(WorkflowNode):
             body = response.json()
             if not isinstance(body, dict):
                 raise ValueError("Expected a VirusTotal JSON object")
-            if body.get("error"):
+            if check_error and body.get("error"):
                 return {"status": "error", "error": _redact(str(body["error"]), token)}
-            result = {"status": "success", **_redact(body, token)}
-            if isinstance(op, GetAccount):
+            result = {"status": "success", **(_redact(body, token) if redact else body)}
+            if account:
                 account = body.get("data")
                 if not isinstance(account, dict) or account.get("type") != "user" or not account.get("id"):
                     raise ValueError("Expected a VirusTotal user object")

@@ -15,7 +15,7 @@ VirusTotalIcon.displayName = 'VirusTotalIcon';
 export const VirusTotalNode: NodeDefinition = {
     type: 'automation-virustotal',
     label: 'VirusTotal',
-    description: 'File, URL, domain and IP threat reports, scans and rescans',
+    description: 'Threat reports, scans, and triggers for new IoC notifications and Livehunt matches',
     category: 'developer-tools',
     Icon: VirusTotalIcon,
     iconColor: '',

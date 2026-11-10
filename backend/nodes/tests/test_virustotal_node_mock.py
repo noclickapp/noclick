@@ -159,3 +159,89 @@ async def test_wrong_account_shape_cannot_prove_connection(monkeypatch):
     transport(monkeypatch, {"data": {"id": "analysis", "type": "analysis"}})
     with pytest.raises(ValueError, match="user object"):
         await node({"operation": "get_account"}).execute({})
+
+
+def documented_stream():
+    return json.loads((Path(__file__).parent / "fixtures" / "virustotal" / "ioc-stream.json").read_text())["body"]
+
+
+def poll_state(monkeypatch, state):
+    async def update(self, mutator, **kwargs):
+        new_state, result = mutator(dict(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+    monkeypatch.setattr(native.VirusTotalNode, "_update_node_state", update)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["on_new_ioc_notification", "on_new_livehunt_match"])
+async def test_documented_notification_baseline_dedup_and_agent(monkeypatch, operation):
+    body = documented_stream()
+    state = {}
+    poll_state(monkeypatch, state)
+    requests = transport(monkeypatch, body)
+    trigger = node({"operation": operation})
+    assert (await trigger.execute({}))["notifications"] == []
+    assert not trigger.trigger_emitted_event({})
+    # One indicator can match multiple rules: notification IDs deduplicate it.
+    body["data"][0]["context_attributes"]["notification_id"] = "second-notification"
+    result = await trigger.execute({})
+    assert result["new_notification_count"] == 1
+    assert trigger.trigger_emitted_event(result)
+    assert trigger.should_propagate_output(result, {"operation": operation})
+    event = trigger.resolve_agent_event(result)
+    for expected in ["second-notification", "vulnerability_weaponization", "Ransomware", "7926136120", body["data"][0]["id"]]:
+        assert expected in event["text"]
+    assert (await trigger.execute({}))["new_notification_count"] == 0
+    assert trigger.trigger_produced_no_event({})
+    assert trigger.resolve_agent_event({"notifications": []}) is None
+    assert requests[0].url.path == "/api/v3/ioc_stream"
+    assert requests[0].url.params["order"] == "date-"
+    assert requests[0].url.params["descriptors_only"] == "true"
+    if operation == "on_new_livehunt_match":
+        assert requests[0].url.params["filter"] == "origin:hunting source_type:hunting_ruleset"
+
+
+@pytest.mark.asyncio
+async def test_notification_pages_keep_fixed_endpoint_and_scope(monkeypatch):
+    import copy
+    from nodes.core.poll_trigger import _scope_of_op_config
+    trigger = node({"operation": "on_new_ioc_notification", "filter": "entity_type:file"})
+    state = {"seen_ids": ["previous"], "scope": _scope_of_op_config(trigger.config.config)}
+    poll_state(monkeypatch, state)
+    first = documented_stream()
+    second = copy.deepcopy(first)
+    second["data"][0]["context_attributes"]["notification_id"] = "previous"
+    first["links"]["next"] = "https://untrusted.example/never-follow-this"
+    requests = []
+    def respond(request):
+        requests.append(request)
+        return httpx.Response(200, json=first if len(requests) == 1 else second)
+    monkeypatch.setattr(native, "guarded_async_client", lambda **kw: httpx.AsyncClient(transport=httpx.MockTransport(respond), **kw))
+    result = await trigger.execute({})
+    assert result["new_notification_count"] == 1
+    assert len(requests) == 2
+    assert all(r.url.host == "www.virustotal.com" and r.url.path == "/api/v3/ioc_stream" for r in requests)
+    assert requests[1].url.params["cursor"] == first["meta"]["cursor"]
+    trigger = node({"operation": "on_new_ioc_notification", "filter": "origin:hunting"})
+    assert (await trigger.execute({}))["new_notification_count"] == 0
+    assert state["scope"] == _scope_of_op_config(trigger.config.config)
+    raw = {"operation": "on_new_ioc_notification", "filter": "origin:hunting"}
+    assert native.VirusTotalNode.schedule_poll_scope(raw) == native.VirusTotalNode.schedule_poll_scope({**raw, "label": "renamed"})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("body,status", [({"data": {}}, 200), ({"data": [{}]}, 200), ({"error": {"message": "Quota exceeded"}}, 429)])
+async def test_invalid_poll_or_api_error_preserves_baseline(monkeypatch, body, status):
+    state = {"seen_ids": []}
+    poll_state(monkeypatch, state)
+    transport(monkeypatch, body, status)
+    trigger = node({"operation": "on_new_ioc_notification"})
+    if status == 200:
+        with pytest.raises(ValueError):
+            await trigger.execute({})
+    else:
+        assert (await trigger.execute({}))["status"] == "error"
+    assert state == {"seen_ids": []}
