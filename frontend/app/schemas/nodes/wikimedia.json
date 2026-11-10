@@ -1,0 +1,1333 @@
+{
+  "$defs": {
+    "AddItemAliases": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edit summary"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Change tags",
+          "type": "array"
+        },
+        "bot": {
+          "default": false,
+          "description": "Requires the bot grant and appropriate wiki rights",
+          "title": "Bot edit",
+          "type": "boolean"
+        },
+        "if_match": {
+          "anyOf": [
+            {
+              "pattern": "^\"[^\"\\r\\n]+\"$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional quoted ETag from a previous read, e.g. \"1276705620\"; a changed revision returns 412.",
+          "title": "Expected revision"
+        },
+        "item_id": {
+          "description": "Wikibase item ID, e.g. Q24",
+          "pattern": "^Q[1-9]\\d{0,9}$",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "language_code": {
+          "default": "en",
+          "pattern": "^[a-z]{2}[a-z0-9-]*$",
+          "title": "Language",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_item_aliases",
+          "default": "add_item_aliases",
+          "title": "Operation",
+          "type": "string"
+        },
+        "aliases": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Aliases",
+          "type": "array"
+        }
+      },
+      "required": [
+        "item_id",
+        "aliases"
+      ],
+      "title": "AddItemAliases",
+      "type": "object"
+    },
+    "AddItemStatement": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edit summary"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Change tags",
+          "type": "array"
+        },
+        "bot": {
+          "default": false,
+          "description": "Requires the bot grant and appropriate wiki rights",
+          "title": "Bot edit",
+          "type": "boolean"
+        },
+        "if_match": {
+          "anyOf": [
+            {
+              "pattern": "^\"[^\"\\r\\n]+\"$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional quoted ETag from a previous read, e.g. \"1276705620\"; a changed revision returns 412.",
+          "title": "Expected revision"
+        },
+        "item_id": {
+          "description": "Wikibase item ID, e.g. Q24",
+          "pattern": "^Q[1-9]\\d{0,9}$",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_item_statement",
+          "default": "add_item_statement",
+          "title": "Operation",
+          "type": "string"
+        },
+        "statement": {
+          "$ref": "#/$defs/Statement"
+        }
+      },
+      "required": [
+        "item_id",
+        "statement"
+      ],
+      "title": "AddItemStatement",
+      "type": "object"
+    },
+    "CheckConnection": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "CreateItem": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edit summary"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Change tags",
+          "type": "array"
+        },
+        "bot": {
+          "default": false,
+          "description": "Requires the bot grant and appropriate wiki rights",
+          "title": "Bot edit",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_item",
+          "default": "create_item",
+          "title": "Operation",
+          "type": "string"
+        },
+        "labels": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "For example {\"en\": \"Jane Doe\"}",
+          "title": "Labels by language",
+          "type": "object"
+        },
+        "descriptions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Descriptions by language",
+          "type": "object"
+        },
+        "aliases": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Aliases by language",
+          "type": "object"
+        }
+      },
+      "required": [
+        "labels"
+      ],
+      "title": "CreateItem",
+      "type": "object"
+    },
+    "DeleteItemDescription": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edit summary"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Change tags",
+          "type": "array"
+        },
+        "bot": {
+          "default": false,
+          "description": "Requires the bot grant and appropriate wiki rights",
+          "title": "Bot edit",
+          "type": "boolean"
+        },
+        "if_match": {
+          "anyOf": [
+            {
+              "pattern": "^\"[^\"\\r\\n]+\"$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional quoted ETag from a previous read, e.g. \"1276705620\"; a changed revision returns 412.",
+          "title": "Expected revision"
+        },
+        "item_id": {
+          "description": "Wikibase item ID, e.g. Q24",
+          "pattern": "^Q[1-9]\\d{0,9}$",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "language_code": {
+          "default": "en",
+          "pattern": "^[a-z]{2}[a-z0-9-]*$",
+          "title": "Language",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_item_description",
+          "default": "delete_item_description",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "DeleteItemDescription",
+      "type": "object"
+    },
+    "DeleteItemLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edit summary"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Change tags",
+          "type": "array"
+        },
+        "bot": {
+          "default": false,
+          "description": "Requires the bot grant and appropriate wiki rights",
+          "title": "Bot edit",
+          "type": "boolean"
+        },
+        "if_match": {
+          "anyOf": [
+            {
+              "pattern": "^\"[^\"\\r\\n]+\"$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional quoted ETag from a previous read, e.g. \"1276705620\"; a changed revision returns 412.",
+          "title": "Expected revision"
+        },
+        "item_id": {
+          "description": "Wikibase item ID, e.g. Q24",
+          "pattern": "^Q[1-9]\\d{0,9}$",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "language_code": {
+          "default": "en",
+          "pattern": "^[a-z]{2}[a-z0-9-]*$",
+          "title": "Language",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_item_label",
+          "default": "delete_item_label",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "DeleteItemLabel",
+      "type": "object"
+    },
+    "DeleteSitelink": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edit summary"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Change tags",
+          "type": "array"
+        },
+        "bot": {
+          "default": false,
+          "description": "Requires the bot grant and appropriate wiki rights",
+          "title": "Bot edit",
+          "type": "boolean"
+        },
+        "if_match": {
+          "anyOf": [
+            {
+              "pattern": "^\"[^\"\\r\\n]+\"$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional quoted ETag from a previous read, e.g. \"1276705620\"; a changed revision returns 412.",
+          "title": "Expected revision"
+        },
+        "item_id": {
+          "description": "Wikibase item ID, e.g. Q24",
+          "pattern": "^Q[1-9]\\d{0,9}$",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "site_id": {
+          "description": "For example enwiki",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Site ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_sitelink",
+          "default": "delete_sitelink",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "site_id"
+      ],
+      "title": "DeleteSitelink",
+      "type": "object"
+    },
+    "DeleteStatement": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edit summary"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Change tags",
+          "type": "array"
+        },
+        "bot": {
+          "default": false,
+          "description": "Requires the bot grant and appropriate wiki rights",
+          "title": "Bot edit",
+          "type": "boolean"
+        },
+        "if_match": {
+          "anyOf": [
+            {
+              "pattern": "^\"[^\"\\r\\n]+\"$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional quoted ETag from a previous read, e.g. \"1276705620\"; a changed revision returns 412.",
+          "title": "Expected revision"
+        },
+        "statement_id": {
+          "pattern": "^[QqPp][1-9]\\d{0,9}\\$.+$",
+          "title": "Statement ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_statement",
+          "default": "delete_statement",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "statement_id"
+      ],
+      "title": "DeleteStatement",
+      "type": "object"
+    },
+    "GetItem": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "description": "Wikibase item ID, e.g. Q24",
+          "pattern": "^Q[1-9]\\d{0,9}$",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_item",
+          "default": "get_item",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "GetItem",
+      "type": "object"
+    },
+    "GetItemAliases": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "description": "Wikibase item ID, e.g. Q24",
+          "pattern": "^Q[1-9]\\d{0,9}$",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_item_aliases",
+          "default": "get_item_aliases",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "GetItemAliases",
+      "type": "object"
+    },
+    "GetItemDescriptions": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "description": "Wikibase item ID, e.g. Q24",
+          "pattern": "^Q[1-9]\\d{0,9}$",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_item_descriptions",
+          "default": "get_item_descriptions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "GetItemDescriptions",
+      "type": "object"
+    },
+    "GetItemLabels": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "description": "Wikibase item ID, e.g. Q24",
+          "pattern": "^Q[1-9]\\d{0,9}$",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_item_labels",
+          "default": "get_item_labels",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "GetItemLabels",
+      "type": "object"
+    },
+    "GetItemStatements": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "description": "Wikibase item ID, e.g. Q24",
+          "pattern": "^Q[1-9]\\d{0,9}$",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_item_statements",
+          "default": "get_item_statements",
+          "title": "Operation",
+          "type": "string"
+        },
+        "property": {
+          "anyOf": [
+            {
+              "pattern": "^P[1-9]\\d{0,9}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter by property"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "GetItemStatements",
+      "type": "object"
+    },
+    "GetProperty": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_property",
+          "default": "get_property",
+          "title": "Operation",
+          "type": "string"
+        },
+        "property_id": {
+          "pattern": "^P[1-9]\\d{0,9}$",
+          "title": "Property ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "property_id"
+      ],
+      "title": "GetProperty",
+      "type": "object"
+    },
+    "GetPropertyDataTypes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_property_data_types",
+          "default": "get_property_data_types",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetPropertyDataTypes",
+      "type": "object"
+    },
+    "GetSitelinks": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "description": "Wikibase item ID, e.g. Q24",
+          "pattern": "^Q[1-9]\\d{0,9}$",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_sitelinks",
+          "default": "get_sitelinks",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "GetSitelinks",
+      "type": "object"
+    },
+    "GetStatement": {
+      "additionalProperties": false,
+      "properties": {
+        "statement_id": {
+          "pattern": "^[QqPp][1-9]\\d{0,9}\\$.+$",
+          "title": "Statement ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_statement",
+          "default": "get_statement",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "statement_id"
+      ],
+      "title": "GetStatement",
+      "type": "object"
+    },
+    "PropertyReference": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^P[1-9]\\d{0,9}$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PropertyReference",
+      "type": "object"
+    },
+    "Reference": {
+      "additionalProperties": false,
+      "properties": {
+        "parts": {
+          "items": {
+            "$ref": "#/$defs/StatementPart"
+          },
+          "title": "Parts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "parts"
+      ],
+      "title": "Reference",
+      "type": "object"
+    },
+    "ReplaceStatement": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edit summary"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Change tags",
+          "type": "array"
+        },
+        "bot": {
+          "default": false,
+          "description": "Requires the bot grant and appropriate wiki rights",
+          "title": "Bot edit",
+          "type": "boolean"
+        },
+        "if_match": {
+          "anyOf": [
+            {
+              "pattern": "^\"[^\"\\r\\n]+\"$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional quoted ETag from a previous read, e.g. \"1276705620\"; a changed revision returns 412.",
+          "title": "Expected revision"
+        },
+        "statement_id": {
+          "pattern": "^[QqPp][1-9]\\d{0,9}\\$.+$",
+          "title": "Statement ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "replace_statement",
+          "default": "replace_statement",
+          "title": "Operation",
+          "type": "string"
+        },
+        "statement": {
+          "$ref": "#/$defs/Statement",
+          "title": "Replacement statement"
+        }
+      },
+      "required": [
+        "statement_id",
+        "statement"
+      ],
+      "title": "ReplaceStatement",
+      "type": "object"
+    },
+    "SearchItems": {
+      "additionalProperties": false,
+      "properties": {
+        "q": {
+          "minLength": 1,
+          "title": "Search text",
+          "type": "string"
+        },
+        "language": {
+          "default": "en",
+          "pattern": "^[a-z]{2}[a-z0-9-]*$",
+          "title": "Search language",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Advance by the page size to request another page",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_items",
+          "default": "search_items",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "SearchItems",
+      "type": "object"
+    },
+    "SearchProperties": {
+      "additionalProperties": false,
+      "properties": {
+        "q": {
+          "minLength": 1,
+          "title": "Search text",
+          "type": "string"
+        },
+        "language": {
+          "default": "en",
+          "pattern": "^[a-z]{2}[a-z0-9-]*$",
+          "title": "Search language",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Advance by the page size to request another page",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_properties",
+          "default": "search_properties",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "SearchProperties",
+      "type": "object"
+    },
+    "SetItemDescription": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edit summary"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Change tags",
+          "type": "array"
+        },
+        "bot": {
+          "default": false,
+          "description": "Requires the bot grant and appropriate wiki rights",
+          "title": "Bot edit",
+          "type": "boolean"
+        },
+        "if_match": {
+          "anyOf": [
+            {
+              "pattern": "^\"[^\"\\r\\n]+\"$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional quoted ETag from a previous read, e.g. \"1276705620\"; a changed revision returns 412.",
+          "title": "Expected revision"
+        },
+        "item_id": {
+          "description": "Wikibase item ID, e.g. Q24",
+          "pattern": "^Q[1-9]\\d{0,9}$",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "language_code": {
+          "default": "en",
+          "pattern": "^[a-z]{2}[a-z0-9-]*$",
+          "title": "Language",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_item_description",
+          "default": "set_item_description",
+          "title": "Operation",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "description"
+      ],
+      "title": "SetItemDescription",
+      "type": "object"
+    },
+    "SetItemLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edit summary"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Change tags",
+          "type": "array"
+        },
+        "bot": {
+          "default": false,
+          "description": "Requires the bot grant and appropriate wiki rights",
+          "title": "Bot edit",
+          "type": "boolean"
+        },
+        "if_match": {
+          "anyOf": [
+            {
+              "pattern": "^\"[^\"\\r\\n]+\"$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional quoted ETag from a previous read, e.g. \"1276705620\"; a changed revision returns 412.",
+          "title": "Expected revision"
+        },
+        "item_id": {
+          "description": "Wikibase item ID, e.g. Q24",
+          "pattern": "^Q[1-9]\\d{0,9}$",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "language_code": {
+          "default": "en",
+          "pattern": "^[a-z]{2}[a-z0-9-]*$",
+          "title": "Language",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_item_label",
+          "default": "set_item_label",
+          "title": "Operation",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "label"
+      ],
+      "title": "SetItemLabel",
+      "type": "object"
+    },
+    "SetSitelink": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edit summary"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Change tags",
+          "type": "array"
+        },
+        "bot": {
+          "default": false,
+          "description": "Requires the bot grant and appropriate wiki rights",
+          "title": "Bot edit",
+          "type": "boolean"
+        },
+        "if_match": {
+          "anyOf": [
+            {
+              "pattern": "^\"[^\"\\r\\n]+\"$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional quoted ETag from a previous read, e.g. \"1276705620\"; a changed revision returns 412.",
+          "title": "Expected revision"
+        },
+        "item_id": {
+          "description": "Wikibase item ID, e.g. Q24",
+          "pattern": "^Q[1-9]\\d{0,9}$",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "site_id": {
+          "description": "For example enwiki",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Site ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_sitelink",
+          "default": "set_sitelink",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Linked page title",
+          "type": "string"
+        },
+        "badges": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Badge item IDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "item_id",
+        "site_id",
+        "title"
+      ],
+      "title": "SetSitelink",
+      "type": "object"
+    },
+    "Statement": {
+      "additionalProperties": false,
+      "properties": {
+        "property": {
+          "$ref": "#/$defs/PropertyReference"
+        },
+        "value": {
+          "$ref": "#/$defs/StatementValue"
+        },
+        "rank": {
+          "default": "normal",
+          "enum": [
+            "normal",
+            "preferred",
+            "deprecated"
+          ],
+          "title": "Rank",
+          "type": "string"
+        },
+        "qualifiers": {
+          "items": {
+            "$ref": "#/$defs/StatementPart"
+          },
+          "title": "Qualifiers",
+          "type": "array"
+        },
+        "references": {
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "title": "References",
+          "type": "array"
+        }
+      },
+      "required": [
+        "property",
+        "value"
+      ],
+      "title": "Statement",
+      "type": "object"
+    },
+    "StatementPart": {
+      "additionalProperties": false,
+      "properties": {
+        "property": {
+          "$ref": "#/$defs/PropertyReference"
+        },
+        "value": {
+          "$ref": "#/$defs/StatementValue"
+        }
+      },
+      "required": [
+        "property",
+        "value"
+      ],
+      "title": "StatementPart",
+      "type": "object"
+    },
+    "StatementValue": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "default": "value",
+          "enum": [
+            "value",
+            "somevalue",
+            "novalue"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "content": {
+          "default": null,
+          "description": "Provider value in the property's data type; omitted for somevalue and novalue",
+          "title": "Content"
+        }
+      },
+      "title": "StatementValue",
+      "type": "object"
+    },
+    "WikimediaAccessToken": {
+      "properties": {
+        "credential_type": {
+          "const": "wikimedia_access_token",
+          "default": "wikimedia_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "wiki_url": {
+          "default": "https://www.wikidata.org",
+          "description": "HTTPS origin of Wikidata or your own Wikibase, e.g. https://www.wikidata.org",
+          "title": "Wiki URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Wikimedia Access Token",
+      "type": "object",
+      "x-credential-instructions": "Create an owner-only OAuth 2.0 client on Wikimedia Meta and paste its access token. Choose grants to read pages, edit existing pages, and create pages for the operations you use. For Wikidata keep the default wiki URL. For your own Wikibase use its HTTPS origin and a token issued for that wiki. Connect reads item Q24 and requires the API's authenticated username header; public item content alone never verifies the account. NoClick does not refresh this token; replace it if revoked.",
+      "x-credential-url": "https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose/oauth2"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_item_aliases": "#/$defs/AddItemAliases",
+          "add_item_statement": "#/$defs/AddItemStatement",
+          "check_connection": "#/$defs/CheckConnection",
+          "create_item": "#/$defs/CreateItem",
+          "delete_item_description": "#/$defs/DeleteItemDescription",
+          "delete_item_label": "#/$defs/DeleteItemLabel",
+          "delete_sitelink": "#/$defs/DeleteSitelink",
+          "delete_statement": "#/$defs/DeleteStatement",
+          "get_item": "#/$defs/GetItem",
+          "get_item_aliases": "#/$defs/GetItemAliases",
+          "get_item_descriptions": "#/$defs/GetItemDescriptions",
+          "get_item_labels": "#/$defs/GetItemLabels",
+          "get_item_statements": "#/$defs/GetItemStatements",
+          "get_property": "#/$defs/GetProperty",
+          "get_property_data_types": "#/$defs/GetPropertyDataTypes",
+          "get_sitelinks": "#/$defs/GetSitelinks",
+          "get_statement": "#/$defs/GetStatement",
+          "replace_statement": "#/$defs/ReplaceStatement",
+          "search_items": "#/$defs/SearchItems",
+          "search_properties": "#/$defs/SearchProperties",
+          "set_item_description": "#/$defs/SetItemDescription",
+          "set_item_label": "#/$defs/SetItemLabel",
+          "set_sitelink": "#/$defs/SetSitelink"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/SearchItems"
+        },
+        {
+          "$ref": "#/$defs/SearchProperties"
+        },
+        {
+          "$ref": "#/$defs/GetItem"
+        },
+        {
+          "$ref": "#/$defs/GetProperty"
+        },
+        {
+          "$ref": "#/$defs/CreateItem"
+        },
+        {
+          "$ref": "#/$defs/GetItemLabels"
+        },
+        {
+          "$ref": "#/$defs/SetItemLabel"
+        },
+        {
+          "$ref": "#/$defs/DeleteItemLabel"
+        },
+        {
+          "$ref": "#/$defs/GetItemDescriptions"
+        },
+        {
+          "$ref": "#/$defs/SetItemDescription"
+        },
+        {
+          "$ref": "#/$defs/DeleteItemDescription"
+        },
+        {
+          "$ref": "#/$defs/GetItemAliases"
+        },
+        {
+          "$ref": "#/$defs/AddItemAliases"
+        },
+        {
+          "$ref": "#/$defs/GetSitelinks"
+        },
+        {
+          "$ref": "#/$defs/SetSitelink"
+        },
+        {
+          "$ref": "#/$defs/DeleteSitelink"
+        },
+        {
+          "$ref": "#/$defs/GetItemStatements"
+        },
+        {
+          "$ref": "#/$defs/AddItemStatement"
+        },
+        {
+          "$ref": "#/$defs/GetStatement"
+        },
+        {
+          "$ref": "#/$defs/ReplaceStatement"
+        },
+        {
+          "$ref": "#/$defs/DeleteStatement"
+        },
+        {
+          "$ref": "#/$defs/GetPropertyDataTypes"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WikimediaAccessToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Wikimedia Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find Wikidata items by label",
+    "Set an item's English description",
+    "Add a sourced statement to this item"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
