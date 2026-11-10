@@ -1,0 +1,919 @@
+[
+  {
+    "provider": "superset",
+    "node_type": "automation-superset",
+    "checked": 23,
+    "passed": 23,
+    "failed": 0,
+    "fixture_errors": 0,
+    "response_checked": 23,
+    "auth_checked": 23,
+    "scope_checked": 0,
+    "skipped": 0,
+    "coverage": {
+      "implemented": 21,
+      "total": 328
+    },
+    "triggers": {
+      "checked": 2,
+      "passed": 2
+    },
+    "operations": [
+      {
+        "operation": "get_current_user",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "http://localhost:8088/api/v1/me/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/me/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "bb83032e3c8225a9d3ccdea5d99bbedd8ed89e045c40050983bf097f8b2b1e45"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_current_user"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_dashboards",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "http://localhost:8088/api/v1/dashboard/?q=%7B%22page%22%3A0%2C%22page_size%22%3A100%7D",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/dashboard/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "65879f298b53870c69329c50ecc5ec6cb97decd5f7a63f013f47e533de3b3fbe"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "page": 0,
+          "page_size": 100,
+          "operation": "list_dashboards"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_dashboard",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "http://localhost:8088/api/v1/dashboard/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/dashboard/{id_or_slug}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f04474d5853cb1572b16ed6071c2132730d90ee785b466c53ca00224fe732fb7"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_dashboard",
+          "dashboard_id": 1
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "create_dashboard",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "http://localhost:8088/api/v1/dashboard/",
+            "content_type": "application/json",
+            "body": "{\"dashboard_title\":\"1\",\"description\":\"1\",\"slug\":\"1\",\"published\":false,\"position_json\":\"1\",\"json_metadata\":\"1\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "110",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /api/v1/dashboard/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 201,
+            "response_sha256": "3cebdded63f332cab38593dd1e905d10843fbca85a93e3b279c79c9ab56a97aa"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "dashboard_title": "1",
+          "description": "1",
+          "slug": "1",
+          "published": false,
+          "position_json": "1",
+          "json_metadata": "1",
+          "operation": "create_dashboard"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "update_dashboard",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PUT",
+            "url": "http://localhost:8088/api/v1/dashboard/1",
+            "content_type": "application/json",
+            "body": "{\"dashboard_title\":\"1\",\"description\":\"1\",\"slug\":\"1\",\"published\":false,\"position_json\":\"1\",\"json_metadata\":\"1\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "110",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PUT /api/v1/dashboard/{pk}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f5bdaf535189326160b357f514c13fa223c8843c5864e13b146f1e0e1a13c07a"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "dashboard_title": "1",
+          "description": "1",
+          "slug": "1",
+          "published": false,
+          "position_json": "1",
+          "json_metadata": "1",
+          "operation": "update_dashboard",
+          "dashboard_id": 1
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "delete_dashboard",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "http://localhost:8088/api/v1/dashboard/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /api/v1/dashboard/{pk}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "06d8447c8095ba6ff015ce587a5ee3bfe087a3158a600f61342c725967c0d5e8"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_dashboard",
+          "dashboard_id": 1
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_charts",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "http://localhost:8088/api/v1/chart/?q=%7B%22page%22%3A0%2C%22page_size%22%3A100%7D",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/chart/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "3ffa0c62c9f9b428d128e3e46a74195a3708d67f6e951b42838a12ce133bd52c"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "page": 0,
+          "page_size": 100,
+          "operation": "list_charts"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_chart",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "http://localhost:8088/api/v1/chart/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/chart/{id_or_uuid}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "55a7fc3523dfd5d662e2ee5b7de87f39b3ab182430231203f286c82128e75311"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_chart",
+          "chart_id": 1
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "create_chart",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "http://localhost:8088/api/v1/chart/",
+            "content_type": "application/json",
+            "body": "{\"slice_name\":\"1\",\"description\":\"1\",\"viz_type\":\"1\",\"params\":\"1\",\"query_context\":\"1\",\"dashboards\":[1],\"cache_timeout\":1,\"datasource_id\":1,\"datasource_type\":\"table\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "163",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /api/v1/chart/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 201,
+            "response_sha256": "1b4114b98a17dd46dacae880b88380144b14d6a3ef401808138ab663435b6e3c"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "slice_name": "1",
+          "description": "1",
+          "viz_type": "1",
+          "params": "1",
+          "query_context": "1",
+          "dashboards": [
+            1
+          ],
+          "cache_timeout": 1,
+          "operation": "create_chart",
+          "datasource_id": 1,
+          "datasource_type": "table"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "update_chart",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PUT",
+            "url": "http://localhost:8088/api/v1/chart/1",
+            "content_type": "application/json",
+            "body": "{\"slice_name\":\"1\",\"description\":\"1\",\"viz_type\":\"1\",\"params\":\"1\",\"query_context\":\"1\",\"dashboards\":[1],\"cache_timeout\":1}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "119",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PUT /api/v1/chart/{pk}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "d164376db3b704ac64322b3718f7038c43ca898d37f93423ca760fd890a72ba5"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "slice_name": "1",
+          "description": "1",
+          "viz_type": "1",
+          "params": "1",
+          "query_context": "1",
+          "dashboards": [
+            1
+          ],
+          "cache_timeout": 1,
+          "operation": "update_chart",
+          "chart_id": 1
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "delete_chart",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "http://localhost:8088/api/v1/chart/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /api/v1/chart/{pk}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "06d8447c8095ba6ff015ce587a5ee3bfe087a3158a600f61342c725967c0d5e8"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_chart",
+          "chart_id": 1
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_datasets",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "http://localhost:8088/api/v1/dataset/?q=%7B%22page%22%3A0%2C%22page_size%22%3A100%7D",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/dataset/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "e1cffd689a2a64945520331228a856d93b6e743ebb89fae2017d4d6b2f101efd"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "page": 0,
+          "page_size": 100,
+          "operation": "list_datasets"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_dataset",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "http://localhost:8088/api/v1/dataset/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/dataset/{id_or_uuid}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "d752fe5cf46a48726cb56ef3a5f2435304c83e177be85b4c8d06fe3833d5630f"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_dataset",
+          "dataset_id": 1
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "create_dataset",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "http://localhost:8088/api/v1/dataset/",
+            "content_type": "application/json",
+            "body": "{\"database\":1,\"table_name\":\"1\",\"catalog\":\"1\",\"sql\":\"1\",\"schema\":\"1\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "68",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /api/v1/dataset/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 201,
+            "response_sha256": "d5d3dc4a5de84be87c7437ac7d347159163501bf16becbdc7efaecd68dbddec5"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "database": 1,
+          "table_name": "1",
+          "schema_name": "1",
+          "catalog": "1",
+          "sql": "1",
+          "operation": "create_dataset"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "update_dataset",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PUT",
+            "url": "http://localhost:8088/api/v1/dataset/1",
+            "content_type": "application/json",
+            "body": "{\"table_name\":\"1\",\"description\":\"1\",\"sql\":\"1\",\"cache_timeout\":1,\"schema\":\"1\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "77",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PUT /api/v1/dataset/{pk}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "5d3cc616210824373be19dfe9f124168579baf0ab365ca0e9bbce7043950dd6f"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "table_name": "1",
+          "description": "1",
+          "sql": "1",
+          "schema_name": "1",
+          "cache_timeout": 1,
+          "operation": "update_dataset",
+          "dataset_id": 1
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "delete_dataset",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "http://localhost:8088/api/v1/dataset/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /api/v1/dataset/{pk}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "06d8447c8095ba6ff015ce587a5ee3bfe087a3158a600f61342c725967c0d5e8"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_dataset",
+          "dataset_id": 1
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_dashboard_charts",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "http://localhost:8088/api/v1/dashboard/1/charts",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/dashboard/{id_or_slug}/charts",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "4a3bf6173c3667068d7e9f80b3936978c6573ed4cc58cea54aa621ab47479650"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_dashboard_charts",
+          "dashboard_id": 1
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_chart_data",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "http://localhost:8088/api/v1/chart/1/data/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/chart/{pk}/data/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "528e62632034dbc43323352de73c40dd20c102b0206412b843e28cefde21f683"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_chart_data",
+          "chart_id": 1
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "refresh_dataset",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PUT",
+            "url": "http://localhost:8088/api/v1/dataset/1/refresh",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "content-length": "0",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "PUT /api/v1/dataset/{pk}/refresh",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "06d8447c8095ba6ff015ce587a5ee3bfe087a3158a600f61342c725967c0d5e8"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "refresh_dataset",
+          "dataset_id": 1
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_databases",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "http://localhost:8088/api/v1/database/?q=%7B%22page%22%3A0%2C%22page_size%22%3A100%7D",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/database/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "4aa06a353bb4f052f51b88f2346912976cc2328759fa40981bc6e3766add0c45"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "page": 0,
+          "page_size": 100,
+          "operation": "list_databases"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_database",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "http://localhost:8088/api/v1/database/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/database/{pk}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_database",
+          "database_id": 1
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "on_new_or_updated_dashboard",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "http://localhost:8088/api/v1/dashboard/?q=%7B%22page%22%3A0%2C%22page_size%22%3A100%2C%22order_column%22%3A%22changed_on%22%2C%22order_direction%22%3A%22desc%22%7D",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/dashboard/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "65879f298b53870c69329c50ecc5ec6cb97decd5f7a63f013f47e533de3b3fbe"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "page_size": 100,
+          "operation": "on_new_or_updated_dashboard"
+        },
+        "trigger": {
+          "kind": "poll",
+          "failures": [],
+          "advisory": [],
+          "emitted": 1,
+          "reads": 9
+        },
+        "passed": true
+      },
+      {
+        "operation": "on_new_or_updated_chart",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "http://localhost:8088/api/v1/chart/?q=%7B%22page%22%3A0%2C%22page_size%22%3A100%7D",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "localhost:8088",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/chart/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "3ffa0c62c9f9b428d128e3e46a74195a3708d67f6e951b42838a12ce133bd52c"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "page_size": 100,
+          "operation": "on_new_or_updated_chart"
+        },
+        "trigger": {
+          "kind": "poll",
+          "failures": [],
+          "advisory": [],
+          "emitted": 1,
+          "reads": 9
+        },
+        "passed": true
+      }
+    ]
+  }
+]

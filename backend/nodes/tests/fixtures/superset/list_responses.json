@@ -1,0 +1,22 @@
+{
+  "dashboard": {
+    "count": 1,
+    "result": [
+      {
+        "id": 7,
+        "changed_on_utc": "2026-11-10T10:00:00+0000",
+        "dashboard_title": "Revenue"
+      }
+    ]
+  },
+  "chart": {
+    "count": 1,
+    "result": [
+      {
+        "id": 7,
+        "changed_on_utc": "2026-11-10T10:00:00+0000",
+        "slice_name": "Revenue"
+      }
+    ]
+  }
+}
