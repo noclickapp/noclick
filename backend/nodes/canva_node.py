@@ -115,9 +115,10 @@ class CanvaOAuthCredential(BaseModel):
     })
 
 
-# Canva's MCP server on the Connect API: agents get its tools through a person's Canva sign-in, on NoClick's
-# Canva Developer Portal app with "Canva MCP" turned on (mcp.canva.com admits only clients on Canva's waitlist).
-CanvaMcpCredential = mcp_credential("canva", "https://api.canva.com/connect/v1/mcp", app="Canva", client_env="CANVA")
+# Canva's MCP server on the Connect API: agents get its tools through a person's Canva sign-in, on NoClick's own
+# Canva app with "Canva MCP" turned on (CANVA_MCP_CLIENT_ID/_SECRET: Canva offers MCP only on apps under "Your apps",
+# not on the Connect integration CANVA_CLIENT_ID names; mcp.canva.com admits only clients on Canva's waitlist).
+CanvaMcpCredential = mcp_credential("canva", "https://api.canva.com/connect/v1/mcp", app="Canva", client_env="CANVA_MCP")
 
 
 # ============================================================================

@@ -165,7 +165,8 @@ export function getCredentialIcon(
 export function getOAuthProviderIcon(provider: string): { Icon: IconCmp; iconColor: string; hasServiceIcon: boolean } {
     const brand = OAUTH_PROVIDER_BRAND_ICONS[provider];
     if (brand) return { ...brand, hasServiceIcon: true };
-    const nodeEntry = buildCredentialIconMap().get(`${provider}_oauth`);
+    // An app named for a credential type of its own (`canva_mcp`, Canva's MCP app) wears that type's mark.
+    const nodeEntry = buildCredentialIconMap().get(`${provider}_oauth`) ?? buildCredentialIconMap().get(provider);
     if (nodeEntry) return { ...nodeEntry, hasServiceIcon: true };
     const config = OAUTH_PROVIDER_CONFIG[provider] ?? PROVIDER_ALIASES[provider];
     if (config?.Icon) return { Icon: config.Icon as IconCmp, iconColor: config.iconColor ?? '', hasServiceIcon: true };

@@ -35,6 +35,9 @@ export const OAUTH_PROVIDER_SETUP: Record<string, OAuthProviderSetup> = {
     "calcom": { label: "Cal.com", consoleUrl: "https://app.cal.com/settings/developer/api-keys", frontendEnv: ["CALCOM_CLIENT_ID", "CALCOM_REDIRECT_URI"], backendEnv: ["CALCOM_CLIENT_ID", "CALCOM_CLIENT_SECRET"] },
     "calendly": { label: "Calendly", consoleUrl: "https://developer.calendly.com/", frontendEnv: ["CALENDLY_CLIENT_ID", "CALENDLY_REDIRECT_URI"], backendEnv: ["CALENDLY_CLIENT_ID", "CALENDLY_CLIENT_SECRET"] },
     "canva": { label: "Canva", consoleUrl: "https://www.canva.com/developers/apps", frontendEnv: ["CANVA_CLIENT_ID", "CANVA_REDIRECT_URI"], backendEnv: ["CANVA_CLIENT_ID", "CANVA_CLIENT_SECRET"] },
+    // Canva's MCP server signs in through an app of its own (Canva offers MCP only on apps under "Your apps"), read
+    // by the backend alone (nodes/canva_node.py, client_env "CANVA_MCP"); the sign-in returns to /api/auth/mcp/callback.
+    "canva_mcp": { label: "Canva MCP", consoleUrl: "https://www.canva.com/developers/apps", frontendEnv: [], backendEnv: ["CANVA_MCP_CLIENT_ID", "CANVA_MCP_CLIENT_SECRET"] },
     "clickup": { label: "ClickUp", consoleUrl: "https://app.clickup.com/settings/apps", frontendEnv: ["CLICKUP_CLIENT_ID", "CLICKUP_REDIRECT_URI"], backendEnv: ["CLICKUP_CLIENT_ID", "CLICKUP_CLIENT_SECRET"] },
     "cloudflare": { label: "Cloudflare", consoleUrl: "https://dash.cloudflare.com/profile/api-tokens", frontendEnv: ["CLOUDFLARE_CLIENT_ID", "CLOUDFLARE_REDIRECT_URI"], backendEnv: ["CLOUDFLARE_CLIENT_ID", "CLOUDFLARE_CLIENT_SECRET"] },
     "discord": { label: "Discord", consoleUrl: "https://discord.com/developers/applications", frontendEnv: ["DISCORD_CLIENT_ID", "DISCORD_REDIRECT_URI"], backendEnv: ["DISCORD_CLIENT_ID", "DISCORD_CLIENT_SECRET"] },

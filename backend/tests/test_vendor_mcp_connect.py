@@ -77,9 +77,10 @@ async def test_canva_declares_its_mcp_server_as_a_way_in():
     assert CanvaMcpCredential in credential_classes_for_node(CanvaNode)
     assert vendor_mcp.node_mcp_credential(CanvaNode) is CanvaMcpCredential
     assert "canva_mcp" in credential_type_literals(CanvaNode.get_config_model())
-    # Canva's Connect API route, signed into through NoClick's Canva app (mcp.canva.com admits only its waitlist).
+    # Canva's Connect API route, signed into through NoClick's own Canva MCP app (mcp.canva.com admits only its
+    # waitlist), whose keys are its own: never the Connect integration's CANVA_CLIENT_ID.
     server = vendor_mcp.server_of("canva_mcp")
-    assert (server.url, server.client_env) == ("https://api.canva.com/connect/v1/mcp", "CANVA")
+    assert (server.url, server.client_env) == ("https://api.canva.com/connect/v1/mcp", "CANVA_MCP")
     assert vendor_mcp.node_type_of("canva_mcp") == "automation-canva"
     schema = CanvaNode.get_config_schema()
     member = schema["$defs"]["CanvaMcpCredential"]
@@ -122,6 +123,21 @@ async def test_a_nodes_own_refresh_never_spends_an_mcp_token(monkeypatch):
         stale = {**connected.credential_data, "credential_type": "notion_mcp", "expires_at": "2020-01-01T00:00:00+00:00"}
         fresh = await NotionNode.freshen_credential(stale, pool=None, user_id=None, credential_id=None)
     assert fake.refreshes == 1 and fresh["access_token"] != connected.credential_data["access_token"]
+
+
+async def test_canvas_mcp_app_is_read_from_its_own_keys_which_self_hosted_settings_set(monkeypatch):
+    from utils.instance_oauth import _env_names
+
+    server = vendor_mcp.server_of("canva_mcp")
+    monkeypatch.setenv("CANVA_CLIENT_ID", "the-connect-integration")
+    monkeypatch.setenv("CANVA_CLIENT_SECRET", "connect-secret")
+    monkeypatch.delenv("CANVA_MCP_CLIENT_ID", raising=False)
+    assert server.registered_client() is None
+    monkeypatch.setenv("CANVA_MCP_CLIENT_ID", "OC-mcp-app")
+    monkeypatch.setenv("CANVA_MCP_CLIENT_SECRET", "mcp-secret")
+    assert server.registered_client() == ("OC-mcp-app", "mcp-secret")
+    # An instance's Settings -> OAuth apps entry "canva_mcp" sets exactly these.
+    assert _env_names("canva_mcp") == ("CANVA_MCP_CLIENT_ID", "CANVA_MCP_CLIENT_SECRET")
 
 
 async def test_an_mcp_credential_is_never_typed_in():
