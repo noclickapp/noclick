@@ -11,7 +11,7 @@ const TripadvisorIcon = ({ className, style }: { className?: string; style?: CSS
 
 export const TripadvisorNode: NodeDefinition = {
     type: 'automation-tripadvisor', category: 'content-research', label: 'Tripadvisor',
-    description: 'Search travel locations, read reviews and photos, manage allowlists and inspect data feeds',
+    description: 'Start workflows from new reviews, search travel locations, read photos, manage allowlists and inspect data feeds',
     Icon: TripadvisorIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={TripadvisorIcon} iconColor="" />),

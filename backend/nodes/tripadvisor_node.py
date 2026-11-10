@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -280,6 +281,20 @@ class TripadvisorGetFeedFileUrlConfig(_Input):
         return value
 
 
+class TripadvisorOnNewReviewConfig(PollTriggerConfigBase):
+    """Watch the location's newest reviews using Terra's publication ordering."""
+    operation: Literal["on_new_review"] = Field("on_new_review", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "New Review",
+    })
+    id: int = Field(..., ge=1, le=2147483647, title="Location ID",
+        description="Tripadvisor location to watch. Existing reviews are recorded when armed; only newly seen reviews start a run.")
+    language: str = Field("primary", title="Review language",
+        description="UGC language code, such as en or fr; primary keeps each review in its original language.")
+    published_after_ts: Optional[date] = Field(None, title="Published on or after",
+        description="Optional earliest publication date. Polls read most recent reviews first, up to 2,000 reviews; narrow this date if the location exceeds that window.")
+
+
 TripadvisorConfig = Annotated[Union[
     TripadvisorListAllowlistConfig,
     TripadvisorUpdateAllowlistConfig,
@@ -295,7 +310,8 @@ TripadvisorConfig = Annotated[Union[
     TripadvisorListPhotosConfig,
     TripadvisorListReviewsConfig,
     TripadvisorListFeedFilesConfig,
-    TripadvisorGetFeedFileUrlConfig
+    TripadvisorGetFeedFileUrlConfig,
+    TripadvisorOnNewReviewConfig
 ], Field(discriminator="operation")]
 
 
@@ -397,7 +413,7 @@ def _redact(value, secret):
     return value
 
 
-class TripadvisorNode(WorkflowNode):
+class TripadvisorNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-tripadvisor"
     connection_evidence = ConnectionEvidence(
         noun="allowlisted Tripadvisor locations", operation="list_allowlist")
@@ -406,22 +422,36 @@ class TripadvisorNode(WorkflowNode):
     def get_config_model(cls):
         return TripadvisorFullConfig
 
-    async def execute(self, inputs):
-        if self.config is None or self.config.credentials is None:
-            raise ValueError("Connect a Tripadvisor Terra API key")
-        config = self.config.config
-        secret = self.config.credentials.api_key
-        method, path, path_fields, query_fields = ROUTES[config.operation]
-        for name in path_fields:
-            path = path.replace("{" + name + "}", quote(str(getattr(config, name)), safe=""))
-        params = []
-        for name in query_fields:
-            value = getattr(config, name)
-            if value is None:
-                continue
-            for item in value if isinstance(value, list) else [value]:
-                params.append((name, str(item).lower() if isinstance(item, bool) else str(item)))
-        body = {"operation_type": config.operation_type, "allowlist": config.allowlist} if config.operation == "update_allowlist" else None
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") == "on_new_review":
+            return bool(output.get("new_review_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if output.get("operation") != "on_new_review":
+            return super().resolve_agent_event(output)
+        reviews = output.get("reviews", [])
+        if not reviews:
+            return None
+        def translated(values):
+            return " / ".join(str(value["value"]) for value in values if isinstance(value, dict) and "value" in value)
+        lines = []
+        for review in reviews[:10]:
+            user = review.get("user") or {}
+            lines.append(
+                f"- {user.get('username') or 'A traveler'} published review {review['id']} "
+                f"on {review['publish_ts']} ({review['rating']}/5): "
+                f"{translated(review['title'])}\n{translated(review['text'])}"
+                + (f"\n{review['url']}" if review.get("url") else ""))
+        if len(reviews) > 10:
+            lines.append(f"… and {len(reviews) - 10} more reviews in the trigger output")
+        return {"text": f"Tripadvisor: {len(reviews)} new review(s) for location {output['location_id']}:\n"
+                + "\n".join(lines), "conversation_key": None}
+
+    @staticmethod
+    async def _request(secret, method, path, params, body=None):
         try:
             async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
                 response = await client.request(method, BASE + path, params=params,
@@ -441,8 +471,56 @@ class TripadvisorNode(WorkflowNode):
             raise ValueError("Tripadvisor returned invalid JSON") from None
         if not isinstance(data, (dict, list)):
             raise ValueError("Tripadvisor returned an unexpected JSON envelope")
+        return data, response.status_code
+
+    async def _poll_new_reviews(self, config, secret):
+        reviews = []
+        for page in range(1, 21):
+            params = [("sort_by", "MOST_RECENT"), ("language", config.language),
+                      ("page", str(page)), ("size", "100")]
+            if config.published_after_ts is not None:
+                params.append(("published_after_ts", config.published_after_ts.isoformat()))
+            data, status = await self._request(secret, "GET", f"/locations/{config.id}/reviews", params)
+            if not isinstance(data, dict) or not isinstance(data.get("data"), list) or not isinstance(data.get("pagination"), dict):
+                raise ValueError("Tripadvisor returned an invalid reviews page")
+            rows = data["data"]
+            if any(not isinstance(row, dict) or type(row.get("id")) is not int for row in rows):
+                raise ValueError("Tripadvisor returned a review without its documented ID")
+            reviews.extend(rows)
+            total = data["pagination"].get("total_pages")
+            if (isinstance(total, int) and page >= total) or (total is None and len(rows) < 100):
+                break
+        else:
+            raise ValueError("Tripadvisor review history exceeds 2,000 reviews; narrow the publication date")
+        # Pages may overlap while new reviews arrive. A review emits once per poll.
+        reviews = list({str(review["id"]): review for review in reviews}.values())
+        fresh = await self._filter_unseen(reviews, lambda review: str(review["id"]))
+        output = {"status": "success", "operation": config.operation, "location_id": config.id,
+                  "reviews": _redact(list(reversed(fresh)), secret), "new_review_count": len(fresh)}
+        await self.emit(output)
+        return output
+
+    async def execute(self, inputs):
+        if self.config is None or self.config.credentials is None:
+            raise ValueError("Connect a Tripadvisor Terra API key")
+        config = self.config.config
+        secret = self.config.credentials.api_key
+        if isinstance(config, TripadvisorOnNewReviewConfig):
+            return await self._poll_new_reviews(config, secret)
+        method, path, path_fields, query_fields = ROUTES[config.operation]
+        for name in path_fields:
+            path = path.replace("{" + name + "}", quote(str(getattr(config, name)), safe=""))
+        params = []
+        for name in query_fields:
+            value = getattr(config, name)
+            if value is None:
+                continue
+            for item in value if isinstance(value, list) else [value]:
+                params.append((name, str(item).lower() if isinstance(item, bool) else str(item)))
+        body = {"operation_type": config.operation_type, "allowlist": config.allowlist} if config.operation == "update_allowlist" else None
+        data, status = await self._request(secret, method, path, params, body)
         output = {"status": "success", "operation": config.operation,
-            "data": _redact(data, secret), "http_status": response.status_code}
+            "data": _redact(data, secret), "http_status": status}
         if config.operation == "list_allowlist":
             if not isinstance(data, dict) or not isinstance(data.get("data"), list) or not isinstance(data.get("pagination"), dict):
                 raise ValueError("Tripadvisor returned an invalid allowlist page")

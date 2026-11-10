@@ -150,3 +150,96 @@ async def test_malformed_allowlist_is_not_account_evidence(monkeypatch, payload)
     capture(monkeypatch, body=payload)
     with pytest.raises(ValueError, match="allowlist"):
         await node({"operation": "list_allowlist"}).execute({})
+
+
+def review_page():
+    # Replayed from the provider's pinned PageReview schema, not a live response.
+    # The generated fixture records its source so evidence remains explicit.
+    from pathlib import Path
+    return json.loads((Path(__file__).parent / "fixtures/tripadvisor/reviews-schema.json").read_text())["body"]
+
+
+def persist_poll_state(monkeypatch, instance):
+    state = {}
+    async def update(mutator, **kwargs):
+        nonlocal state
+        replacement, result = mutator(state)
+        if replacement is not None:
+            state = replacement
+        return result
+    monkeypatch.setattr(instance, "_update_node_state", update)
+    return lambda: state
+
+
+@pytest.mark.asyncio
+async def test_review_trigger_baselines_deduplicates_and_rebaselines_on_scope_change(monkeypatch):
+    import copy
+    payload = review_page()
+    calls = capture(monkeypatch, body=payload)
+    instance = node({"operation": "on_new_review", "id": 183778, "published_after_ts": "2024-01-01"})
+    state = persist_poll_state(monkeypatch, instance)
+    first = await instance.execute({})
+    assert first["reviews"] == [] and instance.trigger_produced_no_event(first)
+    assert native.TripadvisorNode.resolve_agent_event(first) is None
+    newer = copy.deepcopy(payload["data"][0])
+    newer["id"] += 1
+    payload["data"].insert(0, newer)
+    fresh = await instance.execute({})
+    assert fresh["reviews"] == [newer] and fresh["new_review_count"] == 1
+    assert instance.trigger_emitted_event(fresh)
+    assert native.TripadvisorNode.should_propagate_output(fresh, {"operation": "on_new_review"})
+    event = native.TripadvisorNode.resolve_agent_event(fresh)
+    for value in ["183778", str(newer["id"]), newer["publish_ts"], newer["title"][0]["value"], newer["text"][0]["value"], newer["user"]["username"]]:
+        assert value in event["text"]
+    assert (await instance.execute({}))["reviews"] == []
+    assert calls[0].url.path == "/api/locations/183778/reviews"
+    assert dict(calls[0].url.params) == {"sort_by": "MOST_RECENT", "language": "primary", "page": "1", "size": "100", "published_after_ts": "2024-01-01"}
+    previous_scope = state()["scope"]
+    instance.config.config.id = 60763
+    assert (await instance.execute({}))["reviews"] == []
+    assert state()["scope"] != previous_scope
+
+
+@pytest.mark.asyncio
+async def test_review_trigger_paginates_before_advancing_seen_state(monkeypatch):
+    import copy
+    payload = review_page()
+    payload["pagination"]["total_pages"] = 2
+    calls = []
+    async def request(secret, method, path, params, body=None):
+        calls.append(dict(params))
+        page = copy.deepcopy(payload)
+        page["data"][0]["id"] = int(dict(params)["page"])
+        return page, 200
+    monkeypatch.setattr(native.TripadvisorNode, "_request", staticmethod(request))
+    instance = node({"operation": "on_new_review", "id": 183778})
+    state = persist_poll_state(monkeypatch, instance)
+    await instance.execute({})
+    assert [call["page"] for call in calls] == ["1", "2"]
+    assert set(state()["seen_ids"]) == {"1", "2"}
+    payload["pagination"]["total_pages"] = 21
+    with pytest.raises(ValueError, match="2,000"):
+        await instance.execute({})
+    assert set(state()["seen_ids"]) == {"1", "2"}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("payload", [{}, {"data": [{}], "pagination": {}}, {"data": [{"id": True}], "pagination": {}}])
+async def test_review_trigger_rejects_malformed_pages_without_advancing_state(monkeypatch, payload):
+    capture(monkeypatch, body=payload)
+    instance = node({"operation": "on_new_review", "id": 183778})
+    state = persist_poll_state(monkeypatch, instance)
+    with pytest.raises(ValueError, match="review"):
+        await instance.execute({})
+    assert state() == {}
+
+
+def test_review_trigger_scope_ignores_builder_metadata_and_tracks_declared_fields():
+    cls = native.TripadvisorNode
+    config = {"operation": "on_new_review", "id": 183778}
+    scope = cls.schedule_poll_scope(config)
+    assert scope == cls.schedule_poll_scope({**config, "label": "My reviews", "goal": "Alert me"})
+    assert scope != cls.schedule_poll_scope({**config, "language": "fr"})
+    assert scope != cls.schedule_poll_scope({**config, "published_after_ts": "2024-01-01"})
+    assert cls._is_schedule_operation("on_new_review")
+    assert not cls._is_schedule_operation("list_reviews")
