@@ -554,6 +554,22 @@
           "title": "Trigger Error",
           "ui:hidden": true
         },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Cakemail automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
         "operation": {
           "const": "on_compliance_event",
           "default": "on_compliance_event",

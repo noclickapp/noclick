@@ -62,3 +62,8 @@ async def test_rejection_keeps_provider_message_and_redacts_token(respx_mock):
     assert 'Token rejected' in str(error.value)
     assert TOKEN not in str(error.value)
     assert route.calls[0].request.headers['Authorization'] == 'Bearer ' + TOKEN
+
+
+def test_cakemail_trigger_has_headless_registration_marker():
+    from utils.webhook_manager import WebhookManager
+    assert WebhookManager.node_webhook_field_for("automation-cakemail", "on_compliance_event") == "webhook_url"

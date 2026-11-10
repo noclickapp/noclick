@@ -154,6 +154,9 @@ class CakemailListSuppressedEmailsConfig(OperationConfig):
 
 
 class CakemailOnComplianceConfig(WebhookTriggerConfigBase):
+    webhook_url: Optional[str] = Field(
+        None, title="Webhook URL", description="Registered with Cakemail automatically",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
     operation: Literal["on_compliance_event"] = Field("on_compliance_event", title="On Compliance Event", json_schema_extra={"ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers"})
     event_type: Literal["Email.Bounced", "Email.ReportedAsSpam", "Email.Unsubscribed", "Email.GlobalUnsubscribed", "Email.Rejected", "Email.Error", "Contact.Removed", "SuppressedEmail.Added"] = Field("Email.Bounced", title="Event")
 
