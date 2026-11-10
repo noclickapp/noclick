@@ -5,8 +5,12 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const BigOvenIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/bigoven.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain', '--brand-invert': 0 } as CSSProperties} />
+    <>
+        <img src="/icons/bigoven.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, objectFit: 'contain' }} />
+        <img src="/icons/bigoven-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, objectFit: 'contain' }} />
+    </>
 );
 export const BigOvenNode: NodeDefinition = {
     type: 'automation-bigoven', category: 'industry', label: 'BigOven',
