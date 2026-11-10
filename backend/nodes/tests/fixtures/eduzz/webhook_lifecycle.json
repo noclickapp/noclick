@@ -1,0 +1,47 @@
+{
+  "GET /webhook/v1/secret": {
+    "status": 200,
+    "body": {
+      "id": "o01re8ty3kanab3ufi5ref0s3",
+      "name": "APP: 5accd2e8-869f-41d2-ae0d-3e314236f395",
+      "appId": "5accd2e8-869f-41d2-ae0d-3e314236f395",
+      "secret": "edzwgd_T9fKNbk0MG6jNRFUcyIcjknSCd6K0M7Z4xbojWnoj8xPQeWKuX",
+      "default": false
+    }
+  },
+  "POST /webhook/v1/subscription": {
+    "status": 200,
+    "body": {
+      "name": "Test for Doc",
+      "url": "https://webhook.site/c8ff7d31-4fd9-40c7-8eca-b2334d996fb0",
+      "secretId": "87fce2b9bbbf534fc91fa63fdb697a4e9b7f17205c2577ef2cb1f9757307c180",
+      "events": [
+        {
+          "name": "nutror.lesson_watched"
+        }
+      ],
+      "status": "disabled",
+      "id": "yaeung4oaxt25pi0bzzycoezf"
+    }
+  },
+  "POST /webhook/v1/subscription/:id/status": {
+    "status": 200,
+    "body": {
+      "name": "Inscrição de webhook alterada",
+      "url": "https://webhook.site/3559d85c-4c65-4035-854b-e935ef9c1278",
+      "secretId": "lw4nb4ghqox1k7cr05732cors",
+      "events": [
+        {
+          "name": "test.event_one",
+          "conditions": []
+        }
+      ],
+      "status": "disabled",
+      "id": "d01dgcs80wsjm8z9n67csd55o"
+    }
+  },
+  "DELETE /webhook/v1/subscription/:id": {
+    "status": 204,
+    "body": null
+  }
+}

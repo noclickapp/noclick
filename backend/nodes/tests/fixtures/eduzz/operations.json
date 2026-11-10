@@ -1,0 +1,991 @@
+{
+  "get_account": {
+    "config": {
+      "operation": "get_account"
+    },
+    "method": "GET",
+    "path": "/accounts/v1/me",
+    "response": {
+      "status": 200,
+      "body": {
+        "id": "dcc44cb7-30c8-46ef-b35b-ffacf8cc61d1",
+        "name": "Fulano da Silva",
+        "email": "fulano.silva@example.com"
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "list_sales": {
+    "config": {
+      "operation": "list_sales",
+      "page": 1,
+      "itemsPerPage": 20,
+      "startDate": "2025-01-01T00:00:00Z",
+      "endDate": "2025-01-31T23:59:59Z"
+    },
+    "method": "GET",
+    "path": "/myeduzz/v1/sales",
+    "response": {
+      "status": 200,
+      "body": {
+        "pages": 1,
+        "page": 1,
+        "itemsPerPage": 10,
+        "totalItems": 1,
+        "items": [
+          {
+            "id": "123456",
+            "contractId": "78910",
+            "status": "paid",
+            "grossGain": {
+              "currency": "BRL",
+              "value": 1000
+            },
+            "netGain": {
+              "currency": "BRL",
+              "value": 900
+            },
+            "partnersGain": {
+              "currency": "BRL",
+              "value": 50
+            },
+            "affiliatesGain": {
+              "currency": "BRL",
+              "value": 50
+            },
+            "fee": {
+              "currency": "BRL",
+              "value": 10
+            },
+            "total": {
+              "currency": "BRL",
+              "value": 1000
+            },
+            "totalInterest": {
+              "currency": "BRL",
+              "value": 5
+            },
+            "installments": 3,
+            "alumyFee": {
+              "currency": "BRL",
+              "value": 5
+            },
+            "installmentSettlementFee": {
+              "currency": "BRL",
+              "value": 1.99
+            },
+            "others": {
+              "currency": "BRL",
+              "value": 2
+            },
+            "currency": "BRL",
+            "locale": "pt-BR",
+            "dueDate": "2023-12-31T23:59:59Z",
+            "paidAt": "2023-01-01T12:00:00Z",
+            "creditDate": "2023-01-02T12:00:00Z",
+            "isInfiniteFunnel": false,
+            "recoveringStatus": "inactive",
+            "tracker": "tracker1",
+            "tracker2": "tracker2",
+            "tracker3": "tracker3",
+            "createdAt": "2023-01-01T00:00:00Z",
+            "updatedAt": "2023-01-02T00:00:00Z",
+            "payment": {
+              "method": "creditCard",
+              "detail": "visaCreditCard",
+              "link": "https://edz.la/123456/123456?t=x"
+            },
+            "product": {
+              "id": "4",
+              "name": "Produto Exemplo",
+              "type": "digital",
+              "billingType": "single",
+              "sku": "5"
+            },
+            "refund": {
+              "type": "common",
+              "value": {
+                "currency": "BRL",
+                "value": 100
+              },
+              "partialValue": {
+                "currency": "BRL",
+                "value": 50
+              },
+              "refundedAt": "2023-01-03T12:00:00Z"
+            },
+            "affiliate": {
+              "id": "123",
+              "name": "Afiliado Exemplo"
+            },
+            "recipient": {
+              "id": "456",
+              "name": "recipient Example",
+              "email": "recebedor@example.com",
+              "document": "12345678900",
+              "phone": "11999999999"
+            },
+            "buyer": {
+              "id": "13",
+              "name": "Buyer Example",
+              "email": "buyer@example.com",
+              "document": "12345678900",
+              "phone": "11999999999"
+            },
+            "producer": {
+              "id": "5",
+              "name": "Producer Name Example"
+            },
+            "offer": {
+              "name": "Oferta Base"
+            },
+            "utm": {
+              "source": "google",
+              "campaign": "campaing2023",
+              "medium": "cpc",
+              "content": "contect",
+              "term": "term"
+            },
+            "orderBump": {
+              "has": true,
+              "isMainSale": false,
+              "mainSaleId": 123456
+            }
+          }
+        ]
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "get_sale": {
+    "config": {
+      "operation": "get_sale",
+      "id": "123456"
+    },
+    "method": "GET",
+    "path": "/myeduzz/v1/sales/:id",
+    "response": {
+      "status": 200,
+      "body": {
+        "id": "123456",
+        "contractId": "78910",
+        "status": "paid",
+        "grossGain": {
+          "currency": "BRL",
+          "value": 1000
+        },
+        "netGain": {
+          "currency": "BRL",
+          "value": 900
+        },
+        "partnersGain": {
+          "currency": "BRL",
+          "value": 50
+        },
+        "affiliatesGain": {
+          "currency": "BRL",
+          "value": 50
+        },
+        "fee": {
+          "currency": "BRL",
+          "value": 10
+        },
+        "total": {
+          "currency": "BRL",
+          "value": 1000
+        },
+        "totalInterest": {
+          "currency": "BRL",
+          "value": 5
+        },
+        "installments": 3,
+        "alumyFee": {
+          "currency": "BRL",
+          "value": 5
+        },
+        "installmentSettlementFee": {
+          "currency": "BRL",
+          "value": 1.99
+        },
+        "others": {
+          "currency": "BRL",
+          "value": 2
+        },
+        "currency": "BRL",
+        "locale": "pt-BR",
+        "dueDate": "2023-12-31T23:59:59Z",
+        "paidAt": "2023-01-01T12:00:00Z",
+        "creditDate": "2023-01-02T12:00:00Z",
+        "isInfiniteFunnel": false,
+        "recoveringStatus": "inactive",
+        "tracker": "tracker1",
+        "tracker2": "tracker2",
+        "tracker3": "tracker3",
+        "createdAt": "2023-01-01T00:00:00Z",
+        "updatedAt": "2023-01-02T00:00:00Z",
+        "payment": {
+          "method": "creditCard",
+          "detail": "visaCreditCard",
+          "link": "https://edz.la/123456/123456?t=x"
+        },
+        "product": {
+          "id": "1",
+          "name": "Product Example 1",
+          "type": "digital",
+          "billingType": "single",
+          "sku": "5"
+        },
+        "refund": {
+          "type": "common",
+          "value": {
+            "currency": "BRL",
+            "value": 100
+          },
+          "partialValue": {
+            "currency": "BRL",
+            "value": 50
+          },
+          "refundedAt": "2023-01-03T12:00:00Z",
+          "requestedAt": "2023-01-02T12:00:00Z",
+          "motive": "Não fiz essa compra.",
+          "requesterName": "Tio Patinhas"
+        },
+        "affiliate": {
+          "id": 123,
+          "name": "Affiliate Example"
+        },
+        "recipient": {
+          "id": "456",
+          "name": "Example Recipient",
+          "email": "examplerecipient@example.com",
+          "document": "12345678900",
+          "phone": "11999999999"
+        },
+        "buyer": {
+          "id": "3",
+          "name": "Buyer Example",
+          "email": "buyer@example.com",
+          "document": "12345678900",
+          "phone": "11999999999",
+          "phone2": "11888888888",
+          "phone3": "11777777777",
+          "address": {
+            "zipCode": "12345678",
+            "street": "Street Example",
+            "number": "123",
+            "complement": "number 101",
+            "neighborhood": "Neighborhood Example",
+            "city": "City Example",
+            "state": "SP"
+          }
+        },
+        "producer": {
+          "id": "2",
+          "name": "Producer Example"
+        },
+        "affiliates": [
+          {
+            "id": "4",
+            "name": "Affiliates 1",
+            "email": "affiliate1@example.com",
+            "netGain": {
+              "currency": "BRL",
+              "value": 50
+            }
+          }
+        ],
+        "partners": [
+          {
+            "id": "6",
+            "name": "Partners 1",
+            "email": "partner@example.com",
+            "netGain": {
+              "currency": "BRL",
+              "value": 50
+            }
+          }
+        ],
+        "items": [
+          {
+            "id": "7",
+            "productId": "1",
+            "description": "Item Example 7 ",
+            "unitValue": {
+              "currency": "BRL",
+              "value": 500
+            },
+            "quantity": 2,
+            "value": {
+              "currency": "BRL",
+              "value": 1000
+            },
+            "discount": {
+              "currency": "BRL",
+              "value": 50
+            },
+            "freightType": "normal",
+            "freightDeadline": "7 dias",
+            "trackingCode": "TRACK123"
+          }
+        ],
+        "offer": {
+          "name": "Oferta Base"
+        },
+        "utm": {
+          "source": "google",
+          "campaign": "campaing2023",
+          "medium": "cpc",
+          "content": "contect1",
+          "term": "term1"
+        },
+        "orderBump": {
+          "has": true,
+          "isMainSale": false,
+          "mainSaleId": 123456
+        }
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "list_products": {
+    "config": {
+      "operation": "list_products",
+      "page": 1,
+      "itemsPerPage": 20
+    },
+    "method": "GET",
+    "path": "/myeduzz/v1/products",
+    "response": {
+      "status": 200,
+      "body": {
+        "pages": 821,
+        "page": 1,
+        "itemsPerPage": 3,
+        "totalItems": 2461,
+        "items": [
+          {
+            "id": "47998",
+            "name": "Produto Digital Básico",
+            "description": "Produto digital básico para teste e validação do sistema.",
+            "producerId": "1234",
+            "type": "digital",
+            "status": "active",
+            "author": "Eduzz",
+            "moderation": "pending",
+            "imageUrl": "https://cdn.eduzzcdn.com/xpto.jpg",
+            "createdAt": "2018-03-20T16:24:47.180Z",
+            "updatedAt": "2023-05-15T18:46:44.647Z",
+            "payment": {
+              "type": "oneTime",
+              "price": {
+                "currency": "BRL",
+                "value": 1.1
+              },
+              "methods": {
+                "bankslip": true,
+                "pix": true,
+                "card": true,
+                "multipleCards": true
+              }
+            }
+          },
+          {
+            "id": "48015",
+            "name": "Produto de Assinatura",
+            "description": "Produto de assinatura para teste e validação contínua.",
+            "producerId": "1234",
+            "type": "digital",
+            "status": "active",
+            "author": "Eduzz",
+            "moderation": "new",
+            "imageUrl": "https://cdn.eduzzcdn.com/xpto.jpg",
+            "createdAt": "2018-03-20T17:20:05.567Z",
+            "updatedAt": "2023-05-15T18:46:44.647Z",
+            "payment": {
+              "type": "subscription",
+              "price": {
+                "currency": "BRL",
+                "value": 10
+              },
+              "methods": {
+                "bankslip": true,
+                "pix": true,
+                "card": true,
+                "multipleCards": true
+              }
+            }
+          },
+          {
+            "id": "48045",
+            "name": "Produto Premium",
+            "description": "Produto premium com funcionalidades avançadas.",
+            "producerId": "1234",
+            "type": "physical",
+            "status": "inactive",
+            "author": "Eduzz",
+            "moderation": "approved",
+            "imageUrl": "https://cdn.eduzzcdn.com/xpto.jpg",
+            "createdAt": "2018-03-20T19:57:44.357Z",
+            "updatedAt": "2023-05-15T18:46:44.647Z",
+            "payment": {
+              "type": "oneTime",
+              "price": {
+                "currency": "BRL",
+                "value": 100
+              },
+              "methods": {
+                "bankslip": true,
+                "pix": true,
+                "card": true,
+                "multipleCards": false
+              }
+            }
+          }
+        ]
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "get_product": {
+    "config": {
+      "operation": "get_product",
+      "id": "47998"
+    },
+    "method": "GET",
+    "path": "/myeduzz/v1/products/:id",
+    "response": {
+      "status": 200,
+      "body": {
+        "id": "48045",
+        "name": "Produto Premium",
+        "description": "Produto premium com funcionalidades avançadas.",
+        "producerId": "1234",
+        "type": "digital",
+        "status": "active",
+        "author": "Eduzz",
+        "moderation": "new",
+        "imageUrl": "https://cdn.eduzzcdn.com/xpto.jpg",
+        "createdAt": "2018-03-20T19:57:44.357Z",
+        "updatedAt": "2023-05-15T18:46:44.647Z",
+        "payment": {
+          "type": "oneTime",
+          "price": {
+            "currency": "BRL",
+            "value": 100
+          },
+          "methods": {
+            "bankslip": true,
+            "pix": true,
+            "card": true,
+            "multipleCards": false
+          }
+        }
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "list_customers": {
+    "config": {
+      "operation": "list_customers",
+      "page": 1,
+      "itemsPerPage": 20
+    },
+    "method": "GET",
+    "path": "/myeduzz/v1/customers",
+    "response": {
+      "status": 200,
+      "body": {
+        "pages": 1,
+        "page": 1,
+        "itemsPerPage": 10,
+        "totalItems": 1,
+        "items": [
+          {
+            "id": "123456",
+            "name": "John Doe",
+            "email": "buyer@teste.com",
+            "phone": {
+              "countryCode": "55",
+              "areaCode": "15",
+              "number": "999999999"
+            },
+            "purchaseHistoryOverview": {
+              "productsQuantity": 10,
+              "net": {
+                "currency": "BRL",
+                "value": 1000
+              },
+              "gross": {
+                "currency": "BRL",
+                "value": 1005
+              }
+            }
+          }
+        ]
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "get_customer": {
+    "config": {
+      "operation": "get_customer",
+      "email": "buyer@teste.com"
+    },
+    "method": "GET",
+    "path": "/myeduzz/v1/customers/:email",
+    "response": {
+      "status": 200,
+      "body": {
+        "id": "123456",
+        "name": "John Doe",
+        "email": "buyer@teste.com",
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "15",
+          "number": "999999999"
+        },
+        "address": {
+          "street": "Av. Sorocaba",
+          "number": "500",
+          "supplement": "Casa 2",
+          "cep": "18044-390",
+          "state": "SP",
+          "country": "BR"
+        }
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "list_subscriptions": {
+    "config": {
+      "operation": "list_subscriptions",
+      "page": 1,
+      "itemsPerPage": 20
+    },
+    "method": "GET",
+    "path": "/myeduzz/v1/subscriptions",
+    "response": {
+      "status": 200,
+      "body": {
+        "pages": 49,
+        "page": 2,
+        "itemsPerPage": 15,
+        "totalItems": 733,
+        "items": [
+          {
+            "id": "123456",
+            "createdAt": "2024-01-15T15:00:00.000Z",
+            "updatedAt": "2024-01-20T15:00:00.000Z",
+            "status": "canceled",
+            "firstInvoiceId": "654321",
+            "isFinite": true,
+            "isUnlimitedInstallments": false,
+            "hasNegotiation": false,
+            "interruption": {
+              "createdAt": "2024-01-20T15:00:00.000Z",
+              "type": "cancel",
+              "removeAccessDate": "2024-02-30T15:00:00.000Z",
+              "reason": "Cliente não está realizando os pagamentos corretamente",
+              "origin": "MyEduzz",
+              "previousStatus": "late",
+              "responsible": "Atendimento Eduzz"
+            },
+            "recurrence": {
+              "startsAt": "2024-01-15T15:00:00.000Z",
+              "nextDueDate": "2024-02-15T15:00:00.000Z",
+              "currentDueDate": "2024-01-15T15:00:00.000Z",
+              "finalDueDate": "2025-06-15T15:00:00.000Z",
+              "finishesAt": "2025-07-15T15:00:00.000Z",
+              "frequency": {
+                "type": "monthly",
+                "value": 1
+              }
+            },
+            "charges": {
+              "total": 6,
+              "current": 1,
+              "paid": 1,
+              "pending": 0,
+              "negotiated": 0
+            },
+            "products": [
+              {
+                "id": "123321",
+                "title": "Teste Assinatura",
+                "hasMembershipFee": false,
+                "membershipFee": {
+                  "currency": "BRL",
+                  "value": 0
+                },
+                "deliveries": [
+                  "files",
+                  "external",
+                  "nutror",
+                  "alpaClass"
+                ]
+              }
+            ],
+            "payment": {
+              "price": {
+                "currency": "BRL",
+                "value": 1000
+              },
+              "method": "bankslip",
+              "installments": 6
+            },
+            "client": {
+              "name": "Fulano de tal",
+              "email": "fulanodetal@eduzz.com",
+              "phone": {
+                "countryCode": "55",
+                "areaCode": "15",
+                "number": "999999999"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "get_subscription": {
+    "config": {
+      "operation": "get_subscription",
+      "id": "12345"
+    },
+    "method": "GET",
+    "path": "/myeduzz/v1/subscriptions/:id",
+    "response": {
+      "status": 200,
+      "body": {
+        "id": "123456",
+        "createdAt": "2024-01-15T15:00:00.000Z",
+        "updatedAt": "2024-01-20T15:00:00.000Z",
+        "status": "canceled",
+        "firstInvoiceId": "654321",
+        "isFinite": true,
+        "isUnlimitedInstallments": false,
+        "hasNegotiation": false,
+        "interruption": {
+          "createdAt": "2024-01-20T15:00:00.000Z",
+          "type": "cancel",
+          "removeAccessDate": "2024-02-30T15:00:00.000Z",
+          "reason": "Cliente não está realizando os pagamentos corretamente",
+          "origin": "MyEduzz",
+          "previousStatus": "late",
+          "responsible": "Atendimento Eduzz"
+        },
+        "recurrence": {
+          "startsAt": "2024-01-15T15:00:00.000Z",
+          "nextDueDate": "2024-02-15T15:00:00.000Z",
+          "currentDueDate": "2024-01-15T15:00:00.000Z",
+          "finalDueDate": "2025-06-15T15:00:00.000Z",
+          "finishesAt": "2025-07-15T15:00:00.000Z",
+          "frequency": {
+            "type": "monthly",
+            "value": 1
+          }
+        },
+        "charges": {
+          "total": 6,
+          "current": 1,
+          "paid": 1,
+          "pending": 0,
+          "negotiated": 0
+        },
+        "products": [
+          {
+            "id": "123321",
+            "title": "Teste Assinatura",
+            "hasMembershipFee": false,
+            "membershipFee": {
+              "currency": "BRL",
+              "value": 0
+            },
+            "deliveries": [
+              "files",
+              "external",
+              "nutror",
+              "alpaClass"
+            ]
+          }
+        ],
+        "payment": {
+          "price": {
+            "currency": "BRL",
+            "value": 1000
+          },
+          "method": "bankslip",
+          "installments": 6
+        },
+        "client": {
+          "name": "Fulano de tal",
+          "email": "fulanodetal@eduzz.com",
+          "phone": {
+            "countryCode": "55",
+            "areaCode": "15",
+            "number": "999999999"
+          }
+        }
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "list_subscription_invoices": {
+    "config": {
+      "operation": "list_subscription_invoices",
+      "id": "12345"
+    },
+    "method": "GET",
+    "path": "/myeduzz/v1/subscriptions/:id/invoices",
+    "response": {
+      "status": 200,
+      "body": {
+        "items": [
+          {
+            "id": "123",
+            "subscriptionId": "12345",
+            "createdAt": "2024-05-24T10:00:34.000Z",
+            "dueDate": "2024-06-24T00:00:00.000Z",
+            "coupon": "teste",
+            "hasAffiliate": false,
+            "status": "open",
+            "payment": {
+              "amount": {
+                "currency": "BRL",
+                "value": 20
+              },
+              "link": "https://url-teste-pagamento/123456/123456?t=x",
+              "method": "creditCard"
+            },
+            "items": [
+              {
+                "product": {
+                  "id": "123456789",
+                  "title": "Teste"
+                },
+                "description": "Teste descrição produto",
+                "amount": {
+                  "currency": "BRL",
+                  "value": 20
+                },
+                "total": {
+                  "currency": "BRL",
+                  "value": 20
+                },
+                "quantity": 1
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "cancel_subscriptions": {
+    "config": {
+      "operation": "cancel_subscriptions",
+      "subscriptions": [
+        "123456789"
+      ],
+      "cancelReason": "Problemas com o pagamento."
+    },
+    "method": "POST",
+    "path": "/myeduzz/v1/subscriptions/bulk-cancel",
+    "response": {
+      "status": 202,
+      "body": {
+        "message": "Cancelamento solicitado com sucesso. Aguarde o processo ser finalizado."
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "reactivate_subscription": {
+    "config": {
+      "operation": "reactivate_subscription",
+      "id": "12345"
+    },
+    "method": "POST",
+    "path": "/myeduzz/v1/subscriptions/:id/reactivate",
+    "response": {
+      "status": 200,
+      "body": {
+        "message": "Reativação solicitada com sucesso. Aguarde o processo ser finalizado."
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "change_subscription_billing_day": {
+    "config": {
+      "operation": "change_subscription_billing_day",
+      "id": "12345",
+      "dueDateDay": "1",
+      "motive": "Solicitação do cliente"
+    },
+    "method": "PUT",
+    "path": "/myeduzz/v1/subscriptions/:id/recurring-date",
+    "response": {
+      "status": 200,
+      "body": {
+        "message": "Solicitação de alteração de data de vencimento enviada para o cliente."
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "list_students": {
+    "config": {
+      "operation": "list_students",
+      "page": 1,
+      "itemsPerPage": 20
+    },
+    "method": "GET",
+    "path": "/nutror/v1/students",
+    "response": {
+      "status": 200,
+      "body": {
+        "pages": 1,
+        "page": 1,
+        "itemsPerPage": 10,
+        "totalItems": 1,
+        "items": [
+          {
+            "id": "9b71e95310b7464bb6ca910ab3036372",
+            "name": "João Carlos",
+            "email": "test@test.com",
+            "avatar": "https://www.example.com/avatar.jpg"
+          },
+          {
+            "id": "124323123",
+            "name": "Maria Silva",
+            "email": "xpto@test.com",
+            "avatar": "https://www.example.com/avatar.jpg"
+          }
+        ]
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "get_student": {
+    "config": {
+      "operation": "get_student",
+      "id": "12345"
+    },
+    "method": "GET",
+    "path": "/nutror/v1/students/:id",
+    "response": {
+      "status": 200,
+      "body": {
+        "id": "9b71e95310b7464bb6ca910ab3036372",
+        "name": "Jão Carlos",
+        "email": "test@test.com",
+        "avatar": null
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "list_student_enrollments": {
+    "config": {
+      "operation": "list_student_enrollments",
+      "id": "12345",
+      "page": 1,
+      "itemsPerPage": 20
+    },
+    "method": "GET",
+    "path": "/nutror/v1/students/:id/enrollments",
+    "response": {
+      "status": 200,
+      "body": {
+        "pages": 1,
+        "page": 1,
+        "itemsPerPage": 50,
+        "totalItems": 0,
+        "items": []
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "block_enrollment": {
+    "config": {
+      "operation": "block_enrollment",
+      "id": "12345"
+    },
+    "method": "PUT",
+    "path": "/nutror/v1/enrollments/:id/block",
+    "response": {
+      "status": 201,
+      "body": null
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "extend_enrollment_access": {
+    "config": {
+      "operation": "extend_enrollment_access",
+      "id": "12345",
+      "expiredAt": "2025-01-22T00:00:00Z"
+    },
+    "method": "PUT",
+    "path": "/nutror/v1/enrollments/:id/extend-access",
+    "response": {
+      "status": 201,
+      "body": null
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "list_schools": {
+    "config": {
+      "operation": "list_schools"
+    },
+    "method": "GET",
+    "path": "/alpaclass/v1/producer/teams",
+    "response": {
+      "status": 200,
+      "body": {
+        "items": [
+          {
+            "id": "abcdef",
+            "name": "Escola ABC",
+            "url": "https://abcdef.alpaclass.com"
+          },
+          {
+            "id": "nova-escola",
+            "name": "Nova escola",
+            "url": "https://novaescola.com.br"
+          },
+          {
+            "id": "escola-modelo",
+            "name": "Escola Modelo",
+            "url": "https://escola-modelo.com.br"
+          }
+        ]
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  },
+  "create_school_student": {
+    "config": {
+      "operation": "create_school_student",
+      "teamId": "minha-escola",
+      "name": "Jhon Doe",
+      "email": "jhon_doe@eduzz.com",
+      "phone": "11999999999",
+      "document": "1234567890",
+      "tags": [
+        "tag1",
+        "tag2"
+      ]
+    },
+    "method": "POST",
+    "path": "/alpaclass/v1/producer/teams/:teamId/students",
+    "response": {
+      "status": 201,
+      "body": {
+        "id": "xPt123",
+        "name": "Jhon Doe",
+        "email": "jhon_doe@eduzz.com",
+        "phone": "11999999999",
+        "document": "1234567890"
+      }
+    },
+    "source": "https://developers.eduzz.com/api/openapi"
+  }
+}
