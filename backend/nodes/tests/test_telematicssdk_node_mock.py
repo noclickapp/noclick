@@ -30,7 +30,7 @@ def transport(monkeypatch, bodies):
 
 CASES = [
     ({"operation":"get_profile"}, "GET", "/v1/Management/users", None, {}),
-    ({"operation":"find_users","email":"test@example.com"}, "GET", "/v1/Management/users/find", None, {"Email":"test@example.com","IncludeAccountInfo":"false","ShowInactiveUsers":"false"}),
+    ({"operation":"get_users","email":"test@example.com"}, "GET", "/v1/Management/users/find", None, {"Email":"test@example.com","IncludeAccountInfo":"false","ShowInactiveUsers":"false"}),
     ({"operation":"list_users"}, "POST", "/v1/Management/users/GetFilteredPage", {"PageNumber":1,"PageSize":100,"Sort":"DateCreatedDesc","ShowInactiveUsers":False}, {}),
     ({"operation":"search_users","search_term":"Driver"}, "GET", "/v1/Management/users/quicksearch", None, {"SearchTerm":"Driver","ShowInactiveUsers":"false"}),
     ({"operation":"update_profile","first_name":"Tim","user_device_token":ID}, "PUT", "/v1/Management/users", {"FirstName":"Tim","SendVerificationCodeForEmailPhone":False}, {}),
@@ -48,7 +48,7 @@ CASES = [
 @pytest.mark.asyncio
 @pytest.mark.parametrize("config,method,path,body,query", CASES, ids=[c[0]["operation"] for c in CASES])
 async def test_telematicssdk_routes(monkeypatch, config, method, path, body, query):
-    response = {**FIXTURE["acknowledgement"], "Result": []} if config["operation"] == "find_users" else FIXTURE["acknowledgement"]
+    response = {**FIXTURE["acknowledgement"], "Result": []} if config["operation"] == "get_users" else FIXTURE["acknowledgement"]
     calls = transport(monkeypatch, [response])
     assert await node(config).execute({}) == response
     assert len(calls) == 1
@@ -96,7 +96,7 @@ async def test_telematicssdk_poll_baseline_dedup_pagination_and_agent_event(monk
 async def test_telematicssdk_error_envelopes_fail(monkeypatch, response):
     transport(monkeypatch, [response])
     with pytest.raises(ValueError):
-        await node({"operation":"find_users"}).execute({})
+        await node({"operation":"get_users"}).execute({})
 
 
 def test_telematicssdk_manual_connect_default():
@@ -107,4 +107,4 @@ def test_telematicssdk_manual_connect_default():
 async def test_telematicssdk_malformed_evidence_fails(monkeypatch):
     transport(monkeypatch, [{"Status": 200}])
     with pytest.raises(ValueError, match="user list"):
-        await node({"operation":"find_users"}).execute({})
+        await node({"operation":"get_users"}).execute({})

@@ -41,7 +41,7 @@ class GetProfile(_Input):
 
 class FindUsers(_Input):
     """Find users accessible to an admin JWT."""
-    operation: Literal["find_users"] = Field("find_users", title="Find Users (Admin)")
+    operation: Literal["get_users"] = Field("get_users", title="Find Users (Admin)")
     device_token: UUID | None = None
     email: str | None = None
     phone: str | None = None
@@ -162,7 +162,7 @@ def _wire(values):
 
 class TelematicsSDKNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-telematicssdk"
-    connection_evidence = ConnectionEvidence(operation="find_users", noun="Damoov users", label_keys=("DeviceToken",))
+    connection_evidence = ConnectionEvidence(operation="get_users", noun="Damoov users", label_keys=("DeviceToken",))
 
     @classmethod
     def get_config_model(cls):
@@ -236,7 +236,7 @@ class TelematicsSDKNode(ScheduledPollTriggerMixin, WorkflowNode):
         op = config.operation
         if op == "get_profile":
             return await self._request("GET", "/v1/Management/users")
-        if op == "find_users":
+        if op == "get_users":
             data = await self._request("GET", "/v1/Management/users/find", params=_wire(values))
             if not isinstance(data.get("Result"), list):
                 raise ValueError("Expected a Damoov user list")

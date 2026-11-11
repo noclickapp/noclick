@@ -130,8 +130,8 @@
       "description": "Find users accessible to an admin JWT.",
       "properties": {
         "operation": {
-          "const": "find_users",
-          "default": "find_users",
+          "const": "get_users",
+          "default": "get_users",
           "title": "Find Users (Admin)",
           "type": "string"
         },
@@ -1137,9 +1137,9 @@
           "count_users": "#/$defs/CountUsers",
           "create_instance": "#/$defs/CreateInstance",
           "delete_user": "#/$defs/DeleteUser",
-          "find_users": "#/$defs/FindUsers",
           "get_instance": "#/$defs/GetInstance",
           "get_profile": "#/$defs/GetProfile",
+          "get_users": "#/$defs/FindUsers",
           "get_wallets": "#/$defs/GetWallets",
           "join_instance": "#/$defs/JoinInstance",
           "list_users": "#/$defs/ListUsers",
