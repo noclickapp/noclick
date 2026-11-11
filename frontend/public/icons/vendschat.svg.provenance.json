@@ -1,0 +1,10 @@
+{
+  "path": "frontend/public/icons/vendschat.svg",
+  "source": "https://vendschat.com/vendschat.svg",
+  "source_page": "https://vendschat.com",
+  "license": "Vendschat trademark; used to identify the integration",
+  "sha256": "9700cda07c7107e1bc5b17511fc382b71957dab60b62d3a48a0781b710b9b070",
+  "date": "2026-11-11",
+  "edits": [],
+  "notes": "Official standalone app mark from the company header. Unmodified vector paths; no wordmark or added background. The favicon SVG embeds a bitmap, so the genuine header vector is used instead."
+}

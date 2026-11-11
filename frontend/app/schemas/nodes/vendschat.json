@@ -1,0 +1,1030 @@
+{
+  "$defs": {
+    "AddContactLabels": {
+      "properties": {
+        "identifier_type": {
+          "enum": [
+            "contact_id",
+            "email",
+            "phone_number"
+          ],
+          "title": "Find Contact By",
+          "type": "string"
+        },
+        "identifier_value": {
+          "description": "Contact ID, email address, or phone number, matching Find Contact By.",
+          "minLength": 1,
+          "title": "Contact Identifier",
+          "type": "string"
+        },
+        "label_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label IDs"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated names or an array of names/IDs. Missing names are created when adding labels.",
+          "title": "Labels"
+        },
+        "operation": {
+          "const": "add_contact_labels",
+          "default": "add_contact_labels",
+          "title": "Add Contact Labels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts"
+        }
+      },
+      "required": [
+        "identifier_type",
+        "identifier_value"
+      ],
+      "title": "AddContactLabels",
+      "type": "object"
+    },
+    "CreateContact": {
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "phone_number": {
+          "minLength": 1,
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note",
+          "ui:widget": "textarea"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Fields"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts"
+        }
+      },
+      "required": [
+        "phone_number",
+        "email"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "properties": {
+        "identifier_type": {
+          "enum": [
+            "contact_id",
+            "email",
+            "phone_number"
+          ],
+          "title": "Find Contact By",
+          "type": "string"
+        },
+        "identifier_value": {
+          "description": "Contact ID, email address, or phone number, matching Find Contact By.",
+          "minLength": 1,
+          "title": "Contact Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts"
+        }
+      },
+      "required": [
+        "identifier_type",
+        "identifier_value"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "GetTemplate": {
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Get Template Variable Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages"
+        },
+        "channel_id": {
+          "title": "Channel",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "channel_id",
+            "auto_select_sole_option": true
+          }
+        },
+        "id": {
+          "title": "Template ID",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "channel_id"
+            ],
+            "field_name": "template_id"
+          }
+        }
+      },
+      "required": [
+        "channel_id",
+        "id"
+      ],
+      "title": "GetTemplate",
+      "type": "object"
+    },
+    "GetWorkspace": {
+      "properties": {
+        "operation": {
+          "const": "get_workspace",
+          "default": "get_workspace",
+          "title": "Get Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account"
+        }
+      },
+      "title": "GetWorkspace",
+      "type": "object"
+    },
+    "ListChannels": {
+      "properties": {
+        "operation": {
+          "const": "list_channels",
+          "default": "list_channels",
+          "title": "List Active Channels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages"
+        }
+      },
+      "title": "ListChannels",
+      "type": "object"
+    },
+    "ListLabels": {
+      "properties": {
+        "operation": {
+          "const": "list_labels",
+          "default": "list_labels",
+          "title": "List Workspace Labels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts"
+        }
+      },
+      "title": "ListLabels",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "List Approved Templates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages"
+        },
+        "channel_id": {
+          "title": "Channel",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "channel_id",
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "ListWebhookEvents": {
+      "properties": {
+        "operation": {
+          "const": "list_webhook_events",
+          "default": "list_webhook_events",
+          "title": "List Webhook Event Catalog",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks"
+        }
+      },
+      "title": "ListWebhookEvents",
+      "type": "object"
+    },
+    "LookupContact": {
+      "properties": {
+        "identifier_type": {
+          "enum": [
+            "contact_id",
+            "email",
+            "phone_number"
+          ],
+          "title": "Find Contact By",
+          "type": "string"
+        },
+        "identifier_value": {
+          "description": "Contact ID, email address, or phone number, matching Find Contact By.",
+          "minLength": 1,
+          "title": "Contact Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "lookup_contact",
+          "default": "lookup_contact",
+          "title": "Lookup Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts"
+        }
+      },
+      "required": [
+        "identifier_type",
+        "identifier_value"
+      ],
+      "title": "LookupContact",
+      "type": "object"
+    },
+    "OnIncomingWhatsAppText": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_incoming_whatsapp_text",
+          "default": "on_incoming_whatsapp_text",
+          "title": "On Incoming WhatsApp Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "OnIncomingWhatsAppText",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "RemoveContactLabels": {
+      "properties": {
+        "identifier_type": {
+          "enum": [
+            "contact_id",
+            "email",
+            "phone_number"
+          ],
+          "title": "Find Contact By",
+          "type": "string"
+        },
+        "identifier_value": {
+          "description": "Contact ID, email address, or phone number, matching Find Contact By.",
+          "minLength": 1,
+          "title": "Contact Identifier",
+          "type": "string"
+        },
+        "label_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label IDs"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated names or an array of names/IDs. Missing names are created when adding labels.",
+          "title": "Labels"
+        },
+        "operation": {
+          "const": "remove_contact_labels",
+          "default": "remove_contact_labels",
+          "title": "Remove Contact Labels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts"
+        }
+      },
+      "required": [
+        "identifier_type",
+        "identifier_value"
+      ],
+      "title": "RemoveContactLabels",
+      "type": "object"
+    },
+    "SendMessage": {
+      "properties": {
+        "identifier_type": {
+          "enum": [
+            "contact_id",
+            "email",
+            "phone_number"
+          ],
+          "title": "Find Contact By",
+          "type": "string"
+        },
+        "identifier_value": {
+          "description": "Contact ID, email address, or phone number, matching Find Contact By.",
+          "minLength": 1,
+          "title": "Contact Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Send Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages"
+        },
+        "channel_mode": {
+          "default": "last_interacted",
+          "enum": [
+            "last_interacted",
+            "specific"
+          ],
+          "title": "Channel Selection",
+          "type": "string"
+        },
+        "channel_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "channel_id"
+          }
+        },
+        "content_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "text",
+                "attachment"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for the last interacted channel.",
+          "title": "Content Mode",
+          "enum": [
+            "text",
+            "attachment"
+          ],
+          "x-enum-searchable": true
+        },
+        "message_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For a specific channel: text, template, image, video, audio, or document.",
+          "title": "Message Type"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Text",
+          "ui:widget": "textarea"
+        },
+        "attachment_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "image",
+                "video",
+                "audio",
+                "document"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachment Type",
+          "enum": [
+            "image",
+            "video",
+            "audio",
+            "document"
+          ],
+          "x-enum-searchable": true
+        },
+        "media_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media URL"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template ID"
+        },
+        "template_variables": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keys from Get Template Variable Fields, such as body_1.",
+          "title": "Template Variables"
+        }
+      },
+      "required": [
+        "identifier_type",
+        "identifier_value"
+      ],
+      "title": "SendMessage",
+      "type": "object"
+    },
+    "SetContactNote": {
+      "properties": {
+        "identifier_type": {
+          "enum": [
+            "contact_id",
+            "email",
+            "phone_number"
+          ],
+          "title": "Find Contact By",
+          "type": "string"
+        },
+        "identifier_value": {
+          "description": "Contact ID, email address, or phone number, matching Find Contact By.",
+          "minLength": 1,
+          "title": "Contact Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_contact_note",
+          "default": "set_contact_note",
+          "title": "Set Contact Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Use null to clear the note.",
+          "title": "Note",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "identifier_type",
+        "identifier_value",
+        "note"
+      ],
+      "title": "SetContactNote",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note",
+          "ui:widget": "textarea"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Fields"
+        },
+        "identifier_type": {
+          "enum": [
+            "contact_id",
+            "email",
+            "phone_number"
+          ],
+          "title": "Find Contact By",
+          "type": "string"
+        },
+        "identifier_value": {
+          "description": "Contact ID, email address, or phone number, matching Find Contact By.",
+          "minLength": 1,
+          "title": "Contact Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts"
+        }
+      },
+      "required": [
+        "identifier_type",
+        "identifier_value"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "VendschatAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "vendschat_api_key",
+          "default": "vendschat_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Vendschat API Key",
+      "type": "object",
+      "x-credential-instructions": "On Growth or Advanced, open Settings \u2192 Workspace \u2192 Integrations \u2192 n8n, Make, or Zapier and create an API key. Paste the key shown once. Advanced accounts can also use Settings \u2192 Workspace \u2192 API Keys.",
+      "x-credential-url": "https://docs.vendschat.com/integrations/api-keys-and-rest-api"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contact_labels": "#/$defs/AddContactLabels",
+          "create_contact": "#/$defs/CreateContact",
+          "delete_contact": "#/$defs/DeleteContact",
+          "get_template": "#/$defs/GetTemplate",
+          "get_workspace": "#/$defs/GetWorkspace",
+          "list_channels": "#/$defs/ListChannels",
+          "list_labels": "#/$defs/ListLabels",
+          "list_templates": "#/$defs/ListTemplates",
+          "list_webhook_events": "#/$defs/ListWebhookEvents",
+          "lookup_contact": "#/$defs/LookupContact",
+          "on_incoming_whatsapp_text": "#/$defs/OnIncomingWhatsAppText",
+          "remove_contact_labels": "#/$defs/RemoveContactLabels",
+          "send_message": "#/$defs/SendMessage",
+          "set_contact_note": "#/$defs/SetContactNote",
+          "update_contact": "#/$defs/UpdateContact"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetWorkspace"
+        },
+        {
+          "$ref": "#/$defs/ListChannels"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/GetTemplate"
+        },
+        {
+          "$ref": "#/$defs/SendMessage"
+        },
+        {
+          "$ref": "#/$defs/LookupContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/SetContactNote"
+        },
+        {
+          "$ref": "#/$defs/AddContactLabels"
+        },
+        {
+          "$ref": "#/$defs/RemoveContactLabels"
+        },
+        {
+          "$ref": "#/$defs/ListLabels"
+        },
+        {
+          "$ref": "#/$defs/ListWebhookEvents"
+        },
+        {
+          "$ref": "#/$defs/OnIncomingWhatsAppText"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VendschatAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Vendschat Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
