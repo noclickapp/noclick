@@ -1,0 +1,747 @@
+{
+  "$defs": {
+    "VisualstudioArchiveEnvironmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {
+          "format": "uuid",
+          "title": "Environment ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "archive_environment",
+          "default": "archive_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Archive Environment",
+          "x-method-kind": "write"
+        }
+      },
+      "required": [
+        "environment_id"
+      ],
+      "title": "VisualstudioArchiveEnvironmentConfig",
+      "type": "object"
+    },
+    "VisualstudioCreateEnvironmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "plan_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plan ID"
+        },
+        "environment_type": {
+          "description": "Provider environment type.",
+          "minLength": 1,
+          "title": "Environment Type",
+          "type": "string"
+        },
+        "friendly_name": {
+          "minLength": 1,
+          "title": "Environment Name",
+          "type": "string"
+        },
+        "container_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Container Image"
+        },
+        "sku_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "SKU Name"
+        },
+        "auto_shutdown_delay_minutes": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Auto Shutdown Delay (Minutes)"
+        },
+        "dev_container_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dev Container Path"
+        },
+        "working_directory": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Working Directory"
+        },
+        "operation": {
+          "const": "create_environment",
+          "default": "create_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Environment",
+          "x-method-kind": "write"
+        }
+      },
+      "required": [
+        "environment_type",
+        "friendly_name"
+      ],
+      "title": "VisualstudioCreateEnvironmentConfig",
+      "type": "object"
+    },
+    "VisualstudioDeleteEnvironmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {
+          "format": "uuid",
+          "title": "Environment ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_environment",
+          "default": "delete_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Environment",
+          "x-method-kind": "write"
+        }
+      },
+      "required": [
+        "environment_id"
+      ],
+      "title": "VisualstudioDeleteEnvironmentConfig",
+      "type": "object"
+    },
+    "VisualstudioExportEnvironmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {
+          "format": "uuid",
+          "title": "Environment ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "export_environment",
+          "default": "export_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Export Environment",
+          "x-method-kind": "write"
+        }
+      },
+      "required": [
+        "environment_id"
+      ],
+      "title": "VisualstudioExportEnvironmentConfig",
+      "type": "object"
+    },
+    "VisualstudioGetAgentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "minLength": 1,
+          "title": "Agent Family",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_agent",
+          "default": "get_agent",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Agent",
+          "x-method-kind": "read"
+        }
+      },
+      "required": [
+        "family"
+      ],
+      "title": "VisualstudioGetAgentConfig",
+      "type": "object"
+    },
+    "VisualstudioGetBillingConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_billing",
+          "default": "get_billing",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Billing",
+          "x-method-kind": "read"
+        }
+      },
+      "title": "VisualstudioGetBillingConfig",
+      "type": "object"
+    },
+    "VisualstudioGetEnvironmentArchiveConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {
+          "format": "uuid",
+          "title": "Environment ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_environment_archive",
+          "default": "get_environment_archive",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Environment Archive",
+          "x-method-kind": "read"
+        }
+      },
+      "required": [
+        "environment_id"
+      ],
+      "title": "VisualstudioGetEnvironmentArchiveConfig",
+      "type": "object"
+    },
+    "VisualstudioGetEnvironmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {
+          "format": "uuid",
+          "title": "Environment ID",
+          "type": "string"
+        },
+        "deleted": {
+          "default": false,
+          "title": "Include Deleted Environments",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "get_environment",
+          "default": "get_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Environment",
+          "x-method-kind": "read"
+        }
+      },
+      "required": [
+        "environment_id"
+      ],
+      "title": "VisualstudioGetEnvironmentConfig",
+      "type": "object"
+    },
+    "VisualstudioGetEnvironmentStateConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {
+          "format": "uuid",
+          "title": "Environment ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_environment_state",
+          "default": "get_environment_state",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Environment State",
+          "x-method-kind": "read"
+        }
+      },
+      "required": [
+        "environment_id"
+      ],
+      "title": "VisualstudioGetEnvironmentStateConfig",
+      "type": "object"
+    },
+    "VisualstudioGetLocationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "plan_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plan ID"
+        },
+        "location": {
+          "minLength": 1,
+          "title": "Location",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_location",
+          "default": "get_location",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Location",
+          "x-method-kind": "read"
+        }
+      },
+      "required": [
+        "location"
+      ],
+      "title": "VisualstudioGetLocationConfig",
+      "type": "object"
+    },
+    "VisualstudioGetPortInfoConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {
+          "format": "uuid",
+          "title": "Environment ID",
+          "type": "string"
+        },
+        "port_number": {
+          "anyOf": [
+            {
+              "maximum": 65535,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Port Number"
+        },
+        "operation": {
+          "const": "get_port_info",
+          "default": "get_port_info",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Port Info",
+          "x-method-kind": "read"
+        }
+      },
+      "required": [
+        "environment_id"
+      ],
+      "title": "VisualstudioGetPortInfoConfig",
+      "type": "object"
+    },
+    "VisualstudioListEnvironmentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment Name Filter"
+        },
+        "plan_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plan ID"
+        },
+        "deleted": {
+          "default": false,
+          "title": "Include Deleted Environments",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_environments",
+          "default": "list_environments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Environments",
+          "x-method-kind": "read"
+        }
+      },
+      "title": "VisualstudioListEnvironmentsConfig",
+      "type": "object"
+    },
+    "VisualstudioListLocationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Locations",
+          "x-method-kind": "read"
+        }
+      },
+      "title": "VisualstudioListLocationsConfig",
+      "type": "object"
+    },
+    "VisualstudioRestoreEnvironmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {
+          "format": "uuid",
+          "title": "Environment ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "restore_environment",
+          "default": "restore_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Restore Environment",
+          "x-method-kind": "write"
+        }
+      },
+      "required": [
+        "environment_id"
+      ],
+      "title": "VisualstudioRestoreEnvironmentConfig",
+      "type": "object"
+    },
+    "VisualstudioShutdownEnvironmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {
+          "format": "uuid",
+          "title": "Environment ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "shutdown_environment",
+          "default": "shutdown_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Shutdown Environment",
+          "x-method-kind": "write"
+        }
+      },
+      "required": [
+        "environment_id"
+      ],
+      "title": "VisualstudioShutdownEnvironmentConfig",
+      "type": "object"
+    },
+    "VisualstudioStartEnvironmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {
+          "format": "uuid",
+          "title": "Environment ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "start_environment",
+          "default": "start_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Start Environment",
+          "x-method-kind": "write"
+        }
+      },
+      "required": [
+        "environment_id"
+      ],
+      "title": "VisualstudioStartEnvironmentConfig",
+      "type": "object"
+    },
+    "VisualstudioTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "visualstudio_token",
+          "default": "visualstudio_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "VSOnline Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing VSOnline user JWT access token, without the Bearer prefix. The published API accepts bearer tokens; this connection does not create or refresh them. NoClick sends it only to online.visualstudio.com. Use a token authorized for the environments you want to manage.",
+      "x-credential-url": "https://online.visualstudio.com/api/v1/swagger"
+    },
+    "VisualstudioUpdateEnvironmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {
+          "format": "uuid",
+          "title": "Environment ID",
+          "type": "string"
+        },
+        "plan_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plan ID"
+        },
+        "friendly_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment Name"
+        },
+        "sku_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "SKU Name"
+        },
+        "auto_shutdown_delay_minutes": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Auto Shutdown Delay (Minutes)"
+        },
+        "operation": {
+          "const": "update_environment",
+          "default": "update_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Environment",
+          "x-method-kind": "write"
+        }
+      },
+      "required": [
+        "environment_id"
+      ],
+      "title": "VisualstudioUpdateEnvironmentConfig",
+      "type": "object"
+    },
+    "VisualstudioUpdateRecentFoldersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {
+          "format": "uuid",
+          "title": "Environment ID",
+          "type": "string"
+        },
+        "recent_folder_paths": {
+          "description": "Replaces the list; an empty list clears it.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Recent Folder Paths",
+          "type": "array"
+        },
+        "operation": {
+          "const": "update_recent_folders",
+          "default": "update_recent_folders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Recent Folders",
+          "x-method-kind": "write"
+        }
+      },
+      "required": [
+        "environment_id",
+        "recent_folder_paths"
+      ],
+      "title": "VisualstudioUpdateRecentFoldersConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_environment": "#/$defs/VisualstudioArchiveEnvironmentConfig",
+          "create_environment": "#/$defs/VisualstudioCreateEnvironmentConfig",
+          "delete_environment": "#/$defs/VisualstudioDeleteEnvironmentConfig",
+          "export_environment": "#/$defs/VisualstudioExportEnvironmentConfig",
+          "get_agent": "#/$defs/VisualstudioGetAgentConfig",
+          "get_billing": "#/$defs/VisualstudioGetBillingConfig",
+          "get_environment": "#/$defs/VisualstudioGetEnvironmentConfig",
+          "get_environment_archive": "#/$defs/VisualstudioGetEnvironmentArchiveConfig",
+          "get_environment_state": "#/$defs/VisualstudioGetEnvironmentStateConfig",
+          "get_location": "#/$defs/VisualstudioGetLocationConfig",
+          "get_port_info": "#/$defs/VisualstudioGetPortInfoConfig",
+          "list_environments": "#/$defs/VisualstudioListEnvironmentsConfig",
+          "list_locations": "#/$defs/VisualstudioListLocationsConfig",
+          "restore_environment": "#/$defs/VisualstudioRestoreEnvironmentConfig",
+          "shutdown_environment": "#/$defs/VisualstudioShutdownEnvironmentConfig",
+          "start_environment": "#/$defs/VisualstudioStartEnvironmentConfig",
+          "update_environment": "#/$defs/VisualstudioUpdateEnvironmentConfig",
+          "update_recent_folders": "#/$defs/VisualstudioUpdateRecentFoldersConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/VisualstudioListEnvironmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioGetEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioCreateEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioUpdateEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioDeleteEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioStartEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioShutdownEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioArchiveEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioGetEnvironmentArchiveConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioExportEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioRestoreEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioUpdateRecentFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioGetEnvironmentStateConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioGetBillingConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioListLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioGetLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioGetAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/VisualstudioGetPortInfoConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VisualstudioTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Visualstudio Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Start my development environment",
+    "Create a VSOnline environment",
+    "Shut down an idle environment"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
