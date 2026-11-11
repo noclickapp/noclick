@@ -1,0 +1,1840 @@
+{
+  "$defs": {
+    "HassleFreeBooksAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "hasslefreebooks_api_key",
+          "default": "hasslefreebooks_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "HassleFreeBooks API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste an API key created in HassleFreeBooks with read and write scopes. Webhook subscriptions require the owner role. NoClick sends it as a Bearer token to hasslefreebooks.com.",
+      "x-credential-url": "https://hasslefreebooks.com/api-keys"
+    },
+    "HassleFreeBooksApproveBillConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "approve_bill",
+          "default": "approve_bill",
+          "title": "Approve Bill",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bills",
+          "x-display-name": "Approve Bill"
+        },
+        "id": {
+          "description": "Bill ID",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "expense_account_id": {
+          "description": "An active expense account of this business; the bill's amount is charged to it.",
+          "title": "Expense Account Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "expense_account_id"
+      ],
+      "title": "HassleFreeBooksApproveBillConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksCreateBillConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_bill",
+          "default": "create_bill",
+          "title": "Create Bill",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bills",
+          "x-display-name": "Create Bill"
+        },
+        "amount": {
+          "description": "Bill amount (must be greater than zero)",
+          "title": "Amount",
+          "type": "string"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Payment due date (YYYY-MM-DD); defaults to 30 days from today",
+          "title": "Due Date"
+        },
+        "bill_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bill date (YYYY-MM-DD); defaults to today",
+          "title": "Bill Date"
+        },
+        "vendor_name": {
+          "description": "Vendor or supplier name; the bill is recorded against the vendor contact of this name",
+          "title": "Vendor Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bill description or memo (optional)",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "amount",
+        "vendor_name"
+      ],
+      "title": "HassleFreeBooksCreateBillConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksCreateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Create Contact"
+        },
+        "display_name": {
+          "description": "Display name (also accepts `name` as alias)",
+          "title": "Display Name",
+          "type": "string"
+        },
+        "type": {
+          "description": "Contact type",
+          "enum": [
+            "customer",
+            "vendor",
+            "both"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact email (unique per entity)",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact phone number",
+          "title": "Phone"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Arbitrary metadata as JSON object",
+          "title": "Metadata"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Active status (defaults to true)",
+          "title": "Is Active"
+        }
+      },
+      "required": [
+        "display_name",
+        "type"
+      ],
+      "title": "HassleFreeBooksCreateContactConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksCreateInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_invoice",
+          "default": "create_invoice",
+          "title": "Create an invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Create an invoice"
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "invoice_date": {
+          "format": "date",
+          "title": "Invoice Date",
+          "type": "string"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due Date"
+        },
+        "invoice_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoice Number"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "lines": {
+          "description": "Line items; at least one is required (in `lines` or `line_items`). `line_items` is accepted as a synonym and is what the Flutter client sends. Each line needs a description (500 characters or fewer), a quantity greater than 0 and a unit_price of 0 or more; both are rounded to 2 decimals and line_total is quantity x unit_price. A client line_total is ignored.",
+          "items": {
+            "$ref": "#/$defs/HassleFreeBooksCreateInvoiceConfigLinesItem"
+          },
+          "minItems": 1,
+          "title": "Lines",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contact_id",
+        "invoice_date",
+        "lines"
+      ],
+      "title": "HassleFreeBooksCreateInvoiceConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksCreateInvoiceConfigLinesItem": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "quantity": {
+          "minimum": 0.01,
+          "title": "Quantity",
+          "type": "number"
+        },
+        "unit_price": {
+          "minimum": 0,
+          "title": "Unit Price",
+          "type": "number"
+        }
+      },
+      "required": [
+        "description",
+        "quantity",
+        "unit_price"
+      ],
+      "title": "HassleFreeBooksCreateInvoiceConfigLinesItem",
+      "type": "object"
+    },
+    "HassleFreeBooksCreateTransactionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_transaction",
+          "default": "create_transaction",
+          "title": "Create Journal Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactions",
+          "x-display-name": "Create Journal Entry"
+        },
+        "description": {
+          "description": "Journal entry description",
+          "title": "Description",
+          "type": "string"
+        },
+        "date": {
+          "description": "Transaction date in Y-m-d format",
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "entity_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Entity ID (optional, defaults to user's primary entity)",
+          "title": "Entity Id"
+        },
+        "lines": {
+          "description": "Transaction lines (minimum 2, must balance)",
+          "items": {
+            "$ref": "#/$defs/HassleFreeBooksCreateTransactionConfigLinesItem"
+          },
+          "minItems": 2,
+          "title": "Lines",
+          "type": "array"
+        }
+      },
+      "required": [
+        "description",
+        "date",
+        "lines"
+      ],
+      "title": "HassleFreeBooksCreateTransactionConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksCreateTransactionConfigLinesItem": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "description": "Chart of accounts ID",
+          "minimum": 1,
+          "title": "Account Id",
+          "type": "integer"
+        },
+        "debit_amount": {
+          "description": "Debit amount (use \"0.00\" if this is a credit line)",
+          "pattern": "^[0-9]+(?:\\.[0-9]{1,2})?$",
+          "title": "Debit Amount",
+          "type": "string"
+        },
+        "credit_amount": {
+          "description": "Credit amount (use \"0.00\" if this is a debit line)",
+          "pattern": "^[0-9]+(?:\\.[0-9]{1,2})?$",
+          "title": "Credit Amount",
+          "type": "string"
+        },
+        "memo": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional memo for this line",
+          "title": "Memo"
+        }
+      },
+      "required": [
+        "account_id",
+        "debit_amount",
+        "credit_amount"
+      ],
+      "title": "HassleFreeBooksCreateTransactionConfigLinesItem",
+      "type": "object"
+    },
+    "HassleFreeBooksFinalizeInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "finalize_invoice",
+          "default": "finalize_invoice",
+          "title": "Finalize Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Finalize Invoice"
+        },
+        "id": {
+          "description": "Invoice ID",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HassleFreeBooksFinalizeInvoiceConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksGetBalanceSheetConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_balance_sheet",
+          "default": "get_balance_sheet",
+          "title": "Balance sheet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Balance sheet"
+        },
+        "entity_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entity Id"
+        },
+        "as_of_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "As Of Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Balance sheet as of this date (alias of as_of_date).",
+          "title": "End Date"
+        }
+      },
+      "title": "HassleFreeBooksGetBalanceSheetConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksGetBillConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_bill",
+          "default": "get_bill",
+          "title": "Get Bill",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bills",
+          "x-display-name": "Get Bill"
+        },
+        "id": {
+          "description": "Bill ID",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HassleFreeBooksGetBillConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksGetContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Contact"
+        },
+        "id": {
+          "description": "Contact ID",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HassleFreeBooksGetContactConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksGetCurrentUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Current User"
+        }
+      },
+      "title": "HassleFreeBooksGetCurrentUserConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksGetInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Get an invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Get an invoice"
+        },
+        "invoiceId": {
+          "title": "Invoice Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "invoiceId"
+      ],
+      "title": "HassleFreeBooksGetInvoiceConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksGetProfitLossConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_profit_loss",
+          "default": "get_profit_loss",
+          "title": "Generate Profit & Loss Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Generate Profit & Loss Report"
+        },
+        "entity_id": {
+          "description": "Entity ID for multi-tenant isolation",
+          "minimum": 1,
+          "title": "Entity Id",
+          "type": "integer"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Report period start date (YYYY-MM-DD)",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Report period end date (YYYY-MM-DD)",
+          "title": "End Date"
+        },
+        "account_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "income",
+                "expense"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by account type",
+          "title": "Account Type",
+          "enum": [
+            "income",
+            "expense"
+          ],
+          "x-enum-searchable": true
+        },
+        "account_code": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by account code (partial match, max 50 chars)",
+          "title": "Account Code"
+        },
+        "department": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by department (max 100 chars)",
+          "title": "Department"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by tag (max 50 chars)",
+          "title": "Tag"
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of dimensions to group by",
+          "title": "Dimensions"
+        },
+        "compare_to_previous": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include comparison to the previous period",
+          "title": "Compare To Previous",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "entity_id"
+      ],
+      "title": "HassleFreeBooksGetProfitLossConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksGetTransactionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_transaction",
+          "default": "get_transaction",
+          "title": "Get Transaction Detail",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactions",
+          "x-display-name": "Get Transaction Detail"
+        },
+        "id": {
+          "description": "Transaction ID",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "entity_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Entity to read from; defaults to the caller's active entity.",
+          "title": "Entity Id"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HassleFreeBooksGetTransactionConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksListAccountsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "List chart of accounts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "ChartOfAccounts",
+          "x-display-name": "List chart of accounts"
+        },
+        "entity_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the caller's active entity.",
+          "title": "Entity Id"
+        }
+      },
+      "title": "HassleFreeBooksListAccountsConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksListBillsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_bills",
+          "default": "list_bills",
+          "title": "List Bills",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bills",
+          "x-display-name": "List Bills"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number, from 1.",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 20,
+          "description": "Rows per page; above 100 is clamped to 100.",
+          "title": "Per Page"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "paid",
+                "unpaid"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paid state. Any other value is ignored. The workflow state (draft, approved, paid) is in each bill's `status`.",
+          "title": "Status",
+          "enum": [
+            "paid",
+            "unpaid"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free text matched against vendor name and description.",
+          "title": "Search"
+        },
+        "overdue": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "true: only unpaid bills past their due date.",
+          "title": "Overdue"
+        }
+      },
+      "title": "HassleFreeBooksListBillsConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contacts"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "customer",
+                "vendor",
+                "both"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by contact type",
+          "title": "Type",
+          "enum": [
+            "customer",
+            "vendor",
+            "both"
+          ],
+          "x-enum-searchable": true
+        },
+        "active": {
+          "anyOf": [
+            {
+              "enum": [
+                "0",
+                "1",
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by active status (defaults to active-only when omitted)",
+          "title": "Active",
+          "enum": [
+            "0",
+            "1",
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case-insensitive match on name, display name or email",
+          "title": "Q"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opt in to paging; 1-based. Without `page` and `per_page` the whole list is returned.",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rows per page when paging (default 50, clamped to 200). Adds `data.pagination`.",
+          "title": "Per Page"
+        }
+      },
+      "title": "HassleFreeBooksListContactsConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksListInvoicesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "List Invoices",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "List Invoices"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number (1-based)",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Results per page (max 100)",
+          "title": "Per Page"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "sent",
+                "finalized",
+                "partial",
+                "paid",
+                "void"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by invoice status",
+          "title": "Status",
+          "enum": [
+            "draft",
+            "sent",
+            "finalized",
+            "partial",
+            "paid",
+            "void"
+          ],
+          "x-enum-searchable": true
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by contact/customer ID",
+          "title": "Contact Id"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter invoices on or after this date (YYYY-MM-DD)",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter invoices on or before this date (YYYY-MM-DD)",
+          "title": "End Date"
+        }
+      },
+      "title": "HassleFreeBooksListInvoicesConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksListTransactionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "List Transactions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactions",
+          "x-display-name": "List Transactions"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number (1-based)",
+          "title": "Page"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter transactions from this date (inclusive, Y-m-d format)",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter transactions until this date (inclusive, Y-m-d format)",
+          "title": "End Date"
+        },
+        "min_amount": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter transactions with amount >= this value",
+          "title": "Min Amount"
+        },
+        "max_amount": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter transactions with amount <= this value",
+          "title": "Max Amount"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "manual",
+                "import",
+                "api"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by transaction source",
+          "title": "Source",
+          "enum": [
+            "manual",
+            "import",
+            "api"
+          ],
+          "x-enum-searchable": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search in transaction description",
+          "title": "Q"
+        },
+        "entity_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Entity to list; defaults to the caller's active entity (POST /api/v1/entities/switch). An entity the caller is not a member of is answered 404.",
+          "title": "Entity Id"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Rows to return; wins over per_page.",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rows to skip; wins over page.",
+          "title": "Offset"
+        }
+      },
+      "title": "HassleFreeBooksListTransactionsConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksOnEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On Invoice Paid",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Invoice Paid",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "const": "invoice.paid",
+          "default": "invoice.paid",
+          "title": "Event Type",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "HassleFreeBooksOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "HassleFreeBooksPayBillConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "pay_bill",
+          "default": "pay_bill",
+          "title": "Pay Bill",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bills",
+          "x-display-name": "Pay Bill"
+        },
+        "id": {
+          "description": "Bill ID",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Amount to pay (default the outstanding balance). \"1,500.00\" and \"$1,500.00\" are read as 1500.00.",
+          "title": "Amount"
+        },
+        "payment_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date the money left (default the business's today)",
+          "title": "Payment Date"
+        },
+        "payment_account_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Active bank or cash (asset) account the payment came from (default the cash account)",
+          "title": "Payment Account Id"
+        },
+        "expected_outstanding": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The balance you showed the person (default: not checked). When the bill's balance under its row lock differs, the answer is 409 BALANCE_CHANGED and nothing is paid. Send it with part payments so a repeated request cannot pay twice.",
+          "title": "Expected Outstanding"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HassleFreeBooksPayBillConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksRecordInvoicePaymentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "record_invoice_payment",
+          "default": "record_invoice_payment",
+          "title": "Record Invoice Payment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Record Invoice Payment"
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "integer"
+        },
+        "amount": {
+          "title": "Amount",
+          "type": "number"
+        },
+        "payment_date": {
+          "format": "date",
+          "title": "Payment Date",
+          "type": "string"
+        },
+        "deposit_account_id": {
+          "description": "Active asset account of the entity, other than Accounts Receivable",
+          "title": "Deposit Account Id",
+          "type": "integer"
+        },
+        "payment_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Method"
+        },
+        "reference_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference Number"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "invoice_id",
+        "amount",
+        "payment_date",
+        "deposit_account_id"
+      ],
+      "title": "HassleFreeBooksRecordInvoicePaymentConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksSendInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_invoice",
+          "default": "send_invoice",
+          "title": "Send an invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Send an invoice"
+        },
+        "invoiceId": {
+          "title": "Invoice Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "invoiceId"
+      ],
+      "title": "HassleFreeBooksSendInvoiceConfig",
+      "type": "object"
+    },
+    "HassleFreeBooksUpdateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Update Contact"
+        },
+        "id": {
+          "description": "Contact ID",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated display name (also accepts `name`)",
+          "title": "Display Name"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "customer",
+                "vendor",
+                "both"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated contact type",
+          "title": "Type",
+          "enum": [
+            "customer",
+            "vendor",
+            "both"
+          ],
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated email (null clears the value)",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated phone (null clears the value)",
+          "title": "Phone"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated metadata (null clears the value)",
+          "title": "Metadata"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated active status",
+          "title": "Is Active"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HassleFreeBooksUpdateContactConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "approve_bill": "#/$defs/HassleFreeBooksApproveBillConfig",
+          "create_bill": "#/$defs/HassleFreeBooksCreateBillConfig",
+          "create_contact": "#/$defs/HassleFreeBooksCreateContactConfig",
+          "create_invoice": "#/$defs/HassleFreeBooksCreateInvoiceConfig",
+          "create_transaction": "#/$defs/HassleFreeBooksCreateTransactionConfig",
+          "finalize_invoice": "#/$defs/HassleFreeBooksFinalizeInvoiceConfig",
+          "get_balance_sheet": "#/$defs/HassleFreeBooksGetBalanceSheetConfig",
+          "get_bill": "#/$defs/HassleFreeBooksGetBillConfig",
+          "get_contact": "#/$defs/HassleFreeBooksGetContactConfig",
+          "get_current_user": "#/$defs/HassleFreeBooksGetCurrentUserConfig",
+          "get_invoice": "#/$defs/HassleFreeBooksGetInvoiceConfig",
+          "get_profit_loss": "#/$defs/HassleFreeBooksGetProfitLossConfig",
+          "get_transaction": "#/$defs/HassleFreeBooksGetTransactionConfig",
+          "list_accounts": "#/$defs/HassleFreeBooksListAccountsConfig",
+          "list_bills": "#/$defs/HassleFreeBooksListBillsConfig",
+          "list_contacts": "#/$defs/HassleFreeBooksListContactsConfig",
+          "list_invoices": "#/$defs/HassleFreeBooksListInvoicesConfig",
+          "list_transactions": "#/$defs/HassleFreeBooksListTransactionsConfig",
+          "on_event": "#/$defs/HassleFreeBooksOnEventConfig",
+          "pay_bill": "#/$defs/HassleFreeBooksPayBillConfig",
+          "record_invoice_payment": "#/$defs/HassleFreeBooksRecordInvoicePaymentConfig",
+          "send_invoice": "#/$defs/HassleFreeBooksSendInvoiceConfig",
+          "update_contact": "#/$defs/HassleFreeBooksUpdateContactConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HassleFreeBooksListTransactionsConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksCreateTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksGetTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksGetInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksSendInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksGetBalanceSheetConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksListAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksListInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksCreateInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksListBillsConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksCreateBillConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksGetBillConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksPayBillConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksGetProfitLossConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksRecordInvoicePaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksFinalizeInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksApproveBillConfig"
+        },
+        {
+          "$ref": "#/$defs/HassleFreeBooksOnEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HassleFreeBooksAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Hasslefreebooks Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,249 @@
+{
+  "getCurrentUser": {
+    "source": "https://hasslefreebooks.com/openapi.json",
+    "method": "GET",
+    "path": "/api/v1/me",
+    "response": {
+      "ok": true,
+      "request_id": "f4d4ad9fa3ad7ea474f6a9439d891a52",
+      "data": {
+        "user": {
+          "id": 123,
+          "email": "user@example.com",
+          "name": "John Doe",
+          "created_at": "2023-01-01T00:00:00Z",
+          "active_entity_id": 1
+        },
+        "entities": [
+          {
+            "id": 1,
+            "name": "My Business",
+            "role": "owner"
+          }
+        ]
+      },
+      "meta": {
+        "timestamp": "2024-01-01T12:00:00Z"
+      }
+    },
+    "status": 200
+  },
+  "createContact": {
+    "source": "https://hasslefreebooks.com/openapi.json",
+    "method": "POST",
+    "path": "/api/v1/contacts",
+    "request": {
+      "display_name": "Acme Corp",
+      "type": "customer",
+      "email": "billing@acme.com",
+      "phone": "555-0100"
+    },
+    "response": {
+      "ok": true,
+      "request_id": "f4d4ad9fa3ad7ea474f6a9439d891a52",
+      "data": {
+        "contact": {
+          "id": 1,
+          "entity_id": 1,
+          "name": "Acme Corp",
+          "display_name": "Acme Corp",
+          "email": "billing@acme.com",
+          "phone": "555-0100",
+          "type": "customer",
+          "metadata": null,
+          "is_active": true,
+          "created_at": "2024-01-15T10:00:00Z",
+          "updated_at": "2024-01-15T10:00:00Z"
+        },
+        "message": "Contact created successfully"
+      },
+      "meta": {
+        "timestamp": "2024-01-15T10:00:00Z"
+      }
+    },
+    "status": 201
+  },
+  "createInvoiceRest": {
+    "source": "https://hasslefreebooks.com/openapi.json",
+    "method": "POST",
+    "path": "/api/v1/invoices",
+    "request": {
+      "contact_id": 10,
+      "invoice_date": "2026-01-15",
+      "due_date": "2026-02-15",
+      "subtotal": "1000.00",
+      "total": "1000.00",
+      "invoice_number": "INV-001",
+      "notes": "Net 30",
+      "lines": [
+        {
+          "description": "Consulting",
+          "quantity": 10,
+          "unit_price": 100
+        }
+      ]
+    },
+    "response": {
+      "ok": true,
+      "request_id": "f4d4ad9fa3ad7ea474f6a9439d891a52",
+      "data": {
+        "invoice": {
+          "id": 960986,
+          "entity_id": 961041,
+          "contact_id": 961390,
+          "invoice_number": "AUDA-INV-4255465511",
+          "status": "draft",
+          "invoice_date": "2026-10-20",
+          "due_date": "2026-11-19",
+          "subtotal": "300.00",
+          "total": "300.00",
+          "notes": "AUDA",
+          "created_at": "2026-10-25 18:58:54",
+          "updated_at": "2026-10-25 18:58:54",
+          "deleted_at": null,
+          "description": null,
+          "total_amount": "300.00",
+          "tax_amount": "0.00",
+          "discount_amount": "0.00",
+          "paid_amount": "0.00",
+          "balance_due": "300.00",
+          "payment_terms": null,
+          "currency_code": "USD",
+          "exchange_rate": "1.000000",
+          "sent_at": null,
+          "paid_at": null,
+          "voided_at": null,
+          "voided_reason": null,
+          "internal_notes": null,
+          "created_by_user_id": null,
+          "sent_by_user_id": null,
+          "contact_email": "auda-customer-4255465502@example.com",
+          "contact_name": "AUDA-customer-4255465502",
+          "entity_name": "ApiAudit a Books",
+          "lines": [
+            {
+              "id": 314,
+              "invoice_id": 960986,
+              "description": "AUDA line 4255465511",
+              "quantity": "2.00",
+              "unit_price": "150.00",
+              "line_total": "300.00",
+              "created_at": "2026-10-25 18:58:54"
+            }
+          ]
+        }
+      },
+      "meta": {
+        "timestamp": "2026-01-15T12:00:00+00:00"
+      }
+    },
+    "status": 200
+  },
+  "createTransaction": {
+    "source": "https://hasslefreebooks.com/openapi.json",
+    "method": "POST",
+    "path": "/api/v1/transactions",
+    "request": {
+      "date": "2024-01-15",
+      "description": "Office supplies purchase",
+      "entity_id": 1,
+      "lines": [
+        {
+          "account_id": 1,
+          "debit_amount": "100.00",
+          "credit_amount": "0.00",
+          "memo": "Office supplies"
+        },
+        {
+          "account_id": 2,
+          "debit_amount": "0.00",
+          "credit_amount": "100.00",
+          "memo": "Cash payment"
+        }
+      ]
+    },
+    "response": {
+      "ok": true,
+      "request_id": "f4d4ad9fa3ad7ea474f6a9439d891a52",
+      "data": {
+        "transaction": {
+          "id": 42,
+          "entity_id": 1,
+          "date": "2024-01-15",
+          "description": "Office supplies purchase",
+          "source": "api",
+          "created_at": "2024-01-15T10:30:00Z",
+          "total_debits": "100.00",
+          "total_credits": "100.00",
+          "lines": [
+            {
+              "id": 101,
+              "account_id": 1,
+              "account_name": "Office Supplies",
+              "account_code": "6100",
+              "debit_amount": "100.00",
+              "credit_amount": "0.00",
+              "memo": "Office supplies"
+            },
+            {
+              "id": 102,
+              "account_id": 2,
+              "account_name": "Cash",
+              "account_code": "1000",
+              "debit_amount": "0.00",
+              "credit_amount": "100.00",
+              "memo": "Cash payment"
+            }
+          ]
+        }
+      },
+      "meta": {
+        "timestamp": "2024-01-15T12:00:00Z"
+      }
+    },
+    "status": 200
+  },
+  "recordInvoicePayment": {
+    "source": "https://hasslefreebooks.com/openapi.json",
+    "method": "POST",
+    "path": "/api/v1/invoices/record-payment",
+    "response": {
+      "ok": true,
+      "request_id": "f4d4ad9fa3ad7ea474f6a9439d891a52",
+      "data": {
+        "invoice_payment_id": 167,
+        "transaction_id": 964985,
+        "invoice_id": 961003,
+        "new_balance": "200.00",
+        "status": "partial"
+      },
+      "meta": {
+        "timestamp": "2026-01-15T12:00:00+00:00"
+      }
+    },
+    "status": 200
+  },
+  "payBill": {
+    "source": "https://hasslefreebooks.com/openapi.json",
+    "method": "POST",
+    "path": "/api/v1/bills/{id}/pay",
+    "request": {
+      "amount": "150.00",
+      "payment_date": "2026-11-03",
+      "payment_account_id": 12,
+      "expected_outstanding": "1500.00"
+    },
+    "response": {
+      "ok": true,
+      "request_id": "f4d4ad9fa3ad7ea474f6a9439d891a52",
+      "data": {
+        "message": "Bill marked as paid successfully",
+        "bill_id": 1
+      },
+      "meta": {
+        "timestamp": "2024-02-15T10:00:00Z"
+      }
+    },
+    "status": 200
+  }
+}

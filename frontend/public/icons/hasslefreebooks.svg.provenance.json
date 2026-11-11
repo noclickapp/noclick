@@ -1,0 +1,10 @@
+{
+  "path": "frontend/public/icons/hasslefreebooks.svg",
+  "source": "https://hasslefreebooks.com/assets/images/favicon.svg",
+  "source_page": "https://hasslefreebooks.com/",
+  "retrieved_at": "2026-11-11",
+  "license": "HassleFreeBooks trademark; used to identify the integration",
+  "sha256": "cb1f90029a03dcad5c4a83373a9094566d65656cfd53eb57037a557f0dba6ca9",
+  "edits": [],
+  "notes": "Official SVG favicon: open book and checkmark app mark, used as published. No wordmark or added background."
+}
