@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/parcellab-brand-vector-dark.svg",
+  "source": "https://parcellab.com (parcelLab official brand artwork, imported from noclickapp/noclick4#2803)",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: black -> #FFFFFF"
+  ],
+  "variant": "dark mode",
+  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no trademark rights claimed or granted",
+  "sha256": "8b2e6b4847b5f042b830e934c2715f81f61db43024849f2066547181f0ce15f2"
+}
