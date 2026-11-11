@@ -137,8 +137,14 @@ export interface Channel {
     /** The workspace it lives in; null for one in your own channels. */
     workspaceId: string | null;
     members: ChannelMember[];
-    /** Messages since you last read it. */
+    /** Messages since you last read it (none while you've muted it). */
     unread: number;
+    /** Yours alone: starred, it leads your list; muted, it's never unread or bold for you. */
+    starred?: boolean;
+    muted?: boolean;
+    /** A person in a space's channel: whether they're in it (they star, mute and leave only one they're in). The
+     *  account reads every one of its own, so it's never set for it. */
+    joined?: boolean;
     createdAt: string;
     /** A DM's newest message, for its row in a list. */
     lastMessage?: { text: string; at: string; author: ChannelAuthor } | null;

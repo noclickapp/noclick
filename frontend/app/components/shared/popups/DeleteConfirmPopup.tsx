@@ -6,6 +6,7 @@
  * with optional warning icon and item name highlighting.
  */
 
+import type { ReactNode } from 'react';
 import { Trash2 } from 'lucide-react';
 import { ShellDialog } from '~/components/shell/ShellDialog';
 import { BUTTON_DANGER, BUTTON_GHOST } from '~/components/shell/buttons';
@@ -40,6 +41,11 @@ interface DeleteConfirmPopupProps {
     /** Extra classes on the dialog content — e.g. a higher z-index when the
      *  confirm must stack above another modal (default content z is 70). */
     dialogClassName?: string;
+    /** More about what goes, under the message (e.g. what stops with it, as a delete preview says). */
+    children?: ReactNode;
+    /** Holds the confirm, e.g. while what goes is still being read. */
+    confirmDisabled?: boolean;
+    testId?: string;
 }
 
 export function DeleteConfirmPopup({
@@ -57,6 +63,9 @@ export function DeleteConfirmPopup({
     confirmLabel,
     subText,
     dialogClassName,
+    children,
+    confirmDisabled = false,
+    testId,
 }: DeleteConfirmPopupProps) {
     const noun = itemType.toLowerCase();
     const titleText = title ?? (softDelete ? 'Move to Trash?' : `Delete ${noun}?`);
@@ -101,18 +110,20 @@ export function DeleteConfirmPopup({
             tone={softDelete ? 'neutral' : 'danger'}
             title={titleText}
             className={dialogClassName}
+            testId={testId}
             footer={
                 <>
                     <button type="button" onClick={() => onOpenChange(false)} className={BUTTON_GHOST}>
                         Cancel
                     </button>
-                    <button type="button" onClick={handleConfirm} className={BUTTON_DANGER}>
+                    <button type="button" onClick={handleConfirm} disabled={confirmDisabled} className={BUTTON_DANGER}>
                         {confirmText}
                     </button>
                 </>
             }
         >
             <p className="text-[14px] leading-relaxed text-foreground/85">{defaultMessage}</p>
+            {children}
             {subTextContent && <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">{subTextContent}</p>}
         </ShellDialog>
     );

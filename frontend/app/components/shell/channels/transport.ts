@@ -46,15 +46,28 @@ export interface ChannelsTransport {
     react(channelId: string, messageId: string, emoji: string, on: boolean): Promise<ChannelMessage>;
     createWorkspace(name: string, logo?: File): Promise<ChannelWorkspace>;
     createChannel(input: { workspaceId: string | null; name: string; topic: string; agents: AgentChoice[]; people?: string[] }): Promise<Channel>;
-    updateChannel(channelId: string, changes: { topic?: string; mode?: ChannelMode }): Promise<Channel>;
+    updateChannel(channelId: string, changes: { name?: string; topic?: string; mode?: ChannelMode }): Promise<Channel>;
     /** The schedules that post in it. */
     schedules(channelId: string): Promise<ChannelSchedule[]>;
     /** Add one of your agents; a workspace's channel takes a platform agent into the workspace first. */
     addAgent(channel: Channel, agent: AgentChoice): Promise<Channel>;
     removeMember(channelId: string, memberId: string): Promise<Channel>;
     close(channelId: string): Promise<void>;
+    /** Open a closed channel again, under `name` where an open one has its own (else `ChannelNameTaken`). */
+    reopen(channelId: string, name?: string): Promise<Channel>;
+    /** Star or mute it, or undo either, for you alone; returns it as you read it. */
+    setPreference(channelId: string, preference: 'starred' | 'muted', on: boolean): Promise<Channel>;
+    /** Leave a channel you're in (a person in a space's): it carries on without you, and posting in it joins again. */
+    leave(channelId: string): Promise<void>;
+    /** To the trash, for 30 days; resolves to its trash item, which puts it back. */
+    deleteChannel(channelId: string): Promise<{ trashId: string }>;
+    /** Put back a channel `deleteChannel` sent to the trash. */
+    restoreChannel(trashId: string): Promise<void>;
     /** You've read it through its newest message. */
     markRead(channelId: string): Promise<void>;
     /** Follow changes as they happen; returns the way to stop. */
     subscribe(listener: (change: ChannelChange) => void): () => void;
 }
+
+/** A reopen refused because an open channel in its space has its name: it reopens under another. */
+export class ChannelNameTaken extends Error {}

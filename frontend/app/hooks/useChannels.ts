@@ -49,10 +49,19 @@ export interface Channels {
     toggleReaction(channelId: string, messageId: string, emoji: string): Promise<void>;
     createWorkspace(name: string, logo?: File): Promise<ChannelWorkspace>;
     createChannel(input: { workspaceId: string | null; name: string; topic: string; agents: AgentChoice[]; people?: string[] }): Promise<Channel>;
-    updateChannel(channelId: string, changes: { topic?: string; mode?: ChannelMode }): Promise<void>;
+    updateChannel(channelId: string, changes: { name?: string; topic?: string; mode?: ChannelMode }): Promise<void>;
     addAgent(channelId: string, agent: AgentChoice): Promise<void>;
     removeMember(channelId: string, memberId: string): Promise<void>;
     close(channelId: string): Promise<void>;
+    /** Open a closed channel again (under `name`, where an open one has its own). */
+    reopen(channelId: string, name?: string): Promise<void>;
+    /** Star or mute it, or undo either, for you alone: it shows at once. */
+    setPreference(channelId: string, preference: 'starred' | 'muted', on: boolean): Promise<void>;
+    /** Leave a channel you're in. */
+    leave(channelId: string): Promise<void>;
+    /** To the trash; resolves to its trash item, which `restoreChannel` puts back. */
+    deleteChannel(channelId: string): Promise<{ trashId: string }>;
+    restoreChannel(trashId: string): Promise<void>;
 }
 
 const EMPTY_HISTORY: ChannelHistory = { messages: [], older: null, loading: true, loadingOlder: false, error: null };
@@ -405,9 +414,36 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
                 replaceChannel(await transport.addAgent(channel, agent));
             },
             removeMember: async (channelId, memberId) => replaceChannel(await transport.removeMember(channelId, memberId)),
+            // A closed channel stays in its list, read-only.
             close: async (channelId) => {
                 await transport.close(channelId);
+                setLists((prev) => ({ ...prev, channels: prev.channels.map((c) => (c.id === channelId ? { ...c, status: 'closed' as const } : c)) }));
+            },
+            reopen: async (channelId, name) => replaceChannel(await transport.reopen(channelId, name)),
+            setPreference: async (channelId, preference, on) => {
+                const was = lists.channels.find((c) => c.id === channelId);
+                const shown = (c: Channel) => ({ ...c, [preference]: on, ...(preference === 'muted' && on ? { unread: 0 } : {}) });
+                setLists((prev) => ({ ...prev, channels: prev.channels.map((c) => (c.id === channelId ? shown(c) : c)) }));
+                try {
+                    replaceChannel(await transport.setPreference(channelId, preference, on));
+                } catch (e) {
+                    if (was) setLists((prev) => ({ ...prev, channels: prev.channels.map((c) => (c.id === channelId ? { ...c, [preference]: was[preference], unread: was.unread } : c)) }));
+                    throw e;
+                }
+            },
+            // You're out of it, and it reads as one you're not in.
+            leave: async (channelId) => {
+                await transport.leave(channelId);
+                setLists((prev) => ({ ...prev, channels: prev.channels.map((c) => (c.id === channelId ? { ...c, joined: false, starred: false, muted: false, unread: 0 } : c)) }));
+            },
+            deleteChannel: async (channelId) => {
+                const gone = await transport.deleteChannel(channelId);
                 setLists((prev) => ({ ...prev, channels: prev.channels.filter((c) => c.id !== channelId) }));
+                return gone;
+            },
+            restoreChannel: async (trashId) => {
+                await transport.restoreChannel(trashId);
+                await readLists();
             },
         }),
         [lists, agents, histories, transport, setHistory, readLists, readNew, replaceChannel, bringUp]
