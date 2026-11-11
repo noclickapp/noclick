@@ -1,0 +1,1068 @@
+{
+  "$defs": {
+    "FilterInstruments": {
+      "additionalProperties": false,
+      "description": "Filter instruments, ordered alphabetically by FIGI, returning total and a continuation token.",
+      "properties": {
+        "exchCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exchange Code"
+        },
+        "micCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "MIC Code"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "marketSecDes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Market Sector"
+        },
+        "securityType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Security Type"
+        },
+        "securityType2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Secondary Security Type"
+        },
+        "includeUnlistedEquities": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Unlisted Equities"
+        },
+        "optionType": {
+          "anyOf": [
+            {
+              "enum": [
+                "Put",
+                "Call"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Option Type",
+          "enum": [
+            "Put",
+            "Call"
+          ],
+          "x-enum-searchable": true
+        },
+        "strike": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Strike Interval"
+        },
+        "contractSize": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contract Size Interval"
+        },
+        "coupon": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Coupon Interval"
+        },
+        "expiration": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expiration Interval"
+        },
+        "maturity": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maturity Interval"
+        },
+        "stateCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State Code"
+        },
+        "operation": {
+          "const": "filter_instruments",
+          "default": "filter_instruments",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next token returned by the previous page. Keep the same filters.",
+          "title": "Start"
+        }
+      },
+      "title": "FilterInstruments",
+      "type": "object"
+    },
+    "ListCurrencies": {
+      "additionalProperties": false,
+      "description": "List OpenFIGI currencies.",
+      "properties": {
+        "operation": {
+          "const": "list_currencies",
+          "default": "list_currencies",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCurrencies",
+      "type": "object"
+    },
+    "ListExchangeCodes": {
+      "additionalProperties": false,
+      "description": "List OpenFIGI exchange codes.",
+      "properties": {
+        "operation": {
+          "const": "list_exchange_codes",
+          "default": "list_exchange_codes",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListExchangeCodes",
+      "type": "object"
+    },
+    "ListIdentifierTypes": {
+      "additionalProperties": false,
+      "description": "List OpenFIGI identifier types.",
+      "properties": {
+        "operation": {
+          "const": "list_identifier_types",
+          "default": "list_identifier_types",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListIdentifierTypes",
+      "type": "object"
+    },
+    "ListMarketSectors": {
+      "additionalProperties": false,
+      "description": "List OpenFIGI market sectors.",
+      "properties": {
+        "operation": {
+          "const": "list_market_sectors",
+          "default": "list_market_sectors",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListMarketSectors",
+      "type": "object"
+    },
+    "ListMicCodes": {
+      "additionalProperties": false,
+      "description": "List OpenFIGI market identifier codes.",
+      "properties": {
+        "operation": {
+          "const": "list_mic_codes",
+          "default": "list_mic_codes",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListMicCodes",
+      "type": "object"
+    },
+    "ListSecurityTypes": {
+      "additionalProperties": false,
+      "description": "List OpenFIGI security types.",
+      "properties": {
+        "operation": {
+          "const": "list_security_types",
+          "default": "list_security_types",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSecurityTypes",
+      "type": "object"
+    },
+    "ListSecurityTypes2": {
+      "additionalProperties": false,
+      "description": "List OpenFIGI secondary security types.",
+      "properties": {
+        "operation": {
+          "const": "list_security_types_2",
+          "default": "list_security_types_2",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSecurityTypes2",
+      "type": "object"
+    },
+    "MapIdentifiers": {
+      "additionalProperties": false,
+      "description": "Map a batch of identifiers to FIGIs. Results retain input order and per-job warnings/errors.",
+      "properties": {
+        "operation": {
+          "const": "map_identifiers",
+          "default": "map_identifiers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "jobs": {
+          "description": "Up to 100 mapping jobs with an API key. Each job has idType and idValue, plus optional instrument filters.",
+          "items": {
+            "$ref": "#/$defs/MappingJob"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Jobs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "jobs"
+      ],
+      "title": "MapIdentifiers",
+      "type": "object"
+    },
+    "MappingJob": {
+      "additionalProperties": false,
+      "properties": {
+        "exchCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exchange Code"
+        },
+        "micCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "MIC Code"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "marketSecDes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Market Sector"
+        },
+        "securityType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Security Type"
+        },
+        "securityType2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Secondary Security Type"
+        },
+        "includeUnlistedEquities": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Unlisted Equities"
+        },
+        "optionType": {
+          "anyOf": [
+            {
+              "enum": [
+                "Put",
+                "Call"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Option Type",
+          "enum": [
+            "Put",
+            "Call"
+          ],
+          "x-enum-searchable": true
+        },
+        "strike": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Strike Interval"
+        },
+        "contractSize": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contract Size Interval"
+        },
+        "coupon": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Coupon Interval"
+        },
+        "expiration": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expiration Interval"
+        },
+        "maturity": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maturity Interval"
+        },
+        "stateCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State Code"
+        },
+        "idType": {
+          "enum": [
+            "ID_ISIN",
+            "ID_BB_UNIQUE",
+            "ID_SEDOL",
+            "ID_COMMON",
+            "ID_WERTPAPIER",
+            "ID_CUSIP",
+            "ID_BB",
+            "ID_ITALY",
+            "ID_EXCH_SYMBOL",
+            "ID_FULL_EXCHANGE_SYMBOL",
+            "COMPOSITE_ID_BB_GLOBAL",
+            "ID_BB_GLOBAL_SHARE_CLASS_LEVEL",
+            "ID_BB_SEC_NUM_DES",
+            "ID_BB_GLOBAL",
+            "TICKER",
+            "ID_CUSIP_8_CHR",
+            "OCC_SYMBOL",
+            "UNIQUE_ID_FUT_OPT",
+            "OPRA_SYMBOL",
+            "TRADING_SYSTEM_IDENTIFIER",
+            "ID_CINS",
+            "ID_SHORT_CODE",
+            "BASE_TICKER",
+            "VENDOR_INDEX_CODE"
+          ],
+          "title": "Identifier Type",
+          "type": "string"
+        },
+        "idValue": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Identifier Value"
+        }
+      },
+      "required": [
+        "idType",
+        "idValue"
+      ],
+      "title": "MappingJob",
+      "type": "object"
+    },
+    "OpenFIGIAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "openfigi_api_key",
+          "default": "openfigi_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "OpenFIGI API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your OpenFIGI API key, without the header name. Reference data proves API reachability, not account identity. OpenFIGI accepts unauthenticated queries too; this integration always sends your key.",
+      "x-credential-url": "https://www.openfigi.com/api"
+    },
+    "SearchInstruments": {
+      "additionalProperties": false,
+      "description": "Search instruments by keywords and optional filters; send next as start for another page.",
+      "properties": {
+        "exchCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exchange Code"
+        },
+        "micCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "MIC Code"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "marketSecDes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Market Sector"
+        },
+        "securityType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Security Type"
+        },
+        "securityType2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Secondary Security Type"
+        },
+        "includeUnlistedEquities": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Unlisted Equities"
+        },
+        "optionType": {
+          "anyOf": [
+            {
+              "enum": [
+                "Put",
+                "Call"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Option Type",
+          "enum": [
+            "Put",
+            "Call"
+          ],
+          "x-enum-searchable": true
+        },
+        "strike": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Strike Interval"
+        },
+        "contractSize": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contract Size Interval"
+        },
+        "coupon": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Coupon Interval"
+        },
+        "expiration": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expiration Interval"
+        },
+        "maturity": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maturity Interval"
+        },
+        "stateCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State Code"
+        },
+        "operation": {
+          "const": "search_instruments",
+          "default": "search_instruments",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Search Keywords",
+          "type": "string"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next token returned by the previous page. Keep the same filters.",
+          "title": "Start"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchInstruments",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "filter_instruments": "#/$defs/FilterInstruments",
+          "list_currencies": "#/$defs/ListCurrencies",
+          "list_exchange_codes": "#/$defs/ListExchangeCodes",
+          "list_identifier_types": "#/$defs/ListIdentifierTypes",
+          "list_market_sectors": "#/$defs/ListMarketSectors",
+          "list_mic_codes": "#/$defs/ListMicCodes",
+          "list_security_types": "#/$defs/ListSecurityTypes",
+          "list_security_types_2": "#/$defs/ListSecurityTypes2",
+          "map_identifiers": "#/$defs/MapIdentifiers",
+          "search_instruments": "#/$defs/SearchInstruments"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MapIdentifiers"
+        },
+        {
+          "$ref": "#/$defs/SearchInstruments"
+        },
+        {
+          "$ref": "#/$defs/FilterInstruments"
+        },
+        {
+          "$ref": "#/$defs/ListIdentifierTypes"
+        },
+        {
+          "$ref": "#/$defs/ListExchangeCodes"
+        },
+        {
+          "$ref": "#/$defs/ListMicCodes"
+        },
+        {
+          "$ref": "#/$defs/ListCurrencies"
+        },
+        {
+          "$ref": "#/$defs/ListMarketSectors"
+        },
+        {
+          "$ref": "#/$defs/ListSecurityTypes"
+        },
+        {
+          "$ref": "#/$defs/ListSecurityTypes2"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OpenFIGIAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Openfigi Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

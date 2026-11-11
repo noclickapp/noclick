@@ -1,0 +1,97 @@
+{
+  "source": "https://www.openfigi.com/api/documentation",
+  "note": "Provider examples; presentation ellipses omitted from search/filter arrays. No fields or records invented.",
+  "responses": {
+    "mapping": [
+      {
+        "data": [
+          {
+            "figi": "BBG000BLNNH6",
+            "securityType": "Common Stock",
+            "marketSector": "Equity",
+            "ticker": "IBM",
+            "name": "INTL BUSINESS MACHINES CORP",
+            "exchCode": "US",
+            "shareClassFIGI": "BBG001S5S399",
+            "compositeFIGI": "BBG000BLNNH6",
+            "securityType2": "Common Stock",
+            "securityDescription": "IBM"
+          }
+        ]
+      }
+    ],
+    "values": {
+      "values": [
+        "Comdty",
+        "Corp",
+        "Curncy",
+        "Equity",
+        "Govt",
+        "Index",
+        "M-Mkt",
+        "Mtge",
+        "Muni",
+        "Pfd"
+      ]
+    },
+    "search": {
+      "data": [
+        {
+          "figi": "BBG000BLNNH6",
+          "name": "INTL BUSINESS MACHINES CORP",
+          "ticker": "IBM",
+          "exchCode": "US",
+          "compositeFIGI": "BBG000BLNNH6",
+          "securityType": "Common Stock",
+          "marketSector": "Equity",
+          "shareClassFIGI": "BBG001S5S399",
+          "securityType2": "Common Stock",
+          "securityDescription": "IBM"
+        },
+        {
+          "figi": "BBG0002ZTPD8",
+          "name": "March 10 Calls on IBM US",
+          "ticker": "IBM 03/20/10 C105",
+          "exchCode": "US",
+          "compositeFIGI": "BBG0002ZTPD8",
+          "securityType": "Equity Option",
+          "marketSector": "Equity",
+          "shareClassFIGI": null,
+          "securityType2": "Option",
+          "securityDescription": "IBM US 03/20/10 C105"
+        }
+      ],
+      "next": "QW9JSVFEOFMrQ3hDUWtjd01ERTRTMHhhUXpBPSAx.3AG33VCsv54AsUl5fGHehSytWPuWLJxf0t8VL3YXuJh="
+    },
+    "filter": {
+      "data": [
+        {
+          "figi": "BBG000BLNNH6",
+          "name": "INTL BUSINESS MACHINES CORP",
+          "ticker": "IBM",
+          "exchCode": "US",
+          "compositeFIGI": "BBG000BLNNH6",
+          "securityType": "Common Stock",
+          "marketSector": "Equity",
+          "shareClassFIGI": "BBG001S5S399",
+          "securityType2": "Common Stock",
+          "securityDescription": "IBM"
+        },
+        {
+          "figi": "BBG0002ZTPD8",
+          "name": "March 10 Calls on IBM US",
+          "ticker": "IBM 03/20/10 C105",
+          "exchCode": "US",
+          "compositeFIGI": "BBG0002ZTPD8",
+          "securityType": "Equity Option",
+          "marketSector": "Equity",
+          "shareClassFIGI": null,
+          "securityType2": "Option",
+          "securityDescription": "IBM US 03/20/10 C105"
+        }
+      ],
+      "next": "QW9JSVFEOFMrQ3hDUWtjd01ERTRTMHhhUXpBPSAx.3AG33VCsv54AsUl5fGHehSytWPuWLJxf0t8VL3YXuJh=",
+      "total": 29930312
+    }
+  }
+}

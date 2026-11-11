@@ -1,0 +1,11 @@
+{
+  "path": "frontend/public/icons/openfigi.svg",
+  "source": "https://www.openfigi.com/",
+  "found_at": "https://www.openfigi.com/",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "Extracted the official inline header SVG. Removed the two wordmark paths (elements 3 and 4); kept all three symbol paths unchanged. Cropped the viewBox to the circular symbol. Removed HTML presentation attributes."
+  ],
+  "license": "OpenFIGI trademark, used nominatively to identify the provider.",
+  "sha256": "c51b96cebc777969f6b1bbfafd2a167c0dc25434fe9ba6004593fd42d1703844"
+}
