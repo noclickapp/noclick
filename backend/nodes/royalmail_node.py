@@ -7,13 +7,13 @@ is automatically retried: order/return creation and manifesting can have effects
 from __future__ import annotations
 
 import asyncio
-import base64
 from datetime import datetime
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
@@ -208,7 +208,7 @@ class RoyalMailNode(ScheduledPollTriggerMixin, WorkflowNode):
             detail = response.text[:2000].replace(credential.api_token, "[redacted]")
             raise ValueError(f"Royal Mail API {response.status_code}: {detail}")
         if "application/pdf" in response.headers.get("content-type", ""):
-            return {"content_type": "application/pdf", "pdf_base64": base64.b64encode(response.content).decode("ascii")}
+            return {"file": BinaryOutput(data=response.content, content_type="application/pdf", filename="royalmail-labels.pdf")}
         if not response.content:
             return {"http_status": response.status_code}
         data = response.json()

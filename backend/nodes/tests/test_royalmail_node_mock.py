@@ -1,6 +1,5 @@
 """Wire-level tests for Royal Mail's published v1 contract (no live account)."""
 from contextlib import asynccontextmanager
-import base64
 import json
 from pathlib import Path
 from unittest.mock import AsyncMock
@@ -8,6 +7,7 @@ from unittest.mock import AsyncMock
 import httpx
 import pytest
 from nodes.core.base import ConfigValidationError
+from nodes.core.binary_output import BinaryOutput
 from nodes.core.registry import NodeFactory
 from nodes import royalmail_node as rm
 
@@ -90,7 +90,10 @@ async def test_label_is_binary_pdf(monkeypatch):
         return httpx.Response(200, content=pdf, headers={"Content-Type": "application/pdf"})
     transport(monkeypatch, handle)
     result = await node({"operation": "get_labels", "orderIdentifiers": "1001"}).execute({})
-    assert base64.b64decode(result["pdf_base64"]) == pdf
+    assert isinstance(result["file"], BinaryOutput)
+    assert result["file"].data == pdf
+    assert result["file"].content_type == "application/pdf"
+    assert result["file"].filename == "royalmail-labels.pdf"
 
 
 @pytest.mark.asyncio
