@@ -5,7 +5,7 @@
 // list on). The draft and its files belong to the page, one per channel; a
 // file uploads as it's attached, and Send waits for it (one that failed holds
 // Send until it's removed).
-import { useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from 'react';
+import { useMemo, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from 'react';
 import {
     AtSign,
     Bold,
@@ -41,10 +41,11 @@ import { useVoiceClip, type VoiceClip } from '~/hooks/useVoiceClip';
 import { cn } from '~/lib/utils';
 import type { TextFormat } from '~/utils/markdownFormat';
 import { clipClock, VoicePlayer } from './attachments';
-import { MemberAvatar } from './avatars';
+import { MemberAvatar, MENTION_TINT } from './avatars';
 import { CHANNEL_COMMANDS, type ChannelCommand } from './commands';
 import { searchEmoji, type Emoji } from './emoji';
 import { EmojiPicker } from './EmojiPicker';
+import { mentionable, mentionsIn } from './model';
 import type { ChannelAttachment, ChannelMember } from './types';
 
 /** A file waiting in the composer: the tray's shape, plus what the message will carry once it's uploaded. */
@@ -225,6 +226,42 @@ function LiveMeter({ levels }: { levels: number[] }) {
     );
 }
 
+/** The box's text metrics, shared by the text and the tints behind it so each mention's tint sits under its words. */
+const BOX_TEXT = 'whitespace-pre-wrap break-words px-4 pb-1 pt-3 text-[15px] leading-6 [overflow-wrap:anywhere]';
+
+/** Behind the box's text, a tint under each @mention that names a member: an agent's in its colour, a person's in the
+ *  accent. The words stay the box's own. */
+function MentionTints({ text, members, textareaRef }: { text: string; members: ChannelMember[]; textareaRef: RefObject<HTMLTextAreaElement | null> }) {
+    const names = useMemo(() => mentionable(members), [members]);
+    const hits = mentionsIn(text, names);
+    if (!hits.length) return null;
+    const parts: ReactNode[] = [];
+    let at = 0;
+    for (const hit of hits) {
+        if (hit.start > at) parts.push(text.slice(at, hit.start));
+        const hue = hit.member.kind === 'agent' && hit.member.hue;
+        parts.push(
+            <span key={hit.start} className={cn('rounded-[4px]', hue ? MENTION_TINT[hue] : 'bg-accent')} data-mention-tint={hit.member.kind}>
+                {text.slice(hit.start, hit.end)}
+            </span>
+        );
+        at = hit.end;
+    }
+    parts.push(`${text.slice(at)}\u200b`);
+    return (
+        <span
+            aria-hidden
+            ref={(el) => {
+                if (el && textareaRef.current) el.scrollTop = textareaRef.current.scrollTop;
+            }}
+            // The box's own scrollbar, unseen, so its text wraps where the box's does.
+            className={cn(BOX_TEXT, 'pointer-events-none absolute inset-0 overflow-y-auto text-transparent scrollbar-subtle [scrollbar-color:transparent_transparent] [&::-webkit-scrollbar-thumb]:bg-transparent')}
+        >
+            {parts}
+        </span>
+    );
+}
+
 export function ChannelComposer({
     channelName,
     value,
@@ -398,6 +435,8 @@ export function ChannelComposer({
                                     )}
                                 </div>
                             )}
+                            <span className="relative block">
+                                <MentionTints text={value} members={members} textareaRef={textareaRef} />
                             <textarea
                                 ref={textareaRef}
                                 value={value}
@@ -429,8 +468,13 @@ export function ChannelComposer({
                                         onAddFiles(Array.from(files));
                                     }
                                 }}
-                                className="block min-h-[48px] w-full resize-none overflow-y-auto bg-transparent px-4 pb-1 pt-3 text-[15px] leading-6 text-foreground outline-none placeholder:text-[hsl(var(--placeholder))] scrollbar-subtle sm:min-h-[60px]"
+                                onScroll={(e) => {
+                                    const tints = e.currentTarget.previousElementSibling;
+                                    if (tints) tints.scrollTop = e.currentTarget.scrollTop;
+                                }}
+                                className={cn(BOX_TEXT, 'relative block min-h-[48px] w-full resize-none overflow-y-auto bg-transparent text-foreground outline-none placeholder:text-[hsl(var(--placeholder))] scrollbar-subtle sm:min-h-[60px]')}
                             />
+                            </span>
                             {recording ? (
                                 <div className="flex h-12 items-center gap-3 px-3 pb-2 pt-0.5" data-testid="voice-recording">
                                     <span className="relative ml-1 flex h-2.5 w-2.5 shrink-0">

@@ -72,6 +72,31 @@ export function seatMembers(members: readonly ChannelMember[]): ChannelMember[] 
     return members.map((m) => seated.get(m.id) ?? m);
 }
 
+/** The members an `@name` names, by name ignoring case, as the platform resolves a mention; a name several members
+ *  share names none of them. */
+export function mentionable(members: readonly ChannelMember[]): Map<string, ChannelMember> {
+    const seen = new Map<string, ChannelMember | null>();
+    for (const m of members) {
+        const key = m.name.toLowerCase();
+        seen.set(key, seen.has(key) ? null : m);
+    }
+    return new Map([...seen].filter((entry): entry is [string, ChannelMember] => entry[1] !== null));
+}
+
+/** Each `@name` in `text` that names one member, where it starts and ends: never inside a word or an email address,
+ *  the longest name first, as the platform finds them. */
+export function mentionsIn(text: string, members: ReadonlyMap<string, ChannelMember>): { start: number; end: number; member: ChannelMember }[] {
+    const names = [...members.keys()].sort((a, b) => b.length - a.length).map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    if (!names.length) return [];
+    const found: { start: number; end: number; member: ChannelMember }[] = [];
+    for (const hit of text.matchAll(new RegExp(`@(${names.join('|')})(?![\\w-])`, 'gi'))) {
+        const before = text[hit.index - 1];
+        if (before && /[\w@]/.test(before)) continue;
+        found.push({ start: hit.index, end: hit.index + hit[0].length, member: members.get(hit[1].toLowerCase())! });
+    }
+    return found;
+}
+
 /** Who answers in a channel: agents read everything, or wait to be @-mentioned. `named: false` says it of "They" (or
  *  "It"), where the agents are listed just before it. */
 export function modeLine(mode: Channel['mode'], agents: Pick<ChannelMember, 'name'>[], { named = true }: { named?: boolean } = {}): string {

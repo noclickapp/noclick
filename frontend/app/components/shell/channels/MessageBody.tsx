@@ -1,51 +1,62 @@
 // A message's words as markdown: bold, italic, strike, code, quotes, lists and
-// links, with @mentions in the member's colour (yours highlighted) and
-// #channels opening the channel. Mentions and channels are found in the text
-// nodes only, so a `@name` inside code stays code.
+// links, with each @mention of a member drawn as one (an agent's in its colour, a
+// person's in the accent, yours the strongest) and #channels opening the channel.
+// Mentions resolve as the platform resolves them (by name, ignoring case; a name
+// two members share resolves to neither) and are found in the text nodes only, so
+// a `@name` inside code stays code.
 import { useMemo } from 'react';
 import ReactMarkdown, { defaultUrlTransform, type Components, type Options } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { SKIP, visit } from 'unist-util-visit';
 import type { PhrasingContent, Root } from 'mdast';
 import { cn } from '~/lib/utils';
-import { MENTION_HUE } from './avatars';
-import { YOU_ID } from './model';
+import { MENTION_HUE, MENTION_TINT } from './avatars';
+import { mentionable, mentionsIn, YOU_ID } from './model';
 import type { ChannelMember } from './types';
 
 const MENTION = 'nc-mention:';
 const CHANNEL = 'nc-channel:';
 
 interface RefOptions {
-    names: string[];
+    /** The members a mention can name, by their names in lower case. */
+    members: ReadonlyMap<string, ChannelMember>;
     /** The workspace's channels by name. */
     channels: ReadonlyMap<string, string>;
 }
 
-const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-/** Turns `@Name` and `#channel` in text into links the renderer draws as mentions. */
-function remarkChannelRefs({ names, channels }: RefOptions) {
-    // Longest first, so "@Sam" never cuts "@Samira" short.
-    const people = [...names].sort((a, b) => b.length - a.length).map(escape);
-    const pattern = new RegExp(`(${[people.length ? `@(?:${people.join('|')})\\b` : '', '#[a-z0-9][a-z0-9-]*'].filter(Boolean).join('|')})`, 'g');
+/** Turns `@Name` and `#channel` in text into links the renderer draws as mentions, a mention naming its member by id. */
+function remarkChannelRefs({ members, channels }: RefOptions) {
     return (tree: Root) => {
         visit(tree, 'text', (node, index, parent) => {
             if (!parent || index === undefined || parent.type === 'link' || parent.type === 'linkReference') return;
-            const parts = node.value.split(pattern);
-            if (parts.length === 1) return;
-            const nodes: PhrasingContent[] = parts.filter(Boolean).map((part) => {
-                const ref =
-                    part.startsWith('@') && names.includes(part.slice(1))
-                        ? `${MENTION}${encodeURIComponent(part.slice(1))}`
-                        : part.startsWith('#') && channels.has(part.slice(1))
-                          ? `${CHANNEL}${part.slice(1)}`
-                          : null;
-                return ref ? { type: 'link', url: ref, children: [{ type: 'text', value: part }] } : { type: 'text', value: part };
-            });
+            const text = node.value;
+            const refs = [
+                ...mentionsIn(text, members).map((m) => ({ ...m, url: `${MENTION}${encodeURIComponent(m.member.id)}` })),
+                ...[...text.matchAll(/#[a-z0-9][a-z0-9-]*/g)].flatMap((hit) => (channels.has(hit[0].slice(1)) ? [{ start: hit.index, end: hit.index + hit[0].length, url: `${CHANNEL}${hit[0].slice(1)}` }] : [])),
+            ].sort((a, b) => a.start - b.start);
+            if (!refs.length) return;
+            const nodes: PhrasingContent[] = [];
+            let at = 0;
+            for (const ref of refs) {
+                if (ref.start < at) continue;
+                if (ref.start > at) nodes.push({ type: 'text', value: text.slice(at, ref.start) });
+                nodes.push({ type: 'link', url: ref.url, children: [{ type: 'text', value: text.slice(ref.start, ref.end) }] });
+                at = ref.end;
+            }
+            if (at < text.length) nodes.push({ type: 'text', value: text.slice(at) });
             (parent.children as PhrasingContent[]).splice(index, 1, ...nodes);
             return [SKIP, index + nodes.length];
         });
     };
+}
+
+const PILL = 'rounded-[5px] px-1 py-px font-medium';
+
+/** How a mention of `member` reads: an agent's in its colour on its tint, a person's in the accent, yours strongest. */
+export function mentionClass(member: ChannelMember): string {
+    if (member.id === YOU_ID) return cn(PILL, 'bg-foreground/[0.12] text-foreground');
+    if (member.kind === 'agent' && member.hue) return cn(PILL, MENTION_HUE[member.hue], MENTION_TINT[member.hue]);
+    return cn(PILL, 'bg-accent text-foreground');
 }
 
 const keepRefs = (url: string) => (url.startsWith(MENTION) || url.startsWith(CHANNEL) ? url : defaultUrlTransform(url));
@@ -65,9 +76,9 @@ export function MessageBody({
     /** An event line ("set the topic: …") reads quieter than speech. */
     muted?: boolean;
 }) {
-    const plugins = useMemo((): Options['remarkPlugins'] => [remarkGfm, [remarkChannelRefs, { names: members.map((m) => m.name), channels }]], [members, channels]);
+    const plugins = useMemo((): Options['remarkPlugins'] => [remarkGfm, [remarkChannelRefs, { members: mentionable(members), channels }]], [members, channels]);
     const components = useMemo((): Components => {
-        const byName = new Map(members.map((m) => [m.name, m]));
+        const byId = new Map(members.map((m) => [m.id, m]));
         const heading: Components['p'] = ({ children }) => <p className="font-semibold text-foreground">{children}</p>;
         return {
             p: ({ children }) => <p className="whitespace-pre-wrap">{children}</p>,
@@ -99,9 +110,14 @@ export function MessageBody({
             hr: () => <hr className="border-border dark:border-foreground/[0.1]" />,
             a: ({ href = '', children }) => {
                 if (href.startsWith(MENTION)) {
-                    const member = byName.get(decodeURIComponent(href.slice(MENTION.length)));
-                    if (member?.id === YOU_ID) return <span className="rounded-[5px] bg-foreground/[0.1] px-1 py-px font-medium text-foreground">{children}</span>;
-                    return <span className={cn('font-medium', member?.hue ? MENTION_HUE[member.hue] : 'text-foreground')}>{children}</span>;
+                    const member = byId.get(decodeURIComponent(href.slice(MENTION.length)));
+                    return member ? (
+                        <span className={mentionClass(member)} data-mention={member.kind}>
+                            {children}
+                        </span>
+                    ) : (
+                        <>{children}</>
+                    );
                 }
                 if (href.startsWith(CHANNEL)) {
                     return (

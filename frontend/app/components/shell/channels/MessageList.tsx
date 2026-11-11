@@ -11,7 +11,7 @@
 // who the channel started with. Where the page takes threads and pins (Work), a message's hover
 // bar adds quick reactions, Reply in thread and Pin, a message with replies
 // wears Slack's replies bar, and a pinned one says who pinned it.
-import { Fragment, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { ArrowRight, ChevronDown, ChevronRight, EyeOff, Hash, Link2, MessageSquareText, MoreHorizontal, Pin, PinOff, Plug, SmilePlus, UserMinus, UserPlus } from 'lucide-react';
 import type { AccountMenuUser } from '~/components/nav/AccountMenu';
 import { LogoMark, MARK_IN_A_SHAPE } from '~/components/shared/LogoMark';
@@ -55,6 +55,17 @@ export function timeLabel(iso: string): string {
     return new Date(iso).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
 }
 
+/** The same clock with no AM or PM ("9:29", "21:29"), short enough for the gutter beside a grouped message. */
+export function clockLabel(iso: string, locale?: string): string {
+    const parts = new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit' }).formatToParts(new Date(iso));
+    const from = parts.findIndex((p) => p.type === 'hour');
+    const to = parts.findIndex((p) => p.type === 'minute');
+    return parts
+        .slice(from, to + 1)
+        .map((p) => p.value)
+        .join('');
+}
+
 /** A key that says who wrote a message, for grouping. */
 const authorKey = (m: ChannelMessage) => `${m.author.type}:${m.author.id ?? m.author.name}`;
 
@@ -65,6 +76,7 @@ function Intro({
     older,
     loadingOlder,
     onLoadOlder,
+    mark,
     after,
 }: {
     channel: Channel;
@@ -73,6 +85,7 @@ function Intro({
     older: boolean;
     loadingOlder: boolean;
     onLoadOlder: () => void;
+    mark?: ReactNode;
     after?: ReactNode;
 }) {
     const agents = members.filter((m) => m.kind === 'agent');
@@ -97,10 +110,11 @@ function Intro({
     return (
         <div className={cn('pb-4 pt-10', GUTTER)}>
             <span className="grid h-12 w-12 place-items-center rounded-2xl bg-foreground/[0.05] ring-1 ring-inset ring-foreground/[0.06]">
-                <Hash className="h-6 w-6 text-foreground/70" strokeWidth={1.75} />
+                {mark ?? <Hash className="h-6 w-6 text-foreground/70" strokeWidth={1.75} />}
             </span>
             <h2 className="mt-4 font-brand text-[24px] font-semibold tracking-[-0.02em] text-foreground">{channel.name}</h2>
             <p className="mt-1 max-w-[80ch] text-[14.5px] leading-relaxed text-muted-foreground">{channel.topic ? channel.topic : `This is the very beginning of #${channel.name}.`}</p>
+            {after}
             {here.length > 0 && (
                 <JoinLine verb="joined" names={here.map((m) => m.name)} where={`#${channel.name}`} className="mt-4 px-0" testId="channel-intro-members" />
             )}
@@ -108,7 +122,6 @@ function Intro({
                 ? channel.mode === 'mentions' && <p className="mt-4 text-[13px] text-muted-foreground">{modeLine(channel.mode, agents, { named: false })}.</p>
                 : <p className="mt-4 text-[13px] text-muted-foreground">No agents here yet: add one from the members menu, or with /invite.</p>}
             <ScheduleLines schedules={schedules} />
-            {after}
         </div>
     );
 }
@@ -291,17 +304,62 @@ const LINKISH = 'rounded-full underline decoration-muted-foreground/40 underline
 /** A person's first name, as Slack's quiet lines say it. */
 const firstName = (author: ChannelAuthor, members: ChannelMember[]) => (author.type === 'account' && !author.id ? 'You' : (authorMember(author, members)?.name ?? author.name).split(' ')[0]);
 
-/** A message's hover bar, as Slack's: quick emoji, more emoji, reply in thread, more (pin, copy link). */
+/** How far above its message the hover bar rises (`-top-4`). */
+const BAR_RISE = 16;
+
+/** What scrolls `el`: the nearest ancestor whose overflow scrolls. */
+function scrollerOf(el: HTMLElement): HTMLElement | null {
+    for (let up = el.parentElement; up; up = up.parentElement) if (/(auto|scroll)/.test(getComputedStyle(up).overflowY)) return up;
+    return null;
+}
+
+/** Whether a bar above `row` shows whole: below the top of what scrolls it, and below its day's pill stuck there. */
+function roomAbove(row: HTMLElement): boolean {
+    const top = row.getBoundingClientRect().top - BAR_RISE;
+    const day = row.closest('section')?.querySelector<HTMLElement>('[data-testid="day-divider"]');
+    return top >= Math.max(scrollerOf(row)?.getBoundingClientRect().top ?? -Infinity, day?.getBoundingClientRect().bottom ?? -Infinity);
+}
+
+/** A message's hover bar, as Slack's: quick emoji, more emoji, reply in thread, more (pin, copy link). Above the
+ *  message, or in its top corner where nothing shows above it (the first of a day, or one at the top of the list). */
 function HoverBar({ msg, actions, onReact }: { msg: ChannelMessage; actions: MessageActions; onReact: (emoji: string) => void }) {
     // Stays up while one of its menus is open, which takes the focus away from it.
     const [held, setHeld] = useState(false);
+    const [inside, setInside] = useState(false);
+    const bar = useRef<HTMLDivElement>(null);
+    // Placed as it shows: when the pointer comes onto its message or focus goes into it, and as the list scrolls under it.
+    useEffect(() => {
+        const row = bar.current?.parentElement;
+        if (!row) return;
+        const place = () => setInside(!roomAbove(row));
+        let scroller: HTMLElement | null = null;
+        const leave = () => scroller?.removeEventListener('scroll', place);
+        const enter = () => {
+            place();
+            leave();
+            scroller = scrollerOf(row);
+            scroller?.addEventListener('scroll', place, { passive: true });
+        };
+        row.addEventListener('pointerenter', enter);
+        row.addEventListener('pointerleave', leave);
+        row.addEventListener('focusin', place);
+        return () => {
+            row.removeEventListener('pointerenter', enter);
+            row.removeEventListener('pointerleave', leave);
+            row.removeEventListener('focusin', place);
+            leave();
+        };
+    }, []);
     const threads = !!actions.onThread && !msg.threadId;
     return (
         <div
+            ref={bar}
             className={cn(
-                'absolute -top-4 right-5 items-center gap-0.5 rounded-full bg-popover p-0.5 shadow-sm ring-1 ring-border dark:ring-foreground/[0.12]',
+                'absolute right-5 z-20 items-center gap-0.5 rounded-full bg-popover p-0.5 shadow-sm ring-1 ring-border dark:ring-foreground/[0.12]',
+                inside ? 'top-1' : '-top-4',
                 held ? 'flex' : 'hidden group-focus-within:flex group-hover:flex'
             )}
+            data-placement={inside ? 'inside' : 'above'}
             data-testid="message-actions"
         >
             {threads &&
@@ -554,7 +612,17 @@ export function MessageRow({
             )}
             <div className="w-8 shrink-0 pt-0.5">
                 {continued ? (
-                    <time className="hidden pt-1 text-center text-[10.5px] tabular-nums text-muted-foreground group-hover:block">{timeLabel(msg.at)}</time>
+                    // On the first line's baseline, never wrapping; the whole time on hover.
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <time dateTime={msg.at} className="hidden whitespace-nowrap text-center text-[10.5px] leading-6 tabular-nums text-muted-foreground group-hover:block" data-testid="gutter-time">
+                                {clockLabel(msg.at)}
+                            </time>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" sideOffset={6} className="rounded-lg px-2 py-1 text-[12.5px]">
+                            {timeLabel(msg.at)}
+                        </TooltipContent>
+                    </Tooltip>
                 ) : noclick ? (
                     <NoClickAvatar />
                 ) : app ? (
@@ -614,6 +682,7 @@ export function MessageList({
     onDismiss,
     actions,
     intro,
+    introMark,
     introAfter,
 }: {
     channel: Channel;
@@ -634,7 +703,9 @@ export function MessageList({
     actions?: MessageActions;
     /** Where the conversation starts, in place of a channel's (a DM's: the other person). */
     intro?: ReactNode;
-    /** What follows a channel's own start, under who's in it. */
+    /** In place of the # on a channel's own start (NoClick's mark on its channel). */
+    introMark?: ReactNode;
+    /** What follows a channel's own start, under its topic. */
     introAfter?: ReactNode;
 }) {
     const root = useRef<HTMLDivElement>(null);
@@ -672,7 +743,7 @@ export function MessageList({
 
     return (
         <div ref={root} className="flex flex-1 flex-col justify-end">
-            {intro && !older ? intro : <Intro channel={channel} schedules={schedules} members={members} older={older} loadingOlder={loadingOlder} onLoadOlder={onLoadOlder} after={introAfter} />}
+            {intro && !older ? intro : <Intro channel={channel} schedules={schedules} members={members} older={older} loadingOlder={loadingOlder} onLoadOlder={onLoadOlder} mark={introMark} after={introAfter} />}
             {days.map(({ day, label, items }) => (
                 <section key={day} data-day={day} aria-label={label} className="relative">
                     {/* The day's hairline and its pill pin to the top while the day is on screen, over a band of the

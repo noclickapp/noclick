@@ -19,6 +19,15 @@ const AVATAR_HUE: Record<AgentHue, string> = {
     emerald: 'bg-emerald-600 text-neutral-900 dark:bg-emerald-700 dark:text-white',
 };
 
+/** A mention's soft tint behind its hue (MENTION_HUE). */
+export const MENTION_TINT: Record<AgentHue, string> = {
+    sky: 'bg-sky-500/[0.14]',
+    violet: 'bg-violet-500/[0.14]',
+    pink: 'bg-pink-500/[0.14]',
+    fuchsia: 'bg-fuchsia-500/[0.14]',
+    emerald: 'bg-emerald-500/[0.14]',
+};
+
 // The same hues as text, at steps that read on the page (WCAG ≥ 4.7:1 on both themes' pages and cards).
 export const MENTION_HUE: Record<AgentHue, string> = {
     sky: 'text-sky-700 dark:text-sky-400',
