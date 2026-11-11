@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/kapso.png",
+  "source": "https://raw.githubusercontent.com/gokapso/agent-plugins/main/plugins/kapso/assets/kapso-logo.png",
+  "found_at": "https://github.com/gokapso/agent-plugins (Kapso's own repo; plugins/kapso/.codex-plugin/plugin.json names it as the plugin's \"logo\")",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "No SVG qualifies: kapso.com's header logo is live text, its icons are PNG, and every SVG Kapso publishes (the n8n node's kapso-logo.svg / .dark.svg, the Mintlify docs favicon.svg that the current kapso.svg is) wraps a base64 PNG. This 500x500 PNG is the largest official app mark (kapso.com's apple-touch is 180px, the docs favicon 192px). The current kapso.svg is the docs' inverted version (black K on a white rounded tile) wrapped in an SVG; the site, the plugins and the app use the white K on near-black. The tile is square with sharp corners (as app stores take it); kapso.com's apple-touch has the corners rounded. On the dark theme the near-black tile merges with the surface and the white K carries it; Kapso publishes no lighter version of this tile (only the white-tile docs favicon, which would vanish on light).",
+  "license": "Kapso brand mark, used nominatively to identify the connected service; trademark rights remain with Kapso.",
+  "sha256": "c3f4d789102d942289e676e60e8145c09422c2b21cccb2a5f399092128fdc090"
+}
