@@ -1,0 +1,1547 @@
+{
+  "$defs": {
+    "ConvertHtml": {
+      "additionalProperties": false,
+      "description": "Convert inline HTML to PDF bytes.",
+      "properties": {
+        "page_size": {
+          "default": "A4",
+          "enum": [
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4",
+            "A5",
+            "A6",
+            "A7",
+            "A8",
+            "Letter",
+            "HalfLetter",
+            "Ledger",
+            "Legal"
+          ],
+          "title": "Page Size",
+          "type": "string"
+        },
+        "page_orientation": {
+          "default": "Portrait",
+          "enum": [
+            "Portrait",
+            "Landscape"
+          ],
+          "title": "Page Orientation",
+          "type": "string"
+        },
+        "engine": {
+          "default": "Chromium",
+          "enum": [
+            "WebKit",
+            "Restricted",
+            "Blink",
+            "Chromium"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "margin_top": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Top",
+          "type": "integer"
+        },
+        "margin_bottom": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Bottom",
+          "type": "integer"
+        },
+        "margin_left": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Left",
+          "type": "integer"
+        },
+        "margin_right": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Right",
+          "type": "integer"
+        },
+        "pdf_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "PDF filename"
+        },
+        "doc_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doc Title"
+        },
+        "doc_author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doc Author"
+        },
+        "page_numbers": {
+          "default": false,
+          "title": "Page Numbers",
+          "type": "boolean"
+        },
+        "show_header": {
+          "default": false,
+          "title": "Show Header",
+          "type": "boolean"
+        },
+        "header_html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header Html"
+        },
+        "header_height": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header Height"
+        },
+        "show_footer": {
+          "default": false,
+          "title": "Show Footer",
+          "type": "boolean"
+        },
+        "footer_html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Footer Html"
+        },
+        "footer_height": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Footer Height"
+        },
+        "pdf_bookmarks_selectors": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdf Bookmarks Selectors"
+        },
+        "pdf_hide_elements": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdf Hide Elements"
+        },
+        "pdf_web_elements_selectors": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CSS selectors whose bounding boxes can be retrieved for a completed async job.",
+          "title": "Pdf Web Elements Selectors"
+        },
+        "min_load_time": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum page load time in seconds, for JavaScript content.",
+          "title": "Min Load Time"
+        },
+        "html": {
+          "minLength": 1,
+          "title": "Html",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "html"
+        },
+        "base_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base URL for resolving relative HTML assets.",
+          "format": "uri",
+          "title": "Base Url"
+        },
+        "operation": {
+          "const": "convert_html",
+          "default": "convert_html",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Convert HTML to PDF"
+        }
+      },
+      "required": [
+        "html"
+      ],
+      "title": "ConvertHtml",
+      "type": "object"
+    },
+    "ConvertUrl": {
+      "additionalProperties": false,
+      "description": "Convert a web page to PDF bytes.",
+      "properties": {
+        "page_size": {
+          "default": "A4",
+          "enum": [
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4",
+            "A5",
+            "A6",
+            "A7",
+            "A8",
+            "Letter",
+            "HalfLetter",
+            "Ledger",
+            "Legal"
+          ],
+          "title": "Page Size",
+          "type": "string"
+        },
+        "page_orientation": {
+          "default": "Portrait",
+          "enum": [
+            "Portrait",
+            "Landscape"
+          ],
+          "title": "Page Orientation",
+          "type": "string"
+        },
+        "engine": {
+          "default": "Chromium",
+          "enum": [
+            "WebKit",
+            "Restricted",
+            "Blink",
+            "Chromium"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "margin_top": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Top",
+          "type": "integer"
+        },
+        "margin_bottom": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Bottom",
+          "type": "integer"
+        },
+        "margin_left": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Left",
+          "type": "integer"
+        },
+        "margin_right": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Right",
+          "type": "integer"
+        },
+        "pdf_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "PDF filename"
+        },
+        "doc_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doc Title"
+        },
+        "doc_author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doc Author"
+        },
+        "page_numbers": {
+          "default": false,
+          "title": "Page Numbers",
+          "type": "boolean"
+        },
+        "show_header": {
+          "default": false,
+          "title": "Show Header",
+          "type": "boolean"
+        },
+        "header_html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header Html"
+        },
+        "header_height": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header Height"
+        },
+        "show_footer": {
+          "default": false,
+          "title": "Show Footer",
+          "type": "boolean"
+        },
+        "footer_html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Footer Html"
+        },
+        "footer_height": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Footer Height"
+        },
+        "pdf_bookmarks_selectors": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdf Bookmarks Selectors"
+        },
+        "pdf_hide_elements": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdf Hide Elements"
+        },
+        "pdf_web_elements_selectors": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CSS selectors whose bounding boxes can be retrieved for a completed async job.",
+          "title": "Pdf Web Elements Selectors"
+        },
+        "min_load_time": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum page load time in seconds, for JavaScript content.",
+          "title": "Min Load Time"
+        },
+        "url": {
+          "description": "Public web page URL; SelectPdf fetches it.",
+          "format": "uri",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "operation": {
+          "const": "convert_url",
+          "default": "convert_url",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Convert URL to PDF"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ConvertUrl",
+      "type": "object"
+    },
+    "ExtractPdfText": {
+      "additionalProperties": false,
+      "description": "Extract PDF text in original or reading order.",
+      "properties": {
+        "url": {
+          "description": "Public URL of the PDF to process.",
+          "format": "uri",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "start_page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Start Page",
+          "type": "integer"
+        },
+        "end_page": {
+          "default": 0,
+          "description": "0 means the last page.",
+          "minimum": 0,
+          "title": "End Page",
+          "type": "integer"
+        },
+        "user_password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Password",
+          "ui:widget": "password"
+        },
+        "text_layout": {
+          "default": "Original",
+          "enum": [
+            "Original",
+            "Reading"
+          ],
+          "title": "Text Layout",
+          "type": "string"
+        },
+        "operation": {
+          "const": "extract_pdf_text",
+          "default": "extract_pdf_text",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Extract PDF text"
+        },
+        "output_format": {
+          "default": "Text",
+          "enum": [
+            "Text",
+            "Html"
+          ],
+          "title": "Output Format",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ExtractPdfText",
+      "type": "object"
+    },
+    "GetAsyncJob": {
+      "additionalProperties": false,
+      "description": "Read an async job once: processing, or its PDF/text/JSON result.",
+      "properties": {
+        "job_id": {
+          "description": "Job UUID from a previous asynchronous submission.",
+          "format": "uuid",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_async_job",
+          "default": "get_async_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetAsyncJob",
+      "type": "object"
+    },
+    "GetUsage": {
+      "additionalProperties": false,
+      "description": "Read subscription and remaining credits, optionally with monthly history.",
+      "properties": {
+        "operation": {
+          "const": "get_usage",
+          "default": "get_usage",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "get_history": {
+          "default": false,
+          "title": "Get History",
+          "type": "boolean"
+        }
+      },
+      "title": "GetUsage",
+      "type": "object"
+    },
+    "GetWebElements": {
+      "additionalProperties": false,
+      "description": "Read matched web elements from a completed async HTML conversion.",
+      "properties": {
+        "job_id": {
+          "description": "Job UUID from a previous asynchronous submission.",
+          "format": "uuid",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_web_elements",
+          "default": "get_web_elements",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetWebElements",
+      "type": "object"
+    },
+    "MergeFile": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public URL of an input PDF; SelectPdf downloads it.",
+          "format": "uri",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "user_password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Password",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "MergeFile",
+      "type": "object"
+    },
+    "MergePdfs": {
+      "additionalProperties": false,
+      "description": "Merge two or more PDF URLs and return PDF bytes.",
+      "properties": {
+        "input_files": {
+          "description": "PDF URL inputs in merge order.",
+          "items": {
+            "$ref": "#/$defs/MergeFile"
+          },
+          "maxItems": 100,
+          "minItems": 2,
+          "title": "Input Files",
+          "type": "array"
+        },
+        "pdf_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdf Name"
+        },
+        "doc_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doc Title"
+        },
+        "doc_author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doc Author"
+        },
+        "operation": {
+          "const": "merge_pdfs",
+          "default": "merge_pdfs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Merge PDFs"
+        }
+      },
+      "required": [
+        "input_files"
+      ],
+      "title": "MergePdfs",
+      "type": "object"
+    },
+    "SearchPdf": {
+      "additionalProperties": false,
+      "description": "Find text and return matching page coordinates.",
+      "properties": {
+        "url": {
+          "description": "Public URL of the PDF to process.",
+          "format": "uri",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "start_page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Start Page",
+          "type": "integer"
+        },
+        "end_page": {
+          "default": 0,
+          "description": "0 means the last page.",
+          "minimum": 0,
+          "title": "End Page",
+          "type": "integer"
+        },
+        "user_password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Password",
+          "ui:widget": "password"
+        },
+        "text_layout": {
+          "default": "Original",
+          "enum": [
+            "Original",
+            "Reading"
+          ],
+          "title": "Text Layout",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search_pdf",
+          "default": "search_pdf",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Search PDF"
+        },
+        "search_text": {
+          "minLength": 1,
+          "title": "Search Text",
+          "type": "string"
+        },
+        "case_sensitive": {
+          "default": false,
+          "title": "Case Sensitive",
+          "type": "boolean"
+        },
+        "whole_words_only": {
+          "default": false,
+          "title": "Whole Words Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "url",
+        "search_text"
+      ],
+      "title": "SearchPdf",
+      "type": "object"
+    },
+    "SelectPdfAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "selectpdf_api_key",
+          "default": "selectpdf_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "SelectPdf API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your SelectPdf license key from your API account. NoClick sends it as key in the HTTPS request body to selectpdf.com. Connection verification reads your subscription and conversion usage without generating a PDF.",
+      "x-credential-url": "https://selectpdf.com/api/",
+      "x-help-url": "https://selectpdf.com/html-to-pdf-api/"
+    },
+    "StartHtmlConversion": {
+      "additionalProperties": false,
+      "description": "Submit an HTML conversion and return its asynchronous job ID.",
+      "properties": {
+        "page_size": {
+          "default": "A4",
+          "enum": [
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4",
+            "A5",
+            "A6",
+            "A7",
+            "A8",
+            "Letter",
+            "HalfLetter",
+            "Ledger",
+            "Legal"
+          ],
+          "title": "Page Size",
+          "type": "string"
+        },
+        "page_orientation": {
+          "default": "Portrait",
+          "enum": [
+            "Portrait",
+            "Landscape"
+          ],
+          "title": "Page Orientation",
+          "type": "string"
+        },
+        "engine": {
+          "default": "Chromium",
+          "enum": [
+            "WebKit",
+            "Restricted",
+            "Blink",
+            "Chromium"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "margin_top": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Top",
+          "type": "integer"
+        },
+        "margin_bottom": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Bottom",
+          "type": "integer"
+        },
+        "margin_left": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Left",
+          "type": "integer"
+        },
+        "margin_right": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Right",
+          "type": "integer"
+        },
+        "pdf_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "PDF filename"
+        },
+        "doc_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doc Title"
+        },
+        "doc_author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doc Author"
+        },
+        "page_numbers": {
+          "default": false,
+          "title": "Page Numbers",
+          "type": "boolean"
+        },
+        "show_header": {
+          "default": false,
+          "title": "Show Header",
+          "type": "boolean"
+        },
+        "header_html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header Html"
+        },
+        "header_height": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header Height"
+        },
+        "show_footer": {
+          "default": false,
+          "title": "Show Footer",
+          "type": "boolean"
+        },
+        "footer_html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Footer Html"
+        },
+        "footer_height": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Footer Height"
+        },
+        "pdf_bookmarks_selectors": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdf Bookmarks Selectors"
+        },
+        "pdf_hide_elements": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdf Hide Elements"
+        },
+        "pdf_web_elements_selectors": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CSS selectors whose bounding boxes can be retrieved for a completed async job.",
+          "title": "Pdf Web Elements Selectors"
+        },
+        "min_load_time": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum page load time in seconds, for JavaScript content.",
+          "title": "Min Load Time"
+        },
+        "html": {
+          "minLength": 1,
+          "title": "Html",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "html"
+        },
+        "base_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base URL for resolving relative HTML assets.",
+          "format": "uri",
+          "title": "Base Url"
+        },
+        "operation": {
+          "const": "start_html_conversion",
+          "default": "start_html_conversion",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "html"
+      ],
+      "title": "StartHtmlConversion",
+      "type": "object"
+    },
+    "StartPdfMerge": {
+      "additionalProperties": false,
+      "description": "Submit a PDF merge asynchronously.",
+      "properties": {
+        "input_files": {
+          "description": "PDF URL inputs in merge order.",
+          "items": {
+            "$ref": "#/$defs/MergeFile"
+          },
+          "maxItems": 100,
+          "minItems": 2,
+          "title": "Input Files",
+          "type": "array"
+        },
+        "pdf_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdf Name"
+        },
+        "doc_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doc Title"
+        },
+        "doc_author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doc Author"
+        },
+        "operation": {
+          "const": "start_pdf_merge",
+          "default": "start_pdf_merge",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "input_files"
+      ],
+      "title": "StartPdfMerge",
+      "type": "object"
+    },
+    "StartPdfTextExtraction": {
+      "additionalProperties": false,
+      "description": "Submit PDF text extraction asynchronously.",
+      "properties": {
+        "url": {
+          "description": "Public URL of the PDF to process.",
+          "format": "uri",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "start_page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Start Page",
+          "type": "integer"
+        },
+        "end_page": {
+          "default": 0,
+          "description": "0 means the last page.",
+          "minimum": 0,
+          "title": "End Page",
+          "type": "integer"
+        },
+        "user_password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Password",
+          "ui:widget": "password"
+        },
+        "text_layout": {
+          "default": "Original",
+          "enum": [
+            "Original",
+            "Reading"
+          ],
+          "title": "Text Layout",
+          "type": "string"
+        },
+        "operation": {
+          "const": "start_pdf_text_extraction",
+          "default": "start_pdf_text_extraction",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "output_format": {
+          "default": "Text",
+          "enum": [
+            "Text",
+            "Html"
+          ],
+          "title": "Output Format",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "StartPdfTextExtraction",
+      "type": "object"
+    },
+    "StartUrlConversion": {
+      "additionalProperties": false,
+      "description": "Submit a web page conversion and return its asynchronous job ID.",
+      "properties": {
+        "page_size": {
+          "default": "A4",
+          "enum": [
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4",
+            "A5",
+            "A6",
+            "A7",
+            "A8",
+            "Letter",
+            "HalfLetter",
+            "Ledger",
+            "Legal"
+          ],
+          "title": "Page Size",
+          "type": "string"
+        },
+        "page_orientation": {
+          "default": "Portrait",
+          "enum": [
+            "Portrait",
+            "Landscape"
+          ],
+          "title": "Page Orientation",
+          "type": "string"
+        },
+        "engine": {
+          "default": "Chromium",
+          "enum": [
+            "WebKit",
+            "Restricted",
+            "Blink",
+            "Chromium"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "margin_top": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Top",
+          "type": "integer"
+        },
+        "margin_bottom": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Bottom",
+          "type": "integer"
+        },
+        "margin_left": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Left",
+          "type": "integer"
+        },
+        "margin_right": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Margin Right",
+          "type": "integer"
+        },
+        "pdf_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "PDF filename"
+        },
+        "doc_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doc Title"
+        },
+        "doc_author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doc Author"
+        },
+        "page_numbers": {
+          "default": false,
+          "title": "Page Numbers",
+          "type": "boolean"
+        },
+        "show_header": {
+          "default": false,
+          "title": "Show Header",
+          "type": "boolean"
+        },
+        "header_html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header Html"
+        },
+        "header_height": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header Height"
+        },
+        "show_footer": {
+          "default": false,
+          "title": "Show Footer",
+          "type": "boolean"
+        },
+        "footer_html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Footer Html"
+        },
+        "footer_height": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Footer Height"
+        },
+        "pdf_bookmarks_selectors": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdf Bookmarks Selectors"
+        },
+        "pdf_hide_elements": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdf Hide Elements"
+        },
+        "pdf_web_elements_selectors": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CSS selectors whose bounding boxes can be retrieved for a completed async job.",
+          "title": "Pdf Web Elements Selectors"
+        },
+        "min_load_time": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum page load time in seconds, for JavaScript content.",
+          "title": "Min Load Time"
+        },
+        "url": {
+          "description": "Public web page URL; SelectPdf fetches it.",
+          "format": "uri",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "operation": {
+          "const": "start_url_conversion",
+          "default": "start_url_conversion",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "StartUrlConversion",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "convert_html": "#/$defs/ConvertHtml",
+          "convert_url": "#/$defs/ConvertUrl",
+          "extract_pdf_text": "#/$defs/ExtractPdfText",
+          "get_async_job": "#/$defs/GetAsyncJob",
+          "get_usage": "#/$defs/GetUsage",
+          "get_web_elements": "#/$defs/GetWebElements",
+          "merge_pdfs": "#/$defs/MergePdfs",
+          "search_pdf": "#/$defs/SearchPdf",
+          "start_html_conversion": "#/$defs/StartHtmlConversion",
+          "start_pdf_merge": "#/$defs/StartPdfMerge",
+          "start_pdf_text_extraction": "#/$defs/StartPdfTextExtraction",
+          "start_url_conversion": "#/$defs/StartUrlConversion"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ConvertUrl"
+        },
+        {
+          "$ref": "#/$defs/ConvertHtml"
+        },
+        {
+          "$ref": "#/$defs/StartUrlConversion"
+        },
+        {
+          "$ref": "#/$defs/StartHtmlConversion"
+        },
+        {
+          "$ref": "#/$defs/MergePdfs"
+        },
+        {
+          "$ref": "#/$defs/StartPdfMerge"
+        },
+        {
+          "$ref": "#/$defs/ExtractPdfText"
+        },
+        {
+          "$ref": "#/$defs/SearchPdf"
+        },
+        {
+          "$ref": "#/$defs/StartPdfTextExtraction"
+        },
+        {
+          "$ref": "#/$defs/GetAsyncJob"
+        },
+        {
+          "$ref": "#/$defs/GetWebElements"
+        },
+        {
+          "$ref": "#/$defs/GetUsage"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SelectPdfAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Selectpdf Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

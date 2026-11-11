@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/selectpdf.svg",
+  "source": "https://selectpdf.com/",
+  "page": "https://selectpdf.com/",
+  "date": "2026-11-11",
+  "license": "SelectPdf trademark; official website header symbol used to identify the integration.",
+  "sha256": "c972a1d7b859b98216d137131475f1a7ec0264c1d03b8b7c71a2ce9b3715fe70",
+  "edits": [
+    "Extracted the first inline SVG from .spdf-nav-logo without changing its geometry.",
+    "Resolved the official default amber accent CSS variable to #D97706 and currentColor to #1F140A.",
+    "Added the SVG namespace."
+  ],
+  "notes": "Official current header symbol, not the text wordmark; outlined rounded rectangle is part of the provider mark, with no background fill. CSS palette source: https://selectpdf.com/assets/css/base.css"
+}
