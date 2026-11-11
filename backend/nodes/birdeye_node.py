@@ -5,6 +5,8 @@ Connection evidence reads the business identified in the saved credential.
 """
 from __future__ import annotations
 
+import hashlib
+import json
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
 
@@ -13,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_vali
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin, _scope_of_op_config
 
 BASE_URL = "https://api.birdeye.com/resources"
 ResourceID = Annotated[str, StringConstraints(pattern=r"^[0-9]+$", min_length=1, max_length=30)]
@@ -158,7 +161,31 @@ class CheckInCustomerConfig(_BusinessConfig):
     smsEnabled: Literal[0, 1] = Field(0, title="Customer Opted Into SMS", description="Only choose 1 when the customer opted to receive SMS requests. Email requests may still be sent according to business settings.")
     externalId: str | None = Field(None, title="External Contact ID")
 
-Operation = Annotated[Union[GetBusinessConfig, ListChildBusinessesConfig, ListReviewsConfig, GetReviewSummaryConfig, ReplyToReviewConfig, UpsertContactConfig, GetContactConfig, DeleteContactConfig, GetContactActivityConfig, ListContactsConfig, ListReviewSourcesConfig, AddReviewSourceConfig, DeleteReviewSourceConfig, ListSurveysConfig, ListEmployeesConfig, CheckInCustomerConfig], Field(discriminator="operation")]
+class OnNewOrUpdatedReviewConfig(PollTriggerConfigBase, _BusinessConfig):
+    operation: Literal["on_new_or_updated_review"] = Field(
+        "on_new_or_updated_review", title="On New or Updated Review",
+        description="Poll reviews for new IDs or changed records after activation. Existing reviews are baselined; changes between polls are represented by the latest snapshot.", json_schema_extra={
+            "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+            "x-display-name": "On New or Updated Review",
+        })
+    update_from_date: str | None = Field(
+        None, title="Updated Since", pattern=r"^\d{2}/\d{2}/\d{4}$",
+        description="Optional UTC review update start date (MM/DD/YYYY). Narrow large accounts to at most 10,000 matching reviews.")
+
+
+class OnNewOrUpdatedContactConfig(PollTriggerConfigBase, _BusinessConfig):
+    operation: Literal["on_new_or_updated_contact"] = Field(
+        "on_new_or_updated_contact", title="On New or Updated Contact",
+        description="Poll contacts ordered by last activity for new IDs or changed records after activation. Existing contacts are baselined; changes between polls are represented by the latest snapshot.", json_schema_extra={
+            "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+            "x-display-name": "On New or Updated Contact",
+        })
+    start_date: str | None = Field(
+        None, title="Start Date", pattern=r"^\d{2}/\d{2}/\d{4}$",
+        description="Optional contact-list start date (MM/DD/YYYY). Narrow large accounts to at most 10,000 contacts.")
+
+
+Operation = Annotated[Union[GetBusinessConfig, ListChildBusinessesConfig, ListReviewsConfig, GetReviewSummaryConfig, ReplyToReviewConfig, UpsertContactConfig, GetContactConfig, DeleteContactConfig, GetContactActivityConfig, ListContactsConfig, ListReviewSourcesConfig, AddReviewSourceConfig, DeleteReviewSourceConfig, ListSurveysConfig, ListEmployeesConfig, CheckInCustomerConfig, OnNewOrUpdatedReviewConfig, OnNewOrUpdatedContactConfig], Field(discriminator="operation")]
 
 
 
@@ -276,7 +303,7 @@ ROUTES = {'get_business': {'method': 'GET',
                        'body': ['name', 'emailId', 'phone', 'smsEnabled', 'externalId']}}
 
 
-class BirdeyeNode(WorkflowNode):
+class BirdeyeNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-birdeye"
     connection_evidence = ConnectionEvidence(noun="business", identity_operation="get_business")
     edit_examples = ["Find recent reviews", "Reply to a review", "Create or update a contact"]
@@ -285,11 +312,123 @@ class BirdeyeNode(WorkflowNode):
     def get_config_model(cls):
         return BirdeyeNodeConfig
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in {"on_new_or_updated_review", "on_new_or_updated_contact"}:
+            return bool(output.get("event_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        operation = output.get("operation")
+        if operation not in {"on_new_or_updated_review", "on_new_or_updated_contact"}:
+            return super().resolve_agent_event(output)
+        items = output.get("data") or []
+        if not items:
+            return None
+        lines = []
+        for item in items[:10]:
+            if operation == "on_new_or_updated_review":
+                reviewer = item.get("reviewer") or {}
+                who = " ".join(str(reviewer.get(k) or "") for k in ("firstName", "lastName")).strip() or "A reviewer"
+                lines.append(f"- {who}: {item.get('rating')} stars on {item.get('sourceType')}; "
+                             f"{item.get('comments') or '(no comment)'} (review ID {item.get('reviewId')})")
+            else:
+                lines.append(f"- {item.get('name') or 'Contact'}: {item.get('email') or item.get('phone') or '(no contact details)'}; "
+                             f"last activity {item.get('lastActivityWithTime')} (contact ID {item.get('customerId')})")
+        if len(items) > 10:
+            lines.append(f"- … and {len(items) - 10} more")
+        thing = "review(s)" if operation == "on_new_or_updated_review" else "contact(s)"
+        return {"text": f"Birdeye business {output.get('business_id')}: {len(items)} new or updated {thing}:\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    @staticmethod
+    async def _request(api_key, method, path, *, params, body=None):
+        kwargs = {"params": params, "headers": {"x-api-key": api_key, "Accept": "application/json"}}
+        if body is not None:
+            kwargs["json"] = body
+        async with httpx.AsyncClient(timeout=30, follow_redirects=False) as client:
+            response = await client.request(method, BASE_URL + path, **kwargs)
+        if not 200 <= response.status_code < 300:
+            try:
+                error = response.json()
+                message = error.get("message", error.get("errorMessage", "Birdeye request failed")) if isinstance(error, dict) else "Birdeye request failed"
+            except ValueError:
+                message = "Birdeye returned a non-JSON error"
+            raise ValueError(f"Birdeye HTTP {response.status_code}: {str(message).replace(api_key, '[redacted]')}")
+        data = response.json() if response.status_code != 204 and response.content else None
+        if isinstance(data, dict) and (("errorCode" in data and data["errorCode"]) or ("code" in data and data["code"] and "message" in data and data["message"])):
+            raise ValueError(str(data.get("message", data.get("errorMessage", "Birdeye request failed"))).replace(api_key, "[redacted]"))
+        return data
+
+    async def _poll(self, config, credential):
+        business_id = config.business_id or credential.business_id
+        reviews = isinstance(config, OnNewOrUpdatedReviewConfig)
+        items = []
+        for page in range(100):
+            if reviews:
+                data = await self._request(credential.api_key, "POST", f"/v1/review/businessId/{business_id}",
+                    params={"sindex": page * 100, "count": 100},
+                    body={"statuses": ["all"], **({"updateFromDate": config.update_from_date} if config.update_from_date else {})})
+                if not isinstance(data, list):
+                    raise ValueError("Birdeye did not return a review list")
+                batch = data
+                done = len(batch) < 100
+            else:
+                data = await self._request(credential.api_key, "POST", "/v2/customer/list",
+                    params={"businessId": business_id, "page": page, "size": 100, "sortby": "lastActivityOn"},
+                    body={"startDate": config.start_date} if config.start_date else {})
+                if not isinstance(data, dict) or not isinstance(data.get("customers"), list):
+                    raise ValueError("Birdeye did not return a contact list")
+                batch = data["customers"]
+                done = page + 1 >= data["totalPages"]
+            if any(not isinstance(item, dict) or not item.get("reviewId" if reviews else "customerId") for item in batch):
+                raise ValueError("Birdeye returned an item without its documented ID")
+            items.extend(batch)
+            if done:
+                break
+        else:
+            # Never save a partial baseline that could silently miss later pages.
+            raise ValueError("Birdeye poll exceeds 10,000 items; narrow the trigger's date filter")
+        # IDs plus the returned record detect changed snapshots as well as new IDs.
+        # Only provider response fields participate; lifecycle config never does.
+        fresh = await self._filter_unseen(items, lambda item: str(item["reviewId" if reviews else "customerId"]) + ":" +
+            hashlib.sha256(json.dumps(item, sort_keys=True, separators=(",", ":")).encode()).hexdigest())
+        return {"data": fresh, "operation": config.operation, "business_id": business_id, "event_count": len(fresh)}
+
+    async def _filter_unseen(self, items, id_fn):
+        """Keep one latest snapshot per ID so reverting a record is still an update."""
+        scope = _scope_of_op_config(self.config.config)
+        current = {id_fn(item): item for item in items}
+
+        def mutator(state):
+            baseline = "seen_ids" not in state or state.get("scope", scope) != scope
+            if not baseline and getattr(self, "_poll_baseline_only", False):
+                return None, []
+            previous = state.get("seen_ids", []) if not baseline else []
+            seen = set(previous)
+            fresh = [] if baseline else [item for key, item in current.items() if key not in seen]
+            # Drop each resource's older digest, retaining absent resources to
+            # avoid re-firing when they briefly disappear between polls.
+            resource_ids = {key.split(":", 1)[0] for key in current}
+            kept = [key for key in previous if key.split(":", 1)[0] not in resource_ids]
+            seen_ids = (kept + list(current))[-10000:]
+            new_state = {**state, "seen_ids": seen_ids, "scope": scope}
+            return new_state if new_state != state else None, fresh
+
+        fresh = await self._update_node_state(mutator, skip_result=[])
+        self._poll_emitted_count = len(fresh)
+        return fresh
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Birdeye API key and business ID")
         credential = self.config.credentials
         config = self.config.config
+        if isinstance(config, (OnNewOrUpdatedReviewConfig, OnNewOrUpdatedContactConfig)):
+            output = await self._poll(config, credential)
+            await self.emit(output)
+            return output
         route = ROUTES[config.operation]
         values = config.model_dump(exclude_none=True, exclude={"operation", "business_id"})
         if route["business"]:
@@ -300,26 +439,7 @@ class BirdeyeNode(WorkflowNode):
         params = {key: values[key] for key in route["query"] if key in values}
         # Birdeye query arrays use the default OpenAPI form/explode encoding.
         body = {key: values[key] for key in route["body"] if key in values} if route["body"] is not None else None
-        headers = {"x-api-key": credential.api_key, "Accept": "application/json"}
-        kwargs = {"params": params, "headers": headers}
-        if body is not None:
-            kwargs["json"] = body
-        async with httpx.AsyncClient(timeout=30, follow_redirects=False) as client:
-            response = await client.request(route["method"], BASE_URL + path, **kwargs)
-        if not 200 <= response.status_code < 300:
-            # Keep the provider's rejection words, without reflecting the secret.
-            try:
-                error = response.json()
-                message = error.get("message", error.get("errorMessage", "Birdeye request failed")) if isinstance(error, dict) else "Birdeye request failed"
-            except ValueError:
-                message = "Birdeye returned a non-JSON error"
-            raise ValueError(f"Birdeye HTTP {response.status_code}: {str(message).replace(credential.api_key, '[redacted]')}")
-        if response.status_code == 204 or not response.content:
-            data = None
-        else:
-            data = response.json()
-            if isinstance(data, dict) and (data.get("errorCode") or (data.get("code") and data.get("message"))):
-                raise ValueError(str(data.get("message", data.get("errorMessage", "Birdeye request failed"))).replace(credential.api_key, "[redacted]"))
+        data = await self._request(credential.api_key, route["method"], path, params=params, body=body)
         output = {"data": data, "operation": config.operation}
         await self.emit(output)
         return output
