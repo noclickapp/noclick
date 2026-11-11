@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/abysshub.svg",
+  "source": "https://abysshub.com/",
+  "source_page": "https://abysshub.com/",
+  "date": "2026-11-11",
+  "license": "AbyssHub trademark; official website asset used to identify the integration",
+  "sha256": "2e644f9440d10d128e8f3df3fbc849cb828c8aa5a6414eb3aa2502053e0bd3fd",
+  "edits": [
+    "Extracted the abyss-icon-body SVG from the official homepage header; path data is unchanged.",
+    "Removed CSS classes and transparent editor rectangle; fixed dimensions to the original viewBox.",
+    "Set the monochrome path fill to #000000 for light surfaces."
+  ],
+  "notes": "Current company app mark from the website header. No wordmark or added background. The SDK contains an older, different mark; the current website takes precedence."
+}
