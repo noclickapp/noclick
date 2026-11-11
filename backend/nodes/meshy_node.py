@@ -12,6 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from utils.ssrf import guarded_async_client
 
 BASE_URL = "https://api.meshy.ai/openapi"
@@ -238,7 +239,54 @@ class GetBalance(Input):
     operation: Literal["get_balance"] = "get_balance"
 
 
-MeshyOperation = Annotated[Union[CreateTextTo3D, CreateImageTo3D, CreateMultiImageTo3D, CreateRetexture, CreateRemesh, ListTextTo3D, GetTextTo3D, DeleteTextTo3D, ListImageTo3D, GetImageTo3D, DeleteImageTo3D, ListMultiImageTo3D, GetMultiImageTo3D, DeleteMultiImageTo3D, ListRetexture, GetRetexture, DeleteRetexture, ListRemesh, GetRemesh, DeleteRemesh, GetBalance], Field(discriminator="operation")]
+class NewTasks(PollTriggerConfigBase):
+    """Baseline existing tasks, then emit newly created tasks of this kind.
+
+    Meshy's webhooks require dashboard setup; its API lists tasks by creation time.
+    Each poll scans at most 10,000 tasks and fails without advancing state if truncated.
+    """
+
+
+class OnNewTextTo3D(NewTasks):
+    """Watch newly created text-to-3D tasks. Existing history is baselined; fewer than 10,000 tasks are supported."""
+    operation: Literal["on_new_text_to_3d"] = Field("on_new_text_to_3d", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Text to 3D Task"})
+
+
+class OnNewImageTo3D(NewTasks):
+    """Watch newly created image-to-3D tasks. Existing history is baselined; fewer than 10,000 tasks are supported."""
+    operation: Literal["on_new_image_to_3d"] = Field("on_new_image_to_3d", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Image to 3D Task"})
+
+
+class OnNewMultiImageTo3D(NewTasks):
+    """Watch newly created multi-image tasks. Existing history is baselined; fewer than 10,000 tasks are supported."""
+    operation: Literal["on_new_multi_image_to_3d"] = Field("on_new_multi_image_to_3d", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Multi-Image to 3D Task"})
+
+
+class OnNewRetexture(NewTasks):
+    """Watch newly created retexture tasks. Existing history is baselined; fewer than 10,000 tasks are supported."""
+    operation: Literal["on_new_retexture"] = Field("on_new_retexture", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Retexture Task"})
+
+
+class OnNewRemesh(NewTasks):
+    """Watch newly created remesh tasks. Existing history is baselined; fewer than 10,000 tasks are supported."""
+    operation: Literal["on_new_remesh"] = Field("on_new_remesh", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Remesh Task"})
+
+
+POLL_OPERATIONS = {
+    "on_new_text_to_3d": ListTextTo3D,
+    "on_new_image_to_3d": ListImageTo3D,
+    "on_new_multi_image_to_3d": ListMultiImageTo3D,
+    "on_new_retexture": ListRetexture,
+    "on_new_remesh": ListRemesh,
+}
+
+
+MeshyOperation = Annotated[Union[CreateTextTo3D, CreateImageTo3D, CreateMultiImageTo3D, CreateRetexture, CreateRemesh, ListTextTo3D, GetTextTo3D, DeleteTextTo3D, ListImageTo3D, GetImageTo3D, DeleteImageTo3D, ListMultiImageTo3D, GetMultiImageTo3D, DeleteMultiImageTo3D, ListRetexture, GetRetexture, DeleteRetexture, ListRemesh, GetRemesh, DeleteRemesh, GetBalance, OnNewTextTo3D, OnNewImageTo3D, OnNewMultiImageTo3D, OnNewRetexture, OnNewRemesh], Field(discriminator="operation")]
 
 
 class MeshyConfig(NodeConfig[MeshyOperation, MeshyAPIKeyCredential]):
@@ -271,7 +319,7 @@ ROUTES = {
 }
 
 
-class MeshyNode(WorkflowNode):
+class MeshyNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-meshy"
     connection_evidence = ConnectionEvidence(operation="get_balance", noun="Meshy account credit balance")
 
@@ -279,11 +327,70 @@ class MeshyNode(WorkflowNode):
     def get_config_model(cls):
         return MeshyConfig
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in POLL_OPERATIONS:
+            return output.get("status") == "success" and bool(output.get("new_task_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if "new_task_count" not in output:
+            return super().resolve_agent_event(output)
+        tasks = output.get("tasks", [])
+        if not tasks:
+            return None
+        kind = output["task_kind"]
+        path = ROUTES["list_" + kind][1]
+        content_field = "prompt" if kind == "text_to_3d" else (
+            "text_style_prompt" if kind == "retexture" else "object_prompt")
+        lines = []
+        for task in tasks[:10]:
+            title = task.get("name") or task.get(content_field) or "Untitled task"
+            line = (f"- {title}: {task['status']} "
+                    f"(task ID {task['id']}; {BASE_URL}{path}/{task['id']})")
+            model_url = (task.get("model_urls") or {}).get("glb")
+            if model_url:
+                line += f"; GLB model: {model_url}"
+            lines.append(line)
+        if len(tasks) > 10:
+            lines.append(f"- {len(tasks) - 10} more tasks in the trigger output")
+        return {"text": f"Your Meshy account has {len(tasks)} new {kind.replace('_', ' ')} task(s):\n"
+                + "\n".join(lines), "conversation_key": None}
+
+    async def _poll_new_tasks(self, operation):
+        tasks = []
+        list_config = POLL_OPERATIONS[operation]
+        for page_num in range(1, 101):
+            result = await self._execute_operation(list_config(page_num=page_num, page_size=100))
+            if result["status"] != "success":
+                return result
+            rows = result["tasks"]
+            if any(not row["id"] or row.get("status") not in {
+                    "PENDING", "IN_PROGRESS", "SUCCEEDED", "FAILED", "CANCELED"} for row in rows):
+                return {"status": "error", "error": "Meshy returned an unexpected task list"}
+            tasks.extend(rows)
+            if len(rows) < 100:
+                break
+        else:
+            raise ValueError("Meshy task history exceeds the 10,000-task polling limit")
+        # Oldest first, so a batch reaches the agent in creation order.
+        unique = {task["id"]: task for task in reversed(tasks)}
+        fresh = await self._filter_unseen(list(unique.values()), lambda task: task["id"])
+        return {"status": "success", "tasks": fresh, "new_task_count": len(fresh),
+                "task_kind": operation.removeprefix("on_new_")}
+
     async def execute(self, inputs):
         cfg = self.config
         if not cfg.credentials:
             raise ValueError("Connect a Meshy API key")
         op = cfg.config
+        if isinstance(op, NewTasks):
+            return await self._poll_new_tasks(op.operation)
+        return await self._execute_operation(op)
+
+    async def _execute_operation(self, op):
+        cfg = self.config
         method, path = ROUTES[op.operation]
         values = op.model_dump(exclude_none=True, exclude={"operation"})
         task_id = values.pop("task_id", None)

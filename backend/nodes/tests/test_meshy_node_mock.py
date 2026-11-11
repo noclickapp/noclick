@@ -145,3 +145,113 @@ async def test_published_response_examples(monkeypatch, selector):
     transport(monkeypatch, 202 if method == 'POST' else 200, witnesses[selector]['body'])
     result = await node(config).execute({})
     assert result['status'] == 'success'
+
+
+def poll_state(monkeypatch, initial=None):
+    state = dict(initial or {})
+
+    async def update(self, mutator, **kwargs):
+        new_state, result = mutator(dict(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+
+    monkeypatch.setattr(native.MeshyNode, '_update_node_state', update)
+    return state
+
+
+def documented_tasks(operation):
+    witnesses = json.loads((Path(__file__).parent / 'fixtures/meshy/responses.json').read_text())
+    config = native.POLL_OPERATIONS[operation]()
+    path = native.ROUTES[config.operation][1]
+    return path, witnesses['GET ' + path]['body']
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('operation', native.POLL_OPERATIONS)
+async def test_poll_documented_tasks_baseline_emit_once_and_agent_event(monkeypatch, operation):
+    path, tasks = documented_tasks(operation)
+    state = poll_state(monkeypatch)
+    config = {'operation': operation}
+    poll = node(config)
+    transport(monkeypatch, 200, [])
+    assert (await poll.execute({}))['tasks'] == []
+    assert state['seen_ids'] == []
+    assert poll.trigger_produced_no_event({})
+
+    requests = transport(monkeypatch, 200, tasks)
+    result = await poll.execute({})
+    assert result['tasks'] == tasks and result['new_task_count'] == len(tasks)
+    assert requests[0].url.path == '/openapi' + path
+    assert dict(requests[0].url.params) == {'page_num': '1', 'page_size': '100', 'sort_by': '-created_at'}
+    assert poll.trigger_emitted_event(result)
+    assert native.MeshyNode.should_propagate_output(result, config)
+    text = native.MeshyNode.resolve_agent_event(result)['text']
+    assert 'Meshy' in text and tasks[0]['id'] in text and tasks[0]['status'] in text
+    assert native.BASE_URL + path + '/' + tasks[0]['id'] in text
+    again = await poll.execute({})
+    assert again['tasks'] == [] and poll.trigger_produced_no_event(again)
+    assert not native.MeshyNode.should_propagate_output(again, config)
+    assert native.MeshyNode.resolve_agent_event(again) is None
+
+
+@pytest.mark.asyncio
+async def test_poll_existing_history_and_repoint_are_quiet(monkeypatch):
+    state = poll_state(monkeypatch)
+    _, tasks = documented_tasks('on_new_text_to_3d')
+    transport(monkeypatch, 200, tasks)
+    first = await node({'operation': 'on_new_text_to_3d'}).execute({})
+    assert first['tasks'] == [] and state['seen_ids'] == [tasks[0]['id']]
+    old_scope = state['scope']
+    _, tasks = documented_tasks('on_new_remesh')
+    transport(monkeypatch, 200, tasks)
+    assert (await node({'operation': 'on_new_remesh'}).execute({}))['tasks'] == []
+    assert state['scope'] != old_scope and state['seen_ids'] == [tasks[0]['id']]
+
+
+@pytest.mark.asyncio
+async def test_poll_paginates_and_deduplicates_overlapping_pages(monkeypatch):
+    state = poll_state(monkeypatch, {'seen_ids': []})
+    path, tasks = documented_tasks('on_new_text_to_3d')
+    requests = []
+
+    def respond(request):
+        requests.append(request)
+        # Synthetic repeated rows exercise pagination overlap; the task body is provider-authored.
+        return httpx.Response(200, json=tasks * 100 if request.url.params['page_num'] == '1' else tasks)
+
+    monkeypatch.setattr(native, 'guarded_async_client', lambda **kw: httpx.AsyncClient(
+        transport=httpx.MockTransport(respond), **kw))
+    result = await node({'operation': 'on_new_text_to_3d'}).execute({})
+    assert [r.url.params['page_num'] for r in requests] == ['1', '2']
+    assert result['tasks'] == tasks and state['seen_ids'] == [tasks[0]['id']]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('status,body', [(401, {'message': 'Invalid key'}), (429, {}),
+                                       (200, {}), (200, [{'id': TASK}])])
+async def test_poll_failure_never_consumes_state(monkeypatch, status, body):
+    state = poll_state(monkeypatch, {'seen_ids': []})
+    transport(monkeypatch, status, body)
+    result = await node({'operation': 'on_new_text_to_3d'}).execute({})
+    assert result['status'] == 'error' and state == {'seen_ids': []}
+
+
+@pytest.mark.asyncio
+async def test_poll_truncation_does_not_advance_state(monkeypatch):
+    state = poll_state(monkeypatch, {'seen_ids': []})
+    _, tasks = documented_tasks('on_new_text_to_3d')
+    requests = transport(monkeypatch, 200, tasks * 100)
+    with pytest.raises(ValueError, match='polling limit'):
+        await node({'operation': 'on_new_text_to_3d'}).execute({})
+    assert len(requests) == 100 and state == {'seen_ids': []}
+
+
+def test_poll_scope_ignores_canvas_metadata():
+    from nodes.core.poll_trigger import poll_scope
+    config = {'operation': 'on_new_text_to_3d'}
+    assert poll_scope(native.MeshyNode, config) == poll_scope(native.MeshyNode, {
+        **config, 'label': 'My tasks', 'goal': 'Watch tasks',
+        'schedule': {'frequency': 'minutes', 'interval': 10}})
+    assert poll_scope(native.MeshyNode, config) != poll_scope(native.MeshyNode, {'operation': 'on_new_remesh'})
