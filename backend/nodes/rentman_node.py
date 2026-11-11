@@ -10,6 +10,7 @@ from urllib.parse import urlsplit, parse_qsl
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -184,7 +185,52 @@ class ListProjectEquipment(_Page):
     project_id: int = Field(..., gt=0)
 
 
+POLL_COLLECTIONS = {
+    "on_new_or_updated_project": "projects",
+    "on_new_or_updated_contact": "contacts",
+    "on_new_or_updated_task": "tasks",
+    "on_new_or_updated_invoice": "invoices",
+}
+
+
+class _RentmanPoll(PollTriggerConfigBase):
+    model_config = ConfigDict(extra="forbid", hide_input_in_errors=True,
+        json_schema_extra={"x-requires-webhook": True})
+
+
+class OnNewOrUpdatedProject(_RentmanPoll):
+    operation: Literal["on_new_or_updated_project"] = Field("on_new_or_updated_project",
+        title="On New or Updated Project", description="Poll projects by modification time. Existing records form the initial baseline; supports up to 9,000 records.",
+        json_schema_extra={"ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On New or Updated Project"})
+
+
+class OnNewOrUpdatedContact(_RentmanPoll):
+    operation: Literal["on_new_or_updated_contact"] = Field("on_new_or_updated_contact",
+        title="On New or Updated Contact", description="Poll contacts by modification time. Existing records form the initial baseline; supports up to 9,000 records.",
+        json_schema_extra={"ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On New or Updated Contact"})
+
+
+class OnNewOrUpdatedTask(_RentmanPoll):
+    operation: Literal["on_new_or_updated_task"] = Field("on_new_or_updated_task",
+        title="On New or Updated Task", description="Poll tasks by modification time. Existing records form the initial baseline; supports up to 9,000 records.",
+        json_schema_extra={"ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On New or Updated Task"})
+
+
+class OnNewOrUpdatedInvoice(_RentmanPoll):
+    operation: Literal["on_new_or_updated_invoice"] = Field("on_new_or_updated_invoice",
+        title="On New or Updated Invoice", description="Poll invoices by modification time. Existing records form the initial baseline; supports up to 9,000 records.",
+        json_schema_extra={"ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On New or Updated Invoice"})
+
+
 RentmanConfig = Annotated[Union[
+    OnNewOrUpdatedProject,
+    OnNewOrUpdatedContact,
+    OnNewOrUpdatedTask,
+    OnNewOrUpdatedInvoice,
     ListContacts,
     GetContact,
     ListContactpersons,
@@ -257,7 +303,7 @@ def _page_url(value, path):
     return value
 
 
-class RentmanNode(WorkflowNode):
+class RentmanNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-rentman"
     connection_evidence = ConnectionEvidence(noun="projects", operation="list_projects")
 
@@ -284,11 +330,83 @@ class RentmanNode(WorkflowNode):
         if isinstance(credential, dict) and "credential_type" in credential and credential["credential_type"] != "rentman_api_token":
             raise ValueError("Attach a Rentman API token credential")
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in POLL_COLLECTIONS:
+            return bool(output.get("new_or_updated_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("operation") not in POLL_COLLECTIONS:
+            return super().resolve_agent_event(output)
+        records = output.get("data", [])
+        if not records:
+            return None
+        collection = POLL_COLLECTIONS[output["operation"]]
+        lines = []
+        for record in records[:10]:
+            label = record.get("displayname") or f"{collection} record {record['id']}"
+            lines.append(f"- {label}: {BASE}/{collection}/{record['id']} "
+                         f"(modified {record.get('modified')}; creator {record.get('creator')})")
+        if len(records) > 10:
+            lines.append(f"- … and {len(records) - 10} more")
+        return {"text": f"Rentman: {len(records)} new or updated {collection}:\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _request(self, credential, method, url, *, params=None, body=None):
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, url, params=params, json=body,
+                headers={"Authorization": "Bearer " + credential.api_token,
+                         "Accept": "application/json", "Content-Type": "application/json"})
+        if not response.is_success:
+            raise ValueError(f"Rentman HTTP {response.status_code}: {response.text[:2000]}")
+        if len(response.content) > 5_500_000:
+            raise ValueError("Rentman response exceeds its documented size limit")
+        return response
+
+    async def _poll(self, credential, operation):
+        # Querying / sort and the response schemas in OpenAPI 1.19.0 document
+        # -modified ordering and id/modified. Follow opaque cursors unchanged.
+        path = "/" + POLL_COLLECTIONS[operation]
+        url = BASE + path
+        params = {"limit": 1500, "sort": "-modified"}
+        records, visited = [], set()
+        for _ in range(6):
+            visited.add(url)
+            response = await self._request(credential, "GET", url, params=params)
+            payload = response.json()
+            if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):
+                raise ValueError("Rentman collection data must be an array of objects")
+            page = payload["data"]
+            if not all(isinstance(row, dict) and isinstance(row.get("id"), int)
+                       and "modified" in row for row in page):
+                raise ValueError("Rentman poll records require id and modified")
+            records.extend(page)
+            if len(records) > 9000:
+                raise ValueError("Rentman polling supports up to 9,000 records")
+            following = payload.get("next_page_url")
+            if not following:
+                break
+            url = _page_url(following, path)
+            if url in visited:
+                raise ValueError("Rentman returned a repeated continuation")
+            params = None
+        else:
+            raise ValueError("Rentman polling supports up to 9,000 records; collection has more pages")
+        # Keep a version per id; nullable modified still permits new detection.
+        # Finish every page before advancing state, so a failed page loses nothing.
+        fresh = await self._filter_unseen(records, lambda row: f"{row['id']}:{row['modified']}")
+        return {"status": "success", "operation": operation, "data": fresh,
+                "new_or_updated_count": len(fresh)}
+
     async def execute(self, inputs):
         credential = self.config.credentials
         if credential is None:
             raise ValueError("Attach a Rentman API token")
         config = self.config.config
+        if config.operation in POLL_COLLECTIONS:
+            return await self._poll(credential, config.operation)
         method, template = ROUTES[config.operation]
         values = config.model_dump(mode="json", exclude_none=True)
         identifier = next((v for k, v in values.items() if k.endswith("_id")), None)
@@ -304,13 +422,7 @@ class RentmanNode(WorkflowNode):
                 params = {"limit": config.limit}
         elif method in {"POST", "PUT"}:
             body = {k: v for k, v in values.items() if k != "operation" and not k.endswith("_id")}
-        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
-            response = await client.request(method, url, params=params, json=body,
-                headers={"Authorization": "Bearer " + credential.api_token,
-                         "Accept": "application/json", "Content-Type": "application/json"})
-        if not response.is_success:
-            # Keep the provider's rejection verbatim for the shared connect verdict.
-            raise ValueError(f"Rentman HTTP {response.status_code}: {response.text[:2000]}")
+        response = await self._request(credential, method, url, params=params, body=body)
         if method == "DELETE":
             return {"status": "success", "deleted_id": identifier, "http_status": response.status_code}
         if len(response.content) > 5_500_000:

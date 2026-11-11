@@ -154,3 +154,107 @@ def test_foreign_credential_family_rejected(tag):
     assert rentman.RentmanNode.validate_config(data)["valid"] is False
     with pytest.raises(ValueError, match="Rentman API token credential"):
         rentman.RentmanNode.parse_config(data)
+
+
+# Poll fixtures follow ProjectResponse, ContactResponse, TaskResponse and
+# FactuurResponse in Rentman's OpenAPI 1.19.0; these are not webhook events.
+# https://openapi-prod-openapidocumentationbucketprodf3f6f37-23pq5ujpblj3.s3.eu-west-1.amazonaws.com/1.19.0/oas.json
+@pytest.mark.parametrize("operation,collection", rentman.POLL_COLLECTIONS.items())
+async def test_poll_baselines_then_emits_new_and_updated_records(transport, operation, collection):
+    instance = node({"operation": operation})
+    state = {}
+
+    async def update(mutator, **kwargs):
+        nonlocal state
+        replacement, result = mutator(state)
+        if replacement is not None:
+            state = replacement
+        return result
+
+    instance._update_node_state = AsyncMock(side_effect=update)
+    original = {"id": 41, "modified": "2026-10-19T10:00:00Z", "displayname": "Rental record", "creator": "/crew/0"}
+    changed = {**original, "modified": "2026-10-19T11:00:00Z"}
+    added = {**original, "id": 42}
+    for records, expected in [([original], []), ([original], []), ([changed, added], [changed, added]), ([changed, added], [])]:
+        transport[1].append((200, {"data": records, "next_page_url": None}))
+        output = await instance.execute({})
+        assert output["data"] == expected
+        assert output["new_or_updated_count"] == len(expected)
+        assert instance.trigger_produced_no_event(output) is (not expected)
+        assert instance.trigger_emitted_event(output) is bool(expected)
+        assert rentman.RentmanNode.should_propagate_output(output, {"operation": operation}) is bool(expected)
+        event = rentman.RentmanNode.resolve_agent_event(output)
+        if expected:
+            assert f"https://api.rentman.net/{collection}/41" in event["text"]
+            assert "Rental record" in event["text"] and "/crew/0" in event["text"]
+        else:
+            assert event is None
+    assert transport[0][0].url.path == "/" + collection
+    assert dict(transport[0][0].url.params) == {"limit": "1500", "sort": "-modified"}
+
+
+async def test_poll_consumes_all_pages_before_updating_state(transport):
+    instance = node({"operation": "on_new_or_updated_project"})
+    instance._filter_unseen = AsyncMock(side_effect=lambda records, key: records)
+    following = "https://api.rentman.net/projects?sort=-modified&cursor=opaque-token"
+    first = {"id": 41, "modified": None}
+    second = {"id": 42, "modified": None}
+    transport[1].extend([(200, {"data": [first], "next_page_url": following}),
+                         (200, {"data": [second], "next_page_url": None})])
+    output = await instance.execute({})
+    assert output["data"] == [first, second]
+    assert str(transport[0][1].url) == following
+    assert instance._filter_unseen.call_count == 1
+    assert instance._filter_unseen.call_args.args[1](first) == "41:None"
+
+
+@pytest.mark.parametrize("following", [
+    "https://foreign.test/projects?cursor=abc",
+    "https://api.rentman.net/contacts?cursor=abc",
+    "https://api.rentman.net/projects?limit=10",
+])
+async def test_poll_rejects_unsafe_cursor_without_advancing_state(transport, following):
+    instance = node({"operation": "on_new_or_updated_project"})
+    instance._filter_unseen = AsyncMock()
+    transport[1].append((200, {"data": [], "next_page_url": following}))
+    with pytest.raises(ValueError, match="next_page_url"):
+        await instance.execute({})
+    instance._filter_unseen.assert_not_called()
+
+
+async def test_poll_failed_later_page_does_not_advance_state(transport):
+    instance = node({"operation": "on_new_or_updated_task"})
+    instance._filter_unseen = AsyncMock()
+    transport[1].extend([(200, {"data": [{"id": 41, "modified": "2026-10-19T10:00:00Z"}],
+        "next_page_url": "https://api.rentman.net/tasks?cursor=abc"}), (429, {"message": "rate limit"})])
+    with pytest.raises(ValueError, match="HTTP 429"):
+        await instance.execute({})
+    instance._filter_unseen.assert_not_called()
+
+
+async def test_poll_rejects_cycles_and_unbounded_collections(transport):
+    instance = node({"operation": "on_new_or_updated_contact"})
+    instance._filter_unseen = AsyncMock()
+    following = "https://api.rentman.net/contacts?cursor=abc"
+    transport[1].extend([(200, {"data": [], "next_page_url": following})] * 2)
+    with pytest.raises(ValueError, match="repeated continuation"):
+        await instance.execute({})
+    transport[1].extend((200, {"data": [], "next_page_url": f"https://api.rentman.net/contacts?cursor={i}"}) for i in range(6))
+    with pytest.raises(ValueError, match="9,000 records"):
+        await instance.execute({})
+    instance._filter_unseen.assert_not_called()
+
+
+@pytest.mark.parametrize("payload", [{}, {"data": {}}, {"data": ["wrong"]}, {"data": [{"id": 41}]}])
+async def test_poll_rejects_invalid_response_without_advancing_state(transport, payload):
+    instance = node({"operation": "on_new_or_updated_invoice"})
+    instance._filter_unseen = AsyncMock()
+    transport[1].append((200, payload))
+    with pytest.raises(ValueError):
+        await instance.execute({})
+    instance._filter_unseen.assert_not_called()
+
+
+def test_poll_scope_rejects_undeclared_fields():
+    assert not rentman.RentmanNode.validate_config({"config": {
+        "operation": "on_new_or_updated_project", "project_id": 41}, "credentials": AUTH})["valid"]
