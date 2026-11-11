@@ -1,37 +1,24 @@
 [
   {
     "kind": "d",
-    "issue": "The pinned Linode label pattern uses unescaped .. in the negative lookahead, rejecting the provider's linode123 example; the current provider contract escapes the dots as \\.\\..",
     "operations": [
-      "create_instance",
-      "update_instance",
-      "list_instances"
+      "create_instance"
     ],
-    "pinned_pattern": "^[a-zA-Z]((?!--|__|..)[a-zA-Z0-9-_.])+$",
+    "issue": "OpenAPI 4.215.0 uses additionalProperties=false inside the first allOf branch of the create-instance request. It rejects label, region and type declared by later branches, even though the provider create-instance docs explicitly accept them.",
     "docs": [
-      "https://techdocs.akamai.com/linode-api/reference/post-linode-instance",
-      "https://techdocs.akamai.com/linode-api/reference/put-linode-instance",
-      "https://techdocs.akamai.com/linode-api/reference/get-linode-instances"
+      "https://techdocs.akamai.com/linode-api/reference/post-linode-instance"
     ]
   },
   {
     "kind": "d",
-    "issue": "The pinned response schema marks Linode host_uuid as RFC UUID format, while the provider documents a non-RFC host machine identifier and its published response example uses 1a2bcd34e5f67gh8ij901234567kl89mn01opqr2. The node preserves this string.",
     "operations": [
-      "list_instances"
+      "on_new_event",
+      "on_event_finished"
     ],
+    "issue": "OpenAPI 4.215.0 declares the X-Filter header as a schema object with default header serialization instead of JSON content. The provider explicitly documents JSON-encoded filter objects in this header, including +order_by and +order. The triggers send that documented JSON representation.",
     "docs": [
-      "https://techdocs.akamai.com/linode-api/reference/get-linode-instances"
-    ]
-  },
-  {
-    "kind": "d",
-    "issue": "The pinned schema marks created, updated and backups.last_successful as RFC date-time, but the provider documents timezone-less timestamps such as 2026-01-01T00:01:01 and 2026-01-02T00:01:01. The node preserves the documented strings.",
-    "operations": [
-      "list_instances"
-    ],
-    "docs": [
-      "https://techdocs.akamai.com/linode-api/reference/get-linode-instances"
+      "https://techdocs.akamai.com/linode-api/reference/filtering-and-sorting",
+      "https://techdocs.akamai.com/linode-api/reference/get-events"
     ]
   }
 ]

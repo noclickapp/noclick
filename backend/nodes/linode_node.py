@@ -1,11 +1,12 @@
 """Linode API v4 instance, DNS and inventory automation using a personal token.
 
-Each operation makes one request to a fixed provider endpoint. Power actions
-report acceptance because Linode completes those jobs asynchronously.
+Actions use fixed provider endpoints; event triggers poll the account history.
+Power actions report acceptance because Linode completes those jobs asynchronously.
 """
 from __future__ import annotations
 
 import ipaddress
+import json
 import re
 from typing import Annotated, Literal, Union
 
@@ -15,6 +16,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, mo
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from utils.ssrf import guarded_async_client
 
 BASE = "https://api.linode.com/v4"
@@ -238,18 +240,33 @@ class ListEvents(_Page):
     operation: Literal["list_events"] = "list_events"
 
 
+class OnNewEvent(PollTriggerConfigBase):
+    """Poll account actions from the last 90 days; the first poll records a baseline."""
+    operation: Literal["on_new_event"] = Field("on_new_event", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Account Event",
+    })
+    action: Text | None = Field(None, description="Optional exact event action, such as linode_boot, linode_create or dns_record_update. Leave empty for all actions.")
+
+
+class OnEventFinished(OnNewEvent):
+    """Poll account events reaching completed, finished or failed; existing terminal events are baselined."""
+    operation: Literal["on_event_finished"] = Field("on_event_finished", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Event Finished or Failed",
+    })
+
+
 LinodeConfig = Annotated[Union[GetProfile, ListInstances, GetInstance, CreateInstance,
     UpdateInstance, DeleteInstance, BootInstance, ShutdownInstance, RebootInstance,
     ListRegions, ListTypes, ListImages, ListDomains, GetDomain, CreateDomain,
     DeleteDomain, ListRecords, CreateRecord, UpdateRecord, DeleteRecord, ListVolumes,
-    ListEvents], Field(discriminator="operation")]
+    ListEvents, OnNewEvent, OnEventFinished], Field(discriminator="operation")]
 
 
 class LinodeNodeConfig(NodeConfig[LinodeConfig, LinodeTokenCredential]):
     pass
 
 
-# Fixed routes and methods from the pinned Linode 4.145.0 OpenAPI contract.
+# Fixed routes and methods from the published Linode API v4 OpenAPI contract.
 ROUTES = {
     "get_profile": ("GET", "/profile"),
     "list_instances": ("GET", "/linode/instances"),
@@ -289,7 +306,7 @@ def _redact(value, secrets):
     return value
 
 
-class LinodeNode(WorkflowNode):
+class LinodeNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-linode"
     connection_evidence = ConnectionEvidence(noun="Linode user", identity_operation="get_profile", identity_keys=("username", "email"))
 
@@ -297,11 +314,100 @@ class LinodeNode(WorkflowNode):
     def get_config_model(cls):
         return LinodeNodeConfig
 
+    @staticmethod
+    async def _request(token, method, route, *, params=None, body=None, headers=None):
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+            return await client.request(method, BASE + route,
+                headers={"Authorization": "Bearer " + token, "Accept": "application/json", **(headers or {})},
+                params=params, **({"json": body} if body is not None else {}))
+
+    @staticmethod
+    def _payload(response):
+        if len(response.content) > 10_000_000:
+            raise ValueError("Linode response exceeds the supported JSON size")
+        try:
+            payload = response.json()
+        except (ValueError, UnicodeError):
+            raise ValueError("Expected a JSON object from Linode") from None
+        if not isinstance(payload, dict):
+            raise ValueError("Expected a JSON object from Linode")
+        return payload
+
+    @staticmethod
+    def _list_payload(payload):
+        if not isinstance(payload.get("data"), list) or any(not isinstance(row, dict) for row in payload["data"]):
+            raise ValueError("Expected a Linode list envelope")
+        page, pages = payload.get("page"), payload.get("pages")
+        if type(page) is not int or type(pages) is not int or page < 1 or pages < 0:
+            raise ValueError("Expected Linode pagination metadata")
+        return payload["data"], page, pages
+
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in {"on_new_event", "on_event_finished"}:
+            return bool(output.get("event_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if "events" not in output:
+            return super().resolve_agent_event(output)
+        events = output["events"]
+        if not events:
+            return None
+        lines = []
+        for event in events[:20]:
+            entity = event.get("entity") or {}
+            lines.append(f"- {event.get('username') or 'Linode'}: {event['action'].replace('_', ' ')} ({event['action']}) "
+                f"[{event['status']}] at {event['created']}; "
+                f"{entity.get('type') or 'account'} {entity.get('label') or ''} "
+                f"(entity id {entity.get('id')}, event id {event['id']}) "
+                f"{entity.get('url') or ''}; {event.get('message') or ''}")
+        if len(events) > 20:
+            lines.append(f"- … and {len(events) - 20} more events in the workflow output")
+        return {"text": f"Linode: {len(events)} account event(s):\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _poll_events(self, token, op):
+        events = []
+        ordering = {"+order_by": "created", "+order": "desc"}
+        if op.action is not None:
+            ordering["action"] = op.action
+        for page in range(1, 21):
+            response = await self._request(token, "GET", "/account/events",
+                params={"page": page, "page_size": 500}, headers={"X-Filter": json.dumps(ordering)})
+            payload = self._payload(response)
+            if response.status_code != 200 or "errors" in payload:
+                raise ValueError(f"Linode event poll rejected (HTTP {response.status_code})")
+            rows, current, pages = self._list_payload(payload)
+            if current != page:
+                raise ValueError("Linode event poll returned an unexpected page")
+            for event in rows:
+                if type(event.get("id")) is not int or any(not isinstance(event.get(k), str) for k in ("action", "status", "created")):
+                    raise ValueError("Expected Linode event identity, action, status and creation time")
+                if op.action is not None and event["action"] != op.action:
+                    continue
+                if isinstance(op, OnEventFinished) and event["status"] not in {"completed", "finished", "failed"}:
+                    continue
+                events.append(event)
+            if page >= pages:
+                break
+        else:
+            raise ValueError("Linode returned more than 10,000 events; select a narrower action to monitor")
+        # Oldest first keeps recent events at the end of the bounded seen set.
+        unique = {event["id"]: event for event in events}
+        fresh = await self._filter_unseen(list(reversed(list(unique.values()))), lambda event: str(event["id"]))
+        result = {"status": "success", "operation": op.operation, "events": fresh, "event_count": len(fresh)}
+        await self.emit(result)
+        return result
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Linode personal access token")
         op = self.config.config
         token = self.config.credentials.access_token
+        if isinstance(op, OnNewEvent):
+            return await self._poll_events(token, op)
         secrets = (token, getattr(op, "root_pass", None))
         method, template = ROUTES[op.operation]
         values = op.model_dump(exclude_none=True, exclude={"operation"})
@@ -310,22 +416,12 @@ class LinodeNode(WorkflowNode):
         params = fields if method == "GET" else None
         body = fields if method in {"POST", "PUT"} and fields else None
         try:
-            async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
-                response = await client.request(method, BASE + route,
-                    headers={"Authorization": "Bearer " + token, "Accept": "application/json"},
-                    params=params, **({"json": body} if body is not None else {}))
+            response = await self._request(token, method, route, params=params, body=body)
         except httpx.TransportError:
             result = {"status": "error" if method == "GET" else "unknown", "success": False,
                 "message": "Linode request could not be confirmed; inspect the resource before retrying a write."}
         else:
-            if len(response.content) > 10_000_000:
-                raise ValueError("Linode response exceeds the supported JSON size")
-            try:
-                payload = response.json()
-            except (ValueError, UnicodeError):
-                raise ValueError("Expected a JSON object from Linode") from None
-            if not isinstance(payload, dict):
-                raise ValueError("Expected a JSON object from Linode")
+            payload = self._payload(response)
             if response.status_code != 200 or "errors" in payload:
                 reasons = payload.get("errors", [])
                 message = "; ".join(str(row.get("reason", "")) for row in reasons if isinstance(row, dict)) if isinstance(reasons, list) else ""
@@ -335,11 +431,7 @@ class LinodeNode(WorkflowNode):
                 result = {"status": "success", "success": True, "operation": op.operation,
                     "http_status": response.status_code, "data": payload}
                 if op.operation.startswith("list_"):
-                    if not isinstance(payload.get("data"), list) or any(not isinstance(row, dict) for row in payload["data"]):
-                        raise ValueError("Expected a Linode list envelope")
-                    page, pages = payload.get("page"), payload.get("pages")
-                    if type(page) is not int or type(pages) is not int or page < 1 or pages < 0:
-                        raise ValueError("Expected Linode pagination metadata")
+                    _, page, pages = self._list_payload(payload)
                     result.update(data=payload["data"], page=page, pages=pages,
                         results=payload.get("results"), next_page=page + 1 if page < pages else None)
                 elif op.operation == "get_profile":
