@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/teachable.png",
+  "source": "https://cdn.prod.website-files.com/687904fb2b26c434698c47e9/68f25a572e5e73f1b13d70cf_Webclip.png",
+  "found_at": "https://www.teachable.com/ (<link rel=\"apple-touch-icon\">)",
+  "source_kind": "company site (apple-touch icon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published"
+  ],
+  "notes": "No SVG qualifies: every Teachable vector (teachable-logo-color/-light/-dark.svg on its Webflow CDN, the docs' ReadMe logo) is the 'teachable' wordmark, and the monogram is a separate drawing, not a cut of the wordmark. The current file is the lime wordmark, which vanishes on the light theme. The site's 256px Webclip is the flat app mark; the App Store icon is larger (1024px, saved src4) but drawn in a glossy style with a gradient and a corner highlight, so the flat site version was chosen. Lime tile reads on both themes.",
+  "license": "Teachable brand mark, used nominatively to identify the connected service; trademark rights remain with Teachable.",
+  "sha256": "58d857e8a75bc2db7f2838e8602daa8b3301910bb70367fc3a9ccc29da7e4bc9"
+}

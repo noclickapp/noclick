@@ -1,13 +1,11 @@
 {
   "path": "frontend/public/icons/polymarket.svg",
-  "source": "https://polymarket-upload.s3.us-east-2.amazonaws.com/polymarket-logos.zip (icon-blue.svg inside)",
-  "found_at": "https://polymarket.com/brand (download link 'polymarket-logos.zip')",
-  "source_kind": "brand kit",
-  "retrieved": "2026-11-10",
-  "edits": [
-    "cleaned (no geometry changes: the kit's icon-blue.svg is the app icon, a #2E5CFF square with the white mark)"
-  ],
-  "notes": "DECISION: the kit's blue is #2E5CFF while the site's apple-touch-icon PNG is #1652F0 and its mask-icon colour #1652f0; I kept the kit's file as published. The kit also has icon-black.svg and icon-white.svg (bare mark), which would make a light/dark pair (downloads/polymarket/src3/) if the reviewer prefers no tile. The site's safari-pinned-tab.svg is a potrace trace and was not used.",
-  "license": "Polymarket brand mark, used nominatively to identify the connected service; trademark rights remain with Polymarket.",
-  "sha256": "4f66d3325cf3820dabbd35b646a3767c0578da006936a492902dfa08f192b0b3"
+  "source": "https://polymarket-upload.s3.us-east-2.amazonaws.com/polymarket-logos.zip",
+  "source_page": "https://polymarket.com/brand",
+  "source_file": "icon-blue.svg",
+  "retrieved_at": "2026-11-11",
+  "license": "Polymarket brand mark used nominatively to identify the connected service; trademark rights remain with Polymarket.",
+  "sha256": "307075c273fc0ddd765e7b028f6ad9c249c78452ec04a4dcc4a558bba9b24cbf",
+  "edits": [],
+  "notes": "Unmodified icon-blue.svg from the company brand kit, linked by its own brand page. This is the symbol-only app icon, not a wordmark. Its #2E5CFF square is part of the publisher app icon and is intentionally retained; no CSS tile or background was added. The white mark and blue tile read on both light and dark surfaces, so a recoloured theme variant is unnecessary. All original paths, open counters, fills and viewBox are unchanged."
 }
