@@ -87,6 +87,38 @@ export interface AiConnectVia {
     keyNote?: ReactNode;
 }
 
+/** A company's ways in: each subscription sign-in, then each provider's key; only the one whose credential type is
+ *  `only`, where given. */
+export function companyMethods(company: AiCompany, only?: string): ProvideCredentialMethod[] {
+    const all = [
+        ...company.signIns.filter((type) => type in AGENT_SIGN_IN_NAMES).map(agentSignInMethod),
+        ...company.keys.map((provider) => agentKeyMethod(provider, company.keys.length > 1 ? `${getProviderMetadata(provider)?.title ?? provider} API key` : 'API key')),
+    ];
+    return only ? all.filter((m) => m.credential_type === only) : all;
+}
+
+type SendEvent = NonNullable<AgentOAuthComponentProps['sendEvent']>;
+
+/** A key's save, as the socket's `credential:create` replies to it. */
+interface KeyReply {
+    success?: boolean;
+    credential?: CreatedAgentCredential | null;
+    verification?: CredentialTestConnectionResponse | null;
+    error?: string | null;
+    message?: string | null;
+    field_errors?: Record<string, string> | null;
+    hint?: string | null;
+    reachable?: boolean | null;
+}
+
+/** A host that connects through something other than the signed-in app's socket (a provide link): where a sign-in's
+ *  calls go, how a key is saved, and the line under a key's form. Keep it stable across renders. */
+export interface AiConnectVia {
+    signIn: (credentialType: string) => SendEvent;
+    saveKey: (method: ProvideCredentialMethod, values: Record<string, string>) => Promise<KeyReply>;
+    keyNote?: ReactNode;
+}
+
 /** A subscription sign-in: one button that says whose sign-in it opens, the sign-in's own note under it; pressed, the
  *  sign-in's own flow (a device code, a pasted code) runs in its place. */
 function SignIn({
