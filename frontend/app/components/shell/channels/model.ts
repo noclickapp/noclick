@@ -11,8 +11,8 @@ export const NOCLICK_ID = 'noclick';
 export const YOU: ChannelMember = { id: YOU_ID, kind: 'you', name: 'You' };
 
 /** The agents' colours, every pair of which stays apart in both themes and for colour-blind readers (avatars.tsx has
- *  the steps and the validator's verdict). */
-export const AGENT_HUES: AgentHue[] = ['sky', 'violet', 'pink', 'amber', 'emerald'];
+ *  the steps and the validator's verdict). No yellow, amber or orange: NoClick wears none. */
+export const AGENT_HUES: AgentHue[] = ['sky', 'violet', 'pink', 'fuchsia', 'emerald'];
 
 /** An agent's own colour, read from its id: the one it wears wherever no other agent beside it already does. */
 export function hueFor(id: string): AgentHue {

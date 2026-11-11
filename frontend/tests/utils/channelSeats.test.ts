@@ -25,6 +25,11 @@ describe('an agent’s letters', () => {
 });
 
 describe('a room’s colours', () => {
+    it('are five, none of them yellow, amber, orange or lime', () => {
+        expect(AGENT_HUES).toHaveLength(5);
+        expect(AGENT_HUES.filter((h) => ['yellow', 'amber', 'orange', 'lime'].includes(h))).toEqual([]);
+    });
+
     it('give every agent in a room a colour of its own, its own one while it’s free', () => {
         const ids = ['a1', 'a2', 'a3', 'a4', 'a5'];
         const seated = seatMembers([{ id: 'you', kind: 'you', name: 'You' }, ...ids.map((id) => agent(id, `Agent ${id}`))]);
