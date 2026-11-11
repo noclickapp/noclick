@@ -11,7 +11,7 @@ from pydantic import ValidationError
 from nodes.core.registry import NODE_REGISTRY
 from nodes.oauth.zoho_work_drive_oauth import OAUTH_PROVIDER
 from nodes.zoho_work_drive_node import (
-    OPS, OP_MODELS, ZohoWorkDriveConfig, ZohoWorkDriveNode,
+    OPS, OP_MODELS, TRIGGER_MODELS, ZohoWorkDriveConfig, ZohoWorkDriveNode,
     ZohoWorkDriveOAuthCredential, workdrive_request,
 )
 
@@ -30,16 +30,16 @@ def transport(monkeypatch):
 
 def node(operation, **values):
     return ZohoWorkDriveNode(node_id="wd", node_type="automation-zoho-work-drive",
-        node_data={}, config=ZohoWorkDriveConfig(config=OP_MODELS[operation](**values),
+        node_data={}, config=ZohoWorkDriveConfig(config={**OP_MODELS, **TRIGGER_MODELS}[operation](**values),
             credentials=ZohoWorkDriveOAuthCredential(**CREDENTIAL)), user_id="u", workflow_id="w")
 
 
 def test_discovery_scopes_and_schema():
     assert NODE_REGISTRY["automation-zoho-work-drive"] is ZohoWorkDriveNode
-    assert set(ZohoWorkDriveNode.scope_registry._requirements) == set(OPS)
+    assert set(ZohoWorkDriveNode.scope_registry._requirements) == set(OPS) | set(TRIGGER_MODELS)
     assert len(OPS) == 23
     schema = ZohoWorkDriveNode.get_config_schema()
-    assert len(schema["properties"]["config"]["oneOf"]) == 23
+    assert len(schema["properties"]["config"]["oneOf"]) == 25
     credential = schema["$defs"]["ZohoWorkDriveOAuthCredential"]
     assert set(credential["x-oauth-scopes"]) == set(ZohoWorkDriveNode.scope_registry.declared_scopes())
     assert credential["x-oauth-provider"] == OAUTH_PROVIDER.provider
@@ -203,3 +203,95 @@ async def test_documented_responses_are_preserved(fixture, operation, values):
     respx.route(method=OPS[operation].method, host="www.zohoapis.com").mock(return_value=httpx.Response(200, json=body))
     result = await node(operation, **values).execute({})
     assert result["data"] == body
+
+
+@pytest.mark.parametrize("operation,sort", [
+    ("on_new_file", "-created_time"),
+    ("on_new_or_updated_file", "-last_modified"),
+])
+@respx.mock
+async def test_poll_documented_listing_baselines_deduplicates_and_rescopes(operation, sort):
+    from copy import deepcopy
+    from nodes.core.poll_trigger import poll_scope
+    payload = json.loads((FIXTURES / "list-folder.json").read_text())["body"]
+    item = payload["data"][0]
+    folder_id = item["attributes"]["parent_id"]
+    trigger = node(operation, folder_id=folder_id)
+    state = {}
+    async def update(mutator, **kwargs):
+        new_state, result = mutator(deepcopy(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+    trigger._update_node_state = update
+    route = respx.get(BASE + f"/files/{folder_id}/files").mock(return_value=httpx.Response(200, json=payload))
+    assert (await trigger.execute({}))["files"] == []
+    assert trigger.trigger_produced_no_event({})
+    assert state["scope"] == poll_scope(ZohoWorkDriveNode, {"operation": operation, "folder_id": folder_id})
+    assert (await trigger.execute({}))["files"] == []
+    state["seen_ids"] = []
+    output = await trigger.execute({})
+    assert output["files"] == [item]
+    assert output["file_count"] == 1
+    assert trigger.trigger_emitted_event(output)
+    event = trigger.resolve_agent_event(output)
+    for value in (item["id"], item["attributes"]["name"], item["attributes"]["modified_by"],
+            item["attributes"]["modified_by_zuid"], folder_id):
+        assert value in event["text"]
+    assert (await trigger.execute({}))["files"] == []
+    assert trigger.resolve_agent_event(await trigger.execute({})) is None
+    assert dict(route.calls[0].request.url.params) == {
+        "sort": sort, "page[limit]": "50", "page[offset]": "0"}
+    changed = deepcopy(payload)
+    changed["data"][0]["attributes"]["modified_time_in_millisecond"] += 1
+    route.mock(return_value=httpx.Response(200, json=changed))
+    updated = await trigger.execute({})
+    assert updated["file_count"] == (operation == "on_new_or_updated_file")
+    trigger._config.config.folder_id = "another-folder"
+    respx.get(BASE + "/files/another-folder/files").mock(return_value=httpx.Response(200, json=changed))
+    assert (await trigger.execute({}))["files"] == []
+    assert state["scope"] == poll_scope(ZohoWorkDriveNode, {"operation": operation, "folder_id": "another-folder"})
+
+
+@respx.mock
+async def test_poll_paginates_without_following_response_links():
+    from unittest.mock import AsyncMock
+    payload = json.loads((FIXTURES / "list-folder.json").read_text())["body"]
+    item = payload["data"][0]
+    trigger = node("on_new_file", folder_id=item["attributes"]["parent_id"])
+    trigger._filter_unseen = AsyncMock(return_value=[item])
+    route = respx.get(BASE + f"/files/{trigger.config.config.folder_id}/files").mock(side_effect=[
+        httpx.Response(200, json={"data": [item] * 50, "links": {"next": "https://evil.example"}}),
+        httpx.Response(200, json=payload),
+    ])
+    output = await trigger.execute({})
+    assert output["file_count"] == 1
+    assert [call.request.url.params["page[offset]"] for call in route.calls] == ["0", "50"]
+    assert len(trigger._filter_unseen.call_args.args[0]) == 51
+
+
+@pytest.mark.parametrize("body", [{}, {"data": {}}, {"data": [None]},
+    {"data": [{"id": "file1", "attributes": {}}]}])
+@respx.mock
+async def test_poll_refuses_malformed_responses_without_writing_state(body):
+    from unittest.mock import AsyncMock
+    trigger = node("on_new_or_updated_file", folder_id="folder1")
+    trigger._filter_unseen = AsyncMock()
+    respx.get(BASE + "/files/folder1/files").mock(return_value=httpx.Response(200, json=body))
+    with pytest.raises(ValueError):
+        await trigger.execute({})
+    trigger._filter_unseen.assert_not_called()
+
+
+def test_trigger_schema_and_scope_ignore_schedule_metadata():
+    from nodes.core.poll_trigger import poll_scope
+    schema = ZohoWorkDriveNode.get_config_schema()
+    for model in TRIGGER_MODELS.values():
+        assert schema["$defs"][model.__name__]["properties"]["operation"]["x-is-trigger"] is True
+    config = {"operation": "on_new_file", "folder_id": "folder1"}
+    assert poll_scope(ZohoWorkDriveNode, config) == poll_scope(ZohoWorkDriveNode,
+        {**config, "label": "Renamed", "schedule": {"frequency": "minutes", "interval": 10}})
+    assert poll_scope(ZohoWorkDriveNode, config) != poll_scope(ZohoWorkDriveNode, {**config, "folder_id": "folder2"})
+    with pytest.raises(ValidationError):
+        node("on_new_file", folder_id="../secret")

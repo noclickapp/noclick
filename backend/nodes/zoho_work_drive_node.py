@@ -16,6 +16,7 @@ from pydantic import BaseModel, ConfigDict, Field, create_model, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.oauth.zoho_work_drive_oauth import ACCOUNTS_ORIGINS, OAUTH_PROVIDER, validate_api_domain
 from nodes.scopes.zoho_work_drive import ZOHO_WORK_DRIVE_SCOPES
 from utils.ssrf import guarded_async_client
@@ -125,7 +126,28 @@ OP_MODELS = {
         })), **spec.fields)
     for name, spec in OPS.items()
 }
-OperationConfig = Annotated[Union[tuple(OP_MODELS.values())], Field(discriminator="operation")]
+class ZohoWorkDriveOnNewFileConfig(PollTriggerConfigBase):
+    model_config = ConfigDict(json_schema_extra={"x-requires-webhook": True})
+    operation: Literal["on_new_file"] = Field("on_new_file", title="On New File or Folder",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+            "x-display-name": "On New File or Folder"})
+    folder_id: str = Field(..., min_length=1, max_length=256, title="Folder ID",
+        description="Watch the direct contents of this folder. Subfolders are not watched recursively. Folders with more than 5,000 items must be narrowed to a subfolder.")
+    _folder_id = field_validator("folder_id")(_id)
+
+
+class ZohoWorkDriveOnUpdatedFileConfig(ZohoWorkDriveOnNewFileConfig):
+    operation: Literal["on_new_or_updated_file"] = Field("on_new_or_updated_file",
+        title="On New or Updated File or Folder",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+            "x-display-name": "On New or Updated File or Folder"})
+
+
+TRIGGER_MODELS = {
+    "on_new_file": ZohoWorkDriveOnNewFileConfig,
+    "on_new_or_updated_file": ZohoWorkDriveOnUpdatedFileConfig,
+}
+OperationConfig = Annotated[Union[tuple(OP_MODELS.values()) + tuple(TRIGGER_MODELS.values())], Field(discriminator="operation")]
 
 
 class ZohoWorkDriveConfig(NodeConfig[OperationConfig, ZohoWorkDriveOAuthCredential]):
@@ -167,7 +189,7 @@ async def workdrive_request(credential, method, path, *, params=None, body=None)
     return {"status": "success", "http_status": response.status_code, "data": data}
 
 
-class ZohoWorkDriveNode(WorkflowNode):
+class ZohoWorkDriveNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-zoho-work-drive"
     scope_registry = ZOHO_WORK_DRIVE_SCOPES
     connection_evidence = ConnectionEvidence(identity_operation="get_user", noun="account")
@@ -184,6 +206,63 @@ class ZohoWorkDriveNode(WorkflowNode):
             credential_id=credential_id, refresh=OAUTH_PROVIDER.bind_refresh(credential_data),
             additional_token_fields=OAUTH_PROVIDER.credential_fields, provider="zoho_work_drive")
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in TRIGGER_MODELS:
+            return bool(output.get("file_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if output.get("action") not in TRIGGER_MODELS:
+            return super().resolve_agent_event(output)
+        files = output.get("files", [])
+        if not files:
+            return None
+        change = "new" if output["action"] == "on_new_file" else "new or updated"
+        lines = []
+        for item in files[:10]:
+            attrs = item["attributes"]
+            lines.append(f"- {attrs.get('name') or item['id']} (id {item['id']}); "
+                f"modified by {attrs.get('modified_by') or 'unknown'} "
+                f"(user {attrs.get('modified_by_zuid') or 'unknown'}); "
+                f"{attrs.get('permalink') or ''}")
+        if len(files) > 10:
+            lines.append(f"- … and {len(files) - 10} more")
+        return {"text": f"Zoho WorkDrive: {len(files)} {change} file(s) or folder(s) "
+            f"in folder {output['folder_id']}:\n" + "\n".join(lines), "conversation_key": None}
+
+    async def _poll_files(self, credential, operation):
+        # Provider docs: list-files-folders-inside-a-folder.html. Use numeric
+        # offsets only; never follow links supplied by the response.
+        files = []
+        sort = "-created_time" if operation.operation == "on_new_file" else "-last_modified"
+        for offset in range(0, 5001, 50):
+            result = await workdrive_request(credential, "GET",
+                f"/files/{quote(_id(operation.folder_id), safe='')}/files",
+                params={"page[limit]": "50", "page[offset]": str(offset), "sort": sort})
+            body = result["data"]
+            page = body.get("data") if isinstance(body, dict) else None
+            if not isinstance(page, list):
+                raise ValueError("Zoho WorkDrive returned an unexpected folder listing")
+            for item in page:
+                if (not isinstance(item, dict) or not isinstance(item.get("id"), str)
+                        or not item["id"] or not isinstance(item.get("attributes"), dict)):
+                    raise ValueError("Zoho WorkDrive returned an invalid file or folder")
+                if operation.operation == "on_new_or_updated_file" and not isinstance(
+                        item["attributes"].get("modified_time_in_millisecond"), (int, str)):
+                    raise ValueError("Zoho WorkDrive did not return a file modification time")
+            files.extend(page)
+            if len(files) > 5000:
+                raise ValueError("This folder has more than 5,000 items; watch a smaller subfolder")
+            if len(page) < 50:
+                break
+        fresh = await self._filter_unseen(files, lambda item: item["id"] if
+            operation.operation == "on_new_file" else
+            f"{item['id']}:{item['attributes']['modified_time_in_millisecond']}")
+        return {"action": operation.operation, "files": fresh,
+            "file_count": len(fresh), "folder_id": operation.folder_id}
+
     async def execute(self, inputs):
         if not self.config.credentials:
             raise ValueError("Connect a Zoho WorkDrive account")
@@ -195,6 +274,8 @@ class ZohoWorkDriveNode(WorkflowNode):
             additional_token_fields=OAUTH_PROVIDER.credential_fields,
             provider="zoho_work_drive", caller_path="execute")
         operation = self.config.config
+        if operation.operation in TRIGGER_MODELS:
+            return await self._poll_files(credential, operation)
         spec = OPS[operation.operation]
         values = operation.model_dump(exclude_none=True)
         path = spec.path

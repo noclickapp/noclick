@@ -27,7 +27,7 @@ const ZohoWorkDriveNodeComponent = (props: NodeProps) => (
 export const ZohoWorkDriveNode: NodeDefinition = {
     type: 'automation-zoho-work-drive',
     label: 'Zoho WorkDrive',
-    description: 'Manage files, folders, comments and share links',
+    description: 'Manage files, folders, comments and share links; watch for new or updated files',
     category: 'databases-storage',
     Icon: ZohoWorkDriveIcon,
     iconColor: '',

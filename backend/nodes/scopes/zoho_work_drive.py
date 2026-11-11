@@ -13,7 +13,8 @@ ZOHO_WORK_DRIVE_SCOPES = ScopeRegistry(
         "list_team_folders": ScopeRequirement(("WorkDrive.teamfolders.READ",)),
         "get_team_folder": ScopeRequirement(("WorkDrive.teamfolders.READ",)),
         **{op: ScopeRequirement(("WorkDrive.files.READ",)) for op in (
-            "list_files", "get_file", "list_versions", "list_comments", "list_links")},
+            "list_files", "get_file", "list_versions", "list_comments", "list_links",
+            "on_new_file", "on_new_or_updated_file")},
         **{op: ScopeRequirement(("WorkDrive.files.CREATE",)) for op in (
             "create_folder", "copy_file")},
         **{op: ScopeRequirement(("WorkDrive.files.UPDATE",)) for op in (
