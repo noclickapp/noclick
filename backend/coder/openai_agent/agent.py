@@ -160,13 +160,19 @@ def _build_sdk_model(model: str, env: Optional[Dict[str, str]]) -> CostCapturing
     the tier's gateway with the key passed EXPLICITLY — inline params beat env
     lookups, so LiteLLM can never fall back to the platform ``OPENAI_API_KEY``
     and send it to opencode.ai. A missing key fails here, before any streaming
-    work, with the same message the CLI pre-flight gate uses. Every other model
-    keeps LiteLLM's native routing (+ the OpenRouter ``:exacto`` variant)."""
+    work, with the same message the CLI pre-flight gate uses. A model of a
+    provider LiteLLM signs into with a device code is refused before LiteLLM
+    sees it (``device_sign_in_refusal``). Every other model keeps LiteLLM's
+    native routing (+ the OpenRouter ``:exacto`` variant)."""
     from nodes.agent.config.providers import (
+        device_sign_in_refusal,
         resolve_zen_gateway_route,
         validate_provider_credentials,
     )
 
+    refusal = device_sign_in_refusal(model)
+    if refusal:
+        raise ValueError(refusal)
     route = resolve_zen_gateway_route(model)
     if route is None:
         return CostCapturingLitellmModel(model=_apply_exacto_variant(model))

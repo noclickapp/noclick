@@ -460,6 +460,22 @@ def provider_has_credentials(model: str, env_overrides: Optional[Dict[str, str]]
     return bool(oauth and env.get(oauth[0]))
 
 
+# litellm providers whose own sign-in is a device code a person approves in a browser (GitHub Copilot, ChatGPT):
+# litellm starts that sign-in the first time it reads such an id's provider (a call, its cost, its model info), and
+# its polling holds the process for minutes. No turn can approve one, so such an id never reaches litellm.
+DEVICE_SIGN_IN_PROVIDERS = frozenset({"github_copilot", "chatgpt"})
+
+
+def device_sign_in_refusal(model: str) -> Optional[str]:
+    """Why ``model`` never reaches litellm, or None: it names a provider litellm signs into with a device code
+    (``DEVICE_SIGN_IN_PROVIDERS``), behind ``openrouter/`` too, which a cost lookup strips."""
+    provider = model.removeprefix("openrouter/").partition("/")[0]
+    if provider not in DEVICE_SIGN_IN_PROVIDERS:
+        return None
+    return (f"'{model}' is LiteLLM's {provider} provider, which signs in with a device code a person approves in a "
+            "browser; an agent's turn can't. Use the model from its provider's own key, or from OpenRouter.")
+
+
 def validate_provider_credentials(model: str, env_overrides: Optional[Dict[str, str]]) -> None:
     """Raise ``ValueError`` when ``model``'s provider has neither its required API
     key nor a matching subscription-OAuth token in ``env_overrides``.

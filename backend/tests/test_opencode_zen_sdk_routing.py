@@ -289,3 +289,32 @@ async def test_an_sdk_turn_on_a_free_zen_model_fails_before_any_call(monkeypatch
             await execute_llm_model(node, config, {"OPENCODE_API_KEY": "zen-key"}, "user-1", "u@example.com")
     create.assert_not_awaited()
     assert any("free only to OpenCode itself" in (e.get("error") or "") for e in emitted)
+
+
+# ---------------------------------------------------------------------------
+# A provider LiteLLM signs into with a device code
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("model", ["github_copilot/gpt-4o", "chatgpt/gpt-5.2", "openrouter/github_copilot/gpt-4o"])
+def test_a_device_sign_in_model_never_reaches_litellm(model, monkeypatch):
+    """LiteLLM starts GitHub Copilot's or ChatGPT's device-code sign-in the first time it reads such an id's provider
+    and polls for minutes; no turn can approve one. The SDK path refuses the id before LiteLLM sees it."""
+    import litellm
+
+    from coder.openai_agent import agent
+    from nodes.agent.config.providers import device_sign_in_refusal
+
+    read = []
+    monkeypatch.setattr(litellm, "get_llm_provider", lambda *a, **k: read.append(a) or ("m", "p", None, None))
+    assert "device code" in device_sign_in_refusal(model)
+    with pytest.raises(ValueError, match="device code"):
+        agent._build_sdk_model(model, {})
+    assert read == []
+
+
+@pytest.mark.parametrize("model", ["openai/gpt-4o", "anthropic/claude-sonnet-5", "openrouter/openai/gpt-5",
+                                   "gpt-4o", "github-copilot/gpt-4o"])
+def test_every_other_model_is_left_to_litellm(model):
+    from nodes.agent.config.providers import device_sign_in_refusal
+
+    assert device_sign_in_refusal(model) is None  # OpenCode's own github-copilot/ ids never go through LiteLLM
