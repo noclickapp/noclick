@@ -182,3 +182,78 @@ async def test_published_entity_identity_has_numeric_specific_id(transport):
     queue.append(httpx.Response(200, json=entity))
     result = await run("get_api_key_entity")
     assert result["name"] == entity["entity_name"] and result["id"] == entity["entity_specific_id"]
+
+
+def poll_node(operation, **scope):
+    return NodeFactory.create_node(node_id="rsu-poll", node_type="automation-runsignup",
+        node_data={"config": {"operation": operation, **scope}, "credentials": AUTH})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,key,filename,scope", [
+    ("on_new_or_updated_participant", "participants", "race-race_id-participants-GET", {"race_id": 12345, "event_id": 11111}),
+    ("on_new_donation", "donations", "race-race_id-donations-list-GET", {"race_id": 12345}),
+])
+async def test_poll_baseline_new_items_and_agent_event(transport, operation, key, filename, scope):
+    from copy import deepcopy
+    node = poll_node(operation, **scope)
+    state = {}
+    async def update(mutator, **kwargs):
+        nonlocal state
+        replacement, result = mutator(state)
+        if replacement is not None:
+            state = replacement
+        return result
+    node._update_node_state = update
+    requests, queue = transport
+    payload = fixture(filename)
+    queue.append(httpx.Response(200, json=payload))
+    baseline = await node.execute({})
+    assert baseline['new_item_count'] == 0
+    assert node.trigger_produced_no_event(baseline)
+    assert node.resolve_agent_event(baseline) is None
+    changed = deepcopy(payload)
+    if key == 'participants':
+        changed[key][0]['last_modified'] += 1
+    else:
+        changed[key][0]['donation_id'] += 1
+    queue.append(httpx.Response(200, json=changed))
+    output = await node.execute({})
+    assert output['items'] == changed[key] and output['new_item_count'] == 1
+    assert node.should_propagate_output(output, {'operation': operation})
+    event = node.resolve_agent_event(output)
+    assert str(scope['race_id']) in event['text']
+    assert changed[key][0]['user']['first_name'] in event['text']
+    queue.append(httpx.Response(200, json=changed))
+    assert (await node.execute({}))['items'] == []
+    assert requests[0].url.params['page'] == '1'
+    assert requests[0].url.params['results_per_page'] == '100'
+    assert 'schedule' not in requests[0].url.params
+
+
+@pytest.mark.asyncio
+async def test_poll_reads_later_pages_and_never_commits_partial_response(transport):
+    from copy import deepcopy
+    node = poll_node('on_new_donation', race_id=12345)
+    requests, queue = transport
+    row = fixture('race-race_id-donations-list-GET')['donations'][0]
+    rows = [{**deepcopy(row), 'donation_id': i} for i in range(1, 101)]
+    node._filter_unseen = AsyncMock(return_value=[row])
+    queue.extend([httpx.Response(200, json={'donations': rows}), httpx.Response(200, json={'donations': [row]})])
+    await node.execute({})
+    assert [r.url.params['page'] for r in requests] == ['1', '2']
+    assert len(node._filter_unseen.call_args.args[0]) == 101
+    node._filter_unseen.reset_mock()
+    queue.extend([httpx.Response(200, json={'donations': rows}), httpx.Response(500, json={'error': 'Unavailable'})])
+    with pytest.raises(ValueError):
+        await node.execute({})
+    node._filter_unseen.assert_not_called()
+
+
+def test_poll_scope_is_declared_and_changes_with_race_event():
+    from nodes.core.poll_trigger import poll_scope
+    config = {'operation': 'on_new_or_updated_participant', 'race_id': 12345, 'event_id': 11111}
+    original = poll_scope(rsu.RunSignupNode, config)
+    assert original != poll_scope(rsu.RunSignupNode, {**config, 'event_id': 12890})
+    assert original != poll_scope(rsu.RunSignupNode, {**config, 'race_id': 23456})
+    assert original == poll_scope(rsu.RunSignupNode, {**config, 'schedule': {'frequency': 'minutes', 'interval': 10}})

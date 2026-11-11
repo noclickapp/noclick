@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -176,9 +177,24 @@ class AssignBibChip(_Event):
     _request = field_validator("request")(lambda v: _request_document(v, "assignments", 100))
 
 
+class OnNewOrUpdatedParticipant(PollTriggerConfigBase, _Event):
+    operation: Literal["on_new_or_updated_participant"] = Field("on_new_or_updated_participant", title="On New or Updated Participant",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New or Updated Participant"})
+    model_config = ConfigDict(extra="forbid", json_schema_extra={"x-requires-webhook": True},
+        description="Monitor registrations and last-modified timestamps. Existing registrations form the initial baseline. Supports fewer than 10,000 participants per event.")
+
+
+class OnNewDonation(PollTriggerConfigBase, _Race):
+    operation: Literal["on_new_donation"] = Field("on_new_donation", title="On New Donation",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Donation"})
+    model_config = ConfigDict(extra="forbid", json_schema_extra={"x-requires-webhook": True},
+        description="Monitor new donations. Existing donations form the initial baseline. Supports fewer than 10,000 donations per race.")
+
+
 Operation = Annotated[Union[GetAPIKeyEntity, ListRaces, GetRace, ListParticipants, GetParticipantCounts,
     ListRemovedParticipants, ListDonations, ListFundraisers, ListTeams, ListCoupons, ListResultSets,
-    ListResults, ListVolunteerTasks, UpdateRaceDescription, UpsertParticipants, UpsertCoupons, AssignBibChip], Field(discriminator="operation")]
+    ListResults, ListVolunteerTasks, UpdateRaceDescription, UpsertParticipants, UpsertCoupons, AssignBibChip,
+    OnNewOrUpdatedParticipant, OnNewDonation], Field(discriminator="operation")]
 
 
 class RunSignupNodeConfig(NodeConfig[Operation, RunSignupAPIKeyCredential]):
@@ -222,7 +238,7 @@ def _safe_payload(value, secrets):
     return value
 
 
-class RunSignupNode(WorkflowNode):
+class RunSignupNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-runsignup"
     connection_evidence = ConnectionEvidence(noun="RunSignup API key entity", identity_operation="get_api_key_entity")
 
@@ -230,11 +246,72 @@ class RunSignupNode(WorkflowNode):
     def get_config_model(cls):
         return RunSignupNodeConfig
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in {"on_new_or_updated_participant", "on_new_donation"}:
+            return bool(output.get("new_item_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if output.get("operation") not in {"on_new_or_updated_participant", "on_new_donation"}:
+            return super().resolve_agent_event(output)
+        items = output.get("items", [])
+        if not items:
+            return None
+        participant = output["operation"] == "on_new_or_updated_participant"
+        action = "new or updated participant(s)" if participant else "new donation(s)"
+        lines = []
+        for item in items[:10]:
+            user = item.get("user") or {}
+            name = " ".join(str(user.get(k) or "") for k in ("first_name", "last_name")).strip() or "Unknown person"
+            if participant:
+                lines.append(f"- {name}, registration {item['registration_id']}, email {user.get('email') or 'not supplied'}, modified {item['last_modified']}")
+            else:
+                lines.append(f"- {name}, donation {item['donation_id']}, amount {item.get('donation_amount') or 'not supplied'}")
+        if len(items) > 10:
+            lines.append(f"- and {len(items) - 10} more in the trigger output")
+        where = f"race {output['race_id']}" + (f", event {output['event_id']}" if participant else "")
+        return {"text": f"RunSignup: {len(items)} {action} in {where}:\n" + "\n".join(lines), "conversation_key": None}
+
+    async def _poll(self, config):
+        participant = isinstance(config, OnNewOrUpdatedParticipant)
+        key = "participants" if participant else "donations"
+        model = ListParticipants if participant else ListDonations
+        scope = {"race_id": config.race_id}
+        if participant:
+            scope["event_id"] = config.event_id
+        items = []
+        # Finish every page before changing state: a partial read must not
+        # swallow registrations or donations from a later page.
+        for page in range(1, 101):
+            result = await self._execute_operation(model(**scope, page=page, results_per_page=100))
+            data = result["data"]
+            rows = data.get(key) if isinstance(data, dict) else None
+            if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+                raise ValueError("RunSignup returned an unexpected " + key + " list")
+            for row in rows:
+                if row.get("registration_id" if participant else "donation_id") is None or participant and row.get("last_modified") is None:
+                    raise ValueError("RunSignup returned an item without its documented identity or modification timestamp")
+            items.extend(rows)
+            if len(rows) < 100:
+                break
+        else:
+            raise ValueError("RunSignup polling supports fewer than 10,000 items in this scope")
+        fresh = await self._filter_unseen(items, lambda item: (
+            f"{item['registration_id']}:{item['last_modified']}" if participant else str(item['donation_id'])))
+        return {"status": "success", "operation": config.operation, "items": fresh, "new_item_count": len(fresh), **scope}
+
     async def execute(self, inputs):
+        config = self.config.config
+        if isinstance(config, (OnNewOrUpdatedParticipant, OnNewDonation)):
+            return await self._poll(config)
+        return await self._execute_operation(config)
+
+    async def _execute_operation(self, config):
         credential = self.config.credentials
         if credential is None:
             raise ValueError("Connect a RunSignup v2 API key and secret")
-        config = self.config.config
         params = config.model_dump(exclude_none=True)
         operation = params.pop("operation")
         method, route = ROUTES[operation]

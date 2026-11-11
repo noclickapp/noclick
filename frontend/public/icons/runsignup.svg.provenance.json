@@ -2,5 +2,10 @@
   "path": "frontend/public/icons/runsignup.svg",
   "source": "https://d368g9lw5ileu7.cloudfront.net/img/nonversioned/favicon/runsignup/icon.svg",
   "license": "RunSignup trademark; official website icon used to identify the RunSignup integration",
-  "sha256": "0238f83655a4a13fbe74c8d9f03a4afd073256e4bef54d2368694898e3256df9"
+  "sha256": "0238f83655a4a13fbe74c8d9f03a4afd073256e4bef54d2368694898e3256df9",
+  "source_url": "https://d368g9lw5ileu7.cloudfront.net/img/nonversioned/favicon/runsignup/icon.svg",
+  "page_url": "https://runsignup.com/API/Methods",
+  "date": "2026-11-11",
+  "edits": [],
+  "notes": "Official RunSignup favicon/app mark; byte-identical to the current provider-hosted SVG. The circular gradient tile and white runner belong to the publisher asset and are retained unchanged; the brand background supplies contrast for the symbol on light and dark tiles."
 }

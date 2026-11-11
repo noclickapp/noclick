@@ -140,6 +140,20 @@
    "category": null,
    "description": "",
    "is_trigger": false
+  },
+  {
+   "name": "on_new_or_updated_participant",
+   "display_name": "On New or Updated Participant",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_new_donation",
+   "display_name": "On New Donation",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
