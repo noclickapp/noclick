@@ -10,7 +10,7 @@ import {
 } from './credentialTypeMap';
 import { fixWordCasing } from './credentialLabels';
 import { getNodeIconData } from '~/lib/nodeIconRegistry';
-import { borrowsCredentialType } from './nodeMeta';
+import { borrowsCredentialType, isListedNodeType } from './nodeMeta';
 import { serializedIconComponent } from '~/components/shared/SerializedIcon';
 type ServiceIconType = ComponentType<{ className?: string; style?: CSSProperties }>;
 

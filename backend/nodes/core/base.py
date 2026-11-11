@@ -613,6 +613,17 @@ class WorkflowNode(ABC):
     # into the provider's own settings (``WebhookManager.registers_itself``).
     self_registering_triggers: ClassVar[Dict[str, Tuple[str, ...]]] = {}
 
+    # A node whose service has shut down: no listing offers it for new work
+    # (``registry.is_listed``), while a saved one still loads, renders and runs
+    # until the vendor's API refuses it. Published on its schema as `x-retired`.
+    retired: ClassVar[Optional[Retirement]] = None
+
+    # Credential types this node accepts that another integration owns (Reddit
+    # Ads signs in with Reddit's OAuth). Every lookup of "the node for a
+    # credential type" goes to its one owner (credential_connect.owns_credential_type),
+    # never to whichever node registered first.
+    borrowed_credential_types: ClassVar[FrozenSet[str]] = frozenset()
+
     # Credential types this node accepts that another integration owns (Reddit
     # Ads signs in with Reddit's OAuth). Every lookup of "the node for a
     # credential type" goes to its one owner (credential_connect.owns_credential_type),

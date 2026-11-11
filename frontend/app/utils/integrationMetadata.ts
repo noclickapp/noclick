@@ -12,6 +12,7 @@ export interface NodeMetaEntry {
     triggerOperations?: string[];
     platformVendorOperations?: string[];
     borrowedCredentialTypes?: string[];
+    retired?: NodeRetirement;
 }
 
 export interface PublicOAuthProvider {
