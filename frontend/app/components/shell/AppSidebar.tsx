@@ -16,7 +16,6 @@ import { ACCOUNT_MENU_ITEM, AccountAvatar, AccountMenuContent, planLabel, useAcc
 import { OrgSwitcher } from '~/components/organization/OrgSwitcher';
 import { LogoMark } from '~/components/shared/LogoMark';
 import { ShortcutTooltip } from '~/components/shared/ShortcutTooltip';
-import { KeyHint } from '~/components/shared/KeyHint';
 import { HAIRLINE } from '~/components/dashboard/primitives';
 import { useDebugToolsEnabled } from '~/hooks/useDebugToolsEnabled';
 import { isTextEntryTarget } from '~/lib/keyboard';
@@ -142,7 +141,6 @@ function SidebarSearchField({ onSearch }: { onSearch: () => void }) {
         >
             <Search className="h-4 w-4 shrink-0" strokeWidth={1.8} />
             <span className="flex-1 text-left">Search</span>
-            <KeyHint keys={['mod', 'K']} />
         </button>
     );
 }

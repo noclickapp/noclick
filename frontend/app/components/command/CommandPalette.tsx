@@ -37,7 +37,6 @@ import {
     GOTO_DESTINATIONS,
     NEW_ACTIONS,
     OPEN_SCOPES,
-    COMMAND_SHORTCUT_KEYS,
     OPEN_COMMAND_PALETTE_EVENT,
     openFeedback,
     type OpenCommandPaletteDetail,
@@ -92,7 +91,6 @@ const SEARCH_INPUT = 'h-full w-full bg-transparent text-[15px] text-foreground p
 const LIST = 'max-h-[min(52vh,460px)] overflow-y-auto scrollbar-subtle p-2';
 const SECTION = 'px-3 pb-1.5 pt-3 text-[12.5px] font-medium text-muted-foreground first:pt-1.5';
 const EMPTY = 'px-3 py-10 text-center text-[14px] text-muted-foreground';
-const FOOTER = 'flex items-center gap-4 border-t border-border px-5 py-3 text-[12px] text-muted-foreground dark:border-foreground/[0.07]';
 
 // The app shell's pages and words; the open edition runs the tabbed layout, where automations are workflows.
 const SHELL = !isLocalEdition();
@@ -685,7 +683,6 @@ export function CommandPalette({ hiddenSettings }: { hiddenSettings?: readonly S
                                         }
                                         className={SEARCH_INPUT}
                                     />
-                                    <KeyHint keys={['esc']} />
                                 </div>
 
                                 {/* Results */}
@@ -731,18 +728,6 @@ export function CommandPalette({ hiddenSettings }: { hiddenSettings?: readonly S
                                     )}
                                 </div>
 
-                                {/* Footer */}
-                                <div className={FOOTER}>
-                                    <span className="flex items-center gap-1.5">
-                                        <KeyHint keys={['up', 'down']} /> Navigate
-                                    </span>
-                                    <span className="flex items-center gap-1.5">
-                                        <KeyHint keys={['enter']} /> Open
-                                    </span>
-                                    <span className="flex items-center gap-1.5">
-                                        <KeyHint keys={['esc']} /> Close
-                                    </span>
-                                </div>
                             </>
                         ) : (
                             <ShortcutsPage onBack={() => setPage('root')} />
@@ -769,7 +754,6 @@ function CommandRow({
     onSelect: () => void;
 }) {
     const Icon = cmd.icon;
-    const shortcut = COMMAND_SHORTCUT_KEYS[cmd.id];
     return (
         <button
             type="button"
@@ -821,14 +805,6 @@ function CommandRow({
                     {cmd.meta}
                 </span>
             )}
-            {/* Shortcut hint so people learn it in place: sequences as "G then U",
-                combos (⌘/) as adjacent keycaps. */}
-            {shortcut &&
-                (shortcut.sequence ? (
-                    <SequenceKeyHint keys={shortcut.keys} className="shrink-0 max-sm:hidden" />
-                ) : (
-                    <KeyHint keys={shortcut.keys} className="shrink-0 max-sm:hidden" />
-                ))}
             {PLACES.has(cmd.section) ? (
                 <ArrowRight
                     className={cn(
@@ -871,8 +847,8 @@ function ShortcutsPage({ onBack }: { onBack: () => void }) {
 
     return (
         <div>
-            {/* Single top row: a Back affordance, the search input, and an Esc hint
-                — mirrors the root palette so the panel has just one divider. */}
+            {/* Single top row: a Back affordance and the search input, as the root palette has it, so the panel
+                has just one divider. */}
             <div className={cn(SEARCH_ROW, 'pl-3')}>
                 <button
                     type="button"
@@ -890,7 +866,6 @@ function ShortcutsPage({ onBack }: { onBack: () => void }) {
                     placeholder="Search shortcuts…"
                     className={SEARCH_INPUT}
                 />
-                <KeyHint keys={['esc']} />
             </div>
             <div className={LIST}>
                 {groups.length === 0 ? (
