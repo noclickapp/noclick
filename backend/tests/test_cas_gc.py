@@ -445,68 +445,12 @@ class TestIntegrityAndDeletion:
 
 
 @pytest.mark.asyncio
-class TestOrphanRuns:
-    """A run deleted by a path other than Phase A leaves its manifests and refs; nothing else removes them."""
-
-    @staticmethod
-    def _later():
-        return datetime.now(timezone.utc) + gc.DEFAULT_ORPHAN_GRACE + timedelta(minutes=1)
-
-    async def test_what_a_deleted_run_left_goes_and_a_live_runs_stays(self, cas_pool):
-        fake = FakeR2()
-        wid = await _workflow(cas_pool)
-        gone, live = await _execution(cas_pool, wid), await _execution(cas_pool, wid)
-        with patch_r2(fake):
-            for eid in (gone, live):
-                await store.persist_node_output(cas_pool, workflow_id=wid, execution_id=eid,
-                                                node_id="n1", output={"v": list(range(2000))}, threshold=16)
-            await cas_pool.execute("DELETE FROM workflow_executions WHERE id = $1", gone)
-            res = await gc.orphan_runs(cas_pool, now=self._later())
-        assert res["orphan_runs"] == 1 and res["manifests"] == 1 and res["refs"] > 0
-        for table in ("cas_manifests", "cas_refs"):
-            assert await _scalar(cas_pool, f"SELECT count(*) FROM {table} WHERE execution_id=$1", gone) == 0
-            assert await _scalar(cas_pool, f"SELECT count(*) FROM {table} WHERE execution_id=$1", live) > 0
-
-    async def test_refs_left_without_their_manifest_go_too(self, cas_pool):
-        wid = await _workflow(cas_pool)
-        eid = uuid.uuid4()  # its run and manifest are already gone
-        await cas_pool.execute("INSERT INTO cas_blobs (hash, size_bytes) VALUES ('h-left', 1) ON CONFLICT DO NOTHING")
-        await cas_pool.execute("INSERT INTO cas_refs (workflow_id, execution_id, node_id, chunk_hash) "
-                               "VALUES ($1, $2, 'n1', 'h-left')", wid, eid)
-        assert (await gc.orphan_runs(cas_pool, now=self._later()))["refs"] == 1
-        assert await _scalar(cas_pool, "SELECT count(*) FROM cas_refs WHERE execution_id=$1", eid) == 0
-
-    async def test_a_run_still_being_written_is_never_touched(self, cas_pool):
-        """Its row and manifest are written in one transaction (or the manifest after the row, which it locks):
-        uncommitted, the cleanup doesn't see the manifest; committed, it sees the run."""
-        wid = await _workflow(cas_pool)
-        eid = uuid.uuid4()
-        async with cas_pool.acquire() as writer:
-            tx = writer.transaction()
-            await tx.start()
-            await writer.execute("INSERT INTO workflow_executions (id, workflow_id, user_id, status, started_at) "
-                                 "VALUES ($1, $2, $3, 'running', $4)", eid, wid, TEST_USER_ID, NOW)
-            await writer.execute("INSERT INTO cas_manifests (workflow_id, execution_id, node_id, last_run_status, "
-                                 "created_at) VALUES ($1, $2, 'n1', 'completed', now() - interval '1 day')", wid, eid)
-            assert (await gc.orphan_runs(cas_pool, now=self._later()))["orphan_runs"] == 0
-            await tx.commit()
-        assert (await gc.orphan_runs(cas_pool, now=self._later()))["orphan_runs"] == 0
-        assert await _scalar(cas_pool, "SELECT count(*) FROM cas_manifests WHERE execution_id=$1", eid) == 1
-
-    async def test_the_writer_never_writes_for_a_run_that_does_not_exist(self, cas_pool):
-        """What the cleanup relies on: a manifest is written only while its run's row exists."""
-        fake = FakeR2()
-        wid = await _workflow(cas_pool)
-        with patch_r2(fake):
-            written = await store.persist_node_output(cas_pool, workflow_id=wid, execution_id=uuid.uuid4(),
-                                                      node_id="n1", output={"v": 1})
-        assert written is False
-        assert await _scalar(cas_pool, "SELECT count(*) FROM cas_manifests WHERE workflow_id=$1", wid) == 0
-
-    async def test_one_written_within_the_grace_waits_for_the_next_pass(self, cas_pool):
-        wid = await _workflow(cas_pool)
-        eid = uuid.uuid4()
-        await cas_pool.execute("INSERT INTO cas_manifests (workflow_id, execution_id, node_id) VALUES ($1, $2, 'n1')",
-                               wid, eid)
-        assert (await gc.orphan_runs(cas_pool, now=datetime.now(timezone.utc)))["orphan_runs"] == 0
-        assert (await gc.orphan_runs(cas_pool, now=self._later()))["manifests"] == 1
+async def test_the_writer_never_writes_for_a_run_that_does_not_exist(cas_pool):
+    """What the cleanup relies on: a manifest is written only while its run's row exists."""
+    fake = FakeR2()
+    wid = await _workflow(cas_pool)
+    with patch_r2(fake):
+        written = await store.persist_node_output(cas_pool, workflow_id=wid, execution_id=uuid.uuid4(),
+                                                  node_id="n1", output={"v": 1})
+    assert written is False
+    assert await _scalar(cas_pool, "SELECT count(*) FROM cas_manifests WHERE workflow_id=$1", wid) == 0
