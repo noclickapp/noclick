@@ -3,12 +3,10 @@ import type { CSSProperties } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const Digistore24Icon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <>
-        <img src="/icons/digistore24.svg" alt="" aria-hidden="true" className={`dark:hidden ${className ?? ''}`} style={style} />
-        <img src="/icons/digistore24-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`} style={style} />
-    </>
+    <ThemedBrandImg light="/icons/digistore24.svg" dark="/icons/digistore24-dark.svg" className={className} style={style} />
 );
 
 export const Digistore24Node: NodeDefinition = {

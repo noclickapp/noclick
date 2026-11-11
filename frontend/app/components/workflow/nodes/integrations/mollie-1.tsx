@@ -6,12 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const MollieIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <>
-        <img src="/icons/mollie-1.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' }} />
-        <img src="/icons/mollie-1-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' }} />
-    </>
+    <ThemedBrandImg light="/icons/mollie-1.svg" dark="/icons/mollie-1-dark.svg" className={className} style={style} />
 );
 
 export const MollieNode: NodeDefinition = {

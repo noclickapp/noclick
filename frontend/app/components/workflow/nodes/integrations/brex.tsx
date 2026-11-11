@@ -15,32 +15,7 @@ const BrexIcon = ({
     className?: string;
     style?: CSSProperties;
 }) => (
-    <>
-        <img
-            src="/icons/brex.svg"
-            alt=""
-            aria-hidden="true"
-            className={`${className ?? ''} dark:hidden`}
-            style={
-                {
-                    ...style,
-                    objectFit: 'contain',
-                } as CSSProperties
-            }
-        />
-        <img
-            src="/icons/brex-dark.svg"
-            alt=""
-            aria-hidden="true"
-            className={`${className ?? ''} hidden dark:block`}
-            style={
-                {
-                    ...style,
-                    objectFit: 'contain',
-                } as CSSProperties
-            }
-        />
-    </>
+    <ThemedBrandImg light="/icons/brex.svg" dark="/icons/brex-dark.svg" className={className} style={style} />
 );
 
 const BrexNodeComponent = (props: NodeProps) => (

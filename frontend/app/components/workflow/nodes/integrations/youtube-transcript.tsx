@@ -5,12 +5,10 @@ import type { CSSProperties } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const YoutubeTranscriptIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <>
-        <img src="/icons/youtube-transcript.svg" alt="" aria-hidden="true" className={`dark:hidden ${className ?? ''}`} style={style} />
-        <img src="/icons/youtube-transcript-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`} style={style} />
-    </>
+    <ThemedBrandImg light="/icons/youtube-transcript.svg" dark="/icons/youtube-transcript-dark.svg" className={className} style={style} />
 );
 
 export const YoutubeTranscriptNode: NodeDefinition = {
