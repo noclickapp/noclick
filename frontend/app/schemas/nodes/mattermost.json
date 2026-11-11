@@ -645,6 +645,160 @@
       "x-credential-instructions": "Enter your public HTTPS Mattermost server URL (including its deployment subpath, if any) and paste a personal access token from Profile > Security > Personal Access Tokens. Your administrator must enable token creation. Use a non-admin account with access to the teams and channels you automate. NoClick checks the token by reading your current user profile; individual operations still require the corresponding server permissions.",
       "x-credential-url": "https://docs.mattermost.com/developers/integrate/reference/personal-access-token"
     },
+    "OnMessage": {
+      "description": "Start a workflow when someone posts in a public channel.\n\nOutgoing webhooks must be enabled and the token owner needs manage_webhooks.\nPrivate channels and direct messages do not support outgoing webhooks.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_message",
+          "default": "on_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "New Public Channel Message",
+          "x-is-trigger": true
+        },
+        "team_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Team Id",
+          "type": "string"
+        },
+        "channel_id": {
+          "description": "Public channel to watch. Private channels and direct messages are not supported.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Channel Id",
+          "type": "string"
+        },
+        "trigger_words": {
+          "description": "Optional first-word filters. Leave empty for every message in this public channel.",
+          "items": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Trigger Words",
+          "type": "array"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "readOnly": true,
+          "title": "Webhook URL",
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "team_id",
+        "channel_id"
+      ],
+      "title": "OnMessage",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "PinPost": {
       "additionalProperties": false,
       "description": "Pin a message to its channel.",
@@ -935,6 +1089,7 @@
           "list_posts": "#/$defs/ListPosts",
           "list_public_channels": "#/$defs/ListPublicChannels",
           "list_reactions": "#/$defs/ListReactions",
+          "on_message": "#/$defs/OnMessage",
           "pin_post": "#/$defs/PinPost",
           "remove_channel_member": "#/$defs/RemoveChannelMember",
           "remove_reaction": "#/$defs/RemoveReaction",
@@ -946,6 +1101,9 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/OnMessage"
+        },
         {
           "$ref": "#/$defs/GetCurrentUser"
         },

@@ -153,3 +153,69 @@ async def test_mattermost_self_dm_and_documented_lowercase_ok(monkeypatch):
     transport(monkeypatch, {"status": "ok"})
     result = await node({"operation": "delete_post", "post_id": A}).execute({})
     assert result["status"] == "success"
+
+
+OUTGOING_EVENT = json.loads((Path(__file__).parent / "fixtures/mattermost/outgoing-event.json").read_text())
+TRIGGER = {"operation": "on_message", "team_id": OUTGOING_EVENT["team_id"], "channel_id": OUTGOING_EVENT["channel_id"]}
+
+
+@pytest.mark.asyncio
+async def test_mattermost_webhook_lifecycle_and_config_changes(monkeypatch):
+    # The delivery token is documented separately from the incomplete OpenAPI response.
+    requests = transport(monkeypatch, {"id": A, "token": OUTGOING_EVENT["token"]}, 201)
+    state = await native.MattermostNode._register_external_webhook(
+        webhook_url="https://example.hooks.example.test", credential=CREDS, config=TRIGGER, node_id="test")
+    assert state == {"external_webhook_id": A, "signing_secret": OUTGOING_EVENT["token"]}
+    assert requests[0].method == "POST" and requests[0].url.path == "/api/v4/hooks/outgoing"
+    assert json.loads(requests[0].content) == {
+        "team_id": TRIGGER["team_id"], "channel_id": TRIGGER["channel_id"], "display_name": "NoClick",
+        "trigger_words": [], "callback_urls": ["https://example.hooks.example.test"], "content_type": "application/json"}
+    assert requests[0].headers["authorization"] == "Bearer " + TOKEN
+    requests = transport(monkeypatch, {"status": "OK"})
+    await native.MattermostNode._unregister_external_webhook(credential=CREDS, config=state, node_id="test")
+    assert requests[0].method == "DELETE" and requests[0].url.path == "/api/v4/hooks/outgoing/" + A
+    original = native.MattermostNode.registration_fingerprint_fields(TRIGGER)
+    for key, value in [("channel_id", B), ("team_id", B), ("trigger_words", ["some"])]:
+        assert native.MattermostNode.registration_fingerprint_fields({**TRIGGER, key: value}) != original
+
+
+def test_mattermost_documented_event_authentication_and_agent_turn():
+    cls = native.MattermostNode
+    config = {**TRIGGER, "signing_secret": OUTGOING_EVENT["token"]}
+    body = json.dumps(OUTGOING_EVENT).encode()
+    assert cls.verify_webhook_signature(body, {}, config)
+    for invalid in [b"invalid", b"[]", b"{}", json.dumps({**OUTGOING_EVENT, "token": "wrong"}).encode()]:
+        assert not cls.verify_webhook_signature(invalid, {}, config)
+    assert not cls.verify_webhook_signature(body, {}, TRIGGER)
+    assert cls.filter_trigger_payload(OUTGOING_EVENT, config)
+    assert cls.trigger_fire_budget_channel(OUTGOING_EVENT, config) == OUTGOING_EVENT["channel_id"]
+    assert not cls.filter_trigger_payload({**OUTGOING_EVENT, "channel_id": B}, config)
+    assert not cls.filter_trigger_payload({**OUTGOING_EVENT, "team_id": B}, config)
+    output = cls.resolve_trigger_payload({**OUTGOING_EVENT, "_webhook": {"headers": {}}}, config)
+    assert "token" not in output["data"] and "_webhook" not in output["data"]
+    event = cls.resolve_agent_event(output)
+    for value in [OUTGOING_EVENT[k] for k in ("text", "user_name", "channel_name", "post_id", "channel_id", "user_id", "team_id")]:
+        assert value in event["text"]
+    assert OUTGOING_EVENT["token"] not in event["text"]
+    assert event["conversation_key"] == "mattermost:" + TRIGGER["team_id"] + ":" + TRIGGER["channel_id"]
+    assert cls.resolve_agent_event(cls.no_event_output("on_message")) is None
+    long_output = cls.resolve_trigger_payload({**OUTGOING_EVENT, "text": "x" * 6000}, config)
+    assert len(cls.resolve_agent_event(long_output)["text"]) < 4000
+    assert long_output["data"]["text"] == "x" * 6000
+
+
+@pytest.mark.asyncio
+async def test_mattermost_webhook_requires_registration_token_and_reports_errors(monkeypatch):
+    transport(monkeypatch, {"id": A}, 201)
+    with pytest.raises(ValueError, match="verification token"):
+        await native.MattermostNode._register_external_webhook(
+            webhook_url="https://example.hooks.example.test", credential=CREDS, config=TRIGGER, node_id="test")
+    transport(monkeypatch, {"message": TOKEN}, 403)
+    with pytest.raises(ValueError, match="HTTP 403") as error:
+        await native.MattermostNode._register_external_webhook(
+            webhook_url="https://example.hooks.example.test", credential=CREDS, config=TRIGGER, node_id="test")
+    assert TOKEN not in str(error.value)
+    with pytest.raises(ValueError, match="Invalid Mattermost webhook ID"):
+        await native.MattermostNode._unregister_external_webhook(
+            credential=CREDS, config={"external_webhook_id": "../hooks"}, node_id="test")
+    assert (await node(TRIGGER).execute({}))["status"] == "no_event"

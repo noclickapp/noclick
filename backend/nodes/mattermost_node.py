@@ -9,14 +9,18 @@ Token setup: https://docs.mattermost.com/developers/integrate/reference/personal
 from __future__ import annotations
 
 import re
+import hmac
+import json
 from typing import Annotated, Literal, Union
 from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.agent_events import prune_empty
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 
@@ -252,7 +256,22 @@ class UnpinPost(_Input):
     post_id: Identifier
 
 
-MattermostConfig = Annotated[Union[GetCurrentUser, GetUser, GetUserByUsername, ListMyTeams, ListPublicChannels, ListMyChannels, GetChannel, CreateChannel, UpdateChannel, CreateDirectChannel, ListChannelMembers, AddChannelMember, RemoveChannelMember, ListPosts, CreatePost, GetPost, UpdatePost, DeletePost, GetThread, SearchPosts, AddReaction, RemoveReaction, ListReactions, PinPost, UnpinPost], Field(discriminator="operation")]
+class OnMessage(WebhookTriggerConfigBase):
+    """Start a workflow when someone posts in a public channel.
+
+    Outgoing webhooks must be enabled and the token owner needs manage_webhooks.
+    Private channels and direct messages do not support outgoing webhooks.
+    """
+    operation: Literal["on_message"] = Field("on_message", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-display-name": "New Public Channel Message", "x-category": "Triggers"})
+    team_id: Identifier
+    channel_id: Identifier = Field(..., description="Public channel to watch. Private channels and direct messages are not supported.")
+    trigger_words: list[Annotated[str, Field(min_length=1, max_length=100)]] = Field(
+        default_factory=list, max_length=100, description="Optional first-word filters. Leave empty for every message in this public channel.")
+    webhook_url: str | None = Field(None, title="Webhook URL", json_schema_extra={"ui:widget": "webhook", "ui:loadValue": True, "readOnly": True})
+
+
+MattermostConfig = Annotated[Union[OnMessage, GetCurrentUser, GetUser, GetUserByUsername, ListMyTeams, ListPublicChannels, ListMyChannels, GetChannel, CreateChannel, UpdateChannel, CreateDirectChannel, ListChannelMembers, AddChannelMember, RemoveChannelMember, ListPosts, CreatePost, GetPost, UpdatePost, DeletePost, GetThread, SearchPosts, AddReaction, RemoveReaction, ListReactions, PinPost, UnpinPost], Field(discriminator="operation")]
 
 
 class MattermostFullConfig(NodeConfig[MattermostConfig, MattermostTokenCredential]):
@@ -319,7 +338,7 @@ def _response_shape(payload, kind):
     return all(isinstance(payload.get(k), str) and payload[k] for k in keys)
 
 
-class MattermostNode(WorkflowNode):
+class MattermostNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-mattermost"
     connection_evidence = ConnectionEvidence(
         noun="Mattermost account", identity_operation="get_current_user",
@@ -330,9 +349,92 @@ class MattermostNode(WorkflowNode):
     def get_config_model(cls):
         return MattermostFullConfig
 
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {key: config.get(key) for key in ("team_id", "channel_id", "trigger_words")}
+
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, body=None):
+        credential = MattermostTokenCredential.model_validate(credential)
+        async with guarded_async_client(timeout=30, trust_env=False, follow_redirects=False) as client:
+            response = await client.request(
+                method, credential.server_url + "/api/v4" + path,
+                headers={"Authorization": "Bearer " + credential.access_token, "Accept": "application/json"},
+                **({"json": body} if body is not None else {}))
+        if not 200 <= response.status_code < 300:
+            raise ValueError(f"Mattermost webhook request returned HTTP {response.status_code}")
+        return response.json()
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        trigger = OnMessage.model_validate(config)
+        result = await cls._webhook_request(credential, "POST", "/hooks/outgoing", {
+            "team_id": trigger.team_id, "channel_id": trigger.channel_id,
+            "display_name": "NoClick", "trigger_words": trigger.trigger_words,
+            "callback_urls": [webhook_url], "content_type": "application/json"})
+        if not isinstance(result, dict) or not result.get("id") or not result.get("token"):
+            raise ValueError("Mattermost did not return a webhook ID and verification token")
+        return {"external_webhook_id": result["id"], "signing_secret": result["token"]}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        hook_id = config.get("external_webhook_id")
+        if not hook_id or not credential:
+            return
+        if not re.fullmatch(r"[a-z0-9]{26}", str(hook_id)):
+            raise ValueError("Invalid Mattermost webhook ID")
+        await cls._webhook_request(credential, "DELETE", "/hooks/outgoing/" + str(hook_id))
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # Mattermost authenticates the JSON payload with its per-webhook token.
+        secret = config.get("signing_secret")
+        try:
+            payload = json.loads(body)
+        except (ValueError, TypeError, UnicodeDecodeError):
+            return False
+        token = payload.get("token") if isinstance(payload, dict) else None
+        return bool(isinstance(secret, str) and secret and isinstance(token, str)
+                    and hmac.compare_digest(secret.encode(), token.encode()))
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return (payload.get("team_id") == config.get("team_id")
+                and payload.get("channel_id") == config.get("channel_id"))
+
+    @classmethod
+    def trigger_fire_budget_channel(cls, payload, config):
+        return payload.get("channel_id")
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if config.get("operation") != "on_message":
+            return None
+        data = {key: payload[key] for key in (
+            "channel_id", "channel_name", "team_domain", "team_id", "post_id",
+            "text", "timestamp", "trigger_word", "user_id", "user_name") if key in payload}
+        return {"status": "success", "operation": "on_message", "data": data}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if output.get("operation") != "on_message" or output.get("status") != "success":
+            return None
+        data = output["data"]
+        text = prune_empty(str(data.get("text", "")), max_str=3000)
+        return {
+            "text": (f"Mattermost: {data.get('user_name', '')} posted in #{data.get('channel_name', '')} "
+                     f"on {data.get('team_domain', '')}.\n{text}\n"
+                     f"To act: channel_id={data.get('channel_id', '')}, post_id={data.get('post_id', '')}, "
+                     f"user_id={data.get('user_id', '')}, team_id={data.get('team_id', '')}."),
+            "conversation_key": f"mattermost:{data.get('team_id', '')}:{data.get('channel_id', '')}",
+            "title": f"Mattermost #{data.get('channel_name', '')}",
+        }
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect your Mattermost server and personal access token")
+        if isinstance(self.config.config, OnMessage):
+            return self.no_event_output("on_message")
         credential = self.config.credentials
         op = self.config.config
         values = op.model_dump(exclude_none=True)
