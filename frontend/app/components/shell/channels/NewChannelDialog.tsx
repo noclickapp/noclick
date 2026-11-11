@@ -5,14 +5,13 @@
 // too.
 import { useState, type FormEvent } from 'react';
 import { Check, Hash } from 'lucide-react';
-import { NodeMark } from '~/components/dashboard/primitives';
 import { ShellDialog } from '~/components/shell/ShellDialog';
 import { BUTTON_GHOST, BUTTON_PRIMARY } from '~/components/shell/buttons';
 import { FIELD, FIELD_LABEL } from '~/components/shell/fields';
 import { cn } from '~/lib/utils';
-import { MemberAvatar } from './avatars';
+import { AgentChoiceRow } from './AgentChoiceRow';
 import type { AccountMenuUser } from '~/components/nav/AccountMenu';
-import { agentGroups, channelSlug, hueFor } from './model';
+import { agentGroups, channelSlug } from './model';
 import type { AgentChoice } from './types';
 
 export interface NewChannelInput {
@@ -124,10 +123,10 @@ export function NewChannelDialog({
                 <div>
                     <span className={FIELD_LABEL}>Agents</span>
                     {agents.length ? (
-                        <div className="max-h-48 overflow-y-auto rounded-xl border border-border p-1 scrollbar-subtle dark:border-foreground/[0.1]">
+                        <div className="max-h-60 overflow-y-auto rounded-xl border border-border p-1 scrollbar-subtle dark:border-foreground/[0.1]">
                             {agentGroups(agents).map((group) => (
-                                <section key={group.label} aria-label={group.label}>
-                                    <p className="px-2 pb-0.5 pt-1.5 text-[11.5px] text-muted-foreground/80">{group.label}</p>
+                                <section key={group.label} aria-label={group.label || undefined}>
+                                    {group.label && <p className="px-2 pb-0.5 pt-1.5 text-[11.5px] text-muted-foreground/80">{group.label}</p>}
                                     <ul>
                                         {group.agents.map((agent) => {
                                             const on = picked.has(agent.id);
@@ -140,12 +139,7 @@ export function NewChannelDialog({
                                                         onClick={() => toggle(agent.id)}
                                                         className="flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-foreground/[0.04]"
                                                     >
-                                                        <MemberAvatar member={{ id: agent.id, kind: 'agent', name: agent.name, hue: hueFor(agent.id) }} user={user} size={24} />
-                                                        <span className="min-w-0 flex-1 truncate text-[14px] text-foreground">
-                                                            {agent.name}
-                                                            {agent.source === 'automation' && <span className="text-muted-foreground"> · {agent.workflowName}</span>}
-                                                        </span>
-                                                        {agent.markType && <NodeMark type={agent.markType} size="xs" />}
+                                                        <AgentChoiceRow agent={agent} user={user} />
                                                         <span className={cn('grid h-5 w-5 shrink-0 place-items-center rounded-md ring-1 ring-inset', on ? 'bg-primary text-primary-foreground ring-primary' : 'ring-border')}>
                                                             {on && <Check className="h-3.5 w-3.5" strokeWidth={2.5} />}
                                                         </span>

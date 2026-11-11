@@ -150,6 +150,13 @@ interface AgentChoiceBase {
     markType?: string;
     /** Its job in a line, where its agent says one. */
     role?: string;
+    /** A platform agent's harness and model ids (`sdk`; null model: the harness's default). */
+    harness?: string;
+    model?: string | null;
+    /** Its model and harness as a picker names them ("Sonnet 5.5 on Claude Code"), once read. */
+    modelLine?: string;
+    /** NoClick's own agent: the pickers list it first, in its mark. */
+    noclick?: boolean;
 }
 
 /** One of your agents, to add to a channel: one made on the platform, or one in your Automations (an agent node of a workflow). */

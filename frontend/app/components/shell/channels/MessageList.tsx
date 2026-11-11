@@ -65,6 +65,7 @@ function Intro({
     older,
     loadingOlder,
     onLoadOlder,
+    after,
 }: {
     channel: Channel;
     schedules: ChannelSchedule[];
@@ -73,6 +74,7 @@ function Intro({
     older: boolean;
     loadingOlder: boolean;
     onLoadOlder: () => void;
+    after?: ReactNode;
 }) {
     if (older) {
         return (
@@ -116,6 +118,7 @@ function Intro({
                 <p className="mt-4 text-[13px] text-muted-foreground">No agents here yet: add one from the members menu, or with /invite.</p>
             )}
             <ScheduleLines schedules={schedules} />
+            {after}
         </div>
     );
 }
@@ -540,6 +543,7 @@ export function MessageList({
     onDismiss,
     actions,
     intro,
+    introAfter,
 }: {
     channel: Channel;
     /** The schedules that post in it. */
@@ -559,6 +563,8 @@ export function MessageList({
     actions?: MessageActions;
     /** Where the conversation starts, in place of a channel's (a DM's: the other person). */
     intro?: ReactNode;
+    /** What follows a channel's own start, under who's in it. */
+    introAfter?: ReactNode;
 }) {
     const root = useRef<HTMLDivElement>(null);
     const agents = members.filter((m) => m.kind === 'agent');
@@ -589,7 +595,7 @@ export function MessageList({
 
     return (
         <div ref={root} className="flex flex-1 flex-col justify-end">
-            {intro && !older ? intro : <Intro channel={channel} schedules={schedules} agents={agents} user={user} older={older} loadingOlder={loadingOlder} onLoadOlder={onLoadOlder} />}
+            {intro && !older ? intro : <Intro channel={channel} schedules={schedules} agents={agents} user={user} older={older} loadingOlder={loadingOlder} onLoadOlder={onLoadOlder} after={introAfter} />}
             {days.map(({ day, label, items }) => (
                 <section key={day} data-day={day} aria-label={label} className="relative">
                     {/* The day's hairline and its pill pin to the top while the day is on screen, over a band of the

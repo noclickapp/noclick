@@ -131,11 +131,13 @@ export function agentKey(member: Pick<ChannelMember, 'agentId' | 'workflowId' | 
     return member.workflowId && member.nodeId ? automationKey(member.workflowId, member.nodeId) : undefined;
 }
 
-/** Your agents as the pickers group them: those in your Automations, then the platform's. */
+/** Your agents as the pickers group them: NoClick's own first under no heading, those in your Automations, then the
+ *  platform's. */
 export function agentGroups(agents: AgentChoice[]): { label: string; agents: AgentChoice[] }[] {
     return [
-        { label: 'Your agents', agents: agents.filter((a) => a.source === 'automation') },
-        { label: 'Platform agents', agents: agents.filter((a) => a.source === 'platform') },
+        { label: '', agents: agents.filter((a) => a.noclick) },
+        { label: 'Your agents', agents: agents.filter((a) => !a.noclick && a.source === 'automation') },
+        { label: 'Platform agents', agents: agents.filter((a) => !a.noclick && a.source === 'platform') },
     ].filter((group) => group.agents.length > 0);
 }
 
