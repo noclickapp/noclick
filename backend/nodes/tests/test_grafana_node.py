@@ -3,7 +3,11 @@
 These tests do not count as live NoClick FlowCanvas verification.
 """
 
+import hashlib
+import hmac
 import json
+import time
+from pathlib import Path
 from unittest.mock import patch
 
 import httpx
@@ -29,6 +33,155 @@ def _node(operation, **fields):
         node_data={},
         config=config,
     )
+
+
+@pytest.fixture
+def alert_notification():
+    # Unmodified default JSON example from Grafana's webhook-notifier docs;
+    # the adjacent provenance file records the provider page.
+    return json.loads((Path(__file__).parent / "fixtures/grafana/alert-notification.json").read_text())
+
+
+@pytest.mark.asyncio
+async def test_grafana_trigger_registers_signed_contact_point_and_removes_it():
+    requests = []
+
+    def capture(request):
+        requests.append(request)
+        return httpx.Response(202 if request.method == "POST" else 204)
+
+    credential = _node("on_alert_notification").config.credentials.model_dump()
+    def client(**kwargs):
+        return httpx.AsyncClient(transport=httpx.MockTransport(capture))
+
+    with patch("nodes.grafana_node.guarded_async_client", side_effect=client):
+        registration = await GrafanaNode._register_external_webhook(
+            webhook_url="https://example.hooks.example.test", credential=credential,
+            config={"operation": "on_alert_notification"}, node_id="grafana-trigger")
+        await GrafanaNode._unregister_external_webhook(
+            credential=credential, config=registration, node_id="grafana-trigger")
+    posted = json.loads(requests[0].content)
+    assert posted["uid"] == registration["external_webhook_id"]
+    assert len(posted["uid"]) <= 40
+    assert posted["name"].startswith("NoClick ")
+    assert posted["type"] == "webhook"
+    assert posted["disableResolveMessage"] is False
+    assert posted["settings"] == {
+        "url": "https://example.hooks.example.test", "httpMethod": "POST",
+        "hmacConfig": {"secret": registration["signing_secret"],
+                       "header": "X-Grafana-Alerting-Signature",
+                       "timestampHeader": "X-Grafana-Alerting-Timestamp"},
+    }
+    assert len(registration["signing_secret"]) == 64
+    assert requests[0].url.path == "/api/v1/provisioning/contact-points"
+    assert requests[1].method == "DELETE"
+    assert requests[1].url.path.endswith("/" + posted["uid"])
+    assert all(r.headers["Authorization"] == "Bearer grafana-qa-token" for r in requests)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("code", [401, 403, 409, 500])
+async def test_grafana_trigger_lifecycle_errors_are_not_hidden(code):
+    def client(**kwargs):
+        return httpx.AsyncClient(transport=httpx.MockTransport(lambda r: httpx.Response(code)))
+    credential = _node("on_alert_notification").config.credentials.model_dump()
+    with patch("nodes.grafana_node.guarded_async_client", side_effect=client):
+        with pytest.raises(httpx.HTTPStatusError):
+            await GrafanaNode._register_external_webhook(
+                webhook_url="https://example.hooks.example.test", credential=credential, config={}, node_id="test")
+        with pytest.raises(httpx.HTTPStatusError):
+            await GrafanaNode._unregister_external_webhook(
+                credential=credential, config={"external_webhook_id": "cp"}, node_id="test")
+
+
+def test_grafana_timestamped_hmac_signature(alert_notification):
+    body = json.dumps(alert_notification).encode()
+    secret = "test-grafana-signing-secret"
+    def headers(timestamp):
+        return {"X-Grafana-Alerting-Timestamp": timestamp,
+                "X-Grafana-Alerting-Signature": hmac.new(
+                    secret.encode(), timestamp.encode() + b":" + body, hashlib.sha256).hexdigest()}
+    now = str(int(time.time()))
+    config = {"signing_secret": secret}
+    assert GrafanaNode.verify_webhook_signature(body, headers(now), config)
+    assert GrafanaNode.verify_webhook_signature(body, {k.lower(): v for k, v in headers(now).items()}, config)
+    assert not GrafanaNode.verify_webhook_signature(body + b" ", headers(now), config)
+    assert not GrafanaNode.verify_webhook_signature(body, headers(now), {"signing_secret": "wrong"})
+    assert not GrafanaNode.verify_webhook_signature(body, headers(str(int(now) - 301)), config)
+    assert not GrafanaNode.verify_webhook_signature(body, headers(str(int(now) + 301)), config)
+    assert not GrafanaNode.verify_webhook_signature(body, headers("invalid"), config)
+    assert not GrafanaNode.verify_webhook_signature(body, {}, config)
+    assert not GrafanaNode.verify_webhook_signature(body, headers(now), {})
+
+
+def test_grafana_notification_filters_and_agent_turn(alert_notification):
+    config = {"operation": "on_alert_notification"}
+    assert GrafanaNode.filter_trigger_payload(alert_notification, config)
+    assert GrafanaNode.filter_trigger_payload(alert_notification, {**config, "notification_status": "firing"})
+    assert not GrafanaNode.filter_trigger_payload(alert_notification, {**config, "notification_status": "resolved"})
+    assert not GrafanaNode.filter_trigger_payload(alert_notification, {"operation": "list_folders"})
+    assert not GrafanaNode.filter_trigger_payload({}, config)
+    output = GrafanaNode.resolve_trigger_payload(alert_notification, config)
+    event = GrafanaNode.resolve_agent_event(output)
+    for value in ("High memory usage", "High CPU usage", "team=blue", "organization 1",
+                  "My Super Webhook", "c6eadffa33fcdf37", "https://myrunbook.com/runbook/1234",
+                  "https://play.grafana.org/alerting/1afz29v7z/edit"):
+        assert value in event["text"]
+    assert event["conversation_key"] == "https://play.grafana.org/:1:{}:{}"
+
+
+@pytest.mark.asyncio
+async def test_grafana_manual_trigger_run_does_not_fabricate_an_event():
+    result = await _node("on_alert_notification").execute({})
+    assert result["status"] == "no_event"
+
+
+def test_grafana_trigger_registration_fingerprint_and_schema():
+    assert GrafanaNode.registration_fingerprint_fields({"contact_point_name": "Operations"}) == {
+        "contact_point_name": "Operations"}
+    op = _node("on_alert_notification").config.config
+    assert op.model_json_schema()["properties"]["operation"]["x-is-trigger"] is True
+    assert op.model_json_schema()["x-requires-webhook"] is True
+    assert op.model_validate({**op.model_dump(), "signing_secret": "secret"}).signing_secret == "secret"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["create_alert_rule", "get_alert_rule", "update_alert_rule"])
+async def test_grafana_documented_alert_rule_durations_and_nullable_response(operation):
+    fixture = Path(__file__).parent / "fixtures/grafana/alert-rule.json"
+    documented = json.loads(fixture.read_text())
+    calls = []
+    def capture(request):
+        calls.append(request)
+        return httpx.Response(201 if operation == "create_alert_rule" else 200, json=documented)
+    client = httpx.AsyncClient(transport=httpx.MockTransport(capture))
+    fields = {"uid": documented["uid"]} if operation != "create_alert_rule" else {}
+    if operation != "get_alert_rule":
+        fields["body"] = json.dumps({k: documented[k] for k in (
+            "orgID", "folderUID", "ruleGroup", "title", "condition", "data", "noDataState", "execErrState", "for")})
+    with patch("nodes.grafana_node.guarded_async_client", return_value=client):
+        result = await _node(operation, **fields).execute({})
+    assert result["data"] == documented
+    assert result["data"]["for"] == "5m"
+    assert result["data"]["notification_settings"] is None
+    assert result["data"]["record"] is None
+    if operation != "get_alert_rule":
+        assert json.loads(calls[0].content)["for"] == "5m"
+
+
+@pytest.mark.asyncio
+async def test_grafana_preserves_documented_nullable_data_source_json():
+    documented = json.loads((Path(__file__).parent / "fixtures/grafana/update-data-source.json").read_text())
+    calls = []
+    def capture(request):
+        calls.append(request)
+        return httpx.Response(200, json={"message": "Datasource updated"})
+    client = httpx.AsyncClient(transport=httpx.MockTransport(capture))
+    with patch("nodes.grafana_node.guarded_async_client", return_value=client):
+        result = await _node("update_data_source", uid="kLtEtcRGk", body=json.dumps(documented)).execute({})
+    assert result["status"] == "success"
+    assert json.loads(calls[0].content) == documented
+    assert documented["jsonData"] is None
 
 
 def _fields_for(spec):
@@ -82,7 +235,7 @@ def test_catalog_and_schema_have_one_config_per_operation():
     assert len({spec["name"] for spec in OPERATIONS}) == len(OPERATIONS)
     schema = GrafanaNode.get_config_schema()
     assert schema["properties"]["credentials"]
-    assert len(schema["properties"]["config"]["oneOf"]) == len(OPERATIONS)
+    assert len(schema["properties"]["config"]["oneOf"]) == len(OPERATIONS) + 1
 
 
 @pytest.mark.asyncio

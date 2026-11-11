@@ -5,9 +5,12 @@ service-account token works on Grafana Cloud and recent self-hosted Grafana;
 there is no Grafana OAuth application flow for these API operations.
 """
 
+import hashlib
+import hmac
 import json
 import logging
 import re
+import secrets
 import time
 from typing import Annotated, Any, Dict, Literal, Optional, Union
 from urllib.parse import quote, urlsplit
@@ -18,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import allow_private_hosts, guarded_async_client, normalize_https_origin
 
 # Curated from Grafana's published HTTP API at https://play.grafana.org/public/api-merged.json.
@@ -1178,14 +1182,39 @@ def _build_operation_model(operation: dict[str, Any]) -> type[BaseModel]:
 
 _BY_NAME = {operation["name"]: operation for operation in OPERATIONS}
 _MODELS = tuple(_build_operation_model(operation) for operation in OPERATIONS)
-GrafanaConfig = Annotated[Union[_MODELS], Discriminator("operation")]
+
+
+class GrafanaOnAlertNotificationConfig(WebhookTriggerConfigBase):
+    """Receive Grafana's default grouped alert notification payload."""
+
+    operation: Literal["on_alert_notification"] = Field(
+        "on_alert_notification", title="On Alert Notification", json_schema_extra={
+            "const": "on_alert_notification", "ui:hidden": True,
+            "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On Alert Notification",
+        })
+    contact_point_name: str = Field(
+        "", title="Contact Point Name",
+        description=("Leave empty for a unique NoClick contact point. After registration, select "
+                     "this contact point in your Grafana alert rules or notification policies. "
+                     "Requires permission to create contact points and Grafana webhook HMAC support."))
+    notification_status: Literal["all", "firing", "resolved"] = Field(
+        "all", title="Notification Status",
+        description="Receive all notifications, firing groups, or fully resolved groups.")
+    webhook_url: Optional[str] = Field(
+        None, title="Webhook URL",
+        description="Registered with Grafana automatically. Use Grafana's default JSON payload.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+GrafanaConfig = Annotated[Union[_MODELS + (GrafanaOnAlertNotificationConfig,)], Discriminator("operation")]
 
 
 class GrafanaNodeConfig(NodeConfig[GrafanaConfig, Union[GrafanaCredential, GrafanaMcpCredential]]):
     """Grafana operation and service-account credential."""
 
 
-class GrafanaNode(WorkflowNode):
+class GrafanaNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """Manage dashboards, folders, data sources, annotations and alerting."""
 
     integration_type = "automation-grafana"
@@ -1204,11 +1233,104 @@ class GrafanaNode(WorkflowNode):
     def get_config_model(cls):
         return GrafanaNodeConfig
 
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"contact_point_name": (config or {}).get("contact_point_name", "")}
+
+    @staticmethod
+    async def _contact_point_request(credential, method, path, *, body=None):
+        parsed = GrafanaCredential.model_validate(credential)
+        async with guarded_async_client(timeout=30.0) as client:
+            response = await client.request(
+                method, f"{_origin(parsed.url)}/api/v1/provisioning/contact-points{path}",
+                headers={"Authorization": f"Bearer {parsed.token}", "Accept": "application/json"},
+                json=body)
+        if method == "DELETE" and response.status_code == 404:
+            return
+        response.raise_for_status()
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        # Grafana's EmbeddedContactPoint contract allows a caller-supplied UID.
+        # Settings keys: grafana/alerting receivers/webhook/v1/config.go;
+        # signing: Grafana's webhook-notifier documentation.
+        uid = "noclick-" + hashlib.sha256(str(node_id).encode()).hexdigest()[:24]
+        secret = secrets.token_hex(32)
+        await cls._contact_point_request(credential, "POST", "", body={
+            "uid": uid, "name": (config or {}).get("contact_point_name") or f"NoClick {uid}",
+            "type": "webhook", "disableResolveMessage": False,
+            "settings": {"url": webhook_url, "httpMethod": "POST", "hmacConfig": {
+                "secret": secret, "header": "X-Grafana-Alerting-Signature",
+                "timestampHeader": "X-Grafana-Alerting-Timestamp",
+            }},
+        })
+        return {"external_webhook_id": uid, "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        uid = (config or {}).get("external_webhook_id")
+        if not uid:
+            return
+        if not credential:
+            raise ValueError("Connect Grafana to remove its contact point")
+        await cls._contact_point_request(credential, "DELETE", "/" + quote(str(uid), safe=""))
+
+    @classmethod
+    def verify_webhook_signature(cls, body: bytes, headers: dict[str, str], config: dict[str, Any]) -> bool:
+        # https://grafana.com/docs/grafana/latest/alerting/configure-notifications/manage-contact-points/integrations/webhook-notifier/#hmac-signature
+        secret = (config or {}).get("signing_secret")
+        normalized = {key.lower(): value for key, value in headers.items()}
+        timestamp = normalized.get("x-grafana-alerting-timestamp", "")
+        signature = normalized.get("x-grafana-alerting-signature", "")
+        if not secret or not re.fullmatch(r"[0-9]{1,12}", timestamp):
+            return False
+        if abs(time.time() - int(timestamp)) > 300 or not re.fullmatch(r"[0-9a-f]{64}", signature):
+            return False
+        expected = hmac.new(str(secret).encode(), timestamp.encode() + b":" + body, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(expected, signature)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        if (config or {}).get("operation") != "on_alert_notification":
+            return False
+        status = payload.get("status")
+        wanted = (config or {}).get("notification_status") or "all"
+        return (status in {"firing", "resolved"} and isinstance(payload.get("alerts"), list)
+                and bool(payload["alerts"]) and (wanted == "all" or wanted == status))
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or not isinstance(output.get("alerts"), list):
+            return super().resolve_agent_event(output)
+        title = output.get("title") or f"Grafana alerts {output.get('status', '')}"
+        lines = [str(title), f"Grafana: {output.get('externalURL', '')} (organization {output.get('orgId', '')})",
+                 f"Contact point: {output.get('receiver', '')}; status: {output.get('status', '')}"]
+        for alert in output["alerts"]:
+            if not isinstance(alert, dict):
+                continue
+            labels = alert.get("labels") or {}
+            annotations = alert.get("annotations") or {}
+            lines.append(f"\n{labels.get('alertname', 'Alert')} — {alert.get('status', '')}")
+            lines.append("Labels: " + ", ".join(f"{key}={value}" for key, value in labels.items()))
+            for key, value in annotations.items():
+                lines.append(f"{key}: {value}")
+            for key in ("fingerprint", "startsAt", "endsAt", "generatorURL", "silenceURL", "dashboardURL", "panelURL", "values"):
+                if alert.get(key):
+                    lines.append(f"{key}: {alert[key]}")
+        if output.get("message"):
+            lines += ["", str(output["message"])]
+        if output.get("truncatedAlerts"):
+            lines.append(f"Additional alerts omitted by Grafana: {output['truncatedAlerts']}")
+        return {"text": "\n".join(lines), "title": str(title),
+                "conversation_key": f"{output.get('externalURL', '')}:{output.get('orgId', '')}:{output.get('groupKey', '')}"}
+
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         started = time.monotonic()
         config = self.config
         if not isinstance(config, GrafanaNodeConfig):
             raise ValueError("Valid Grafana configuration is required")
+        if isinstance(config.config, GrafanaOnAlertNotificationConfig):
+            return self.no_event_output("on_alert_notification")
         credential = config.credentials
         if not credential or not credential.token:
             raise ValueError("A Grafana service account token is required")
