@@ -686,7 +686,19 @@ def test_content_template_version_schema_matches_runtime_status_contract():
         "title": "Mailjet Node Configuration",
         "x-agent-tool-provider": True,
     })
-    assert schema == generated
+    # JSON Schema anyOf alternatives are unordered. Pydantic can emit the
+    # same union in a different order across processes/Python environments.
+    def canonical(value):
+        if isinstance(value, dict):
+            result = {key: canonical(child) for key, child in value.items()}
+            if "anyOf" in result:
+                result["anyOf"] = sorted(result["anyOf"], key=lambda item: json.dumps(item, sort_keys=True))
+            return result
+        if isinstance(value, list):
+            return [canonical(item) for item in value]
+        return value
+
+    assert canonical(schema) == canonical(generated)
     get_fields = schema["$defs"]["MailjetGetContentTemplateVersionConfig"]["properties"]
     update_fields = schema["$defs"]["MailjetUpdateContentTemplateVersionConfig"]["properties"]
     assert get_fields["content_type"]["enum"] == ["D", "P", "A"]
