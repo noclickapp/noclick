@@ -214,12 +214,14 @@ async def codex_complete(poll: Dict[str, Any]) -> Dict[str, Any]:
         "CODEX_ID_TOKEN": tokens.get("id_token", ""),
         "CODEX_EXPIRES_AT": compute_expires_at_iso(tokens.get("expires_in"), access_token) or "",
     }
-    from nodes.agent.harness_oauth import chatgpt_plan_models, plan_models_metadata
+    from nodes.agent.harness_oauth import chatgpt_email, chatgpt_plan_models, plan_models_metadata, signed_in_as
 
     models = await chatgpt_plan_models(credentials)
-    # The credential's own metadata: the models ChatGPT lists for this sign-in, which a plan is judged by.
+    # The credential's own metadata: the account it's signed in as, and the models ChatGPT lists for this sign-in,
+    # which a plan is judged by.
     return {"status": "completed", "credential_data": {"credentials": credentials},
-            "metadata": plan_models_metadata(models) if models is not None else {}}
+            "metadata": {**signed_in_as(chatgpt_email(credentials["CODEX_ID_TOKEN"])),
+                         **(plan_models_metadata(models) if models is not None else {})}}
 
 
 # ==============================================================================
@@ -294,6 +296,8 @@ async def claude_code_complete(poll: Dict[str, Any], *, context: Optional[dict] 
     if not access_token:
         raise OAuthFlowError("No access token received from token exchange")
     expires_in = tokens.get("expires_in", "")
+    from nodes.agent.harness_oauth import claude_account_email, signed_in_as
+
     return {
         "status": "completed",
         "credential_data": {
@@ -304,6 +308,8 @@ async def claude_code_complete(poll: Dict[str, Any], *, context: Optional[dict] 
                 "CLAUDE_CODE_EXPIRES_AT": compute_expires_at_iso(expires_in, access_token) or "",
             }
         },
+        # The credential's own metadata: the account it's signed in as.
+        "metadata": signed_in_as(claude_account_email(tokens)),
     }
 
 

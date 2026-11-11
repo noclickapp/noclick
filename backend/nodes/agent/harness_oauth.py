@@ -65,6 +65,9 @@ CHATGPT_MODELS_URL = "https://chatgpt.com/backend-api/codex/models"
 # A ChatGPT sign-in's credential metadata: the models ChatGPT lists for it, and when it said so.
 PLAN_MODELS_KEY = "chatgpt_models"
 PLAN_MODELS_AT_KEY = "chatgpt_models_at"
+# The email a sign-in is for, in its credential's metadata: what Connect reads as the connection's ``account``, so two
+# plans of one kind are told apart.
+SIGNED_IN_AS_KEY = "verified_as"
 
 # Row-level bookkeeping keys the flat env view carries for the refresh
 # machinery (CAS + audit); never env vars, always stripped before dispatch.
@@ -91,6 +94,8 @@ class HarnessTokens:
     refresh_token: Optional[str]
     expires_at: Optional[str]
     scope: None = None
+    # The account the response names (Claude's ``account.email_address``); never adopted into the env.
+    email: Optional[str] = None
     token_type: None = None
 
 
@@ -182,7 +187,21 @@ async def _refresh_claude_code(refresh_token: str) -> HarnessTokens:
         access_token=access,
         refresh_token=tokens.get("refresh_token"),
         expires_at=compute_expires_at_iso(tokens.get("expires_in"), access),
+        email=claude_account_email(tokens),
     )
+
+
+def claude_account_email(tokens: Dict[str, Any]) -> Optional[str]:
+    """The email of the Claude account a token response (a sign-in's or a refresh's) is for, as Claude Code reads it
+    (``account.email_address``); None when it names none."""
+    account = tokens.get("account")
+    email = account.get("email_address") if isinstance(account, dict) else None
+    return email if isinstance(email, str) and email else None
+
+
+def signed_in_as(email: Optional[str]) -> Dict[str, str]:
+    """The credential metadata naming the account a sign-in is for (``SIGNED_IN_AS_KEY``), or nothing."""
+    return {SIGNED_IN_AS_KEY: email} if email else {}
 
 
 def _make_codex_refresh(env: Dict[str, str]):
@@ -270,9 +289,15 @@ class _HarnessOAuthSpec:
     # Token fields a refresh rotates alongside access/refresh/expires.
     companion_keys: Tuple[str, ...] = ()
 
-    def build_refresh(self, env: Dict[str, str]):
+    def build_refresh(self, env: Dict[str, str], said: Dict[str, Optional[str]]):
+        """The refresh call; a Claude refresh's response also names its account, kept in ``said`` for the caller
+        to store after the refresh, never inside it."""
         if self.provider == "claude_code":
-            return lambda token: _refresh_claude_code(token)
+            async def refresh(token: str) -> HarnessTokens:
+                tokens = await _refresh_claude_code(token)
+                said["email"] = getattr(tokens, "email", None)
+                return tokens
+            return refresh
         return _make_codex_refresh(env)
 
     def stale(self, row: Dict[str, Any]) -> bool:
@@ -335,13 +360,14 @@ async def ensure_fresh_harness_tokens(
             else None
         )
         before = env.get(spec.access_key)
+        said: Dict[str, Optional[str]] = {}
         try:
             await ensure_fresh_oauth_token(
                 pool=pool,
                 credential_id=credential_id,
                 user_id=user_id,
                 credential=env,
-                refresh=spec.build_refresh(env),
+                refresh=spec.build_refresh(env, said),
                 access_token_key=spec.access_key,
                 refresh_token_key=spec.refresh_key,
                 expires_at_key=spec.expires_at_key,
@@ -363,10 +389,15 @@ async def ensure_fresh_harness_tokens(
                 logger.error("[harness_oauth] %s refused NoClick's client (%s, HTTP %s) refreshing credential %s",
                              spec.provider, e.provider_error_code, e.status, credential_id)
             raise
-        if spec.provider == "codex_chatgpt" and store is not None and env.get(spec.access_key) != before:
+        if store is not None and env.get(spec.access_key) != before:
             # After the refresh, never inside it: the refresh attempt is bounded, and the rotated token it minted
-            # must persist whatever ChatGPT's list takes. Off the dispatch too: nothing waits on it.
-            spawn(store_plan_models(pool, credential_id, dict(env)), name="harness_oauth.plan_models")
+            # must persist whatever ChatGPT's list takes. Off the dispatch too: nothing waits on it. So a sign-in
+            # made before its account was kept gets it at its next refresh.
+            codex = spec.provider == "codex_chatgpt"
+            email = chatgpt_email(env.get("CODEX_ID_TOKEN")) if codex else said.get("email")
+            if codex or email:
+                spawn(store_sign_in(pool, credential_id, spec.provider, dict(env), email),
+                      name="harness_oauth.sign_in")
     for key in _BOOKKEEPING_KEYS:
         env.pop(key, None)
     env.pop("credential_type", None)
@@ -412,6 +443,13 @@ def chatgpt_plan_type(id_token: Optional[str]) -> Optional[str]:
     return plan.lower() if plan else None
 
 
+def chatgpt_email(id_token: Optional[str]) -> Optional[str]:
+    """The email a ChatGPT sign-in is for, from its id token's claims, as Codex reads it; None when unknown."""
+    claims = _chatgpt_id_token_claims(id_token)
+    email = claims.get("email") if claims else None
+    return email if isinstance(email, str) and email else None
+
+
 def chatgpt_account_id(id_token: Optional[str]) -> Optional[str]:
     """The ChatGPT account (workspace) a sign-in acts in, from its id token's claims, as Codex reads it; an expired
     token still names it. None when unknown."""
@@ -451,18 +489,21 @@ def plan_models_metadata(models: List[str]) -> Dict[str, Any]:
     return {PLAN_MODELS_KEY: models, PLAN_MODELS_AT_KEY: datetime.now(timezone.utc).isoformat()}
 
 
-async def store_plan_models(pool, credential_id: str, env: Dict[str, Any]) -> None:
-    """Read the models ChatGPT lists for a sign-in with its fresh token and keep
-    them in its credential's metadata, never its blob or token version. A list
-    that can't be read changes nothing."""
+async def store_sign_in(pool, credential_id: str, provider: str, env: Dict[str, Any],
+                        email: Optional[str]) -> None:
+    """What a refreshed sign-in says of itself, kept in its credential's metadata, never its blob or token version:
+    the email it's for, and for a ChatGPT sign-in the models ChatGPT lists for it, read with its fresh token. What
+    can't be read changes nothing."""
     from repositories.credentials import merge_credential_metadata
     from utils import database_pool
 
-    models = await chatgpt_plan_models(env)
-    if models is None:
-        return
-    await merge_credential_metadata(pool or database_pool.get_native_pool(), credential_id,
-                                    plan_models_metadata(models))
+    patch = signed_in_as(email)
+    if provider == "codex_chatgpt":
+        models = await chatgpt_plan_models(env)
+        if models is not None:
+            patch.update(plan_models_metadata(models))
+    if patch:
+        await merge_credential_metadata(pool or database_pool.get_native_pool(), credential_id, patch)
 
 
 def chatgpt_account_of(env: Dict[str, Any]) -> Optional[str]:

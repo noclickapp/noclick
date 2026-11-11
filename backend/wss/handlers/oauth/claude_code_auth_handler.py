@@ -169,7 +169,7 @@ class ClaudeCodeAuthHandler(DatabasePoolMixin, SocketIOHandler):
             if request.credential_id:
                 affected, error = await update_credential_data_detailed(
                     request.credential_id, user_id, credential_data, pool=pool,
-                    metadata_updates={'provider': 'claude_code', 'auth_mode': 'oauth'},
+                    metadata_updates={'provider': 'claude_code', 'auth_mode': 'oauth', **(result.get('metadata') or {})},
                     expected_owner_id=user_id, expected_credential_type='agent_claude_code_oauth',
                 )
                 if affected != 1:
@@ -203,6 +203,7 @@ class ClaudeCodeAuthHandler(DatabasePoolMixin, SocketIOHandler):
                     credential_name, encrypted_data, {
                         'provider': 'claude_code',
                         'auth_mode': 'oauth',
+                        **(result.get('metadata') or {}),
                     },
                 )
                 if error:

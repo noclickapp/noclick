@@ -87,6 +87,21 @@ class TestCodexFlow:
         assert PLAN_MODELS_KEY not in creds
 
     @respx.mock
+    async def test_a_sign_in_keeps_the_email_its_id_token_names(self):
+        """Two ChatGPT plans are told apart by the account each signed in as: its id token's ``email``, as Codex
+        reads it, kept as the credential's metadata."""
+        from nodes.agent.harness_oauth import CHATGPT_MODELS_URL
+
+        respx.post(f"{CODEX_ISSUER}/api/accounts/deviceauth/token").mock(
+            return_value=httpx.Response(200, json={"authorization_code": "authz", "code_verifier": "ver"}))
+        respx.post(f"{CODEX_ISSUER}/oauth/token").mock(return_value=httpx.Response(200, json={
+            "access_token": "acc", "refresh_token": "ref", "expires_in": 3600,
+            "id_token": _minted_id_token("plus", email="plan@example.com")}))
+        respx.get(CHATGPT_MODELS_URL).mock(return_value=httpx.Response(502))
+        result = await codex_complete({"device_auth_id": "d", "user_code": "c"})
+        assert result["metadata"] == {"verified_as": "plan@example.com"}
+
+    @respx.mock
     async def test_a_sign_in_whose_list_cant_be_read_still_completes(self):
         from nodes.agent.harness_oauth import CHATGPT_MODELS_URL
 
@@ -140,6 +155,24 @@ class TestClaudeCodePkceFlow:
         # verifier is one-time — deleted after exchange
         assert f"claude_code_pkce:{session_id}" not in fake.store
 
+    @respx.mock
+    @pytest.mark.parametrize("account, kept", [
+        ({"uuid": "u-1", "email_address": "plan@example.com"}, {"verified_as": "plan@example.com"}),
+        (None, {}),  # a response naming no account keeps none
+    ])
+    async def test_a_sign_in_keeps_the_account_its_token_response_names(self, monkeypatch, account, kept):
+        """Two Claude plans are told apart by the account each signed in as: Claude's token response names it
+        (``account.email_address``, as Claude Code reads it), and it's the credential's metadata, never its blob."""
+        monkeypatch.setattr(flows, "_redis_client", _FakeRedis())
+        start = await claude_code_start()
+        from nodes.agent.harness_oauth import CLAUDE_CODE_TOKEN_URL
+        respx.post(CLAUDE_CODE_TOKEN_URL).mock(return_value=httpx.Response(200, json={
+            "access_token": "cacc", "refresh_token": "cref", "expires_in": 3600,
+            **({"account": account, "organization": {"uuid": "o-1", "name": "Org"}} if account else {})}))
+        done = await claude_code_complete({**start["poll"], "code": "the-code#the-state"})
+        assert done["metadata"] == kept
+        assert "plan@example.com" not in str(done["credential_data"])
+
     async def test_complete_with_expired_session_raises(self, monkeypatch):
         monkeypatch.setattr(flows, "_redis_client", _FakeRedis())
         with pytest.raises(OAuthFlowError):
@@ -153,10 +186,11 @@ class TestClaudeCodePkceFlow:
             await claude_code_complete({**start['poll'], 'code': 'code'}, context=wrong_context)
 
 
-def _minted_id_token(plan):
+def _minted_id_token(plan, email=None):
     import base64, json
     b64 = lambda d: base64.urlsafe_b64encode(json.dumps(d).encode()).decode().rstrip("=")
-    claims = {"https://api.openai.com/auth": {"chatgpt_account_id": "acct", "chatgpt_plan_type": plan}}
+    claims = {"https://api.openai.com/auth": {"chatgpt_account_id": "acct", "chatgpt_plan_type": plan},
+              **({"email": email} if email else {})}
     return b64({"alg": "RS256"}) + "." + b64(claims) + ".sig"
 
 
