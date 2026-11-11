@@ -6,7 +6,14 @@ written by the owner's authenticated review page can admit a restricted call.
 
 from mcp_adapter.auth.endpoints import get_frontend_url
 from repositories.credential_approvals import CredentialApprovalRepo
-from utils.database_pool import get_native_pool
+
+
+def get_native_pool():
+    """The app's pool, looked up when called: a name bound at import keeps whatever stood there then, such as
+    the pool a test served for its own run."""
+    from utils import database_pool
+
+    return database_pool.get_native_pool()
 
 
 async def notify_created(row, pool):
