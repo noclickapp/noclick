@@ -534,6 +534,43 @@ class NodeStateConflict(Exception):
     """
 
 
+@dataclass(frozen=True)
+class Retirement:
+    """Why a node's service is gone, and since when (an ISO date: the day it
+    ended, or the day it was found gone when its vendor never said)."""
+
+    reason: str
+    since: str
+
+    def __post_init__(self) -> None:
+        if not self.reason.strip():
+            raise ValueError("A retirement needs its reason")
+        date.fromisoformat(self.since)
+
+    def as_json(self) -> Dict[str, str]:
+        return {"reason": self.reason, "since": self.since}
+
+
+def _mcp_aware_freshen(freshen):
+    """``freshen`` (a node's ``freshen_credential``), except that a vendor-MCP
+    credential is refreshed by ``vendor_mcp.fresh_credential``."""
+    import functools
+
+    @functools.wraps(freshen)
+    async def wrapper(cls, credential_data, *args, **kwargs):
+        from nodes.core import vendor_mcp
+
+        if credential_data and vendor_mcp.is_mcp_credential(credential_data):
+            return await vendor_mcp.fresh_credential(
+                credential_data, credential_id=kwargs.get("credential_id"), user_id=kwargs.get("user_id"),
+                pool=kwargs.get("pool"), caller_path="freshen",
+            )
+        return await freshen(cls, credential_data, *args, **kwargs)
+
+    wrapper._mcp_aware = True
+    return wrapper
+
+
 def _mcp_aware_freshen(freshen):
     """``freshen`` (a node's ``freshen_credential``), except that a vendor-MCP
     credential is refreshed by ``vendor_mcp.fresh_credential``."""
