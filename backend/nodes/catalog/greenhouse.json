@@ -3,7 +3,7 @@
  "type": "automation-greenhouse",
  "label": "Greenhouse",
  "description": "Greenhouse Harvest v3 recruiting automation",
- "category": null,
+ "category": "hr-recruiting",
  "keywords": null,
  "credentials": [
   {
@@ -17,6 +17,13 @@
   }
  ],
  "operations": [
+  {
+   "name": "on_event",
+   "display_name": "On Recruiting Event",
+   "category": "Triggers",
+   "description": "Start a workflow on a signed recruiting event (Greenhouse partners only).",
+   "is_trigger": true
+  },
   {
    "name": "list_candidates",
    "display_name": "List Candidates",
@@ -196,6 +203,6 @@
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null
 }

@@ -18,6 +18,20 @@
  ],
  "operations": [
   {
+   "name": "on_new_booking",
+   "display_name": "On New Booking",
+   "category": "Triggers",
+   "description": "Poll for bookings created after the trigger was armed.",
+   "is_trigger": true
+  },
+  {
+   "name": "on_new_or_updated_booking",
+   "display_name": "On New or Updated Booking",
+   "category": "Triggers",
+   "description": "Poll for new bookings and changed booking timestamps in the watched window.",
+   "is_trigger": true
+  },
+  {
    "name": "list_products",
    "display_name": null,
    "category": null,
@@ -168,6 +182,6 @@
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null
 }

@@ -27,6 +27,7 @@ import asyncio
 import functools
 import inspect
 import logging
+import re
 import time
 from contextlib import contextmanager
 from contextvars import ContextVar
@@ -193,6 +194,7 @@ class OAuthRefreshError(ValueError):
         network_failure_kind: Optional[str] = None,
         provider_error_code: Optional[str] = None,
         attempts: int = 1,
+        status: Optional[int] = None,
     ):
         super().__init__(message)
         self.provider = provider
@@ -200,6 +202,22 @@ class OAuthRefreshError(ValueError):
         self.network_failure_kind = network_failure_kind
         self.provider_error_code = provider_error_code
         self.attempts = attempts
+        # The token endpoint's HTTP status, where its refresh module reports one (``TokenEndpointError``).
+        self.status = status
+
+    @property
+    def sign_in_ended(self) -> bool:
+        """The person's grant ended, so their sign-in did too (``grant_ended``)."""
+        return grant_ended(self.status, self.provider_error_code)
+
+
+class TokenEndpointError(ValueError):
+    """A token endpoint's HTTP error, raised by a refresh module so the failure is judged by its ``status`` (a 5xx is
+    never the person's sign-in ending, ``grant_ended``), not read back out of its text."""
+
+    def __init__(self, message: str, *, status: int):
+        super().__init__(message)
+        self.status = status
 
 
 def require_rotated_refresh_token(token_data: Dict[str, Any], *, provider: str) -> str:
@@ -574,6 +592,7 @@ def _classify_refresh_exception(
         builder.set_outcome(PhaseOutcome.PROVIDER_200_MISSING_FIELD, "F04")
     elif isinstance(exc, ValueError):
         builder.provider_error_code = _extract_provider_error_code(str(exc))
+        builder.http_status = getattr(exc, "status", None)
         builder.set_outcome(PhaseOutcome.PROVIDER_4XX, "F01")
     else:
         builder.network_failure_kind = classify_httpx_exception(exc)
@@ -581,6 +600,40 @@ def _classify_refresh_exception(
             PhaseOutcome.NETWORK_ERROR,
             "F08" if builder.network_failure_kind == NetworkFailureKind.TIMEOUT else "F09",
         )
+
+
+# The codes that mean the person's grant ended (signed out, revoked, reused, their account gone): their sign-in is over
+# until they sign in again. NoClick's own client setup is refused with the others, which say nothing about the person.
+SIGN_IN_ENDED_CODES = frozenset({
+    "invalid_grant", "invalid_refresh_token", "refresh_token_reused", "refresh_token_expired",
+    "refresh_token_invalidated", "token_revoked", "account_inactive", "account_disabled", "account_deleted",
+    "user_not_found",
+})
+CLIENT_SETUP_CODES = frozenset({
+    "invalid_client", "unauthorized_client", "invalid_scope", "unsupported_grant_type", "invalid_request",
+})
+
+
+def grant_ended(status: Optional[int], code: Optional[str]) -> bool:
+    """The one judgement of whether a refused refresh ended the person's sign-in: a 4xx naming the grant's end (from a
+    refresh module that reports no status, its answer naming it). A 5xx, no code, a timeout or NoClick's own client
+    error is unknown: nothing is marked and no one is told to sign in again."""
+    return code in SIGN_IN_ENDED_CODES and (status is None or 400 <= status < 500)
+
+
+# What a refresh ends with where ``grant_ended`` said so. ``refresh_refused`` finds it in a failure's text, as a
+# turn's error carries it, so a turn and a check judge a refusal by the same predicate.
+RECONNECT_SUFFIX = " The credential may need to be reconnected."
+_REFUSED_REFRESH = re.compile(r"(\w+) OAuth token refresh failed")
+
+
+def refresh_refused(text: Optional[str]) -> Optional[str]:
+    """The provider (``codex_chatgpt``, ``claude_code``, ...) whose refresh of a sign-in ``text`` says the sign-in
+    ended (``grant_ended``), else None."""
+    if not text or RECONNECT_SUFFIX.strip() not in text:
+        return None
+    found = _REFUSED_REFRESH.search(text)
+    return found.group(1) if found else None
 
 
 def _build_refresh_failure(
@@ -606,17 +659,15 @@ def _build_refresh_failure(
             attempts=builder.refresh_attempts,
         )
     detail = str(exc).strip()
-    suffix = (
-        " The credential may need to be reconnected."
-        if builder.provider_error_code
-        else ""
-    )
+    ended = grant_ended(builder.http_status, builder.provider_error_code)
     return OAuthRefreshError(
-        f"{provider} OAuth token refresh failed" + (f": {detail}" if detail else "") + suffix,
+        f"{provider} OAuth token refresh failed" + (f": {detail}" if detail else "") + (
+            RECONNECT_SUFFIX if ended else ""),
         provider=provider,
         transient=False,
         provider_error_code=builder.provider_error_code,
         attempts=builder.refresh_attempts,
+        status=builder.http_status,
     )
 
 
@@ -856,6 +907,9 @@ async def _run_refresh(
 _PROVIDER_ERROR_TOKENS = (
     "invalid_grant",
     "invalid_refresh_token",
+    "refresh_token_reused",
+    "refresh_token_expired",
+    "refresh_token_invalidated",
     "invalid_client",
     "unauthorized_client",
     "invalid_request",

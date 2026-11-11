@@ -181,3 +181,41 @@ async def test_hung_refresh_is_bounded_by_attempt_timeout():
     assert calls["n"] == 2
     assert audit[0]["phase_outcome"] == "refreshed"
     assert audit[0]["metadata"].get("refresh_attempts") == 2
+
+
+def test_a_refusal_to_refresh_is_found_in_a_turns_error():
+    """A turn's error carries the refresh failure's own words: one the provider refused names it, a network blip
+    never does (the credential is still good)."""
+    from nodes.core.oauth_refresh import RECONNECT_SUFFIX, refresh_refused
+
+    refused = ("The agent turn failed: agent node agent failed: codex_chatgpt OAuth token refresh failed: "
+               "codex_chatgpt token endpoint returned 401: {\"error\": {\"code\": \"invalid_refresh_token\"}}"
+               + RECONNECT_SUFFIX)
+    assert refresh_refused(refused) == "codex_chatgpt"
+    assert refresh_refused("Could not reach claude_code's OAuth token endpoint to refresh the access token after "
+                           "3 attempt(s) (timeout). This is a transient network error, not a credential problem — "
+                           "the saved credential is still valid. Please retry.") is None
+    assert refresh_refused("codex_chatgpt OAuth token refresh failed: unexpected response") is None  # no code: unsure
+    assert refresh_refused(None) is None
+
+
+@pytest.mark.parametrize("status, code, ended", [
+    (400, "invalid_grant", True),
+    (401, "token_revoked", True),
+    (400, "refresh_token_reused", True),
+    (None, "invalid_grant", True),  # a refresh module that reports no status: its answer named the grant's end
+    (503, "invalid_grant", False),  # an outage, whatever its body says
+    (500, None, False),
+    (400, None, False),  # no code
+    (400, "invalid_client", False),  # NoClick's own client setup, never the person's sign-in
+    (400, "unauthorized_client", False),
+    (400, "invalid_scope", False),
+    (400, "unsupported_grant_type", False),
+    (400, "invalid_request", False),
+])
+def test_only_a_4xx_naming_the_grants_end_ends_a_sign_in(status, code, ended):
+    from nodes.core.oauth_refresh import OAuthRefreshError, grant_ended
+
+    assert grant_ended(status, code) is ended
+    assert OAuthRefreshError("x", provider_error_code=code, status=status).sign_in_ended is ended
+    assert OAuthRefreshError("x", transient=True, network_failure_kind="timeout").sign_in_ended is False
