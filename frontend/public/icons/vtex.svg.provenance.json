@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/vtex.svg",
+  "source": "https://www.vtex.com/images/brand/vtex-header-logo.svg",
+  "source_page": "https://www.vtex.com/",
+  "date": "2026-11-11",
+  "license": "VTEX trademark; official company header asset, used for identification",
+  "sha256": "0acc1cd037254cb8b0ce0bdcd89b94fdfbdbf3564d8dd186dccb364d66a19c15",
+  "edits": [
+    "Removed wordmark subpaths from the company SVG; retained the two original mark subpaths exactly.",
+    "Cropped viewBox to 0 0 27.7 23.",
+    "Recoloured the original white mark black for light tiles."
+  ],
+  "notes": "Official VTEX twin-triangle app mark; original negative-space counter retained, no background added."
+}

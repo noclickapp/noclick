@@ -1,0 +1,3763 @@
+{
+  "get_order": {
+    "config": {
+      "orderId": "1172452900788-01"
+    },
+    "method": "GET",
+    "path": "/api/oms/pvt/orders/{orderId}",
+    "body": null,
+    "response": {
+      "orderId": "1172452900788-01",
+      "sequence": "502556",
+      "marketplaceOrderId": "1172452900788-01",
+      "marketplaceServicesEndpoint": "http://oms.vtexinternal.com.br/api/oms?an=luxstore",
+      "sellerOrderId": "00-v502556llux-01",
+      "origin": "Marketplace",
+      "affiliateId": "GHB",
+      "salesChannel": "1",
+      "merchantName": "luxstore",
+      "status": "handling",
+      "workflowIsInError": false,
+      "statusDescription": "Preparando Entrega",
+      "value": 1160,
+      "creationDate": "2024-02-04T20:09:43.899958+00:00",
+      "lastChange": "2024-02-06T20:46:11.7010747+00:00",
+      "orderGroup": "1415461749731",
+      "followUpEmail": "david@luxstore.com",
+      "lastMessage": "Your payment was approved",
+      "hostname": "luxstore",
+      "isCompleted": true,
+      "roundingError": 0,
+      "orderFormId": "33c887b2-bf49-4a18-8a0a-acc6b0d724bf",
+      "allowCancellation": true,
+      "allowEdition": false,
+      "isCheckedIn": false,
+      "authorizedDate": "2024-02-04T20:46:11.7010747+00:00",
+      "invoicedDate": "2024-02-09T10:17:40.5322681+00:00",
+      "cancelReason": "Item size was too large.",
+      "checkedInPickupPointId": "storeNameExample_901",
+      "totals": [
+        {
+          "id": "Items",
+          "name": "Total dos Itens",
+          "value": 99
+        },
+        {
+          "id": "Discounts",
+          "name": "Total dos Descontos",
+          "value": 0
+        },
+        {
+          "id": "Shipping",
+          "name": "Total do Frete",
+          "value": 300
+        },
+        {
+          "id": "Tax",
+          "name": "Total da Taxa",
+          "value": 0
+        }
+      ],
+      "sellers": [
+        {
+          "id": "1",
+          "name": "Lux Store",
+          "logo": "https://sellersLogo/images.png",
+          "fulfillmentEndpoint": "http://fulfillment.vtexcommerce.com.br/api/fulfillment?an=accountName"
+        }
+      ],
+      "clientPreferencesData": {
+        "locale": "en-US",
+        "optinNewsLetter": true
+      },
+      "cancellationData": {
+        "RequestedByUser": true,
+        "RequestedBySystem": false,
+        "RequestedBySellerNotification": false,
+        "RequestedByPaymentNotification": false,
+        "Reason": "Item size was too large.",
+        "CancellationDate": "2024-02-11T09:14:41.3695207Z"
+      },
+      "taxData": {
+        "areTaxesDesignatedByMarketplace": true,
+        "taxInfoCollection": [
+          {
+            "itemIndex": 0,
+            "sku": "18",
+            "priceTags": [
+              {
+                "identifier": "0a9df101-330c-41ad-a4c7-5a0bd521bc9u",
+                "isPercentual": false,
+                "name": "Taxes (Magazine Luisa)",
+                "value": 193,
+                "rawValue": 1.93
+              }
+            ]
+          }
+        ]
+      },
+      "subscriptionData": {
+        "SubscriptionGroupId": "A64AC73C0FB8693A7ADB4AC69CA4FD5F",
+        "Subscriptions": [
+          {
+            "ExecutionCount": 724,
+            "PriceAtSubscriptionDate": 100.0,
+            "ItemIndex": 0,
+            "Plan": {
+              "type": "RECURRING_PAYMENT",
+              "frequency": {
+                "periodicity": "MONTH",
+                "interval": 1
+              },
+              "validity": {
+                "begin": "2024-02-09T09:14:41.3695207Z",
+                "end": "2026-02-11T09:14:41.3695207Z"
+              }
+            }
+          }
+        ]
+      },
+      "itemMetadata": {
+        "Items": [
+          {
+            "Id": "18",
+            "Seller": "1",
+            "Name": "Cat food",
+            "SkuName": "Cat food",
+            "ProductId": "6",
+            "RefId": "105",
+            "Ean": "43673557",
+            "ImageUrl": "http://store.vteximg.com.br/ids/155392-55-55/AlconKOI.jpg?v=635918402228600000",
+            "DetailUrl": "/catfood/p",
+            "AssemblyOptions": [
+              {
+                "Id": "vtex.subscription.plan-ana",
+                "Name": "vtex.subscription.plan-ana",
+                "Required": false,
+                "InputValues": {
+                  "vtex.subscription.key.frequency": {
+                    "MaximumNumberOfCharacters": 8,
+                    "Domain": [
+                      "4 month",
+                      "1 month"
+                    ]
+                  }
+                },
+                "Composition": {}
+              },
+              {
+                "Id": "vtex.subscription.daily",
+                "Name": "vtex.subscription.daily",
+                "Required": false,
+                "InputValues": {
+                  "vtex.subscription.key.frequency": {
+                    "MaximumNumberOfCharacters": 5,
+                    "Domain": [
+                      "1 day"
+                    ]
+                  }
+                },
+                "Composition": null
+              },
+              {
+                "Id": "vtex.subscription.weekly",
+                "Name": "vtex.subscription.weekly",
+                "Required": false,
+                "InputValues": {
+                  "vtex.subscription.key.frequency": {
+                    "MaximumNumberOfCharacters": 7,
+                    "Domain": [
+                      "1 week",
+                      "2 week",
+                      "3 week",
+                      "4 week"
+                    ]
+                  }
+                },
+                "Composition": null
+              }
+            ]
+          }
+        ]
+      },
+      "marketplace": {
+        "baseURL": "http://oms.vtexinternal.com.br/api/oms?an=luxstore",
+        "isCertified": true,
+        "name": "luxstore"
+      },
+      "storePreferencesData": {
+        "countryCode": "BRA",
+        "currencyCode": "BRL",
+        "currencyFormatInfo": {
+          "CurrencyDecimalDigits": 2,
+          "CurrencyDecimalSeparator": ",",
+          "CurrencyGroupSeparator": ".",
+          "CurrencyGroupSize": 3,
+          "StartsWithCurrencySymbol": true
+        },
+        "currencyLocale": 1046,
+        "currencySymbol": "R$",
+        "timeZone": "E. South America Standard Time"
+      },
+      "customData": {
+        "customApps": [
+          {
+            "id": "integration-marketplace-example",
+            "major": 1,
+            "fields": {
+              "marketplacePaymentCnpjAcquirers": "11.222.333/0001-44",
+              "marketplacePaymentAuthorizationCodes": "XYZ",
+              "marketplacePaymentCreditCardBrands": "Visa",
+              "marketplacePaymentMethods": "CreditCard"
+            }
+          }
+        ],
+        "customFields": [
+          {
+            "linkedEntity": {
+              "type": "item",
+              "id": "B2949D0A45244825B177D2F9F96DC711"
+            },
+            "fields": [
+              {
+                "name": "Cost Center",
+                "value": "CC3"
+              }
+            ]
+          }
+        ]
+      },
+      "commercialConditionData": "Commercial conditions information.",
+      "openTextField": null,
+      "invoiceData": {
+        "userPaymentInfo": null,
+        "address": null,
+        "invoiceSubject": null
+      },
+      "changesAttachment": {
+        "id": "changeAttachment",
+        "changesData": [
+          {
+            "reason": "The customer wanted to change.",
+            "discountValue": 3290,
+            "incrementValue": 0,
+            "itemsAdded": [],
+            "itemsRemoved": [
+              {
+                "id": "1234568358",
+                "name": "Bay Max L",
+                "quantity": 1,
+                "price": 3290,
+                "unitMultiplier": null
+              }
+            ],
+            "receipt": {
+              "date": "2019-02-06T20:46:04.4003606+00:00",
+              "orderId": "v502556llux-01",
+              "receipt": "029f9ab8-751a-4b1e-bf81-7dd25d14b49b"
+            }
+          }
+        ]
+      },
+      "callCenterOperatorData": {
+        "id": "CallCenterOperatorAttachment",
+        "email": "sandra.daves@luxstore.com",
+        "userName": "sandraDaves"
+      },
+      "packageAttachment": {
+        "packages": [
+          {
+            "items": [
+              {
+                "itemIndex": 0,
+                "quantity": 1,
+                "price": 0,
+                "description": "001",
+                "unitMultiplier": 0.0
+              }
+            ],
+            "courier": "PAC Correios",
+            "invoiceNumber": "24382",
+            "invoiceValue": 1015,
+            "invoiceUrl": "https://luxstore.com/invoices/24382.pdf",
+            "issuanceDate": "2024-02-09T10:10:20.5322681+00:00",
+            "trackingNumber": "TRK-48960684",
+            "invoiceKey": "CFe35201100063960001504590006629690333214542150",
+            "trackingUrl": "https://tracking.fastdelivery.com/track/146/TRK-48960684-01/24382",
+            "embeddedInvoice": "<?xml version= 1.0 encoding= utf-8 ?><Invoice>  <BusinessUnitID>204</BusinessUnitID>  <Discount>0</Discount>  <DiscountDueDate></DiscountDueDate>  <DocumentType>INVOICE</DocumentType>  <DueDate>15/2/2024 12:00:00 AM</DueDate>  <Freight>90</Freight></invoice>",
+            "type": "Input",
+            "courierStatus": {
+              "status": "ok",
+              "finished": true,
+              "deliveredDate": "2024-02-15T10:17:40.5322681+00:00",
+              "data": [
+                {
+                  "lastChange": "2024-02-15T10:17:40.5322681+00:00",
+                  "city": "Rio de Janeiro",
+                  "state": "RJ",
+                  "description": "Carrier received the package",
+                  "createDate": "2024-02-13T10:12:55.5322681+00:00"
+                }
+              ]
+            },
+            "cfop": "5100",
+            "restitutions": {
+              "Refund": {
+                "value": 1015,
+                "giftCardData": null,
+                "items": [
+                  {
+                    "useFreight": false,
+                    "isCompensation": false,
+                    "compensationValue": 0,
+                    "id": "7060874",
+                    "quantity": 1,
+                    "price": 0,
+                    "description": "The size was too big."
+                  }
+                ]
+              }
+            },
+            "volumes": 1,
+            "EnableInferItems": false
+          }
+        ]
+      },
+      "paymentData": {
+        "transactions": [
+          {
+            "isActive": true,
+            "transactionId": "E4CFCEA1A2BF42AE9A3FAE8ED460CBFE",
+            "merchantName": "luxstore",
+            "payments": [
+              {
+                "id": "A536832D9B95439DB73A11558B6F2C2C",
+                "paymentSystem": "2",
+                "paymentSystemName": "Visa",
+                "value": 3990,
+                "installments": 1,
+                "referenceValue": 3990,
+                "cardHolder": null,
+                "cardNumber": null,
+                "firstDigits": "444433",
+                "lastDigits": "1111",
+                "cvv2": "351",
+                "expireMonth": "12",
+                "expireYear": "2029",
+                "url": null,
+                "giftCardId": null,
+                "giftCardName": null,
+                "giftCardCaption": null,
+                "redemptionCode": null,
+                "group": "creditCard",
+                "tid": "65738757",
+                "dueDate": "12/29",
+                "connectorResponses": {
+                  "authId": "738757",
+                  "Tid": "65738757",
+                  "ReturnCode": "200",
+                  "Message": "857956"
+                },
+                "giftCardProvider": "presentCard",
+                "giftCardAsDiscount": false,
+                "koinUrl": "koinURL",
+                "accountId": "5BC5C6B417FE432AB971B1D399F190C9",
+                "parentAccountId": "5BC5C6B417FE432AB971B1D399F190C9",
+                "bankIssuedInvoiceIdentificationNumber": "23797770100000019003099260100022107500729050",
+                "bankIssuedInvoiceIdentificationNumberFormatted": "32534.95739 75945.24534 54395.734214 5",
+                "bankIssuedInvoiceBarCodeNumber": "325349573975945245345439573421443986734065",
+                "bankIssuedInvoiceBarCodeType": "i25",
+                "billingAddress": {
+                  "country": "BRA",
+                  "street": "Brigadeiro Faria Lima Avenue",
+                  "number": "4440",
+                  "complement": "10th Floor",
+                  "reference": null,
+                  "geoCoordinates": [
+                    -51.065948486328125,
+                    0.014090900309383867
+                  ],
+                  "neighborhood": "Itaim Bibi",
+                  "postalCode": "04538132",
+                  "city": "São Paulo",
+                  "state": "SP"
+                },
+                "paymentOrigin": "PayPal"
+              }
+            ]
+          }
+        ],
+        "giftCards": []
+      },
+      "shippingData": {
+        "id": "shippingData",
+        "address": {
+          "addressType": "residential",
+          "receiverName": "Rodrigo Smith",
+          "addressId": "3206601248910",
+          "versionId": "e9c3bec2-125d-4b96-a021-316c3aa9f14f",
+          "entityId": "eabfb564-99d6-40d8-bd6c-bddbd4990aad",
+          "postalCode": "22630-011",
+          "city": "Rio de Janeiro",
+          "state": "RJ",
+          "country": "BRA",
+          "street": "Avenida Lúcio Costa",
+          "number": "126",
+          "neighborhood": "Barra da Tijuca",
+          "complement": "10",
+          "reference": "apartment",
+          "geoCoordinates": [
+            -43.3373718,
+            -23.0105873
+          ]
+        },
+        "logisticsInfo": [
+          {
+            "itemIndex": 0,
+            "selectedSla": "Normal",
+            "lockTTL": "10d",
+            "price": 3000,
+            "listPrice": 3000,
+            "sellingPrice": 3000,
+            "deliveryWindow": null,
+            "deliveryCompany": "All CEPs",
+            "shippingEstimate": "4bd",
+            "shippingEstimateDate": "2024-03-09T10:13:40.1020453+00:00",
+            "slas": [
+              {
+                "id": "Normal",
+                "name": "Normal",
+                "shippingEstimate": "4bd",
+                "deliveryWindow": null,
+                "price": 3000,
+                "deliveryChannel": "delivery",
+                "pickupStoreInfo": {
+                  "additionalInfo": null,
+                  "address": null,
+                  "dockId": null,
+                  "friendlyName": null,
+                  "isPickupStore": false
+                },
+                "polygonName": "region196",
+                "lockTTL": "10d",
+                "pickupPointId": "1_store-RJ",
+                "transitTime": "3d",
+                "pickupDistance": 0.0
+              },
+              {
+                "id": "Express",
+                "name": "Express",
+                "shippingEstimate": "2bd",
+                "deliveryWindow": null,
+                "price": 3000,
+                "deliveryChannel": "pickup-in-point",
+                "pickupStoreInfo": {
+                  "additionalInfo": "Arrive soon",
+                  "address": {
+                    "addressType": "pickup",
+                    "receiverName": null,
+                    "addressId": "VTEX-RJ",
+                    "versionId": null,
+                    "entityId": null,
+                    "postalCode": "22250-040",
+                    "city": "Rio de Janeiro",
+                    "state": "RJ",
+                    "country": "BRA",
+                    "street": "Praia de Botafogo",
+                    "number": "300",
+                    "neighborhood": "Botafogo",
+                    "complement": "4th floor",
+                    "reference": null,
+                    "geoCoordinates": [
+                      -43.18259,
+                      -22.94436
+                    ]
+                  },
+                  "dockId": "Take away dock",
+                  "friendlyName": "Store Name RJ",
+                  "isPickupStore": true
+                },
+                "polygonName": "",
+                "lockTTL": "10d",
+                "pickupPointId": "1_VTEX-RJ",
+                "transitTime": "0d",
+                "pickupDistance": 17.473064422607422
+              }
+            ],
+            "shipsTo": [
+              "BRA"
+            ],
+            "deliveryIds": [
+              {
+                "courierId": "136769c",
+                "courierName": "Correios",
+                "dockId": "dock_1f95",
+                "quantity": 1,
+                "warehouseId": "warehouse_68d7",
+                "accountCarrierName": "recorrencia",
+                "kitItemDetails": []
+              }
+            ],
+            "deliveryChannels": [
+              {
+                "id": "delivery",
+                "stockBalance": 0
+              },
+              {
+                "id": "pickup-in-point",
+                "stockBalance": 0
+              }
+            ],
+            "deliveryChannel": "delivery",
+            "pickupStoreInfo": {
+              "additionalInfo": null,
+              "address": null,
+              "dockId": null,
+              "friendlyName": null,
+              "isPickupStore": false
+            },
+            "addressId": "3206601248910",
+            "versionId": null,
+            "entityId": null,
+            "polygonName": "",
+            "pickupPointId": null,
+            "transitTime": "3d"
+          }
+        ],
+        "trackingHints": [
+          {
+            "trackingId": "701-1947797-1739404_DBA",
+            "courierName": "Amazon Label",
+            "trackingUrl": "https://storeName.vtexcommercestable.com.br/api/integration-amazon/logistic-program/dba/labels?orderId=d9xsHobRJCIWbbub0",
+            "trackingLabel": "Amazon Label"
+          }
+        ],
+        "selectedAddresses": [
+          {
+            "addressType": "residential",
+            "receiverName": "Rodrigo Smith",
+            "addressId": "3206601248910",
+            "versionId": "e9c3bec2-125d-4b96-a021-316c3aa9f14f",
+            "entityId": "eabfb564-99d6-40d8-bd6c-bddbd4990aad",
+            "postalCode": "22630-011",
+            "city": "Rio de Janeiro",
+            "state": "RJ",
+            "country": "BRA",
+            "street": "Avenida Lúcio Costa",
+            "number": "126",
+            "neighborhood": "Barra da Tijuca",
+            "complement": "10",
+            "reference": "4th floor",
+            "geoCoordinates": [
+              -43.3373718,
+              -23.0105873
+            ]
+          }
+        ],
+        "contactInformation": [
+          {
+            "id": "0",
+            "email": "contact@email.com",
+            "firstName": "U**",
+            "lastName": "H*****",
+            "phone": "556196842267",
+            "document": "845.134.270-19",
+            "documentType": "cpf",
+            "entityId": "5e50b939-2797-4644-afc9-202069cec129",
+            "versionId": "9af7b09a-be4c-41a1-b0e9-47c54dd062b4"
+          }
+        ]
+      },
+      "ratesAndBenefitsData": {
+        "id": "ratesAndBenefitsData",
+        "rateAndBenefitsIdentifiers": [
+          {
+            "id": "2a7acc17-1eb9-4541-8ac6-2776ce9628e6",
+            "name": "Shipping promo $100",
+            "featured": true,
+            "description": "Promotion of the week",
+            "matchedParameters": {
+              "Free Shipping": "100"
+            },
+            "additionalInfo": null
+          }
+        ]
+      },
+      "marketingData": {
+        "id": "marketingData",
+        "utmSource": "fb",
+        "utmPartner": "utm partner name",
+        "utmMedium": "utm medium name",
+        "utmCampaign": "christmas",
+        "coupon": "sale",
+        "utmiCampaign": " ",
+        "utmipage": " ",
+        "utmiPart": " ",
+        "marketingTags": [
+          "vtex-subscription"
+        ]
+      },
+      "giftRegistryData": {
+        "giftRegistryId": "154",
+        "giftRegistryType": "9",
+        "giftRegistryTypeName": "Wedding list",
+        "addressId": "4352357942349",
+        "description": "Alanna & Daniel"
+      },
+      "clientProfileData": {
+        "id": "clientProfile_6930",
+        "email": "rodrigo.smith@email.com",
+        "firstName": "Rodrigo",
+        "lastName": "Smith",
+        "documentType": "cpf",
+        "document": "845.134.270-19",
+        "phone": "+5561992227222",
+        "corporateName": null,
+        "tradeName": null,
+        "corporateDocument": null,
+        "stateInscription": null,
+        "corporatePhone": null,
+        "isCorporate": false,
+        "userProfileId": "5660c55f-714d-4b14-88a7-b03e9bfbdd2y",
+        "userProfileVersion": "b98d1d7b-4075-4d88-81e5-418d36b078g3",
+        "customerClass": null,
+        "customerCode": "933d29f5-c7c5-4d12-b0c8-c30079c33b21"
+      },
+      "items": [
+        {
+          "uniqueId": "94913BB553334977BFD669A24E678C69",
+          "id": "18",
+          "productId": "6",
+          "ean": "3256873",
+          "lockId": "00-1415461749731-01",
+          "itemAttachment": {
+            "content": {},
+            "name": null
+          },
+          "attachments": [],
+          "quantity": 1,
+          "seller": "1",
+          "name": "Bay Max L",
+          "refId": "BIGBML",
+          "price": 990,
+          "listPrice": 1990,
+          "manualPrice": null,
+          "priceTags": [],
+          "imageUrl": "https://luxstore.img.com.br/ids/155392-55-55/KOI.jpg?v=6359184022286",
+          "detailUrl": "/bay-max-9429485/p",
+          "components": [],
+          "bundleItems": [
+            {
+              "id": 12,
+              "quantity": 2
+            }
+          ],
+          "params": [],
+          "offerings": [],
+          "attachmentOfferings": [
+            {
+              "name": "luxstore.subscription.weekly",
+              "required": false,
+              "schema": {
+                "luxstore.subscription.key.frequency": {
+                  "MaximumNumberOfCharacters": 7,
+                  "Domain": [
+                    "1 week",
+                    "2 week",
+                    "3 week",
+                    "4 week"
+                  ]
+                }
+              }
+            }
+          ],
+          "sellerSku": "18",
+          "priceValidUntil": "2025-03-05T10:13:09.0000000+00:00",
+          "commission": 0,
+          "tax": 0,
+          "preSaleDate": null,
+          "additionalInfo": {
+            "brandName": "Lux Brand",
+            "brandId": "2000000",
+            "categoriesIds": "/9/",
+            "categories": [
+              {
+                "id": 9,
+                "name": "Coach"
+              }
+            ],
+            "productClusterId": "135",
+            "commercialConditionId": "1",
+            "dimension": {
+              "cubicweight": 1.0,
+              "height": 10.0,
+              "length": 10.0,
+              "weight": 10.0,
+              "width": 10.0
+            },
+            "offeringInfo": null,
+            "offeringType": null,
+            "offeringTypeId": null
+          },
+          "measurementUnit": "un",
+          "unitMultiplier": 1.0,
+          "sellingPrice": 990,
+          "isGift": false,
+          "shippingPrice": null,
+          "rewardValue": 1599,
+          "freightCommission": 0,
+          "priceDefinition": {
+            "sellingPrices": [
+              {
+                "value": 990,
+                "quantity": 1
+              }
+            ],
+            "calculatedSellingPrice": 990,
+            "total": 990,
+            "reason": null
+          },
+          "taxCode": "product_Free",
+          "parentItemIndex": 0,
+          "parentAssemblyBinding": "assembly_product_warranty",
+          "callCenterOperator": null,
+          "serialNumbers": null,
+          "assemblies": [],
+          "costPrice": 520
+        }
+      ],
+      "marketplaceItems": []
+    },
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "list_orders": {
+    "config": {},
+    "method": "GET",
+    "path": "/api/oms/pvt/orders",
+    "body": null,
+    "response": {
+      "list": [
+        {
+          "orderId": "1306331686122-01",
+          "creationDate": "2019-02-04T10:29:11+00:00",
+          "clientName": "J C",
+          "items": null,
+          "totalValue": 7453,
+          "paymentNames": "Boleto Bancário",
+          "status": "invoiced",
+          "statusDescription": "Faturado",
+          "marketPlaceOrderId": null,
+          "sequence": "502559",
+          "salesChannel": "1",
+          "affiliateId": "",
+          "origin": "Marketplace",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": " Lux Store 96 Sua Nota Fiscal foi emitida. Referente ao Pedido #v502559llux-01 Olá, J. Estamos empacotando seu produto para providenci",
+          "ShippingEstimatedDate": null,
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": "2019-02-07T21:29:54+00:00",
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        },
+        {
+          "orderId": "v502556llux-01",
+          "creationDate": "2019-01-28T20:09:43+00:00",
+          "clientName": "Rodrigo VTEX",
+          "items": null,
+          "totalValue": 1160,
+          "paymentNames": "Boleto Bancário",
+          "status": "handling",
+          "statusDescription": "Preparando Entrega",
+          "marketPlaceOrderId": null,
+          "sequence": "502556",
+          "salesChannel": "1",
+          "affiliateId": "",
+          "origin": "Marketplace",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": " Lux Store Seu pedido foi alterado! Pedido realizado em: 28/01/2019 Olá, Rodrigo. Seu pedido foi alterado. Seguem informações abaixo: ",
+          "ShippingEstimatedDate": "2019-02-04T20:33:46+00:00",
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": "2019-01-28T20:33:04+00:00",
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        },
+        {
+          "orderId": "v502553llux-01",
+          "creationDate": "2019-01-24T12:35:19+00:00",
+          "clientName": "test test",
+          "items": null,
+          "totalValue": 10150,
+          "paymentNames": "Mastercard",
+          "status": "ready-for-handling",
+          "statusDescription": "Pronto para o manuseio",
+          "marketPlaceOrderId": null,
+          "sequence": "502554",
+          "salesChannel": "1",
+          "affiliateId": "",
+          "origin": "Marketplace",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": " Lux Store 96 Sua Nota Fiscal foi emitida. Referente ao Pedido #v502553llux-01 Olá, test. Estamos empacotando seu produto para provide",
+          "ShippingEstimatedDate": "2019-01-31T12:36:30+00:00",
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": "2019-01-24T12:36:01+00:00",
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        },
+        {
+          "orderId": "v502550llux-01",
+          "creationDate": "2019-01-23T16:39:45+00:00",
+          "clientName": "test test",
+          "items": null,
+          "totalValue": 10150,
+          "paymentNames": "Mastercard",
+          "status": "ready-for-handling",
+          "statusDescription": "Pronto para o manuseio",
+          "marketPlaceOrderId": null,
+          "sequence": "502551",
+          "salesChannel": "1",
+          "affiliateId": "",
+          "origin": "Marketplace",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": " Lux Store 96 Seu pagamento foi aprovado. Referente ao Pedido #v502550llux-01 Olá, test. Estamos providenciando a emissão da Nota Fisc",
+          "ShippingEstimatedDate": "2019-01-30T16:40:55+00:00",
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": "2019-01-23T16:40:27+00:00",
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        },
+        {
+          "orderId": "v502547llux-01",
+          "creationDate": "2019-01-23T16:34:20+00:00",
+          "clientName": "test test",
+          "items": null,
+          "totalValue": 10150,
+          "paymentNames": "Mastercard",
+          "status": "ready-for-handling",
+          "statusDescription": "Pronto para o manuseio",
+          "marketPlaceOrderId": null,
+          "sequence": "502548",
+          "salesChannel": "1",
+          "affiliateId": "",
+          "origin": "Marketplace",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": " Lux Store 96 Seu pagamento foi aprovado. Referente ao Pedido #v502547llux-01 Olá, test. Estamos providenciando a emissão da Nota Fisc",
+          "ShippingEstimatedDate": "2019-01-30T16:35:30+00:00",
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": "2019-01-23T16:35:04+00:00",
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        },
+        {
+          "orderId": "v502544llux-01",
+          "creationDate": "2018-12-28T18:15:28+00:00",
+          "clientName": "test test",
+          "items": null,
+          "totalValue": 8990,
+          "paymentNames": "Boleto Bancário",
+          "status": "canceled",
+          "statusDescription": "Cancelado",
+          "marketPlaceOrderId": null,
+          "sequence": "502544",
+          "salesChannel": "1",
+          "affiliateId": "",
+          "origin": "Marketplace",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": " Lux Store 96 Seu pedido foi cancelado. Referente ao Pedido #v502544llux-01 Resumo Itens R$ 89,90 Total R$ 89,90 Produto Alavanca De M",
+          "ShippingEstimatedDate": null,
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": null,
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        },
+        {
+          "orderId": "v502541llux-01",
+          "creationDate": "2018-12-18T18:48:17+00:00",
+          "clientName": "Douglas Rodrigues",
+          "items": null,
+          "totalValue": 3290,
+          "paymentNames": "Boleto Bancário",
+          "status": "canceled",
+          "statusDescription": "Cancelado",
+          "marketPlaceOrderId": null,
+          "sequence": "502541",
+          "salesChannel": "1",
+          "affiliateId": "",
+          "origin": "Marketplace",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": " Lux Store 96 Seu pedido foi cancelado. Referente ao Pedido #v502541llux-01 Resumo Itens R$ 32,90 Total R$ 32,90 Produto Bay Max L 1 u",
+          "ShippingEstimatedDate": null,
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": null,
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        },
+        {
+          "orderId": "v502538llux-01",
+          "creationDate": "2018-12-12T18:21:47+00:00",
+          "clientName": "test test",
+          "items": null,
+          "totalValue": 8990,
+          "paymentNames": "Mastercard",
+          "status": "ready-for-handling",
+          "statusDescription": "Pronto para o manuseio",
+          "marketPlaceOrderId": null,
+          "sequence": "502538",
+          "salesChannel": "1",
+          "affiliateId": "",
+          "origin": "Marketplace",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": " Lux Store 96 Seu pagamento foi aprovado. Referente ao Pedido #v502538llux-01 Olá, test. Estamos providenciando a emissão da Nota Fisc",
+          "ShippingEstimatedDate": "2018-12-19T18:22:26+00:00",
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": "2018-12-12T18:22:22+00:00",
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        },
+        {
+          "orderId": "SCP-880102018018-01",
+          "creationDate": "2018-11-30T17:34:01+00:00",
+          "clientName": "roberta grecco",
+          "items": null,
+          "totalValue": 1250,
+          "paymentNames": "",
+          "status": "canceled",
+          "statusDescription": "Cancelado",
+          "marketPlaceOrderId": "880102018018-01",
+          "sequence": "502537",
+          "salesChannel": "1",
+          "affiliateId": "SCP",
+          "origin": "Fulfillment",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": "cancelamento teste shp ",
+          "ShippingEstimatedDate": null,
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": "2018-11-30T17:34:42+00:00",
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        },
+        {
+          "orderId": "SCP-880091692043-01",
+          "creationDate": "2018-11-30T17:28:35+00:00",
+          "clientName": "roberta grecco",
+          "items": null,
+          "totalValue": 1250,
+          "paymentNames": "",
+          "status": "invoiced",
+          "statusDescription": "Faturado",
+          "marketPlaceOrderId": "880091692043-01",
+          "sequence": "502536",
+          "salesChannel": "1",
+          "affiliateId": "SCP",
+          "origin": "Fulfillment",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": null,
+          "ShippingEstimatedDate": null,
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": "2018-11-30T17:29:22+00:00",
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        },
+        {
+          "orderId": "SCP-880091058221-01",
+          "creationDate": "2018-11-30T17:18:00+00:00",
+          "clientName": "roberta grecco",
+          "items": null,
+          "totalValue": 1250,
+          "paymentNames": "",
+          "status": "canceled",
+          "statusDescription": "Cancelado",
+          "marketPlaceOrderId": "880091058221-01",
+          "sequence": "502535",
+          "salesChannel": "1",
+          "affiliateId": "SCP",
+          "origin": "Fulfillment",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": "Teste de cancelamento do ShopFácil ",
+          "ShippingEstimatedDate": null,
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": "2018-11-30T17:18:44+00:00",
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        },
+        {
+          "orderId": "SCP-880090643370-01",
+          "creationDate": "2018-11-30T17:10:59+00:00",
+          "clientName": "roberta grecco",
+          "items": null,
+          "totalValue": 1250,
+          "paymentNames": "",
+          "status": "ready-for-handling",
+          "statusDescription": "Pronto para o manuseio",
+          "marketPlaceOrderId": "880090643370-01",
+          "sequence": "502534",
+          "salesChannel": "1",
+          "affiliateId": "SCP",
+          "origin": "Fulfillment",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": null,
+          "ShippingEstimatedDate": "2018-12-07T17:11:39+00:00",
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": "2018-11-30T17:11:42+00:00",
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        },
+        {
+          "orderId": "SCP-880090622238-01",
+          "creationDate": "2018-11-30T17:10:45+00:00",
+          "clientName": "roberta grecco",
+          "items": null,
+          "totalValue": 1250,
+          "paymentNames": "",
+          "status": "canceled",
+          "statusDescription": "Cancelado",
+          "marketPlaceOrderId": "880090622238-01",
+          "sequence": "502533",
+          "salesChannel": "1",
+          "affiliateId": "SCP",
+          "origin": "Fulfillment",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": null,
+          "ShippingEstimatedDate": null,
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": null,
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        },
+        {
+          "orderId": "MNC-877730530419-01",
+          "creationDate": "2018-11-20T21:09:01+00:00",
+          "clientName": "Carlos VTEX",
+          "items": null,
+          "totalValue": 11150,
+          "paymentNames": "",
+          "status": "canceled",
+          "statusDescription": "Cancelado",
+          "marketPlaceOrderId": "877730530419-01",
+          "sequence": "502532",
+          "salesChannel": "1",
+          "affiliateId": "MNC",
+          "origin": "Fulfillment",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": null,
+          "ShippingEstimatedDate": null,
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": "2018-11-20T21:13:06+00:00",
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        },
+        {
+          "orderId": "SCP-876733475998-01",
+          "creationDate": "2018-11-16T16:58:18+00:00",
+          "clientName": "roberta grecco",
+          "items": null,
+          "totalValue": 1250,
+          "paymentNames": "",
+          "status": "ready-for-handling",
+          "statusDescription": "Pronto para o manuseio",
+          "marketPlaceOrderId": "876733475998-01",
+          "sequence": "502531",
+          "salesChannel": "1",
+          "affiliateId": "SCP",
+          "origin": "Fulfillment",
+          "workflowInErrorState": false,
+          "workflowInRetry": false,
+          "lastMessageUnread": null,
+          "ShippingEstimatedDate": "2018-11-23T16:58:48+00:00",
+          "ShippingEstimatedDateMax": null,
+          "ShippingEstimatedDateMin": null,
+          "orderIsComplete": true,
+          "listId": null,
+          "listType": null,
+          "authorizedDate": "2018-11-16T16:58:53+00:00",
+          "callCenterOperatorName": null,
+          "totalItems": 1,
+          "currencyCode": "BRL"
+        }
+      ],
+      "facets": [],
+      "paging": {
+        "total": 84,
+        "pages": 6,
+        "currentPage": 1,
+        "perPage": 15
+      },
+      "stats": {
+        "stats": {
+          "totalValue": {
+            "Count": 84,
+            "Max": 21526180,
+            "Mean": 262672.75,
+            "Min": 1160,
+            "Missing": 0,
+            "StdDev": 2348087.3869179883,
+            "Sum": 22064511,
+            "SumOfSquares": 463417439039853,
+            "Facets": {
+              "origin": {
+                "Fulfillment": {
+                  "Count": 68,
+                  "Max": 11150,
+                  "Mean": 1395.5882352941176,
+                  "Min": 1250,
+                  "Missing": 0,
+                  "StdDev": 1200.5513439298484,
+                  "Sum": 94900,
+                  "SumOfSquares": 229010000,
+                  "Facets": null
+                },
+                "Marketplace": {
+                  "Count": 16,
+                  "Max": 21526180,
+                  "Mean": 1373100.6875,
+                  "Min": 1160,
+                  "Missing": 0,
+                  "StdDev": 5374326.141087491,
+                  "Sum": 21969611,
+                  "SumOfSquares": 463417210029853,
+                  "Facets": null
+                }
+              },
+              "currencyCode": {
+                "BRL": {
+                  "Count": 84,
+                  "Max": 21526180,
+                  "Mean": 262672.75,
+                  "Min": 1160,
+                  "Missing": 0,
+                  "StdDev": 2348087.3869179883,
+                  "Sum": 22064511,
+                  "SumOfSquares": 463417439039853,
+                  "Facets": null
+                }
+              }
+            }
+          },
+          "totalItems": {
+            "Count": 84,
+            "Max": 89,
+            "Mean": 2.2261904761904763,
+            "Min": 1,
+            "Missing": 0,
+            "StdDev": 9.660940100525016,
+            "Sum": 187,
+            "SumOfSquares": 8163,
+            "Facets": {
+              "origin": {
+                "Fulfillment": {
+                  "Count": 68,
+                  "Max": 1,
+                  "Mean": 1,
+                  "Min": 1,
+                  "Missing": 0,
+                  "StdDev": 0,
+                  "Sum": 68,
+                  "SumOfSquares": 68,
+                  "Facets": null
+                },
+                "Marketplace": {
+                  "Count": 16,
+                  "Max": 89,
+                  "Mean": 7.4375,
+                  "Min": 1,
+                  "Missing": 0,
+                  "StdDev": 21.92401651157926,
+                  "Sum": 119,
+                  "SumOfSquares": 8095,
+                  "Facets": null
+                }
+              },
+              "currencyCode": {
+                "BRL": {
+                  "Count": 84,
+                  "Max": 89,
+                  "Mean": 2.2261904761904763,
+                  "Min": 1,
+                  "Missing": 0,
+                  "StdDev": 9.660940100525016,
+                  "Sum": 187,
+                  "SumOfSquares": 8163,
+                  "Facets": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "start_handling": {
+    "config": {
+      "orderId": "1172452900788-01"
+    },
+    "method": "POST",
+    "path": "/api/oms/pvt/orders/{orderId}/start-handling",
+    "body": null,
+    "response": null,
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "cancel_order": {
+    "config": {
+      "orderId": "1172452900788-01",
+      "reason": "Unexpected stock shortage"
+    },
+    "method": "POST",
+    "path": "/api/oms/pvt/orders/{orderId}/cancel",
+    "body": {
+      "reason": "Unexpected stock shortage"
+    },
+    "response": {
+      "date": "2024-02-07T15:22:56.7612218-02:00",
+      "orderId": "123543123",
+      "receipt": "38e0e47da2934847b489216d208cfd91"
+    },
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "register_change": {
+    "config": {
+      "orderId": "1172452900788-01",
+      "requestId": "change-request-0123",
+      "reason": "Stock shortage",
+      "discountValue": 100,
+      "incrementValue": 100,
+      "itemsRemoved_json": "[{\"id\": \"0\", \"price\": 2499, \"quantity\": 1}]",
+      "itemsAdded_json": "[{\"id\": \"0\", \"price\": 2499, \"quantity\": 1}]"
+    },
+    "method": "POST",
+    "path": "/api/oms/pvt/orders/{orderId}/changes",
+    "body": {
+      "requestId": "change-request-0123",
+      "reason": "Stock shortage",
+      "discountValue": 100,
+      "incrementValue": 100,
+      "itemsRemoved": [
+        {
+          "id": "0",
+          "price": 2499,
+          "quantity": 1
+        }
+      ],
+      "itemsAdded": [
+        {
+          "id": "0",
+          "price": 2499,
+          "quantity": 1
+        }
+      ]
+    },
+    "response": {
+      "date": "2024-02-08T13:54:33.6868469+00:00",
+      "orderId": "v502538llux-01",
+      "receipt": "535d4581-a2a2-4fd2-a206-1c61eae91b1e"
+    },
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "add_order_log": {
+    "config": {
+      "orderId": "1172452900788-01",
+      "source": "Postman",
+      "message": "Add interactions"
+    },
+    "method": "POST",
+    "path": "/api/oms/pvt/orders/{orderId}/interactions",
+    "body": {
+      "source": "Postman",
+      "message": "Add interactions"
+    },
+    "response": null,
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "notify_invoice": {
+    "config": {
+      "orderId": "1172452900788-01",
+      "type": "Output",
+      "issuanceDate": "2024-01-31T18:25:43-05:00",
+      "invoiceNumber": "DFG-v7731485plzv-01",
+      "invoiceValue": "2499",
+      "invoiceKey": "CFe35201100063960001504590006629690333214542150",
+      "invoiceUrl": "https://luxstore.com/invoices/24382.pdf",
+      "embeddedInvoice": "<NFe>\r\n<infNFe Id=\"NFe34687999999090910270550010000000015180000000000\" versao=\"1.10\">\r\n<ide>\r\n<cUF>37</cUF>\r\n<cNF>000005177</cNF>\r\n<natOp>Venda a vista</natOp>\r\n<indPag>0</indPag>\r\n<mod>55</mod>\r\n<serie>1</serie>\r\n<nNF>1</nNF>\r\n<dEmi>2018-07-06</dEmi>\r\n<dSaiEnt>2018-07-06</dSaiEnt>\r\n<tpNF>0</tpNF>\r\n<cMunFG>79950308</cMunFG>\r\n<tpImp>1</tpImp>\r\n<tpEmis>1</tpEmis>\r\n<cDV>3</cDV>\r\n<tpAmb>2</tpAmb>\r\n<finNFe>1</finNFe>\r\n<procEmi>0</procEmi>\r\n<verProc>NF-eletronica.com</verProc>\r\n</ide>\r\n<emit>\r\n<CNPJ>99999090998760</CNPJ>\r\n<xNome>NF-e Associacao NF-e</xNome>\r\n<xFant>NF-e</xFant>\r\n<enderEmit>\r\n<xLgr>Rua Central</xLgr>\r\n<nro>100</nro>\r\n<xCpl>Fundos</xCpl>\r\n<xBairro>Distrito Industrial</xBairro>\r\n<cMun>0000000</cMun>\r\n<xMun>Município</xMun>\r\n<UF>SP</UF>\r\n<CEP>0000000</CEP>\r\n<cPais>1058</cPais>\r\n<xPais>Brasil</xPais>\r\n<fone>1733021717</fone>\r\n</enderEmit>\r\n<IE>123456789012</IE>\r\n</emit>\r\n<dest>\r\n<CNPJ>00000000000000</CNPJ>\r\n<xNome>DISTRIBUIDORA DE AGUAS MINERAIS</xNome>\r\n<enderDest>\r\n<xLgr>AV DAS FONTES</xLgr>\r\n<nro>1777</nro>\r\n<xCpl>1001 ANDAR</xCpl>\r\n<xBairro>PARQUE</xBairro>\r\n<cMun>0000000</cMun>\r\n<xMun>Sao Paulo</xMun>\r\n<UF>SP</UF>\r\n<CEP>00000000</CEP>\r\n<cPais>1058</cPais>\r\n<xPais>BRASIL</xPais>\r\n<fone>3900000000</fone>\r\n</enderDest>\r\n<IE> </IE>\r\n</dest>\r\n<retirada>\r\n<CNPJ>000000000004</CNPJ>\r\n<xLgr>AV PAULISTA</xLgr>\r\n<nro>12345</nro>\r\n<xCpl>TERREO</xCpl>\r\n<xBairro>CERQUEIRA CESAR</xBairro>\r\n<cMun>0000000</cMun>\r\n<xMun>SAO PAULO</xMun>\r\n<UF>SP</UF>\r\n</retirada>\r\n<entrega>\r\n<CNPJ>00000000299000194</CNPJ>\r\n<xLgr>AV FARIA LIMA</xLgr>\r\n<nro>154400</nro>\r\n<xCpl>156 ANDAR</xCpl>\r\n<xBairro>PINHEIROS</xBairro>\r\n<cMun>0000308</cMun>\r\n<xMun>SAO PAULO</xMun>\r\n<UF>SP</UF>\r\n</entrega>\r\n<det nItem=\"1\">\r\n<prod>\r\n<cProd>00001</cProd>\r\n<cEAN/>\r\n<xProd>Agua Mineral</xProd>\r\n<CFOP>5101</CFOP>\r\n<uCom>dz</uCom>\r\n<qCom>1000000.0000</qCom>\r\n<vUnCom>1</vUnCom>\r\n<vProd>10000000.00</vProd>\r\n<cEANTrib/>\r\n<uTrib>und</uTrib>\r\n<qTrib>12000000.0000</qTrib>\r\n<vUnTrib>1</vUnTrib>\r\n</prod>\r\n<imposto>\r\n<ICMS>\r\n<ICMS00>\r\n<orig>0</orig>\r\n<CST>00</CST>\r\n<modBC>0</modBC>\r\n<vBC>10000000.00</vBC>\r\n<pICMS>18.00</pICMS>\r\n<vICMS>1800000.00</vICMS>\r\n</ICMS00>\r\n</ICMS>\r\n<PIS>\r\n<PISAliq>\r\n<CST>01</CST>\r\n<vBC>10000000.00</vBC>\r\n<pPIS>0.65</pPIS>\r\n<vPIS>65000</vPIS>\r\n</PISAliq>\r\n</PIS>\r\n<COFINS>\r\n<COFINSAliq>\r\n<CST>01</CST>\r\n<vBC>10000000.00</vBC>\r\n<pCOFINS>2.00</pCOFINS>\r\n<vCOFINS>200000.00</vCOFINS>\r\n</COFINSAliq>\r\n</COFINS>\r\n</imposto>\r\n</det>\r\n<det nItem=\"2\">\r\n<prod>\r\n<cProd>00002</cProd>\r\n<cEAN/>\r\n<xProd>Agua Mineral</xProd>\r\n<CFOP>5101</CFOP>\r\n<uCom>pack</uCom>\r\n<qCom>5000000.0000</qCom>\r\n<vUnCom>2</vUnCom>\r\n<vProd>10000000.00</vProd>\r\n<cEANTrib/>\r\n<uTrib>und</uTrib>\r\n<qTrib>3000000.0000</qTrib>\r\n<vUnTrib>0.3333</vUnTrib>\r\n</prod>\r\n<imposto>\r\n<ICMS>\r\n<ICMS00>\r\n<orig>0</orig>\r\n<CST>00</CST>\r\n<modBC>0</modBC>\r\n<vBC>10000000.00</vBC>\r\n<pICMS>18.00</pICMS>\r\n<vICMS>1800000.00</vICMS>\r\n</ICMS00>\r\n</ICMS>\r\n<PIS>\r\n<PISAliq>\r\n<CST>01</CST>\r\n<vBC>10000000.00</vBC>\r\n<pPIS>0.65</pPIS>\r\n<vPIS>65000</vPIS>\r\n</PISAliq>\r\n</PIS>\r\n<COFINS>\r\n<COFINSAliq>\r\n<CST>01</CST>\r\n<vBC>10000000.00</vBC>\r\n<pCOFINS>2.00</pCOFINS>\r\n<vCOFINS>200000.00</vCOFINS>\r\n</COFINSAliq>\r\n</COFINS>\r\n</imposto>\r\n</det>\r\n<total>\r\n<ICMSTot>\r\n<vBC>20000000.00</vBC>\r\n<vICMS>18.00</vICMS>\r\n<vBCST>0</vBCST>\r\n<vST>0</vST>\r\n<vProd>20000000.00</vProd>\r\n<vFrete>0</vFrete>\r\n<vSeg>0</vSeg>\r\n<vDesc>0</vDesc>\r\n<vII>0</vII>\r\n<vIPI>0</vIPI>\r\n<vPIS>130000.00</vPIS>\r\n<vCOFINS>400000.00</vCOFINS>\r\n<vOutro>0</vOutro>\r\n<vNF>20000000.00</vNF>\r\n</ICMSTot>\r\n</total>\r\n<transp>\r\n<modFrete>0</modFrete>\r\n<transporta>\r\n<CNPJ>00000000000000</CNPJ>\r\n<xNome>Distribuidora de Bebidas Fazenda de SP Ltda.</xNome>\r\n<IE>00000000999119</IE>\r\n<xEnder>Rua Central 100 - Fundos - Distrito Industrial</xEnder>\r\n<xMun>SAO PAULO</xMun>\r\n<UF>SP</UF>\r\n</transporta>\r\n<veicTransp>\r\n<placa>BXI1717</placa>\r\n<UF>SP</UF>\r\n<RNTC>123456789</RNTC>\r\n</veicTransp>\r\n<reboque>\r\n<placa>UUU0000</placa>\r\n<UF>SP</UF>\r\n<RNTC>123456789</RNTC>\r\n</reboque>\r\n<vol>\r\n<qVol>10000</qVol>\r\n<esp>CAIXA</esp>\r\n<marca>LINDOYA</marca>\r\n<nVol>500</nVol>\r\n<pesoL>1000000000.000</pesoL>\r\n<pesoB>1200000000.000</pesoB>\r\n<lacres>\r\n<nLacre>XYZ10231486</nLacre>\r\n</lacres>\r\n</vol>\r\n</transp>\r\n<infAdic>\r\n<infAdFisco>Nota Fiscal de exemplo NF-eletronica.com</infAdFisco>\r\n</infAdic>\r\n</infNFe>\r\n<Signature>\r\n<SignedInfo>\r\n<CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-0321120010315\"/>\r\n<SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\"/>\r\n<Reference URI=\"#NFe3508059999977777777705500100000000000000000\">\r\n<Transforms>\r\n<Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/>\r\n<Transform Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-66666615\"/>\r\n</Transforms>\r\n<DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/>\r\n<DigestValue>xFzhgdgnhjSD1e9uqe04lnoHT4ZzLSY=</DigestValue>\r\n</Reference>\r\n</SignedInfo>\r\n<SignatureValue>\r\nIz5Z3PLQbzZt9jnBtr6xsmHZMOu/3plXG9xxfFjRCQYGnD1rjlhzBGrqt026Ca2VHHM/bHNepi6FuFkAi595GScKVuHREUotzifE2OIjgavvTOrMwbXG7+0LYgkwPFiPCao2S33UpZe7MneaxcmKQGKQZw1fP8fsWmaQ4cczZT8=\r\n</SignatureValue>\r\n<KeyInfo>\r\n<X509Data>\r\n<X509Certificate>\r\nMIIEuzCCA6OgAwIBAgIDMTMxMA0GasfFSDAGQUAMIGSMQswCQYDVQQGEwJCUjELMAkGA1UECBMCUlMxFTATBgNVBAcTDFBvcnRvIEFsZWdyZTEdMBsGA1UEChMUVGVzdGUgUHJvamV0byBORmUgUlMxHTAbBgNVBAsTFFRlc3RlIFByb2pldG8gTkZlIFJTMSEwHwYDVQQDExhORmUgLSBBQyBJbnRlcm1lZGlhcmlhIDEwHhcNMDgwNDI4MDkwMTAyWhcNMDkwNDMwMjM1OTU5WjCBnjELMAkGA1UECBMCUlMxHTAfvw4567DRhg76FByb2pldG8gTkZlIFJTMR0wGwYDVQQKExRUZXN0ZSBQcm9qZXRvIE5GZSBSUzEVMBMGA1UEBxMMUE9SVE8gQUxFR1JFMQswCQYDVQQGEwJCUjEtMCsGA1UEAxMkTkZlIC0gQXNzb2NpYWNhbyBORi1lOjk5OTk5MDkwOTEwMjcwMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDh6RRv0bj4RYX+tDQrZRb5opa77LBVVs+6LphIfSF3TSWPfnKh0+xLlBFdmnB5YGgbbW9Uon6pZQTfaC8jZhRhI5eFRRofY/Ugoeo0NGt6PcIQNZQd6lLQ/ASd1qWwjqJoEa7udriKjy3h351Mf1bng1VxS1urqC3Dn39ZWIEwQIDAQABo4IBjjCCAYowIgYDVR0jAQEABBgwFoAUPT5TqhNWAm+ZpcVsvB7malDBjEQwDwYDVR0TAQH/BAUwAwEBADAPBgNVHQ8BAf8EBQMDAOAAMAwGA1UdIAEBAAQCMAAwgbwGA1UdEQEBAASBsTCBrqA4BgVgTAEDBKAvBC0wNzA4MTk1MTE1MTk0NTMxMDg3MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDCgHQYFYEwBAwKgFAQSRmVybmFuZG8gQ2FudG8gQWx0oBkGBWBMAQMDoBAEDjk5OTk5MDkwOTEwMjcwoBcGBWBMAQMHoA4EDDAwMDAwMDAwMDAwMIEfZmVybmFuZG8tYWx0QHByb2NlcmdzLnJzLmdvdi5icjAgBgNVHSUBAf8EFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwUwYDVR0fAQEABEkwRzBFoEOgQYY/aHR0cDovL25mZWNlcnRpZmljYWRvLnNlZmF6LnJzLmdvdi5ici9MQ1IvQUNJbnRlcm1lZGlhcmlhMzguY3JsMA0GCSqGSIb3DQEBBQUAA4IBAQCNPpaZ3Byu3/70nObXE8NiM53j1ddIFXsb+v2ghCVd4ffExv3hYc+/a3lfgV8H/WfQsdSCTzS2cHrd4Aasr/eXfclVDmf2hcWz+R7iysOHuT6B6r+DvV3JcMdJJCDdynR5REa+zViMnVZo1G3KuceQ7/y5X3WFNVq4kwHvonJ9oExsWyw8rTwUK5bsjz0A2yEwXkmkJIngnF41sP31+9jCImiqkXcmsesFhxzX7iurAQAQCZOm7iwMWxQKcAjXCZrgSZWRQy6mU224sX3HTArHahmLJ9Iw+WYAua5qBJsiN6PC7v5tfhdsgGD46DHMnOecxvkkPolDUyBa7d7xwgm\r\n</X509Certificate>\r\n</X509Data>\r\n</KeyInfo>\r\n</Signature>\r\n</NFe>",
+      "courier": "carrierOne",
+      "trackingNumber": "87658",
+      "trackingUrl": "https://www.tracking.com/url",
+      "dispatchedDate": "2019-02-08T13:16:13.4617653+00:00",
+      "items_json": "[{\"id\": \"123\", \"price\": 2499, \"description\": \"335\", \"quantity\": 2}]"
+    },
+    "method": "POST",
+    "path": "/api/oms/pvt/orders/{orderId}/invoice",
+    "body": {
+      "type": "Output",
+      "issuanceDate": "2024-01-31T18:25:43-05:00",
+      "invoiceNumber": "DFG-v7731485plzv-01",
+      "invoiceValue": "2499",
+      "invoiceKey": "CFe35201100063960001504590006629690333214542150",
+      "invoiceUrl": "https://luxstore.com/invoices/24382.pdf",
+      "embeddedInvoice": "<NFe>\r\n<infNFe Id=\"NFe34687999999090910270550010000000015180000000000\" versao=\"1.10\">\r\n<ide>\r\n<cUF>37</cUF>\r\n<cNF>000005177</cNF>\r\n<natOp>Venda a vista</natOp>\r\n<indPag>0</indPag>\r\n<mod>55</mod>\r\n<serie>1</serie>\r\n<nNF>1</nNF>\r\n<dEmi>2018-07-06</dEmi>\r\n<dSaiEnt>2018-07-06</dSaiEnt>\r\n<tpNF>0</tpNF>\r\n<cMunFG>79950308</cMunFG>\r\n<tpImp>1</tpImp>\r\n<tpEmis>1</tpEmis>\r\n<cDV>3</cDV>\r\n<tpAmb>2</tpAmb>\r\n<finNFe>1</finNFe>\r\n<procEmi>0</procEmi>\r\n<verProc>NF-eletronica.com</verProc>\r\n</ide>\r\n<emit>\r\n<CNPJ>99999090998760</CNPJ>\r\n<xNome>NF-e Associacao NF-e</xNome>\r\n<xFant>NF-e</xFant>\r\n<enderEmit>\r\n<xLgr>Rua Central</xLgr>\r\n<nro>100</nro>\r\n<xCpl>Fundos</xCpl>\r\n<xBairro>Distrito Industrial</xBairro>\r\n<cMun>0000000</cMun>\r\n<xMun>Município</xMun>\r\n<UF>SP</UF>\r\n<CEP>0000000</CEP>\r\n<cPais>1058</cPais>\r\n<xPais>Brasil</xPais>\r\n<fone>1733021717</fone>\r\n</enderEmit>\r\n<IE>123456789012</IE>\r\n</emit>\r\n<dest>\r\n<CNPJ>00000000000000</CNPJ>\r\n<xNome>DISTRIBUIDORA DE AGUAS MINERAIS</xNome>\r\n<enderDest>\r\n<xLgr>AV DAS FONTES</xLgr>\r\n<nro>1777</nro>\r\n<xCpl>1001 ANDAR</xCpl>\r\n<xBairro>PARQUE</xBairro>\r\n<cMun>0000000</cMun>\r\n<xMun>Sao Paulo</xMun>\r\n<UF>SP</UF>\r\n<CEP>00000000</CEP>\r\n<cPais>1058</cPais>\r\n<xPais>BRASIL</xPais>\r\n<fone>3900000000</fone>\r\n</enderDest>\r\n<IE> </IE>\r\n</dest>\r\n<retirada>\r\n<CNPJ>000000000004</CNPJ>\r\n<xLgr>AV PAULISTA</xLgr>\r\n<nro>12345</nro>\r\n<xCpl>TERREO</xCpl>\r\n<xBairro>CERQUEIRA CESAR</xBairro>\r\n<cMun>0000000</cMun>\r\n<xMun>SAO PAULO</xMun>\r\n<UF>SP</UF>\r\n</retirada>\r\n<entrega>\r\n<CNPJ>00000000299000194</CNPJ>\r\n<xLgr>AV FARIA LIMA</xLgr>\r\n<nro>154400</nro>\r\n<xCpl>156 ANDAR</xCpl>\r\n<xBairro>PINHEIROS</xBairro>\r\n<cMun>0000308</cMun>\r\n<xMun>SAO PAULO</xMun>\r\n<UF>SP</UF>\r\n</entrega>\r\n<det nItem=\"1\">\r\n<prod>\r\n<cProd>00001</cProd>\r\n<cEAN/>\r\n<xProd>Agua Mineral</xProd>\r\n<CFOP>5101</CFOP>\r\n<uCom>dz</uCom>\r\n<qCom>1000000.0000</qCom>\r\n<vUnCom>1</vUnCom>\r\n<vProd>10000000.00</vProd>\r\n<cEANTrib/>\r\n<uTrib>und</uTrib>\r\n<qTrib>12000000.0000</qTrib>\r\n<vUnTrib>1</vUnTrib>\r\n</prod>\r\n<imposto>\r\n<ICMS>\r\n<ICMS00>\r\n<orig>0</orig>\r\n<CST>00</CST>\r\n<modBC>0</modBC>\r\n<vBC>10000000.00</vBC>\r\n<pICMS>18.00</pICMS>\r\n<vICMS>1800000.00</vICMS>\r\n</ICMS00>\r\n</ICMS>\r\n<PIS>\r\n<PISAliq>\r\n<CST>01</CST>\r\n<vBC>10000000.00</vBC>\r\n<pPIS>0.65</pPIS>\r\n<vPIS>65000</vPIS>\r\n</PISAliq>\r\n</PIS>\r\n<COFINS>\r\n<COFINSAliq>\r\n<CST>01</CST>\r\n<vBC>10000000.00</vBC>\r\n<pCOFINS>2.00</pCOFINS>\r\n<vCOFINS>200000.00</vCOFINS>\r\n</COFINSAliq>\r\n</COFINS>\r\n</imposto>\r\n</det>\r\n<det nItem=\"2\">\r\n<prod>\r\n<cProd>00002</cProd>\r\n<cEAN/>\r\n<xProd>Agua Mineral</xProd>\r\n<CFOP>5101</CFOP>\r\n<uCom>pack</uCom>\r\n<qCom>5000000.0000</qCom>\r\n<vUnCom>2</vUnCom>\r\n<vProd>10000000.00</vProd>\r\n<cEANTrib/>\r\n<uTrib>und</uTrib>\r\n<qTrib>3000000.0000</qTrib>\r\n<vUnTrib>0.3333</vUnTrib>\r\n</prod>\r\n<imposto>\r\n<ICMS>\r\n<ICMS00>\r\n<orig>0</orig>\r\n<CST>00</CST>\r\n<modBC>0</modBC>\r\n<vBC>10000000.00</vBC>\r\n<pICMS>18.00</pICMS>\r\n<vICMS>1800000.00</vICMS>\r\n</ICMS00>\r\n</ICMS>\r\n<PIS>\r\n<PISAliq>\r\n<CST>01</CST>\r\n<vBC>10000000.00</vBC>\r\n<pPIS>0.65</pPIS>\r\n<vPIS>65000</vPIS>\r\n</PISAliq>\r\n</PIS>\r\n<COFINS>\r\n<COFINSAliq>\r\n<CST>01</CST>\r\n<vBC>10000000.00</vBC>\r\n<pCOFINS>2.00</pCOFINS>\r\n<vCOFINS>200000.00</vCOFINS>\r\n</COFINSAliq>\r\n</COFINS>\r\n</imposto>\r\n</det>\r\n<total>\r\n<ICMSTot>\r\n<vBC>20000000.00</vBC>\r\n<vICMS>18.00</vICMS>\r\n<vBCST>0</vBCST>\r\n<vST>0</vST>\r\n<vProd>20000000.00</vProd>\r\n<vFrete>0</vFrete>\r\n<vSeg>0</vSeg>\r\n<vDesc>0</vDesc>\r\n<vII>0</vII>\r\n<vIPI>0</vIPI>\r\n<vPIS>130000.00</vPIS>\r\n<vCOFINS>400000.00</vCOFINS>\r\n<vOutro>0</vOutro>\r\n<vNF>20000000.00</vNF>\r\n</ICMSTot>\r\n</total>\r\n<transp>\r\n<modFrete>0</modFrete>\r\n<transporta>\r\n<CNPJ>00000000000000</CNPJ>\r\n<xNome>Distribuidora de Bebidas Fazenda de SP Ltda.</xNome>\r\n<IE>00000000999119</IE>\r\n<xEnder>Rua Central 100 - Fundos - Distrito Industrial</xEnder>\r\n<xMun>SAO PAULO</xMun>\r\n<UF>SP</UF>\r\n</transporta>\r\n<veicTransp>\r\n<placa>BXI1717</placa>\r\n<UF>SP</UF>\r\n<RNTC>123456789</RNTC>\r\n</veicTransp>\r\n<reboque>\r\n<placa>UUU0000</placa>\r\n<UF>SP</UF>\r\n<RNTC>123456789</RNTC>\r\n</reboque>\r\n<vol>\r\n<qVol>10000</qVol>\r\n<esp>CAIXA</esp>\r\n<marca>LINDOYA</marca>\r\n<nVol>500</nVol>\r\n<pesoL>1000000000.000</pesoL>\r\n<pesoB>1200000000.000</pesoB>\r\n<lacres>\r\n<nLacre>XYZ10231486</nLacre>\r\n</lacres>\r\n</vol>\r\n</transp>\r\n<infAdic>\r\n<infAdFisco>Nota Fiscal de exemplo NF-eletronica.com</infAdFisco>\r\n</infAdic>\r\n</infNFe>\r\n<Signature>\r\n<SignedInfo>\r\n<CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-0321120010315\"/>\r\n<SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\"/>\r\n<Reference URI=\"#NFe3508059999977777777705500100000000000000000\">\r\n<Transforms>\r\n<Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/>\r\n<Transform Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-66666615\"/>\r\n</Transforms>\r\n<DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/>\r\n<DigestValue>xFzhgdgnhjSD1e9uqe04lnoHT4ZzLSY=</DigestValue>\r\n</Reference>\r\n</SignedInfo>\r\n<SignatureValue>\r\nIz5Z3PLQbzZt9jnBtr6xsmHZMOu/3plXG9xxfFjRCQYGnD1rjlhzBGrqt026Ca2VHHM/bHNepi6FuFkAi595GScKVuHREUotzifE2OIjgavvTOrMwbXG7+0LYgkwPFiPCao2S33UpZe7MneaxcmKQGKQZw1fP8fsWmaQ4cczZT8=\r\n</SignatureValue>\r\n<KeyInfo>\r\n<X509Data>\r\n<X509Certificate>\r\nMIIEuzCCA6OgAwIBAgIDMTMxMA0GasfFSDAGQUAMIGSMQswCQYDVQQGEwJCUjELMAkGA1UECBMCUlMxFTATBgNVBAcTDFBvcnRvIEFsZWdyZTEdMBsGA1UEChMUVGVzdGUgUHJvamV0byBORmUgUlMxHTAbBgNVBAsTFFRlc3RlIFByb2pldG8gTkZlIFJTMSEwHwYDVQQDExhORmUgLSBBQyBJbnRlcm1lZGlhcmlhIDEwHhcNMDgwNDI4MDkwMTAyWhcNMDkwNDMwMjM1OTU5WjCBnjELMAkGA1UECBMCUlMxHTAfvw4567DRhg76FByb2pldG8gTkZlIFJTMR0wGwYDVQQKExRUZXN0ZSBQcm9qZXRvIE5GZSBSUzEVMBMGA1UEBxMMUE9SVE8gQUxFR1JFMQswCQYDVQQGEwJCUjEtMCsGA1UEAxMkTkZlIC0gQXNzb2NpYWNhbyBORi1lOjk5OTk5MDkwOTEwMjcwMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDh6RRv0bj4RYX+tDQrZRb5opa77LBVVs+6LphIfSF3TSWPfnKh0+xLlBFdmnB5YGgbbW9Uon6pZQTfaC8jZhRhI5eFRRofY/Ugoeo0NGt6PcIQNZQd6lLQ/ASd1qWwjqJoEa7udriKjy3h351Mf1bng1VxS1urqC3Dn39ZWIEwQIDAQABo4IBjjCCAYowIgYDVR0jAQEABBgwFoAUPT5TqhNWAm+ZpcVsvB7malDBjEQwDwYDVR0TAQH/BAUwAwEBADAPBgNVHQ8BAf8EBQMDAOAAMAwGA1UdIAEBAAQCMAAwgbwGA1UdEQEBAASBsTCBrqA4BgVgTAEDBKAvBC0wNzA4MTk1MTE1MTk0NTMxMDg3MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDCgHQYFYEwBAwKgFAQSRmVybmFuZG8gQ2FudG8gQWx0oBkGBWBMAQMDoBAEDjk5OTk5MDkwOTEwMjcwoBcGBWBMAQMHoA4EDDAwMDAwMDAwMDAwMIEfZmVybmFuZG8tYWx0QHByb2NlcmdzLnJzLmdvdi5icjAgBgNVHSUBAf8EFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwUwYDVR0fAQEABEkwRzBFoEOgQYY/aHR0cDovL25mZWNlcnRpZmljYWRvLnNlZmF6LnJzLmdvdi5ici9MQ1IvQUNJbnRlcm1lZGlhcmlhMzguY3JsMA0GCSqGSIb3DQEBBQUAA4IBAQCNPpaZ3Byu3/70nObXE8NiM53j1ddIFXsb+v2ghCVd4ffExv3hYc+/a3lfgV8H/WfQsdSCTzS2cHrd4Aasr/eXfclVDmf2hcWz+R7iysOHuT6B6r+DvV3JcMdJJCDdynR5REa+zViMnVZo1G3KuceQ7/y5X3WFNVq4kwHvonJ9oExsWyw8rTwUK5bsjz0A2yEwXkmkJIngnF41sP31+9jCImiqkXcmsesFhxzX7iurAQAQCZOm7iwMWxQKcAjXCZrgSZWRQy6mU224sX3HTArHahmLJ9Iw+WYAua5qBJsiN6PC7v5tfhdsgGD46DHMnOecxvkkPolDUyBa7d7xwgm\r\n</X509Certificate>\r\n</X509Data>\r\n</KeyInfo>\r\n</Signature>\r\n</NFe>",
+      "courier": "carrierOne",
+      "trackingNumber": "87658",
+      "trackingUrl": "https://www.tracking.com/url",
+      "dispatchedDate": "2019-02-08T13:16:13.4617653+00:00",
+      "items": [
+        {
+          "id": "123",
+          "price": 2499,
+          "description": "335",
+          "quantity": 2
+        }
+      ]
+    },
+    "response": {
+      "date": "2024-02-07T15:22:56.7612218-02:00",
+      "orderId": "123543123",
+      "receipt": "38e0e47da2934847b489216d208cfd91"
+    },
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "update_invoice_tracking": {
+    "config": {
+      "orderId": "1172452900788-01",
+      "invoiceNumber": "000030711",
+      "trackingNumber": "87658",
+      "trackingUrl": "https://www.tracking.com/url",
+      "dispatchedDate": "2022-02-08T13:16:13.4617653+00:00",
+      "courier": "carrierOne"
+    },
+    "method": "PATCH",
+    "path": "/api/oms/pvt/orders/{orderId}/invoice/{invoiceNumber}",
+    "body": {
+      "trackingNumber": "87658",
+      "trackingUrl": "https://www.tracking.com/url",
+      "courier": "carrierOne",
+      "dispatchedDate": "2022-02-08T13:16:13.4617653+00:00"
+    },
+    "response": {
+      "date": "2019-02-08T13:16:13.4617653+00:00",
+      "orderId": "00-v5195004lux-01",
+      "receipt": "527b1ae251264ef1b7a9b597cd8f16b9"
+    },
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "update_tracking_status": {
+    "config": {
+      "orderId": "1172452900788-01",
+      "invoiceNumber": "000030711",
+      "isDelivered": false,
+      "deliveredDate": null,
+      "events_json": "[{\"city\": \"Rio de Janeiro\", \"state\": \"RJ\", \"description\": \"Coletado pela transportadora\", \"date\": \"2015-06-23\"}, {\"city\": \"Sao Paulo\", \"state\": \"SP\", \"description\": \"A caminho de Curitiba\", \"date\": \"2015-06-24\"}]"
+    },
+    "method": "PUT",
+    "path": "/api/oms/pvt/orders/{orderId}/invoice/{invoiceNumber}/tracking",
+    "body": {
+      "isDelivered": false,
+      "deliveredDate": null,
+      "events": [
+        {
+          "city": "Rio de Janeiro",
+          "state": "RJ",
+          "description": "Coletado pela transportadora",
+          "date": "2015-06-23"
+        },
+        {
+          "city": "Sao Paulo",
+          "state": "SP",
+          "description": "A caminho de Curitiba",
+          "date": "2015-06-24"
+        }
+      ]
+    },
+    "response": {
+      "date": "2017-03-29T18:04:31.0521233+00:00",
+      "orderId": "v501245lspt-01",
+      "receipt": "f67d33a8029c42ce9a8f07fc17f54449"
+    },
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "get_conversation": {
+    "config": {
+      "orderId": "1172452900788-01"
+    },
+    "method": "GET",
+    "path": "/api/oms/pvt/orders/{orderId}/conversation-message",
+    "body": null,
+    "response": [
+      {
+        "id": "2023-01-23t09-23-08_619a80a05aa34efb982b309c7a1910e3",
+        "from": {
+          "conversationRelatedTo": "1305371685465-01",
+          "conversationSubject": "oms",
+          "emailAlias": "noreply@vtexcommerce.com.br-9814872b.ct.store.com.br",
+          "aliasMaskType": 0,
+          "email": "noreply@store.com.br",
+          "name": "no reply",
+          "role": "null"
+        },
+        "to": [
+          {
+            "conversationRelatedTo": "1305371685465-01",
+            "conversationSubject": "oms",
+            "emailAlias": "64d8bd8dbe5c4e7b93b8b3c237e50be1@ct.name.com.br",
+            "aliasMaskType": 0,
+            "email": "customer.name@email.com",
+            "name": "Mary John",
+            "role": "Customer"
+          }
+        ],
+        "subject": "Your payment has been aproved.",
+        "firstWords": "Your payment has been aproved and we are waiting for...",
+        "body": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional //EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"> <html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:v=\"urn:schemas-microsoft-com:vml\" style=\"-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; box-sizing: border-box; width: 100%; height: 100%; margin: 0; padding: 0; background: #f1f1f1 !important;\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/> <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"/> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/> <title>recorrenciaqa</title> <!--[if gte mso 9]> <xml> <o:OfficeDocumentSettings> <o:AllowPNG/> <o:PixelsPerInch>96</o:PixelsPerInch> </o:OfficeDocumentSettings> </xml> <![endif]--> <style> a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; font-size: inherit !important; font-family: inherit !important; font-weight: inherit !important; line-height: inherit !important; } </style> <style> @media (max-width: 600px) { img { max-width: 100% !important; height: auto !important; } } </style> <style> @media screen and (min-width: 30em) { .ph4-ns { padding-left: 2rem !important; padding-right: 2rem !important; } .mv4-ns { margin-top: 2rem !important; margin-bottom: 2rem !important; } } </style> </head> <body style=\"-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; box-sizing: border-box; width: 100%; height: 100%; margin: 0; padding: 0; background: #f1f1f1 !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;\"> <table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"box-sizing: border-box; margin: 0; padding: 0; background: #f1f1f1; border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%; height: 100%; line-height: 100% !important;\"> <tr style=\"box-sizing: border-box !important;\"> <td align=\"left\" valign=\"top\" style=\"font-size: 14px; line-height: 20px; box-sizing: border-box; border-collapse: collapse; text-align: left !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;\"> <table class=\"mv4-ns\" width=\"100%\" align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"box-sizing: border-box; max-width: 40rem; width: 100%; background-color: #fff; border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;\" bgcolor=\"#fff\"> <tr style=\"box-sizing: border-box !important;\"> <td class=\"ph4-ns\" style=\"font-size: 14px; line-height: 20px; box-sizing: border-box; border-collapse: collapse; border-bottom-style: solid; border-bottom-width: 1px; border-color: #eee; width: 100%; padding-bottom: 2rem; text-align: center !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;\" align=\"center\"> <div style=\"box-sizing: border-box; width: 8rem; margin-bottom: 1rem; margin-top: 2rem; margin-right: auto; margin-left: auto !important;\"> <a href=\"http://.com.br\" style=\"box-sizing: border-box !important;\"> <img alt=\"\" border=\"0\" width=\"auto\" src=\"http://licensemanager.vtex.com.br/api/site/pub/accounts/9ddcfba5-3855-49ec-b61e-b2847b9314cc/logos/show\" style=\"vertical-align: top; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; max-width: 100%; border: none; max-height: 80px !important;\"> </img></a> </div> <h1 style=\"margin: 0; font-size: 50px; line-height: 58px; box-sizing: border-box !important;\">Seu pagamento foi aprovado.</h1> <div style=\"box-sizing: border-box; color: #777; margin-top: .5rem !important;\"> Referente ao Pedido <span style=\"font-weight: 700 !important;\">#1305371685465-01</span> </div> </td> </tr> <tr style=\"box-sizing: border-box !important;\"> <td class=\"ph4-ns\" style=\"font-size: 14px; line-height: 20px; box-sizing: border-box; border-collapse: collapse; text-align: left; width: 100% !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;\" align=\"left\"> <div style=\"box-sizing: border-box; margin-top: 2rem !important;\"> <p style=\"box-sizing: border-box !important;\">    Olá, jose.     Estamos providenciando a emissão da Nota Fiscal do seu pedido e o envio do seu produto.  </p> </div> </td> </tr> <tr style=\"box-sizing: border-box !important;\"> <td class=\"ph4-ns\" style=\"font-size: 14px; line-height: 20px; box-sizing: border-box; border-collapse: collapse; text-align: left; width: 100%; padding-bottom: 2rem; padding-top: 1rem !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;\" align=\"left\"> <h3 style=\"font-size: 20px; line-height: 36px; text-transform: uppercase; letter-spacing: 1.2pt; font-weight: 300; margin-top: 16px; box-sizing: border-box; margin: 0 !important;\">Pagamento</h3>    <div style=\"box-sizing: border-box; line-height: 1.5; font-size: 1.25rem !important;\"> Visa  final 1111  <br/>R$ 3,99  à vista  </div>     </td> </tr> <tr style=\"box-sizing: border-box !important;\"> <td class=\"ph4-ns\" style=\"font-size: 14px; line-height: 20px; box-sizing: border-box; border-collapse: collapse; text-align: left; border-top-style: solid; border-top-width: 1px; border-color: #eee; padding-top: 1rem; padding-bottom: 1rem !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;\" align=\"left\"> <p style=\"box-sizing: border-box !important;\"> Atenciosamente,<br/>Equipe recorrenciaqa </p> </td> </tr> </table> </td> </tr> </table> </body> </html>",
+        "hasAttachment": false,
+        "attachmentNames": [
+          "attachments439505"
+        ],
+        "date": "2023-01-23T09:23:31.0000000+00:00"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "get_payment_transaction": {
+    "config": {
+      "orderId": "1172452900788-01"
+    },
+    "method": "GET",
+    "path": "/api/oms/pvt/orders/{orderId}/payment-transaction",
+    "body": null,
+    "response": {
+      "status": "Finished",
+      "isActive": true,
+      "transactionId": "CB452D77E7D04099A4DB0479087B1D2C",
+      "merchantName": "LUXSTORE",
+      "payments": [
+        {
+          "id": "721CBE1090324D12ABE301FE33DE775A",
+          "paymentSystem": "4",
+          "paymentSystemName": "Mastercard",
+          "value": 10150,
+          "installments": 1,
+          "referenceValue": 10150,
+          "cardHolder": null,
+          "cardNumber": null,
+          "firstDigits": "412341",
+          "lastDigits": "4123",
+          "url": null,
+          "giftCardId": null,
+          "giftCardName": null,
+          "cvv2": null,
+          "expireMonth": null,
+          "expireYear": null,
+          "giftCardCaption": null,
+          "redemptionCode": null,
+          "group": "creditCard",
+          "tid": "101770752",
+          "dueDate": null,
+          "connectorResponses": {
+            "Tid": "101770752",
+            "ReturnCode": "200",
+            "Message": "logMessage",
+            "authId": "170852"
+          }
+        }
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "get_feed_configuration": {
+    "config": {},
+    "method": "GET",
+    "path": "/api/orders/feed/config",
+    "body": null,
+    "response": {
+      "filter": {
+        "type": "FromOrders",
+        "expression": "status = \"payment-pending\"",
+        "disableSingleFire": false
+      },
+      "queue": {
+        "visibilityTimeoutInSeconds": 240,
+        "messageRetentionPeriodInSeconds": 345600
+      },
+      "quantity": 127,
+      "approximateAgeOfOldestMessageInSeconds": 78.91597222222222
+    },
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "get_hook_configuration": {
+    "config": {},
+    "method": "GET",
+    "path": "/api/orders/hook/config",
+    "body": null,
+    "response": null,
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "get_change_summary": {
+    "config": {
+      "orderId": "v12772213qst-02"
+    },
+    "method": "GET",
+    "path": "/api/orders/pvt/document/{orderId}/change-summary",
+    "body": null,
+    "response": {
+      "original": [
+        {
+          "totalQuantity": 3,
+          "quantity": 3,
+          "deliveryIds": [
+            {
+              "courierId": "1",
+              "warehouseId": "1_1",
+              "dockId": "1",
+              "courierName": "Transportadora",
+              "quantity": 4,
+              "totalListPrice": null,
+              "accountCarrierName": "Store Name",
+              "kitItemDetails": []
+            }
+          ],
+          "itemIndex": 0,
+          "uniqueId": "368A04D405BE40F9888D23920ACA17EC",
+          "id": "4",
+          "productId": "4",
+          "lockId": "00-1537351038731-01",
+          "ean": "7896025801879",
+          "seller": "1",
+          "sellerSku": "4",
+          "priceValidUntil": "2026-06-05T15:01:17Z",
+          "name": "Banana",
+          "additionalInfo": {
+            "brandName": "Brand name",
+            "brandId": "20000",
+            "categoriesIds": "/1/",
+            "dimension": {
+              "cubicweight": 1.0,
+              "height": 10.0,
+              "length": 10.0,
+              "weight": 5.0,
+              "width": 10.0
+            },
+            "productClusterId": "",
+            "commercialConditionId": "1",
+            "offeringInfo": null,
+            "offeringType": null,
+            "offeringTypeId": null,
+            "categories": [
+              {
+                "id": 1,
+                "name": "Grocery"
+              }
+            ]
+          },
+          "attachments": [],
+          "attachmentOfferings": null,
+          "assemblies": null,
+          "refId": "151762",
+          "shippingPrice": null,
+          "price": 1199,
+          "sellingPrice": 599,
+          "listPrice": 1199,
+          "manualPrice": null,
+          "manualPriceAppliedBy": null,
+          "tax": 215,
+          "customTax": null,
+          "rewardValue": 0,
+          "freightCommission": 0,
+          "commission": 0,
+          "priceTags": [
+            {
+              "name": "tax@price-ecc63e22-47ba-4f6c-843b-cfce4f06995e#bf555b6a-3049-4242-9f34-24a5bbb2a6ca",
+              "rawValue": 0.275,
+              "isPercentual": true,
+              "identifier": "ecc63e22-47ba-4f6c-843b-cfce4f06995e",
+              "rate": null,
+              "jurisCode": null,
+              "jurisType": null,
+              "jurisName": null
+            },
+            {
+              "name": "tax@price-45ef7f98-c05d-4d23-a867-593e1b8eecb7#3e134d5e-2e9b-4117-9f53-6a2ad41f8885",
+              "rawValue": 1.5,
+              "isPercentual": false,
+              "identifier": "45ef7f98-c05d-4d23-a867-593e1b8eecb7",
+              "rate": null,
+              "jurisCode": null,
+              "jurisType": null,
+              "jurisName": null
+            }
+          ],
+          "imageUrl": "https://example.com/image.jpg",
+          "detailUrl": "/banana/p",
+          "components": [],
+          "bundleItems": [],
+          "offerings": [],
+          "preSaleDate": null,
+          "isGift": false,
+          "taxCode": "",
+          "measurementUnit": "kg",
+          "unitMultiplier": 1.0,
+          "marketingData": null,
+          "parentAssemblyBinding": null,
+          "parentItemIndex": null,
+          "callCenterOperator": null,
+          "priceDefinition": {
+            "calculatedSellingPrice": 599,
+            "total": 1797,
+            "sellingPrices": [
+              {
+                "value": 599,
+                "quantity": 3
+              }
+            ],
+            "reason": null
+          },
+          "costPrice": 599
+        }
+      ],
+      "added": [
+        {
+          "id": "11",
+          "uniqueId": "DF6E5BB06ED84724A29A68ED392F99CE",
+          "totalQuantity": 1,
+          "quantity": 1,
+          "price": 749,
+          "measurementUnit": "un",
+          "unitMultiplier": 1.0,
+          "imageUrl": "https://example.com/image.jpg",
+          "sellingPrice": 749,
+          "priceTags": [],
+          "detailUrl": "/nuggets/p",
+          "name": "Nuggets",
+          "refId": "XX00021",
+          "deliveryIds": [
+            {
+              "courierId": "1",
+              "warehouseId": "1_1",
+              "dockId": "1",
+              "courierName": "Transportadora",
+              "quantity": 5,
+              "totalListPrice": null,
+              "accountCarrierName": "Store Name",
+              "kitItemDetails": []
+            }
+          ]
+        }
+      ],
+      "removed": [
+        {
+          "id": "17",
+          "uniqueId": "8A6A0E3F26DE4F479F9017A60784DF2F",
+          "quantity": 7,
+          "price": 5500,
+          "measurementUnit": "un",
+          "unitMultiplier": 1.0,
+          "imageUrl": "https://example.com/image.jpg",
+          "sellingPrice": 5500,
+          "priceTags": [],
+          "detailUrl": "/plush-shark-18/p",
+          "name": "Plush shark",
+          "refId": null,
+          "deliveryIds": [
+            {
+              "courierId": "1",
+              "warehouseId": "1_1",
+              "dockId": "1",
+              "courierName": "Transportadora",
+              "quantity": 7,
+              "totalListPrice": null,
+              "accountCarrierName": "Store Name",
+              "kitItemDetails": []
+            }
+          ]
+        }
+      ],
+      "replaced": [
+        {
+          "replaceType": "WeightChange",
+          "userInputType": "WeightChange",
+          "from": {
+            "items": [
+              {
+                "id": "1",
+                "uniqueId": "6024FC8687884BC3B9AA9A8630C52804",
+                "quantity": 1,
+                "price": 765,
+                "measurementUnit": "kg",
+                "unitMultiplier": 1.0,
+                "imageUrl": "https://example.com/image.jpg",
+                "sellingPrice": 765,
+                "priceTags": [],
+                "detailUrl": "/apple/p",
+                "name": "Apple",
+                "refId": "197326",
+                "deliveryIds": [
+                  {
+                    "courierId": "1",
+                    "warehouseId": "1_1",
+                    "dockId": "1",
+                    "courierName": "Transportadora",
+                    "quantity": 5,
+                    "totalListPrice": null,
+                    "accountCarrierName": "recorrenciacharlie",
+                    "kitItemDetails": []
+                  }
+                ]
+              }
+            ],
+            "shippingData": null
+          },
+          "to": {
+            "items": [
+              {
+                "id": "1",
+                "uniqueId": "6024FC8687884BC3B9AA9A8630C52804",
+                "totalQuantity": 1,
+                "quantity": 1,
+                "price": 765,
+                "measurementUnit": "kg",
+                "unitMultiplier": 2.0,
+                "imageUrl": "https://example.com/image.jpg",
+                "sellingPrice": 1530,
+                "priceTags": [],
+                "detailUrl": "/apple/p",
+                "name": "Apple",
+                "refId": "197326",
+                "deliveryIds": [
+                  {
+                    "courierId": "1",
+                    "warehouseId": "1_1",
+                    "dockId": "1",
+                    "courierName": "Transportadora",
+                    "quantity": 5,
+                    "totalListPrice": null,
+                    "accountCarrierName": "Store Name",
+                    "kitItemDetails": []
+                  }
+                ]
+              }
+            ],
+            "shippingData": null
+          },
+          "type": "UserInput"
+        }
+      ],
+      "manualDiscountValueAggregated": 0,
+      "manualIncrementValueAggregated": 0,
+      "totalChangesValueAggregated": -37393,
+      "totals": [
+        {
+          "id": "Items",
+          "name": "Items Total",
+          "value": -37684,
+          "alternativeTotals": null
+        },
+        {
+          "id": "Discounts",
+          "name": "Discounts Total",
+          "value": 600,
+          "alternativeTotals": null
+        },
+        {
+          "id": "Shipping",
+          "name": "Shipping Total",
+          "value": -94,
+          "alternativeTotals": null
+        },
+        {
+          "id": "Tax",
+          "name": "Tax Total",
+          "value": -215,
+          "alternativeTotals": null
+        }
+      ],
+      "lastChange": "2025-06-05T17:03:41.3219923Z"
+    },
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "create_change": {
+    "config": {
+      "accountName": "storeName",
+      "changeOrderId": "v12772213qst-02",
+      "reason": "The client wants to change a weighable product.",
+      "replace_json": "[{\"from\": {\"items\": [{\"id\": \"1\", \"quantity\": 1, \"uniqueId\": \"1D6A12BD177140B2BAF0C042D2FAEE54\", \"price\": 2499}], \"customData\": {\"customFields\": [{\"linkedEntity\": {\"type\": \"item\", \"id\": \"B2949D0A45244825B177D2F9F96DC711\"}, \"fields\": [{\"name\": \"desktop\", \"value\": \"DSK-OLD\"}]}]}}, \"to\": {\"items\": [{\"id\": \"2\", \"quantity\": 1, \"uniqueId\": \"1D6A12BD177140B2BAF0C042D2FAEE54\", \"measurementUnit\": \"kg\", \"unitMultiplier\": 3.0, \"manualDiscountValue\": 0, \"manualIncrementValue\": 0, \"clientProfileData\": [{\"firstName\": \"Jane\", \"lastName\": \"Earhart\", \"documentType\": \"cpf\", \"document\": \"123456789\", \"phone\": \"55110988887777\", \"corporateName\": null, \"tradeName\": null, \"corporateDocument\": null, \"stateInscription\": null, \"corporatePhone\": null, \"isCorporate\": false}]}], \"customData\": {\"customFields\": [{\"linkedEntity\": {\"type\": \"item\", \"id\": \"B2949D0A45244825B133D2F9F96DC713\"}, \"fields\": [{\"name\": \"desktop\", \"value\": \"DSK-NEW\"}]}]}, \"shippingData\": {\"logisticsInfo\": [{\"itemIndex\": 0, \"selectedSla\": \"Normal\", \"selectedDeliveryChannel\": \"delivery\", \"addressId\": \"9ec276fd3a604eb1aa151b5333ca5db6\", \"price\": 1000}]}}}]",
+      "settings_json": "{\"paymentConfiguration\": {\"customPaymentSystemsAllowed\": [\"201\"]}, \"rolloutConfiguration\": {\"enableApi\": true, \"enableAdminOrders\": {\"enabledWorkspaces\": [\"*\"]}, \"enableMyOrders\": {\"enabledWorkspaces\": [\"storename\"]}}, \"pipelineConfiguration\": {\"enableTaxHubRecalculation\": false, \"compensateShippingChanges\": true, \"enablePromotionRecalculation\": true, \"enableNativeTaxRecalculation\": true}}"
+    },
+    "method": "PATCH",
+    "path": "/api/order-system/orders/{changeOrderId}/changes",
+    "body": {
+      "reason": "The client wants to change a weighable product.",
+      "replace": [
+        {
+          "from": {
+            "items": [
+              {
+                "id": "1",
+                "quantity": 1,
+                "uniqueId": "1D6A12BD177140B2BAF0C042D2FAEE54",
+                "price": 2499
+              }
+            ],
+            "customData": {
+              "customFields": [
+                {
+                  "linkedEntity": {
+                    "type": "item",
+                    "id": "B2949D0A45244825B177D2F9F96DC711"
+                  },
+                  "fields": [
+                    {
+                      "name": "desktop",
+                      "value": "DSK-OLD"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "to": {
+            "items": [
+              {
+                "id": "2",
+                "quantity": 1,
+                "uniqueId": "1D6A12BD177140B2BAF0C042D2FAEE54",
+                "measurementUnit": "kg",
+                "unitMultiplier": 3.0,
+                "manualDiscountValue": 0,
+                "manualIncrementValue": 0,
+                "clientProfileData": [
+                  {
+                    "firstName": "Jane",
+                    "lastName": "Earhart",
+                    "documentType": "cpf",
+                    "document": "123456789",
+                    "phone": "55110988887777",
+                    "corporateName": null,
+                    "tradeName": null,
+                    "corporateDocument": null,
+                    "stateInscription": null,
+                    "corporatePhone": null,
+                    "isCorporate": false
+                  }
+                ]
+              }
+            ],
+            "customData": {
+              "customFields": [
+                {
+                  "linkedEntity": {
+                    "type": "item",
+                    "id": "B2949D0A45244825B133D2F9F96DC713"
+                  },
+                  "fields": [
+                    {
+                      "name": "desktop",
+                      "value": "DSK-NEW"
+                    }
+                  ]
+                }
+              ]
+            },
+            "shippingData": {
+              "logisticsInfo": [
+                {
+                  "itemIndex": 0,
+                  "selectedSla": "Normal",
+                  "selectedDeliveryChannel": "delivery",
+                  "addressId": "9ec276fd3a604eb1aa151b5333ca5db6",
+                  "price": 1000
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "settings": {
+        "paymentConfiguration": {
+          "customPaymentSystemsAllowed": [
+            "201"
+          ]
+        },
+        "rolloutConfiguration": {
+          "enableApi": true,
+          "enableAdminOrders": {
+            "enabledWorkspaces": [
+              "*"
+            ]
+          },
+          "enableMyOrders": {
+            "enabledWorkspaces": [
+              "storename"
+            ]
+          }
+        },
+        "pipelineConfiguration": {
+          "enableTaxHubRecalculation": false,
+          "compensateShippingChanges": true,
+          "enablePromotionRecalculation": true,
+          "enableNativeTaxRecalculation": true
+        }
+      }
+    },
+    "response": {
+      "requestId": "e8532a32-7f7e-434a-88ec-29609f0ede46",
+      "workflowId": "74f40e7a-68c6-4699-b874-a8a297fb3f6a",
+      "reason": "The client did not like the size.",
+      "manualDiscountValue": 0,
+      "manualIncrementValue": 0,
+      "totalChangeValue": 0,
+      "totals": [],
+      "add": null,
+      "remove": null,
+      "replace": [
+        {
+          "from": {
+            "paymentData": {
+              "transactions": []
+            },
+            "items": [
+              {
+                "id": "31",
+                "quantity": 1,
+                "price": null,
+                "measurementUnit": null,
+                "unitMultiplier": 0,
+                "sellingPrice": null,
+                "name": null,
+                "detailUrl": null,
+                "imageUrl": null
+              }
+            ],
+            "shippingData": {
+              "logisticsInfo": []
+            }
+          },
+          "to": {
+            "items": [
+              {
+                "uniqueId": "40E763F4378E4F40AD1FE915FE1078E1",
+                "id": "1",
+                "productId": null,
+                "productRefId": null,
+                "refId": null,
+                "ean": null,
+                "name": null,
+                "skuName": null,
+                "modalType": null,
+                "parentItemIndex": null,
+                "parentAssemblyBinding": null,
+                "assemblies": [],
+                "priceValidUntil": null,
+                "tax": 0,
+                "price": null,
+                "listPrice": null,
+                "manualPrice": null,
+                "manualPriceAppliedBy": null,
+                "sellingPrice": null,
+                "rewardValue": 0,
+                "isGift": false,
+                "additionalInfo": {
+                  "dimension": null,
+                  "brandName": null,
+                  "brandId": null,
+                  "offeringInfo": null,
+                  "offeringType": null,
+                  "offeringTypeId": null,
+                  "categoriesIds": null,
+                  "productClusterId": null,
+                  "commercialConditionId": null
+                },
+                "preSaleDate": null,
+                "productCategoryIds": null,
+                "productCategories": {},
+                "quantity": 1,
+                "seller": null,
+                "sellerChain": [
+                  null
+                ],
+                "imageUrl": null,
+                "detailUrl": null,
+                "components": [],
+                "bundleItems": [],
+                "attachments": [],
+                "attachmentOfferings": [],
+                "offerings": [],
+                "priceTags": [],
+                "availability": null,
+                "measurementUnit": "un",
+                "unitMultiplier": 1,
+                "manufacturerCode": null,
+                "priceDefinition": null
+              }
+            ],
+            "paymentData": {
+              "transactions": []
+            },
+            "receiptData": null,
+            "shippingData": {
+              "logisticsInfo": [
+                {
+                  "itemIndex": 0,
+                  "selectedSla": "Lenta",
+                  "selectedDeliveryChannel": "delivery",
+                  "addressId": "9ec276fd3a604eb1aa151b5333ca5db6",
+                  "slas": [
+                    {
+                      "id": "Lenta",
+                      "deliveryChannel": "delivery",
+                      "name": "Lenta",
+                      "deliveryIds": [],
+                      "shippingEstimate": null,
+                      "shippingEstimateDate": null,
+                      "lockTTL": null,
+                      "availableDeliveryWindows": [],
+                      "deliveryWindow": null,
+                      "price": 600,
+                      "listPrice": 600,
+                      "tax": 0,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupPointId": null,
+                      "pickupDistance": null,
+                      "polygonName": null,
+                      "transitTime": null
+                    }
+                  ],
+                  "shipsTo": [],
+                  "itemId": "1",
+                  "deliveryChannels": [],
+                  "price": 600,
+                  "listPrice": 600,
+                  "shippingEstimate": null,
+                  "dockEstimate": null,
+                  "shippingEstimateDate": null,
+                  "lockTTL": null,
+                  "deliveryCompany": null,
+                  "polygonName": null,
+                  "transitTime": null,
+                  "sellingPrice": 600,
+                  "deliveryIds": [],
+                  "deliveryWindow": null,
+                  "pickupPointId": null,
+                  "pickupStoreInfo": {
+                    "isPickupStore": false,
+                    "friendlyName": null,
+                    "address": null,
+                    "additionalInfo": null,
+                    "dockId": null
+                  },
+                  "pickupDistance": null
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "date": "2023-07-27T17:52:18.6483116Z",
+      "origin": {
+        "account": "qastore",
+        "orderId": "v12772213qst-02",
+        "component": "MarketplaceComponent"
+      },
+      "settings": {
+        "paymentConfiguration": {
+          "customPaymentSystemsAllowed": [
+            "201"
+          ]
+        },
+        "rolloutConfiguration": {
+          "enableApi": true
+        },
+        "pipelineConfiguration": {
+          "enableTaxHubRecalculation": false,
+          "compensateShippingChanges": true,
+          "enablePromotionRecalculation": true,
+          "enableNativeTaxRecalculation": true
+        }
+      }
+    },
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "get_change_history": {
+    "config": {
+      "an": "storeName",
+      "changeOrderId": "v12772213qst-02"
+    },
+    "method": "GET",
+    "path": "/api/order-system/orders/{changeOrderId}/changes",
+    "body": null,
+    "response": {
+      "requests": [
+        {
+          "requestId": "e8532a32-7f7e-434a-88ec-29609f0ede46",
+          "workflowId": "74f40e7a-68c6-4699-b874-a8a297fb3f6a",
+          "reason": "The client did not like the size.",
+          "manualDiscountValue": 0,
+          "manualIncrementValue": 0,
+          "totalChangeValue": 0,
+          "totals": [
+            {
+              "id": "ManualValues",
+              "name": "Manual Values Total",
+              "value": -1000
+            }
+          ],
+          "add": null,
+          "remove": null,
+          "replace": [
+            {
+              "from": {
+                "paymentData": {
+                  "transactions": []
+                },
+                "items": [
+                  {
+                    "id": "31",
+                    "quantity": 1,
+                    "price": 5000,
+                    "measurementUnit": "un",
+                    "unitMultiplier": 1,
+                    "sellingPrice": 5000,
+                    "name": "Small toy",
+                    "detailUrl": "/small-toy-24/p",
+                    "imageUrl": "http://storename.com/arquivos/ids/155431-55-55/image-bdab69af1e5c41cdbc498d02e370b376.jpg?v=636579391945870000"
+                  }
+                ],
+                "shippingData": {
+                  "logisticsInfo": [
+                    {
+                      "itemIndex": 0,
+                      "selectedSla": "Economic",
+                      "selectedDeliveryChannel": "delivery",
+                      "addressId": "9ec276fd3a604eb1aa151b5333ca5db6",
+                      "slas": [
+                        {
+                          "id": "Economic",
+                          "deliveryChannel": "delivery",
+                          "name": "Economic",
+                          "deliveryIds": [
+                            {
+                              "courierId": "1c083bf",
+                              "warehouseId": "1_1",
+                              "dockId": "1",
+                              "courierName": "DeliverClass",
+                              "quantity": 1,
+                              "kitItemDetails": [],
+                              "accountCarrierName": null
+                            }
+                          ],
+                          "shippingEstimate": "25bd",
+                          "shippingEstimateDate": "2024-08-30T10:17:24.6436519Z",
+                          "lockTTL": "12d",
+                          "availableDeliveryWindows": [],
+                          "deliveryWindow": null,
+                          "price": 180,
+                          "listPrice": 180,
+                          "tax": 0,
+                          "pickupStoreInfo": {
+                            "isPickupStore": false,
+                            "friendlyName": null,
+                            "address": null,
+                            "additionalInfo": null,
+                            "dockId": null
+                          },
+                          "pickupPointId": null,
+                          "pickupDistance": null,
+                          "polygonName": "",
+                          "transitTime": "25bd"
+                        },
+                        {
+                          "id": "Normal",
+                          "deliveryChannel": "delivery",
+                          "name": "Normal",
+                          "deliveryIds": [
+                            {
+                              "courierId": "1",
+                              "warehouseId": "1_1",
+                              "dockId": "1",
+                              "courierName": "CourierClass",
+                              "quantity": 1,
+                              "kitItemDetails": [],
+                              "accountCarrierName": null
+                            }
+                          ],
+                          "shippingEstimate": "3bd",
+                          "shippingEstimateDate": null,
+                          "lockTTL": "12d",
+                          "availableDeliveryWindows": [],
+                          "deliveryWindow": null,
+                          "price": 500,
+                          "listPrice": 500,
+                          "tax": 0,
+                          "pickupStoreInfo": {
+                            "isPickupStore": false,
+                            "friendlyName": null,
+                            "address": null,
+                            "additionalInfo": null,
+                            "dockId": null
+                          },
+                          "pickupPointId": null,
+                          "pickupDistance": null,
+                          "polygonName": "",
+                          "transitTime": "3bd"
+                        },
+                        {
+                          "id": "Pickup",
+                          "deliveryChannel": "delivery",
+                          "name": "Pickup",
+                          "deliveryIds": [
+                            {
+                              "courierId": "ech018654",
+                              "warehouseId": "1_1",
+                              "dockId": "1",
+                              "courierName": "Pickup",
+                              "quantity": 1,
+                              "kitItemDetails": [],
+                              "accountCarrierName": null
+                            }
+                          ],
+                          "shippingEstimate": "25bd",
+                          "shippingEstimateDate": null,
+                          "lockTTL": "12d",
+                          "availableDeliveryWindows": [],
+                          "deliveryWindow": null,
+                          "price": 700,
+                          "listPrice": 700,
+                          "tax": 0,
+                          "pickupStoreInfo": {
+                            "isPickupStore": false,
+                            "friendlyName": null,
+                            "address": null,
+                            "additionalInfo": null,
+                            "dockId": null
+                          },
+                          "pickupPointId": null,
+                          "pickupDistance": null,
+                          "polygonName": "",
+                          "transitTime": "25bd"
+                        }
+                      ],
+                      "shipsTo": [
+                        "BRA"
+                      ],
+                      "itemId": "31",
+                      "deliveryChannels": [
+                        {
+                          "id": "delivery"
+                        }
+                      ],
+                      "price": 180,
+                      "listPrice": 180,
+                      "shippingEstimate": "25bd",
+                      "dockEstimate": null,
+                      "shippingEstimateDate": "2024-08-30T10:17:24.6436519Z",
+                      "lockTTL": "12d",
+                      "deliveryCompany": null,
+                      "polygonName": "",
+                      "transitTime": "25bd",
+                      "sellingPrice": 180,
+                      "deliveryIds": [
+                        {
+                          "courierId": "1c083bf",
+                          "warehouseId": "1_1",
+                          "dockId": "1",
+                          "courierName": "CourierClass",
+                          "quantity": 1,
+                          "kitItemDetails": null,
+                          "accountCarrierName": "qastoreecho"
+                        }
+                      ],
+                      "deliveryWindow": null,
+                      "pickupPointId": null,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupDistance": null
+                    }
+                  ]
+                }
+              },
+              "to": {
+                "items": [
+                  {
+                    "uniqueId": "40E763F4378E4F40AD1FE915FE1078E1",
+                    "id": "1",
+                    "productId": "1",
+                    "productRefId": "",
+                    "refId": "codrefxicaraazul",
+                    "ean": "8745121641",
+                    "name": "Blue cup",
+                    "skuName": "cup",
+                    "modalType": null,
+                    "parentItemIndex": null,
+                    "parentAssemblyBinding": null,
+                    "assemblies": [],
+                    "priceValidUntil": null,
+                    "tax": 0,
+                    "price": 5000,
+                    "listPrice": null,
+                    "manualPrice": null,
+                    "manualPriceAppliedBy": null,
+                    "sellingPrice": 5000,
+                    "rewardValue": 0,
+                    "isGift": false,
+                    "additionalInfo": {
+                      "dimension": null,
+                      "brandName": null,
+                      "brandId": null,
+                      "offeringInfo": null,
+                      "offeringType": null,
+                      "offeringTypeId": null,
+                      "categoriesIds": null,
+                      "productClusterId": null,
+                      "commercialConditionId": null
+                    },
+                    "preSaleDate": null,
+                    "productCategoryIds": "/1/",
+                    "productCategories": {
+                      "1": "Category"
+                    },
+                    "quantity": 1,
+                    "seller": "1",
+                    "sellerChain": [
+                      "1"
+                    ],
+                    "imageUrl": "http://storename.com/arquivos/ids/155394-55-55/cup.jpg?v=636565506415770000",
+                    "detailUrl": "/xicara/p",
+                    "components": [],
+                    "bundleItems": [],
+                    "attachments": [],
+                    "attachmentOfferings": [],
+                    "offerings": [],
+                    "priceTags": [],
+                    "availability": null,
+                    "measurementUnit": "un",
+                    "unitMultiplier": 1,
+                    "manufacturerCode": null,
+                    "priceDefinition": {
+                      "calculatedSellingPrice": 5000,
+                      "total": 5000,
+                      "sellingPrices": [
+                        {
+                          "value": 5000,
+                          "quantity": 1
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "paymentData": {
+                  "transactions": []
+                },
+                "receiptData": null,
+                "shippingData": {
+                  "logisticsInfo": [
+                    {
+                      "itemIndex": 0,
+                      "selectedSla": "Economic",
+                      "selectedDeliveryChannel": "delivery",
+                      "addressId": "9ec276fd3a604eb1aa151b5333ca5db6",
+                      "slas": [
+                        {
+                          "id": "Economic",
+                          "deliveryChannel": "delivery",
+                          "name": "Economic",
+                          "deliveryIds": [
+                            {
+                              "courierId": "1c083bf",
+                              "warehouseId": "1_1",
+                              "dockId": "1",
+                              "courierName": "CourierClass",
+                              "quantity": 1,
+                              "kitItemDetails": [],
+                              "accountCarrierName": null
+                            }
+                          ],
+                          "shippingEstimate": "25bd",
+                          "shippingEstimateDate": "2024-08-30T10:17:24.6436519Z",
+                          "lockTTL": "12d",
+                          "availableDeliveryWindows": [],
+                          "deliveryWindow": null,
+                          "price": 600,
+                          "listPrice": 180,
+                          "tax": 0,
+                          "pickupStoreInfo": {
+                            "isPickupStore": false,
+                            "friendlyName": null,
+                            "address": null,
+                            "additionalInfo": null,
+                            "dockId": null
+                          },
+                          "pickupPointId": null,
+                          "pickupDistance": null,
+                          "polygonName": "",
+                          "transitTime": "25bd"
+                        },
+                        {
+                          "id": "Normal",
+                          "deliveryChannel": "delivery",
+                          "name": "Normal",
+                          "deliveryIds": [
+                            {
+                              "courierId": "1",
+                              "warehouseId": "1_1",
+                              "dockId": "1",
+                              "courierName": "CourierClass",
+                              "quantity": 1,
+                              "kitItemDetails": [],
+                              "accountCarrierName": null
+                            }
+                          ],
+                          "shippingEstimate": "3bd",
+                          "shippingEstimateDate": null,
+                          "lockTTL": "12d",
+                          "availableDeliveryWindows": [],
+                          "deliveryWindow": null,
+                          "price": 500,
+                          "listPrice": 500,
+                          "tax": 0,
+                          "pickupStoreInfo": {
+                            "isPickupStore": false,
+                            "friendlyName": null,
+                            "address": null,
+                            "additionalInfo": null,
+                            "dockId": null
+                          },
+                          "pickupPointId": null,
+                          "pickupDistance": null,
+                          "polygonName": "",
+                          "transitTime": "3bd"
+                        },
+                        {
+                          "id": "Pickup",
+                          "deliveryChannel": "delivery",
+                          "name": "Pickup",
+                          "deliveryIds": [
+                            {
+                              "courierId": "ech018654",
+                              "warehouseId": "1_1",
+                              "dockId": "1",
+                              "courierName": "Pickup",
+                              "quantity": 1,
+                              "kitItemDetails": [],
+                              "accountCarrierName": null
+                            }
+                          ],
+                          "shippingEstimate": "25bd",
+                          "shippingEstimateDate": null,
+                          "lockTTL": "12d",
+                          "availableDeliveryWindows": [],
+                          "deliveryWindow": null,
+                          "price": 700,
+                          "listPrice": 700,
+                          "tax": 0,
+                          "pickupStoreInfo": {
+                            "isPickupStore": false,
+                            "friendlyName": null,
+                            "address": null,
+                            "additionalInfo": null,
+                            "dockId": null
+                          },
+                          "pickupPointId": null,
+                          "pickupDistance": null,
+                          "polygonName": "",
+                          "transitTime": "25bd"
+                        }
+                      ],
+                      "shipsTo": [
+                        "BRA"
+                      ],
+                      "itemId": "1",
+                      "deliveryChannels": [
+                        {
+                          "id": "delivery"
+                        }
+                      ],
+                      "price": 600,
+                      "listPrice": 180,
+                      "shippingEstimate": "25bd",
+                      "dockEstimate": null,
+                      "shippingEstimateDate": "2024-08-30T10:17:24.6436519Z",
+                      "lockTTL": "12d",
+                      "deliveryCompany": null,
+                      "polygonName": "",
+                      "transitTime": "25bd",
+                      "sellingPrice": 600,
+                      "deliveryIds": [
+                        {
+                          "courierId": "1c083bf",
+                          "warehouseId": "1_1",
+                          "dockId": "1",
+                          "courierName": "Donkey",
+                          "quantity": 1,
+                          "kitItemDetails": null,
+                          "accountCarrierName": "qastoreecho"
+                        }
+                      ],
+                      "deliveryWindow": null,
+                      "pickupPointId": null,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupDistance": null
+                    }
+                  ]
+                }
+              }
+            }
+          ],
+          "date": "2024-07-27T17:52:18.6483116Z",
+          "origin": {
+            "account": "qastore",
+            "orderId": "v12772213qst-02",
+            "component": "MarketplaceComponent"
+          },
+          "settings": {
+            "customPaymentSystemsAllowed": [
+              "201"
+            ]
+          }
+        }
+      ],
+      "actions": []
+    },
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "get_change_detail": {
+    "config": {
+      "an": "storeName",
+      "changeOrderId": "v12772213qst-02",
+      "changeRequestId": "e8532a32-7f7e-434a-88ec-29609f0ede46"
+    },
+    "method": "GET",
+    "path": "/api/order-system/orders/{changeOrderId}/changes/{changeRequestId}",
+    "body": null,
+    "response": {
+      "requestId": "e8532a32-7f7e-434a-88ec-29609f0ede46",
+      "workflowId": "74f40e7a-68c6-4699-b874-a8a297fb3f6a",
+      "status": "done",
+      "inProgress": false,
+      "reason": "The client did not like the size.",
+      "manualDiscountValue": 0,
+      "manualIncrementValue": 0,
+      "totalChangeValue": 0,
+      "totals": [
+        {
+          "id": "ManualValues",
+          "name": "Manual Values Total",
+          "value": -1000
+        }
+      ],
+      "add": null,
+      "remove": null,
+      "replace": [
+        {
+          "from": {
+            "paymentData": {
+              "transactions": []
+            },
+            "items": [
+              {
+                "id": "31",
+                "quantity": 1,
+                "price": 5000,
+                "measurementUnit": "un",
+                "unitMultiplier": 1,
+                "sellingPrice": 5000,
+                "name": "Small toy",
+                "detailUrl": "/small-toy-24/p",
+                "imageUrl": "http://storename.com/arquivos/ids/155431-55-55/image-bdab69af1e5c41cdbc498d02e370b376.jpg?v=636579391945870000"
+              }
+            ],
+            "shippingData": {
+              "logisticsInfo": [
+                {
+                  "itemIndex": "0",
+                  "selectedSla": "Economic",
+                  "selectedDeliveryChannel": "delivery",
+                  "addressId": "9ec276fd3a604eb1aa151b5333ca5db6",
+                  "slas": [
+                    {
+                      "id": "Economic",
+                      "deliveryChannel": "delivery",
+                      "name": "Economic",
+                      "deliveryIds": [
+                        {
+                          "courierId": "1c083bf",
+                          "warehouseId": "1_1",
+                          "dockId": "1",
+                          "courierName": "DeliverClass",
+                          "quantity": 1,
+                          "kitItemDetails": [],
+                          "accountCarrierName": null
+                        }
+                      ],
+                      "shippingEstimate": "25bd",
+                      "shippingEstimateDate": "2024-08-30T10:17:24.6436519Z",
+                      "lockTTL": "12d",
+                      "availableDeliveryWindows": [],
+                      "deliveryWindow": null,
+                      "price": 180,
+                      "listPrice": 180,
+                      "tax": 0,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupPointId": null,
+                      "pickupDistance": null,
+                      "polygonName": "",
+                      "transitTime": "25bd"
+                    },
+                    {
+                      "id": "Normal",
+                      "deliveryChannel": "delivery",
+                      "name": "Normal",
+                      "deliveryIds": [
+                        {
+                          "courierId": "1",
+                          "warehouseId": "1_1",
+                          "dockId": "1",
+                          "courierName": "CourierClass",
+                          "quantity": 1,
+                          "kitItemDetails": [],
+                          "accountCarrierName": null
+                        }
+                      ],
+                      "shippingEstimate": "3bd",
+                      "shippingEstimateDate": null,
+                      "lockTTL": "12d",
+                      "availableDeliveryWindows": [],
+                      "deliveryWindow": null,
+                      "price": 500,
+                      "listPrice": 500,
+                      "tax": 0,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupPointId": null,
+                      "pickupDistance": null,
+                      "polygonName": "",
+                      "transitTime": "3bd"
+                    },
+                    {
+                      "id": "Pickup",
+                      "deliveryChannel": "delivery",
+                      "name": "Pickup",
+                      "deliveryIds": [
+                        {
+                          "courierId": "ech018654",
+                          "warehouseId": "1_1",
+                          "dockId": "1",
+                          "courierName": "Pickup",
+                          "quantity": 1,
+                          "kitItemDetails": [],
+                          "accountCarrierName": null
+                        }
+                      ],
+                      "shippingEstimate": "25bd",
+                      "shippingEstimateDate": null,
+                      "lockTTL": "12d",
+                      "availableDeliveryWindows": [],
+                      "deliveryWindow": null,
+                      "price": 700,
+                      "listPrice": 700,
+                      "tax": 0,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupPointId": null,
+                      "pickupDistance": null,
+                      "polygonName": "",
+                      "transitTime": "25bd"
+                    }
+                  ],
+                  "shipsTo": [
+                    "BRA"
+                  ],
+                  "itemId": "31",
+                  "deliveryChannels": [
+                    {
+                      "id": "delivery"
+                    }
+                  ],
+                  "price": 180,
+                  "listPrice": 180,
+                  "shippingEstimate": "25bd",
+                  "dockEstimate": null,
+                  "shippingEstimateDate": "2024-08-30T10:17:24.6436519Z",
+                  "lockTTL": "12d",
+                  "deliveryCompany": null,
+                  "polygonName": "",
+                  "transitTime": "25bd",
+                  "sellingPrice": 180,
+                  "deliveryIds": [
+                    {
+                      "courierId": "1c083bf",
+                      "warehouseId": "1_1",
+                      "dockId": "1",
+                      "courierName": "CourierClass",
+                      "quantity": 1,
+                      "kitItemDetails": null,
+                      "accountCarrierName": "qastoreecho"
+                    }
+                  ],
+                  "deliveryWindow": null,
+                  "pickupPointId": null,
+                  "pickupStoreInfo": {
+                    "isPickupStore": false,
+                    "friendlyName": null,
+                    "address": null,
+                    "additionalInfo": null,
+                    "dockId": null
+                  },
+                  "pickupDistance": null
+                }
+              ]
+            }
+          },
+          "to": {
+            "items": [
+              {
+                "uniqueId": "40E763F4378E4F40AD1FE915FE1078E1",
+                "id": "1",
+                "productId": "1",
+                "productRefId": "",
+                "refId": "codrefxicaraazul",
+                "ean": "8745121641",
+                "name": "Blue cup",
+                "skuName": "cup",
+                "modalType": null,
+                "parentItemIndex": null,
+                "parentAssemblyBinding": null,
+                "assemblies": [],
+                "priceValidUntil": null,
+                "tax": 0,
+                "price": 5000,
+                "listPrice": null,
+                "manualPrice": null,
+                "manualPriceAppliedBy": null,
+                "sellingPrice": 5000,
+                "rewardValue": 0,
+                "isGift": false,
+                "additionalInfo": {
+                  "dimension": null,
+                  "brandName": null,
+                  "brandId": null,
+                  "offeringInfo": null,
+                  "offeringType": null,
+                  "offeringTypeId": null,
+                  "categoriesIds": null,
+                  "productClusterId": null,
+                  "commercialConditionId": null
+                },
+                "preSaleDate": null,
+                "productCategoryIds": "/1/",
+                "productCategories": {
+                  "1": "Category"
+                },
+                "quantity": 1,
+                "seller": "1",
+                "sellerChain": [
+                  "1"
+                ],
+                "imageUrl": "http://storename.com/arquivos/ids/155394-55-55/cup.jpg?v=636565506415770000",
+                "detailUrl": "/xicara/p",
+                "components": [],
+                "bundleItems": [],
+                "attachments": [],
+                "attachmentOfferings": [],
+                "offerings": [],
+                "priceTags": [],
+                "availability": null,
+                "measurementUnit": "un",
+                "unitMultiplier": 1,
+                "manufacturerCode": null,
+                "firstName": "first-name",
+                "lastName": "last-name",
+                "documentType": "cpf",
+                "document": "123456789",
+                "phone": "+55110988887777",
+                "corporateName": null,
+                "tradeName": null,
+                "corporateDocument": null,
+                "stateInscription": null,
+                "corporatePhone": null,
+                "isCorporate": false,
+                "priceDefinition": {
+                  "calculatedSellingPrice": 5000,
+                  "total": 5000,
+                  "sellingPrices": [
+                    {
+                      "value": 5000,
+                      "quantity": 1
+                    }
+                  ]
+                }
+              }
+            ],
+            "paymentData": {
+              "transactions": []
+            },
+            "receiptData": null,
+            "shippingData": {
+              "logisticsInfo": [
+                {
+                  "itemIndex": "0",
+                  "selectedSla": "Economic",
+                  "selectedDeliveryChannel": "delivery",
+                  "addressId": "9ec276fd3a604eb1aa151b5333ca5db6",
+                  "slas": [
+                    {
+                      "id": "Economic",
+                      "deliveryChannel": "delivery",
+                      "name": "Economic",
+                      "deliveryIds": [
+                        {
+                          "courierId": "1c083bf",
+                          "warehouseId": "1_1",
+                          "dockId": "1",
+                          "courierName": "CourierClass",
+                          "quantity": 1,
+                          "kitItemDetails": [],
+                          "accountCarrierName": null
+                        }
+                      ],
+                      "shippingEstimate": "25bd",
+                      "shippingEstimateDate": "2024-08-30T10:17:24.6436519Z",
+                      "lockTTL": "12d",
+                      "availableDeliveryWindows": [],
+                      "deliveryWindow": null,
+                      "price": 600,
+                      "listPrice": 180,
+                      "tax": 0,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupPointId": null,
+                      "pickupDistance": null,
+                      "polygonName": "",
+                      "transitTime": "25bd"
+                    },
+                    {
+                      "id": "Normal",
+                      "deliveryChannel": "delivery",
+                      "name": "Normal",
+                      "deliveryIds": [
+                        {
+                          "courierId": "1",
+                          "warehouseId": "1_1",
+                          "dockId": "1",
+                          "courierName": "CourierClass",
+                          "quantity": 1,
+                          "kitItemDetails": [],
+                          "accountCarrierName": null
+                        }
+                      ],
+                      "shippingEstimate": "3bd",
+                      "shippingEstimateDate": null,
+                      "lockTTL": "12d",
+                      "availableDeliveryWindows": [],
+                      "deliveryWindow": null,
+                      "price": 500,
+                      "listPrice": 500,
+                      "tax": 0,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupPointId": null,
+                      "pickupDistance": null,
+                      "polygonName": "",
+                      "transitTime": "3bd"
+                    },
+                    {
+                      "id": "Pickup",
+                      "deliveryChannel": "delivery",
+                      "name": "Pickup",
+                      "deliveryIds": [
+                        {
+                          "courierId": "ech018654",
+                          "warehouseId": "1_1",
+                          "dockId": "1",
+                          "courierName": "Pickup",
+                          "quantity": 1,
+                          "kitItemDetails": [],
+                          "accountCarrierName": null
+                        }
+                      ],
+                      "shippingEstimate": "25bd",
+                      "shippingEstimateDate": null,
+                      "lockTTL": "12d",
+                      "availableDeliveryWindows": [],
+                      "deliveryWindow": null,
+                      "price": 700,
+                      "listPrice": 700,
+                      "tax": 0,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupPointId": null,
+                      "pickupDistance": null,
+                      "polygonName": "",
+                      "transitTime": "25bd"
+                    }
+                  ],
+                  "shipsTo": [
+                    "BRA"
+                  ],
+                  "itemId": "1",
+                  "deliveryChannels": [
+                    {
+                      "id": "delivery"
+                    }
+                  ],
+                  "price": 600,
+                  "listPrice": 180,
+                  "shippingEstimate": "25bd",
+                  "dockEstimate": null,
+                  "shippingEstimateDate": "2024-08-30T10:17:24.6436519Z",
+                  "lockTTL": "12d",
+                  "deliveryCompany": null,
+                  "polygonName": "",
+                  "transitTime": "25bd",
+                  "sellingPrice": 600,
+                  "deliveryIds": [
+                    {
+                      "courierId": "1c083bf",
+                      "warehouseId": "1_1",
+                      "dockId": "1",
+                      "courierName": "Donkey",
+                      "quantity": 1,
+                      "kitItemDetails": null,
+                      "accountCarrierName": "qastoreecho"
+                    }
+                  ],
+                  "deliveryWindow": null,
+                  "pickupPointId": null,
+                  "pickupStoreInfo": {
+                    "isPickupStore": false,
+                    "friendlyName": null,
+                    "address": null,
+                    "additionalInfo": null,
+                    "dockId": null
+                  },
+                  "pickupDistance": null
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "date": "2024-07-27T17:52:18.6483116Z",
+      "origin": {
+        "account": "qastore",
+        "orderId": "v12772213qst-02",
+        "component": "MarketplaceComponent"
+      },
+      "settings": {
+        "customPaymentSystemsAllowed": [
+          "201"
+        ]
+      }
+    },
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "preview_change": {
+    "config": {
+      "an": "storeName",
+      "changeOrderId": "v12772213qst-02",
+      "reason": "The client wants to change a weighable product.",
+      "replace_json": "[{\"from\": {\"items\": [{\"id\": \"12345\", \"quantity\": 2, \"uniqueId\": \"1D6A12BD177140B2BAF0C042D2FAEE54\", \"price\": 2499}], \"customData\": {\"customFields\": [{\"linkedEntity\": {\"type\": \"item\", \"id\": \"B2949D0A45244825B177D2F9F96DC711\"}, \"fields\": [{\"name\": \"desktop\", \"value\": \"DSK-OLD\"}]}]}}, \"to\": {\"items\": [{\"id\": \"2\", \"quantity\": 1, \"uniqueId\": \"1D6A12BD177140B2BAF0C042D2FAEE54\", \"measurementUnit\": \"kg\", \"unitMultiplier\": 3.0, \"manualDiscountValue\": 0, \"manualIncrementValue\": 0, \"clientProfileData\": [{\"firstName\": \"Jane\", \"lastName\": \"Earhart\", \"documentType\": \"cpf\", \"document\": \"123456789\", \"phone\": \"55110988887777\", \"corporateName\": null, \"tradeName\": null, \"corporateDocument\": null, \"stateInscription\": null, \"corporatePhone\": null, \"isCorporate\": false}]}], \"customData\": {\"customFields\": [{\"linkedEntity\": {\"type\": \"item\", \"id\": \"B2949D0A45244825B133D2F9F96DC713\"}, \"fields\": [{\"name\": \"desktop\", \"value\": \"DSK-NEW\"}]}]}, \"shippingData\": {\"logisticsInfo\": [{\"itemIndex\": 0, \"selectedSla\": \"Normal\", \"selectedDeliveryChannel\": \"delivery\", \"addressId\": \"9ec276fd3a604eb1aa151b5333ca5db6\", \"price\": 1000}]}}}]",
+      "settings_json": "{\"paymentConfiguration\": {\"customPaymentSystemsAllowed\": [\"201\"]}, \"rolloutConfiguration\": {\"enableApi\": true, \"enableAdminOrders\": {\"enabledWorkspaces\": [\"*\"]}, \"enableMyOrders\": {\"enabledWorkspaces\": [\"storename\"]}}, \"pipelineConfiguration\": {\"enableTaxHubRecalculation\": false, \"compensateShippingChanges\": true, \"enablePromotionRecalculation\": true, \"enableNativeTaxRecalculation\": true}}"
+    },
+    "method": "POST",
+    "path": "/api/order-system/orders/{changeOrderId}/changes/preview",
+    "body": {
+      "reason": "The client wants to change a weighable product.",
+      "replace": [
+        {
+          "from": {
+            "items": [
+              {
+                "id": "12345",
+                "quantity": 2,
+                "uniqueId": "1D6A12BD177140B2BAF0C042D2FAEE54",
+                "price": 2499
+              }
+            ],
+            "customData": {
+              "customFields": [
+                {
+                  "linkedEntity": {
+                    "type": "item",
+                    "id": "B2949D0A45244825B177D2F9F96DC711"
+                  },
+                  "fields": [
+                    {
+                      "name": "desktop",
+                      "value": "DSK-OLD"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "to": {
+            "items": [
+              {
+                "id": "2",
+                "quantity": 1,
+                "uniqueId": "1D6A12BD177140B2BAF0C042D2FAEE54",
+                "measurementUnit": "kg",
+                "unitMultiplier": 3.0,
+                "manualDiscountValue": 0,
+                "manualIncrementValue": 0,
+                "clientProfileData": [
+                  {
+                    "firstName": "Jane",
+                    "lastName": "Earhart",
+                    "documentType": "cpf",
+                    "document": "123456789",
+                    "phone": "55110988887777",
+                    "corporateName": null,
+                    "tradeName": null,
+                    "corporateDocument": null,
+                    "stateInscription": null,
+                    "corporatePhone": null,
+                    "isCorporate": false
+                  }
+                ]
+              }
+            ],
+            "customData": {
+              "customFields": [
+                {
+                  "linkedEntity": {
+                    "type": "item",
+                    "id": "B2949D0A45244825B133D2F9F96DC713"
+                  },
+                  "fields": [
+                    {
+                      "name": "desktop",
+                      "value": "DSK-NEW"
+                    }
+                  ]
+                }
+              ]
+            },
+            "shippingData": {
+              "logisticsInfo": [
+                {
+                  "itemIndex": 0,
+                  "selectedSla": "Normal",
+                  "selectedDeliveryChannel": "delivery",
+                  "addressId": "9ec276fd3a604eb1aa151b5333ca5db6",
+                  "price": 1000
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "settings": {
+        "paymentConfiguration": {
+          "customPaymentSystemsAllowed": [
+            "201"
+          ]
+        },
+        "rolloutConfiguration": {
+          "enableApi": true,
+          "enableAdminOrders": {
+            "enabledWorkspaces": [
+              "*"
+            ]
+          },
+          "enableMyOrders": {
+            "enabledWorkspaces": [
+              "storename"
+            ]
+          }
+        },
+        "pipelineConfiguration": {
+          "enableTaxHubRecalculation": false,
+          "compensateShippingChanges": true,
+          "enablePromotionRecalculation": true,
+          "enableNativeTaxRecalculation": true
+        }
+      }
+    },
+    "response": {
+      "reason": "I would like to receive a preview.",
+      "manualDiscountValue": 0,
+      "manualIncrementValue": 0,
+      "totalChangeValue": 420,
+      "totals": [
+        {
+          "id": "ManualValues",
+          "name": "Manual Values Total",
+          "value": 0
+        },
+        {
+          "id": "Shipping",
+          "name": "Shipping Total",
+          "value": 420
+        }
+      ],
+      "add": null,
+      "remove": null,
+      "replace": [
+        {
+          "from": {
+            "paymentData": {
+              "transactions": []
+            },
+            "items": [
+              {
+                "id": "31",
+                "quantity": 1,
+                "price": 5000,
+                "measurementUnit": "un",
+                "unitMultiplier": 1,
+                "sellingPrice": 5000,
+                "name": "Small toy",
+                "detailUrl": "/small-toy-24/p",
+                "imageUrl": "http://storename.com/arquivos/ids/155431-55-55/image-bdab69af1e5c41cdbc498d02e370b376.jpg?v=636579391945870000"
+              }
+            ],
+            "shippingData": {
+              "logisticsInfo": [
+                {
+                  "itemIndex": 0,
+                  "selectedSla": "Economic",
+                  "selectedDeliveryChannel": "delivery",
+                  "addressId": "9ec276fd3a604eb1aa151b5333ca5db6",
+                  "slas": [
+                    {
+                      "id": "Economic",
+                      "deliveryChannel": "delivery",
+                      "name": "Economic",
+                      "deliveryIds": [
+                        {
+                          "courierId": "1c083bf",
+                          "warehouseId": "1_1",
+                          "dockId": "1",
+                          "courierName": "DeliverClass",
+                          "quantity": 1,
+                          "kitItemDetails": [],
+                          "accountCarrierName": null
+                        }
+                      ],
+                      "shippingEstimate": "25bd",
+                      "shippingEstimateDate": "2024-08-30T10:17:24.6436519Z",
+                      "lockTTL": "12d",
+                      "availableDeliveryWindows": [],
+                      "deliveryWindow": null,
+                      "price": 180,
+                      "listPrice": 180,
+                      "tax": 0,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupPointId": null,
+                      "pickupDistance": null,
+                      "polygonName": "",
+                      "transitTime": "25bd"
+                    },
+                    {
+                      "id": "Normal",
+                      "deliveryChannel": "delivery",
+                      "name": "Normal",
+                      "deliveryIds": [
+                        {
+                          "courierId": "1",
+                          "warehouseId": "1_1",
+                          "dockId": "1",
+                          "courierName": "CourierClass",
+                          "quantity": 1,
+                          "kitItemDetails": [],
+                          "accountCarrierName": null
+                        }
+                      ],
+                      "shippingEstimate": "3bd",
+                      "shippingEstimateDate": null,
+                      "lockTTL": "12d",
+                      "availableDeliveryWindows": [],
+                      "deliveryWindow": null,
+                      "price": 500,
+                      "listPrice": 500,
+                      "tax": 0,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupPointId": null,
+                      "pickupDistance": null,
+                      "polygonName": "",
+                      "transitTime": "3bd"
+                    },
+                    {
+                      "id": "Pickup",
+                      "deliveryChannel": "delivery",
+                      "name": "Pickup",
+                      "deliveryIds": [
+                        {
+                          "courierId": "ech018654",
+                          "warehouseId": "1_1",
+                          "dockId": "1",
+                          "courierName": "Pickup",
+                          "quantity": 1,
+                          "kitItemDetails": [],
+                          "accountCarrierName": null
+                        }
+                      ],
+                      "shippingEstimate": "25bd",
+                      "shippingEstimateDate": null,
+                      "lockTTL": "12d",
+                      "availableDeliveryWindows": [],
+                      "deliveryWindow": null,
+                      "price": 700,
+                      "listPrice": 700,
+                      "tax": 0,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupPointId": null,
+                      "pickupDistance": null,
+                      "polygonName": "",
+                      "transitTime": "25bd"
+                    }
+                  ],
+                  "shipsTo": [
+                    "BRA"
+                  ],
+                  "itemId": "31",
+                  "deliveryChannels": [
+                    {
+                      "id": "delivery"
+                    }
+                  ],
+                  "price": 180,
+                  "listPrice": 180,
+                  "shippingEstimate": "25bd",
+                  "dockEstimate": null,
+                  "shippingEstimateDate": "2024-08-30T10:17:24.6436519Z",
+                  "lockTTL": "12d",
+                  "deliveryCompany": null,
+                  "polygonName": "",
+                  "transitTime": "25bd",
+                  "sellingPrice": 180,
+                  "deliveryIds": [
+                    {
+                      "courierId": "1c083bf",
+                      "warehouseId": "1_1",
+                      "dockId": "1",
+                      "courierName": "CourierClass",
+                      "quantity": 1,
+                      "kitItemDetails": null,
+                      "accountCarrierName": "qastoreecho"
+                    }
+                  ],
+                  "deliveryWindow": null,
+                  "pickupPointId": null,
+                  "pickupStoreInfo": {
+                    "isPickupStore": false,
+                    "friendlyName": null,
+                    "address": null,
+                    "additionalInfo": null,
+                    "dockId": null
+                  },
+                  "pickupDistance": null
+                }
+              ]
+            }
+          },
+          "to": {
+            "items": [
+              {
+                "uniqueId": "40E763F4378E4F40AD1FE915FE1078E1",
+                "id": "1",
+                "productId": "1",
+                "productRefId": "",
+                "refId": "codrefxicaraazul",
+                "ean": "8745121641",
+                "name": "Blue cup",
+                "skuName": "cup",
+                "modalType": null,
+                "parentItemIndex": null,
+                "parentAssemblyBinding": null,
+                "assemblies": [],
+                "priceValidUntil": null,
+                "tax": 0,
+                "price": 5000,
+                "listPrice": null,
+                "manualPrice": null,
+                "manualPriceAppliedBy": null,
+                "sellingPrice": 5000,
+                "rewardValue": 0,
+                "isGift": false,
+                "additionalInfo": {
+                  "dimension": null,
+                  "brandName": null,
+                  "brandId": null,
+                  "offeringInfo": null,
+                  "offeringType": null,
+                  "offeringTypeId": null,
+                  "categoriesIds": null,
+                  "productClusterId": null,
+                  "commercialConditionId": null
+                },
+                "preSaleDate": null,
+                "productCategoryIds": "/1/",
+                "productCategories": {
+                  "1": "Category"
+                },
+                "quantity": 1,
+                "seller": "1",
+                "sellerChain": [
+                  "1"
+                ],
+                "imageUrl": "http://storename.com/arquivos/ids/155394-55-55/cup.jpg?v=636565506415770000",
+                "detailUrl": "/xicara/p",
+                "components": [],
+                "bundleItems": [],
+                "attachments": [],
+                "attachmentOfferings": [],
+                "offerings": [],
+                "priceTags": [],
+                "availability": null,
+                "measurementUnit": "un",
+                "unitMultiplier": 1,
+                "manufacturerCode": null,
+                "priceDefinition": {
+                  "calculatedSellingPrice": 5000,
+                  "total": 5000,
+                  "sellingPrices": [
+                    {
+                      "value": 5000,
+                      "quantity": 1
+                    }
+                  ]
+                }
+              }
+            ],
+            "paymentData": {
+              "transactions": []
+            },
+            "receiptData": null,
+            "shippingData": {
+              "logisticsInfo": [
+                {
+                  "itemIndex": 0,
+                  "selectedSla": "Economic",
+                  "selectedDeliveryChannel": "delivery",
+                  "addressId": "9ec276fd3a604eb1aa151b5333ca5db6",
+                  "slas": [
+                    {
+                      "id": "Economic",
+                      "deliveryChannel": "delivery",
+                      "name": "Economic",
+                      "deliveryIds": [
+                        {
+                          "courierId": "1c083bf",
+                          "warehouseId": "1_1",
+                          "dockId": "1",
+                          "courierName": "CourierClass",
+                          "quantity": 1,
+                          "kitItemDetails": [],
+                          "accountCarrierName": null
+                        }
+                      ],
+                      "shippingEstimate": "25bd",
+                      "shippingEstimateDate": "2024-08-30T10:17:24.6436519Z",
+                      "lockTTL": "12d",
+                      "availableDeliveryWindows": [],
+                      "deliveryWindow": null,
+                      "price": 600,
+                      "listPrice": 180,
+                      "tax": 0,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupPointId": null,
+                      "pickupDistance": null,
+                      "polygonName": "",
+                      "transitTime": "25bd"
+                    },
+                    {
+                      "id": "Normal",
+                      "deliveryChannel": "delivery",
+                      "name": "Normal",
+                      "deliveryIds": [
+                        {
+                          "courierId": "1",
+                          "warehouseId": "1_1",
+                          "dockId": "1",
+                          "courierName": "CourierClass",
+                          "quantity": 1,
+                          "kitItemDetails": [],
+                          "accountCarrierName": null
+                        }
+                      ],
+                      "shippingEstimate": "3bd",
+                      "shippingEstimateDate": null,
+                      "lockTTL": "12d",
+                      "availableDeliveryWindows": [],
+                      "deliveryWindow": null,
+                      "price": 500,
+                      "listPrice": 500,
+                      "tax": 0,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupPointId": null,
+                      "pickupDistance": null,
+                      "polygonName": "",
+                      "transitTime": "3bd"
+                    },
+                    {
+                      "id": "Pickup",
+                      "deliveryChannel": "delivery",
+                      "name": "Pickup",
+                      "deliveryIds": [
+                        {
+                          "courierId": "ech018654",
+                          "warehouseId": "1_1",
+                          "dockId": "1",
+                          "courierName": "Pickup",
+                          "quantity": 1,
+                          "kitItemDetails": [],
+                          "accountCarrierName": null
+                        }
+                      ],
+                      "shippingEstimate": "25bd",
+                      "shippingEstimateDate": null,
+                      "lockTTL": "12d",
+                      "availableDeliveryWindows": [],
+                      "deliveryWindow": null,
+                      "price": 700,
+                      "listPrice": 700,
+                      "tax": 0,
+                      "pickupStoreInfo": {
+                        "isPickupStore": false,
+                        "friendlyName": null,
+                        "address": null,
+                        "additionalInfo": null,
+                        "dockId": null
+                      },
+                      "pickupPointId": null,
+                      "pickupDistance": null,
+                      "polygonName": "",
+                      "transitTime": "25bd"
+                    }
+                  ],
+                  "shipsTo": [
+                    "BRA"
+                  ],
+                  "itemId": "1",
+                  "deliveryChannels": [
+                    {
+                      "id": "delivery"
+                    }
+                  ],
+                  "price": 600,
+                  "listPrice": 180,
+                  "shippingEstimate": "25bd",
+                  "dockEstimate": null,
+                  "shippingEstimateDate": "2024-08-30T10:17:24.6436519Z",
+                  "lockTTL": "12d",
+                  "deliveryCompany": null,
+                  "polygonName": "",
+                  "transitTime": "25bd",
+                  "sellingPrice": 600,
+                  "deliveryIds": [
+                    {
+                      "courierId": "1c083bf",
+                      "warehouseId": "1_1",
+                      "dockId": "1",
+                      "courierName": "Donkey",
+                      "quantity": 1,
+                      "kitItemDetails": null,
+                      "accountCarrierName": "qastoreecho"
+                    }
+                  ],
+                  "deliveryWindow": null,
+                  "pickupPointId": null,
+                  "pickupStoreInfo": {
+                    "isPickupStore": false,
+                    "friendlyName": null,
+                    "address": null,
+                    "additionalInfo": null,
+                    "dockId": null
+                  },
+                  "pickupDistance": null
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "date": "2024-07-27T17:52:18.6483116Z",
+      "origin": {
+        "account": "qastore",
+        "orderId": "v12772213qst-02",
+        "component": "MarketplaceComponent"
+      },
+      "settings": {
+        "customPaymentSystemsAllowed": [
+          "201"
+        ]
+      }
+    },
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "retry_change": {
+    "config": {
+      "an": "storeName",
+      "changeOrderId": "v12772213qst-02",
+      "changeRequestId": "e8532a32-7f7e-434a-88ec-29609f0ede46",
+      "reason": "The client wants to change a weighable product.",
+      "replace_json": "[{\"from\": {\"items\": [{\"id\": \"1\", \"quantity\": 1, \"uniqueId\": \"1D6A12BD177140B2BAF0C042D2FAEE54\", \"price\": 2499}], \"customData\": {\"customFields\": [{\"linkedEntity\": {\"type\": \"item\", \"id\": \"B2949D0A45244825B177D2F9F96DC711\"}, \"fields\": [{\"name\": \"desktop\", \"value\": \"DSK-OLD\"}]}]}}, \"to\": {\"items\": [{\"id\": \"2\", \"quantity\": 1, \"uniqueId\": \"1D6A12BD177140B2BAF0C042D2FAEE54\", \"measurementUnit\": \"kg\", \"unitMultiplier\": 3.0, \"manualDiscountValue\": 0, \"manualIncrementValue\": 0, \"clientProfileData\": [{\"firstName\": \"Jane\", \"lastName\": \"Earhart\", \"documentType\": \"cpf\", \"document\": \"123456789\", \"phone\": \"55110988887777\", \"corporateName\": null, \"tradeName\": null, \"corporateDocument\": null, \"stateInscription\": null, \"corporatePhone\": null, \"isCorporate\": false}]}], \"customData\": {\"customFields\": [{\"linkedEntity\": {\"type\": \"item\", \"id\": \"B2949D0A45244825B133D2F9F96DC713\"}, \"fields\": [{\"name\": \"desktop\", \"value\": \"DSK-NEW\"}]}]}, \"shippingData\": {\"logisticsInfo\": [{\"itemIndex\": 0, \"selectedSla\": \"Normal\", \"selectedDeliveryChannel\": \"delivery\", \"addressId\": \"9ec276fd3a604eb1aa151b5333ca5db6\", \"price\": 1000}]}}}]"
+    },
+    "method": "POST",
+    "path": "/api/order-system/orders/{changeOrderId}/changes/{changeRequestId}/retry",
+    "body": {
+      "reason": "The client wants to change a weighable product.",
+      "replace": [
+        {
+          "from": {
+            "items": [
+              {
+                "id": "1",
+                "quantity": 1,
+                "uniqueId": "1D6A12BD177140B2BAF0C042D2FAEE54",
+                "price": 2499
+              }
+            ],
+            "customData": {
+              "customFields": [
+                {
+                  "linkedEntity": {
+                    "type": "item",
+                    "id": "B2949D0A45244825B177D2F9F96DC711"
+                  },
+                  "fields": [
+                    {
+                      "name": "desktop",
+                      "value": "DSK-OLD"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "to": {
+            "items": [
+              {
+                "id": "2",
+                "quantity": 1,
+                "uniqueId": "1D6A12BD177140B2BAF0C042D2FAEE54",
+                "measurementUnit": "kg",
+                "unitMultiplier": 3.0,
+                "manualDiscountValue": 0,
+                "manualIncrementValue": 0,
+                "clientProfileData": [
+                  {
+                    "firstName": "Jane",
+                    "lastName": "Earhart",
+                    "documentType": "cpf",
+                    "document": "123456789",
+                    "phone": "55110988887777",
+                    "corporateName": null,
+                    "tradeName": null,
+                    "corporateDocument": null,
+                    "stateInscription": null,
+                    "corporatePhone": null,
+                    "isCorporate": false
+                  }
+                ]
+              }
+            ],
+            "customData": {
+              "customFields": [
+                {
+                  "linkedEntity": {
+                    "type": "item",
+                    "id": "B2949D0A45244825B133D2F9F96DC713"
+                  },
+                  "fields": [
+                    {
+                      "name": "desktop",
+                      "value": "DSK-NEW"
+                    }
+                  ]
+                }
+              ]
+            },
+            "shippingData": {
+              "logisticsInfo": [
+                {
+                  "itemIndex": 0,
+                  "selectedSla": "Normal",
+                  "selectedDeliveryChannel": "delivery",
+                  "addressId": "9ec276fd3a604eb1aa151b5333ca5db6",
+                  "price": 1000
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "response": null,
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  },
+  "cancel_change": {
+    "config": {
+      "an": "storeName",
+      "changeOrderId": "v12772213qst-02",
+      "changeRequestId": "e8532a32-7f7e-434a-88ec-29609f0ede46",
+      "reason": "Stock shortage"
+    },
+    "method": "POST",
+    "path": "/api/order-system/orders/{changeOrderId}/changes/{changeRequestId}/cancel",
+    "body": {
+      "reason": "Stock shortage"
+    },
+    "response": null,
+    "source": "https://raw.githubusercontent.com/vtex/openapi-schemas/master/VTEX%20-%20Orders%20API.json"
+  }
+}
