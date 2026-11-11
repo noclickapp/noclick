@@ -44,7 +44,7 @@ async def test_flat_write_body_and_comment_path(transport):
 async def test_flat_cursor_does_not_follow_url(transport):
     req, replies = transport
     replies.append((200, [{"id": "c1", "title": "Jazz scores"}], {"Link": '<https://untrusted.invalid/collections?next=opaque>; rel="next"'}))
-    out = await run("listCollections")
+    out = await run("list_collections")
     assert out["next_cursor"] == "opaque"
     assert len(req) == 1
     assert req[0].url.params["sort"] == "modificationDate"
@@ -61,7 +61,7 @@ async def test_flat_provider_rejection_redacts_token(transport):
     _, replies = transport
     replies.append((401, {"message": "Invalid " + AUTH["access_token"]}, {}))
     with pytest.raises(ValueError, match="401") as error:
-        await run("getAuthenticatedUser")
+        await run("get_authenticated_user")
     assert AUTH["access_token"] not in str(error.value)
 
 @pytest.mark.asyncio

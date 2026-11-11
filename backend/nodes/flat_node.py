@@ -24,7 +24,7 @@ class Input(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 class ListCollectionsConfig(Input):
-    operation: Literal["listCollections"] = Field("listCollections", title='List the collections', json_schema_extra={"ui:hidden": True})
+    operation: Literal["list_collections"] = Field("list_collections", title='List the collections', json_schema_extra={"ui:hidden": True})
     parent: str = "user"
     sort: Literal["creationDate", "modificationDate", "title"] = "modificationDate"
     direction: Literal["asc", "desc"] = "desc"
@@ -72,7 +72,7 @@ class DeleteScoreFromCollectionConfig(Input):
     score: str = Field(..., min_length=1, max_length=256)
 
 class GetAuthenticatedUserConfig(Input):
-    operation: Literal["getAuthenticatedUser"] = Field("getAuthenticatedUser", title='Get current user account', json_schema_extra={"ui:hidden": True})
+    operation: Literal["get_authenticated_user"] = Field("get_authenticated_user", title='Get current user account', json_schema_extra={"ui:hidden": True})
 
 class GetScoreConfig(Input):
     operation: Literal["getScore"] = Field("getScore", title="Get a score's metadata", json_schema_extra={"ui:hidden": True})
@@ -153,11 +153,11 @@ FlatConfig = Annotated[Union[ListCollectionsConfig, CreateCollectionConfig, GetC
 class FlatNodeConfig(NodeConfig[FlatConfig, FlatCredential]):
     pass
 
-ROUTES = {'listCollections': ('GET', '/collections'), 'createCollection': ('POST', '/collections'), 'getCollection': ('GET', '/collections/{collection}'), 'editCollection': ('PUT', '/collections/{collection}'), 'deleteCollection': ('DELETE', '/collections/{collection}'), 'untrashCollection': ('POST', '/collections/{collection}/untrash'), 'listCollectionScores': ('GET', '/collections/{collection}/scores'), 'addScoreToCollection': ('PUT', '/collections/{collection}/scores/{score}'), 'deleteScoreFromCollection': ('DELETE', '/collections/{collection}/scores/{score}'), 'getAuthenticatedUser': ('GET', '/me'), 'getScore': ('GET', '/scores/{score}'), 'editScore': ('PUT', '/scores/{score}'), 'deleteScore': ('DELETE', '/scores/{score}'), 'untrashScore': ('POST', '/scores/{score}/untrash'), 'forkScore': ('POST', '/scores/{score}/fork'), 'getScoreCollaborators': ('GET', '/scores/{score}/collaborators'), 'addScoreCollaborator': ('POST', '/scores/{score}/collaborators'), 'removeScoreCollaborator': ('DELETE', '/scores/{score}/collaborators/{collaborator}'), 'getScoreComments': ('GET', '/scores/{score}/comments'), 'postScoreComment': ('POST', '/scores/{score}/comments'), 'updateScoreComment': ('PUT', '/scores/{score}/comments/{comment}'), 'deleteScoreComment': ('DELETE', '/scores/{score}/comments/{comment}'), 'getScoreRevisions': ('GET', '/scores/{score}/revisions')}
+ROUTES = {'list_collections': ('GET', '/collections'), 'createCollection': ('POST', '/collections'), 'getCollection': ('GET', '/collections/{collection}'), 'editCollection': ('PUT', '/collections/{collection}'), 'deleteCollection': ('DELETE', '/collections/{collection}'), 'untrashCollection': ('POST', '/collections/{collection}/untrash'), 'listCollectionScores': ('GET', '/collections/{collection}/scores'), 'addScoreToCollection': ('PUT', '/collections/{collection}/scores/{score}'), 'deleteScoreFromCollection': ('DELETE', '/collections/{collection}/scores/{score}'), 'get_authenticated_user': ('GET', '/me'), 'getScore': ('GET', '/scores/{score}'), 'editScore': ('PUT', '/scores/{score}'), 'deleteScore': ('DELETE', '/scores/{score}'), 'untrashScore': ('POST', '/scores/{score}/untrash'), 'forkScore': ('POST', '/scores/{score}/fork'), 'getScoreCollaborators': ('GET', '/scores/{score}/collaborators'), 'addScoreCollaborator': ('POST', '/scores/{score}/collaborators'), 'removeScoreCollaborator': ('DELETE', '/scores/{score}/collaborators/{collaborator}'), 'getScoreComments': ('GET', '/scores/{score}/comments'), 'postScoreComment': ('POST', '/scores/{score}/comments'), 'updateScoreComment': ('PUT', '/scores/{score}/comments/{comment}'), 'deleteScoreComment': ('DELETE', '/scores/{score}/comments/{comment}'), 'getScoreRevisions': ('GET', '/scores/{score}/revisions')}
 
 class FlatNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-flat"
-    connection_evidence = ConnectionEvidence(operation="listCollections", noun="collections", label_keys=("title",), identity_operation="getAuthenticatedUser", identity_keys=("name", "username"))
+    connection_evidence = ConnectionEvidence(operation="list_collections", noun="collections", label_keys=("title",), identity_operation="get_authenticated_user", identity_keys=("name", "username"))
 
     @classmethod
     def get_config_model(cls):

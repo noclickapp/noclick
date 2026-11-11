@@ -364,8 +364,8 @@
       "additionalProperties": false,
       "properties": {
         "operation": {
-          "const": "getAuthenticatedUser",
-          "default": "getAuthenticatedUser",
+          "const": "get_authenticated_user",
+          "default": "get_authenticated_user",
           "title": "Get current user account",
           "type": "string",
           "ui:hidden": true
@@ -554,8 +554,8 @@
       "additionalProperties": false,
       "properties": {
         "operation": {
-          "const": "listCollections",
-          "default": "listCollections",
+          "const": "list_collections",
+          "default": "list_collections",
           "title": "List the collections",
           "type": "string",
           "ui:hidden": true
@@ -1316,14 +1316,14 @@
           "editCollection": "#/$defs/EditCollectionConfig",
           "editScore": "#/$defs/EditScoreConfig",
           "forkScore": "#/$defs/ForkScoreConfig",
-          "getAuthenticatedUser": "#/$defs/GetAuthenticatedUserConfig",
           "getCollection": "#/$defs/GetCollectionConfig",
           "getScore": "#/$defs/GetScoreConfig",
           "getScoreCollaborators": "#/$defs/GetScoreCollaboratorsConfig",
           "getScoreComments": "#/$defs/GetScoreCommentsConfig",
           "getScoreRevisions": "#/$defs/GetScoreRevisionsConfig",
+          "get_authenticated_user": "#/$defs/GetAuthenticatedUserConfig",
           "listCollectionScores": "#/$defs/ListCollectionScoresConfig",
-          "listCollections": "#/$defs/ListCollectionsConfig",
+          "list_collections": "#/$defs/ListCollectionsConfig",
           "on_updated_collection": "#/$defs/OnUpdatedCollectionConfig",
           "on_updated_score": "#/$defs/OnUpdatedScoreConfig",
           "postScoreComment": "#/$defs/PostScoreCommentConfig",
