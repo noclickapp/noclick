@@ -6,12 +6,12 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const SamdockIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/samdock.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <img ref={ref} src="/icons/samdock.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
     ),
 );
 SamdockIcon.displayName = 'SamdockIcon';
 
-// Official publisher icon; provenance is recorded beside the PNG.
+// Official publisher icon; provenance is recorded beside the SVG.
 export const SamdockNode: NodeDefinition = {
     type: 'automation-samdock',
     label: 'Samdock',
