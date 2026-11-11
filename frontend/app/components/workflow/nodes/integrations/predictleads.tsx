@@ -8,7 +8,7 @@ import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nod
 
 // PredictLeads' favicon from https://predictleads.com/
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/predictleads-preferred-brand.svg" alt="" aria-hidden="true" className={className}
+    <img src="/icons/predictleads.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, objectFit: 'contain' }} />
 );
 

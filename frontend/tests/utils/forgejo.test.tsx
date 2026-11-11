@@ -45,6 +45,6 @@ describe('Forgejo native metadata', () => {
     expect(html).toContain('object-fit:contain');
     expect(html).toContain(`filter:${filter}`);
     expect(html).not.toContain('brand-invert');
-    expect(html).not.toContain('invert(1)');
+    expect(html).not.toContain('invert(');
   });
 });

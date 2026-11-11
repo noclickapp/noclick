@@ -9,9 +9,9 @@ import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nod
 
 // Mindbody's favicon M from https://www.mindbodyonline.com/; source and edits are in its provenance file.
 import type { CSSProperties as BrandCSSProperties } from 'react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/mindbody-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <ThemedBrandImg light="/icons/mindbody-brand.svg" dark="/icons/mindbody-brand-dark.svg" className={className} style={style} />
 );
 
 const MindbodyIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(

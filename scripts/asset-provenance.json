@@ -952,12 +952,6 @@
       "sha256": "329fa2d33d3b56fa83ecc685af847940b8a985fc248237c2cf31aa7ed81e7aec"
     },
     {
-      "path": "frontend/public/icons/kajabi.png",
-      "source": "https://partners.kajabi.com/get-started (Kajabi Branding & Logo Guide → Kajabi_Branding_Logos.zip → Color_Icon.png; unmodified official icon)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "e9de5f1c933ae4aeb28b762bad25a04eafc1e353ad422c610307db202f52fbb9"
-    },
-    {
       "path": "frontend/public/icons/cloudzero-brand-vector.svg",
       "source": "https://www.cloudzero.com/ (CloudZero published brand artwork)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
