@@ -6,12 +6,15 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const CommonRoomIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/common-room.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <>
+            <img {...props} ref={ref} src="/icons/common-room.svg" alt="" className={`${className || ''} dark:hidden `} style={style} />
+            <img {...props} src="/icons/common-room-dark.svg" alt="" className={`${className || ''} hidden dark:block `} style={style} />
+        </>
     ),
 );
 CommonRoomIcon.displayName = 'CommonRoomIcon';
 
-// Exact publisher asset; provenance is recorded beside the PNG.
+// Official favicon paths with transparent counters; provenance records each theme edit.
 export const CommonRoomNode: NodeDefinition = {
     type: 'automation-common-room',
     label: 'Common Room',

@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/common-room-dark.svg",
+  "source": "https://www.commonroom.io/static/meta/favicon.svg",
+  "page": "https://www.commonroom.io/",
+  "date": "2026-11-11",
+  "license": "Common Room trademark; used solely to identify the Common Room integration.",
+  "sha256": "0c2ae1a0252cc958fb3c9d7eb3c932fc8339612c1263622fc17379536c812b4d",
+  "edits": [
+    "Deleted the white interior underlay path so the mark's original counter remains transparent; all surviving path data is unchanged.",
+    "Recoloured the remaining black mark path white for dark surfaces."
+  ],
+  "notes": "Official SVG favicon/app mark linked by Common Room's own homepage, not the wordmark. Original square viewBox retained; no path coordinates created or changed."
+}
