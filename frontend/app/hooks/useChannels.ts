@@ -83,19 +83,43 @@ export function flipReaction(reactions: ChannelReaction[], emoji: string): Chann
 
 let localIds = 0;
 
+interface Lists {
+    loading: boolean;
+    error: string | null;
+    workspaces: ChannelWorkspace[];
+    channels: Channel[];
+}
+
+/** What a transport's page last held (its lists, agents and the histories it opened), so a page mounted again over the
+ *  same transport shows it at once and reads it again in place. Changes that landed meanwhile went unheard: every list
+ *  is read again on mount, and each kept history again the first time it's opened. */
+interface Held {
+    lists: Lists;
+    agents: AgentChoice[];
+    histories: Record<string, ChannelHistory>;
+}
+const held = new WeakMap<ChannelsTransport, Held>();
+
 export function useChannels(transport: ChannelsTransport, openId: string | null): Channels {
-    const [lists, setLists] = useState<{ loading: boolean; error: string | null; workspaces: ChannelWorkspace[]; channels: Channel[] }>({
-        loading: true,
-        error: null,
-        workspaces: [],
-        channels: [],
-    });
-    const [agents, setAgents] = useState<AgentChoice[]>([]);
-    const [histories, setHistories] = useState<Record<string, ChannelHistory>>({});
+    const [lists, setLists] = useState<Lists>(() => held.get(transport)?.lists ?? { loading: true, error: null, workspaces: [], channels: [] });
+    const [agents, setAgents] = useState<AgentChoice[]>(() => held.get(transport)?.agents ?? []);
+    const [histories, setHistories] = useState<Record<string, ChannelHistory>>(() => held.get(transport)?.histories ?? {});
     const historiesRef = useRef(histories);
     historiesRef.current = histories;
     const openRef = useRef(openId);
     openRef.current = openId;
+    // The histories read (or followed) since this page mounted: any other one held from before is read again on open.
+    const current = useRef(new Set<string>());
+
+    useEffect(() => {
+        // What's held is what the server sent: never a post still going or a note only you see.
+        const settled = Object.fromEntries(
+            Object.entries(histories)
+                .filter(([, h]) => !h.loading && !h.error)
+                .map(([id, h]) => [id, { ...h, loadingOlder: false, messages: h.messages.filter((m) => !m.pending && !m.ephemeral) }])
+        );
+        held.set(transport, { lists, agents, histories: settled });
+    }, [transport, lists, agents, histories]);
 
     const setHistory = useCallback((channelId: string, update: (h: ChannelHistory) => ChannelHistory) => {
         setHistories((prev) => ({ ...prev, [channelId]: update(prev[channelId] ?? EMPTY_HISTORY) }));
@@ -134,6 +158,25 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
         [transport, setHistory]
     );
 
+    /** A history held from an earlier mount, brought up to date in place: its newest page read again (what changed on
+     *  it, what's gone from it), the older messages it held kept. */
+    const catchUp = useCallback(
+        async (channelId: string) => {
+            try {
+                const page = await transport.history(channelId);
+                const from = page.messages.length ? time(page.messages[0]) : Infinity;
+                setHistory(channelId, (h) => {
+                    const older = page.older ? h.messages.filter((m) => !m.pending && !m.ephemeral && time(m) < from) : [];
+                    const local = h.messages.filter((m) => m.pending || m.ephemeral);
+                    return { ...h, older: older.length ? h.older : page.older, messages: mergeMessages(older, [...page.messages, ...local]) };
+                });
+            } catch (e) {
+                console.warn('[channels] catching up failed:', e);
+            }
+        },
+        [transport, setHistory]
+    );
+
     const openHistory = useCallback(
         async (channelId: string) => {
             setHistory(channelId, (h) => ({ ...h, loading: true, error: null }));
@@ -152,10 +195,14 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
         void readAgents();
     }, [readLists, readAgents]);
 
-    // A channel's history loads the first time it opens; later it's kept current by changes.
+    // A channel's history loads the first time it opens; later it's kept current by changes. One held from an earlier
+    // mount shows at once and catches up.
     useEffect(() => {
-        if (openId && !historiesRef.current[openId]) void openHistory(openId);
-    }, [openId, openHistory]);
+        if (!openId || current.current.has(openId)) return;
+        current.current.add(openId);
+        if (historiesRef.current[openId]) void catchUp(openId);
+        else void openHistory(openId);
+    }, [openId, openHistory, catchUp]);
 
     // Live: read again where a change landed, a burst at a time.
     useEffect(() => {
