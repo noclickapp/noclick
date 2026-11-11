@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/kit-brand-vector-dark.svg",
+  "source": "https://kit.com/brand",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "light mode: #F9F7F4, white -> #000000 (the source is the white, dark-background version)",
+    "dark mode: the source file as published (white)"
+  ],
+  "variant": "dark mode",
+  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+  "sha256": "633b4e5f44b0096ee777c9a3cb54afa8232d725de2a5577f444be85a3d07a6fa"
+}

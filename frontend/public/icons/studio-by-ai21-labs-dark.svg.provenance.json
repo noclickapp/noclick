@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/studio-by-ai21-labs-dark.svg",
+  "source": "https://www.ai21.com/wp-content/uploads/2026/02/ai21-logo-footer.svg",
+  "found_at": "https://www.ai21.com/ (footer logo; studio.ai21.com now redirects to ai21.com)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the black square tile behind the letter (element 0)",
+    "cropped the viewBox to the 'a'",
+    "stripped editor metadata",
+    "light file: white -> #000000",
+    "dark file keeps the footer's white 'a' as published"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: AI21's logo is the 'AI21' wordmark (the current PNG), so this uses its own icon mark, the single 'a' from its footer/favicon. The site shows that 'a' in a tile, black in the footer SVG and pink in the PNG favicon; I dropped the tile and ship a black 'a' for light and a white 'a' for dark. If the tile should stay, the footer file can ship as-is (black tile, white 'a'), though the black tile disappears on the dark theme; no SVG of the pink favicon tile exists.",
+  "license": "AI21 Labs brand mark, used nominatively to identify the connected service; trademark rights remain with AI21 Labs.",
+  "sha256": "9e5dd6e1e2483b6aae5ca41821eeded04d8910a1b3794f0f678f29bcd528f612"
+}

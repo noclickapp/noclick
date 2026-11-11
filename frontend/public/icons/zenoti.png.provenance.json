@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/zenoti.png",
+  "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/17/f0/1f/17f01fe6-eb4b-dc01-e727-f07dfcf091f9/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/1024x1024bb.png",
+  "found_at": "https://apps.apple.com/us/app/zenoti-mobile/id1104329960 (Zenoti Mobile, the business app, by Soham Online Solutions Pvt Ltd, Zenoti's operating company; seller URL www.zenoti.com)",
+  "source_kind": "company app (App Store listing icon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the file as published (Apple's 1024px rendition of the uploaded icon)"
+  ],
+  "notes": "DECISION: two official rasters of the Z-and-dot mark exist and each has a cost. (1) Shipped: the Zenoti Mobile business app's icon, 1024px, white tile, reads on both themes, but the Z is small inside a decorative ring of dots and in the app's teal and red. (2) zenoti.com's own apple-touch icon (downloads/zenoti/s2-1/apple-icon.png, 180px): the corporate Z and dot in #333638 on transparent, closest to the current brand, but it vanishes on the dark theme and Zenoti publishes no white version of the Z (/zenoti-logo-white.svg exists only for the wordmark). Pick (2) only if a near-invisible dark-theme icon is acceptable. No SVG qualifies: every Zenoti vector is the 'zenoti' wordmark (zenoti-logo.svg, the current file, whose dark grey vanishes on dark; zenoti-logo-white.svg; help.zenoti.com's portal-logo.svg), and the Z-and-dot is a separate drawing (the wordmark's dot belongs to its 'i').",
+  "license": "Zenoti brand mark, used nominatively to identify the connected service; trademark rights remain with Zenoti.",
+  "sha256": "aa145890a38f890703113efcea4ce6173b9182f826d901f9237eef02687174aa"
+}

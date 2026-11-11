@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/gorgias-dark.svg",
+  "source": "https://cdn.prod.website-files.com/5e4ff204e7b6f80e402d407a/669a5ab4a69be50c3a94800a_Gorgias%20Logo%20-%20Black.svg",
+  "found_at": "https://www.gorgias.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the mark (element 0); removed the 'gorgias' wordmark paths (elements 1-8)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "#000000 \u2192 #FFFFFF on the mark (element 0)"
+  ],
+  "variant": "dark mode",
+  "notes": "Replaces the black rounded-square tile the current file added (no such tile in Gorgias's logo). The social avatar shows the same mark in coral on black; the header and favicon use plain black, which is what ships here.",
+  "license": "Gorgias brand mark, used nominatively to identify the connected service; trademark rights remain with Gorgias.",
+  "sha256": "86dbdf4746c4e012a9e0eccd340f0080a92c739673766635772de70c73788935"
+}
