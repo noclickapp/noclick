@@ -43,6 +43,32 @@ const ASSUME_AVAILABLE: InstanceCapabilities = {
 };
 
 let cached: InstanceCapabilities | null = null;
+/** The read under way: every surface that mounts before it answers waits on it rather than asking again. */
+let reading: Promise<InstanceCapabilities | null> | null = null;
+
+function readCapabilities(): Promise<InstanceCapabilities | null> {
+    reading ??= (async () => {
+        try {
+            const res = await fetch(`${apiBaseUrl()}/api/public/instance-status`, {
+                signal: AbortSignal.timeout(4000),
+            });
+            if (!res.ok) return null;
+            const body = await res.json();
+            if (!body?.capabilities) return null;
+            const { creditsPerDollar, ...reported } = body.capabilities;
+            if (typeof creditsPerDollar === 'number') setCreditsPerDollar(creditsPerDollar);
+            cached = { ...ASSUME_AVAILABLE, ...reported };
+            return cached;
+        } catch {
+            // Older backend, or unreachable — keep the optimistic default.
+            return null;
+        } finally {
+            // A read that answered nothing can be asked again by the next surface.
+            if (!cached) reading = null;
+        }
+    })();
+    return reading;
+}
 
 export function useInstanceCapabilities(): InstanceCapabilities {
     const [caps, setCaps] = useState<InstanceCapabilities>(cached ?? ASSUME_AVAILABLE);
@@ -50,23 +76,9 @@ export function useInstanceCapabilities(): InstanceCapabilities {
     useEffect(() => {
         if (cached) return;
         let cancelled = false;
-        (async () => {
-            try {
-                const res = await fetch(`${apiBaseUrl()}/api/public/instance-status`, {
-                    signal: AbortSignal.timeout(4000),
-                });
-                if (!res.ok) return;
-                const body = await res.json();
-                if (!body?.capabilities || cancelled) return;
-                const { creditsPerDollar, ...reported } = body.capabilities;
-                if (typeof creditsPerDollar === 'number') setCreditsPerDollar(creditsPerDollar);
-                const resolved: InstanceCapabilities = { ...ASSUME_AVAILABLE, ...reported };
-                cached = resolved;
-                setCaps(resolved);
-            } catch {
-                // Older backend, or unreachable — keep the optimistic default.
-            }
-        })();
+        void readCapabilities().then((resolved) => {
+            if (resolved && !cancelled) setCaps(resolved);
+        });
         return () => {
             cancelled = true;
         };
