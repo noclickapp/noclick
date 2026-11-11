@@ -1,0 +1,1298 @@
+{
+  "$defs": {
+    "ZonnaGPSAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "zonnagps_api_token",
+          "default": "zonnagps_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "ZonnaGPS API Token",
+      "type": "object",
+      "x-credential-instructions": "In ZonnaGPS, open Settings \u2192 Integrations and create a dedicated API key. Paste the key shown once, without Bearer. Enable assets.list for connection evidence and each action's documented scope. Triggers also need webhooks.create and webhooks.delete; older keys only support reads.",
+      "x-credential-url": "https://app.zonnagps.es/api/docs"
+    },
+    "ZonnaGPSAssignDriverConfig": {
+      "description": "Assign Driver.",
+      "properties": {
+        "operation": {
+          "const": "assign_driver",
+          "default": "assign_driver",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Assign Driver",
+          "x-is-trigger": false
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "driver_id": {
+          "minimum": 1,
+          "title": "Driver Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "driver_id"
+      ],
+      "title": "ZonnaGPSAssignDriverConfig",
+      "type": "object"
+    },
+    "ZonnaGPSCreateDriverConfig": {
+      "description": "Create Driver.",
+      "properties": {
+        "operation": {
+          "const": "create_driver",
+          "default": "create_driver",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Drivers",
+          "x-display-name": "Create Driver",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "nif": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nif"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ZonnaGPSCreateDriverConfig",
+      "type": "object"
+    },
+    "ZonnaGPSCreateGeofenceConfig": {
+      "description": "Create Geofence.",
+      "properties": {
+        "operation": {
+          "const": "create_geofence",
+          "default": "create_geofence",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Geofences",
+          "x-display-name": "Create Geofence",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "center_latitude": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Center Latitude",
+          "type": "number"
+        },
+        "center_longitude": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Center Longitude",
+          "type": "number"
+        },
+        "radius_meters": {
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Radius Meters",
+          "type": "integer"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Active"
+        }
+      },
+      "required": [
+        "name",
+        "center_latitude",
+        "center_longitude",
+        "radius_meters"
+      ],
+      "title": "ZonnaGPSCreateGeofenceConfig",
+      "type": "object"
+    },
+    "ZonnaGPSCreatePlaceConfig": {
+      "description": "Create Place.",
+      "properties": {
+        "operation": {
+          "const": "create_place",
+          "default": "create_place",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Places",
+          "x-display-name": "Create Place",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "latitude": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        },
+        "radius_meters": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Radius Meters"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Active"
+        }
+      },
+      "required": [
+        "name",
+        "latitude",
+        "longitude"
+      ],
+      "title": "ZonnaGPSCreatePlaceConfig",
+      "type": "object"
+    },
+    "ZonnaGPSDeactivateDriverConfig": {
+      "description": "Deactivate Driver.",
+      "properties": {
+        "operation": {
+          "const": "deactivate_driver",
+          "default": "deactivate_driver",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Drivers",
+          "x-display-name": "Deactivate Driver",
+          "x-is-trigger": false
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ZonnaGPSDeactivateDriverConfig",
+      "type": "object"
+    },
+    "ZonnaGPSDeactivateGeofenceConfig": {
+      "description": "Deactivate Geofence.",
+      "properties": {
+        "operation": {
+          "const": "deactivate_geofence",
+          "default": "deactivate_geofence",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Geofences",
+          "x-display-name": "Deactivate Geofence",
+          "x-is-trigger": false
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ZonnaGPSDeactivateGeofenceConfig",
+      "type": "object"
+    },
+    "ZonnaGPSDeactivatePlaceConfig": {
+      "description": "Deactivate Place.",
+      "properties": {
+        "operation": {
+          "const": "deactivate_place",
+          "default": "deactivate_place",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Places",
+          "x-display-name": "Deactivate Place",
+          "x-is-trigger": false
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ZonnaGPSDeactivatePlaceConfig",
+      "type": "object"
+    },
+    "ZonnaGPSGetAssetConfig": {
+      "description": "Get Asset.",
+      "properties": {
+        "operation": {
+          "const": "get_asset",
+          "default": "get_asset",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Get Asset",
+          "x-is-trigger": false
+        },
+        "asset": {
+          "minimum": 1,
+          "title": "Vehicle ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "asset"
+      ],
+      "title": "ZonnaGPSGetAssetConfig",
+      "type": "object"
+    },
+    "ZonnaGPSGetLatestPositionConfig": {
+      "description": "Get Latest Position.",
+      "properties": {
+        "operation": {
+          "const": "get_latest_position",
+          "default": "get_latest_position",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Get Latest Position",
+          "x-is-trigger": false
+        },
+        "asset": {
+          "minimum": 1,
+          "title": "Vehicle ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "asset"
+      ],
+      "title": "ZonnaGPSGetLatestPositionConfig",
+      "type": "object"
+    },
+    "ZonnaGPSGetReportConfig": {
+      "description": "Get Report.",
+      "properties": {
+        "operation": {
+          "const": "get_report",
+          "default": "get_report",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Get Report",
+          "x-is-trigger": false
+        },
+        "dataset": {
+          "enum": [
+            "vehicles",
+            "vehicle-daily",
+            "driver-daily",
+            "alerts",
+            "deca"
+          ],
+          "minLength": 1,
+          "title": "Dataset",
+          "type": "string"
+        },
+        "from_time": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Time"
+        },
+        "to_time": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To Time"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 5000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Per Page"
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "ZonnaGPSGetReportConfig",
+      "type": "object"
+    },
+    "ZonnaGPSListAlarmsConfig": {
+      "description": "List Alarms.",
+      "properties": {
+        "operation": {
+          "const": "list_alarms",
+          "default": "list_alarms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alarms",
+          "x-display-name": "List Alarms",
+          "x-is-trigger": false
+        },
+        "from_time": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Time"
+        },
+        "to_time": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To Time"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Per Page"
+        }
+      },
+      "title": "ZonnaGPSListAlarmsConfig",
+      "type": "object"
+    },
+    "ZonnaGPSListAssetsConfig": {
+      "description": "List Assets.",
+      "properties": {
+        "operation": {
+          "const": "list_assets",
+          "default": "list_assets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "List Assets",
+          "x-is-trigger": false
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Per Page"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ZonnaGPSListAssetsConfig",
+      "type": "object"
+    },
+    "ZonnaGPSListDriversConfig": {
+      "description": "List Drivers.",
+      "properties": {
+        "operation": {
+          "const": "list_drivers",
+          "default": "list_drivers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Drivers",
+          "x-display-name": "List Drivers",
+          "x-is-trigger": false
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "nif": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nif"
+        },
+        "include_inactive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Inactive"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Per Page"
+        }
+      },
+      "title": "ZonnaGPSListDriversConfig",
+      "type": "object"
+    },
+    "ZonnaGPSListPositionsConfig": {
+      "description": "List Positions.",
+      "properties": {
+        "operation": {
+          "const": "list_positions",
+          "default": "list_positions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "List Positions",
+          "x-is-trigger": false
+        },
+        "asset": {
+          "minimum": 1,
+          "title": "Vehicle ID",
+          "type": "integer"
+        },
+        "from_time": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Time"
+        },
+        "to_time": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To Time"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Per Page"
+        }
+      },
+      "required": [
+        "asset"
+      ],
+      "title": "ZonnaGPSListPositionsConfig",
+      "type": "object"
+    },
+    "ZonnaGPSListWebhooksConfig": {
+      "description": "List Webhooks.",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ZonnaGPSListWebhooksConfig",
+      "type": "object"
+    },
+    "ZonnaGPSOnEventConfig": {
+      "description": "Receive selected fleet events through an automatically registered webhook.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Fleet Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "all",
+          "enum": [
+            "all",
+            "alert.triggered",
+            "geofence.enter",
+            "geofence.exit",
+            "deca.issued",
+            "vehicle.offline"
+          ],
+          "title": "Event type",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "ZonnaGPSOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ZonnaGPSUpdateDriverConfig": {
+      "description": "Update Driver.",
+      "properties": {
+        "operation": {
+          "const": "update_driver",
+          "default": "update_driver",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Drivers",
+          "x-display-name": "Update Driver",
+          "x-is-trigger": false
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "nif": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nif"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ZonnaGPSUpdateDriverConfig",
+      "type": "object"
+    },
+    "ZonnaGPSUpdateGeofenceConfig": {
+      "description": "Update Geofence.",
+      "properties": {
+        "operation": {
+          "const": "update_geofence",
+          "default": "update_geofence",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Geofences",
+          "x-display-name": "Update Geofence",
+          "x-is-trigger": false
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "center_latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Center Latitude"
+        },
+        "center_longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Center Longitude"
+        },
+        "radius_meters": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Radius Meters"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Active"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ZonnaGPSUpdateGeofenceConfig",
+      "type": "object"
+    },
+    "ZonnaGPSUpdatePlaceConfig": {
+      "description": "Update Place.",
+      "properties": {
+        "operation": {
+          "const": "update_place",
+          "default": "update_place",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Places",
+          "x-display-name": "Update Place",
+          "x-is-trigger": false
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Longitude"
+        },
+        "radius_meters": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Radius Meters"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Active"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ZonnaGPSUpdatePlaceConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "assign_driver": "#/$defs/ZonnaGPSAssignDriverConfig",
+          "create_driver": "#/$defs/ZonnaGPSCreateDriverConfig",
+          "create_geofence": "#/$defs/ZonnaGPSCreateGeofenceConfig",
+          "create_place": "#/$defs/ZonnaGPSCreatePlaceConfig",
+          "deactivate_driver": "#/$defs/ZonnaGPSDeactivateDriverConfig",
+          "deactivate_geofence": "#/$defs/ZonnaGPSDeactivateGeofenceConfig",
+          "deactivate_place": "#/$defs/ZonnaGPSDeactivatePlaceConfig",
+          "get_asset": "#/$defs/ZonnaGPSGetAssetConfig",
+          "get_latest_position": "#/$defs/ZonnaGPSGetLatestPositionConfig",
+          "get_report": "#/$defs/ZonnaGPSGetReportConfig",
+          "list_alarms": "#/$defs/ZonnaGPSListAlarmsConfig",
+          "list_assets": "#/$defs/ZonnaGPSListAssetsConfig",
+          "list_drivers": "#/$defs/ZonnaGPSListDriversConfig",
+          "list_positions": "#/$defs/ZonnaGPSListPositionsConfig",
+          "list_webhooks": "#/$defs/ZonnaGPSListWebhooksConfig",
+          "on_event": "#/$defs/ZonnaGPSOnEventConfig",
+          "update_driver": "#/$defs/ZonnaGPSUpdateDriverConfig",
+          "update_geofence": "#/$defs/ZonnaGPSUpdateGeofenceConfig",
+          "update_place": "#/$defs/ZonnaGPSUpdatePlaceConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ZonnaGPSListAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSGetAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSGetLatestPositionConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSListPositionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSListAlarmsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSListDriversConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSCreateDriverConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSUpdateDriverConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSDeactivateDriverConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSCreatePlaceConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSUpdatePlaceConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSDeactivatePlaceConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSCreateGeofenceConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSUpdateGeofenceConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSDeactivateGeofenceConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSAssignDriverConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSGetReportConfig"
+        },
+        {
+          "$ref": "#/$defs/ZonnaGPSOnEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ZonnaGPSAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Zonnagps Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

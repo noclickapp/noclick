@@ -1,0 +1,12 @@
+{
+  "id": "a304321c-1234-4567-8901-123456789012",
+  "event": "geofence.exit",
+  "occurred_at": "2026-10-18T10:00:00+00:00",
+  "data": {
+    "id": 12,
+    "device_id": 34,
+    "geofence_id": 56,
+    "latitude": 40.4,
+    "longitude": -3.7
+  }
+}

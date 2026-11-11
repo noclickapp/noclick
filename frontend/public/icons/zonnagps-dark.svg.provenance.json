@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/zonnagps-dark.svg",
+  "source": "https://raw.githubusercontent.com/zonnagps/n8n-nodes-zonnagps/f02cb9578e53856211010ac02568ab05da9cd8fd/nodes/ZonnaGps/zonnagps.svg",
+  "source_page": "https://github.com/zonnagps/n8n-nodes-zonnagps",
+  "license": "MIT (provider repository); ZonnaGPS trademark",
+  "date": "2026-11-11",
+  "sha256": "f7f0d3b7533dffe9f584f70772597cb14f38b9953d756503bcc3aa0d42cf70fe",
+  "edits": [
+    "Removed white background rectangle",
+    "Cropped viewBox to app mark",
+    "Recoloured navy path white for dark tiles"
+  ]
+}
