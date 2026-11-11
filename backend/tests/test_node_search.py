@@ -75,11 +75,18 @@ def test_a_mistyped_type_finds_what_it_meant():
 
 def test_every_registered_node_type_is_searchable_by_its_own_name():
     """An integration the catalog file doesn't list yet (added since it was generated) is found by its type."""
-    from nodes.core.registry import NODE_REGISTRY
+    from nodes.core.registry import NODE_REGISTRY, is_listed
 
-    missed = [t for t in NODE_REGISTRY if not t.startswith("test-")
+    missed = [t for t in NODE_REGISTRY if not t.startswith("test-") and is_listed(t)
               and t not in {h.node_type for h in node_search.search(node_search.slug_of(t).replace("-", " "), limit=5)}]
     assert missed == []
+
+
+def test_a_retired_type_is_found_only_by_a_search_scoped_to_it():
+    """A retired service is in no listing (``registry.is_listed``), while a search naming its type still reads it."""
+    assert "automation-humanloop" not in {h.node_type for h in node_search.search("humanloop")}
+    scoped = node_search.search("humanloop", node_types=["automation-humanloop"])
+    assert [h.node_type for h in scoped] == ["automation-humanloop"]
 
 
 def test_stop_words_alone_find_nothing():
