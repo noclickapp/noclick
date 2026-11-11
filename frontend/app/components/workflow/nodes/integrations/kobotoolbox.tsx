@@ -11,7 +11,7 @@ const KobotoolboxIcon = ({ className, style }: { className?: string; style?: CSS
 
 export const KobotoolboxNode: NodeDefinition = {
     type: 'automation-kobotoolbox', category: 'forms', label: 'KoboToolbox',
-    description: 'Start on new submissions and manage projects, validation, deployments and exports',
+    description: 'Receive submissions through a dedicated REST service and manage projects, validation, deployments and exports',
     Icon: KobotoolboxIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={KobotoolboxIcon} iconColor="" />),

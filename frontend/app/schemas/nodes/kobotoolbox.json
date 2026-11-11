@@ -672,7 +672,7 @@
     },
     "OnNewSubmission": {
       "additionalProperties": false,
-      "description": "Start when a project receives a new submission; edits do not send events.",
+      "description": "Bind a dedicated existing REST service to receive new submissions; edits do not send events. NoClick replaces its delivery settings and disables it on disconnect.",
       "properties": {
         "project_id": {
           "description": "Project asset UID from the KoboToolbox project URL.",
@@ -784,6 +784,12 @@
           "x-display-name": "New submission",
           "x-is-trigger": true
         },
+        "rest_service_id": {
+          "description": "Create a dedicated service in the project\u2019s Settings > REST Services, then copy its UID from the hooks API. NoClick replaces its endpoint, format, authentication, headers, subset and wrapper settings, and disables the service on disconnect. Do not use a service shared with another integration.",
+          "pattern": "^[A-Za-z0-9]+$",
+          "title": "Dedicated REST service UID",
+          "type": "string"
+        },
         "webhook_url": {
           "anyOf": [
             {
@@ -794,7 +800,7 @@
             }
           ],
           "default": null,
-          "description": "Registered with KoboToolbox automatically.",
+          "description": "Applied to the dedicated KoboToolbox REST service automatically.",
           "title": "Webhook URL",
           "ui:copyable": true,
           "ui:loadValue": true,
@@ -802,7 +808,8 @@
         }
       },
       "required": [
-        "project_id"
+        "project_id",
+        "rest_service_id"
       ],
       "title": "OnNewSubmission",
       "type": "object",

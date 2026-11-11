@@ -107,35 +107,37 @@ def test_manual_credential_defaults_and_server_boundary():
 
 
 SUBMISSION = json.loads((Path(__file__).parent / "fixtures/kobotoolbox/submission_created.json").read_text())["body"]
-TRIGGER = {"operation": "on_new_submission", "project_id": "a4etXeWtqcoodSxLV8a6Uq"}
+TRIGGER = {"operation": "on_new_submission", "project_id": "a4etXeWtqcoodSxLV8a6Uq", "rest_service_id": "hZzzeedWxQoFHgibsTCysv"}
 
 
 @pytest.mark.asyncio
 async def test_rest_service_registration_and_cleanup(monkeypatch):
     credential = {"api_token": TOKEN, "server": "https://eu.kobotoolbox.org"}
-    requests = transport(monkeypatch, 201, {"uid": "hZzzeedWxQoFHgibsTCysv"})
+    requests = transport(monkeypatch, 200, {"uid": "hZzzeedWxQoFHgibsTCysv"})
     registered = await native.KobotoolboxNode._register_external_webhook(
         webhook_url="https://test.hooks.example.test/hook", credential=credential, config=TRIGGER, node_id="test")
     assert registered == {"external_webhook_id": TRIGGER["project_id"] + ":hZzzeedWxQoFHgibsTCysv"}
-    assert requests[0].method == "POST"
-    assert requests[0].url == "https://eu.kobotoolbox.org/api/v2/assets/a4etXeWtqcoodSxLV8a6Uq/hooks/"
+    assert requests[0].method == "PATCH"
+    assert requests[0].url == "https://eu.kobotoolbox.org/api/v2/assets/a4etXeWtqcoodSxLV8a6Uq/hooks/hZzzeedWxQoFHgibsTCysv/"
     assert json.loads(requests[0].content) == {
-        "name": "NoClick test", "endpoint": "https://test.hooks.example.test/hook", "active": True,
+        "endpoint": "https://test.hooks.example.test/hook", "active": True,
         "export_type": "json", "auth_level": "no_auth", "email_notification": False,
+        "subset_fields": [], "payload_template": None, "settings": {},
     }
     assert requests[0].headers["Authorization"] == "Token " + TOKEN
-    requests = transport(monkeypatch, 204)
+    requests = transport(monkeypatch, 200, {})
     await native.KobotoolboxNode._unregister_external_webhook(
-        credential=credential, config={**TRIGGER, **registered, "project_id": "aDifferentProject"}, node_id="test")
-    assert requests[0].method == "DELETE"
+        credential=credential, config={**TRIGGER, **registered, "project_id": "aDifferentProject", "rest_service_id": "hOtherService"}, node_id="test")
+    assert requests[0].method == "PATCH"
+    assert json.loads(requests[0].content) == {"active": False}
     assert requests[0].url.path == "/api/v2/assets/a4etXeWtqcoodSxLV8a6Uq/hooks/hZzzeedWxQoFHgibsTCysv/"
-    assert native.KobotoolboxNode.registration_fingerprint_fields(TRIGGER) == {"project_id": TRIGGER["project_id"]}
+    assert native.KobotoolboxNode.registration_fingerprint_fields(TRIGGER) == {key: TRIGGER[key] for key in ("project_id", "rest_service_id")}
     config = native.OnNewSubmission(**TRIGGER, **registered)
     assert config.model_dump()["external_webhook_id"] == registered["external_webhook_id"]
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("status", [401, 403, 429, 500])
+@pytest.mark.parametrize("status", [401, 403, 404, 429, 500])
 async def test_registration_rejection_raises_without_token(monkeypatch, status):
     transport(monkeypatch, status, {"detail": TOKEN})
     with pytest.raises(ValueError, match=f"HTTP {status}") as exc:
@@ -168,11 +170,12 @@ async def test_documented_submission_delivery_and_manual_run():
 
 
 @pytest.mark.asyncio
-async def test_cleanup_already_removed_is_idempotent_and_uid_required(monkeypatch):
+async def test_cleanup_already_removed_is_idempotent_and_service_uid_required(monkeypatch):
     transport(monkeypatch, 404, {"detail": "Not found."})
     await native.KobotoolboxNode._unregister_external_webhook(
         credential={"api_token": TOKEN}, config={**TRIGGER, "external_webhook_id": TRIGGER["project_id"] + ":h123"}, node_id="test")
-    transport(monkeypatch, 201, {})
-    with pytest.raises(ValueError, match="REST service UID"):
-        await native.KobotoolboxNode._register_external_webhook(
-            webhook_url="https://test.hooks.example.test/hook", credential={"api_token": TOKEN}, config=TRIGGER, node_id="test")
+    for service in (None, "../other", "h123/other"):
+        with pytest.raises(ValidationError):
+            native.OnNewSubmission(**{**TRIGGER, "rest_service_id": service})
+    with pytest.raises(ValidationError):
+        native.OnNewSubmission(project_id=TRIGGER["project_id"])

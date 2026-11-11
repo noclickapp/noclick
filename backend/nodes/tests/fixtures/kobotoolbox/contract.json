@@ -35,12 +35,14 @@
     "create_export": "POST /api/v2/assets/{uid_asset}/exports/",
     "delete_export": "DELETE /api/v2/assets/{uid_asset}/exports/{uid_export}/",
     "on_new_submission": {
-      "register": "POST /api/v2/assets/{uid_asset}/hooks/",
-      "unregister": "DELETE /api/v2/assets/{uid_asset}/hooks/{uid_hook}/",
+      "register": "PATCH /api/v2/assets/{uid_asset}/hooks/{uid_hook}/",
+      "unregister": "PATCH /api/v2/assets/{uid_asset}/hooks/{uid_hook}/",
       "event": "submission.created",
       "payload_source": "https://community.kobotoolbox.org/t/sending-files-to-other-systems-via-rest-api/18280/11",
       "payload_author": "Joshua Beretta (KoboToolbox Core Team, forum admin/moderator)",
-      "behavior_source": "https://support.kobotoolbox.org/rest_services.html"
+      "behavior_source": "https://support.kobotoolbox.org/rest_services.html",
+      "setup": "Requires a dedicated existing REST service UID. Registration replaces delivery settings; cleanup disables the saved service without deleting it.",
+      "registration_source": "https://kf.kobotoolbox.org/api/v2/docs/#tag/Survey-data---Rest-Services/operation/api_v2_assets_hooks_partial_update"
     }
   },
   "spec_defects": [
@@ -50,14 +52,6 @@
       "failure": "Missing required path parameter: id",
       "description": "The collection OpenAPI declares required path id although its URL contains only uid_asset. Provider migration docs distinguish the collection URL /data/ from the individual /data/{submission_id}/ URL. Keep the documented collection route.",
       "source": "https://support.kobotoolbox.org/migrating_api.html#data-endpoints-submission-data"
-    },
-    {
-      "operation": "on_new_submission",
-      "kind": "d",
-      "failure": "Hook create request validator requires readOnly properties asset, date_modified, failed_count, logs_url, pending_count, success_count, uid and url",
-      "description": "The published OpenAPI 3.1 Hook schema marks these fields readOnly and also lists them as required; offline request validation applies the response required list to create requests. The provider create-operation docs explicitly state name and endpoint are required. Do not send server-generated hook IDs, counts, dates or URLs. Registration, unsigned delivery, field-read checks, agent event and unregistration otherwise pass.",
-      "source": "https://kf.kobotoolbox.org/api/v2/docs/#tag/Survey-data---Rest-Services/operation/api_v2_assets_hooks_create",
-      "contract_source": "https://kf.kobotoolbox.org/api/v2/schema/?format=json"
     }
   ],
   "evidence": "Offline conformance with the pinned provider OpenAPI and unchanged Core Team submission example; no live account or credential used."

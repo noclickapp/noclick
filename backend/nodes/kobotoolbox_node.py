@@ -195,11 +195,13 @@ class DeleteExport(_Export):
 
 
 class OnNewSubmission(WebhookTriggerConfigBase, _Project):
-    """Start when a project receives a new submission; edits do not send events."""
+    """Bind a dedicated existing REST service to receive new submissions; edits do not send events. NoClick replaces its delivery settings and disables it on disconnect."""
     operation: Literal["on_new_submission"] = Field("on_new_submission", title="New submission", json_schema_extra={
         "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "New submission",
     })
-    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with KoboToolbox automatically.",
+    rest_service_id: str = Field(..., pattern=r"^[A-Za-z0-9]+$", title="Dedicated REST service UID",
+        description="Create a dedicated service in the project’s Settings > REST Services, then copy its UID from the hooks API. NoClick replaces its endpoint, format, authentication, headers, subset and wrapper settings, and disables the service on disconnect. Do not use a service shared with another integration.")
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Applied to the dedicated KoboToolbox REST service automatically.",
         json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
 
 
@@ -246,34 +248,33 @@ class KobotoolboxNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     @classmethod
     def registration_fingerprint_fields(cls, config):
-        return {"project_id": (config or {}).get("project_id")}
+        return {key: (config or {}).get(key) for key in ("project_id", "rest_service_id")}
 
     @staticmethod
-    async def _hook_request(credential, method, path, *, body=None):
+    async def _hook_request(credential, method, path, *, body, allow_missing=False):
         credential = KobotoolboxAPITokenCredential.model_validate(credential or {})
         async with guarded_async_client(timeout=30, trust_env=False, follow_redirects=False) as client:
             response = await client.request(method, credential.server + path,
                 headers={"Authorization": "Token " + credential.api_token, "Accept": "application/json"},
                 **({"json": body} if body is not None else {}))
-        expected = 201 if method == "POST" else 204
-        if response.status_code != expected:
-            if method == "DELETE" and response.status_code == 404:
+        if response.status_code != 200:
+            if allow_missing and response.status_code == 404:
                 return None
             raise ValueError(f"KoboToolbox REST service request failed (HTTP {response.status_code})")
-        return response.json() if method == "POST" else None
+        return None
 
     @classmethod
     async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
-        project = _Project.model_validate({"project_id": config.get("project_id")}).project_id
-        # API contract: no_auth is the default; JSON sends the complete submission.
-        # https://kf.kobotoolbox.org/api/v2/docs/#tag/Survey-data-Rest-Services
-        data = await cls._hook_request(credential, "POST", f"/api/v2/assets/{project}/hooks/", body={
-            "name": f"NoClick {node_id}"[:255], "endpoint": webhook_url, "active": True,
-            "export_type": "json", "auth_level": "no_auth", "email_notification": False,
+        trigger = OnNewSubmission(project_id=config.get("project_id"), rest_service_id=config.get("rest_service_id"))
+        project, uid = trigger.project_id, trigger.rest_service_id
+        # PATCH updates an existing, dedicated service. Unlike the create schema,
+        # PatchedHook does not require server-generated readOnly response fields.
+        # Reset previous wrappers/subsets/auth so the documented raw JSON arrives.
+        await cls._hook_request(credential, "PATCH", f"/api/v2/assets/{project}/hooks/{uid}/", body={
+            "endpoint": webhook_url, "active": True, "export_type": "json",
+            "auth_level": "no_auth", "email_notification": False,
+            "subset_fields": [], "payload_template": None, "settings": {},
         })
-        uid = data.get("uid") if isinstance(data, dict) else None
-        if not isinstance(uid, str) or not uid.isascii() or not uid.isalnum():
-            raise ValueError("KoboToolbox did not return a REST service UID")
         # Keep its parent with the UID so a project edit still cleans up the old service.
         return {"external_webhook_id": f"{project}:{uid}"}
 
@@ -284,13 +285,14 @@ class KobotoolboxNode(ExternalWebhookTriggerMixin, WorkflowNode):
             return
         registered_project, uid = str(uid).split(":", 1)
         project = _Project.model_validate({"project_id": registered_project}).project_id
-        await cls._hook_request(credential, "DELETE",
-            f"/api/v2/assets/{project}/hooks/{quote(str(uid), safe='')}/")
+        await cls._hook_request(credential, "PATCH",
+            f"/api/v2/assets/{project}/hooks/{quote(str(uid), safe='')}/",
+            body={"active": False}, allow_missing=True)
 
     @classmethod
     def verify_webhook_signature(cls, body, headers, config):
         # REST services support no_auth (default) or basic_auth, not payload signatures.
-        # We register no_auth, as described in the provider's Hook API contract.
+        # We configure no_auth, as described in the provider's Hook API contract.
         return True
 
     @classmethod
