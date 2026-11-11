@@ -184,6 +184,13 @@
    "category": null,
    "description": "List Lead Phases.",
    "is_trigger": false
+  },
+  {
+   "name": "on_project_updated",
+   "display_name": "Project Updated",
+   "category": "Triggers",
+   "description": "Start when a Houzz Pro project changes, including status and budget updates.",
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,

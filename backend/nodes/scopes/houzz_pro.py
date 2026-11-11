@@ -8,6 +8,8 @@ for manually supplied tokens; no OAuth popup is advertised.
 from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 
 HOUZZ_PRO_SCOPES = ScopeRegistry(provider="houzz-pro", requirements={
+    # Webhook subscriptions need a valid token, but no named scope (provider docs).
+    'on_project_updated': ScopeRequirement(scopes=()),
     'list_projects': ScopeRequirement(scopes=('read:projects',)),
     'get_project': ScopeRequirement(scopes=('read:projects',)),
     'create_project': ScopeRequirement(scopes=('write:projects',)),

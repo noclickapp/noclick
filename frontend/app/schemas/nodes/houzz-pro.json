@@ -1173,6 +1173,135 @@
       "title": "ListProjectsConfig",
       "type": "object"
     },
+    "OnProjectUpdatedConfig": {
+      "additionalProperties": false,
+      "description": "Start when a Houzz Pro project changes, including status and budget updates.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_project_updated",
+          "default": "on_project_updated",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Project Updated",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Houzz Pro automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "OnProjectUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "ReactivateLeadConfig": {
       "additionalProperties": false,
       "description": "Reactivate lead.",
@@ -1927,6 +2056,7 @@
           "list_project_statuses": "#/$defs/ListProjectStatusesConfig",
           "list_project_tasks": "#/$defs/ListProjectTasksConfig",
           "list_projects": "#/$defs/ListProjectsConfig",
+          "on_project_updated": "#/$defs/OnProjectUpdatedConfig",
           "reactivate_lead": "#/$defs/ReactivateLeadConfig",
           "retire_lead": "#/$defs/RetireLeadConfig",
           "update_contact": "#/$defs/UpdateContactConfig",
@@ -2009,6 +2139,9 @@
         },
         {
           "$ref": "#/$defs/ListLeadPhasesConfig"
+        },
+        {
+          "$ref": "#/$defs/OnProjectUpdatedConfig"
         }
       ],
       "title": "Config"

@@ -5,12 +5,17 @@ Paste a short-lived service-account Bearer token; replace it when it expires.
 """
 from __future__ import annotations
 
+import hashlib
+import hmac
+import json
+
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.credential_fields import clean_secret
 from nodes.scopes.houzz_pro import HOUZZ_PRO_SCOPES
 from utils.ssrf import guarded_async_client
@@ -273,6 +278,17 @@ class ListLeadPhasesConfig(_Page):
     operation: Literal["list_lead_phases"] = Field("list_lead_phases", json_schema_extra={"ui:hidden": True})
 
 
+class OnProjectUpdatedConfig(WebhookTriggerConfigBase):
+    """Start when a Houzz Pro project changes, including status and budget updates."""
+    model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
+    operation: Literal["on_project_updated"] = Field("on_project_updated", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+        "x-display-name": "Project Updated",
+    })
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with Houzz Pro automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
 HouzzProConfig = Annotated[Union[
     ListProjectsConfig,
     GetProjectConfig,
@@ -297,7 +313,8 @@ HouzzProConfig = Annotated[Union[
     ListProjectNotesConfig,
     CreateProjectNoteConfig,
     ListProjectStatusesConfig,
-    ListLeadPhasesConfig
+    ListLeadPhasesConfig,
+    OnProjectUpdatedConfig
 ], Field(discriminator="operation")]
 
 
@@ -452,7 +469,7 @@ def _redact(value, token):
     return value
 
 
-class HouzzProNode(WorkflowNode):
+class HouzzProNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-houzz-pro"
     scope_registry = HOUZZ_PRO_SCOPES
     connection_evidence = ConnectionEvidence(noun="projects", operation="list_projects", label_keys=("name", "id"))
@@ -460,6 +477,95 @@ class HouzzProNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return HouzzProFullConfig
+
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, *, body=None):
+        token = HouzzProAccessToken.model_validate(credential).access_token
+        kwargs = {"json": body} if body is not None else {}
+        try:
+            async with guarded_async_client(timeout=30, trust_env=False, follow_redirects=False) as client:
+                response = await client.request(method, BASE_URL + path,
+                    headers={"Authorization": "Bearer " + token, "Accept": "application/json"}, **kwargs)
+        except httpx.RequestError:
+            raise ValueError("Houzz Pro webhook request failed") from None
+        if method == "DELETE" and response.status_code == 404:
+            return {"deleted": True}
+        expected = 201 if method == "POST" else 200
+        if response.status_code != expected:
+            raise ValueError(f"Houzz Pro webhook request returned HTTP {response.status_code}")
+        if len(response.content) > 10_000_000 or response.headers.get("Content-Type", "").split(";", 1)[0].lower() != "application/json":
+            raise ValueError("Houzz Pro returned an unexpected webhook response")
+        try:
+            result = response.json()
+        except ValueError:
+            raise ValueError("Houzz Pro returned invalid webhook JSON") from None
+        if not isinstance(result, dict) or "error" in result:
+            raise ValueError("Houzz Pro did not confirm the webhook request")
+        return result
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        # Registration and one-time secret: https://developer.houzz.com/docs/guides/webhooks
+        result = await cls._webhook_request(credential, "POST", "/v1/webhookSubscriptions", body={
+            "url": webhook_url, "description": f"NoClick {node_id}",
+            "triggers": [{"resourceName": "project", "eventType": "update"}],
+        })
+        subscription = result.get("data")
+        if not isinstance(subscription, dict):
+            raise ValueError("Houzz Pro did not return a webhook subscription")
+        sid, secret = subscription.get("id"), subscription.get("secret")
+        if type(sid) is not int or sid <= 0 or not isinstance(secret, str) or not secret:
+            raise ValueError("Houzz Pro did not return a subscription ID and signing secret")
+        return {"external_webhook_id": str(sid), "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        sid = (config or {}).get("external_webhook_id")
+        if sid is None or credential is None:
+            return
+        result = await cls._webhook_request(credential, "DELETE", "/v1/webhookSubscriptions/" + quote(str(sid), safe=""))
+        if result.get("deleted") is not True:
+            raise ValueError("Houzz Pro did not confirm webhook deletion")
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # The secret is used literally, including whsec_; it is not base64-decoded.
+        # https://developer.houzz.com/docs/guides/webhooks#verifying-delivery-signatures
+        secret = (config or {}).get("signing_secret")
+        values = {key.lower(): value for key, value in headers.items()}
+        timestamp, received = values.get("x-webhook-timestamp"), values.get("x-webhook-signature")
+        if not isinstance(secret, str) or not secret or not isinstance(timestamp, str) or not timestamp.isascii() or not timestamp.isdigit():
+            return False
+        if not isinstance(received, str) or not received.isascii():
+            return False
+        expected = "sha256=" + hmac.new(secret.encode(), timestamp.encode() + b"." + body, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(received, expected)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return (isinstance(payload, dict) and payload.get("event_type") == "project.update"
+            and payload.get("entity_type") == "project" and payload.get("entity_id") is not None)
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("event_type") != "project.update":
+            return None
+        pid, company = output.get("entity_id"), output.get("company_id")
+        if pid is None or company is None:
+            return None
+        record = output.get("data") if isinstance(output.get("data"), dict) else {}
+        actor = output.get("actor") if isinstance(output.get("actor"), dict) else {}
+        who = f"user {actor['id']}" if actor.get("type") == "user" and actor.get("id") is not None else "an automated process"
+        name = record.get("name") or f"Project {pid}"
+        lines = [f"Houzz Pro project updated: {name}", f"Changed by {who} in company {company}.",
+            f"Project ID: {pid}", f"Occurred at: {output.get('occurred_at')}",
+            f"Updated fields: {json.dumps(output.get('updated_fields') or [], ensure_ascii=False)}",
+            f"Delivery ID: {output.get('delivery_id')} (use this to identify retries)",
+            f"Current project: {json.dumps(record, ensure_ascii=False)}",
+            f"To fetch the current project, use get_project with resource_id={pid}; to change it, use update_project with resource_id={pid}."]
+        if not record:
+            lines.append("The delivery contains no project data; fetch the current project before acting.")
+        return {"text": "\n".join(lines), "conversation_key": f"{company}:project:{pid}", "title": f"Project updated: {name}"}
 
     @staticmethod
     def _check_family(config_data):
@@ -484,6 +590,8 @@ class HouzzProNode(WorkflowNode):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Houzz Pro access token")
         op = self.config.config
+        if isinstance(op, OnProjectUpdatedConfig):
+            return self.no_event_output(op.operation)
         token = self.config.credentials.access_token
         method, route, paths, query, body_fields = OPERATIONS[op.operation]
         for field, parameter in paths.items():

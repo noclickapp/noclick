@@ -1,5 +1,7 @@
 """Houzz Pro wire, connection and response regressions; no live service access."""
 import json
+import hashlib
+import hmac
 from pathlib import Path
 import httpx
 import pytest
@@ -129,3 +131,84 @@ def test_credential_manual_default_and_foreign_family():
     for token in ["https://example.com/token", "Bearer abc", "test token"]:
         with pytest.raises(ValueError):
             native.HouzzProAccessToken(access_token=token)
+
+
+PROJECT_UPDATED = json.loads((FIXTURES / "project-updated.json").read_text())["body"]
+SUBSCRIPTION = json.loads((FIXTURES / "webhook-subscription.json").read_text())["body"]
+
+
+@pytest.mark.asyncio
+async def test_project_updated_registration_and_cleanup(monkeypatch):
+    requests = transport(monkeypatch, SUBSCRIPTION, 201)
+    state = await native.HouzzProNode._register_external_webhook(
+        webhook_url="https://example.com/hooks/houzz", credential=CREDENTIAL,
+        config={"operation": "on_project_updated"}, node_id="project-updates")
+    assert state == {"external_webhook_id": "42", "signing_secret": SUBSCRIPTION["data"]["secret"]}
+    assert requests[0].method == "POST" and requests[0].url.path == "/api/v1/webhookSubscriptions"
+    assert requests[0].headers["Authorization"] == "Bearer " + TOKEN
+    assert json.loads(requests[0].content) == {
+        "url": "https://example.com/hooks/houzz", "description": "NoClick project-updates",
+        "triggers": [{"resourceName": "project", "eventType": "update"}]}
+    requests = transport(monkeypatch, {"deleted": True})
+    await native.HouzzProNode._unregister_external_webhook(credential=CREDENTIAL, config=state, node_id="project-updates")
+    assert requests[0].method == "DELETE" and requests[0].url.path == "/api/v1/webhookSubscriptions/42"
+    transport(monkeypatch, {"error": {"code": "NOT_FOUND"}}, 404)
+    await native.HouzzProNode._unregister_external_webhook(credential=CREDENTIAL, config=state, node_id="project-updates")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("response", [{"data": {"id": 42}}, {"data": {"secret": "whsec_example"}}, {"data": []}])
+async def test_registration_requires_subscription_and_one_time_secret(monkeypatch, response):
+    transport(monkeypatch, response, 201)
+    with pytest.raises(ValueError, match="Houzz Pro"):
+        await native.HouzzProNode._register_external_webhook(
+            webhook_url="https://example.com/hooks/houzz", credential=CREDENTIAL,
+            config={"operation": "on_project_updated"}, node_id="project-updates")
+
+
+def test_signature_uses_exact_raw_body_timestamp_and_literal_secret():
+    body = json.dumps(PROJECT_UPDATED, indent=2).encode()
+    secret = SUBSCRIPTION["data"]["secret"]
+    timestamp = "1787769483"
+    signature = "sha256=" + hmac.new(secret.encode(), timestamp.encode() + b"." + body, hashlib.sha256).hexdigest()
+    headers = {"X-Webhook-Timestamp": timestamp, "X-Webhook-Signature": signature}
+    verify = native.HouzzProNode.verify_webhook_signature
+    assert verify(body, headers, {"signing_secret": secret})
+    assert verify(body, {k.lower(): v for k, v in headers.items()}, {"signing_secret": secret})
+    assert not verify(body + b" ", headers, {"signing_secret": secret})
+    assert not verify(body, {**headers, "X-Webhook-Timestamp": "1787769484"}, {"signing_secret": secret})
+    assert not verify(body, headers, {"signing_secret": "wrong-secret"})
+    assert not verify(body, {}, {"signing_secret": secret})
+    assert not verify(body, headers, {})
+    assert not verify(body, {**headers, "X-Webhook-Signature": "sha256=é"}, {"signing_secret": secret})
+
+
+def test_documented_project_delivery_and_agent_context():
+    cls = native.HouzzProNode
+    config = {"operation": "on_project_updated"}
+    assert cls.filter_trigger_payload(PROJECT_UPDATED, config)
+    assert cls.resolve_trigger_payload(PROJECT_UPDATED, config) == PROJECT_UPDATED
+    event = cls.resolve_agent_event(PROJECT_UPDATED)
+    for text in ("Maple Street Remodel", "555", "12345", "6789", "status", "budget", PROJECT_UPDATED["delivery_id"], "get_project", "update_project"):
+        assert text in event["text"]
+    assert event["conversation_key"] == "12345:project:6789"
+    # The provider explicitly documents empty data and a system actor too.
+    empty = {**PROJECT_UPDATED, "data": {}, "actor": {"type": "system"}}
+    event = cls.resolve_agent_event(empty)
+    assert "automated process" in event["text"] and "fetch the current project" in event["text"]
+    assert event["conversation_key"] == "12345:project:6789"
+    assert not cls.filter_trigger_payload({**PROJECT_UPDATED, "event_type": "project.create"}, config)
+    assert not cls.filter_trigger_payload({**PROJECT_UPDATED, "entity_type": "lead"}, config)
+    assert not cls.filter_trigger_payload({}, config)
+
+
+@pytest.mark.asyncio
+async def test_trigger_manual_run_waits_for_delivery(monkeypatch):
+    requests = transport(monkeypatch, PROJECTS)
+    trigger = node({"operation": "on_project_updated"})
+    output = await trigger.execute({})
+    assert output["status"] == "no_event" and trigger.runs_as_trigger()
+    assert requests == []
+    assert native.OnProjectUpdatedConfig.model_json_schema()["properties"]["operation"]["x-is-trigger"] is True
+    config = native.OnProjectUpdatedConfig(external_webhook_id="42", signing_secret="secret")
+    assert config.model_dump()["signing_secret"] == "secret"
