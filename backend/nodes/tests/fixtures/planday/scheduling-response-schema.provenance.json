@@ -1,0 +1,5 @@
+{
+  "source": "https://openapi.planday.com/scheduling/swagger/v1.0/swagger.json",
+  "pointer": "/components/schemas/GetShiftOutputModel",
+  "edits": []
+}

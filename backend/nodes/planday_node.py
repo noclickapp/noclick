@@ -3,6 +3,7 @@
 No setup, OAuth callbacks, token exchange, special HR fields or write routes.
 """
 from __future__ import annotations
+import hashlib
 import json
 import logging
 import re
@@ -16,6 +17,7 @@ from opentelemetry.instrumentation.utils import suppress_http_instrumentation
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StrictBool, StrictInt, StrictStr, model_serializer, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from utils.credentials import resolve_credential_with_owner_fallback
 from utils.ssrf import guarded_async_client
 
@@ -52,8 +54,8 @@ def instant(value):
 ID = Annotated[StrictInt, Field(ge=1, le=9007199254740991)]
 Offset = Annotated[StrictInt, Field(ge=0, le=2147483647)]
 Limit = Annotated[StrictInt, Field(ge=1, le=50)]
-Date = Annotated[StrictStr, BeforeValidator(calendar_date), Field(min_length=10, max_length=10)]
-Instant = Annotated[StrictStr, BeforeValidator(instant), Field(max_length=64)]
+Date = Annotated[StrictStr, BeforeValidator(calendar_date), Field(min_length=10, max_length=10, json_schema_extra={"format": "date"})]
+Instant = Annotated[StrictStr, BeforeValidator(instant), Field(max_length=64, json_schema_extra={"format": "date-time"})]
 Text = Annotated[StrictStr, Field(max_length=65536)]
 
 
@@ -158,8 +160,33 @@ class GetShift(Config):
     shift_id: ID = Field(..., title="Shift ID", description="Exact ID from List Department Shift Metadata; custom entry only.")
 
 
-OPERATIONS = (GetPortalInfo, ListDepartments, GetDepartment, ListEmployeeGroups, GetEmployeeGroup, ListEmployees, GetEmployee, ListDepartmentEmployees, ListShifts, GetShift)
-PlandayConfig = Annotated[Union[GetPortalInfo, ListDepartments, GetDepartment, ListEmployeeGroups, GetEmployeeGroup, ListEmployees, GetEmployee, ListDepartmentEmployees, ListShifts, GetShift], Field(discriminator="operation")]
+class OnNewOrUpdatedEmployee(PollTriggerConfigBase):
+    model_config = ConfigDict(extra="forbid", json_schema_extra={"x-requires-webhook": True})
+    operation: Literal["on_new_or_updated_employee"] = Field(
+        "on_new_or_updated_employee", title="On New or Updated Employee",
+        description="Monitor active employee metadata; employee:read. Existing records form a baseline. Deactivations are excluded. Maximum 1,000 records per poll; narrow Modified After for larger portals.",
+        json_schema_extra={"const": "on_new_or_updated_employee", "ui:hidden": True,
+                           "x-category": "Triggers", "x-is-trigger": True,
+                           "x-display-name": "On New or Updated Employee"})
+    modified_from: Optional[Instant] = Field(None, title="Modified After",
+        description="Optional fixed lower bound for modifiedFrom. All matching pages are checked each poll.")
+
+
+class OnNewOrUpdatedShift(PollTriggerConfigBase):
+    model_config = ConfigDict(extra="forbid", json_schema_extra={"x-requires-webhook": True})
+    operation: Literal["on_new_or_updated_shift"] = Field(
+        "on_new_or_updated_shift", title="On New or Updated Shift",
+        description="Monitor shift metadata; shift:read. Existing records form a baseline. Deleted shifts are excluded. Maximum 1,000 records per poll; narrow Department or Modified After for larger schedules.",
+        json_schema_extra={"const": "on_new_or_updated_shift", "ui:hidden": True,
+                           "x-category": "Triggers", "x-is-trigger": True,
+                           "x-display-name": "On New or Updated Shift"})
+    department_id: Optional[ID] = Field(None, title="Department ID", json_schema_extra={"x-dynamic-options": True})
+    modified_from: Optional[Instant] = Field(None, title="Modified After",
+        description="Optional fixed lower bound for modifiedFrom. All matching pages are checked each poll.")
+
+
+OPERATIONS = (GetPortalInfo, ListDepartments, GetDepartment, ListEmployeeGroups, GetEmployeeGroup, ListEmployees, GetEmployee, ListDepartmentEmployees, ListShifts, GetShift, OnNewOrUpdatedEmployee, OnNewOrUpdatedShift)
+PlandayConfig = Annotated[Union[GetPortalInfo, ListDepartments, GetDepartment, ListEmployeeGroups, GetEmployeeGroup, ListEmployees, GetEmployee, ListDepartmentEmployees, ListShifts, GetShift, OnNewOrUpdatedEmployee, OnNewOrUpdatedShift], Field(discriminator="operation")]
 
 
 class PlandayNodeConfig(NodeConfig[PlandayConfig, PlandayAccessTokenCredential]):
@@ -351,6 +378,27 @@ class Shift(Response):
     timeZone: Text
 
 
+class PollEmployee(Response):
+    id: ID
+    departments: list[ID]
+    employeeGroups: list[ID]
+    primaryDepartmentId: Optional[ID] = None
+    employeeTypeId: Optional[ID] = None
+    dateTimeCreated: Optional[Text] = None
+    dateTimeModified: Optional[Text] = None
+
+
+class PollShift(Shift):
+    dateTimeCreated: Optional[Text] = None
+    dateTimeModified: Optional[Text] = None
+
+
+def poll_version(item):
+    # Nullable timestamps still permit detection of changed projected metadata.
+    content = json.dumps(item, sort_keys=True, separators=(",", ":"))
+    return f"{item['id']}:{hashlib.sha256(content.encode()).hexdigest()}"
+
+
 class Paging(Response):
     offset: Offset
     limit: Limit
@@ -438,7 +486,7 @@ async def operate(auth, cfg):
     raise ValueError("Unsupported Planday operation")
 
 
-class PlandayNode(WorkflowNode):
+class PlandayNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-planday"
     connection_evidence = ConnectionEvidence(identity_operation="get_portal_info", noun="Planday portal", identity_keys=("companyName", "name", "id"), proves="account")
 
@@ -478,11 +526,73 @@ class PlandayNode(WorkflowNode):
                 await validation_context.revalidate()
             return None, UNVERIFIED
 
+    async def _poll_changes(self, auth, cfg):
+        # Official HR / scheduling v1.0 contracts document modifiedFrom and
+        # offset/limit. Finish the bounded scan before persisting seen ids.
+        employee = isinstance(cfg, OnNewOrUpdatedEmployee)
+        route = "hr/v1.0/employees" if employee else "scheduling/v1.0/shifts"
+        model = PollEmployee if employee else PollShift
+        parameters = {"limit": 50}
+        if cfg.modified_from is not None:
+            parameters["modifiedFrom"] = datetime.fromisoformat(
+                cfg.modified_from.replace("Z", "+00:00")).astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+        if not employee and cfg.department_id is not None:
+            parameters["departmentId"] = cfg.department_id
+        if auth.credential.expected_portal_id is not None:
+            await portal(auth)
+        records, ids, offset = [], set(), 0
+        for _ in range(20):
+            result = page(model, await request(auth, route, {**parameters, "offset": offset}),
+                          Page(offset=offset, limit=50))
+            for item in result["data"]:
+                if item["id"] in ids:
+                    raise OutcomeUnverified("Planday returned duplicate IDs across poll pages")
+                if not employee and cfg.department_id is not None and item["departmentId"] != cfg.department_id:
+                    raise OutcomeUnverified("Planday returned a different department parent")
+                ids.add(item["id"])
+                records.append(item)
+            continuation = result["continuation"]
+            if continuation["more_results"] is True and not result["data"]:
+                raise OutcomeUnverified("Planday returned an incomplete poll page")
+            if continuation["next_offset_candidate"] is None:
+                break
+            offset = continuation["next_offset_candidate"]
+        else:
+            raise OutcomeUnverified("Planday poll exceeds 1,000 records; narrow Modified After or Department")
+        await auth.require_current()
+        fresh = await self._filter_unseen(records, poll_version)
+        return {"status": "success", "operation": cfg.operation,
+                "employees" if employee else "shifts": fresh, "event_count": len(fresh)}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("operation") not in {
+                "on_new_or_updated_employee", "on_new_or_updated_shift"}:
+            return super().resolve_agent_event(output)
+        employee = output["operation"] == "on_new_or_updated_employee"
+        records = output.get("employees" if employee else "shifts", [])
+        if not records:
+            return None
+        noun = "employee" if employee else "shift"
+        lines = [f"Planday: {len(records)} new or updated {noun} record(s)."]
+        for item in records[:10]:
+            if employee:
+                lines.append(f"Employee {item['id']}; departments {item['departments']}; employee groups {item['employeeGroups']}.")
+            else:
+                lines.append(f"Shift {item['id']}; department {item.get('departmentId')}; employee {item.get('employeeId')}; {item.get('date')}; {item['status']}; {item.get('startDateTime')} to {item.get('endDateTime')} ({item['timeZone']}).")
+            lines.append(f"Created {item.get('dateTimeCreated')}; last modified {item.get('dateTimeModified')}.")
+        if len(records) > 10:
+            lines.append(f"{len(records) - 10} more records are in the trigger output.")
+        lines.append("Use get_employee with employee_id, or get_shift with shift_id and department_id, to read the current record.")
+        return {"text": "\n".join(lines)[:12000], "conversation_key": None}
+
     async def execute(self, inputs):
         raw_guard(self.node_data)
         if not isinstance(self.config, PlandayNodeConfig) or self.config.credentials is None:
             raise ValueError("Planday client ID and supplied access token are required")
         auth = await Authority.create(self.config.credentials.model_dump(), pool=self.node_data.get("_approval_pool"), user_id=self.user_id, credential_id=self.node_data.get("credential_id"), organization_id=self.organization_id, workflow_id=self.workflow_id)
+        if isinstance(self.config.config, (OnNewOrUpdatedEmployee, OnNewOrUpdatedShift)):
+            return await self._poll_changes(auth, self.config.config)
         data = await operate(auth, self.config.config)
         await auth.require_current()
         return {"status": "success", "operation": self.config.config.operation, "data": data}

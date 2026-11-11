@@ -1,8 +1,11 @@
-"""Native Planday factory/connect/dispatcher/current-row/picker fixtures.
+"""Exercise Planday reads, credential authority and scheduled change triggers.
 
-Synthetic records and explicit MockTransport; mocks do not prove DB ACL SQL.
+The employee example and response schemas are copied from official contracts.
+Synthetic MockTransport cases test edge conditions, without claiming live evidence.
 """
 import logging
+import json
+from pathlib import Path
 from contextlib import asynccontextmanager
 from copy import deepcopy
 from datetime import datetime, timezone
@@ -21,6 +24,95 @@ PORTAL = {"id": 7, "name": "Synthetic Portal", "companyName": "Synthetic Company
 EMPLOYEE = {"id": 91, "departments": [4], "employeeGroups": [6], "employeeTypeId": 8, "firstName": "omit-name", "email": "omit-email", "bankAccount": {"accountNumber": "omit-bank"}, "birthDate": "omit-birth", "ssn": "omit-ssn", "custom_1": {"url": "omit-capability"}, "salaryIdentifier": "omit-pay", "securityGroups": [123]}
 DEPARTMENT = {"id": 4, "name": "Operations", "number": "D-4"}
 SHIFT = {"id": 31, "departmentId": 4, "employeeId": 91, "date": "2026-10-01", "status": "Assigned", "timeZone": "Europe/Copenhagen", "startDateTime": "2026-10-01T09:00:00Z", "endDateTime": "2026-10-01T17:00:00Z", "comment": "omit-private", "punchClockShiftId": 44, "cost": "omit-cost"}
+
+
+def poll_state(monkeypatch, instance):
+    state = {}
+    async def update(mutator, *, skip_result=None):
+        new_state, result = mutator(deepcopy(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+    monkeypatch.setattr(instance, "_update_node_state", update)
+    return state
+
+
+@pytest.mark.parametrize("model,contract", [(native.PollEmployee, "hr"), (native.PollShift, "scheduling")])
+def test_poll_projection_only_reads_provider_contract_fields(model, contract):
+    schema = json.loads((Path(__file__).parent / f"fixtures/planday/{contract}-response-schema.json").read_text())
+    assert set(model.model_fields) <= set(schema["properties"])
+
+
+@pytest.mark.asyncio
+async def test_employee_trigger_documented_example_baseline_updates_and_agent(transport, monkeypatch):
+    documented = json.loads((Path(__file__).parent / "fixtures/planday/employees.json").read_text())
+    instance = node("on_new_or_updated_employee", modified_from="2016-01-01T00:00:00Z")
+    state = poll_state(monkeypatch, instance)
+    transport[1].append(deepcopy(documented))
+    baseline = await instance.execute({})
+    assert baseline["event_count"] == 0 and instance.trigger_produced_no_event(baseline)
+    assert native.PlandayNode.resolve_agent_event(baseline) is None
+    changed = deepcopy(documented)
+    changed["data"][0]["dateTimeModified"] = "2016-07-12T13:22:00Z"
+    transport[1].extend([changed, changed])
+    fired = await instance.execute({})
+    assert fired["event_count"] == 1 and instance.trigger_emitted_event(fired)
+    assert (await instance.execute({}))["event_count"] == 0
+    text = native.PlandayNode.resolve_agent_event(fired)["text"]
+    assert "614517" in text and "6324" in text and "2016-07-12" in text
+    assert "Mindy" not in repr(fired) and "98765432" not in repr(fired)
+    assert dict(transport[0][0].url.params) == {"limit": "50", "modifiedFrom": "2016-01-01T00:00:00Z", "offset": "0"}
+    assert state["seen_ids"]
+    # Changing a declared polling filter starts a new baseline.
+    instance.config.config.modified_from = "2016-01-02T00:00:00Z"
+    transport[1].append(changed)
+    assert (await instance.execute({}))["event_count"] == 0
+
+
+@pytest.mark.asyncio
+async def test_shift_trigger_versions_nullable_timestamps_and_scope(transport, monkeypatch):
+    instance = node("on_new_or_updated_shift", department_id=4)
+    poll_state(monkeypatch, instance)
+    transport[1].append(paged([SHIFT]))
+    assert (await instance.execute({}))["event_count"] == 0
+    changed = {**SHIFT, "status": "Approved", "dateTimeCreated": None, "dateTimeModified": None}
+    transport[1].append(paged([changed]))
+    fired = await instance.execute({})
+    assert fired["event_count"] == 1
+    text = native.PlandayNode.resolve_agent_event(fired)["text"]
+    assert "Shift 31" in text and "department 4" in text and "employee 91" in text and "Approved" in text
+    assert "omit-private" not in repr(fired)
+    transport[1].append(paged([{**changed, "departmentId": 5}]))
+    with pytest.raises(native.OutcomeUnverified, match="department parent"):
+        await instance.execute({})
+    assert dict(transport[0][0].url.params) == {"limit": "50", "departmentId": "4", "offset": "0"}
+
+
+@pytest.mark.asyncio
+async def test_poll_complete_pages_before_state(transport, monkeypatch):
+    instance = node("on_new_or_updated_employee")
+    state = poll_state(monkeypatch, instance)
+    transport[1].extend([paged([EMPLOYEE], total=2), paged([{**EMPLOYEE, "id": 92}], offset=1, total=2)])
+    # Provider offsets advance by returned rows, rather than assuming full pages.
+    assert (await instance.execute({}))["event_count"] == 0
+    assert len(state["seen_ids"]) == 2
+    assert transport[0][1].url.params["offset"] == "1"
+
+
+@pytest.mark.asyncio
+async def test_poll_cap_and_duplicate_pages_never_save_partial_baseline(transport, monkeypatch):
+    instance = node("on_new_or_updated_employee")
+    state = poll_state(monkeypatch, instance)
+    for offset in range(0, 1000, 50):
+        transport[1].append(paged([{**EMPLOYEE, "id": offset + i + 1} for i in range(50)], offset=offset, total=1001))
+    with pytest.raises(native.OutcomeUnverified, match="1,000"):
+        await instance.execute({})
+    assert not state
+    transport[1].extend([paged([EMPLOYEE], total=2), paged([EMPLOYEE], offset=1, total=2)])
+    with pytest.raises(native.OutcomeUnverified, match="duplicate IDs"):
+        await instance.execute({})
+    assert not state
 
 
 def paged(rows, offset=0, limit=50, total=None):

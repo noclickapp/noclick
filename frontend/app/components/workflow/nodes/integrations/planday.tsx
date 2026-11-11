@@ -13,7 +13,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const PlandayNode: NodeDefinition = {
   type: 'automation-planday', category: 'hr-recruiting', label: 'Planday',
-  description: 'Read protected portal, departments, employee groups, employee and shift metadata',
+  description: 'Read workforce metadata and trigger workflows on new or updated employees and shifts',
   keywords: ['Planday', 'workforce', 'HR', 'departments', 'scheduling', 'shifts'],
   Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: memo(Component),
 };

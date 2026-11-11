@@ -1,0 +1,121 @@
+{
+  "required": [
+    "comment",
+    "date",
+    "dateTimeCreated",
+    "dateTimeModified",
+    "departmentId",
+    "employeeGroupId",
+    "employeeId",
+    "endDateTime",
+    "id",
+    "positionId",
+    "punchClockShiftId",
+    "shiftTypeId",
+    "skillIds",
+    "startDateTime",
+    "status",
+    "timeZone"
+  ],
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Identifier of the shift",
+      "format": "int64"
+    },
+    "departmentId": {
+      "type": "integer",
+      "description": "Department identifier associated with the shift",
+      "format": "int64",
+      "nullable": true
+    },
+    "employeeId": {
+      "type": "integer",
+      "description": "Employee identifier associated with a shift",
+      "format": "int64",
+      "nullable": true
+    },
+    "employeeGroupId": {
+      "type": "integer",
+      "description": "Employee group identifier associated with a shift",
+      "format": "int64",
+      "nullable": true
+    },
+    "positionId": {
+      "type": "integer",
+      "description": "Position identifier associated with a shift",
+      "format": "int64",
+      "nullable": true
+    },
+    "shiftTypeId": {
+      "type": "integer",
+      "description": "Shift type associated with the shift",
+      "format": "int64",
+      "nullable": true
+    },
+    "date": {
+      "type": "string",
+      "description": "Date of the shift",
+      "format": "date",
+      "nullable": true
+    },
+    "comment": {
+      "type": "string",
+      "description": "Optional comment on the shift",
+      "nullable": true
+    },
+    "timeZone": {
+      "type": "string",
+      "description": "Time zone of the shift"
+    },
+    "punchClockShiftId": {
+      "type": "integer",
+      "description": "Punch clock shift identifier linked to the shift",
+      "format": "int64",
+      "nullable": true
+    },
+    "startDateTime": {
+      "type": "string",
+      "description": "Start date and time of the shift",
+      "format": "date-time",
+      "nullable": true
+    },
+    "endDateTime": {
+      "type": "string",
+      "description": "End date and time of the shift",
+      "format": "date-time",
+      "nullable": true
+    },
+    "status": {
+      "allOf": [
+        {
+          "$ref": "#/components/schemas/ShiftStatusExtended"
+        }
+      ],
+      "description": "Current status of the shift (e.g. Open, Assigned, Approved, etc.)"
+    },
+    "dateTimeCreated": {
+      "type": "string",
+      "description": "Creation date and time of the shift",
+      "format": "date-time",
+      "nullable": true
+    },
+    "dateTimeModified": {
+      "type": "string",
+      "description": "Date and time of the last shift\u2019s modification",
+      "format": "date-time",
+      "nullable": true
+    },
+    "skillIds": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "int64"
+      },
+      "description": "Skill Ids assotiated with shift"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Get Shifts response model"
+}

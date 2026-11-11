@@ -1,0 +1,5 @@
+{
+  "source": "https://openapi.planday.com/hr/swagger/v1.0/swagger.json",
+  "pointer": "/components/schemas/EmployeeOutput",
+  "edits": []
+}
