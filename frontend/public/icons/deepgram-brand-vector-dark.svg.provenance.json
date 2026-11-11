@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/deepgram-brand-vector-dark.svg",
+  "source": "https://deepgram.com/ (official brand artwork carried from noclickapp/noclick4#2509)",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #000000 -> #FFFFFF"
+  ],
+  "variant": "dark mode",
+  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+  "sha256": "1591e958ca1561cdb54fc0ea68cee8c3e885b35b51c08807391693de610e2231"
+}
