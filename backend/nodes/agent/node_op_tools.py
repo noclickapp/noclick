@@ -616,7 +616,7 @@ def build_node_mcp_tools(
     slug: Optional[str] = None,
     provider_label: Optional[str] = None,
     credential_label: Optional[str] = None,
-) -> Tuple[List[ChatCompletionToolParam], Dict[str, Dict[str, Any]]]:
+) -> Tuple[List["ChatCompletionToolParam"], Dict[str, Dict[str, Any]]]:
     """Agent tools for a provider connected through its vendor's MCP server: one
     per tool the server listed, named and tagged as ``build_node_op_tools`` names
     operations, run by ``run_node_mcp_tool`` (``tool_type='node_mcp'``)."""
@@ -626,7 +626,7 @@ def build_node_mcp_tools(
         parts = ([f"the '{provider_label}' node"] if provider_label else []) + (
             [f"the '{credential_label}' credential"] if credential_label else [])
         tag = f" Acts via {' using '.join(parts)}."
-    tool_params: List[ChatCompletionToolParam] = []
+    tool_params: List["ChatCompletionToolParam"] = []
     tool_configs: Dict[str, Dict[str, Any]] = {}
     for tool in mcp_tools:
         name = _mcp_tool_name(slug, tool["name"])
@@ -638,10 +638,10 @@ def build_node_mcp_tools(
         description = (tool.get("description") or tool["name"]).strip()
         if tag:
             description = f"{description.rstrip('. ')}.{tag}"
-        tool_params.append(ChatCompletionToolParam(
-            type="function",
-            function=ChatCompletionToolParamFunctionChunk(name=name, description=description, parameters=parameters),
-        ))
+        tool_params.append({
+            "type": "function",
+            "function": {"name": name, "description": description, "parameters": parameters},
+        })
         tool_configs[name] = {
             "node_id": node_id,
             "tool_type": "node_mcp",
