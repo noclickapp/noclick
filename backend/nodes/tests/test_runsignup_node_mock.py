@@ -165,6 +165,15 @@ def test_manual_credential_default_and_family():
             rsu.RunSignupAPIKeyCredential.model_validate({**AUTH, **change})
 
 
+@pytest.mark.parametrize("api_key", ["fixture—key", "fixture\u200bkey", "fixturé-key"])
+def test_native_credential_refuses_non_ascii_issued_keys(api_key):
+    with pytest.raises(ValueError, match="which no key has"):
+        rsu.RunSignupNodeConfig.model_validate({
+            "config": {"operation": "get_api_key_entity"},
+            "credentials": {**AUTH, "api_key": api_key},
+        })
+
+
 @pytest.mark.asyncio
 async def test_published_request_and_response_examples(transport):
     _, queue = transport

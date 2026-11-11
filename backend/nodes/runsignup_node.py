@@ -32,7 +32,7 @@ class RunSignupAPIKeyCredential(BaseModel):
     @field_validator("api_key", "api_secret", mode="before")
     @classmethod
     def secret(cls, value, info):
-        value = clean_secret(value, field_name=info.field_name)
+        value = clean_secret(value, field_name=info.field_name, key=info.field_name == "api_key")
         if any(c.isspace() for c in value):
             raise ValueError("Paste a single API credential without whitespace")
         return value
