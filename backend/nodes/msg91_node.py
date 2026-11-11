@@ -1,10 +1,13 @@
 """MSG91 messaging and reporting against the provider's published v5 contract.
 
 Each operation makes one request. Message acknowledgements mean queued, never
-verified delivery. Lists return one provider page; no implicit pagination/retry.
+verified delivery. Actions return one provider page; no implicit pagination/retry. Email and Hello
+polls baseline before firing and detect the latest state, not intermediate changes.
 """
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
+import json
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
 
@@ -12,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -230,7 +234,33 @@ class SearchContacts(Input):
     sortOrder: Literal["asc", "desc"] | None = None
 
 
-Msg91Config = Annotated[Union[SendSMS, CreateSMSTemplate, ListSMSTemplates, GetSMSTemplateVersions, SendOTP, VerifyOTP, ResendOTP, SendEmail, ListEmailTemplates, GetEmailTemplate, CreateEmailTemplate, GetSmsLogs, GetSmsAnalytics, GetOtpLogs, GetOtpAnalytics, GetEmailLogs, GetEmailAnalytics, SearchContacts], Field(discriminator="operation")]
+class OnEmailDeliveryUpdate(PollTriggerConfigBase):
+    """Watch new email logs and delivery changes in a rolling three-calendar-day window.
+
+    The first poll records a baseline. Intermediate states between polls are not replayed.
+    """
+    operation: Literal["on_email_delivery_update"] = Field("on_email_delivery_update", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+        "x-display-name": "On Email Delivery Update",
+    })
+    limit: int = Field(1000, ge=1, le=10000, title="Maximum Emails",
+        description="Maximum email logs per poll (up to 10,000). Increase this if your three-day window exceeds the limit; an incomplete response stops the poll.")
+
+
+class OnNewOrUpdatedTicket(PollTriggerConfigBase):
+    """Watch the latest 100 Hello tickets in an inbox for new tickets or latest-message changes.
+
+    The first poll records a baseline; changes outside this recent window are not replayed.
+    """
+    operation: Literal["on_new_or_updated_ticket"] = Field("on_new_or_updated_ticket", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+        "x-display-name": "On New or Updated Hello Ticket",
+    })
+    inbox_id: str = Field(..., min_length=1, title="Inbox ID")
+    ticket_state: Literal["Open", "close", "snooze", "spam"] = Field("Open", title="Ticket State")
+
+
+Msg91Config = Annotated[Union[SendSMS, CreateSMSTemplate, ListSMSTemplates, GetSMSTemplateVersions, SendOTP, VerifyOTP, ResendOTP, SendEmail, ListEmailTemplates, GetEmailTemplate, CreateEmailTemplate, GetSmsLogs, GetSmsAnalytics, GetOtpLogs, GetOtpAnalytics, GetEmailLogs, GetEmailAnalytics, SearchContacts, OnEmailDeliveryUpdate, OnNewOrUpdatedTicket], Field(discriminator="operation")]
 
 
 class Msg91NodeConfig(NodeConfig[Msg91Config, Msg91APIKeyCredential]):
@@ -280,7 +310,7 @@ def _failed(data):
     )
 
 
-class Msg91Node(WorkflowNode):
+class Msg91Node(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-msg91"
     connection_evidence = ConnectionEvidence(noun="SMS templates", operation="list_sms_templates", label_keys=("flow_name", "flow_id"))
 
@@ -288,11 +318,91 @@ class Msg91Node(WorkflowNode):
     def get_config_model(cls):
         return Msg91NodeConfig
 
+    @classmethod
+    def resolve_agent_event(cls, output):
+        emails = output.get("emails") if isinstance(output, dict) else None
+        tickets = output.get("tickets") if isinstance(output, dict) else None
+        if isinstance(emails, list):
+            if not emails:
+                return None
+            lines = [f"- {str(row.get('status') or 'Status updated')[:100]}: "
+                     f"{str(row.get('senderEmail') or '')[:200]} to {str(row.get('recipientEmail') or '')[:200]}; "
+                     f"subject: {str(row.get('subject') or '')[:300]}; "
+                     f"request ID: {row.get('requestId')}; updated: {row.get('statusUpdatedAt')}; "
+                     f"reason: {str(row.get('failureReason') or row.get('description') or '')[:300]}"
+                     for row in emails[:10]]
+            return {"text": f"MSG91: {len(emails)} email delivery update(s).\n" + "\n".join(lines),
+                    "title": "MSG91 email delivery updates", "conversation_key": None}
+        if isinstance(tickets, list):
+            if not tickets:
+                return None
+            lines = []
+            for row in tickets[:10]:
+                message = (row.get("last_message") or {}).get("message") or {}
+                text = (message.get("content") or {}).get("text") or ""
+                lines.append(f"- {str(row.get('customer_name') or '')[:200]} "
+                             f"({str(row.get('customer_mail') or row.get('customer_number') or '')[:200]}): "
+                             f"{str(row.get('subject') or '')[:300]}; {str(text)[:800]} "
+                             f"[ticket ID {row.get('ticket_id')}, chat ID {row.get('id')}, inbox ID {row.get('inbox_id')}; "
+                             f"message ID {message.get('_id')}; by {row.get('last_message_by')}]")
+            return {"text": f"MSG91 Hello: {len(tickets)} new or updated ticket(s).\n" + "\n".join(lines),
+                    "title": "MSG91 Hello ticket updates", "conversation_key": None}
+        return super().resolve_agent_event(output)
+
+    async def _poll(self, op, key):
+        # Official contracts: https://docs.msg91.com/email/email-logs.md and
+        # https://docs.msg91.com/hello/mail-ticket-list.openapi.yml
+        if isinstance(op, OnEmailDeliveryUpdate):
+            today = datetime.now(timezone.utc).date()
+            path = "/api/v5/report/logs/mail"
+            params = {"startDate": (today - timedelta(days=2)).isoformat(),
+                      "endDate": today.isoformat(), "limit": op.limit}
+            collection = "data"
+        else:
+            path = "/api/v5/hello/v2/mail-channel/"
+            params = {"inbox_id": op.inbox_id, "type": op.ticket_state,
+                      "start_from": 0, "page_size": 100}
+            collection = "chat_channels"
+        try:
+            async with guarded_async_client(timeout=30.0, follow_redirects=False, trust_env=False) as client:
+                response = await client.get("https://control.msg91.com" + path,
+                    params=params, headers={"authkey": key, "accept": "application/json"})
+            if response.status_code >= 300:
+                raise ValueError("MSG91 polling request was rejected; check the API key and product permissions")
+            data = response.json()
+        except (httpx.RequestError, ValueError):
+            raise ValueError("MSG91 polling request did not return a readable successful response") from None
+        rows = data.get(collection) if isinstance(data, dict) else None
+        if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+            raise ValueError("MSG91 polling response has an unexpected list shape")
+        if isinstance(op, OnEmailDeliveryUpdate):
+            total = (data.get("metadata") or {}).get("total")
+            if len(rows) > 10000 or (isinstance(total, (int, float)) and total > len(rows)):
+                raise ValueError("MSG91 email logs are incomplete; increase Maximum Emails before polling again")
+            def identity(row):
+                if not row.get("requestId") or not row.get("recipientEmail") or not row.get("statusUpdatedAt"):
+                    raise ValueError("MSG91 email log is missing its request, recipient or update time")
+                return json.dumps([row["requestId"], row["recipientEmail"], row["statusUpdatedAt"], row.get("status")])
+            fresh = await self._filter_unseen(rows, identity)
+            result = {"emails": _redact(fresh, key), "new_email_count": len(fresh)}
+        else:
+            def identity(row):
+                last = row.get("last_message") or {}
+                if row.get("id") is None or last.get("timetoken") is None:
+                    raise ValueError("MSG91 Hello ticket is missing its chat ID or latest-message time")
+                return json.dumps([row["id"], last["timetoken"]])
+            fresh = await self._filter_unseen(rows, identity)
+            result = {"tickets": _redact(fresh, key), "new_ticket_count": len(fresh)}
+        await self.emit(result)
+        return result
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a MSG91 API key")
         op = self.config.config
         key = self.config.credentials.authkey
+        if isinstance(op, (OnEmailDeliveryUpdate, OnNewOrUpdatedTicket)):
+            return await self._poll(op, key)
         method, path, query_names = OPERATIONS[op.operation]
         values = op.model_dump(by_alias=True, exclude_none=True, exclude={"operation"})
         for field in ("template_version_id", "phonebook_id"):
