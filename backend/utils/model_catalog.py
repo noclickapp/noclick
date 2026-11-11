@@ -136,6 +136,26 @@ def _openrouter_is_free(pricing: Any) -> bool:
         return False
 
 
+def _openrouter_name(api_model: Dict[str, Any]) -> Optional[str]:
+    """What an OpenRouter model is called. An alias ("~openai/gpt-luna-latest") is named for the model it serves
+    today ("OpenAI: GPT-6 Luna (latest)"), so a picker shows its number."""
+    target = (api_model.get("alias_target") or {}).get("name")
+    return f"{target} (latest)" if target else api_model.get("name")
+
+
+async def openrouter_alias_names() -> Dict[str, str]:
+    """Each OpenRouter alias (``openrouter/~anthropic/claude-sonnet-latest``) by its name (``_openrouter_name``), from
+    the cached catalog: for a list that names OpenRouter's models from another source (models.dev, OpenRouter's own
+    names), which call an alias by its family alone ("Claude Sonnet Latest")."""
+    try:
+        raw = await get_openrouter_models() or []
+    except Exception as e:
+        logger.warning(f"[model_catalog] OpenRouter fetch failed: {e}")
+        return {}
+    return {f"openrouter/{m['id']}": _openrouter_name(m) for m in raw
+            if m.get("id") and (m.get("alias_target") or {}).get("name")}
+
+
 def _translate_openrouter(api_model: Dict[str, Any]) -> Model:
     arch = api_model.get("architecture") or {}
     input_modalities = arch.get("input_modalities") or ["text"]
@@ -146,12 +166,10 @@ def _translate_openrouter(api_model: Dict[str, Any]) -> Model:
     raw_created = api_model.get("created")
     created: Optional[int] = int(raw_created) if isinstance(raw_created, (int, float)) else None
 
-    # An alias ("~openai/gpt-luna-latest") is named for the model it serves today, so a picker shows its number.
-    target = (api_model.get("alias_target") or {}).get("name")
     return Model(
         id=f"openrouter/{or_id}",
         provider="openrouter",
-        name=f"{target} (latest)" if target else api_model.get("name"),
+        name=_openrouter_name(api_model),
         description=api_model.get("description"),
         input_modalities=list(input_modalities),
         output_modalities=list(output_modalities),
