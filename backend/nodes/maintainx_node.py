@@ -5,6 +5,10 @@ continuation URLs are never followed and writes are never retried automatically.
 """
 from __future__ import annotations
 
+import hashlib
+import hmac
+import time
+
 from typing import Annotated, Literal, Union
 
 from pydantic import (
@@ -18,6 +22,7 @@ from pydantic import (
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -329,8 +334,35 @@ class ListTeams(_Page):
     operation: Literal["list_teams"] = "list_teams"
 
 
+# Subscription types and event fields: https://api.getmaintainx.com/v1/openapi.json
+WEBHOOK_EVENTS = {
+    "NEW_WORK_ORDER": ("Work order created", "workOrderId", "work order"),
+    "WORK_ORDER_CHANGE": ("Work order updated", "workOrderId", "work order"),
+    "WORK_ORDER_STATUS_CHANGE": ("Work order status changed", "workOrderId", "work order"),
+    "NEW_WORK_REQUEST": ("Work request created", "workRequestId", "work request"),
+    "NEW_COMMENT_ON_WORK_ORDER": ("Work order comment added", "workOrderId", "work order"),
+    "ASSET_CHANGE": ("Asset updated", "assetId", "asset"),
+    "PART_QUANTITY_CHANGE": ("Part quantity changed", "partId", "part"),
+}
+
+
+class OnMaintainxEvent(WebhookTriggerConfigBase):
+    """Start a workflow or agent when a selected MaintainX event occurs."""
+
+    operation: Literal["on_event"] = Field(
+        "on_event", json_schema_extra={"x-is-trigger": True, "x-category": "Triggers",
+                                      "x-display-name": "On MaintainX Event", "ui:hidden": True})
+    event_type: Literal[*WEBHOOK_EVENTS] = Field(
+        "NEW_WORK_ORDER", title="Event",
+        json_schema_extra={"enumNames": [value[0] for value in WEBHOOK_EVENTS.values()]})
+    webhook_url: str | None = Field(
+        None, title="Webhook URL", description="Registered with MaintainX automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
 MaintainxOperation = Annotated[
     Union[
+        OnMaintainxEvent,
         ListOrganizations,
         ListWorkOrders,
         GetWorkOrder,
@@ -428,7 +460,7 @@ def _redact(value, secret):
     return value
 
 
-class MaintainxNode(WorkflowNode):
+class MaintainxNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-maintainx"
     connection_evidence = ConnectionEvidence(
         operation="list_organizations", noun="organizations"
@@ -438,11 +470,136 @@ class MaintainxNode(WorkflowNode):
     def get_config_model(cls):
         return MaintainxConfig
 
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, body=None):
+        auth = MaintainxApiKey.model_validate(credential)
+        headers = {"Authorization": "Bearer " + auth.api_key, "Accept": "application/json"}
+        if auth.organization_id:
+            headers["x-organization-id"] = str(auth.organization_id)
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, BASE_URL + path, headers=headers,
+                                            **({"json": body} if body is not None else {}))
+        if not 200 <= response.status_code < 300:
+            raise ValueError(f"MaintainX webhook request failed (HTTP {response.status_code})")
+        return response.json() if response.content else {}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event = (config or {}).get("event_type", "NEW_WORK_ORDER")
+        if event not in WEBHOOK_EVENTS:
+            raise ValueError("Choose a supported MaintainX event")
+        if len(webhook_url) > 512:
+            raise ValueError("MaintainX webhook URLs must be at most 512 characters")
+        body = {"type": event, "url": webhook_url}
+        if event in {"NEW_WORK_ORDER", "WORK_ORDER_CHANGE", "WORK_ORDER_STATUS_CHANGE", "ASSET_CHANGE"}:
+            body["options"] = {"serializeEntity": True}
+        data = await cls._webhook_request(credential, "POST", "/subscriptions", body)
+        subscription_id = data.get("id")
+        if not isinstance(subscription_id, int) or isinstance(subscription_id, bool) or subscription_id < 1:
+            raise ValueError("MaintainX did not return a subscription ID")
+        try:
+            if data.get("status") != "VALID":
+                raise ValueError("MaintainX subscription needs approval; contact MaintainX support")
+            secret = data.get("secret")
+            if not secret:
+                secret = (await cls._webhook_request(
+                    credential, "GET", f"/subscriptions/{subscription_id}/secret")).get("secret")
+            if not isinstance(secret, str) or not secret:
+                raise ValueError("MaintainX did not return a signing secret")
+        except Exception:
+            await cls._webhook_request(credential, "DELETE", f"/subscriptions/{subscription_id}")
+            raise
+        return {"external_webhook_id": str(subscription_id), "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        subscription_id = (config or {}).get("external_webhook_id")
+        if not subscription_id or not credential:
+            return
+        subscription_id = int(subscription_id)
+        if subscription_id < 1:
+            raise ValueError("Invalid MaintainX subscription ID")
+        await cls._webhook_request(credential, "DELETE", f"/subscriptions/{subscription_id}")
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"event_type": (config or {}).get("event_type", "NEW_WORK_ORDER")}
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # https://help.getmaintainx.com/build/webhooks#verify-a-webhook-signature
+        secret = (config or {}).get("signing_secret")
+        if not isinstance(secret, str) or not secret:
+            return False
+        header = next((v for k, v in headers.items()
+                       if k.lower() == "x-maintainx-webhook-body-signature"), "")
+        if not isinstance(header, str):
+            return False
+        fields = [field.strip().split("=", 1) for field in header.split(",")]
+        timestamps = [v for k, v in fields if k == "t"] if all(len(f) == 2 for f in fields) else []
+        if len(timestamps) != 1 or not timestamps[0].isascii() or not timestamps[0].isdigit():
+            return False
+        timestamp = timestamps[0]
+        if len(timestamp) > 12 or abs(time.time() - int(timestamp)) > 300:
+            return False
+        expected = hmac.new(secret.encode(), timestamp.encode() + b"." + body, hashlib.sha256).hexdigest()
+        return any(hmac.compare_digest(v, expected) for k, v in fields if k == "v1" and v.isascii())
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return ((config or {}).get("operation") == "on_event"
+                and payload.get("eventType") == (config or {}).get("event_type", "NEW_WORK_ORDER"))
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("eventType") not in WEBHOOK_EVENTS:
+            return super().resolve_agent_event(output)
+        event = output["eventType"]
+        label, id_field, noun = WEBHOOK_EVENTS[event]
+        rid = output.get(id_field)
+        org = output.get("orgId")
+        lines = [f"MaintainX: {label} — {noun} {rid}",
+                 f"Organization: {org}. At: {output.get('occurredAt')}."]
+        if event in {"NEW_WORK_ORDER", "WORK_ORDER_CHANGE", "WORK_ORDER_STATUS_CHANGE", "PART_QUANTITY_CHANGE"}:
+            user = output.get("userId")
+            if user is not None:
+                lines.append(f"By user {user}.")
+            elif event != "PART_QUANTITY_CHANGE":
+                lines.append("System-initiated event.")
+        if event in {"NEW_WORK_ORDER", "WORK_ORDER_CHANGE", "WORK_ORDER_STATUS_CHANGE"}:
+            record = output.get("newWorkOrder") or {}
+            if record.get("title"):
+                lines.append(f"Title: {record['title']}")
+            if record.get("description"):
+                lines.append(str(record["description"])[:3000])
+        if event == "WORK_ORDER_STATUS_CHANGE":
+            lines.append(f"Status: {output.get('oldStatus')} → {output.get('newStatus')}.")
+        if event == "NEW_COMMENT_ON_WORK_ORDER":
+            lines.append(f"Comment ({output.get('type')}): {str(output.get('comment') or '')[:3000]}")
+            if output.get("url"):
+                lines.append(f"Attachment (expires in 60 minutes): {output['url']}")
+        if event == "ASSET_CHANGE":
+            record = output.get("newAsset") or {}
+            if record.get("name"):
+                lines.append(f"Name: {record['name']}")
+            if record.get("description"):
+                lines.append(str(record["description"])[:3000])
+        if event == "PART_QUANTITY_CHANGE":
+            lines.append(f"Quantity change: {output.get('quantityDiff')} units.")
+            for field, label in (("oldQuantity", "Previous quantity"), ("newQuantity", "Current quantity")):
+                if output.get(field) is not None:
+                    lines.append(f"{label}: {output[field]}.")
+        lines.append(f"To act: use get_{noun.replace(' ', '_')} with {noun.replace(' ', '_')}_id={rid} (organization {org}).")
+        return {"text": "\n".join(lines), "title": f"{label}: {rid}",
+                "conversation_key": f"maintainx:{org}:{noun.replace(' ', '_')}:{rid}"}
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a MaintainX API key")
         config = self.config.config
         credential = self.config.credentials
+        if isinstance(config, OnMaintainxEvent):
+            return self.no_event_output(config.operation)
         method, path, key = ROUTES[config.operation]
         values = config.model_dump(
             mode="json", exclude={"operation"}, exclude_none=True

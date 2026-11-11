@@ -1281,6 +1281,157 @@
       "x-credential-instructions": "In MaintainX, open Settings > Integrations > API Keys and generate a key for your user. API access requires Premium or Enterprise. Paste only the key, without Bearer. For a multi-organization key, enter the organization ID to use for list and create operations; record IDs on other operations are global IDs.",
       "x-credential-url": "https://app.getmaintainx.com/settings/integrations/apiKeys"
     },
+    "OnMaintainxEvent": {
+      "description": "Start a workflow or agent when a selected MaintainX event occurs.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On MaintainX Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "NEW_WORK_ORDER",
+          "enum": [
+            "NEW_WORK_ORDER",
+            "WORK_ORDER_CHANGE",
+            "WORK_ORDER_STATUS_CHANGE",
+            "NEW_WORK_REQUEST",
+            "NEW_COMMENT_ON_WORK_ORDER",
+            "ASSET_CHANGE",
+            "PART_QUANTITY_CHANGE"
+          ],
+          "enumNames": [
+            "Work order created",
+            "Work order updated",
+            "Work order status changed",
+            "Work request created",
+            "Work order comment added",
+            "Asset updated",
+            "Part quantity changed"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with MaintainX automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "OnMaintainxEvent",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "UpdateAsset": {
       "additionalProperties": false,
       "description": "Update a asset, sending only supplied fields.",
@@ -1899,6 +2050,7 @@
           "list_work_order_comments": "#/$defs/ListWorkOrderComments",
           "list_work_orders": "#/$defs/ListWorkOrders",
           "list_work_requests": "#/$defs/ListWorkRequests",
+          "on_event": "#/$defs/OnMaintainxEvent",
           "update_asset": "#/$defs/UpdateAsset",
           "update_location": "#/$defs/UpdateLocation",
           "update_part": "#/$defs/UpdatePart",
@@ -1908,6 +2060,9 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/OnMaintainxEvent"
+        },
         {
           "$ref": "#/$defs/ListOrganizations"
         },

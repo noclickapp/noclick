@@ -1,0 +1,274 @@
+{
+  "WORK_ORDER_CHANGE": {
+  "body": {
+    "eventType": "WORK_ORDER_CHANGE",
+    "workOrderId": 123456,
+    "orgId": 321,
+    "workOrderExternalId": "ext-workorder-001",
+    "customerId": 456,
+    "occurredAt": "2022-01-01T00:00:00.000Z",
+    "userId": 789,
+    "newWorkOrder": {
+      "assetId": 42,
+      "assigneeIds": [
+        31
+      ],
+      "categories": [
+        {
+          "id": 123,
+          "name": "Safety",
+          "description": "Used for everything related to Safety"
+        }
+      ],
+      "description": "A work order sample description",
+      "dueDate": "2022-01-01T00:00:00.000Z",
+      "estimatedTime": 3600,
+      "extraFields": {
+        "Third Party Id": "aa674f49-dac6-4f15-9fdd-061d2b5caf30"
+      },
+      "locationId": 611,
+      "parts": [
+        {
+          "id": 963,
+          "quantityUsed": 2,
+          "unitCost": 120,
+          "locationId": 852,
+          "copyOnRecurring": "Copy"
+        }
+      ],
+      "priority": "MEDIUM",
+      "startDate": "2022-01-01T00:00:00.000Z",
+      "teamIds": [
+        12
+      ],
+      "title": "string",
+      "vendorIds": [
+        1
+      ],
+      "costs": {
+        "total": 0,
+        "rows": [
+          {
+            "type": "EXPENSE",
+            "costPerUnit": 0,
+            "description": "string",
+            "quantity": 0,
+            "rowTotal": 0,
+            "durationTotal": 0,
+            "userId": 0,
+            "partId": 0
+          }
+        ]
+      },
+      "customerId": 456
+    },
+    "addedAssigneeIds": [
+      0
+    ],
+    "removedAssigneeIds": [
+      0
+    ],
+    "addedTeamIds": [
+      0
+    ],
+    "removedTeamIds": [
+      0
+    ]
+  },
+  "source": "https://api.getmaintainx.com/v1/openapi.json",
+  "reference_url": "https://api.getmaintainx.com/v1/docs"
+},
+  "NEW_WORK_ORDER": {
+    "body": {
+      "eventType": "NEW_WORK_ORDER",
+      "workOrderId": 123456,
+      "workOrderExternalId": "ext-workorder-001",
+      "orgId": 321,
+      "customerId": 456,
+      "occurredAt": "2022-01-01T00:00:00.000Z",
+      "userId": 789,
+      "newWorkOrder": {
+        "assetId": 42,
+        "assigneeIds": [
+          31
+        ],
+        "categories": [
+          {
+            "id": 123,
+            "name": "Safety",
+            "description": "Used for everything related to Safety"
+          }
+        ],
+        "description": "A work order sample description",
+        "dueDate": "2022-01-01T00:00:00.000Z",
+        "estimatedTime": 3600,
+        "extraFields": {
+          "Third Party Id": "aa674f49-dac6-4f15-9fdd-061d2b5caf30"
+        },
+        "locationId": 611,
+        "parts": [
+          {
+            "id": 963,
+            "quantityUsed": 2,
+            "unitCost": 120,
+            "locationId": 852,
+            "copyOnRecurring": "Copy"
+          }
+        ],
+        "priority": "MEDIUM",
+        "startDate": "2022-01-01T00:00:00.000Z",
+        "teamIds": [
+          12
+        ],
+        "title": "string",
+        "vendorIds": [
+          1
+        ]
+      }
+    },
+    "source": "https://api.getmaintainx.com/v1/openapi.json",
+    "reference_url": "https://api.getmaintainx.com/v1/docs"
+  },
+  "WORK_ORDER_STATUS_CHANGE": {
+    "body": {
+      "eventType": "WORK_ORDER_STATUS_CHANGE",
+      "workOrderId": 123456,
+      "orgId": 321,
+      "workOrderExternalId": "ext-workorder-001",
+      "customerId": 456,
+      "oldStatus": "DONE",
+      "oldSubStatus": "CANCELED",
+      "newStatus": "DONE",
+      "newSubStatus": "CANCELED",
+      "progress": {
+        "inProgressCount": 2,
+        "onHoldCount": 1,
+        "doneCount": 0
+      },
+      "occurredAt": "2022-01-01T00:00:00.000Z",
+      "userId": 789,
+      "newWorkOrder": {
+        "assetId": 42,
+        "assigneeIds": [
+          31
+        ],
+        "categories": [
+          {
+            "id": 123,
+            "name": "Safety",
+            "description": "Used for everything related to Safety"
+          }
+        ],
+        "description": "A work order sample description",
+        "dueDate": "2022-01-01T00:00:00.000Z",
+        "estimatedTime": 3600,
+        "extraFields": {
+          "Third Party Id": "aa674f49-dac6-4f15-9fdd-061d2b5caf30"
+        },
+        "locationId": 611,
+        "parts": [
+          {
+            "id": 963,
+            "quantityUsed": 2,
+            "unitCost": 120,
+            "locationId": 852,
+            "copyOnRecurring": "Copy"
+          }
+        ],
+        "priority": "MEDIUM",
+        "startDate": "2022-01-01T00:00:00.000Z",
+        "teamIds": [
+          12
+        ],
+        "title": "string",
+        "vendorIds": [
+          1
+        ]
+      }
+    },
+    "source": "https://api.getmaintainx.com/v1/openapi.json",
+    "reference_url": "https://api.getmaintainx.com/v1/docs"
+  },
+  "NEW_WORK_REQUEST": {
+    "body": {
+      "eventType": "NEW_WORK_REQUEST",
+      "workRequestId": 123456,
+      "workRequestExternalId": "ext-workrequest-001",
+      "orgId": 321,
+      "occurredAt": "2022-01-01T00:00:00.000Z"
+    },
+    "source": "https://api.getmaintainx.com/v1/openapi.json",
+    "reference_url": "https://api.getmaintainx.com/v1/docs"
+  },
+  "NEW_COMMENT_ON_WORK_ORDER": {
+    "body": {
+      "eventType": "NEW_COMMENT_ON_WORK_ORDER",
+      "orgId": 321,
+      "workOrderId": 123456,
+      "workOrderExternalId": "ext-workorder-001",
+      "occurredAt": "2022-01-01T00:00:00.000Z",
+      "type": "string",
+      "comment": "string",
+      "url": "string"
+    },
+    "source": "https://api.getmaintainx.com/v1/openapi.json",
+    "reference_url": "https://api.getmaintainx.com/v1/docs"
+  },
+  "ASSET_CHANGE": {
+    "body": {
+      "eventType": "ASSET_CHANGE",
+      "assetId": 123456,
+      "assetExternalId": "ext-asset-001",
+      "orgId": 321,
+      "occurredAt": "2022-01-01T00:00:00.000Z",
+      "newAsset": {
+        "id": 963,
+        "name": "Forklift",
+        "description": "Forklift that is used to to move heavy equipments around the warehouse",
+        "locationId": 852,
+        "barcode": "BWFPBNRHAW54CG",
+        "parentId": 852,
+        "vendorIds": [
+          1
+        ],
+        "teamIds": [
+          123,
+          456
+        ],
+        "assetTypes": [
+          "manual",
+          "tool"
+        ],
+        "extraFields": {
+          "My Custom Field": "000000000"
+        }
+      }
+    },
+    "source": "https://api.getmaintainx.com/v1/openapi.json",
+    "reference_url": "https://api.getmaintainx.com/v1/docs"
+  },
+  "PART_QUANTITY_CHANGE": {
+    "body": {
+      "eventType": "PART_QUANTITY_CHANGE",
+      "partId": 123456,
+      "partExternalId": "ext-part-001",
+      "orgId": 321,
+      "quantityDiff": 3,
+      "oldQuantity": 54,
+      "newQuantity": 57,
+      "userId": 1337,
+      "triggeredFrom": "PURCHASE_ORDER",
+      "locations": [
+        {
+          "locationId": 842,
+          "quantityDiff": 3,
+          "oldQuantity": 3,
+          "newQuantity": 3
+        }
+      ],
+      "occurredAt": "2022-01-01T00:00:00.000Z"
+    },
+    "source": "https://api.getmaintainx.com/v1/openapi.json",
+    "reference_url": "https://api.getmaintainx.com/v1/docs"
+  }
+}

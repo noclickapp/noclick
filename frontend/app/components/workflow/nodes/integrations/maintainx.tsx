@@ -13,7 +13,7 @@ const MaintainxIcon = ({ className, style }: { className?: string; style?: CSSPr
 
 export const MaintainxNode: NodeDefinition = {
     type: 'automation-maintainx', category: 'industry', label: 'MaintainX',
-    description: 'Automate work orders, assets, locations, parts and work requests',
+    description: 'Automate maintenance and react to work order, asset and inventory events',
     keywords: ['maintainx', 'cmms', 'maintenance', 'work orders', 'assets', 'inventory'],
     Icon: MaintainxIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
