@@ -30,6 +30,13 @@ function askFor(company: AiCompany, credentialType: string): { credentialType: s
     return { credentialType, signIn: plan && company.signIns.includes(plan) ? { agentOAuthType: plan } : undefined };
 }
 
+/** Asking someone for the company's key: its link offers the company's plan beside the key where the plan holds the
+ *  same account. */
+function askFor(company: AiCompany, credentialType: string): { credentialType: string; signIn?: AskSignIn } {
+    const plan = signInForKey(credentialType);
+    return { credentialType, signIn: plan && company.signIns.includes(plan) ? { agentOAuthType: plan } : undefined };
+}
+
 /** An account in the company's list: what it is (its email, login or the name you gave it; else its plan or "API
  *  key") and, under it, what's wrong, whose it is, or when it was added. */
 function accountRow(account: ConnectedAccount): ConnectAccountRow {
