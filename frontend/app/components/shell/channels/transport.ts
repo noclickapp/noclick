@@ -45,7 +45,7 @@ export interface ChannelsTransport {
     /** Add (`on`) or take back your reaction; returns the message. */
     react(channelId: string, messageId: string, emoji: string, on: boolean): Promise<ChannelMessage>;
     createWorkspace(name: string, logo?: File): Promise<ChannelWorkspace>;
-    createChannel(input: { workspaceId: string | null; name: string; topic: string; agents: AgentChoice[] }): Promise<Channel>;
+    createChannel(input: { workspaceId: string | null; name: string; topic: string; agents: AgentChoice[]; people?: string[] }): Promise<Channel>;
     updateChannel(channelId: string, changes: { topic?: string; mode?: ChannelMode }): Promise<Channel>;
     /** The schedules that post in it. */
     schedules(channelId: string): Promise<ChannelSchedule[]>;

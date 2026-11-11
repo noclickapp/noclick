@@ -3,6 +3,9 @@
 export const FIELD =
     'h-10 w-full rounded-xl border border-border bg-transparent px-3.5 text-[14px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 disabled:opacity-60 dark:border-foreground/[0.1] dark:focus:border-foreground/25';
 
+/** A one-line field as a pill: a short name, a search. */
+export const PILL_FIELD = FIELD.replace('rounded-xl', 'rounded-full');
+
 export const QUIET_LINK =
     'inline-flex items-center gap-1 rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
 

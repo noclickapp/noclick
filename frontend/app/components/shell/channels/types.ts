@@ -163,3 +163,10 @@ interface AgentChoiceBase {
 
 /** One of your agents, to add to a channel: one made on the platform, or one in your Automations (an agent node of a workflow). */
 export type AgentChoice = (AgentChoiceBase & { source: 'platform' }) | (AgentChoiceBase & { source: 'automation'; workflowId: string; nodeId: string; workflowName: string });
+
+/** A person of the space, to add to a channel: their user id, their name, and a line under it (when they were last on). */
+export interface PersonChoice {
+    id: string;
+    name: string;
+    detail?: string | null;
+}

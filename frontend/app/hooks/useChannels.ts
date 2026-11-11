@@ -48,7 +48,7 @@ export interface Channels {
     /** Add your reaction, or take it back if it's there. */
     toggleReaction(channelId: string, messageId: string, emoji: string): Promise<void>;
     createWorkspace(name: string, logo?: File): Promise<ChannelWorkspace>;
-    createChannel(input: { workspaceId: string | null; name: string; topic: string; agents: AgentChoice[] }): Promise<Channel>;
+    createChannel(input: { workspaceId: string | null; name: string; topic: string; agents: AgentChoice[]; people?: string[] }): Promise<Channel>;
     updateChannel(channelId: string, changes: { topic?: string; mode?: ChannelMode }): Promise<void>;
     addAgent(channelId: string, agent: AgentChoice): Promise<void>;
     removeMember(channelId: string, memberId: string): Promise<void>;
