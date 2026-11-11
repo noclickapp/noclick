@@ -26,9 +26,6 @@ class MemoryClients:
 
     rows: dict = {}
 
-    def __init__(self, pool):
-        pass
-
     async def get(self, issuer, redirect_uri):
         return self.rows.get((issuer, redirect_uri))
 
@@ -46,7 +43,7 @@ def loopback(monkeypatch):
     monkeypatch.setenv("OUTBOUND_ALLOW_PRIVATE_IPS", "true")
     monkeypatch.setenv("FRONTEND_URL", "http://localhost:5173")
     MemoryClients.rows = {}
-    monkeypatch.setattr("repositories.mcp_clients.McpClientRepo", MemoryClients)
+    monkeypatch.setattr(mcp_connect, "_client_store", lambda pool=None: MemoryClients())
 
 
 @pytest.fixture

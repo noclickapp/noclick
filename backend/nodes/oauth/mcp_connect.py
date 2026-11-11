@@ -129,6 +129,14 @@ def metadata_document_url(redirect_uri: str) -> str:
     return f"{parts.scheme}://{parts.netloc}{CLIENT_METADATA_PATH}"
 
 
+def _client_store(pool=None):
+    """The kept registrations (``repositories.mcp_clients``), on ``pool`` or the app's."""
+    from repositories.mcp_clients import McpClientRepo
+    from utils.database_pool import get_native_pool
+
+    return McpClientRepo(pool or get_native_pool())
+
+
 async def _client_for(server, discovery, redirect_uri: str, scope: str, pool) -> Dict[str, Optional[str]]:
     """NoClick's client at this authorization server for this redirect URI, in the
     MCP spec's order: the app NoClick registered with the vendor, when the
@@ -136,7 +144,6 @@ async def _client_for(server, discovery, redirect_uri: str, scope: str, pool) ->
     (DCR); else NoClick's metadata document (CIMD), on a public origin only, since
     the server fetches it."""
     from nodes.oauth.mcp_oauth import register_dynamic_client
-    from repositories.mcp_clients import McpClientRepo
     from utils.encryption import get_encryption
     from utils.hosted_defaults import frontend_url
 
@@ -149,7 +156,7 @@ async def _client_for(server, discovery, redirect_uri: str, scope: str, pool) ->
                 f"NoClick has none set up ({server.client_env}_CLIENT_ID)."
             )
         return {"client_id": registered[0], "client": "registered", "issuer": issuer}
-    repo = McpClientRepo(pool)
+    repo = _client_store(pool)
     known = await repo.get(issuer, redirect_uri)
     if known is None and not discovery.registration_endpoint:
         if discovery.client_id_metadata_document_supported and urlsplit(redirect_uri).scheme == "https":
@@ -182,7 +189,6 @@ async def start(credential_type: str, *, redirect_uri: str, principal: str, pool
     """Begin connecting ``credential_type`` for ``principal`` (``user:<id>`` or
     ``request:<id>``). Raises McpConnectError with words for the person."""
     from nodes.oauth.mcp_oauth import discover_oauth_requirements, generate_pkce_pair
-    from utils.database_pool import get_native_pool
 
     server = _server(credential_type)
     if not allowed_callback(redirect_uri):
@@ -205,7 +211,7 @@ async def start(credential_type: str, *, redirect_uri: str, principal: str, pool
         raise McpConnectError(f"{server.app}'s MCP server doesn't support a secure (PKCE) sign-in.")
 
     scope = " ".join(discovery.resource_scopes or discovery.scopes_supported or [])
-    client = await _client_for(server, discovery, redirect_uri, scope, pool or get_native_pool())
+    client = await _client_for(server, discovery, redirect_uri, scope, pool)
     verifier, challenge = generate_pkce_pair()
     state = str(uuid.uuid4())
     params = {
@@ -299,11 +305,7 @@ async def finish(
             )
         except ValueError as e:
             if "invalid_client" in str(e) and started.get("client") == "registration":
-                from repositories.mcp_clients import McpClientRepo
-                from utils.database_pool import get_native_pool
-
-                await McpClientRepo(pool or get_native_pool()).forget(
-                    started["issuer"], started["redirect_uri"], started["client_id"])
+                await _client_store(pool).forget(started["issuer"], started["redirect_uri"], started["client_id"])
             raise McpConnectError(f"{server.app} didn't accept the sign-in: {e}") from None
         account = vendor_mcp.account_from_tokens(tokens.raw)
         data.update({
