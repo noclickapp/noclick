@@ -895,6 +895,16 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
             # column is NOT NULL, so link-mode rows store an empty target_email.
             target_email = (request.target_email or "").strip()
 
+            from utils.credential_request_routes import agent_sign_in_options
+
+            try:
+                options = agent_sign_in_options(
+                    request.credential_type, request.agent_oauth_type, request.agent_oauth_withheld,
+                )
+            except ValueError as e:
+                await send_event(self.sio, sid, ResponseEvent(request_id=request.request_id, data={}, error=str(e)))
+                return
+
             # Upsert: re-sending a request refreshes the token and expiration
             repo = CredentialsRepo(pool)
             row = await repo.upsert_credential_request(
@@ -902,6 +912,7 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                 target_email=target_email,
                 credential_type=request.credential_type,
                 message=request.message,
+                metadata=options,
             )
 
             if not row:

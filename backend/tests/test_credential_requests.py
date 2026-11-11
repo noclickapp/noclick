@@ -143,6 +143,46 @@ class TestCredentialRequestHandler(BaseHandlerTest):
         assert row['target_email'] == ''
         assert row['status'] == 'pending'
 
+    async def _ask_for_key(self, frontend_sio, sid, request_id: str, **sign_in) -> dict:
+        request = CredentialRequestCreateRequest(
+            request_id=request_id, target_email="", credential_type="agent_anthropic", **sign_in,
+        )
+        await send_event(frontend_sio, sid, request)
+        await self.wait_for_main_api_events("response", request_id=request_id)
+        return next(e[1] for e in self.get_main_api_emitted_events("response") if e[1].get('request_id') == request_id)
+
+    @patch('utils.email.send_credential_request_email', new_callable=AsyncMock, return_value=True)
+    async def test_an_ask_for_an_ai_key_names_the_plan_its_link_offers(self, mock_send_email, real_database, frontend_sio, sid):
+        """An ask for an AI provider's key can name the plan holding the same
+        account (an Anthropic key's Claude plan), which its link then offers
+        beside the key; or the harness the asking agent runs on, which takes no
+        plan, so the link offers the key alone and says why."""
+        from utils.credential_request_routes import get_credential_request
+
+        await self.create_test_user(real_database)
+        await real_database.execute("DELETE FROM credential_requests WHERE credential_type = 'agent_anthropic'")
+        try:
+            reply = await self._ask_for_key(frontend_sio, sid, "ask-plan", agent_oauth_type="agent_claude_code_oauth")
+            token = reply['data']['provide_url'].rsplit('/', 1)[-1]
+            details = await get_credential_request(token)
+            assert [(m.credential_type, m.method_kind) for m in details.available_methods] == [
+                ('agent_anthropic', 'api_key'), ('agent_claude_code_oauth', 'agent_oauth')]
+            assert details.sign_in_withheld is None
+
+            # Asked again for an agent on OpenCode: the same link now offers the key alone, and says why.
+            reply = await self._ask_for_key(frontend_sio, sid, "ask-withheld", agent_oauth_withheld="opencode")
+            token = reply['data']['provide_url'].rsplit('/', 1)[-1]
+            details = await get_credential_request(token)
+            assert [m.credential_type for m in details.available_methods] == ['agent_anthropic']
+            assert details.sign_in_withheld == 'opencode'
+
+            # A plan holding another account is refused, and nothing changes.
+            reply = await self._ask_for_key(frontend_sio, sid, "ask-wrong", agent_oauth_type="agent_codex_oauth")
+            assert reply['error'] == "agent_codex_oauth isn't a sign-in for agent_anthropic"
+            assert (await get_credential_request(token)).sign_in_withheld == 'opencode'
+        finally:
+            await real_database.execute("DELETE FROM credential_requests WHERE credential_type = 'agent_anthropic'")
+
     @patch('utils.email.send_credential_request_email', new_callable=AsyncMock, return_value=True)
     async def test_list_credential_requests(self, mock_send_email, real_database, frontend_sio, sid):
         """Test listing credential requests returns all user's requests."""
@@ -1597,3 +1637,31 @@ def test_a_provide_method_reads_its_class_title_not_its_schema_key():
 
     assert _get_credential_method('instagram_oauth')['label'] == 'Instagram with Facebook Login'
     assert _get_credential_method('postgres_credentials')['label'] != 'Postgress'
+
+
+def test_a_key_request_offers_only_a_plan_holding_its_account():
+    """``agent_sign_in_options``: a plan is offered beside a key only where it
+    holds the same account (the provider's own, or the harness on its key's);
+    a withheld sign-in names a real harness; never both."""
+    from utils.credential_request_routes import agent_sign_in_options
+
+    assert agent_sign_in_options('agent_anthropic', 'agent_claude_code_oauth', None) == {
+        'agent_oauth_type': 'agent_claude_code_oauth'}
+    assert agent_sign_in_options('agent_openai', 'agent_codex_oauth', None) == {'agent_oauth_type': 'agent_codex_oauth'}
+    assert agent_sign_in_options('agent_claude_code', 'agent_claude_code_oauth', None) == {
+        'agent_oauth_type': 'agent_claude_code_oauth'}
+    assert agent_sign_in_options('agent_anthropic', None, 'opencode') == {
+        'agent_oauth_type': None, 'agent_oauth_withheld': 'opencode'}
+    assert agent_sign_in_options('agent_anthropic', None, 'llm') == {
+        'agent_oauth_type': None, 'agent_oauth_withheld': 'llm'}
+    assert agent_sign_in_options('agent_anthropic', None, None) == {}
+    assert agent_sign_in_options('notion_oauth', None, None) == {}
+    for credential_type, plan, withheld in (
+        ('agent_anthropic', 'agent_codex_oauth', None),
+        ('agent_gemini', 'agent_claude_code_oauth', None),
+        ('agent_anthropic', 'agent_claude_code_oauth', 'opencode'),
+        ('agent_anthropic', None, 'Visit example.com'),
+        ('notion_oauth', None, 'opencode'),
+    ):
+        with pytest.raises(ValueError):
+            agent_sign_in_options(credential_type, plan, withheld)

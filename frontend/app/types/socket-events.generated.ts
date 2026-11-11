@@ -2594,6 +2594,14 @@ export interface CredentialRequestCreateRequest {
    * Frontend URL for constructing the provision link
    */
   frontend_url?: string | null;
+  /**
+   * For an AI provider's key: the plan sign-in the link offers beside it (e.g. 'agent_claude_code_oauth'), one holding the key's account
+   */
+  agent_oauth_type?: string | null;
+  /**
+   * For an AI provider's key: the harness the asking agent runs on when it takes no plan ('opencode', 'llm'), so the link offers the key alone and says why
+   */
+  agent_oauth_withheld?: string | null;
   [k: string]: unknown;
 }
 /**

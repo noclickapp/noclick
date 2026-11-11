@@ -411,6 +411,45 @@ def _agent_oauth_offered(credential_type: str, options: dict) -> Optional[str]:
     return oauth_type if oauth_type and get_agent_oauth_flow(oauth_type) else None
 
 
+def _key_sign_ins(credential_type: str) -> set[str]:
+    """The plan sign-ins holding the same account as an ``agent_<provider>``
+    key: the provider's own, and that of the harness running on its key (an
+    Anthropic key's Claude plan). The FE ``signInForKey`` mirrors it."""
+    provider = _get_agent_provider(credential_type)
+    if not provider:
+        return set()
+    from nodes.agent.config.providers import AGENT_VENDOR_KEY_ALIASES
+
+    stems = {provider}
+    alias = AGENT_VENDOR_KEY_ALIASES.get(provider.replace("_", "-"))
+    if alias:
+        stems.add(alias.removeprefix("agent_"))
+    offered = {AGENT_PROVIDER_OAUTH_TYPE[stem] for stem in stems if stem in AGENT_PROVIDER_OAUTH_TYPE}
+    return {oauth_type for oauth_type in offered if get_agent_oauth_flow(oauth_type)}
+
+
+def agent_sign_in_options(
+    credential_type: str, agent_oauth_type: Optional[str], agent_oauth_withheld: Optional[str]
+) -> dict[str, Any]:
+    """A key request's sign-in options as its minting surface asks: the plan
+    the link offers beside the key (one holding the key's account), or the
+    harness the asking agent runs on, which takes no plan, so the link offers
+    the key alone and says why. Raises ValueError for anything else."""
+    if agent_oauth_type and agent_oauth_withheld:
+        raise ValueError("A request offers a sign-in or says why it doesn't, not both")
+    if agent_oauth_type:
+        if agent_oauth_type not in _key_sign_ins(credential_type):
+            raise ValueError(f"{agent_oauth_type} isn't a sign-in for {credential_type}")
+        return {"agent_oauth_type": agent_oauth_type}
+    if agent_oauth_withheld:
+        from coder.workflow.workflow_ops import AGENT_HARNESS_NAMES
+
+        if not _get_agent_provider(credential_type) or agent_oauth_withheld not in {*AGENT_HARNESS_NAMES, "llm"}:
+            raise ValueError(f"{agent_oauth_withheld} isn't a harness a {credential_type} request can name")
+        return {"agent_oauth_type": None, "agent_oauth_withheld": agent_oauth_withheld}
+    return {}
+
+
 def _agent_methods(credential_type: str, options: Optional[dict] = None) -> Optional[list[dict]]:
     """Auth methods offered for an agent credential request: the provider's API-key
     field(s) and/or an OAuth sign-in (``_agent_oauth_offered`` over the request's
@@ -514,6 +553,8 @@ class CredentialRequestDetails(BaseModel):
     expires_at: str
     # Where the page sends the person once provided (GET /{token}/return).
     redirect_url: Optional[str] = None
+    # The harness the asking agent runs on when it takes no plan, so the page says why it offers no sign-in.
+    sign_in_withheld: Optional[str] = None
 
 
 class ProvideCredentialBody(BaseModel):
@@ -694,6 +735,7 @@ async def get_credential_request(token: str) -> CredentialRequestDetails:
         status=row['status'],
         expires_at=row['expires_at'].isoformat() if row['expires_at'] else '',
         redirect_url=row['metadata'].get('redirect_url'),
+        sign_in_withheld=row['metadata'].get('agent_oauth_withheld'),
     )
 
 

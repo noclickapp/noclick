@@ -537,6 +537,8 @@ class CredentialRequestCreateRequest(ClientEventBase):
     credential_type: str = Field(..., description="Credential type to request (e.g. 'google_sheets_oauth', 'openai_api_key')")
     message: Optional[str] = Field(None, description="Optional message to include in the request email")
     frontend_url: Optional[str] = Field(None, description="Frontend URL for constructing the provision link")
+    agent_oauth_type: Optional[str] = Field(None, description="For an AI provider's key: the plan sign-in the link offers beside it (e.g. 'agent_claude_code_oauth'), one holding the key's account")
+    agent_oauth_withheld: Optional[str] = Field(None, description="For an AI provider's key: the harness the asking agent runs on when it takes no plan ('opencode', 'llm'), so the link offers the key alone and says why")
 
 
 class CredentialRequestListRequest(ClientEventBase):
