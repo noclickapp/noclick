@@ -88,8 +88,18 @@ export interface ChannelMessage {
     pinned?: { by: ChannelAuthor; at: string | null } | null;
     /** NoClick's quiet line about the channel itself: someone pinned a message. */
     event?: { type: 'pinned'; messageId: string };
-    /** A note that you added or removed members: a quiet line as Slack draws joins, a run of them one line. */
-    membership?: { verb: 'added' | 'removed'; names: string[] };
+    /** Who joined or left, as the channel keeps it: a quiet line as Slack draws joins, a run of them one line. */
+    membership?: ChannelMembership;
+}
+
+/** `by` added or removed `members`. `by` is null when NoClick did it (a member left the space, its automation's step
+ *  went), and `self` when the members came or went by themselves (a person joining by posting). */
+export interface ChannelMembership {
+    action: 'added' | 'removed';
+    by: ChannelAuthor | null;
+    self: boolean;
+    /** Each by its channel member id, and its name as the channel knows it. */
+    members: { id: string; name: string }[];
 }
 
 export interface ChannelThreadSummary {

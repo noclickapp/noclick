@@ -25,7 +25,7 @@ import { EmojiPicker } from './EmojiPicker';
 import { MessageBody } from './MessageBody';
 import { AGENT_HUES, authorMember, byNoClick, handoffsOf, modeLine, NOCLICK_NAME, postedForYou } from './model';
 import { ScheduleLines } from './schedules';
-import type { Channel, ChannelAuthor, ChannelMember, ChannelMessage, ChannelReaction, ChannelSchedule } from './types';
+import type { Channel, ChannelAuthor, ChannelMember, ChannelMembership, ChannelMessage, ChannelReaction, ChannelSchedule } from './types';
 
 /** Consecutive messages from one author inside this window share a header. */
 const GROUP_WINDOW_MS = 5 * 60 * 1000;
@@ -78,6 +78,7 @@ function Intro({
     onLoadOlder,
     mark,
     after,
+    recorded,
 }: {
     channel: Channel;
     schedules: ChannelSchedule[];
@@ -87,6 +88,8 @@ function Intro({
     onLoadOlder: () => void;
     mark?: ReactNode;
     after?: ReactNode;
+    /** Its history opens on who it started with, so the start needn't say it. */
+    recorded?: boolean;
 }) {
     const agents = members.filter((m) => m.kind === 'agent');
     // Who it started with, as one line: its people, then NoClick, then the other agents.
@@ -115,7 +118,7 @@ function Intro({
             <h2 className="mt-4 font-brand text-[24px] font-semibold tracking-[-0.02em] text-foreground">{channel.name}</h2>
             <p className="mt-1 max-w-[80ch] text-[14.5px] leading-relaxed text-muted-foreground">{channel.topic ? channel.topic : `This is the very beginning of #${channel.name}.`}</p>
             {after}
-            {here.length > 0 && (
+            {here.length > 0 && !recorded && (
                 <JoinLine verb="joined" names={here.map((m) => m.name)} where={`#${channel.name}`} className="mt-4 px-0" testId="channel-intro-members" />
             )}
             {agents.length > 0
@@ -476,37 +479,41 @@ function Names({ names }: { names: string[] }) {
 }
 
 /** Who joined, as Slack draws it: a quiet line, its mark under the faces. "Priya, Tom and 2 others joined #launch",
- *  "You added Growth and Support". */
+ *  "Ana left", "You added Growth and Support", "Priya removed Scout". */
 function JoinLine({
     verb,
     names,
+    by,
     where,
     at,
     className,
     testId = 'join-line',
 }: {
-    verb: 'joined' | 'added' | 'removed';
+    verb: 'joined' | 'left' | 'added' | 'removed';
     names: string[];
-    /** Where they joined (`#launch`), for `joined`. */
+    /** Who added or removed them. */
+    by?: string;
+    /** Where they joined (`#launch`). */
     where?: string;
     at?: string;
     className?: string;
     testId?: string;
 }) {
-    const Mark = verb === 'removed' ? UserMinus : UserPlus;
+    const Mark = verb === 'removed' || verb === 'left' ? UserMinus : UserPlus;
     return (
         <div className={cn('flex items-center gap-3 py-1.5 text-xs text-muted-foreground', GUTTER, className)} data-testid={testId}>
             <span className="grid w-8 shrink-0 place-items-center">
                 <Mark className="h-3.5 w-3.5" strokeWidth={2} />
             </span>
             <span className="min-w-0">
-                {verb === 'joined' ? (
+                {verb === 'joined' || verb === 'left' ? (
                     <>
-                        <Names names={names} /> joined {where}
+                        <Names names={names} /> {verb}
+                        {where && ` ${where}`}
                     </>
                 ) : (
                     <>
-                        You {verb} <Names names={names} />
+                        {by} {verb} <Names names={names} />
                     </>
                 )}
                 {at && (
@@ -519,6 +526,18 @@ function JoinLine({
         </div>
     );
 }
+
+/** A channel's record of who joined or left, named as the page names its members (yours as "You"). Nobody did it, or
+ *  they did it themselves: they joined or left; else whoever did it added or removed them. */
+function MembershipLine({ membership: m, members, at }: { membership: ChannelMembership; members: ChannelMember[]; at: string }) {
+    const names = m.members.map((x) => (x.name === 'You' ? x.name : (members.find((y) => y.id === x.id)?.name ?? x.name)));
+    if (!m.by || m.self) return <JoinLine verb={m.action === 'added' ? 'joined' : 'left'} names={names} at={at} />;
+    const by = m.by.type === 'account' && !m.by.id ? 'You' : (authorMember(m.by, members)?.name ?? m.by.name);
+    return <JoinLine verb={m.action} by={by} names={names} at={at} />;
+}
+
+/** Whether two records of who came and went say the same of the same one, so a run of them reads as one line. */
+const sameMove = (a: ChannelMembership, b: ChannelMembership) => a.action === b.action && a.self === b.self && a.by?.type === b.by?.type && a.by?.id === b.by?.id && a.by?.name === b.by?.name;
 
 function PinLine({ msg, target, members, actions }: { msg: ChannelMessage; target?: ChannelMessage; members: ChannelMember[]; actions: MessageActions }) {
     const pinned = msg.event?.messageId;
@@ -575,7 +594,8 @@ export function MessageRow({
     pinTarget?: ChannelMessage;
 }) {
     if (msg.event?.type === 'pinned') return <PinLine msg={msg} target={pinTarget} members={members} actions={actions} />;
-    if (msg.membership) return <JoinLine verb={msg.membership.verb} names={msg.membership.names} at={msg.at} />;
+    // Never NoClick speaking: the channel's record of who came and went.
+    if (msg.membership) return <MembershipLine membership={msg.membership} members={members} at={msg.at} />;
     const noclick = byNoClick(msg.author);
     const app = msg.author.type === 'app';
     const author = authorMember(msg.author, members);
@@ -716,11 +736,11 @@ export function MessageList({
             const day = localDay(msg.at);
             const item = { msg, prev: messages[i - 1] };
             const last = out[out.length - 1];
-            // A run of adds (or of removals) is one line, as Slack folds joins.
+            // A run of the same move by the same one is one line, as Slack folds joins.
             const before = last?.day === day ? last.items[last.items.length - 1] : undefined;
             const was = before?.msg.membership;
-            if (msg.membership && was?.verb === msg.membership.verb) {
-                before!.msg = { ...before!.msg, membership: { ...was, names: [...was.names, ...msg.membership.names.filter((n) => !was.names.includes(n))] } };
+            if (msg.membership && was && sameMove(was, msg.membership)) {
+                before!.msg = { ...before!.msg, membership: { ...was, members: [...was.members, ...msg.membership.members.filter((m) => !was.members.some((w) => w.id === m.id))] } };
                 return;
             }
             if (last?.day === day) last.items.push(item);
@@ -743,7 +763,7 @@ export function MessageList({
 
     return (
         <div ref={root} className="flex flex-1 flex-col justify-end">
-            {intro && !older ? intro : <Intro channel={channel} schedules={schedules} members={members} older={older} loadingOlder={loadingOlder} onLoadOlder={onLoadOlder} mark={introMark} after={introAfter} />}
+            {intro && !older ? intro : <Intro channel={channel} schedules={schedules} members={members} older={older} loadingOlder={loadingOlder} onLoadOlder={onLoadOlder} mark={introMark} after={introAfter} recorded={!!messages[0]?.membership} />}
             {days.map(({ day, label, items }) => (
                 <section key={day} data-day={day} aria-label={label} className="relative">
                     {/* The day's hairline and its pill pin to the top while the day is on screen, over a band of the

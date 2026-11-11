@@ -40,8 +40,8 @@ export interface Channels {
     loadOlder(channelId: string): Promise<void>;
     refresh(): void;
     post(channelId: string, text: string, attachments: ChannelAttachment[]): Promise<void>;
-    /** NoClick answering you alone, in the channel, until dismissed; a `membership` note is a quiet line instead. */
-    note(channelId: string, text: string, extra?: Pick<ChannelMessage, 'membership'>): void;
+    /** NoClick answering you alone, in the channel, until dismissed. */
+    note(channelId: string, text: string): void;
     dismiss(channelId: string, messageId: string): void;
     /** A message as the server now has it (a pin, a thread's counts), into the timeline it's in. */
     upsert(channelId: string, message: ChannelMessage): void;
@@ -360,9 +360,8 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
                     throw e;
                 }
             },
-            note: (channelId, text, extra) => {
+            note: (channelId, text) => {
                 const note: ChannelMessage = {
-                    ...extra,
                     id: `note-${++localIds}`,
                     author: { type: 'system', id: null, name: 'NoClick' },
                     text,
