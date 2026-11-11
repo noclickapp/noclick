@@ -7,11 +7,12 @@
 // row of its own; what an agent posted for you is signed by it; NoClick's
 // notes in the room (why it halted) read as NoClick's, and an app's event as
 // that app's. NoClick's answers to your commands are yours alone, and
-// dismissable. Where the page takes threads and pins (Work), a message's hover
+// dismissable. Who joined is a quiet line as in Slack (a run of adds is one), as is
+// who the channel started with. Where the page takes threads and pins (Work), a message's hover
 // bar adds quick reactions, Reply in thread and Pin, a message with replies
 // wears Slack's replies bar, and a pinned one says who pinned it.
 import { Fragment, useMemo, useRef, useState, type ReactNode } from 'react';
-import { ArrowRight, ChevronDown, ChevronRight, EyeOff, Hash, Link2, MessageSquareText, MoreHorizontal, Pin, PinOff, Plug, SmilePlus } from 'lucide-react';
+import { ArrowRight, ChevronDown, ChevronRight, EyeOff, Hash, Link2, MessageSquareText, MoreHorizontal, Pin, PinOff, Plug, SmilePlus, UserMinus, UserPlus } from 'lucide-react';
 import type { AccountMenuUser } from '~/components/nav/AccountMenu';
 import { LogoMark, MARK_IN_A_SHAPE } from '~/components/shared/LogoMark';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '~/components/ui/dropdown-menu';
@@ -60,8 +61,7 @@ const authorKey = (m: ChannelMessage) => `${m.author.type}:${m.author.id ?? m.au
 function Intro({
     channel,
     schedules,
-    agents,
-    user,
+    members,
     older,
     loadingOlder,
     onLoadOlder,
@@ -69,13 +69,16 @@ function Intro({
 }: {
     channel: Channel;
     schedules: ChannelSchedule[];
-    agents: ChannelMember[];
-    user: AccountMenuUser;
+    members: ChannelMember[];
     older: boolean;
     loadingOlder: boolean;
     onLoadOlder: () => void;
     after?: ReactNode;
 }) {
+    const agents = members.filter((m) => m.kind === 'agent');
+    // Who it started with, as one line: its people, then NoClick, then the other agents.
+    const order = (m: ChannelMember) => (m.kind === 'human' ? 0 : m.noclick ? 1 : m.kind === 'agent' ? 2 : 3);
+    const here = members.filter((m) => m.kind !== 'you').sort((a, b) => order(a) - order(b));
     if (older) {
         return (
             <div className={cn('flex justify-center pb-2 pt-6', GUTTER)}>
@@ -98,25 +101,12 @@ function Intro({
             </span>
             <h2 className="mt-4 font-brand text-[24px] font-semibold tracking-[-0.02em] text-foreground">{channel.name}</h2>
             <p className="mt-1 max-w-[80ch] text-[14.5px] leading-relaxed text-muted-foreground">{channel.topic ? channel.topic : `This is the very beginning of #${channel.name}.`}</p>
-            {agents.length > 0 ? (
-                <>
-                    {/* Who's here: each agent by name, its job under it. */}
-                    <ul className="mt-5 space-y-3" data-testid="channel-intro-agents">
-                        {agents.map((a) => (
-                            <li key={a.id} className="flex items-start gap-3">
-                                <MemberAvatar member={a} user={user} size={28} />
-                                <span className="min-w-0">
-                                    <span className="block text-[14px] font-medium leading-snug text-foreground">{a.name}</span>
-                                    {a.role && <span className="block text-[13px] leading-snug text-muted-foreground">{a.role}</span>}
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                    {channel.mode === 'mentions' && <p className="mt-4 text-[13px] text-muted-foreground">{modeLine(channel.mode, agents, { named: false })}.</p>}
-                </>
-            ) : (
-                <p className="mt-4 text-[13px] text-muted-foreground">No agents here yet: add one from the members menu, or with /invite.</p>
+            {here.length > 0 && (
+                <JoinLine verb="joined" names={here.map((m) => m.name)} where={`#${channel.name}`} className="mt-4 px-0" testId="channel-intro-members" />
             )}
+            {agents.length > 0
+                ? channel.mode === 'mentions' && <p className="mt-4 text-[13px] text-muted-foreground">{modeLine(channel.mode, agents, { named: false })}.</p>
+                : <p className="mt-4 text-[13px] text-muted-foreground">No agents here yet: add one from the members menu, or with /invite.</p>}
             <ScheduleLines schedules={schedules} />
             {after}
         </div>
@@ -392,6 +382,86 @@ function pinnerOf(msg: ChannelMessage, target: ChannelMessage | undefined, membe
 }
 
 /** The quiet line pinning leaves in the timeline, as Slack's. */
+/** Names as a line reads them: "Priya", "Priya and Tom", "Priya, Tom and Sam", past three "Priya, Tom and 2 others"
+ *  (the others named on hover). */
+function Names({ names }: { names: string[] }) {
+    const shown = names.length > 3 ? names.slice(0, 2) : names;
+    const rest = names.slice(shown.length);
+    const parts: ReactNode[] = shown.map((name, i) => (
+        <span key={i} className="font-medium text-foreground/80">
+            {name}
+        </span>
+    ));
+    if (rest.length)
+        parts.push(
+            <Tooltip key="rest">
+                <TooltipTrigger asChild>
+                    <button type="button" className={cn(LINKISH, 'font-medium text-foreground/80')}>
+                        {rest.length} others
+                    </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" sideOffset={6} className="rounded-lg px-2 py-1 text-[12.5px]">
+                    {new Intl.ListFormat('en', { type: 'conjunction' }).format(rest)}
+                </TooltipContent>
+            </Tooltip>
+        );
+    return (
+        <>
+            {parts.map((part, i) => (
+                <Fragment key={i}>
+                    {i > 0 && (i === parts.length - 1 ? ' and ' : ', ')}
+                    {part}
+                </Fragment>
+            ))}
+        </>
+    );
+}
+
+/** Who joined, as Slack draws it: a quiet line, its mark under the faces. "Priya, Tom and 2 others joined #launch",
+ *  "You added Growth and Support". */
+function JoinLine({
+    verb,
+    names,
+    where,
+    at,
+    className,
+    testId = 'join-line',
+}: {
+    verb: 'joined' | 'added' | 'removed';
+    names: string[];
+    /** Where they joined (`#launch`), for `joined`. */
+    where?: string;
+    at?: string;
+    className?: string;
+    testId?: string;
+}) {
+    const Mark = verb === 'removed' ? UserMinus : UserPlus;
+    return (
+        <div className={cn('flex items-center gap-3 py-1.5 text-xs text-muted-foreground', GUTTER, className)} data-testid={testId}>
+            <span className="grid w-8 shrink-0 place-items-center">
+                <Mark className="h-3.5 w-3.5" strokeWidth={2} />
+            </span>
+            <span className="min-w-0">
+                {verb === 'joined' ? (
+                    <>
+                        <Names names={names} /> joined {where}
+                    </>
+                ) : (
+                    <>
+                        You {verb} <Names names={names} />
+                    </>
+                )}
+                {at && (
+                    <>
+                        {' '}
+                        · <time className="tabular-nums">{timeLabel(at)}</time>
+                    </>
+                )}
+            </span>
+        </div>
+    );
+}
+
 function PinLine({ msg, target, members, actions }: { msg: ChannelMessage; target?: ChannelMessage; members: ChannelMember[]; actions: MessageActions }) {
     const pinned = msg.event?.messageId;
     return (
@@ -447,6 +517,7 @@ export function MessageRow({
     pinTarget?: ChannelMessage;
 }) {
     if (msg.event?.type === 'pinned') return <PinLine msg={msg} target={pinTarget} members={members} actions={actions} />;
+    if (msg.membership) return <JoinLine verb={msg.membership.verb} names={msg.membership.names} at={msg.at} />;
     const noclick = byNoClick(msg.author);
     const app = msg.author.type === 'app';
     const author = authorMember(msg.author, members);
@@ -567,7 +638,6 @@ export function MessageList({
     introAfter?: ReactNode;
 }) {
     const root = useRef<HTMLDivElement>(null);
-    const agents = members.filter((m) => m.kind === 'agent');
     const today = localDay(new Date().toISOString());
     const days = useMemo(() => {
         const out: { day: string; label: string; items: { msg: ChannelMessage; prev?: ChannelMessage }[] }[] = [];
@@ -575,6 +645,13 @@ export function MessageList({
             const day = localDay(msg.at);
             const item = { msg, prev: messages[i - 1] };
             const last = out[out.length - 1];
+            // A run of adds (or of removals) is one line, as Slack folds joins.
+            const before = last?.day === day ? last.items[last.items.length - 1] : undefined;
+            const was = before?.msg.membership;
+            if (msg.membership && was?.verb === msg.membership.verb) {
+                before!.msg = { ...before!.msg, membership: { ...was, names: [...was.names, ...msg.membership.names.filter((n) => !was.names.includes(n))] } };
+                return;
+            }
             if (last?.day === day) last.items.push(item);
             else out.push({ day, label: dayLabel(day, today), items: [item] });
         });
@@ -595,7 +672,7 @@ export function MessageList({
 
     return (
         <div ref={root} className="flex flex-1 flex-col justify-end">
-            {intro && !older ? intro : <Intro channel={channel} schedules={schedules} agents={agents} user={user} older={older} loadingOlder={loadingOlder} onLoadOlder={onLoadOlder} after={introAfter} />}
+            {intro && !older ? intro : <Intro channel={channel} schedules={schedules} members={members} older={older} loadingOlder={loadingOlder} onLoadOlder={onLoadOlder} after={introAfter} />}
             {days.map(({ day, label, items }) => (
                 <section key={day} data-day={day} aria-label={label} className="relative">
                     {/* The day's hairline and its pill pin to the top while the day is on screen, over a band of the

@@ -88,6 +88,8 @@ export interface ChannelMessage {
     pinned?: { by: ChannelAuthor; at: string | null } | null;
     /** NoClick's quiet line about the channel itself: someone pinned a message. */
     event?: { type: 'pinned'; messageId: string };
+    /** A note that you added or removed members: a quiet line as Slack draws joins, a run of them one line. */
+    membership?: { verb: 'added' | 'removed'; names: string[] };
 }
 
 export interface ChannelThreadSummary {
