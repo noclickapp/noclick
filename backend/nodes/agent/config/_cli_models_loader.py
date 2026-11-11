@@ -24,6 +24,7 @@ Three kinds of data per harness:
 from __future__ import annotations
 
 import json
+import re
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List
@@ -132,8 +133,17 @@ def codex_options() -> List[Dict[str, str]]:
 
 def claude_code_options() -> List[Dict[str, str]]:
     """`{value, label}` entries for the Claude Code alias dropdown: the alias
-    the CLI recommends (`best`) first, then the rest in catalog order."""
+    the CLI recommends (`best`) first, then the rest in catalog order. An alias
+    follows its family's newest model, so it's named for the model it serves
+    today, as an OpenRouter alias is: `sonnet` (claude-sonnet-5-5) is "Claude
+    Sonnet 5.5 (latest)"."""
     aliases = claude_code_aliases()
     best = _load()["claude_code"].get("best")
     order = ([best] if best in aliases else []) + [a for a in aliases if a != best]
-    return [{"value": alias, "label": f"{alias} ({aliases[alias]})"} for alias in order]
+    return [{"value": alias, "label": _latest_of(aliases[alias])} for alias in order]
+
+
+def _latest_of(model: str) -> str:
+    family, version = re.fullmatch(r"(.+?)((?:-\d{1,2})*)(?:-\d{8})?", model).groups()
+    name = " ".join(word.capitalize() for word in family.split("-"))
+    return f"{name} {version.strip('-').replace('-', '.')} (latest)" if version else f"{name} (latest)"
