@@ -59,6 +59,8 @@ export interface ChannelsTransport {
     setPreference(channelId: string, preference: 'starred' | 'muted', on: boolean): Promise<Channel>;
     /** Leave a channel you're in (a person in a space's): it carries on without you, and posting in it joins again. */
     leave(channelId: string): Promise<void>;
+    /** Join a channel of your space you're not in (a person in a space's); returns it as you read it. */
+    join(channelId: string): Promise<Channel>;
     /** To the trash, for 30 days; resolves to its trash item, which puts it back. */
     deleteChannel(channelId: string): Promise<{ trashId: string }>;
     /** Put back a channel `deleteChannel` sent to the trash. */

@@ -142,6 +142,9 @@ export interface Channel {
     /** Yours alone: starred, it leads your list; muted, it's never unread or bold for you. */
     starred?: boolean;
     muted?: boolean;
+    /** Messages since you last read it that @-mention you (while muted, all it counts as unread); unset where the
+     *  platform doesn't count them yet. */
+    mentions?: number;
     /** A person in a space's channel: whether they're in it (they star, mute and leave only one they're in). The
      *  account reads every one of its own, so it's never set for it. */
     joined?: boolean;

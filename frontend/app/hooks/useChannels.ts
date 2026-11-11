@@ -59,6 +59,8 @@ export interface Channels {
     setPreference(channelId: string, preference: 'starred' | 'muted', on: boolean): Promise<void>;
     /** Leave a channel you're in. */
     leave(channelId: string): Promise<void>;
+    /** Join a channel you're not in (one you left, say). */
+    join(channelId: string): Promise<void>;
     /** To the trash; resolves to its trash item, which `restoreChannel` puts back. */
     deleteChannel(channelId: string): Promise<{ trashId: string }>;
     restoreChannel(trashId: string): Promise<void>;
@@ -306,11 +308,12 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
         };
     }, [readLists, readNew]);
 
-    // What you're reading is read: the open channel's unread count goes to zero, on the server too.
-    const openUnread = lists.channels.find((c) => c.id === openId)?.unread ?? 0;
+    // What you're reading is read: the open channel's unread count (and what mentions you) goes to zero, on the server too.
+    const openChannel = lists.channels.find((c) => c.id === openId);
+    const openUnread = (openChannel?.unread ?? 0) + (openChannel?.mentions ?? 0);
     useEffect(() => {
         if (!openId || !openUnread || typeof document === 'undefined' || document.hidden) return;
-        setLists((prev) => ({ ...prev, channels: prev.channels.map((c) => (c.id === openId ? { ...c, unread: 0 } : c)) }));
+        setLists((prev) => ({ ...prev, channels: prev.channels.map((c) => (c.id === openId ? { ...c, unread: 0, ...(c.mentions ? { mentions: 0 } : {}) } : c)) }));
         transport.markRead(openId).catch((e) => console.warn('[channels] mark read failed:', e));
     }, [openId, openUnread, transport]);
 
@@ -422,7 +425,7 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
             reopen: async (channelId, name) => replaceChannel(await transport.reopen(channelId, name)),
             setPreference: async (channelId, preference, on) => {
                 const was = lists.channels.find((c) => c.id === channelId);
-                const shown = (c: Channel) => ({ ...c, [preference]: on, ...(preference === 'muted' && on ? { unread: 0 } : {}) });
+                const shown = (c: Channel) => ({ ...c, [preference]: on, ...(preference === 'muted' && on ? { unread: c.mentions ?? 0 } : {}) });
                 setLists((prev) => ({ ...prev, channels: prev.channels.map((c) => (c.id === channelId ? shown(c) : c)) }));
                 try {
                     replaceChannel(await transport.setPreference(channelId, preference, on));
@@ -431,6 +434,7 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
                     throw e;
                 }
             },
+            join: async (channelId) => replaceChannel(await transport.join(channelId)),
             // You're out of it, and it reads as one you're not in.
             leave: async (channelId) => {
                 await transport.leave(channelId);
