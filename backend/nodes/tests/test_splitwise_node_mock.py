@@ -1,5 +1,7 @@
 """Splitwise wire-contract, factory, pagination and error regressions; no live account."""
 import json
+from copy import deepcopy
+from pathlib import Path
 
 import httpx
 import pytest
@@ -193,3 +195,114 @@ async def test_update_category_remains_documented_integer(monkeypatch):
     result = await node({"operation": "update_expense", **CONFIGS["update_expense"], "category_id": 15}).execute({})
     assert result["status"] == "success"
     assert json.loads(requests[0].content)["category_id"] == 15
+
+
+def poll_response(expenses=True):
+    """Unmodified response samples copied from Splitwise's rendered API docs."""
+    fixtures = json.loads((Path(__file__).parent / "fixtures/splitwise/poll_responses.json").read_text())
+    return fixtures["GET /get_expenses" if expenses else "GET /get_notifications"]["body"]
+
+
+def poll_state(instance, state):
+    async def update(mutator, **kwargs):
+        new_state, result = mutator(deepcopy(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+    instance._update_node_state = update
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,envelope", [
+    ("on_expense_changed", "expenses"), ("on_new_activity", "notifications"),
+])
+async def test_poll_baselines_then_delivers_documented_records_once(monkeypatch, operation, envelope):
+    body = poll_response(envelope == "expenses")
+    requests = transport(monkeypatch, body)
+    instance = node({"operation": operation, "updated_after": "2020-07-28T20:46:00Z"})
+    state = {}
+    poll_state(instance, state)
+    first = await instance.execute({})
+    assert first[envelope] == []
+    assert instance.trigger_produced_no_event(first)
+    assert native.SplitwiseNode.resolve_agent_event(first) is None
+    # An already armed trigger that has seen no items emits the provider's sample.
+    state["seen_ids"] = []
+    fresh = await instance.execute({})
+    assert fresh[envelope] == body[envelope]
+    assert instance.trigger_emitted_event(fresh)
+    event = native.SplitwiseNode.resolve_agent_event(fresh)
+    assert "Splitwise" in event["text"] and str(body[envelope][0]["id"]) in event["text"]
+    assert "<strong>" not in event["text"]
+    repeated = await instance.execute({})
+    assert repeated[envelope] == []
+    for request in requests:
+        assert request.headers["Authorization"] == "Bearer " + KEY
+        assert request.url.params["updated_after"] == "2020-07-28T20:46:00Z"
+        assert set(request.url.params) == ({"limit", "offset", "updated_after"} if envelope == "expenses"
+                                           else {"limit", "updated_after"})
+
+
+@pytest.mark.asyncio
+async def test_expense_poll_detects_edit_to_existing_id_and_rebaselines_scope(monkeypatch):
+    body = poll_response()
+    transport(monkeypatch, body)
+    state = {}
+    instance = node({"operation": "on_expense_changed", "group_id": 391})
+    poll_state(instance, state)
+    await instance.execute({})
+    # Both timestamps are values documented in the expense response sample.
+    edited = deepcopy(body)
+    edited["expenses"][0]["updated_at"] = edited["expenses"][0]["created_at"]
+    transport(monkeypatch, edited)
+    result = await instance.execute({})
+    assert len(result["expenses"]) == 1
+    assert result["expenses"][0]["id"] == body["expenses"][0]["id"]
+    assert not (await instance.execute({}))["expenses"]
+    changed = node({"operation": "on_expense_changed", "friend_id": 4818})
+    poll_state(changed, state)
+    assert not (await changed.execute({}))["expenses"]
+
+
+@pytest.mark.asyncio
+async def test_expense_poll_pages_before_committing_baseline(monkeypatch):
+    body = poll_response()
+    requests = []
+    def respond(request):
+        requests.append(request)
+        offset = int(request.url.params["offset"])
+        return httpx.Response(200, json={"expenses": body["expenses"] * 100 if offset == 0 else []})
+    monkeypatch.setattr(native, "guarded_async_client", lambda **kwargs:
+        httpx.AsyncClient(transport=httpx.MockTransport(respond), **kwargs))
+    state = {}
+    instance = node({"operation": "on_expense_changed", "group_id": 391, "friend_id": 4818})
+    poll_state(instance, state)
+    await instance.execute({})
+    assert [r.url.params["offset"] for r in requests] == ["0", "100"]
+    assert all(r.url.params["group_id"] == "391" and r.url.params["friend_id"] == "4818" for r in requests)
+    assert state["seen_ids"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("body,status", [({}, 200), ({"expenses": [{}]}, 200),
+    ({"expenses": []}, 401), ({"expenses": {}}, 200)])
+async def test_failed_poll_does_not_consume_state(monkeypatch, body, status):
+    transport(monkeypatch, body, status)
+    instance = node({"operation": "on_expense_changed"})
+    state = {}
+    poll_state(instance, state)
+    with pytest.raises(ValueError):
+        await instance.execute({})
+    assert state == {}
+
+
+@pytest.mark.asyncio
+async def test_expense_poll_refuses_truncated_baseline(monkeypatch):
+    requests = transport(monkeypatch, {"expenses": poll_response()["expenses"] * 100})
+    state = {}
+    instance = node({"operation": "on_expense_changed"})
+    poll_state(instance, state)
+    with pytest.raises(ValueError, match="2,000"):
+        await instance.execute({})
+    assert len(requests) == 20 and state == {}

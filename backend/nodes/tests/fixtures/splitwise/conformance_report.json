@@ -2,19 +2,113 @@
   {
     "provider": "splitwise",
     "node_type": "automation-splitwise",
-    "checked": 23,
-    "passed": 21,
+    "checked": 25,
+    "passed": 23,
     "failed": 2,
     "fixture_errors": 0,
-    "response_checked": 23,
-    "auth_checked": 21,
+    "response_checked": 25,
+    "auth_checked": 23,
     "scope_checked": 0,
     "skipped": 0,
     "coverage": {
       "implemented": 23,
       "total": 27
     },
+    "triggers": {
+      "checked": 2,
+      "passed": 2
+    },
     "operations": [
+      {
+        "operation": "on_expense_changed",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://secure.splitwise.com/api/v3.0/get_expenses?updated_after=2024-01-01T00%3A00%3A00Z&group_id=1&friend_id=1&limit=100&offset=0",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "secure.splitwise.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /get_expenses",
+            "security_declared": true,
+            "response_source": "docs",
+            "response_witness": "GET /get_expenses",
+            "response_source_url": "https://dev.splitwise.com/#tag/expenses/paths/~1get_expenses/get",
+            "response_status": 200,
+            "response_sha256": "221e1a4f7e4a639fc42ffac81453c8b17584c0a681a45a34de0b8d457233e0bc"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "on_expense_changed",
+          "group_id": 1,
+          "friend_id": 1,
+          "updated_after": "2024-01-01T00:00:00Z"
+        },
+        "trigger": {
+          "kind": "poll",
+          "failures": [],
+          "advisory": [],
+          "emitted": 1,
+          "reads": 6
+        },
+        "passed": true
+      },
+      {
+        "operation": "on_new_activity",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://secure.splitwise.com/api/v3.0/get_notifications?updated_after=2024-01-01T00%3A00%3A00Z&limit=0",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "secure.splitwise.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /get_notifications",
+            "security_declared": true,
+            "response_source": "docs",
+            "response_witness": "GET /get_notifications",
+            "response_source_url": "https://dev.splitwise.com/#tag/notifications/paths/~1get_notifications/get",
+            "response_status": 200,
+            "response_sha256": "40addc43300bf42f234ead144a3f7b1478e0464e2d9925587a78c021f80e12d9"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "on_new_activity",
+          "updated_after": "2024-01-01T00:00:00Z"
+        },
+        "trigger": {
+          "kind": "poll",
+          "failures": [],
+          "advisory": [],
+          "emitted": 1,
+          "reads": 4
+        },
+        "passed": true
+      },
       {
         "operation": "get_current_user",
         "scenario": null,
@@ -47,6 +141,7 @@
         "config": {
           "operation": "get_current_user"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -82,6 +177,7 @@
           "operation": "get_user",
           "id": 1
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -116,6 +212,7 @@
         "config": {
           "operation": "get_groups"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -151,6 +248,7 @@
           "operation": "get_group",
           "id": 1
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -190,6 +288,7 @@
           "group_type": "home",
           "simplify_by_default": false
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -228,6 +327,7 @@
           "operation": "delete_group",
           "id": 1
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -266,6 +366,7 @@
           "group_id": 1,
           "user_id": 1
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -304,6 +405,7 @@
           "group_id": 1,
           "user_id": 1
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -338,6 +440,7 @@
         "config": {
           "operation": "get_friends"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -373,6 +476,7 @@
           "operation": "get_friend",
           "id": 1
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -411,6 +515,7 @@
           "operation": "delete_friend",
           "id": 1
         },
+        "trigger": null,
         "passed": false
       },
       {
@@ -433,9 +538,11 @@
             },
             "spec_operation": "GET /get_expenses",
             "security_declared": true,
-            "response_source": "generated",
+            "response_source": "docs",
+            "response_witness": "GET /get_expenses",
+            "response_source_url": "https://dev.splitwise.com/#tag/expenses/paths/~1get_expenses/get",
             "response_status": 200,
-            "response_sha256": "67b1c2a0e2a5b7000a809a819113c9b26aca5a5b206ab47f81d1bfa143e18a3f"
+            "response_sha256": "221e1a4f7e4a639fc42ffac81453c8b17584c0a681a45a34de0b8d457233e0bc"
           }
         ],
         "failures": [],
@@ -453,6 +560,7 @@
           "limit": 20,
           "offset": 0
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -488,6 +596,7 @@
           "operation": "get_expense",
           "id": 1
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -533,6 +642,7 @@
           "group_id": 1,
           "split_equally": true
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -580,6 +690,7 @@
           "category_id": 15,
           "group_id": 0
         },
+        "trigger": null,
         "passed": false
       },
       {
@@ -616,6 +727,7 @@
           "operation": "delete_expense",
           "id": 1
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -654,6 +766,7 @@
           "operation": "undelete_expense",
           "id": 1
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -689,6 +802,7 @@
           "operation": "get_comments",
           "expense_id": 1
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -727,6 +841,7 @@
           "expense_id": 1,
           "content": "1"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -763,6 +878,7 @@
           "operation": "delete_comment",
           "id": 1
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -785,9 +901,11 @@
             },
             "spec_operation": "GET /get_notifications",
             "security_declared": true,
-            "response_source": "generated",
+            "response_source": "docs",
+            "response_witness": "GET /get_notifications",
+            "response_source_url": "https://dev.splitwise.com/#tag/notifications/paths/~1get_notifications/get",
             "response_status": 200,
-            "response_sha256": "8898b3b1826b2306210ff0495c99bd53b65051e6fd354b33f4dc3ec11d235c0b"
+            "response_sha256": "40addc43300bf42f234ead144a3f7b1478e0464e2d9925587a78c021f80e12d9"
           }
         ],
         "failures": [],
@@ -799,6 +917,7 @@
           "updated_after": "2024-01-01T00:00:00Z",
           "limit": 20
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -833,6 +952,7 @@
         "config": {
           "operation": "get_currencies"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -867,6 +987,7 @@
         "config": {
           "operation": "get_categories"
         },
+        "trigger": null,
         "passed": true
       }
     ]

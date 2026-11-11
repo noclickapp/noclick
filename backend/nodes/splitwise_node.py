@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 from datetime import datetime
+from html import unescape
+import re
 from typing import Annotated, Literal, Union
 
 import httpx
@@ -10,6 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from utils.ssrf import guarded_async_client
 
 BASE = "https://secure.splitwise.com/api/v3.0"
@@ -201,7 +204,31 @@ class SplitwiseGetCategoriesConfig(_Input):
     operation: Literal["get_categories"] = Field("get_categories", json_schema_extra={"ui:hidden": True})
 
 
+class SplitwiseOnExpenseChangedConfig(PollTriggerConfigBase):
+    """Watch new or updated expenses; existing expenses are baselined when armed."""
+    model_config = ConfigDict(extra="forbid", json_schema_extra={"x-requires-webhook": True})
+    operation: Literal["on_expense_changed"] = Field("on_expense_changed", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+        "x-display-name": "On New or Updated Expense",
+    })
+    group_id: ResourceID | None = None
+    friend_id: ResourceID | None = Field(None, description="Ignored by Splitwise when a group is selected.")
+    updated_after: datetime | None = Field(None, description="Optional start of the watched update window. Narrow this or select a group for accounts with more than 2,000 expenses.")
+
+
+class SplitwiseOnNewActivityConfig(PollTriggerConfigBase):
+    """Watch recent account activity, including comments, payments and group changes."""
+    model_config = ConfigDict(extra="forbid", json_schema_extra={"x-requires-webhook": True})
+    operation: Literal["on_new_activity"] = Field("on_new_activity", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+        "x-display-name": "On New Activity",
+    })
+    updated_after: datetime | None = Field(None, description="Optional start of the activity window. Splitwise caps recent activity, so changes beyond its retained window cannot be detected.")
+
+
 SplitwiseConfig = Annotated[Union[
+    SplitwiseOnExpenseChangedConfig,
+    SplitwiseOnNewActivityConfig,
     SplitwiseGetCurrentUserConfig,
     SplitwiseGetUserConfig,
     SplitwiseGetGroupsConfig,
@@ -269,7 +296,7 @@ def _redact(value, secret):
     return value
 
 
-class SplitwiseNode(WorkflowNode):
+class SplitwiseNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-splitwise"
     connection_evidence = ConnectionEvidence(noun="Splitwise account", identity_operation="get_current_user")
 
@@ -277,11 +304,82 @@ class SplitwiseNode(WorkflowNode):
     def get_config_model(cls):
         return SplitwiseFullConfig
 
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if output.get("operation") not in {"on_expense_changed", "on_new_activity"}:
+            return super().resolve_agent_event(output)
+        expenses = output.get("expenses", [])
+        activity = output.get("notifications", [])
+        if not expenses and not activity:
+            return None
+        lines = []
+        for expense in expenses[:10]:
+            actor = expense.get("updated_by") or expense.get("created_by") or {}
+            who = " ".join(str(actor.get(k) or "") for k in ("first_name", "last_name")).strip()
+            lines.append(f"- {who or 'A Splitwise user'}: {expense.get('description') or 'Expense'}; "
+                         f"{expense.get('cost')} {expense.get('currency_code')}; "
+                         f"expense {expense.get('id')}, group {expense.get('group_id')}; "
+                         f"updated {expense.get('updated_at')}. {expense.get('details') or ''}")
+        for item in activity[:10]:
+            source = item.get("source") or {}
+            content = unescape(re.sub(r"<[^>]+>", " ", item.get("content") or "")).strip()
+            lines.append(f"- User {item.get('created_by')}: {content}; activity {item.get('id')} "
+                         f"at {item.get('created_at')}; {source.get('type') or 'account'} "
+                         f"{source.get('id')}; {source.get('url') or ''}")
+        count = len(expenses) + len(activity)
+        if count > 10:
+            lines.append(f"- … and {count - 10} more (full records in the trigger output)")
+        return {"text": f"Splitwise: {count} expense change(s) or new activity item(s):\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _poll_changes(self, config, key):
+        expense_poll = isinstance(config, SplitwiseOnExpenseChangedConfig)
+        path, envelope = ("/get_expenses", "expenses") if expense_poll else ("/get_notifications", "notifications")
+        # Only declared provider fields leave the node; cron mirrors stay local.
+        params = {"updated_after": config.updated_after.isoformat().replace("+00:00", "Z")} if config.updated_after else {}
+        if expense_poll:
+            params.update({name: getattr(config, name) for name in ("group_id", "friend_id")
+                           if getattr(config, name) is not None})
+        params["limit"] = 100 if expense_poll else 0
+        items = []
+        async with guarded_async_client(timeout=30, trust_env=False, follow_redirects=False) as client:
+            for offset in range(0, 2000, 100):
+                if expense_poll:
+                    params["offset"] = offset
+                response = await client.get(BASE + path, params=params,
+                    headers={"Authorization": "Bearer " + key, "Accept": "application/json"})
+                if not 200 <= response.status_code < 300:
+                    raise ValueError(f"Splitwise poll failed (HTTP {response.status_code})")
+                if len(response.content) > 5_000_000:
+                    raise ValueError("Splitwise poll response exceeds the read bound")
+                body = response.json()
+                if not isinstance(body, dict) or not isinstance(body.get(envelope), list):
+                    raise ValueError("Splitwise returned an invalid poll response")
+                page = body[envelope]
+                for item in page:
+                    if not isinstance(item, dict) or type(item.get("id")) is not int:
+                        raise ValueError("Splitwise poll item has no identity")
+                    if expense_poll and not item.get("updated_at"):
+                        raise ValueError("Splitwise expense has no update timestamp")
+                items.extend(page)
+                if not expense_poll or len(page) < 100:
+                    break
+                if offset == 1900:
+                    raise ValueError("Splitwise poll exceeds 2,000 expenses; select a group, friend or later update window")
+        fresh = await self._filter_unseen(items, lambda item:
+            f"{item['id']}:{item['updated_at']}" if expense_poll else str(item["id"]))
+        output = {"status": "success", "operation": config.operation,
+                  envelope: _redact(fresh, key), "new_item_count": len(fresh)}
+        await self.emit(output)
+        return output
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Splitwise API key")
         config = self.config.config
         key = self.config.credentials.api_key
+        if isinstance(config, (SplitwiseOnExpenseChangedConfig, SplitwiseOnNewActivityConfig)):
+            return await self._poll_changes(config, key)
         method, path, envelope = OPERATIONS[config.operation]
         values = config.model_dump(mode="json", exclude_none=True, exclude={"operation"})
         if "{id}" in path:

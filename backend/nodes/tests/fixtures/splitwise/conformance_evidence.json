@@ -14,12 +14,16 @@
     ],
     "advisory": [],
     "stats": {
-      "operations": 23,
+      "operations": 25,
       "skipped": 0,
-      "request_ok": 22,
-      "authored_parser_ok": 5,
-      "generated_only": 17,
+      "request_ok": 24,
+      "authored_parser_ok": 9,
+      "generated_only": 15,
       "local_ok": 0
+    },
+    "triggers": {
+      "on_expense_changed": "passed",
+      "on_new_activity": "passed"
     }
   },
   "spec_defects": [
@@ -35,5 +39,14 @@
       "source": "https://dev.splitwise.com/#tag/friends/paths/~1delete_friend~1%7Bid%7D/post"
     }
   ],
-  "merge_bar": "Only documented provider-contract contradictions remain; regression tests accept both documented payloads. No live provider account was used."
+  "merge_bar": "Both poll triggers pass contract payload and new-item detection checks. Only the two documented pre-existing provider-contract contradictions remain; no live account was used.",
+  "trigger_brief": 1,
+  "triggers": [
+    "on_expense_changed",
+    "on_new_activity"
+  ],
+  "trigger_contracts": {
+    "on_expense_changed": "https://dev.splitwise.com/#tag/expenses/paths/~1get_expenses/get",
+    "on_new_activity": "https://dev.splitwise.com/#tag/notifications/paths/~1get_notifications/get"
+  }
 }
