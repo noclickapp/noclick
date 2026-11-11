@@ -1,0 +1,128 @@
+{
+  "sent": {
+    "body": {
+      "event": "sent",
+      "time": 1433333949,
+      "MessageID": 19421777835146490,
+      "Message_GUID": "1ab23cd4-e567-8901-2345-6789f0gh1i2j",
+      "email": "api@mailjet.com",
+      "mj_campaign_id": 7257,
+      "mj_contact_id": 4,
+      "customcampaign": "",
+      "mj_message_id": "19421777835146490",
+      "smtp_reply": "sent (250 2.0.0 OK 1433333948 fa5si855896wjc.199 - gsmtp)",
+      "CustomID": "helloworld",
+      "Payload": ""
+    },
+    "source": "https://dev.mailjet.com/docs/email-api/webhooks/event-types"
+  },
+  "open": {
+    "body": {
+      "event": "open",
+      "time": 1433103519,
+      "MessageID": 19421777396190490,
+      "Message_GUID": "1ab23cd4-e567-8901-2345-6789f0gh1i2j",
+      "email": "api@mailjet.com",
+      "mj_campaign_id": 7173,
+      "mj_contact_id": 320,
+      "customcampaign": "",
+      "CustomID": "helloworld",
+      "Payload": "",
+      "ip": "127.0.0.1",
+      "geo": "US",
+      "agent": "Mozilla/5.0 (Windows NT 5.1; rv:11.0) Gecko Firefox/11.0"
+    },
+    "source": "https://dev.mailjet.com/docs/email-api/webhooks/event-types"
+  },
+  "click": {
+    "body": {
+      "event": "click",
+      "time": 1433334653,
+      "MessageID": 19421777836302490,
+      "Message_GUID": "1ab23cd4-e567-8901-2345-6789f0gh1i2j",
+      "email": "api@mailjet.com",
+      "mj_campaign_id": 7272,
+      "mj_contact_id": 4,
+      "customcampaign": "",
+      "CustomID": "helloworld",
+      "Payload": "",
+      "url": "https://mailjet.com",
+      "ip": "127.0.0.1",
+      "geo": "FR",
+      "agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit/537.36"
+    },
+    "source": "https://dev.mailjet.com/docs/email-api/webhooks/event-types"
+  },
+  "bounce": {
+    "body": {
+      "event": "bounce",
+      "time": 1430812195,
+      "MessageID": 13792286917004336,
+      "Message_GUID": "1ab23cd4-e567-8901-2345-6789f0gh1i2j",
+      "email": "bounce@mailjet.com",
+      "mj_campaign_id": 0,
+      "mj_contact_id": 0,
+      "customcampaign": "",
+      "CustomID": "helloworld",
+      "Payload": "",
+      "blocked": false,
+      "hard_bounce": true,
+      "error_related_to": "recipient",
+      "error": "user unknown",
+      "comment": "Host or domain name not found. Name service error for name=lbjsnrftlsiuvbsren.com type=A: Host not found"
+    },
+    "source": "https://dev.mailjet.com/docs/email-api/webhooks/event-types"
+  },
+  "blocked": {
+    "body": {
+      "event": "blocked",
+      "time": 1430812195,
+      "MessageID": 13792286917004336,
+      "Message_GUID": "1ab23cd4-e567-8901-2345-6789f0gh1i2j",
+      "email": "bounce@mailjet.com",
+      "mj_campaign_id": 0,
+      "mj_contact_id": 0,
+      "customcampaign": "",
+      "CustomID": "helloworld",
+      "Payload": "",
+      "error_related_to": "recipient",
+      "error": "user unknown"
+    },
+    "source": "https://dev.mailjet.com/docs/email-api/webhooks/event-types"
+  },
+  "spam": {
+    "body": {
+      "event": "spam",
+      "time": 1430812195,
+      "MessageID": 13792286917004336,
+      "Message_GUID": "1ab23cd4-e567-8901-2345-6789f0gh1i2j",
+      "email": "bounce@mailjet.com",
+      "mj_campaign_id": 0,
+      "mj_contact_id": 0,
+      "customcampaign": "",
+      "CustomID": "helloworld",
+      "Payload": "",
+      "source": "JMRPP"
+    },
+    "source": "https://dev.mailjet.com/docs/email-api/webhooks/event-types"
+  },
+  "unsub": {
+    "body": {
+      "event": "unsub",
+      "time": 1433334941,
+      "MessageID": 20547674933128000,
+      "Message_GUID": "1ab23cd4-e567-8901-2345-6789f0gh1i2j",
+      "email": "api@mailjet.com",
+      "mj_campaign_id": 7276,
+      "mj_contact_id": 126,
+      "customcampaign": "",
+      "CustomID": "helloworld",
+      "Payload": "",
+      "mj_list_id": 1,
+      "ip": "127.0.0.1",
+      "geo": "FR",
+      "agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36"
+    },
+    "source": "https://dev.mailjet.com/docs/email-api/webhooks/event-types"
+  }
+}

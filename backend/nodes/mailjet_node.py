@@ -15,11 +15,15 @@ https://dev.mailjet.com/docs/content-api/content-overview/content-overview
 
 from __future__ import annotations
 
+import base64
+import binascii
+import hmac
 import json
 import re
+import secrets
 from dataclasses import dataclass
 from typing import Annotated, Any, Dict, Literal, Optional, Union
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit, urlunsplit
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
@@ -28,6 +32,7 @@ from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import filter_options_by_search, normalize_search
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 
 
 API_BASE = "https://api.mailjet.com"
@@ -313,7 +318,35 @@ def _operation_model(op: Operation) -> type[BaseModel]:
     return create_model("Mailjet" + "".join(s.title() for s in op.name.split("_")) + "Config", **fields)
 
 
-_MODELS = [_operation_model(op) for op in _OPERATIONS]
+# Event names and payloads: https://dev.mailjet.com/docs/email-api/webhooks/event-types
+MAILJET_TRIGGER_EVENTS = {
+    "on_email_sent": ("sent", "Email Delivered"),
+    "on_email_opened": ("open", "Email Opened"),
+    "on_email_clicked": ("click", "Email Link Clicked"),
+    "on_email_bounced": ("bounce", "Email Bounced"),
+    "on_email_blocked": ("blocked", "Email Blocked"),
+    "on_spam_complaint": ("spam", "Spam Complaint"),
+    "on_unsubscribed": ("unsub", "Contact Unsubscribed"),
+}
+
+
+def _trigger_model(operation, label):
+    return create_model(
+        "Mailjet" + "".join(word.title() for word in operation.split("_")) + "Config",
+        __base__=WebhookTriggerConfigBase, __module__=__name__,
+        operation=(Literal[operation], Field(operation, title=label, json_schema_extra={
+            "const": operation, "ui:hidden": True, "x-category": "Triggers",
+            "x-is-trigger": True, "x-display-name": label,
+        })),
+        webhook_url=(Optional[str], Field(None, title="Webhook URL",
+            description="Registered with Mailjet automatically when the trigger is activated.",
+            json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})),
+    )
+
+
+_MODELS = [_operation_model(op) for op in _OPERATIONS] + [
+    _trigger_model(operation, label) for operation, (_, label) in MAILJET_TRIGGER_EVENTS.items()
+]
 MailjetOperation = Annotated[Union[tuple(_MODELS)], Discriminator("operation")]
 
 
@@ -539,7 +572,7 @@ async def _request(credentials: MailjetApiKeyCredential, op: Operation, path: st
     return result
 
 
-class MailjetNode(WorkflowNode):
+class MailjetNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-mailjet"
 
     connection_evidence = ConnectionEvidence(
@@ -550,6 +583,101 @@ class MailjetNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return MailjetNodeConfig
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        # Version 1 delivers individual objects rather than grouped arrays.
+        # https://dev.mailjet.com/openapi/openapi-mailjet/webhook/post_v3_eventcallbackurl
+        operation = (config or {}).get("operation")
+        if operation not in MAILJET_TRIGGER_EVENTS:
+            raise ValueError("Choose a Mailjet email trigger")
+        parsed = urlsplit(webhook_url)
+        if parsed.scheme != "https" or not parsed.netloc or parsed.username or parsed.password:
+            raise ValueError("Mailjet requires an HTTPS webhook URL")
+        secret = secrets.token_urlsafe(32)
+        authenticated_url = urlunsplit(parsed._replace(netloc=f"noclick:{secret}@{parsed.netloc}"))
+        result = await _request(MailjetApiKeyCredential.model_validate(credential),
+            OPERATIONS["create_webhook_url"], "/v3/REST/eventcallbackurl", body={
+                "EventType": MAILJET_TRIGGER_EVENTS[operation][0], "Url": authenticated_url,
+                "IsBackup": False, "Status": "alive", "Version": 1,
+            })
+        if result["status"] != "success":
+            raise ValueError(result["error"])
+        rows = result["data"].get("Data", [])
+        endpoint_id = rows[0].get("ID") if len(rows) == 1 and isinstance(rows[0], dict) else None
+        if type(endpoint_id) is not int or endpoint_id <= 0:
+            raise ValueError("Mailjet did not return a webhook ID")
+        return {"external_webhook_id": str(endpoint_id), "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = (config or {}).get("external_webhook_id")
+        if not endpoint_id:
+            return
+        if not credential:
+            raise ValueError("Connect Mailjet to remove its webhook")
+        result = await _request(MailjetApiKeyCredential.model_validate(credential),
+            OPERATIONS["delete_webhook_url"],
+            f"/v3/REST/eventcallbackurl/{quote(str(endpoint_id), safe='')}")
+        if result["status"] != "success" and result.get("status_code") != 404:
+            raise ValueError(result["error"])
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # Mailjet uses HTTP Basic credentials embedded in the registered URL,
+        # with no body signature. Never reuse the account's API secret here.
+        # https://dev.mailjet.com/docs/email-api/webhooks/webhooks-overview
+        secret = (config or {}).get("signing_secret")
+        if not isinstance(secret, str) or not secret:
+            return False
+        authorization = next((value for key, value in headers.items()
+                              if key.lower() == "authorization"), "")
+        try:
+            scheme, encoded = authorization.split(" ", 1)
+            if scheme.lower() != "basic":
+                return False
+            supplied = base64.b64decode(encoded, validate=True)
+        except (ValueError, binascii.Error, AttributeError):
+            return False
+        return hmac.compare_digest(supplied, f"noclick:{secret}".encode())
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event = MAILJET_TRIGGER_EVENTS.get((config or {}).get("operation"))
+        return bool(event and isinstance(payload, dict) and payload.get("event") == event[0])
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("event") not in {
+            event for event, _ in MAILJET_TRIGGER_EVENTS.values()
+        }:
+            return super().resolve_agent_event(output)
+        event = output["event"]
+        recipient = output.get("email") or "unknown recipient"
+        message_id = output.get("MessageID")
+        lines = [f"Mailjet {event}: {recipient}"]
+        for field, label in (("time", "At (Unix time)"), ("mj_contact_id", "Contact ID"),
+                             ("mj_campaign_id", "Campaign ID"), ("MessageID", "Message ID"),
+                             ("CustomID", "Custom ID"), ("Payload", "Custom payload")):
+            value = output.get(field)
+            if value is not None and value != "":
+                lines.append(f"{label}: {str(value)[:1500]}")
+        details = {
+            "sent": (("smtp_reply", "SMTP reply"),),
+            "open": (("geo", "Country"),),
+            "click": (("url", "Clicked link"),),
+            "bounce": (("hard_bounce", "Permanent bounce"), ("blocked", "Recipient blocked"),
+                       ("error", "Error"), ("comment", "SMTP error")),
+            "blocked": (("error", "Error"),),
+            "spam": (("source", "Complaint source"),),
+            "unsub": (("mj_list_id", "Contact list ID"),),
+        }
+        for field, label in details[event]:
+            if (value := output.get(field)) is not None:
+                lines.append(f"{label}: {str(value)[:1500]}")
+        return {"text": "\n".join(lines),
+                "conversation_key": str(message_id) if message_id is not None else str(recipient),
+                "title": f"Mailjet {event}: {recipient}"[:200]}
 
     @classmethod
     async def load_field_options(cls, field_name: str, credential_data: Dict[str, Any],
@@ -631,6 +759,8 @@ class MailjetNode(WorkflowNode):
         if not isinstance(self.config, MailjetNodeConfig) or self.config.credentials is None:
             raise ValueError("Connect a Mailjet API key and secret")
         config = self.config.config
+        if config.operation in MAILJET_TRIGGER_EVENTS:
+            return self.no_event_output(config.operation)
         op = OPERATIONS.get(config.operation)
         if op is None:
             raise ValueError("Unknown Mailjet operation")
