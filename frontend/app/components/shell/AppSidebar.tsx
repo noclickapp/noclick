@@ -446,8 +446,8 @@ export function SidebarContent({
                 </nav>
             </div>
 
-            {/* The Text NoClick card is its own edge: no rule above it. */}
-            <div className={cn('flex shrink-0 flex-col gap-0.5 border-t p-2 [&:has([data-testid=text-noclick-banner])]:border-t-0', HAIRLINE)}>
+            {/* No rule above the foot: its card and account stand on the column's own surface. */}
+            <div className="flex shrink-0 flex-col gap-0.5 p-2">
                 {!collapsed && <TextNoClickBanner />}
                 {/* Mounted even on the rail: the hosted balance owns the out-of-funds
                     listeners that open the top-up flow mid-run. */}
