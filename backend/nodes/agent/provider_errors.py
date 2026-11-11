@@ -390,6 +390,11 @@ def provider_label(provider: str) -> str:
     return _meta(provider)["label"]
 
 
+def provider_billing_url(provider: str) -> Optional[str]:
+    """Where a person adds funds to their account with a provider, None where it has no such page."""
+    return _meta(provider)["billing_url"] or None
+
+
 def _action_for(kind: str, provider: str) -> Optional[Dict[str, str]]:
     meta = _meta(provider)
     if provider == "noclick" and kind == "spend_cap":
