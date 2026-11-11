@@ -121,3 +121,110 @@ async def test_provider_documented_responses_through_factory(transport, operatio
     transport[1].append(httpx.Response(200, json=example["body"]))
     result = await node(operation, config).execute({})
     assert result == {**example["body"], "operation": operation, "status": "success"}
+
+
+@pytest.fixture
+def documented_records():
+    from pathlib import Path
+    examples = json.loads((Path(__file__).parent / "fixtures/kintone/responses.json").read_text())
+    return examples["GET /k/v1/records.json"]["body"]["records"]
+
+
+def poll_state(instance):
+    """Persist the real mixin's baseline/dedup state without a database."""
+    state = {}
+    async def update(mutator, **kwargs):
+        changed, result = mutator(deepcopy(state))
+        if changed is not None:
+            state.clear()
+            state.update(changed)
+        return result
+    instance._update_node_state = update
+    return state
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["on_new_record", "on_new_or_updated_record"])
+async def test_poll_baseline_new_record_duplicate_suppression_and_agent(transport, documented_records, operation):
+    requests, replies = transport
+    instance = node(operation, {"app_id": 8})
+    poll_state(instance)
+    replies.append(httpx.Response(200, json={"records": documented_records[:1]}))
+    baseline = await instance.execute({})
+    assert baseline["records"] == []
+    assert instance.trigger_produced_no_event(baseline)
+    assert native.KintoneNode.resolve_agent_event(baseline) is None
+    replies.append(httpx.Response(200, json={"records": documented_records}))
+    result = await instance.execute({})
+    assert result["records"] == documented_records[1:]
+    assert result["record_count"] == 1 and instance.trigger_emitted_event(result)
+    event = native.KintoneNode.resolve_agent_event(result)
+    assert "Administrator" in event["text"] and "app 8" in event["text"]
+    assert "https://example.cybozu.com/k/8/show#record=2" in event["text"]
+    assert native.KintoneNode.should_propagate_output(result, {"operation": operation})
+    replies.append(httpx.Response(200, json={"records": documented_records}))
+    repeated = await instance.execute({})
+    assert not repeated["records"] and instance.trigger_produced_no_event(repeated)
+    assert not native.KintoneNode.should_propagate_output(repeated, {"operation": operation})
+    assert all(dict(r.url.params) == {"app": "8", "query": "$id > 0 order by $id asc limit 500", "totalCount": "false"} for r in requests)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,emits_edit", [("on_new_record", False), ("on_new_or_updated_record", True)])
+async def test_poll_detects_changes_in_app_defined_fields(transport, documented_records, operation, emits_edit):
+    instance = node(operation, {"app_id": 8})
+    poll_state(instance)
+    transport[1].append(httpx.Response(200, json={"records": documented_records[:1]}))
+    await instance.execute({})
+    edited = deepcopy(documented_records[:1])
+    # A synthetic edit to a documented field tests change detection; the base
+    # record is the provider's saved list example.
+    edited[0]["Created_by"]["value"]["name"] = "Changed name"
+    transport[1].append(httpx.Response(200, json={"records": edited}))
+    output = await instance.execute({})
+    assert bool(output["records"]) is emits_edit
+    transport[1].append(httpx.Response(200, json={"records": edited}))
+    assert not (await instance.execute({}))["records"]
+
+
+@pytest.mark.asyncio
+async def test_poll_keyset_pagination_finishes_before_state_commit(transport, documented_records, monkeypatch):
+    monkeypatch.setattr(native, "_POLL_PAGE_SIZE", 1)
+    instance = node("on_new_record", {"app_id": 8})
+    state = poll_state(instance)
+    transport[1].extend(httpx.Response(200, json={"records": page}) for page in [documented_records[:1], documented_records[1:], []])
+    assert not (await instance.execute({}))["records"]
+    assert [r.url.params["query"] for r in transport[0]] == [
+        "$id > 0 order by $id asc limit 1", "$id > 1 order by $id asc limit 1", "$id > 2 order by $id asc limit 1"]
+    assert state["seen_ids"] == ["1", "2"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("failure", ["http", "missing_id", "unordered", "too_large"])
+async def test_failed_or_incomplete_poll_never_advances_state(transport, documented_records, monkeypatch, failure):
+    monkeypatch.setattr(native, "_POLL_PAGE_SIZE", 1)
+    monkeypatch.setattr(native, "_POLL_MAX_RECORDS", 1)
+    instance = node("on_new_or_updated_record", {"app_id": 8})
+    state = poll_state(instance)
+    transport[1].append(httpx.Response(200, json={"records": documented_records[:1]}))
+    second = {
+        "http": httpx.Response(403, json={"code": "CB_NO02", "message": "No permission"}),
+        "missing_id": httpx.Response(200, json={"records": [{}]}),
+        "unordered": httpx.Response(200, json={"records": documented_records[:1]}),
+        "too_large": httpx.Response(200, json={"records": documented_records[1:]}),
+    }[failure]
+    transport[1].append(second)
+    with pytest.raises(ValueError):
+        await instance.execute({})
+    assert not state
+
+
+def test_poll_scope_uses_only_declared_fields_and_requires_app():
+    from nodes.core.poll_trigger import poll_scope
+    cls = native.KintoneNode
+    config = {"operation": "on_new_record", "app_id": 8}
+    assert poll_scope(cls, config) == poll_scope(cls, {**config, "label": "Different label", "goal": "Cosmetic change"})
+    assert poll_scope(cls, config) != poll_scope(cls, {**config, "app_id": 9})
+    assert poll_scope(cls, config) != poll_scope(cls, {**config, "operation": "on_new_or_updated_record"})
+    with pytest.raises(ValueError):
+        node("on_new_record")

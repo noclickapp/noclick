@@ -1,10 +1,12 @@
 """Kintone app records and metadata via app-scoped API tokens.
 
-Contract: kintone/openapi-spec 2026.8.31. API reference:
+Contract: kintone/openapi-spec 2026.11.11. API reference:
 https://kintone.dev/en/docs/kintone/rest-api/
 """
 from __future__ import annotations
 
+import hashlib
+import json
 from typing import Annotated, Any, Literal, Union
 import re
 from urllib.parse import urlencode
@@ -13,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import SSRFError, guarded_async_client, normalize_provider_https_origin
 
@@ -200,6 +203,30 @@ class KintoneUpdateAssignees(_Record):
     revision: int | None = Field(None, ge=-1)
 
 
+class KintoneOnNewRecord(PollTriggerConfigBase):
+    """Watch an app for new records. Existing records become the initial baseline.
+
+    Polls all accessible records, up to 10,000; larger apps fail without advancing
+    the baseline. The API token needs View records permission for this app.
+    """
+    operation: Literal["on_new_record"] = Field("on_new_record", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Record",
+    })
+    app_id: int = Field(..., ge=1, title="App ID", description="The app to watch. The API token must have View records permission for this app.")
+
+
+class KintoneOnNewOrUpdatedRecord(KintoneOnNewRecord):
+    """Watch for new records or changes to their accessible field values.
+
+    Polling compares complete records between runs; intermediate edits between
+    polls and changes to fields the token cannot view are not delivered.
+    Supports apps with at most 10,000 accessible records.
+    """
+    operation: Literal["on_new_or_updated_record"] = Field("on_new_or_updated_record", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New or Updated Record",
+    })
+
+
 KintoneConfig = Annotated[Union[
     KintoneGetApp, KintoneGetFields, KintoneGetViews, KintoneGetProcess,
     KintoneGetRecord, KintoneListRecords, KintoneCreateRecord, KintoneUpdateRecord,
@@ -207,6 +234,7 @@ KintoneConfig = Annotated[Union[
     KintoneGetComments, KintoneAddComment, KintoneDeleteComment,
     KintoneCreateCursor, KintoneGetCursor, KintoneDeleteCursor,
     KintoneUpdateStatus, KintoneUpdateAssignees,
+    KintoneOnNewRecord, KintoneOnNewOrUpdatedRecord,
 ], Field(discriminator="operation")]
 
 
@@ -244,7 +272,11 @@ def _guard_credential(data):
         raise ValueError("Attach a Kintone API token credential")
 
 
-class KintoneNode(WorkflowNode):
+_POLL_PAGE_SIZE = 500
+_POLL_MAX_RECORDS = 10_000
+
+
+class KintoneNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-kintone"
     connection_evidence = ConnectionEvidence(noun="Kintone app", identity_operation="get_app")
 
@@ -270,6 +302,8 @@ class KintoneNode(WorkflowNode):
         if credential is None:
             raise ValueError("Supply a Kintone API token credential")
         operation = config.operation
+        if isinstance(config, KintoneOnNewRecord):
+            return await self._poll_records(config)
         method, route = ROUTES[operation]
         params = {k: v for k, v in config.model_dump(exclude={"operation", "app_id"}).items() if v is not None}
         if operation == "update_records":
@@ -288,6 +322,10 @@ class KintoneNode(WorkflowNode):
             params["comment"] = {"text": params.pop("text"), "mentions": params.pop("mentions")}
         if operation == "delete_comment":
             params["comment"] = params.pop("comment_id")
+        return await self._request(operation, method, route, params)
+
+    async def _request(self, operation, method, route, params):
+        credential = self.config.credentials
         url = credential.tenant_url + "/k/v1/" + route + ".json"
         kwargs = {}
         if method == "GET":
@@ -315,6 +353,79 @@ class KintoneNode(WorkflowNode):
             return {**body, "operation": operation, "status": "success"}
         except (httpx.HTTPError, SSRFError, ValueError):
             return {"status": "error", "error": "Kintone request failed or returned an invalid response"}
+
+    async def _poll_records(self, config):
+        # The published query grammar allows $id ordering/comparison. Keyset
+        # pagination avoids offset drift if records are inserted/deleted mid-poll.
+        records = []
+        after = 0
+        while True:
+            body = await self._request("list_records", "GET", "records", {
+                "app": config.app_id,
+                "query": f"$id > {after} order by $id asc limit {_POLL_PAGE_SIZE}",
+                "totalCount": "false",
+            })
+            if body.get("status") != "success":
+                raise ValueError(body.get("error") or "Kintone poll failed")
+            page = body["records"]
+            for record in page:
+                record_id = self._record_id(record)
+                if int(record_id) <= after:
+                    raise ValueError("Kintone records are missing their ordered IDs")
+                after = int(record_id)
+            records.extend(page)
+            if len(records) > _POLL_MAX_RECORDS:
+                raise ValueError("Kintone polling supports apps with at most 10,000 accessible records")
+            if len(page) < _POLL_PAGE_SIZE:
+                break
+
+        def identity(record):
+            record_id = self._record_id(record)
+            if config.operation == "on_new_record":
+                return record_id
+            # Field codes are app-defined. Compare the entire documented record
+            # object rather than assuming an English Updated_datetime field code.
+            digest = hashlib.sha256(json.dumps(record, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+            return f"{record_id}:{digest}"
+
+        fresh = await self._filter_unseen(records, identity)
+        return {"status": "success", "operation": config.operation, "app_id": config.app_id,
+                "tenant_url": self.config.credentials.tenant_url,
+                "records": fresh, "record_count": len(fresh)}
+
+    @staticmethod
+    def _record_id(record):
+        field = record.get("$id") if isinstance(record, dict) else None
+        value = field.get("value") if isinstance(field, dict) else None
+        if not isinstance(value, str) or not re.fullmatch(r"[1-9][0-9]*", value):
+            raise ValueError("Kintone record is missing its numeric $id.value")
+        return value
+
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in {"on_new_record", "on_new_or_updated_record"}:
+            return bool(output.get("record_count"))
+        return super().should_propagate_output(output, config)
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if output.get("operation") not in {"on_new_record", "on_new_or_updated_record"}:
+            return super().resolve_agent_event(output)
+        records = output.get("records") or []
+        if not records:
+            return None
+        change = "new" if output["operation"] == "on_new_record" else "new or updated"
+        app_id, tenant = output["app_id"], output["tenant_url"]
+        lines = [f"Kintone: {len(records)} {change} record(s) in app {app_id}."]
+        for record in records[:10]:
+            record_id = cls._record_id(record)
+            # Keep app-defined field codes and values, including creator/modifier
+            # identity, so the agent can understand the content and act on it.
+            content = json.dumps(record, ensure_ascii=False)[:4000]
+            lines.append(f"Record {record_id}: {tenant}/k/{app_id}/show#record={record_id}\n{content}")
+        if len(records) > 10:
+            lines.append(f"And {len(records) - 10} more; all records are in the trigger output.")
+        return {"text": "\n".join(lines), "conversation_key": f"kintone:{tenant}:{app_id}"}
 
     @staticmethod
     def _validate_response(operation, body):
