@@ -12,6 +12,7 @@ const { socketCall } = vi.hoisted(() => ({ socketCall: vi.fn() }));
 vi.mock('~/lib/socketCall', () => ({ socketCall }));
 
 import { UsagePage } from '~/components/usage/page/UsagePage';
+import { forgetUsagePage } from '~/hooks/useUsagePage';
 import { money } from '~/components/usage/page/derive';
 import type { ChargeRow, ChargesPage, UsagePageData } from '~/components/usage/page/types';
 
@@ -121,6 +122,8 @@ beforeEach(() => {
 afterEach(() => {
     cleanup();
     socketCall.mockReset();
+    // Each test is a new tab: nothing kept from the one before.
+    forgetUsagePage();
 });
 
 // Plain DOM queries for what waitFor polls: *ByRole over 85 rows took each test past its limit on a CI runner.

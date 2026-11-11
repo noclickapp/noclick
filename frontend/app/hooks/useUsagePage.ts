@@ -19,11 +19,20 @@ export interface UsagePageState {
     charges: ChargesSource;
 }
 
+/** What the page showed when it was last open in this tab: a return shows it at once and reads it again. It's the
+ *  socket's account's, and a tab viewing another account starts over (a reload). */
+let kept: { snap: UsageSnapshot; firstPage: ChargesPage; period: UsagePageData['period'] } | null = null;
+
+/** Forget it, as a new tab would (a test's next page). */
+export function forgetUsagePage(): void {
+    kept = null;
+}
+
 export function useUsagePage(): UsagePageState {
-    const [data, setData] = useState<{ snap: UsageSnapshot; firstPage: ChargesPage } | null>(null);
+    const [data, setData] = useState<{ snap: UsageSnapshot; firstPage: ChargesPage } | null>(() => kept);
     const [error, setError] = useState<string | null>(null);
     const inFlight = useRef(false);
-    const period = useRef<UsagePageData['period'] | null>(null);
+    const period = useRef<UsagePageData['period'] | null>(kept?.period ?? null);
 
     const load = useCallback(async () => {
         if (inFlight.current) return;
@@ -31,7 +40,8 @@ export function useUsagePage(): UsagePageState {
         try {
             const page = (await socketCall('usage:page')) as unknown as UsagePageData;
             period.current = page.period;
-            setData({ snap: toSnapshot(page), firstPage: page.charges });
+            kept = { snap: toSnapshot(page), firstPage: page.charges, period: page.period };
+            setData(kept);
             setError(null);
         } catch (e) {
             setError(e instanceof Error ? e.message : 'Usage didn’t load');

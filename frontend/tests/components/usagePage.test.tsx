@@ -9,6 +9,7 @@ const { socketCall } = vi.hoisted(() => ({ socketCall: vi.fn() }));
 vi.mock('~/lib/socketCall', () => ({ socketCall }));
 
 import { UsagePage } from '~/components/usage/page/UsagePage';
+import { forgetUsagePage } from '~/hooks/useUsagePage';
 import type { ChargeRow, UsagePageData } from '~/components/usage/page/types';
 
 const NOW = '2026-10-16T15:20:00Z';
@@ -82,6 +83,8 @@ beforeEach(() => {
 afterEach(() => {
     cleanup();
     socketCall.mockReset();
+    // Each test is a new tab: nothing kept from the one before.
+    forgetUsagePage();
 });
 
 const open = () =>
@@ -99,6 +102,20 @@ it('shows a skeleton while the page reads, then the page', async () => {
     await act(async () => resolve(BUSY));
     expect(await screen.findByLabelText('Where it goes')).toBeTruthy();
     expect(socketCall).toHaveBeenCalledWith('usage:page');
+});
+
+it('shows the page it last read at once when it opens again in the tab, and reads it again behind it', async () => {
+    answer = () => Promise.resolve(BUSY);
+    const first = open();
+    expect(await screen.findByLabelText('Where it goes')).toBeTruthy();
+    first.unmount();
+    let resolve!: (v: unknown) => void;
+    answer = () => new Promise((r) => (resolve = r));
+    open();
+    expect(screen.queryByLabelText('Loading usage')).toBeNull();
+    expect(screen.getByLabelText('Where it goes')).toBeTruthy();
+    expect(socketCall.mock.calls.filter(([event]) => event === 'usage:page')).toHaveLength(2);
+    await act(async () => resolve(BUSY));
 });
 
 it('says when the page failed and reads it again on Try again', async () => {
