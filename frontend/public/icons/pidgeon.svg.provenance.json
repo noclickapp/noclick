@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/pidgeon.svg",
+  "source": "https://pidgeon.ai/icon.svg",
+  "source_page": "https://pidgeon.ai",
+  "retrieved_at": "2026-11-11",
+  "license": "Pidgeon trademark; used to identify the Pidgeon integration",
+  "sha256": "05f9d2b614183af44c2fb5799f774a46665334097f7cbb500f88debeac9fe424",
+  "edits": [
+    "Removed the official cream tile and border (the two rect elements) to isolate the company symbol.",
+    "Cropped the viewBox to 37 47 126 106 around the unchanged transformed stroke."
+  ],
+  "notes": "Company SVG favicon/app icon linked on the official homepage. All path and transform data are unchanged. The pair isolates the symbol and preserves its geometry and open spaces."
+}
