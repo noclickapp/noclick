@@ -1,5 +1,7 @@
 """Dart contract transports with synthetic account data; no live writes."""
 import json
+import hashlib
+import hmac
 from pathlib import Path
 
 import httpx
@@ -13,6 +15,7 @@ from nodes.core.registry import NodeFactory
 ID = "Ab12Cd34Ef56"
 TOKEN = "synthetic-dart-token-42"
 CASES = json.loads((Path(__file__).parent / "fixtures/dart/transport.json").read_text())["cases"]
+EVENTS = json.loads((Path(__file__).parent / "fixtures/dart/events.json").read_text())["events"]
 
 
 @pytest.fixture(autouse=True)
@@ -125,3 +128,82 @@ def test_dart_manual_credential_default_masking_and_strict_resource_ids():
         {"operation": "list_tasks", "limit": 0}]:
         with pytest.raises(ConfigValidationError):
             native.DartNode.parse_config({"config": config})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("event_type", native.EVENTS)
+async def test_dart_webhook_registration_lifecycle_and_event_subscription(monkeypatch, event_type):
+    config = {"operation": "on_event", "event_type": event_type, "webhook_secret": "dsw_fixture_secret"}
+    url = "https://fixture.hooks.example.test/webhook/dart"
+    requests = transport(monkeypatch, {"item": {"id": ID, "title": "NoClick fixture", "url": url,
+        "enabled": True, "eventKinds": [event_type]}})
+    extra = await native.DartNode._register_external_webhook(
+        webhook_url=url, credential=credential(), config=config, node_id="fixture")
+    assert extra == {"external_webhook_id": ID, "signing_secret": "dsw_fixture_secret"}
+    assert json.loads(requests[0].content) == {"item": {"title": "NoClick fixture", "url": url,
+        "enabled": True, "eventKinds": [event_type]}}
+    assert requests[0].method == "POST" and requests[0].url.path.endswith("/webhooks")
+    await native.DartNode._unregister_external_webhook(credential=credential(), config={**config, **extra}, node_id="fixture")
+    assert requests[1].method == "DELETE" and requests[1].url.path.endswith("/webhooks/" + ID)
+    assert all(r.headers["Authorization"] == "Bearer " + TOKEN for r in requests)
+    before = native.DartNode.registration_fingerprint_fields(config)
+    assert before != native.DartNode.registration_fingerprint_fields({**config, "event_type": "doc.updated" if event_type != "doc.updated" else "task.created"})
+    assert before != native.DartNode.registration_fingerprint_fields({**config, "webhook_secret": "rotated"})
+    assert "dsw_fixture_secret" not in str(before)
+
+
+def test_dart_signature_matches_official_sdk_and_fails_closed():
+    secret = "dsw_fixture_secret"
+    body = json.dumps(EVENTS["task.created"]).encode()
+    signature = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
+    for config in ({"signing_secret": secret}, {"webhook_secret": secret}):
+        assert native.DartNode.verify_webhook_signature(body, {"Dart-Signature": signature}, config)
+        assert native.DartNode.verify_webhook_signature(body, {"dart-signature": signature}, config)
+        assert not native.DartNode.verify_webhook_signature(body + b" ", {"Dart-Signature": signature}, config)
+        assert not native.DartNode.verify_webhook_signature(body, {}, config)
+        assert not native.DartNode.verify_webhook_signature(body, {"Dart-Signature": "☃"}, config)
+    assert not native.DartNode.verify_webhook_signature(body, {"Dart-Signature": signature}, {})
+    assert not native.DartNode.verify_webhook_signature(body, {"Dart-Signature": signature}, {"signing_secret": "wrong"})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("event_type", native.EVENTS)
+@pytest.mark.parametrize("sdk_envelope", [False, True])
+async def test_dart_contract_events_deliver_content_and_ids_to_workflow_and_agent(event_type, sdk_envelope):
+    # Values come from the OpenAPI schemas. The official server documents the
+    # alternate data.model envelope: https://github.com/its-dart/dart-tools/blob/3bb2e3514d63c95157bfed8753cc48e183befaf3/dart/server.py
+    payload = json.loads(json.dumps(EVENTS[event_type]))
+    if sdk_envelope and "model" not in payload["data"]:
+        payload["data"] = {"model": payload["data"]}
+    config = {"operation": "on_event", "event_type": event_type, "webhook_secret": "dsw_fixture_secret"}
+    assert native.DartNode.filter_trigger_payload(payload, config)
+    assert not native.DartNode.filter_trigger_payload(payload, {**config, "event_type": "unsupported"})
+    assert native.DartNode.resolve_trigger_payload(payload, config) is payload
+    assert await node(config).execute(payload) == payload
+    event = native.DartNode.resolve_agent_event(payload)
+    record = payload["data"].get("model", payload["data"])
+    assert record["id"] in event["text"] and record["htmlUrl"] in event["text"]
+    assert event_type in event["text"]
+    assert (record.get("text") or record.get("description") or record.get("title"))[:200] in event["text"]
+    resource = event_type.split(".")[0]
+    assert event["conversation_key"] == f"dart:{'task' if resource == 'comment' else resource}:{record['taskId'] if resource == 'comment' else record['id']}"
+    assert "dsw_fixture_secret" not in str(event)
+    if event_type == "task.status_updated":
+        assert payload["data"]["oldStatus"] in event["text"] and payload["data"]["newStatus"] in event["text"]
+    if event_type == "task.assignees_updated":
+        assert "Previous assignees" in event["text"] and "New assignees" in event["text"]
+
+
+@pytest.mark.asyncio
+async def test_dart_malformed_webhook_registration_and_teardown_ids_are_refused(monkeypatch):
+    requests = transport(monkeypatch, {"item": {}})
+    config = {"operation": "on_event", "webhook_secret": "dsw_fixture_secret"}
+    with pytest.raises(ValueError, match="webhook ID"):
+        await native.DartNode._register_external_webhook(webhook_url="https://fixture.hooks.example.test/webhook/dart",
+            credential=credential(), config=config, node_id="fixture")
+    with pytest.raises(ValueError, match="webhook ID"):
+        await native.DartNode._unregister_external_webhook(credential=credential(),
+            config={"external_webhook_id": "../../me"}, node_id="fixture")
+    assert len(requests) == 1
+    assert not native.DartNode.filter_trigger_payload({"type": "task.created", "data": []}, config)
+    assert native.DartNode.resolve_agent_event({"type": "task.created", "data": {}}) is None

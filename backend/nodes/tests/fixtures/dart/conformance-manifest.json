@@ -8,6 +8,26 @@
     "credential": {
       "credential_type": "dart_api_token",
       "api_token": "<token>"
+    },
+    "webhook_signature": {
+      "header": "Dart-Signature",
+      "algorithm": "sha256",
+      "encoding": "hex",
+      "message": "{body}",
+      "source": "https://github.com/its-dart/dart-tools/blob/3bb2e3514d63c95157bfed8753cc48e183befaf3/dart/server.py"
+    },
+    "signature_evidence": {
+      "helper": "https://github.com/its-dart/dart-tools/blob/3bb2e3514d63c95157bfed8753cc48e183befaf3/dart/webhook.py",
+      "setup": "https://help.dartai.com/en/articles/9024895-webhooks",
+      "commit": "3bb2e3514d63c95157bfed8753cc48e183befaf3",
+      "files": {
+        "server.py": {
+          "sha256": "1a1ed3ab377a46e26cac42e2dd762efd7b4f3d24a0abaf83865b3eab8887c813"
+        },
+        "webhook.py": {
+          "sha256": "d7ff26d6293893bc8e1e2d6604a510ad3cba4485c2142baad10264a25a191066"
+        }
+      }
     }
   }
 }

@@ -1,11 +1,14 @@
-"""Dart public API v0: tasks, documents, comments and workspace resources.
+"""Dart public API v0: tasks, documents, comments and signed workspace events.
 
 Contract: https://app.dartai.com/api/v0/public/schema/ (version 1.0.0).
 Token setup: https://www.dartai.com/features/api-libraries-and-cli
+Webhook setup: https://help.dartai.com/en/articles/9024895-webhooks
 Each operation makes one provider request. Lists return one page only.
 """
 from __future__ import annotations
 
+import hashlib
+import hmac
 import re
 from typing import Annotated, Literal, Union
 from urllib.parse import parse_qs, urlsplit
@@ -16,6 +19,7 @@ from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 BASE = "https://app.dartai.com/api/v0/public"
@@ -207,7 +211,7 @@ DartCredential = Union[DartAPITokenCredential, DartMcpCredential]
 
 DartConfig = Annotated[Union[GetMe, GetConfig, ListTasks, GetTask, CreateTask, UpdateTask,
     DeleteTask, MoveTask, ListDocs, GetDoc, CreateDoc, UpdateDoc, DeleteDoc,
-    ListComments, AddComment, GetDartboard, GetFolder, GetView], Field(discriminator="operation")]
+    ListComments, AddComment, GetDartboard, GetFolder, GetView, OnEvent], Field(discriminator="operation")]
 
 
 class DartFullConfig(NodeConfig[DartConfig, DartCredential]):
@@ -228,7 +232,7 @@ ROUTES = {
 }
 
 
-class DartNode(WorkflowNode):
+class DartNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-dart"
     credential_provider_labels = {"dart": "Dart Account"}
     connection_evidence = ConnectionEvidence(noun="tasks", operation="list_tasks", identity_operation="get_me")
@@ -236,6 +240,86 @@ class DartNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return DartFullConfig
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        trigger = OnEvent.model_validate(config)
+        data = await cls._request(DartAPITokenCredential.model_validate(credential), "POST", "/webhooks",
+            body={"item": {"enabled": True, "title": f"NoClick {node_id}", "url": webhook_url,
+                "eventKinds": [trigger.event_type]}})
+        item = data.get("item")
+        if not isinstance(item, dict) or not re.fullmatch(r"[a-zA-Z0-9]{12}", str(item.get("id", ""))):
+            raise ValueError("Dart did not return a webhook ID")
+        return {"external_webhook_id": item["id"], "signing_secret": trigger.webhook_secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        webhook_id = (config or {}).get("external_webhook_id")
+        if not webhook_id:
+            return
+        if not re.fullmatch(r"[a-zA-Z0-9]{12}", str(webhook_id)):
+            raise ValueError("Invalid Dart webhook ID")
+        await cls._request(DartAPITokenCredential.model_validate(credential), "DELETE", f"/webhooks/{webhook_id}")
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        config = config or {}
+        return {"event_type": config.get("event_type", "task.created"),
+            "secret_hash": hashlib.sha256(str(config.get("webhook_secret", "")).encode()).hexdigest()}
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # Dart's official SDK: dart/webhook.py and dart/server.py.
+        secret = (config or {}).get("signing_secret") or (config or {}).get("webhook_secret")
+        signature = next((v for k, v in headers.items() if k.lower() == "dart-signature"), "")
+        if not isinstance(secret, str) or not secret or not isinstance(signature, str):
+            return False
+        expected = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
+        return bool(re.fullmatch(r"[a-fA-F0-9]{64}", signature)) and hmac.compare_digest(expected, signature)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return (isinstance(payload, dict) and payload.get("type") in EVENTS
+            and payload.get("type") == (config or {}).get("event_type", "task.created")
+            and isinstance(payload.get("data"), dict))
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("type") not in EVENTS:
+            return super().resolve_agent_event(output)
+        kind = output["type"]
+        data = output.get("data")
+        if not isinstance(data, dict):
+            return None
+        # OpenAPI uses direct data on create/delete; the official SDK server
+        # documents data.model on those deliveries too. Accept both contracts.
+        record = data["model"] if "model" in data else data
+        if not isinstance(record, dict) or not record.get("id"):
+            return None
+        resource_id = record["id"]
+        resource = kind.split(".")[0]
+        title = record.get("text") if resource == "comment" else record.get("title")
+        title = str(title or resource_id)[:200]
+        lines = [f"Dart {kind}: {title}", f"{resource}_id: {resource_id}"]
+        if resource == "task":
+            actor = record.get("createdBy") if kind == "task.created" else record.get("updatedBy")
+            facts = [("By", actor), ("Dartboard", record.get("dartboard")), ("Status", record.get("status")),
+                ("Description", record.get("description"))]
+            if kind == "task.status_updated":
+                facts += [("Previous status", data.get("oldStatus")), ("New status", data.get("newStatus"))]
+            elif kind == "task.assignees_updated":
+                facts += [("Previous assignees", data.get("oldAssignees")), ("New assignees", data.get("newAssignees"))]
+            conversation = resource_id
+        elif resource == "doc":
+            facts = [("Folder", record.get("folder")), ("Content", record.get("text"))]
+            conversation = resource_id
+        else:
+            facts = [("By", record.get("author")), ("Task ID", record.get("taskId")), ("Comment", record.get("text"))]
+            conversation = record.get("taskId") or resource_id
+        facts.append(("URL", record.get("htmlUrl")))
+        lines += [f"{label}: {str(value)[:2000]}" for label, value in facts if value is not None and value != ""]
+        return {"text": "\n".join(lines), "conversation_key": f"dart:{resource if resource != 'comment' else 'task'}:{conversation}",
+            "title": title}
 
     @staticmethod
     async def _request(credential, method, path, *, params=None, body=None):
@@ -279,6 +363,10 @@ class DartNode(WorkflowNode):
         credential = self.config.credentials
         if not credential:
             raise ValueError("Connect a Dart API token")
+        if isinstance(config, OnEvent):
+            if not self.filter_trigger_payload(inputs, config.model_dump()):
+                raise ValueError("Expected the selected Dart event")
+            return inputs
         method, template = ROUTES[config.operation]
         args = config.model_dump(exclude_none=True, exclude={"operation"})
         path, body, params = template, None, None

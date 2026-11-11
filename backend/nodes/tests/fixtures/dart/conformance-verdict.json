@@ -9,11 +9,14 @@
   "list_comments: parser on generated response: execution: ValueError: Dart returned a next page outside the selected list"
  ],
  "stats": {
-  "operations": 18,
+  "operations": 19,
   "skipped": 0,
   "request_ok": 18,
   "authored_parser_ok": 0,
   "generated_only": 18,
   "local_ok": 0
+ },
+ "triggers": {
+  "on_event": "passed"
  }
 }

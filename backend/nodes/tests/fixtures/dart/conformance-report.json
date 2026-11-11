@@ -2,17 +2,21 @@
   {
     "provider": "dart",
     "node_type": "automation-dart",
-    "checked": 18,
-    "passed": 14,
+    "checked": 19,
+    "passed": 15,
     "failed": 4,
     "fixture_errors": 0,
-    "response_checked": 18,
-    "auth_checked": 18,
+    "response_checked": 19,
+    "auth_checked": 20,
     "scope_checked": 0,
     "skipped": 0,
     "coverage": {
-      "implemented": 18,
+      "implemented": 20,
       "total": 40
+    },
+    "triggers": {
+      "checked": 1,
+      "passed": 1
     },
     "operations": [
       {
@@ -49,6 +53,7 @@
         "config": {
           "operation": "get_me"
         },
+        "trigger": null,
         "passed": false
       },
       {
@@ -83,6 +88,7 @@
         "config": {
           "operation": "get_config"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -131,6 +137,7 @@
           "in_trash": false,
           "no_defaults": false
         },
+        "trigger": null,
         "passed": false
       },
       {
@@ -166,6 +173,7 @@
           "operation": "get_task",
           "task_id": "aaaaaaaaaaaa"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -223,6 +231,7 @@
           "operation": "create_task",
           "title": "1"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -281,6 +290,7 @@
           "task_id": "aaaaaaaaaaaa",
           "title": "1"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -316,6 +326,7 @@
           "operation": "delete_task",
           "task_id": "aaaaaaaaaaaa"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -355,6 +366,7 @@
           "position": "before",
           "relative_task_id": "aaaaaaaaaaaa"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -399,6 +411,7 @@
           "in_trash": false,
           "no_defaults": false
         },
+        "trigger": null,
         "passed": false
       },
       {
@@ -434,6 +447,7 @@
           "operation": "get_doc",
           "doc_id": "aaaaaaaaaaaa"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -473,6 +487,7 @@
           "folder": "1",
           "text": "1"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -513,6 +528,7 @@
           "folder": "1",
           "text": "1"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -548,6 +564,7 @@
           "operation": "delete_doc",
           "doc_id": "aaaaaaaaaaaa"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -590,6 +607,7 @@
           "text": "1",
           "parent_id": "aaaaaaaaaaaa"
         },
+        "trigger": null,
         "passed": false
       },
       {
@@ -629,6 +647,7 @@
           "text": "1",
           "parent_id": "aaaaaaaaaaaa"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -664,6 +683,7 @@
           "operation": "get_dartboard",
           "dartboard_id": "aaaaaaaaaaaa"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -699,6 +719,7 @@
           "operation": "get_folder",
           "folder_id": "aaaaaaaaaaaa"
         },
+        "trigger": null,
         "passed": true
       },
       {
@@ -733,6 +754,138 @@
         "config": {
           "operation": "get_view",
           "view_id": "aaaaaaaaaaaa"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "on_event",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.dartai.com/api/v0/public/webhooks",
+            "content_type": "application/json",
+            "body": "{\"item\":{\"enabled\":true,\"title\":\"NoClick conformance\",\"url\":\"https://conformance.hooks.example.test/webhook/conformance\",\"eventKinds\":[\"task.created\"]}}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "145",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /webhooks",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "7a7267ec53671f9a29f66cf7b5ec5943a6e77ba1b296c4f91678c5ad7407a0ff"
+          },
+          {
+            "method": "DELETE",
+            "url": "https://app.dartai.com/api/v0/public/webhooks/aaaaaaaaaaaa",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /webhooks/{id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "7a7267ec53671f9a29f66cf7b5ec5943a6e77ba1b296c4f91678c5ad7407a0ff"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "on_event",
+          "event_type": "task.created",
+          "webhook_secret": "1"
+        },
+        "trigger": {
+          "kind": "webhook",
+          "registration": "registered",
+          "events": [
+            {
+              "event": "taskCreated",
+              "where": "webhooks.taskCreated",
+              "source": "generated",
+              "outcome": "delivered",
+              "failures": [],
+              "reads": 14
+            },
+            {
+              "event": "taskUpdated",
+              "where": "webhooks.taskUpdated",
+              "source": "generated",
+              "outcome": "filtered out",
+              "failures": []
+            },
+            {
+              "event": "taskStatusUpdated",
+              "where": "webhooks.taskStatusUpdated",
+              "source": "generated",
+              "outcome": "filtered out",
+              "failures": []
+            },
+            {
+              "event": "taskAssigneesUpdated",
+              "where": "webhooks.taskAssigneesUpdated",
+              "source": "generated",
+              "outcome": "filtered out",
+              "failures": []
+            },
+            {
+              "event": "taskDeleted",
+              "where": "webhooks.taskDeleted",
+              "source": "generated",
+              "outcome": "filtered out",
+              "failures": []
+            },
+            {
+              "event": "docCreated",
+              "where": "webhooks.docCreated",
+              "source": "generated",
+              "outcome": "filtered out",
+              "failures": []
+            },
+            {
+              "event": "docUpdated",
+              "where": "webhooks.docUpdated",
+              "source": "generated",
+              "outcome": "filtered out",
+              "failures": []
+            },
+            {
+              "event": "docDeleted",
+              "where": "webhooks.docDeleted",
+              "source": "generated",
+              "outcome": "filtered out",
+              "failures": []
+            },
+            {
+              "event": "commentCreated",
+              "where": "webhooks.commentCreated",
+              "source": "generated",
+              "outcome": "filtered out",
+              "failures": []
+            }
+          ],
+          "failures": [],
+          "advisory": [],
+          "signature": "hmac"
         },
         "passed": true
       }

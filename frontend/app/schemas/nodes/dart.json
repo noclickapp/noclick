@@ -1142,6 +1142,160 @@
       "title": "MoveTask",
       "type": "object"
     },
+    "OnEvent": {
+      "description": "Start a workflow or agent when a selected Dart workspace event occurs.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Dart Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "task.created",
+          "enum": [
+            "task.created",
+            "task.updated",
+            "task.status_updated",
+            "task.assignees_updated",
+            "task.deleted",
+            "doc.created",
+            "doc.updated",
+            "doc.deleted",
+            "comment.created"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "webhook_secret": {
+          "description": "Copy the workspace Webhook secret from Dart Settings > Webhooks. Used to verify Dart deliveries.",
+          "minLength": 1,
+          "title": "Webhook secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick registers this URL with Dart automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "webhook_secret"
+      ],
+      "title": "OnEvent",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "UpdateDoc": {
       "description": "Update supplied document properties. Omitted properties are unchanged.",
       "properties": {
@@ -1475,6 +1629,7 @@
           "list_docs": "#/$defs/ListDocs",
           "list_tasks": "#/$defs/ListTasks",
           "move_task": "#/$defs/MoveTask",
+          "on_event": "#/$defs/OnEvent",
           "update_doc": "#/$defs/UpdateDoc",
           "update_task": "#/$defs/UpdateTask"
         },
@@ -1534,6 +1689,9 @@
         },
         {
           "$ref": "#/$defs/GetView"
+        },
+        {
+          "$ref": "#/$defs/OnEvent"
         }
       ],
       "title": "Config"

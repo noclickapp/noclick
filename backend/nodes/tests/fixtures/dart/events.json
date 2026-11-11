@@ -1,0 +1,566 @@
+{
+  "source": "https://app.dartai.com/api/v0/public/schema/",
+  "sha256": "1f9acd5f5a47ddd2bc58c8c6e969ffb99c076c1de26c9837ef98da71e84224d2",
+  "note": "Synthetic values generated from the provider webhook schemas, not recorded deliveries or provider-authored example values. SDK data.model variants are tested as documented by dart/server.py.",
+  "events": {
+    "task.created": {
+      "type": "task.created",
+      "data": {
+        "id": "aaaaaaaaaaaa",
+        "htmlUrl": "1",
+        "title": "1",
+        "parentId": "aaaaaaaaaaaa",
+        "dartboard": "1",
+        "type": "1",
+        "status": "1",
+        "description": "1",
+        "assignees": [
+          "1"
+        ],
+        "assignee": "1",
+        "reviewers": [
+          "1"
+        ],
+        "reviewer": "1",
+        "tags": [
+          "1"
+        ],
+        "priority": "Critical",
+        "startAt": "1",
+        "dueAt": "1",
+        "size": "1",
+        "timeTracking": "1",
+        "attachments": [
+          {
+            "name": "1",
+            "url": "https://example.test",
+            "kind": "1"
+          }
+        ],
+        "customProperties": {
+          "customCheckboxProperty": true,
+          "customDatesProperty": "2025-05-10",
+          "customDatesPropertyWithRange": [
+            "2025-05-01",
+            "2025-05-30"
+          ],
+          "customMultiselectProperty": [
+            "frontend",
+            "bug"
+          ],
+          "customNumberPropertyWithIntegerFormat": 5,
+          "customNumberPropertyWithPercentageFormat": 75,
+          "customNumberPropertyWithDollarsFormat": 1500.5,
+          "customSelectProperty": "In Progress",
+          "customStatusProperty": "Blocked",
+          "customTextProperty": "This task requires additional review from the design team",
+          "customUserProperty": "john.doe@example.com",
+          "customMultipleUserProperty": [
+            "john.doe@example.com",
+            "Alice Smith"
+          ]
+        },
+        "taskRelationships": {
+          "subtaskIds": [
+            "abcdefghijk1",
+            "abcdefghijk2"
+          ],
+          "blockerIds": [
+            "abcdefghijk3"
+          ],
+          "blockingIds": [
+            "abcdefghijk4"
+          ],
+          "duplicateIds": [
+            "abcdefghijk5"
+          ],
+          "relatedIds": [
+            "abcdefghijk6",
+            "abcdefghijk7"
+          ]
+        },
+        "createdBy": "1",
+        "createdAt": "2024-01-01T00:00:00Z",
+        "updatedBy": "1",
+        "updatedAt": "2024-01-01T00:00:00Z",
+        "completedAt": "2024-01-01T00:00:00Z"
+      }
+    },
+    "task.updated": {
+      "type": "task.updated",
+      "data": {
+        "model": {
+          "id": "aaaaaaaaaaaa",
+          "htmlUrl": "1",
+          "title": "1",
+          "parentId": "aaaaaaaaaaaa",
+          "dartboard": "1",
+          "type": "1",
+          "status": "1",
+          "description": "1",
+          "assignees": [
+            "1"
+          ],
+          "assignee": "1",
+          "reviewers": [
+            "1"
+          ],
+          "reviewer": "1",
+          "tags": [
+            "1"
+          ],
+          "priority": "Critical",
+          "startAt": "1",
+          "dueAt": "1",
+          "size": "1",
+          "timeTracking": "1",
+          "attachments": [
+            {
+              "name": "1",
+              "url": "https://example.test",
+              "kind": "1"
+            }
+          ],
+          "customProperties": {
+            "customCheckboxProperty": true,
+            "customDatesProperty": "2025-05-10",
+            "customDatesPropertyWithRange": [
+              "2025-05-01",
+              "2025-05-30"
+            ],
+            "customMultiselectProperty": [
+              "frontend",
+              "bug"
+            ],
+            "customNumberPropertyWithIntegerFormat": 5,
+            "customNumberPropertyWithPercentageFormat": 75,
+            "customNumberPropertyWithDollarsFormat": 1500.5,
+            "customSelectProperty": "In Progress",
+            "customStatusProperty": "Blocked",
+            "customTextProperty": "This task requires additional review from the design team",
+            "customUserProperty": "john.doe@example.com",
+            "customMultipleUserProperty": [
+              "john.doe@example.com",
+              "Alice Smith"
+            ]
+          },
+          "taskRelationships": {
+            "subtaskIds": [
+              "abcdefghijk1",
+              "abcdefghijk2"
+            ],
+            "blockerIds": [
+              "abcdefghijk3"
+            ],
+            "blockingIds": [
+              "abcdefghijk4"
+            ],
+            "duplicateIds": [
+              "abcdefghijk5"
+            ],
+            "relatedIds": [
+              "abcdefghijk6",
+              "abcdefghijk7"
+            ]
+          },
+          "createdBy": "1",
+          "createdAt": "2024-01-01T00:00:00Z",
+          "updatedBy": "1",
+          "updatedAt": "2024-01-01T00:00:00Z",
+          "completedAt": "2024-01-01T00:00:00Z"
+        },
+        "oldModel": {
+          "id": "aaaaaaaaaaaa",
+          "htmlUrl": "1",
+          "title": "1",
+          "parentId": "aaaaaaaaaaaa",
+          "dartboard": "1",
+          "type": "1",
+          "status": "1",
+          "description": "1",
+          "assignees": [
+            "1"
+          ],
+          "assignee": "1",
+          "reviewers": [
+            "1"
+          ],
+          "reviewer": "1",
+          "tags": [
+            "1"
+          ],
+          "priority": "Critical",
+          "startAt": "1",
+          "dueAt": "1",
+          "size": "1",
+          "timeTracking": "1",
+          "attachments": [
+            {
+              "name": "1",
+              "url": "https://example.test",
+              "kind": "1"
+            }
+          ],
+          "customProperties": {
+            "customCheckboxProperty": true,
+            "customDatesProperty": "2025-05-10",
+            "customDatesPropertyWithRange": [
+              "2025-05-01",
+              "2025-05-30"
+            ],
+            "customMultiselectProperty": [
+              "frontend",
+              "bug"
+            ],
+            "customNumberPropertyWithIntegerFormat": 5,
+            "customNumberPropertyWithPercentageFormat": 75,
+            "customNumberPropertyWithDollarsFormat": 1500.5,
+            "customSelectProperty": "In Progress",
+            "customStatusProperty": "Blocked",
+            "customTextProperty": "This task requires additional review from the design team",
+            "customUserProperty": "john.doe@example.com",
+            "customMultipleUserProperty": [
+              "john.doe@example.com",
+              "Alice Smith"
+            ]
+          },
+          "taskRelationships": {
+            "subtaskIds": [
+              "abcdefghijk1",
+              "abcdefghijk2"
+            ],
+            "blockerIds": [
+              "abcdefghijk3"
+            ],
+            "blockingIds": [
+              "abcdefghijk4"
+            ],
+            "duplicateIds": [
+              "abcdefghijk5"
+            ],
+            "relatedIds": [
+              "abcdefghijk6",
+              "abcdefghijk7"
+            ]
+          },
+          "createdBy": "1",
+          "createdAt": "2024-01-01T00:00:00Z",
+          "updatedBy": "1",
+          "updatedAt": "2024-01-01T00:00:00Z",
+          "completedAt": "2024-01-01T00:00:00Z"
+        }
+      }
+    },
+    "task.status_updated": {
+      "type": "task.status_updated",
+      "data": {
+        "model": {
+          "id": "aaaaaaaaaaaa",
+          "htmlUrl": "1",
+          "title": "1",
+          "parentId": "aaaaaaaaaaaa",
+          "dartboard": "1",
+          "type": "1",
+          "status": "1",
+          "description": "1",
+          "assignees": [
+            "1"
+          ],
+          "assignee": "1",
+          "reviewers": [
+            "1"
+          ],
+          "reviewer": "1",
+          "tags": [
+            "1"
+          ],
+          "priority": "Critical",
+          "startAt": "1",
+          "dueAt": "1",
+          "size": "1",
+          "timeTracking": "1",
+          "attachments": [
+            {
+              "name": "1",
+              "url": "https://example.test",
+              "kind": "1"
+            }
+          ],
+          "customProperties": {
+            "customCheckboxProperty": true,
+            "customDatesProperty": "2025-05-10",
+            "customDatesPropertyWithRange": [
+              "2025-05-01",
+              "2025-05-30"
+            ],
+            "customMultiselectProperty": [
+              "frontend",
+              "bug"
+            ],
+            "customNumberPropertyWithIntegerFormat": 5,
+            "customNumberPropertyWithPercentageFormat": 75,
+            "customNumberPropertyWithDollarsFormat": 1500.5,
+            "customSelectProperty": "In Progress",
+            "customStatusProperty": "Blocked",
+            "customTextProperty": "This task requires additional review from the design team",
+            "customUserProperty": "john.doe@example.com",
+            "customMultipleUserProperty": [
+              "john.doe@example.com",
+              "Alice Smith"
+            ]
+          },
+          "taskRelationships": {
+            "subtaskIds": [
+              "abcdefghijk1",
+              "abcdefghijk2"
+            ],
+            "blockerIds": [
+              "abcdefghijk3"
+            ],
+            "blockingIds": [
+              "abcdefghijk4"
+            ],
+            "duplicateIds": [
+              "abcdefghijk5"
+            ],
+            "relatedIds": [
+              "abcdefghijk6",
+              "abcdefghijk7"
+            ]
+          },
+          "createdBy": "1",
+          "createdAt": "2024-01-01T00:00:00Z",
+          "updatedBy": "1",
+          "updatedAt": "2024-01-01T00:00:00Z",
+          "completedAt": "2024-01-01T00:00:00Z"
+        },
+        "oldStatus": "1",
+        "newStatus": "1"
+      }
+    },
+    "task.assignees_updated": {
+      "type": "task.assignees_updated",
+      "data": {
+        "model": {
+          "id": "aaaaaaaaaaaa",
+          "htmlUrl": "1",
+          "title": "1",
+          "parentId": "aaaaaaaaaaaa",
+          "dartboard": "1",
+          "type": "1",
+          "status": "1",
+          "description": "1",
+          "assignees": [
+            "1"
+          ],
+          "assignee": "1",
+          "reviewers": [
+            "1"
+          ],
+          "reviewer": "1",
+          "tags": [
+            "1"
+          ],
+          "priority": "Critical",
+          "startAt": "1",
+          "dueAt": "1",
+          "size": "1",
+          "timeTracking": "1",
+          "attachments": [
+            {
+              "name": "1",
+              "url": "https://example.test",
+              "kind": "1"
+            }
+          ],
+          "customProperties": {
+            "customCheckboxProperty": true,
+            "customDatesProperty": "2025-05-10",
+            "customDatesPropertyWithRange": [
+              "2025-05-01",
+              "2025-05-30"
+            ],
+            "customMultiselectProperty": [
+              "frontend",
+              "bug"
+            ],
+            "customNumberPropertyWithIntegerFormat": 5,
+            "customNumberPropertyWithPercentageFormat": 75,
+            "customNumberPropertyWithDollarsFormat": 1500.5,
+            "customSelectProperty": "In Progress",
+            "customStatusProperty": "Blocked",
+            "customTextProperty": "This task requires additional review from the design team",
+            "customUserProperty": "john.doe@example.com",
+            "customMultipleUserProperty": [
+              "john.doe@example.com",
+              "Alice Smith"
+            ]
+          },
+          "taskRelationships": {
+            "subtaskIds": [
+              "abcdefghijk1",
+              "abcdefghijk2"
+            ],
+            "blockerIds": [
+              "abcdefghijk3"
+            ],
+            "blockingIds": [
+              "abcdefghijk4"
+            ],
+            "duplicateIds": [
+              "abcdefghijk5"
+            ],
+            "relatedIds": [
+              "abcdefghijk6",
+              "abcdefghijk7"
+            ]
+          },
+          "createdBy": "1",
+          "createdAt": "2024-01-01T00:00:00Z",
+          "updatedBy": "1",
+          "updatedAt": "2024-01-01T00:00:00Z",
+          "completedAt": "2024-01-01T00:00:00Z"
+        },
+        "oldAssignees": [
+          "1"
+        ],
+        "newAssignees": [
+          "1"
+        ]
+      }
+    },
+    "task.deleted": {
+      "type": "task.deleted",
+      "data": {
+        "id": "aaaaaaaaaaaa",
+        "htmlUrl": "1",
+        "title": "1",
+        "parentId": "aaaaaaaaaaaa",
+        "dartboard": "1",
+        "type": "1",
+        "status": "1",
+        "description": "1",
+        "assignees": [
+          "1"
+        ],
+        "assignee": "1",
+        "reviewers": [
+          "1"
+        ],
+        "reviewer": "1",
+        "tags": [
+          "1"
+        ],
+        "priority": "Critical",
+        "startAt": "1",
+        "dueAt": "1",
+        "size": "1",
+        "timeTracking": "1",
+        "attachments": [
+          {
+            "name": "1",
+            "url": "https://example.test",
+            "kind": "1"
+          }
+        ],
+        "customProperties": {
+          "customCheckboxProperty": true,
+          "customDatesProperty": "2025-05-10",
+          "customDatesPropertyWithRange": [
+            "2025-05-01",
+            "2025-05-30"
+          ],
+          "customMultiselectProperty": [
+            "frontend",
+            "bug"
+          ],
+          "customNumberPropertyWithIntegerFormat": 5,
+          "customNumberPropertyWithPercentageFormat": 75,
+          "customNumberPropertyWithDollarsFormat": 1500.5,
+          "customSelectProperty": "In Progress",
+          "customStatusProperty": "Blocked",
+          "customTextProperty": "This task requires additional review from the design team",
+          "customUserProperty": "john.doe@example.com",
+          "customMultipleUserProperty": [
+            "john.doe@example.com",
+            "Alice Smith"
+          ]
+        },
+        "taskRelationships": {
+          "subtaskIds": [
+            "abcdefghijk1",
+            "abcdefghijk2"
+          ],
+          "blockerIds": [
+            "abcdefghijk3"
+          ],
+          "blockingIds": [
+            "abcdefghijk4"
+          ],
+          "duplicateIds": [
+            "abcdefghijk5"
+          ],
+          "relatedIds": [
+            "abcdefghijk6",
+            "abcdefghijk7"
+          ]
+        },
+        "createdBy": "1",
+        "createdAt": "2024-01-01T00:00:00Z",
+        "updatedBy": "1",
+        "updatedAt": "2024-01-01T00:00:00Z",
+        "completedAt": "2024-01-01T00:00:00Z"
+      }
+    },
+    "doc.created": {
+      "type": "doc.created",
+      "data": {
+        "id": "aaaaaaaaaaaa",
+        "htmlUrl": "1",
+        "title": "1",
+        "folder": "1",
+        "text": "1"
+      }
+    },
+    "doc.updated": {
+      "type": "doc.updated",
+      "data": {
+        "model": {
+          "id": "aaaaaaaaaaaa",
+          "htmlUrl": "1",
+          "title": "1",
+          "folder": "1",
+          "text": "1"
+        },
+        "oldModel": {
+          "id": "aaaaaaaaaaaa",
+          "htmlUrl": "1",
+          "title": "1",
+          "folder": "1",
+          "text": "1"
+        }
+      }
+    },
+    "doc.deleted": {
+      "type": "doc.deleted",
+      "data": {
+        "id": "aaaaaaaaaaaa",
+        "htmlUrl": "1",
+        "title": "1",
+        "folder": "1",
+        "text": "1"
+      }
+    },
+    "comment.created": {
+      "type": "comment.created",
+      "data": {
+        "id": "aaaaaaaaaaaa",
+        "parentId": "aaaaaaaaaaaa",
+        "htmlUrl": "1",
+        "author": "1",
+        "taskId": "aaaaaaaaaaaa",
+        "text": "1"
+      }
+    }
+  }
+}
