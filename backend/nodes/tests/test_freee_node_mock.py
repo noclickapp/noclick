@@ -129,3 +129,102 @@ async def test_freee_provider_rejection_preserves_documented_message(transport):
     transport[1].append((403, {"errors": [{"type": "status", "messages": ["アクセス権限がありません。"]}]}))
     result = await node({"operation": "list_companies"}).execute({})
     assert result["error"] == "アクセス権限がありません。"
+
+
+@pytest.fixture
+def poll_state():
+    state = {}
+    async def update(mutator, **kwargs):
+        replacement, result = mutator(dict(state))
+        if replacement is not None:
+            state.clear()
+            state.update(replacement)
+        return result
+    return state, update
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,list_operation", [
+    ("on_new_deal", "list_deals"), ("on_new_partner", "list_partners"),
+    ("on_new_wallet_txn", "list_wallet_txns"),
+])
+async def test_freee_poll_baseline_new_items_and_agent(operation, list_operation, transport, poll_state):
+    from copy import deepcopy
+    from nodes.core.poll_trigger import poll_scope
+    key = FREEE_OPERATIONS[list_operation]["response_key"]
+    documented = deepcopy(CASES[list_operation]["response"])
+    instance = node({"operation": operation, "company_id": 1})
+    state, update = poll_state
+    instance._update_node_state = update
+    transport[1].append((200, documented))
+    baseline = await instance.execute({})
+    assert baseline["count"] == 0
+    assert FreeeNode.resolve_agent_event(baseline) is None
+    assert instance.trigger_produced_no_event(baseline)
+    assert not FreeeNode.should_propagate_output(baseline, {"operation": operation})
+    added = deepcopy(documented[key][0])
+    added["id"] += 100
+    current = {key: documented[key] + [added]}
+    transport[1].append((200, current))
+    output = await instance.execute({})
+    assert output[key] == [added] and output["count"] == 1
+    event = FreeeNode.resolve_agent_event(output)
+    assert "company 1" in event["text"] and str(added["id"]) in event["text"]
+    assert instance.trigger_emitted_event(output)
+    transport[1].append((200, current))
+    assert (await instance.execute({}))["count"] == 0
+    config = {"operation": operation, "company_id": 1}
+    assert poll_scope(FreeeNode, config) == poll_scope(FreeeNode, {**config, "label": "Renamed"})
+    repointed = node({**config, "company_id": 2})
+    repointed._update_node_state = update
+    transport[1].append((200, current))
+    assert (await repointed.execute({}))["count"] == 0
+    if operation == "on_new_wallet_txn":
+        assert transport[0][0].url.params["sort_type"] == "created_at_desc"
+    assert "schedule" not in transport[0][0].url.params
+
+
+@pytest.mark.asyncio
+async def test_freee_poll_pages_and_failure_leave_state_intact(transport, poll_state):
+    instance = node({"operation": "on_new_deal", "company_id": 1, "type": "income"})
+    state, update = poll_state
+    instance._update_node_state = update
+    record = CASES["list_deals"]["response"]["deals"][0]
+    page = [{**record, "id": index + 1} for index in range(100)]
+    transport[1].extend([(200, {"deals": page}), (500, {"message": "unavailable"})])
+    assert (await instance.execute({}))["status"] == "error"
+    assert state == {}
+    assert [r.url.params["offset"] for r in transport[0]] == ["0", "100"]
+    assert all(r.url.params["type"] == "income" for r in transport[0])
+    transport[1].extend([(200, {"deals": page}), (200, {"deals": []})])
+    assert (await instance.execute({}))["count"] == 0
+    assert len(state["seen_ids"]) == 100
+
+
+@pytest.mark.asyncio
+async def test_freee_poll_overflow_and_invalid_record_cannot_advance_state(transport, poll_state):
+    instance = node({"operation": "on_new_partner", "company_id": 1})
+    state, update = poll_state
+    instance._update_node_state = update
+    record = CASES["list_partners"]["response"]["partners"][0]
+    transport[1].extend((200, {"partners": [{**record, "id": offset + i + 1} for i in range(100)]})
+                        for offset in range(0, 2100, 100))
+    with pytest.raises(ValueError, match="2,000"):
+        await instance.execute({})
+    assert state == {}
+    transport[1].append((200, {"partners": [{}]}))
+    with pytest.raises(ValueError, match="valid ID"):
+        await instance.execute({})
+    assert state == {}
+
+
+@pytest.mark.parametrize("config", [
+    {"operation": "on_new_wallet_txn", "company_id": 1, "walletable_id": 1},
+    {"operation": "on_new_wallet_txn", "company_id": 1, "walletable_type": "bank_account"},
+    {"operation": "on_new_wallet_txn", "company_id": 1, "start_date": "2026-02-30"},
+    {"operation": "on_new_deal", "company_id": 1, "start_issue_date": "20261111"},
+    {"operation": "on_new_partner", "company_id": 0},
+])
+def test_freee_poll_scope_validation(config):
+    with pytest.raises(ValueError):
+        node(config)

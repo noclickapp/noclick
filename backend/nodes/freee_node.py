@@ -5,13 +5,15 @@ Updating deal details replaces all lines: include every line to retain with ID.
 """
 from __future__ import annotations
 from typing import Annotated, Literal, Optional, Union
+from datetime import date
 import httpx
-from pydantic import BaseModel, ConfigDict, Field, Json, create_model, field_validator
+from pydantic import BaseModel, ConfigDict, Field, Json, create_model, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
-from nodes.freee_operations import FREEE_OPERATIONS
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
+from nodes.freee_operations import FREEE_OPERATIONS, FREEE_TRIGGERS
 from nodes.scopes.freee import FREEE_SCOPES
 
 
@@ -102,15 +104,52 @@ def _operation_model(name, spec):
     return create_model("Freee" + name.title().replace("_", "") + "Config", __base__=_Input, **fields)
 
 
+class _FreeePollConfig(PollTriggerConfigBase):
+    model_config = ConfigDict(extra="ignore", hide_input_in_errors=True)
+
+    @model_validator(mode="after")
+    def scope_fields(self):
+        if hasattr(self, "walletable_id") and bool(self.walletable_id) != bool(self.walletable_type):
+            raise ValueError("Choose both an account type and account ID, or leave both empty")
+        for name in ("start_date", "start_issue_date"):
+            value = getattr(self, name, None)
+            if value is not None:
+                try:
+                    if date.fromisoformat(value).isoformat() != value:
+                        raise ValueError
+                except ValueError:
+                    raise ValueError("Use a YYYY-MM-DD start date") from None
+        return self
+
+
+def _poll_model(name, definition):
+    list_operation, label, selected = definition
+    fields = {"operation": (Literal[name], Field(name, title=label, json_schema_extra={
+        "ui:hidden": True, "x-display-name": label, "x-category": "Triggers", "x-is-trigger": True,
+    }))}
+    for parameter in FREEE_OPERATIONS[list_operation]["parameters"]:
+        key = parameter["name"]
+        if key not in selected:
+            continue
+        fields[key] = (_annotation(parameter["schema"], name + key.title()), Field(
+            ... if parameter["required"] else None, title=key.replace("_", " ").title(),
+            description="Monitor new records within this scope. Existing records form the initial baseline; "
+                        "up to 2,000 records can be monitored. Narrow the scope if the limit is exceeded.",
+            json_schema_extra={"examples": parameter["schema"].get("examples", [])},
+        ))
+    return create_model("Freee" + name.title().replace("_", "") + "Config", __base__=_FreeePollConfig, **fields)
+
+
+_POLL_MODELS = tuple(_poll_model(name, spec) for name, spec in FREEE_TRIGGERS.items())
 _MODELS = tuple(_operation_model(name, spec) for name, spec in FREEE_OPERATIONS.items())
-FreeeConfig = Annotated[Union[_MODELS], Field(discriminator="operation")]
+FreeeConfig = Annotated[Union[_MODELS + _POLL_MODELS], Field(discriminator="operation")]
 
 
 class FreeeFullConfig(NodeConfig[FreeeConfig, FreeeCredential]):
     pass
 
 
-class FreeeNode(WorkflowNode):
+class FreeeNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-freee"
     credential_provider_labels = {"freee": "Freee Account"}
     scope_registry = FREEE_SCOPES
@@ -139,12 +178,63 @@ class FreeeNode(WorkflowNode):
                 setattr(credential, key, data[key])
         return credential.access_token
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in FREEE_TRIGGERS:
+            return output.get("status") == "success" and bool(output.get("count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        operation = output.get("operation")
+        if operation not in FREEE_TRIGGERS:
+            return super().resolve_agent_event(output)
+        items = output.get("items") or []
+        if not items:
+            return None
+        label = FREEE_TRIGGERS[operation][1]
+        # Full provider records preserve the company, resource, partner/account
+        # IDs and content an agent needs; no actor is invented for a list API.
+        from nodes.core.agent_events import default_agent_event
+        event = default_agent_event({"records": items})
+        event["text"] = f"Freee: {len(items)} {label.lower()} record(s) detected in company {output['company_id']}.\n" + event["text"]
+        event["title"] = f"Freee: {label}"
+        return event
+
+    async def _poll(self, config):
+        list_operation, _, selected = FREEE_TRIGGERS[config.operation]
+        spec = FREEE_OPERATIONS[list_operation]
+        values = config.model_dump(exclude_none=True)
+        params = {key: values[key] for key in selected if key in values}
+        if config.operation == "on_new_wallet_txn":
+            params["sort_type"] = "created_at_desc"
+        items = []
+        for offset in range(0, 2100, 100):
+            result = await self._request(spec, {**params, "limit": 100, "offset": offset})
+            if result["status"] != "success":
+                return result  # never advance the baseline after a failed page
+            page = result[spec["response_key"]]
+            if len(items) + len(page) > 2000:
+                raise ValueError("Freee polling scope exceeds 2,000 records; narrow the company, date or account scope")
+            if any(not isinstance(item, dict) or not isinstance(item.get("id"), int) or item["id"] < 1 for item in page):
+                raise ValueError("Freee returned a record without a valid ID")
+            items.extend(page)
+            if len(page) < 100:
+                break
+        fresh = await self._filter_unseen(items, lambda item: str(item["id"]))
+        return {"status": "success", "operation": config.operation, "company_id": config.company_id,
+                spec["response_key"]: fresh, "items": fresh, "count": len(fresh)}
+
     async def execute(self, inputs):
         if not isinstance(self.config, FreeeFullConfig) or not self.config.credentials:
             raise ValueError("Connect a Freee account")
         config = self.config.config
-        spec = FREEE_OPERATIONS[config.operation]
-        values = config.model_dump(exclude_unset=True)
+        self.scope_registry.require(config.operation)
+        if config.operation in FREEE_TRIGGERS:
+            return await self._poll(config)
+        return await self._request(FREEE_OPERATIONS[config.operation], config.model_dump(exclude_unset=True))
+
+    async def _request(self, spec, values):
         path, params = spec["path"], {}
         for parameter in spec["parameters"]:
             key = parameter["name"]

@@ -1030,3 +1030,12 @@ FREEE_OPERATIONS = {'get_current_user': {'method': 'GET',
                                                   'maxLength': 20,
                                                   'pattern': '^[0-9a-zA-Z_-]+$',
                                                   'examples': ['code001']}}}}}
+
+# The same official list contracts support polling: partners has update-date
+# filters, deals has renew-date filters, and wallet_txns has created_at_desc.
+FREEE_TRIGGERS = {
+    "on_new_deal": ("list_deals", "New Deal", ("company_id", "type", "partner_id", "start_issue_date")),
+    "on_new_partner": ("list_partners", "New Partner", ("company_id",)),
+    "on_new_wallet_txn": ("list_wallet_txns", "New Bank Transaction", (
+        "company_id", "walletable_type", "walletable_id", "start_date", "entry_side")),
+}
