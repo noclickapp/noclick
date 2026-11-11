@@ -11,7 +11,6 @@ TODO: refactor to make much simpler
 import { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
 import { ResizablePanel } from '~/components/ui/ResizablePanel';
 import { cn } from '~/lib/utils'; // some tailwind thing
-import { KeyHint } from '~/components/shared/KeyHint';
 import { ParticlesBackground } from '~/components/utils/ParticlesBackground';
 import { useSocketConnection } from '~/hooks/useSocketConnection';
 import { useSocketAuthMonitor } from '~/hooks/useSocketAuthMonitor';
@@ -235,7 +234,6 @@ function CollapsedChatRail() {
                 )}
             >
                 Open chat
-                <KeyHint keys={['/']} />
             </div>
         </div>
     );

@@ -21,7 +21,6 @@ import { HARNESS_BRANDS } from '~/lib/harnessBrand';
 import { CursorMark } from '~/components/shared/CursorMark';
 import { MCP_CLIENTS, type GuideBlock } from '~/data/mcpQuickSteps';
 import { noclickMcp } from '~/lib/noclickMcp';
-import { KeyHint } from '~/components/shared/KeyHint';
 import { BUTTON_SECONDARY } from '~/components/shell/buttons';
 import { DISPLAY } from '~/components/shell/titles';
 import { cn } from '~/lib/utils';
@@ -363,11 +362,6 @@ export function MCPSetupModal({ open, onClose, url, urlError, serverName, title,
                 </div>
 
                 <div className="flex items-center justify-between gap-3 border-t border-border px-6 py-4 dark:border-foreground/[0.08]">
-                    <span className="hidden items-center gap-1.5 text-[12px] text-muted-foreground sm:flex">
-                        <KeyHint keys={['up', 'down']} /> Switch client
-                        <span className="px-1 text-muted-foreground/50">·</span>
-                        <KeyHint keys={['esc']} /> Close
-                    </span>
                     <button type="button" onClick={onClose} className={cn(BUTTON_SECONDARY, 'ml-auto')}>
                         Done
                     </button>

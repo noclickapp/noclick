@@ -1,6 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
-import { KeyHint } from '~/components/shared/KeyHint';
 
 type Variant = 'default' | 'warning';
 
@@ -13,7 +12,7 @@ interface HeaderTabProps {
     onClick: () => void;
     disabled?: boolean;
     title: string;
-    /** Single-key shortcut shown in the tooltip (e.g. 'C'). */
+    /** Its single-key shortcut (e.g. 'C'), which still works; never shown. */
     shortcut?: string;
     /** 'warning' paints active/hover in red (used by the Credentials tab when
         the selected node has unconnected credentials). */
@@ -33,7 +32,6 @@ export function HeaderTab({
     onClick,
     disabled = false,
     title,
-    shortcut,
     variant = 'default',
     tourTarget,
 }: HeaderTabProps) {
@@ -63,15 +61,13 @@ export function HeaderTab({
                         {!isCompact && <span>{label}</span>}
                     </button>
                 </TooltipTrigger>
-                {/* Lighter color (kept distinct from the dark canvas-bar tooltips).
-                    The tab label is already visible, so the tooltip is just the
-                    shortcut keycap (falling back to the title when there's none). */}
+                {/* Lighter color (kept distinct from the dark canvas-bar tooltips): its title. */}
                 <TooltipContent
                     side="top"
                     sideOffset={8}
                     className="rounded-lg border border-border dark:border-zinc-700/60 bg-popover/95 px-2 py-1.5 text-xs font-medium tracking-tight text-foreground shadow-2xl dark:shadow-black/60 backdrop-blur-md"
                 >
-                    {shortcut ? <KeyHint keys={[shortcut]} /> : title}
+                    {title}
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>

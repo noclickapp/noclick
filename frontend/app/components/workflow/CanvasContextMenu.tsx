@@ -5,15 +5,13 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '~/lib/utils';
-import { KeyHint } from '~/components/shared/KeyHint';
 
 export type ContextMenuItem =
     | {
           type: 'item';
           label: string;
           icon?: ReactNode;
-          /** Key tokens for KeyHint — e.g. ['mod', 'C'] renders ⌘C on macOS,
-           *  CtrlC elsewhere. 'backspace', 'enter', 'esc', etc. → glyphs. */
+          /** Its keyboard shortcut (['mod', 'C']), which still works; never drawn. */
           shortcut?: string[];
           onSelect: () => void;
           disabled?: boolean;
@@ -132,13 +130,6 @@ export function CanvasContextMenu({ position, items, onClose }: CanvasContextMen
                             </span>
                         )}
                         <span className="flex-1 truncate tracking-[-0.005em]">{item.label}</span>
-                        {item.shortcut && (
-                            <KeyHint
-                                keys={item.shortcut}
-                                className="ml-3 shrink-0"
-                                kbdClassName="bg-foreground/[0.04] text-muted-foreground group-hover:text-foreground"
-                            />
-                        )}
                     </button>
                 );
             })}

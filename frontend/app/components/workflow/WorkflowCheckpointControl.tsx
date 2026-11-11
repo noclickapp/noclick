@@ -10,7 +10,6 @@ import { History, Plus, Trash2, RotateCcw, Check } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
-import { KeyHint } from '~/components/shared/KeyHint';
 import { cn } from '~/lib/utils';
 import { sendEventWithCallback } from '~/lib/socket-sender';
 import { createWorkflowNode } from '~/lib/applyNodeUpdate';
@@ -277,10 +276,7 @@ export function WorkflowCheckpointControl({
                             sideOffset={16}
                             className="rounded-lg border border-border dark:border-white/10 bg-background dark:bg-[#0a0a0b] px-3 py-1.5 text-xs font-medium tracking-tight text-foreground shadow-2xl dark:shadow-black/60 backdrop-blur-md"
                         >
-                            <span className="flex items-center gap-2">
-                                Versions — saved workflow snapshots
-                                <KeyHint keys={['V']} />
-                            </span>
+                            Versions — saved workflow snapshots
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>

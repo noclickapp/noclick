@@ -201,7 +201,6 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '~/components/ui/tooltip';
-import { KeyHint } from '~/components/shared/KeyHint';
 import {
     Popover,
     PopoverTrigger,
@@ -8144,11 +8143,7 @@ const FlowCanvasInner = ({
                                                     sideOffset={10}
                                                     className="rounded-lg border border-border dark:border-white/10 bg-background dark:bg-[#0a0a0b] px-3 py-1.5 text-xs font-medium tracking-tight text-foreground shadow-2xl dark:shadow-black/60 backdrop-blur-md"
                                                 >
-                                                    <span className="flex items-center gap-2">
-                                                        Add nodes, config &amp;
-                                                        credentials
-                                                        <KeyHint keys={['F']} />
-                                                    </span>
+                                                    Add nodes, config &amp; credentials
                                                 </TooltipContent>
                                             </Tooltip>
                                         </TooltipProvider>
@@ -8219,10 +8214,7 @@ const FlowCanvasInner = ({
                                                     sideOffset={10}
                                                     className="rounded-lg border border-border dark:border-white/10 bg-background dark:bg-[#0a0a0b] px-3 py-1.5 text-xs font-medium tracking-tight text-foreground shadow-2xl dark:shadow-black/60 backdrop-blur-md"
                                                 >
-                                                    <span className="flex items-center gap-2">
-                                                        Add a node
-                                                        <KeyHint keys={['N']} />
-                                                    </span>
+                                                    Add a node
                                                 </TooltipContent>
                                             </Tooltip>
                                             {hasNonCursorNodes && (

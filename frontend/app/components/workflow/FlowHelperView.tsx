@@ -38,7 +38,6 @@ import { useIncompleteNodes } from './flowHelper/useIncompleteNodes';
 import { usePanelLayout } from './flowHelper/usePanelLayout';
 import { useFit, type FitItem } from './flowHelper/useFit';
 import { isTextEntryTarget, isModalOpen, pressedKey } from '~/lib/keyboard';
-import { KeyHint } from '~/components/shared/KeyHint';
 import { applyCredentialSelection } from '~/lib/applyCredentialSelection';
 import { tikTokNodePublishingError } from '~/utils/tikTokPublishing';
 
@@ -835,7 +834,7 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
                     </TooltipTrigger>
                     <TooltipContent side="top" sideOffset={8} className={PANEL_TOOLTIP_CLASS}>
                         {selectedNode && inputNodes.length > 0
-                            ? <KeyHint keys={['X']} />
+                            ? 'Show its input'
                             : !selectedNode ? 'Select a node first' : 'No input connections'}
                     </TooltipContent>
                     </Tooltip>
@@ -914,7 +913,7 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
                     </button>
                     </TooltipTrigger>
                     <TooltipContent side="top" sideOffset={8} className={PANEL_TOOLTIP_CLASS}>
-                        {selectedNode ? <KeyHint keys={['Y']} /> : 'Select a node first'}
+                        {selectedNode ? 'Show its output' : 'Select a node first'}
                     </TooltipContent>
                     </Tooltip>
                     </TooltipProvider>
@@ -964,7 +963,7 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
                                  !selectedNode ? 'Select a node first' :
                                  isWorkflowRunning ? 'Workflow is running' :
                                  !canRunNode ? (runBlocker ?? 'Missing input data from previous nodes') :
-                                 <KeyHint keys={['mod', 'enter']} />}
+                                 'Run this node'}
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
@@ -991,7 +990,7 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
                     </button>
                     </TooltipTrigger>
                     <TooltipContent side="top" sideOffset={8} className={PANEL_TOOLTIP_CLASS}>
-                        {selectedNode ? <KeyHint keys={['D']} /> : 'Select a node first'}
+                        {selectedNode ? (selectedNode.data?.disabled ? 'Enable this node' : 'Disable this node') : 'Select a node first'}
                     </TooltipContent>
                     </Tooltip>
                     </TooltipProvider>

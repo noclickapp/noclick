@@ -79,7 +79,6 @@ import {
 } from './WorkflowBrowserCards';
 import { FolderRow, WorkflowRow } from './WorkflowBrowserList';
 import { useCachedValtioState } from '~/hooks/useCachedValtioState';
-import { KeyHint } from '~/components/shared/KeyHint';
 import { useListKeyboardNav } from '~/hooks/useListKeyboardNav';
 import { TrashView } from './TrashView';
 import {
@@ -2353,33 +2352,6 @@ export function WorkflowBrowser({
                                                 </div>
                                             )}
 
-                                        {/* Keyboard hints while searching */}
-                                        {isSearching &&
-                                            listItems.length > 0 && (
-                                                <div className="flex items-center justify-center gap-4 pt-1 text-[0.6875rem] text-muted-foreground/60 dark:text-white/30 select-none">
-                                                    <span className="inline-flex items-center gap-1.5">
-                                                        <KeyHint
-                                                            keys={[
-                                                                'up',
-                                                                'down',
-                                                            ]}
-                                                        />{' '}
-                                                        navigate
-                                                    </span>
-                                                    <span className="inline-flex items-center gap-1.5">
-                                                        <KeyHint
-                                                            keys={['enter']}
-                                                        />{' '}
-                                                        open
-                                                    </span>
-                                                    <span className="inline-flex items-center gap-1.5">
-                                                        <KeyHint
-                                                            keys={['esc']}
-                                                        />{' '}
-                                                        clear
-                                                    </span>
-                                                </div>
-                                            )}
                                     </div>
                                 ) : (
                                     /* Workflows Grid */

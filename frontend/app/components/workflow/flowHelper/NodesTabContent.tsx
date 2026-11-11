@@ -4,7 +4,6 @@ import { useDraggable } from '@dnd-kit/core';
 import { Loader2, X } from 'lucide-react';
 import OpenAI from '@lobehub/icons/es/OpenAI';
 import { isTextEntryTarget } from '~/lib/keyboard';
-import { KeyHint } from '~/components/shared/KeyHint';
 import { DragHintBadge } from '../DragHintBadge';
 import { MiniStickyNotePreview } from '../nodes/MiniStickyNotePreview';
 import { NODE_DEFINITION_TYPES, isOfferedNodeType } from '../nodes/nodeDefinitions';
@@ -291,12 +290,6 @@ function PaletteNodes({
                     {title}
                 </div>
                 <DragHintBadge label="Drag or click" />
-                {/* Keyboard-add hint — navigate with arrows, add with Enter. */}
-                <span className="flex items-center gap-1 text-[11px] text-muted-foreground/70 dark:text-zinc-600">
-                    <KeyHint keys={['up', 'down']} />
-                    <KeyHint keys={['enter']} />
-                    to add
-                </span>
             </div>
             <PaletteRows matches={displayMatches} models={models} highlight={highlight} />
         </div>

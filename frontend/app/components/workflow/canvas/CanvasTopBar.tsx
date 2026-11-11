@@ -28,7 +28,6 @@ import {
     DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
-import { KeyHint } from '~/components/shared/KeyHint';
 import { useElementWidth } from '~/hooks/useElementWidth';
 import { cn } from '~/lib/utils';
 import { CollaboratorAvatars } from '../collaboration';
@@ -335,7 +334,7 @@ interface NavbarTabProps {
     compact: boolean;
     isMobile: boolean;
     tooltip: string;
-    /** Single-key shortcut shown in the tooltip (e.g. 'W'). */
+    /** Its single-key shortcut (e.g. 'W'), which still works; never shown. */
     shortcut?: string;
     /** Optional data-tour-target for anchoring a GuidedTourHighlight step. */
     tourTarget?: string;
@@ -345,7 +344,7 @@ interface NavbarTabProps {
 const NAVBAR_TOOLTIP_CLASS =
     'rounded-lg border border-border dark:border-white/10 bg-background dark:bg-[#0a0a0b] px-3 py-1.5 text-xs font-medium tracking-tight text-foreground shadow-2xl dark:shadow-black/60 backdrop-blur-md';
 
-function NavbarTab({ tab, label, icon: Icon, activeTab, compact, isMobile, tooltip, shortcut, tourTarget, onClick }: NavbarTabProps) {
+function NavbarTab({ tab, label, icon: Icon, activeTab, compact, isMobile, tooltip, tourTarget, onClick }: NavbarTabProps) {
     const isActive = activeTab === tab;
     return (
         <Tooltip>
@@ -363,10 +362,7 @@ function NavbarTab({ tab, label, icon: Icon, activeTab, compact, isMobile, toolt
                 </button>
             </TooltipTrigger>
             <TooltipContent side="bottom" sideOffset={16} className={NAVBAR_TOOLTIP_CLASS}>
-                <span className="flex items-center gap-2">
-                    {tooltip}
-                    {shortcut && <KeyHint keys={[shortcut]} />}
-                </span>
+                {tooltip}
             </TooltipContent>
         </Tooltip>
     );
@@ -728,10 +724,7 @@ function RunStopButton({
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" sideOffset={16} className={NAVBAR_TOOLTIP_CLASS}>
-                    <span className="flex items-center gap-1.5">
-                        {isWorkflowRunning ? 'Stop workflow' : 'Run workflow'}
-                        <KeyHint keys={['Shift', 'R']} />
-                    </span>
+                    {isWorkflowRunning ? 'Stop workflow' : 'Run workflow'}
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>

@@ -8,7 +8,6 @@ import useResizeObserver from 'use-resize-observer';
 import { Plus, Home, Loader2, FolderPlus, Folder, FolderOpen, Settings, Trash2, ChevronLeft, ChevronRight, Search, X, Workflow as WorkflowIcon, ChevronRight as ChevronRightIcon, Share2, ChevronDown } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
-import { KeyHint } from '~/components/shared/KeyHint';
 import { Button } from '~/components/ui/button';
 import { sendEventWithCallback } from '~/lib/socket-sender';
 import { useAnalytics } from '~/lib/analytics';
@@ -512,7 +511,6 @@ function CollapsedWorkspaceRail({
                 )}
             >
                 Show workspace
-                <KeyHint keys={['[']} />
             </div>
         </div>
     );

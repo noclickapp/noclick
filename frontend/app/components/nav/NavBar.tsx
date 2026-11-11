@@ -20,7 +20,6 @@ import {
     Monitor,
     SunMoon,
 } from 'lucide-react';
-import { KeyHint } from '~/components/shared/KeyHint';
 import { openCommandPalette, openKeyboardShortcuts } from '~/lib/shortcuts';
 import { FaDiscord } from 'react-icons/fa6';
 import { FeedbackButton } from '~/components/nav/FeedbackButton';
@@ -253,7 +252,6 @@ export function NavBar({
                                 <Search className="h-4 w-4" />
                                 Search
                             </span>
-                            <KeyHint keys={['mod', 'K']} />
                         </button>
 
                         {/* Community (Discord) - hidden until lg breakpoint */}
@@ -345,10 +343,6 @@ export function NavBar({
                                     >
                                         <Keyboard className="mr-2 h-4 w-4 text-muted-foreground" />
                                         <span>Shortcuts</span>
-                                        <KeyHint
-                                            keys={['mod', '/']}
-                                            className="ml-auto"
-                                        />
                                     </DropdownMenuItem>
                                     {/* Theme picker — a System/Light/Dark segmented control;
                                 preventDefault keeps the menu open so the flip is visible */}

@@ -1,6 +1,5 @@
-// Detects whether the client is macOS so UI can show ⌘ vs Ctrl in keyboard
-// hints. Starts `false` to avoid SSR hydration mismatch, then resolves on mount.
-// Shared so every keybinding preview (KeyHint) agrees on the platform glyph.
+// Detects whether the client is macOS (⌘ or Ctrl, for the keyboard shortcuts page and the keys the app listens for).
+// Starts `false` to avoid SSR hydration mismatch, then resolves on mount.
 import { useEffect, useState } from 'react';
 
 export function useIsMac(): boolean {
@@ -13,11 +12,4 @@ export function useIsMac(): boolean {
         setIsMac(/Mac|iPhone|iPad|iPod/.test(platform));
     }, []);
     return isMac;
-}
-
-/** Platform label for the modifier key in inline text hints: '⌘' on macOS,
- *  'Ctrl' elsewhere. Single source of truth so callers never inline the
- *  isMac check. For keycap chips use <KeyHint keys={['mod', …]} /> instead. */
-export function useModKey(): string {
-    return useIsMac() ? '⌘' : 'Ctrl';
 }

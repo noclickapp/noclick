@@ -25,7 +25,6 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '~/components/ui/popover';
-import { KeyHint, SequenceKeyHint } from '~/components/shared/KeyHint';
 import { ShortcutTooltip } from '~/components/shared/ShortcutTooltip';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { SubmitFeedbackRequest } from '~/types/socket-events.generated';
@@ -163,12 +162,9 @@ export function FeedbackButton({ children }: { children?: ReactNode } = {}) {
                 onCloseAutoFocus={(e) => e.preventDefault()}
                 className="w-[calc(100vw-2rem)] rounded-2xl border border-foreground/10 bg-popover dark:bg-[#0a0a0b] p-3.5 text-foreground shadow-2xl sm:w-96"
             >
-                <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-foreground">
-                        Send feedback
-                    </h3>
-                    <SequenceKeyHint keys={['H', 'H']} />
-                </div>
+                <h3 className="text-sm font-semibold text-foreground">
+                    Send feedback
+                </h3>
                 <p className="mt-0.5 text-xs text-foreground/60 dark:text-foreground/40">
                     Tell us what&apos;s working or what&apos;s broken.
                 </p>
@@ -219,10 +215,6 @@ export function FeedbackButton({ children }: { children?: ReactNode } = {}) {
                             <Loader2 className="h-3.5 w-3.5 animate-spin" />
                         ) : null}
                         Send
-                        <KeyHint
-                            keys={['mod', 'enter']}
-                            kbdClassName="bg-primary-foreground/10 text-primary-foreground/60"
-                        />
                     </button>
                 </div>
             </PopoverContent>
