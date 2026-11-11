@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -209,7 +210,7 @@ WistiaCredential = Union[WistiaAPITokenCredential, WistiaMcpCredential]
 WistiaConfig = Annotated[Union[GetAccount, GetToken, ListMedia, GetMedia, UpdateMedia,
     DeleteMedia, CopyMedia, GetMediaStats, ImportMedia, GetJob, ListFolders,
     GetFolder, CreateFolder, UpdateFolder, DeleteFolder, ListTags, CreateTag,
-    DeleteTag, ListCaptions, CreateCaptions], Field(discriminator="operation")]
+    DeleteTag, ListCaptions, CreateCaptions, OnNewMedia, OnUpdatedMedia], Field(discriminator="operation")]
 
 
 class WistiaFullConfig(NodeConfig[WistiaConfig, WistiaCredential]):
@@ -252,7 +253,7 @@ def _redact(value, token):
     return value
 
 
-class WistiaNode(WorkflowNode):
+class WistiaNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-wistia"
     credential_provider_labels = {"wistia": "Wistia Account"}
     connection_evidence = ConnectionEvidence(noun="Wistia media", operation="list_media", identity_operation="get_account")
@@ -266,6 +267,66 @@ class WistiaNode(WorkflowNode):
             raise ValueError("Connect a Wistia API token")
         op = self.config.config
         token = self.config.credentials.api_token
+        if isinstance(op, (OnNewMedia, OnUpdatedMedia)):
+            output = await self._poll_media(op, token)
+        else:
+            output = await self._execute_operation(op, token)
+        output = _redact(output, token)
+        await self.emit(output)
+        return output
+
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in {"on_new_media", "on_updated_media"}:
+            return bool(output.get("media_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if output.get("operation") not in {"on_new_media", "on_updated_media"}:
+            return super().resolve_agent_event(output)
+        media = output.get("media", [])
+        if not media:
+            return None
+        change = "new" if output["operation"] == "on_new_media" else "new or updated"
+        lines = [f"- {row.get('name') or 'Untitled media'} (media hashed ID {row['hashed_id']})"
+                 + (f": {row['description']}" if row.get('description') else "")
+                 for row in media[:10]]
+        if len(media) > 10:
+            lines.append(f"- … and {len(media) - 10} more")
+        return {"text": f"Wistia: {len(media)} {change} media in "
+                + (f"folder {output['folder_id']}" if output.get("folder_id") else "the connected account")
+                + ":\n" + "\n".join(lines), "conversation_key": None}
+
+    async def _poll_media(self, op, token):
+        # List ordering, hashed_id and updated are documented in List Media:
+        # https://docs.wistia.com/reference/get_medias
+        updated = isinstance(op, OnUpdatedMedia)
+        media = []
+        for page in range(1, 22):
+            result = await self._execute_operation(ListMedia(
+                page=page, per_page=100, folder_id=op.folder_id,
+                sort_by="updated" if updated else "created", sort_direction=0), token)
+            if result["status"] != "success":
+                raise ValueError(f"Wistia poll failed (HTTP {result['http_status']}); baseline unchanged")
+            media.extend(result["data"])
+            if len(media) > 2000:
+                raise ValueError("Wistia poll exceeded 2,000 media; choose a smaller folder to monitor")
+            if not result["has_more"]:
+                break
+        else:
+            raise ValueError("Wistia poll exceeded 2,000 media; choose a smaller folder to monitor")
+        for row in media:
+            if not isinstance(row.get("hashed_id"), str) or not row["hashed_id"]:
+                raise ValueError("Wistia media lacks its hashed ID; baseline unchanged")
+            if updated and (not isinstance(row.get("updated"), str) or not row["updated"]):
+                raise ValueError("Wistia media lacks its updated timestamp; baseline unchanged")
+        fresh = await self._filter_unseen(media, lambda row:
+            row["hashed_id"] + ":" + row["updated"] if updated else row["hashed_id"])
+        return {"status": "success", "operation": op.operation, "folder_id": op.folder_id,
+                "media": fresh, "media_count": len(fresh)}
+
+    async def _execute_operation(self, op, token):
         method, path, path_field, body_fields = ROUTES[op.operation]
         if path_field:
             path = re.sub(r"\{[^}]+\}", lambda _: quote(str(getattr(op, path_field)), safe=""), path)
@@ -318,6 +379,4 @@ class WistiaNode(WorkflowNode):
                 output["import_completed"] = False
             if method == "DELETE":
                 output["deletion_acknowledged"] = True
-        output = _redact(output, token)
-        await self.emit(output)
         return output

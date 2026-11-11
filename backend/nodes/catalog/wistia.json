@@ -168,6 +168,20 @@
    "category": null,
    "description": "Create captions from SRT text; omit language to let Wistia detect it.",
    "is_trigger": false
+  },
+  {
+   "name": "on_new_media",
+   "display_name": "On New Media",
+   "category": "Triggers",
+   "description": "Watch new media; the first poll records existing media without firing.\n\n    Monitors up to 2,000 media per scope; choose a folder for larger libraries.",
+   "is_trigger": true
+  },
+  {
+   "name": "on_updated_media",
+   "display_name": "On New or Updated Media",
+   "category": "Triggers",
+   "description": "Watch new or updated media, including processing and metadata changes.\n\n    The first poll records existing versions without firing. Monitors up to\n    2,000 media per scope; choose a folder for larger libraries.",
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
