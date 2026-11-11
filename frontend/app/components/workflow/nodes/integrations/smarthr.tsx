@@ -13,7 +13,7 @@ const SmartHRIcon = ({ className, style }: { className?: string; style?: CSSProp
 
 export const SmartHRNode: NodeDefinition = {
     type: 'automation-smarthr', category: 'hr-recruiting', label: 'SmartHR',
-    description: 'Manage employees, departments, employment types and job titles; read users, companies and dependents',
+    description: 'Start workflows from employee and dependent events; manage employees, departments, employment types and job titles',
     keywords: ['smarthr', 'human resources', 'employees', 'onboarding'],
     Icon: SmartHRIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

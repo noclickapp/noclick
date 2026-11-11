@@ -6,6 +6,9 @@ List operations expose page navigation without downloading all employee data.
 from __future__ import annotations
 
 import re
+import hmac
+import json
+import secrets
 from datetime import date
 from typing import Annotated, Literal, Union
 from urllib.parse import parse_qs, urlsplit
@@ -13,6 +16,8 @@ from urllib.parse import parse_qs, urlsplit
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.agent_events import prune_empty
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -288,7 +293,26 @@ class SmartHRGetDependentConfig(_Input):
     id: str = Field(..., pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$", description='SmartHR resource ID.')
 
 
+SMARTHR_WEBHOOK_EVENTS = (
+    "crew_created", "crew_updated", "crew_deleted", "crew_imported",
+    "dependent_created", "dependent_updated", "dependent_deleted", "dependent_imported",
+)
+
+
+class SmartHROnEventConfig(WebhookTriggerConfigBase):
+    """API-registered events from developer.smarthr.jp/api/about_webhook."""
+    operation: Literal["on_event"] = Field("on_event", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-display-name": "On Employee or Dependent Event",
+        "x-category": "Triggers",
+    })
+    event_type: Literal[*SMARTHR_WEBHOOK_EVENTS] = Field(
+        "crew_created", title="Event", description="Start when an employee or dependent is created, updated, deleted or imported.")
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with SmartHR automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
 SmartHRConfig = Annotated[Union[
+    SmartHROnEventConfig,
     SmartHRListEmployeesConfig,
     SmartHRGetEmployeeConfig,
     SmartHRCreateEmployeeConfig,
@@ -391,7 +415,7 @@ QUERY_FIELDS = {'list_employees': ['emp_code',
  'get_dependent': []}
 
 
-class SmartHRNode(WorkflowNode):
+class SmartHRNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-smarthr"
     connection_evidence = ConnectionEvidence(noun="companies", operation="list_companies")
 
@@ -399,7 +423,96 @@ class SmartHRNode(WorkflowNode):
     def get_config_model(cls):
         return SmartHRFullConfig
 
+    @classmethod
+    async def _request(cls, credential, method, path, *, query=None, body=None):
+        credential = SmartHRAccessTokenCredential.model_validate(credential)
+        url = f"https://{credential.subdomain}.smarthr.jp/api" + path
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, url, params=query,
+                headers={"Authorization": "Bearer " + credential.access_token, "Accept": "application/json"},
+                **({"json": body} if body is not None else {}))
+        if not 200 <= response.status_code < 300:
+            try:
+                message = response.json().get("message", "SmartHR request failed")
+            except (ValueError, AttributeError):
+                message = "SmartHR request failed"
+            message = str(message).replace(credential.access_token, "[redacted]")[:2000]
+            raise ValueError(f"SmartHR HTTP {response.status_code}: {message}")
+        return response
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event = SmartHROnEventConfig.model_validate(config).event_type
+        secret = secrets.token_urlsafe(32)
+        response = await cls._request(credential, "POST", "/v1/webhooks", body={
+            "url": webhook_url, "secret_token": secret, "expose_only_id": False,
+            **{name: name == event for name in SMARTHR_WEBHOOK_EVENTS},
+        })
+        endpoint_id = response.json().get("id")
+        if not isinstance(endpoint_id, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,127}", endpoint_id):
+            raise ValueError("SmartHR did not return a valid webhook ID")
+        return {"external_webhook_id": endpoint_id, "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = config.get("external_webhook_id")
+        if not endpoint_id:
+            raise ValueError("SmartHR webhook ID is required for removal")
+        endpoint_id = SmartHRGetEmployeeConfig(id=str(endpoint_id)).id
+        await cls._request(credential, "DELETE", f"/v1/webhooks/{endpoint_id}")
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"event_type": SmartHROnEventConfig.model_validate(config).event_type}
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # SmartHR sends the configured secret verbatim, not a body HMAC.
+        secret = config.get("signing_secret")
+        token = next((value for key, value in headers.items() if key.lower() == "x-smarthr-token"), "")
+        return bool(isinstance(secret, str) and secret and isinstance(token, str)
+                    and hmac.compare_digest(secret.encode(), token.encode()))
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return payload.get("event") == SmartHROnEventConfig.model_validate(config).event_type
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        event = output.get("event")
+        if event not in SMARTHR_WEBHOOK_EVENTS:
+            return super().resolve_agent_event(output)
+        noun, action = event.split("_", 1)
+        label = "employee" if noun == "crew" else "dependent"
+        sender = output.get("sender") or {}
+        actor = " ".join(str(sender.get(k) or "") for k in ("last_name", "first_name")).strip()
+        lines = [f"SmartHR {label} {action}"]
+        if actor:
+            lines.append(f"By: {actor} (employee ID {sender.get('id')})")
+        if output.get("triggered_at"):
+            lines.append(f"At: {output['triggered_at']}")
+        if action == "imported":
+            result = output.get(f"{noun}_import_result") or {}
+            created = result.get(f"created_{noun}s") or []
+            updated = result.get(f"updated_{noun}s") or []
+            records = created + updated
+            lines.append(f"Imported: {len(created)} created, {len(updated)} updated")
+        else:
+            record = output.get(noun) or {}
+            records = [record]
+        for record in records:
+            name = " ".join(str(record.get(k) or "") for k in ("last_name", "first_name")).strip()
+            lines.append(f"{label.title()}: {name} (ID {record.get('id')})")
+            if noun == "dependent":
+                lines.append(f"Employee ID: {record.get('crew_id')}")
+            lines.append(json.dumps(prune_empty(record, max_str=1000), ensure_ascii=False)[:4000])
+        lines.append("Use get_employee id=<employee ID> or get_dependent crew_id=<employee ID> id=<dependent ID> for current details; deleted records are no longer available.")
+        return {"text": "\n".join(lines)[:12000], "title": f"SmartHR {label} {action}"}
+
     async def execute(self, inputs):
+        if isinstance(self.config.config, SmartHROnEventConfig):
+            return self.no_event_output("on_event")
+
         if not self.config.credentials:
             raise ValueError("Connect a SmartHR access token")
         credential = self.config.credentials
@@ -412,17 +525,8 @@ class SmartHRNode(WorkflowNode):
         query = {key: config.pop(key) for key in QUERY_FIELDS[operation] if key in config}
         # httpx serializes booleans as lowercase JSON-compatible query values.
         url = f"https://{credential.subdomain}.smarthr.jp/api" + path
-        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
-            response = await client.request(method, url, params=query,
-                headers={"Authorization": "Bearer " + credential.access_token, "Accept": "application/json"},
-                **({"json": config} if method in {"POST", "PATCH"} else {}))
-        if not 200 <= response.status_code < 300:
-            try:
-                message = response.json().get("message", "SmartHR request failed")
-            except (ValueError, AttributeError):
-                message = "SmartHR request failed"
-            message = str(message).replace(credential.access_token, "[redacted]")[:2000]
-            raise ValueError(f"SmartHR HTTP {response.status_code}: {message}")
+        response = await self._request(credential.model_dump(), method, path, query=query,
+                                       body=config if method in {"POST", "PATCH"} else None)
         if response.status_code == 204:
             return {"status": "success", "operation": operation, "acknowledged": True}
         payload = response.json()

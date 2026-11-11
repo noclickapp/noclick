@@ -142,3 +142,83 @@ async def test_smarthr_invalid_page_fails_before_http(transport):
 def test_smarthr_secret_paste_errors(token):
     with pytest.raises(ValueError):
         module.SmartHRAccessTokenCredential.model_validate({**AUTH, "access_token": token})
+
+
+EVENTS = json.loads((Path(__file__).parent / "fixtures/smarthr/events.json").read_text())["events"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("event", module.SMARTHR_WEBHOOK_EVENTS)
+async def test_smarthr_webhook_registration_and_removal(transport, event):
+    requests, replies = transport
+    replies.extend([httpx.Response(201, json={"id": "webhook-id"}), httpx.Response(204)])
+    config = {"operation": "on_event", "event_type": event}
+    registered = await module.SmartHRNode._register_external_webhook(
+        webhook_url="https://fixture.hooks.example.test/", credential=AUTH, config=config, node_id="fixture")
+    body = json.loads(requests[0].content)
+    assert requests[0].method == "POST" and requests[0].url.path == "/api/v1/webhooks"
+    assert body == {"url": "https://fixture.hooks.example.test/", "secret_token": registered["signing_secret"],
+                    "expose_only_id": False, **{name: name == event for name in module.SMARTHR_WEBHOOK_EVENTS}}
+    assert len(registered["signing_secret"]) >= 32
+    assert registered["external_webhook_id"] == "webhook-id"
+    assert module.SmartHRNode.registration_fingerprint_fields(config) == {"event_type": event}
+    await module.SmartHRNode._unregister_external_webhook(
+        credential=AUTH, config={**config, **registered}, node_id="fixture")
+    assert requests[1].method == "DELETE" and requests[1].url.path == "/api/v1/webhooks/webhook-id"
+    assert not replies
+
+
+@pytest.mark.parametrize("event", module.SMARTHR_WEBHOOK_EVENTS)
+def test_smarthr_documented_events_filter_and_agent_turn(event):
+    payload = EVENTS[event]
+    config = {"operation": "on_event", "event_type": event}
+    assert module.SmartHRNode.filter_trigger_payload(payload, config)
+    assert not module.SmartHRNode.filter_trigger_payload(payload, {**config, "event_type": "dependent_updated" if event.startswith("crew_") else "crew_created"})
+    output = module.SmartHRNode.resolve_trigger_payload(payload, config)
+    turn = module.SmartHRNode.resolve_agent_event(output)
+    assert "SmartHR" in turn["text"] and event.split("_")[1] in turn["text"]
+    assert payload["triggered_at"] in turn["text"]
+    if event.endswith("imported"):
+        assert "0 created, 0 updated" in turn["text"]
+    else:
+        assert "ID string" in turn["text"]
+    assert "get_employee" in turn["text"] and "get_dependent" in turn["text"]
+
+
+def test_smarthr_webhook_secret_token_verification():
+    body = json.dumps(EVENTS["crew_created"]).encode()
+    config = {"signing_secret": "synthetic-only-secret"}
+    assert module.SmartHRNode.verify_webhook_signature(body, {"X-SmartHR-Token": config["signing_secret"]}, config)
+    assert module.SmartHRNode.verify_webhook_signature(body, {"x-smarthr-token": config["signing_secret"]}, config)
+    for headers in ({}, {"X-SmartHR-Token": "wrong"}, {"X-SmartHR-Token": "synthetic-only-secreté"}):
+        assert not module.SmartHRNode.verify_webhook_signature(body, headers, config)
+    assert not module.SmartHRNode.verify_webhook_signature(body, {"X-SmartHR-Token": ""}, {})
+
+
+@pytest.mark.asyncio
+async def test_smarthr_manual_trigger_has_no_event(transport):
+    result = await run("on_event", {"event_type": "crew_created"})
+    assert result["status"] == "no_event" and not transport[0]
+
+
+@pytest.mark.asyncio
+async def test_smarthr_webhook_failures_are_not_acknowledged(transport):
+    transport[1].append(httpx.Response(403, json={"message": "forbidden"}))
+    with pytest.raises(ValueError, match="HTTP 403"):
+        await module.SmartHRNode._register_external_webhook(
+            webhook_url="https://fixture.hooks.example.test/", credential=AUTH,
+            config={"operation": "on_event"}, node_id="fixture")
+    transport[1].append(httpx.Response(500, json={"message": "failure"}))
+    with pytest.raises(ValueError, match="HTTP 500"):
+        await module.SmartHRNode._unregister_external_webhook(
+            credential=AUTH, config={"external_webhook_id": "webhook-id"}, node_id="fixture")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("endpoint", [{}, {"id": "../other"}])
+async def test_smarthr_registration_requires_safe_endpoint_id(transport, endpoint):
+    transport[1].append(httpx.Response(201, json=endpoint))
+    with pytest.raises(ValueError, match="webhook ID"):
+        await module.SmartHRNode._register_external_webhook(
+            webhook_url="https://fixture.hooks.example.test/", credential=AUTH,
+            config={"operation": "on_event"}, node_id="fixture")

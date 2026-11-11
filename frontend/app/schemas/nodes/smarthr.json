@@ -1220,6 +1220,150 @@
       "title": "SmartHRListUsersConfig",
       "type": "object"
     },
+    "SmartHROnEventConfig": {
+      "description": "API-registered events from developer.smarthr.jp/api/about_webhook.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Employee or Dependent Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "crew_created",
+          "description": "Start when an employee or dependent is created, updated, deleted or imported.",
+          "enum": [
+            "crew_created",
+            "crew_updated",
+            "crew_deleted",
+            "crew_imported",
+            "dependent_created",
+            "dependent_updated",
+            "dependent_deleted",
+            "dependent_imported"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with SmartHR automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "SmartHROnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "SmartHRUpdateDepartmentConfig": {
       "additionalProperties": false,
       "description": "PATCH /v1/departments/{id}: patchV1DepartmentsId.",
@@ -1607,6 +1751,7 @@
           "list_employment_types": "#/$defs/SmartHRListEmploymentTypesConfig",
           "list_job_titles": "#/$defs/SmartHRListJobTitlesConfig",
           "list_users": "#/$defs/SmartHRListUsersConfig",
+          "on_event": "#/$defs/SmartHROnEventConfig",
           "update_department": "#/$defs/SmartHRUpdateDepartmentConfig",
           "update_employee": "#/$defs/SmartHRUpdateEmployeeConfig",
           "update_employment_type": "#/$defs/SmartHRUpdateEmploymentTypeConfig",
@@ -1615,6 +1760,9 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/SmartHROnEventConfig"
+        },
         {
           "$ref": "#/$defs/SmartHRListEmployeesConfig"
         },
