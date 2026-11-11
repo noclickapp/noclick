@@ -571,26 +571,6 @@ def _mcp_aware_freshen(freshen):
     return wrapper
 
 
-def _mcp_aware_freshen(freshen):
-    """``freshen`` (a node's ``freshen_credential``), except that a vendor-MCP
-    credential is refreshed by ``vendor_mcp.fresh_credential``."""
-    import functools
-
-    @functools.wraps(freshen)
-    async def wrapper(cls, credential_data, *args, **kwargs):
-        from nodes.core import vendor_mcp
-
-        if credential_data and vendor_mcp.is_mcp_credential(credential_data):
-            return await vendor_mcp.fresh_credential(
-                credential_data, credential_id=kwargs.get("credential_id"), user_id=kwargs.get("user_id"),
-                pool=kwargs.get("pool"), caller_path="freshen",
-            )
-        return await freshen(cls, credential_data, *args, **kwargs)
-
-    wrapper._mcp_aware = True
-    return wrapper
-
-
 class WorkflowNode(ABC):
     """
     Abstract base class for all workflow nodes.
@@ -654,12 +634,6 @@ class WorkflowNode(ABC):
     # (``registry.is_listed``), while a saved one still loads, renders and runs
     # until the vendor's API refuses it. Published on its schema as `x-retired`.
     retired: ClassVar[Optional[Retirement]] = None
-
-    # Credential types this node accepts that another integration owns (Reddit
-    # Ads signs in with Reddit's OAuth). Every lookup of "the node for a
-    # credential type" goes to its one owner (credential_connect.owns_credential_type),
-    # never to whichever node registered first.
-    borrowed_credential_types: ClassVar[FrozenSet[str]] = frozenset()
 
     # Credential types this node accepts that another integration owns (Reddit
     # Ads signs in with Reddit's OAuth). Every lookup of "the node for a
