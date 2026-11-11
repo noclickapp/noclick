@@ -1,0 +1,1877 @@
+{
+  "$defs": {
+    "BitsnapAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "bitsnap_api_key",
+          "default": "bitsnap_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Bitsnap API Key",
+      "type": "object",
+      "x-credential-instructions": "In Bitsnap, open Settings \u2192 Developer and create a project API key. Paste the bs_test_ or bs_live_ key. Choose the scopes your actions need and enable its write switch for writes. Payment links require a live key. NoClick checks GetAccount to show the shop and environment.",
+      "x-credential-url": "https://docs.bitsnap.pl/reference/api/"
+    },
+    "BitsnapArchivePaymentLinkConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "archive_payment_link",
+          "default": "archive_payment_link",
+          "title": "Archive Payment Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "PaymentLink",
+          "x-display-name": "Archive Payment Link",
+          "x-is-trigger": false
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse this key only for a retry of the same write and body (kept for 24 hours).",
+          "title": "Idempotency Key"
+        },
+        "id": {
+          "description": "Opaque Bitsnap resource ID.",
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "BitsnapArchivePaymentLinkConfig",
+      "type": "object"
+    },
+    "BitsnapCreateCheckoutLinkConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_checkout_link",
+          "default": "create_checkout_link",
+          "title": "Create Product Checkout Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Checkout",
+          "x-display-name": "Create Product Checkout Link",
+          "x-is-trigger": false
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse this key only for a retry of the same write and body (kept for 24 hours).",
+          "title": "Idempotency Key"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/CheckoutItem"
+          },
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        },
+        "customer_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Email"
+        },
+        "success_url": {
+          "anyOf": [
+            {
+              "pattern": "^https://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Success Url"
+        },
+        "cancel_url": {
+          "anyOf": [
+            {
+              "pattern": "^https://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cancel Url"
+        },
+        "client_reference_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Reference Id"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "BitsnapCreateCheckoutLinkConfig",
+      "type": "object"
+    },
+    "BitsnapCreateCouponCodeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_coupon_code",
+          "default": "create_coupon_code",
+          "title": "Create Coupon Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "Create Coupon Code",
+          "x-is-trigger": false
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse this key only for a retry of the same write and body (kept for 24 hours).",
+          "title": "Idempotency Key"
+        },
+        "coupon_id": {
+          "minLength": 1,
+          "title": "Coupon Id",
+          "type": "string"
+        },
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "max_redemptions": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Redemptions"
+        },
+        "minimum_order_amount": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Order Amount"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp, e.g. 2026-01-01T00:00:00Z.",
+          "format": "date-time",
+          "title": "Expires At"
+        }
+      },
+      "required": [
+        "coupon_id",
+        "code"
+      ],
+      "title": "BitsnapCreateCouponCodeConfig",
+      "type": "object"
+    },
+    "BitsnapCreateCouponConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_coupon",
+          "default": "create_coupon",
+          "title": "Create Coupon",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "Create Coupon",
+          "x-is-trigger": false
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse this key only for a retry of the same write and body (kept for 24 hours).",
+          "title": "Idempotency Key"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "discount": {
+          "$ref": "#/$defs/Discount"
+        },
+        "includes_delivery": {
+          "default": false,
+          "title": "Includes Delivery",
+          "type": "boolean"
+        },
+        "product_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Product Ids",
+          "type": "array"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp, e.g. 2026-01-01T00:00:00Z.",
+          "format": "date-time",
+          "title": "Expires At"
+        }
+      },
+      "required": [
+        "name",
+        "discount"
+      ],
+      "title": "BitsnapCreateCouponConfig",
+      "type": "object"
+    },
+    "BitsnapCreatePaymentLinkConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_payment_link",
+          "default": "create_payment_link",
+          "title": "Create Payment Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "PaymentLink",
+          "x-display-name": "Create Payment Link",
+          "x-is-trigger": false
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse this key only for a retry of the same write and body (kept for 24 hours).",
+          "title": "Idempotency Key"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "price": {
+          "$ref": "#/$defs/Money",
+          "description": "Gross price, greater than zero. Live key required."
+        },
+        "vat_rate": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vat Rate"
+        },
+        "usage": {
+          "default": "PAYMENT_LINK_USAGE_SINGLE",
+          "enum": [
+            "PAYMENT_LINK_USAGE_SINGLE",
+            "PAYMENT_LINK_USAGE_REUSABLE"
+          ],
+          "title": "Usage",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "price"
+      ],
+      "title": "BitsnapCreatePaymentLinkConfig",
+      "type": "object"
+    },
+    "BitsnapCreateProductConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_product",
+          "default": "create_product",
+          "title": "Create Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Products",
+          "x-display-name": "Create Product",
+          "x-is-trigger": false
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse this key only for a retry of the same write and body (kept for 24 hours).",
+          "title": "Idempotency Key"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "price": {
+          "$ref": "#/$defs/Money"
+        },
+        "status": {
+          "default": "PRODUCT_STATUS_DRAFT",
+          "enum": [
+            "PRODUCT_STATUS_DRAFT",
+            "PRODUCT_STATUS_UNPUBLISHED",
+            "PRODUCT_STATUS_PUBLISHED"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "available_quantity": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Available Quantity"
+        },
+        "images": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Images",
+          "type": "array"
+        },
+        "variants": {
+          "items": {
+            "$ref": "#/$defs/Variant"
+          },
+          "title": "Variants",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "price"
+      ],
+      "title": "BitsnapCreateProductConfig",
+      "type": "object"
+    },
+    "BitsnapDeleteCouponCodeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_coupon_code",
+          "default": "delete_coupon_code",
+          "title": "Delete Coupon Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "Delete Coupon Code",
+          "x-is-trigger": false
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse this key only for a retry of the same write and body (kept for 24 hours).",
+          "title": "Idempotency Key"
+        },
+        "id": {
+          "description": "Opaque Bitsnap resource ID.",
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "BitsnapDeleteCouponCodeConfig",
+      "type": "object"
+    },
+    "BitsnapDeleteCouponConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_coupon",
+          "default": "delete_coupon",
+          "title": "Delete Coupon and Its Codes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "Delete Coupon and Its Codes",
+          "x-is-trigger": false
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse this key only for a retry of the same write and body (kept for 24 hours).",
+          "title": "Idempotency Key"
+        },
+        "id": {
+          "description": "Opaque Bitsnap resource ID.",
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "BitsnapDeleteCouponConfig",
+      "type": "object"
+    },
+    "BitsnapGetAccountConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Account",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BitsnapGetAccountConfig",
+      "type": "object"
+    },
+    "BitsnapGetLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Get Lead",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Leads",
+          "x-display-name": "Get Lead",
+          "x-is-trigger": false
+        },
+        "lead_id": {
+          "minLength": 1,
+          "title": "Lead Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "BitsnapGetLeadConfig",
+      "type": "object"
+    },
+    "BitsnapGetOrderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Get Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Get Order",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Opaque Bitsnap resource ID.",
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "BitsnapGetOrderConfig",
+      "type": "object"
+    },
+    "BitsnapGetPaymentLinkConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_payment_link",
+          "default": "get_payment_link",
+          "title": "Get Payment Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "PaymentLink",
+          "x-display-name": "Get Payment Link",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Opaque Bitsnap resource ID.",
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "BitsnapGetPaymentLinkConfig",
+      "type": "object"
+    },
+    "BitsnapGetProductConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Get Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Products",
+          "x-display-name": "Get Product",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Opaque Bitsnap resource ID.",
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "BitsnapGetProductConfig",
+      "type": "object"
+    },
+    "BitsnapGetSalesSummaryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_sales_summary",
+          "default": "get_sales_summary",
+          "title": "Get Sales Summary",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stats",
+          "x-display-name": "Get Sales Summary",
+          "x-is-trigger": false
+        },
+        "from_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp, e.g. 2026-01-01T00:00:00Z.",
+          "format": "date-time",
+          "title": "From Time"
+        },
+        "to_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp, e.g. 2026-01-01T00:00:00Z.",
+          "format": "date-time",
+          "title": "To Time"
+        },
+        "product_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Product Ids",
+          "type": "array"
+        }
+      },
+      "title": "BitsnapGetSalesSummaryConfig",
+      "type": "object"
+    },
+    "BitsnapListCouponsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_coupons",
+          "default": "list_coupons",
+          "title": "List Coupons",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "List Coupons",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BitsnapListCouponsConfig",
+      "type": "object"
+    },
+    "BitsnapListFormsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_forms",
+          "default": "list_forms",
+          "title": "List Lead Forms",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Leads",
+          "x-display-name": "List Lead Forms",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "title": "BitsnapListFormsConfig",
+      "type": "object"
+    },
+    "BitsnapListLeadsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "List Leads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Leads",
+          "x-display-name": "List Leads",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Form Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "created_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp, e.g. 2026-01-01T00:00:00Z.",
+          "format": "date-time",
+          "title": "Created After"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "nextPageToken from the previous response.",
+          "title": "Page Token"
+        },
+        "min_score": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Score"
+        },
+        "band": {
+          "anyOf": [
+            {
+              "enum": [
+                "hot",
+                "warm",
+                "cold"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Band",
+          "enum": [
+            "hot",
+            "warm",
+            "cold"
+          ],
+          "x-enum-searchable": true
+        },
+        "spam_suspected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Spam Suspected"
+        },
+        "sort": {
+          "default": "created_desc",
+          "enum": [
+            "created_desc",
+            "score_desc"
+          ],
+          "title": "Sort",
+          "type": "string"
+        }
+      },
+      "title": "BitsnapListLeadsConfig",
+      "type": "object"
+    },
+    "BitsnapListOrdersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "List Orders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "List Orders",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous response. One page per run.",
+          "title": "Cursor"
+        },
+        "created_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp, e.g. 2026-01-01T00:00:00Z.",
+          "format": "date-time",
+          "title": "Created From"
+        },
+        "created_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp, e.g. 2026-01-01T00:00:00Z.",
+          "format": "date-time",
+          "title": "Created To"
+        },
+        "statuses": {
+          "items": {
+            "enum": [
+              "ORDER_STATUS_CREATED",
+              "ORDER_STATUS_PAID",
+              "ORDER_STATUS_UNPAID",
+              "ORDER_STATUS_CANCELED",
+              "ORDER_STATUS_SENT",
+              "ORDER_STATUS_COMPLETED",
+              "ORDER_STATUS_ISSUE",
+              "ORDER_STATUS_RETURNED",
+              "ORDER_STATUS_IN_PROGRESS"
+            ],
+            "type": "string"
+          },
+          "title": "Statuses",
+          "type": "array"
+        },
+        "product_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Product Ids",
+          "type": "array"
+        }
+      },
+      "title": "BitsnapListOrdersConfig",
+      "type": "object"
+    },
+    "BitsnapListPaymentLinksConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_payment_links",
+          "default": "list_payment_links",
+          "title": "List Payment Links",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "PaymentLink",
+          "x-display-name": "List Payment Links",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous response. One page per run.",
+          "title": "Cursor"
+        },
+        "statuses": {
+          "items": {
+            "enum": [
+              "PAYMENT_LINK_STATUS_ACTIVE",
+              "PAYMENT_LINK_STATUS_PAID",
+              "PAYMENT_LINK_STATUS_ARCHIVED"
+            ],
+            "type": "string"
+          },
+          "title": "Statuses",
+          "type": "array"
+        }
+      },
+      "title": "BitsnapListPaymentLinksConfig",
+      "type": "object"
+    },
+    "BitsnapListProductsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "List Products",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Products",
+          "x-display-name": "List Products",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous response. One page per run.",
+          "title": "Cursor"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "include_drafts": {
+          "default": false,
+          "title": "Include Drafts",
+          "type": "boolean"
+        }
+      },
+      "title": "BitsnapListProductsConfig",
+      "type": "object"
+    },
+    "BitsnapOnEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On Shop Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Shop Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "ALL",
+          "description": "Receive all documented shop events or select one. Requires webhooks:write and the key's write switch.",
+          "enum": [
+            "ALL",
+            "TRANSACTION_CREATED",
+            "TRANSACTION_SUCCESS",
+            "TRANSACTION_FAILURE",
+            "TRANSACTION_EXPIRED",
+            "TRANSACTION_CHARGE",
+            "SUBSCRIPTION_CREATED",
+            "SUBSCRIPTION_PAUSED",
+            "SUBSCRIPTION_RESUMED",
+            "SUBSCRIPTION_UPDATED",
+            "SUBSCRIPTION_DELETED",
+            "SUBSCRIPTION_CHARGE_PAID",
+            "SUBSCRIPTION_CHARGE_FAILED",
+            "SUBSCRIPTION_PAST_DUE",
+            "SUBSCRIPTION_CANCELED",
+            "ACCESS_EXPIRES_IN_3_DAYS",
+            "ACCESS_EXPIRED",
+            "CART_RECOVERY",
+            "TESTIMONIAL_FULFILLED",
+            "PARTNER_COMMISSION_EARNED",
+            "REFUND_SUCCEEDED",
+            "REFUND_FAILED",
+            "CONFIGURATOR_SUBMISSION_CREATED",
+            "CONFIGURATOR_SUBMISSION_UPDATED",
+            "CONFIGURATOR_SUBMISSION_STATUS_CHANGED",
+            "CONFIGURATOR_FORM_PUBLISHED",
+            "CONFIGURATOR_FORM_ARCHIVED",
+            "CONFIGURATOR_CHECKOUT_STARTED",
+            "CONFIGURATOR_CHECKOUT_PAID",
+            "CONFIGURATOR_CHECKOUT_FAILED",
+            "INVOICE_ISSUED"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically with Bitsnap.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "BitsnapOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BitsnapSendPaymentLinkConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_payment_link",
+          "default": "send_payment_link",
+          "title": "Email Payment Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "PaymentLink",
+          "x-display-name": "Email Payment Link",
+          "x-is-trigger": false
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse this key only for a retry of the same write and body (kept for 24 hours).",
+          "title": "Idempotency Key"
+        },
+        "id": {
+          "description": "Opaque Bitsnap resource ID.",
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "email": {
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "id",
+        "email"
+      ],
+      "title": "BitsnapSendPaymentLinkConfig",
+      "type": "object"
+    },
+    "BitsnapUpdateCouponConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_coupon",
+          "default": "update_coupon",
+          "title": "Replace Coupon",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "Replace Coupon",
+          "x-is-trigger": false
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse this key only for a retry of the same write and body (kept for 24 hours).",
+          "title": "Idempotency Key"
+        },
+        "id": {
+          "description": "Opaque Bitsnap resource ID.",
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "discount": {
+          "$ref": "#/$defs/Discount"
+        },
+        "includes_delivery": {
+          "default": false,
+          "title": "Includes Delivery",
+          "type": "boolean"
+        },
+        "product_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Product Ids",
+          "type": "array"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp, e.g. 2026-01-01T00:00:00Z.",
+          "format": "date-time",
+          "title": "Expires At"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "discount"
+      ],
+      "title": "BitsnapUpdateCouponConfig",
+      "type": "object"
+    },
+    "BitsnapUpdateLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_lead",
+          "default": "update_lead",
+          "title": "Update Lead",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Leads",
+          "x-display-name": "Update Lead",
+          "x-is-trigger": false
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse this key only for a retry of the same write and body (kept for 24 hours).",
+          "title": "Idempotency Key"
+        },
+        "lead_id": {
+          "minLength": 1,
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee Id"
+        },
+        "department_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department Id"
+        },
+        "replace_tags": {
+          "default": false,
+          "title": "Replace Tags",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "BitsnapUpdateLeadConfig",
+      "type": "object"
+    },
+    "BitsnapUpdateProductConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_product",
+          "default": "update_product",
+          "title": "Update Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Products",
+          "x-display-name": "Update Product",
+          "x-is-trigger": false
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse this key only for a retry of the same write and body (kept for 24 hours).",
+          "title": "Idempotency Key"
+        },
+        "id": {
+          "description": "Opaque Bitsnap resource ID.",
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Revision last read; rejects concurrent edits. Omit to overwrite.",
+          "title": "Revision"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "PRODUCT_STATUS_DRAFT",
+                "PRODUCT_STATUS_UNPUBLISHED",
+                "PRODUCT_STATUS_PUBLISHED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "PRODUCT_STATUS_DRAFT",
+            "PRODUCT_STATUS_UNPUBLISHED",
+            "PRODUCT_STATUS_PUBLISHED"
+          ],
+          "x-enum-searchable": true
+        },
+        "available_quantity": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Available Quantity"
+        },
+        "images": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Images",
+          "type": "array"
+        },
+        "variants": {
+          "description": "Nonempty replaces all variants; include existing IDs to retain them. Empty keeps them.",
+          "items": {
+            "$ref": "#/$defs/Variant"
+          },
+          "title": "Variants",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "BitsnapUpdateProductConfig",
+      "type": "object"
+    },
+    "CheckoutItem": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "description": "Product or variant ID.",
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        },
+        "quantity": {
+          "default": 1,
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Quantity",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "CheckoutItem",
+      "type": "object"
+    },
+    "Discount": {
+      "additionalProperties": false,
+      "properties": {
+        "percent_off": {
+          "description": "Percent off. Must stay within the key's maximum discount (default 30%). Fixed-amount coupons are created in the Bitsnap dashboard.",
+          "exclusiveMinimum": 0,
+          "maximum": 100,
+          "title": "Percent Off",
+          "type": "number"
+        }
+      },
+      "required": [
+        "percent_off"
+      ],
+      "title": "Discount",
+      "type": "object"
+    },
+    "Money": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "description": "Integer in minor units: 4900 = 49.00 PLN.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Amount",
+          "type": "integer"
+        },
+        "currency": {
+          "description": "Uppercase ISO 4217 currency code.",
+          "pattern": "^[A-Z]{3}$",
+          "title": "Currency",
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "title": "Money",
+      "type": "object"
+    },
+    "Variant": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Existing variant ID when updating; omit to create a variant.",
+          "title": "Id"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "price": {
+          "$ref": "#/$defs/Money"
+        },
+        "available_quantity": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Available Quantity"
+        }
+      },
+      "required": [
+        "name",
+        "price"
+      ],
+      "title": "Variant",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_payment_link": "#/$defs/BitsnapArchivePaymentLinkConfig",
+          "create_checkout_link": "#/$defs/BitsnapCreateCheckoutLinkConfig",
+          "create_coupon": "#/$defs/BitsnapCreateCouponConfig",
+          "create_coupon_code": "#/$defs/BitsnapCreateCouponCodeConfig",
+          "create_payment_link": "#/$defs/BitsnapCreatePaymentLinkConfig",
+          "create_product": "#/$defs/BitsnapCreateProductConfig",
+          "delete_coupon": "#/$defs/BitsnapDeleteCouponConfig",
+          "delete_coupon_code": "#/$defs/BitsnapDeleteCouponCodeConfig",
+          "get_account": "#/$defs/BitsnapGetAccountConfig",
+          "get_lead": "#/$defs/BitsnapGetLeadConfig",
+          "get_order": "#/$defs/BitsnapGetOrderConfig",
+          "get_payment_link": "#/$defs/BitsnapGetPaymentLinkConfig",
+          "get_product": "#/$defs/BitsnapGetProductConfig",
+          "get_sales_summary": "#/$defs/BitsnapGetSalesSummaryConfig",
+          "list_coupons": "#/$defs/BitsnapListCouponsConfig",
+          "list_forms": "#/$defs/BitsnapListFormsConfig",
+          "list_leads": "#/$defs/BitsnapListLeadsConfig",
+          "list_orders": "#/$defs/BitsnapListOrdersConfig",
+          "list_payment_links": "#/$defs/BitsnapListPaymentLinksConfig",
+          "list_products": "#/$defs/BitsnapListProductsConfig",
+          "on_event": "#/$defs/BitsnapOnEventConfig",
+          "send_payment_link": "#/$defs/BitsnapSendPaymentLinkConfig",
+          "update_coupon": "#/$defs/BitsnapUpdateCouponConfig",
+          "update_lead": "#/$defs/BitsnapUpdateLeadConfig",
+          "update_product": "#/$defs/BitsnapUpdateProductConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BitsnapGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapGetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapCreateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapUpdateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapListOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapGetOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapListCouponsConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapCreateCouponConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapUpdateCouponConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapDeleteCouponConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapCreateCouponCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapDeleteCouponCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapCreateCheckoutLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapListPaymentLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapGetPaymentLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapCreatePaymentLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapArchivePaymentLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapSendPaymentLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapGetSalesSummaryConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapListFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapListLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapGetLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapUpdateLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/BitsnapOnEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BitsnapAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bitsnap Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

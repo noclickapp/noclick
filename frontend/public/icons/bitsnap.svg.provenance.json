@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/bitsnap.svg",
+  "source": "https://bitsnap.pl/",
+  "source_page": "https://bitsnap.pl/",
+  "retrieved_at": "2026-11-11",
+  "license": "Proprietary Bitsnap trademark; used to identify the integration",
+  "sha256": "1764dc21b05de5cb0569d07c29d208d4e5c32555f0809def744cab6ba731df64",
+  "edits": [
+    "Extracted the standalone dotted app mark SVG from the official site header; no wordmark paths included",
+    "Removed HTML presentation attributes; preserved all path data and original viewBox",
+    "Resolved currentColor to #0f172a (official slate-900 header color)"
+  ],
+  "notes": "Official company app symbol, with no added background. Dark variant changes only the monochrome fill."
+}
