@@ -21,7 +21,6 @@ import {
     getNodeDefinition,
     isOfferedNodeType,
     loadNodeDefinitions,
-    offeredNodeDefinitions,
 } from '~/components/workflow/nodes/nodeDefinitions';
 import { NODE_SCHEMA_TYPES, getAgentWirableCatalog, getNodeCredentialInfo, loadAllNodeSchemas } from '~/utils/nodeSchemas';
 import { isListedNodeType } from '~/utils/nodeMeta';
@@ -48,7 +47,7 @@ describe('retired integrations', () => {
         // The node palette and its search.
         for (const type of RETIRED) expect(isOfferedNodeType(type)).toBe(false);
         noneRetired(getSearchableNodes().map((node) => node.type));
-        noneRetired(offeredNodeDefinitions().map((node) => node.type));
+        noneRetired(NODE_DEFINITION_TYPES.filter(isOfferedNodeType));
         // The agent's add-a-trigger and add-a-tool palette.
         const wirable = getAgentWirableCatalog();
         noneRetired([...wirable.triggers.map((entry) => entry.nodeType), ...wirable.tools]);
