@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -176,9 +177,22 @@ class BatchGetAuthors(_Fields):
         return value
 
 
+class OnNewMatchingPaper(PollTriggerConfigBase, _Filters):
+    """Watch the newest 1,000 matching papers by publication date.
+
+    Existing matches form the baseline when armed. New IDs in this window fire
+    afterwards; use a focused query/filter and poll often enough to avoid gaps.
+    This detects newly observed papers, not edits or all newly indexed papers.
+    """
+    operation: Literal["on_new_matching_paper"] = Field("on_new_matching_paper", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Matching Paper",
+    })
+    query: str = Field(..., min_length=1, max_length=2000, description="Paper title/abstract search. Watches the newest 1,000 matches by publication date; narrow the query and filters for busy topics.")
+
+
 SemanticScholarConfig = Annotated[Union[SearchPapers, SearchPapersBulk, MatchPaper,
     AutocompletePapers, GetPaper, GetPaperAuthors, GetPaperCitations, GetPaperReferences,
-    BatchGetPapers, SearchAuthors, GetAuthor, GetAuthorPapers, BatchGetAuthors], Field(discriminator="operation")]
+    BatchGetPapers, SearchAuthors, GetAuthor, GetAuthorPapers, BatchGetAuthors, OnNewMatchingPaper], Field(discriminator="operation")]
 
 
 class SemanticScholarFullConfig(NodeConfig[SemanticScholarConfig, SemanticScholarAPIKeyCredential]):
@@ -202,7 +216,7 @@ ROUTES = {
 }
 
 
-class SemanticScholarNode(WorkflowNode):
+class SemanticScholarNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-semanticscholar"
     connection_evidence = ConnectionEvidence(noun="Semantic Scholar papers", operation="search_papers",
         operation_arguments={"query": "graph", "limit": 1}, proves="reachability")
@@ -211,13 +225,39 @@ class SemanticScholarNode(WorkflowNode):
     def get_config_model(cls):
         return SemanticScholarFullConfig
 
+    @classmethod
+    def resolve_agent_event(cls, output):
+        papers = output.get("papers")
+        if not isinstance(papers, list):
+            return super().resolve_agent_event(output)
+        if not papers:
+            return None
+        lines = ["New matching papers on Semantic Scholar:"]
+        for paper in papers[:20]:
+            lines.append(f"{paper.get('title') or 'Untitled paper'} (paper_id={paper['paperId']})")
+            if paper.get("url"):
+                lines.append(str(paper["url"]))
+        if len(papers) > 20:
+            lines.append(f"{len(papers) - 20} more papers are in the workflow output.")
+        lines.append("Use get_paper with paper_id to read a paper, or get_paper_citations to explore its citations.")
+        return {"text": "\n".join(lines)[:12000], "conversation_key": None,
+                "title": "New Semantic Scholar papers"}
+
     async def execute(self, inputs):
         if not self.config.credentials:
             raise ValueError("Connect a Semantic Scholar API key")
         config = self.config.config
         key = self.config.credentials.api_key
-        method, route = ROUTES[config.operation]
+        is_poll = isinstance(config, OnNewMatchingPaper)
+        method, route = ROUTES["search_papers_bulk" if is_poll else config.operation]
         params = config.model_dump(exclude_none=True, exclude={"operation", "paper_id", "author_id", "ids"})
+        if is_poll:
+            # Schedule fields belong to NoClick, never the provider request.
+            params = {name: getattr(config, name) for name in _Filters.model_fields
+                      if getattr(config, name) is not None}
+            params.update(query=config.query, sort="publicationDate:desc")
+            fields = set((config.fields or "title,url,publicationDate,authors,abstract").split(","))
+            params["fields"] = ",".join(sorted(fields | {"title", "url"}))
         for field in ("paper_id", "author_id"):
             if hasattr(config, field):
                 route = route.replace("{" + field + "}", quote(getattr(config, field), safe=""))
@@ -255,6 +295,14 @@ class SemanticScholarNode(WorkflowNode):
             array_key = "matches" if config.operation == "autocomplete_papers" else "data"
             if not isinstance(payload.get(array_key), list):
                 raise ValueError("Expected a Semantic Scholar result list")
+        if is_poll:
+            papers = payload["data"]
+            if any(not isinstance(p, dict) or not isinstance(p.get("paperId"), str) or not p["paperId"] for p in papers):
+                raise ValueError("Expected Semantic Scholar papers with paperId")
+            fresh = await self._filter_unseen(papers, lambda paper: paper["paperId"])
+            output = {"papers": fresh, "new_paper_count": len(fresh)}
+            await self.emit(output)
+            return output
         # Preserve the provider's envelope, including next/offset/token/total and
         # citation/reference nesting. No implicit pagination or download follows.
         output = {"status": "success", "data": payload}

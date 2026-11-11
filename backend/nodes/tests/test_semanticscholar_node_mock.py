@@ -131,3 +131,71 @@ def test_semanticscholar_credential_can_be_filled_manually():
 def test_semanticscholar_rejects_invalid_inputs(model, config):
     with pytest.raises(ValidationError):
         model(**config)
+
+
+@pytest.mark.asyncio
+async def test_semanticscholar_poll_baseline_new_ids_and_scope(monkeypatch):
+    # Provider batch examples supply the records; the bulk-search contract
+    # defines the data envelope and guarantees paperId on every record.
+    from nodes.core.poll_trigger import poll_scope
+    from copy import deepcopy
+    papers = json.loads((Path(__file__).parent / 'fixtures/semanticscholar/papers_batch.json').read_text())
+    body = {'data': papers[:1]}
+    requests = transport(monkeypatch, body)
+    watcher = node({'operation': 'on_new_matching_paper', 'query': 'fish ladder',
+                    'publicationDateOrYear': '2015:2020', 'fields': 'title',
+                    'openAccessPdf': True, 'minCitationCount': 200})
+    state = {}
+
+    async def update(mutator, **kwargs):
+        nonlocal state
+        next_state, result = mutator(deepcopy(state))
+        if next_state is not None:
+            state = next_state
+        return result
+
+    monkeypatch.setattr(watcher, '_update_node_state', update)
+    first = await watcher.execute({})
+    assert first == {'papers': [], 'new_paper_count': 0}
+    assert watcher.trigger_produced_no_event(first)
+    assert native.SemanticScholarNode.resolve_agent_event(first) is None
+    assert dict(requests[0].url.params) == {
+        'query': 'fish ladder', 'publicationDateOrYear': '2015:2020',
+        'fields': 'title,url', 'sort': 'publicationDate:desc',
+        'openAccessPdf': '', 'minCitationCount': '200',
+    }
+    assert requests[0].url.path == '/graph/v1/paper/search/bulk'
+    body['data'] = papers
+    fresh = await watcher.execute({})
+    assert fresh == {'papers': papers[1:], 'new_paper_count': 1}
+    assert watcher.trigger_emitted_event(fresh)
+    event = native.SemanticScholarNode.resolve_agent_event(fresh)
+    assert papers[1]['title'] in event['text']
+    assert papers[1]['paperId'] in event['text']
+    assert 'get_paper' in event['text']
+    assert (await watcher.execute({}))['papers'] == []
+    config = watcher.config.config.model_dump()
+    original_scope = poll_scope(native.SemanticScholarNode, config)
+    assert original_scope == poll_scope(native.SemanticScholarNode, {**config, 'webhook_url': 'https://example.test/tick'})
+    assert original_scope != poll_scope(native.SemanticScholarNode, {**config, 'query': 'covid'})
+    watcher.config.config.query = 'covid'
+    assert (await watcher.execute({}))['papers'] == []
+
+
+@pytest.mark.asyncio
+async def test_semanticscholar_poll_rejects_malformed_records_without_advancing_state(monkeypatch):
+    from unittest.mock import AsyncMock
+    transport(monkeypatch, {'data': [{'title': 'missing ID'}]})
+    watcher = node({'operation': 'on_new_matching_paper', 'query': 'fish ladder'})
+    update = AsyncMock()
+    monkeypatch.setattr(watcher, '_update_node_state', update)
+    with pytest.raises(ValueError, match='paperId'):
+        await watcher.execute({})
+    update.assert_not_awaited()
+
+
+def test_semanticscholar_poll_is_discoverable():
+    from nodes.core.poll_trigger import PollTriggerConfigBase
+    config = native.OnNewMatchingPaper(query='fish ladder')
+    assert isinstance(config, PollTriggerConfigBase)
+    assert config.model_json_schema()['properties']['operation']['x-is-trigger'] is True

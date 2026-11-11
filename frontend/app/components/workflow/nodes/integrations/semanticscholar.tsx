@@ -11,7 +11,7 @@ const SemanticScholarIcon = ({ className, style }: { className?: string; style?:
 
 export const SemanticScholarNode: NodeDefinition = {
     type: 'automation-semanticscholar', category: 'content-research', label: 'Semantic Scholar',
-    description: 'Search papers and authors, retrieve citations, references and research metrics',
+    description: 'Search papers and authors, retrieve citations, references and research metrics, and watch for new matching papers',
     Icon: SemanticScholarIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={SemanticScholarIcon} iconColor="" />),
