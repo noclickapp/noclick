@@ -10,6 +10,7 @@ import httpx
 import pytest
 import respx
 from pydantic import ValidationError
+from nodes.core.binary_output import BinaryOutput, resolve_binary_outputs
 
 from nodes.obono_node import (
     CONFIG_MODELS, ObonoNode, ObonoNodeConfig, ObonoOnNewReceiptConfig, ObonoTokenCredential,
@@ -68,7 +69,30 @@ async def test_reads_and_exports(operation, path, query, media):
     elif media.startswith("text/"):
         assert result["data"]["content"] == "export-data"
     else:
-        assert result["data"]["content_base64"] == "ZXhwb3J0LWRhdGE="
+        marker = result["data"]
+        assert isinstance(marker, BinaryOutput)
+        assert marker.data == b"export-data"
+        assert marker.content_type == media
+        extension = {"application/pdf": "pdf", "image/png": "png",
+            "application/zip": "zip", "application/vnd.ms-excel": "xls"}.get(media, "bin")
+        assert marker.filename == f"obono-{RECEIPT if '/belege/' in path else REGISTER}.{extension}"
+
+
+@pytest.mark.asyncio
+async def test_download_resolves_to_a_usable_file_reference(monkeypatch):
+    store = AsyncMock(return_value={"download_url": "https://files.example/receipt.pdf",
+        "mime_type": "application/pdf", "name": f"obono-{RECEIPT}.pdf", "size_bytes": 14})
+    monkeypatch.setattr("nodes.core.binary_output.create_resource_from_bytes", store)
+    with respx.mock as router:
+        router.get(ROOT + f"/export/pdf/belege/{RECEIPT}").mock(
+            return_value=httpx.Response(200, content=b"%PDF-receipt%\n"))
+        output = await node("export_receipt_pdf", receipt_uuid=RECEIPT).execute({})
+    resolved = await resolve_binary_outputs(output, user_id="user", workflow_id="workflow")
+    assert resolved["data"] == {"url": "https://files.example/receipt.pdf",
+        "mime_type": "application/pdf", "name": f"obono-{RECEIPT}.pdf", "size_bytes": 14}
+    assert store.await_args.kwargs["body"] == b"%PDF-receipt%\n"
+    assert store.await_args.kwargs["content_type"] == "application/pdf"
+    assert store.await_args.kwargs["filename"] == f"obono-{RECEIPT}.pdf"
 
 
 @pytest.mark.asyncio

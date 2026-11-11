@@ -4,7 +4,6 @@ Contract: https://app.obono.at/api/docs/api.yml
 Bearer prefix: https://app.obono.at/api/docs/ (Swagger authorization setup).
 No automatic retries: receipt UUIDs are chosen by the caller for reconciliation.
 """
-import base64
 from dataclasses import dataclass
 from typing import Annotated, Any, Literal, Optional, Union
 from urllib.parse import quote
@@ -14,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, create_model, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 
@@ -216,7 +216,10 @@ class ObonoNode(ScheduledPollTriggerMixin, WorkflowNode):
             return response.json()
         if op.media.startswith("text/"):
             return {"content": response.text, "content_type": op.media}
-        return {"content_base64": base64.b64encode(response.content).decode(), "content_type": op.media}
+        extension = {"application/pdf": "pdf", "image/png": "png",
+            "application/zip": "zip", "application/vnd.ms-excel": "xls"}.get(op.media, "bin")
+        return BinaryOutput(data=response.content, content_type=op.media,
+            filename=f"obono-{receipt_uuid or credential.register_uuid}.{extension}")
 
     async def _poll_receipts(self, credential, config):
         # The watched resource is declared in config so the shared poll family
