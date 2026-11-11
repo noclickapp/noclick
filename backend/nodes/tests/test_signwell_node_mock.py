@@ -1,4 +1,7 @@
 """SignWell request mapping and documented response regressions; no live API calls."""
+import copy
+import hashlib
+import hmac
 import json
 from pathlib import Path
 
@@ -11,6 +14,7 @@ from nodes.core.registry import NodeFactory
 
 FIXTURES = json.loads((Path(__file__).parent / 'fixtures/signwell/published_responses.json').read_text())
 TOKEN = 'signwell-test-private-key'
+EVENTS = json.loads((Path(__file__).parent / 'fixtures/signwell/webhook_events.json').read_text())
 
 
 @pytest.fixture(autouse=True)
@@ -143,3 +147,94 @@ def test_credentials_and_template_fields_are_typed():
         native.SignwellFullConfig.model_validate({'config': {'operation': 'get_me'},
             'credentials': {'credential_type': 'other_key', 'api_key': TOKEN}})
     assert TOKEN not in str(invalid.value)
+
+
+@pytest.mark.asyncio
+async def test_trigger_registers_and_unregisters_using_documented_hooks(monkeypatch):
+    fixture = FIXTURES['create_webhook']
+    requests = transport(monkeypatch, 201, fixture['response'])
+    config = {'operation': 'on_event', 'event_type': 'document_completed',
+              'api_application_id': '3fa54438-5bd9-405a-9d7f-89dd47c80dc4'}
+    extra = await native.SignwellNode._register_external_webhook(
+        webhook_url='https://example.com/webhook', credential={'api_key': TOKEN}, config=config, node_id='test')
+    assert extra == {'external_webhook_id': fixture['response']['id'], 'signing_secret': fixture['response']['id']}
+    assert requests[0].method == 'POST' and requests[0].url.path == '/api/v1/hooks'
+    assert requests[0].headers['X-Api-Key'] == TOKEN
+    assert json.loads(requests[0].content) == {'callback_url': 'https://example.com/webhook',
+        'api_application_id': config['api_application_id']}
+    assert native.SignwellNode.registration_fingerprint_fields(config) == {'api_application_id': config['api_application_id']}
+    persisted = native.SignwellOnEventConfig.model_validate({**config, **extra}).model_dump()
+    assert persisted['signing_secret'] == fixture['response']['id']
+    requests = transport(monkeypatch, 204)
+    await native.SignwellNode._unregister_external_webhook(
+        credential={'api_key': TOKEN}, config=persisted, node_id='test')
+    assert requests[0].method == 'DELETE'
+    assert requests[0].url.path == '/api/v1/hooks/' + fixture['response']['id']
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('status,body', [(401, {'message': TOKEN}), (201, {}), (201, [])])
+async def test_trigger_registration_failures_raise_without_disclosing_key(monkeypatch, status, body):
+    transport(monkeypatch, status, body)
+    with pytest.raises(ValueError) as error:
+        await native.SignwellNode._register_external_webhook(webhook_url='https://example.com/webhook',
+            credential={'api_key': TOKEN}, config={}, node_id='test')
+    assert TOKEN not in str(error.value)
+
+
+@pytest.mark.asyncio
+async def test_trigger_teardown_does_not_silently_skip_missing_credentials(monkeypatch):
+    requests = transport(monkeypatch, 204)
+    with pytest.raises(ValueError, match='Connect a SignWell'):
+        await native.SignwellNode._unregister_external_webhook(
+            credential=None, config={'external_webhook_id': 'registered-hook'}, node_id='test')
+    assert not requests
+
+
+@pytest.mark.parametrize('kind', native.SIGNWELL_EVENTS)
+def test_documented_events_reach_agent_with_resource_identity(kind):
+    # Event Data documents the standard, template and SMS envelopes. Events documents each type.
+    sample = 'template_available' if kind.startswith('template_') else (
+        'document_sms_failed' if kind.startswith('document_sms_') else 'document_viewed')
+    payload = copy.deepcopy(EVENTS[sample]['body'])
+    payload['event']['type'] = kind
+    config = {'operation': 'on_event', 'event_type': kind, 'signing_secret': '3ca1189b-ae29-4a9e-878d-5c53dee86987'}
+    message = f"{kind}@{payload['event']['time']}".encode()
+    payload['event']['hash'] = hmac.new(config['signing_secret'].encode(), message, hashlib.sha256).hexdigest()
+    body = json.dumps(payload).encode()
+    assert native.SignwellNode.verify_webhook_signature(body, {}, config)
+    assert not native.SignwellNode.verify_webhook_signature(body, {}, {**config, 'signing_secret': 'wrong'})
+    for field, value in [('type', 'document_error'), ('time', 1), ('hash', 'bad')]:
+        altered = copy.deepcopy(payload)
+        altered['event'][field] = value if value != payload['event'][field] else 'other'
+        assert not native.SignwellNode.verify_webhook_signature(json.dumps(altered).encode(), {}, config)
+    assert native.SignwellNode.filter_trigger_payload(payload, config)
+    assert not native.SignwellNode.filter_trigger_payload(payload, {**config, 'event_type': 'other'})
+    output = native.SignwellNode.resolve_trigger_payload(payload, config)
+    agent = native.SignwellNode.resolve_agent_event(output)
+    assert payload['data']['object']['id'] in agent['text']
+    assert payload['data']['object']['name'] in agent['title']
+    assert payload['data']['account_id'] in agent['conversation_key']
+    assert kind.replace('_', ' ') in agent['text']
+    assert config['signing_secret'] not in agent['text']
+    if sample == 'document_viewed':
+        assert 'Christian Jordan' in agent['text']
+        assert 'Please complete this example agreement' in agent['text']
+    if sample == 'document_sms_failed':
+        assert 'Jane Doe' in agent['text']
+
+
+@pytest.mark.parametrize('body', [b'null', b'[]', b'{}', b'bad', b'{"event":null}',
+    b'{"event":{"type":"document_completed","time":true,"hash":"x"}}'])
+def test_signature_fails_closed_for_malformed_payload(body):
+    assert not native.SignwellNode.verify_webhook_signature(body, {}, {'signing_secret': 'hook-id'})
+    assert not native.SignwellNode.verify_webhook_signature(body, {}, {})
+
+
+@pytest.mark.asyncio
+async def test_manual_trigger_run_never_invents_an_event(monkeypatch):
+    requests = transport(monkeypatch, 200, {})
+    result = await node({'operation': 'on_event'}).execute({'unrelated': 'data'})
+    assert result['status'] == 'no_event'
+    assert native.SignwellNode.resolve_agent_event(result) is None
+    assert not requests

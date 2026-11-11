@@ -1303,6 +1303,175 @@
       "title": "SignwellListWebhooksConfig",
       "type": "object"
     },
+    "SignwellOnEventConfig": {
+      "additionalProperties": false,
+      "description": "Start a workflow when the selected SignWell document or template event arrives.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On SignWell Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On SignWell Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "document_completed",
+          "description": "SignWell delivers all events; only this event starts the workflow.",
+          "enum": [
+            "document_created",
+            "document_sent",
+            "document_viewed",
+            "document_in_progress",
+            "document_recipients_updated",
+            "document_signed",
+            "document_completed",
+            "document_expired",
+            "document_canceled",
+            "document_declined",
+            "document_bounced",
+            "document_error",
+            "template_created",
+            "template_error",
+            "template_available",
+            "template_unavailable",
+            "document_sms_failed",
+            "document_sms_opted_out"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "api_application_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optionally restrict deliveries to one API application.",
+          "format": "uuid",
+          "title": "API Application ID"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with SignWell automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "SignwellOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "SignwellSendDocumentConfig": {
       "additionalProperties": false,
       "description": "Update and Send Document.",
@@ -1863,6 +2032,7 @@
           "get_template": "#/$defs/SignwellGetTemplateConfig",
           "list_bulk_sends": "#/$defs/SignwellListBulkSendsConfig",
           "list_webhooks": "#/$defs/SignwellListWebhooksConfig",
+          "on_event": "#/$defs/SignwellOnEventConfig",
           "send_document": "#/$defs/SignwellSendDocumentConfig",
           "send_reminder": "#/$defs/SignwellSendReminderConfig",
           "update_authentication": "#/$defs/SignwellUpdateAuthenticationConfig",
@@ -1872,6 +2042,9 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/SignwellOnEventConfig"
+        },
         {
           "$ref": "#/$defs/SignwellGetMeConfig"
         },

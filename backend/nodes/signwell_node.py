@@ -6,6 +6,9 @@ write acknowledgements do not assert delivery or completed signatures.
 """
 from __future__ import annotations
 
+import hashlib
+import hmac
+import json
 import re
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
@@ -15,6 +18,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.agent_events import bullet_lines, prune_empty
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 BASE_URL = "https://www.signwell.com"
@@ -330,7 +335,32 @@ class SignwellGetBulkSendDocumentsConfig(BulkDocuments):
     operation: Literal["get_bulk_send_documents"] = Field("get_bulk_send_documents", json_schema_extra={"ui:hidden": True})
 
 
+SIGNWELL_EVENTS = (
+    "document_created", "document_sent", "document_viewed", "document_in_progress",
+    "document_recipients_updated", "document_signed", "document_completed",
+    "document_expired", "document_canceled", "document_declined", "document_bounced",
+    "document_error", "template_created", "template_error", "template_available",
+    "template_unavailable", "document_sms_failed", "document_sms_opted_out",
+)
+
+
+class SignwellOnEventConfig(WebhookTriggerConfigBase, Input):
+    """Start a workflow when the selected SignWell document or template event arrives."""
+
+    operation: Literal["on_event"] = Field("on_event", title="On SignWell Event", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+        "x-display-name": "On SignWell Event",
+    })
+    event_type: Literal[*SIGNWELL_EVENTS] = Field("document_completed", title="Event",
+        description="SignWell delivers all events; only this event starts the workflow.")
+    api_application_id: str | None = Field(None, title="API Application ID",
+        json_schema_extra={"format": "uuid"}, description="Optionally restrict deliveries to one API application.")
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with SignWell automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
 SignwellConfig = Annotated[Union[
+    SignwellOnEventConfig,
     SignwellGetMeConfig,
     SignwellGetAccountConfig,
     SignwellCreateDocumentConfig,
@@ -380,16 +410,105 @@ def _redact(value, secrets):
     return value
 
 
-class SignwellNode(WorkflowNode):
+class SignwellNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-signwell"
     connection_evidence = ConnectionEvidence(noun="SignWell account", identity_operation="get_me")
+    webhook_replace_stale_endpoint = True
 
     @classmethod
     def get_config_model(cls):
         return SignwellFullConfig
 
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, body=None):
+        if not credential or not credential.get("api_key"):
+            raise ValueError("Connect a SignWell API key to manage this trigger")
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, BASE_URL + path,
+                headers={"X-Api-Key": credential["api_key"], "Accept": "application/json"}, json=body)
+        if method == "DELETE" and response.status_code == 404:
+            return None
+        if not 200 <= response.status_code < 300:
+            raise ValueError(f"SignWell webhook request failed (HTTP {response.status_code})")
+        return response.json() if method == "POST" else None
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        body = {"callback_url": webhook_url}
+        if config.get("api_application_id"):
+            body["api_application_id"] = config["api_application_id"]
+        data = await cls._webhook_request(credential, "POST", "/api/v1/hooks", body)
+        if not isinstance(data, dict) or not isinstance(data.get("id"), str) or not data["id"]:
+            raise ValueError("SignWell did not return a webhook ID")
+        # SignWell's documented HMAC key is the webhook ID, not the account API key.
+        return {"external_webhook_id": data["id"], "signing_secret": data["id"]}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = config.get("external_webhook_id")
+        if not endpoint_id:
+            return
+        await cls._webhook_request(credential, "DELETE", "/api/v1/hooks/" + quote(str(endpoint_id), safe=""))
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"api_application_id": config.get("api_application_id")}
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        """https://developers.signwell.com/reference/event-hash-verification"""
+        secret = config.get("signing_secret")
+        if not secret:
+            return False
+        try:
+            event = json.loads(body)["event"]
+            if (not isinstance(event, dict) or not isinstance(event.get("type"), str)
+                    or type(event.get("time")) is not int or not isinstance(event.get("hash"), str)):
+                return False
+            message = f"{event['type']}@{event['time']}".encode()
+            expected = hmac.new(str(secret).encode(), message, hashlib.sha256).hexdigest()
+            return hmac.compare_digest(expected, event["hash"])
+        except (ValueError, TypeError, KeyError, UnicodeError):
+            return False
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event = payload.get("event")
+        return (isinstance(event, dict) and event.get("type") in SIGNWELL_EVENTS
+                and event.get("type") == config.get("event_type", "document_completed"))
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or ("status" in output and output["status"] == "no_event"):
+            return None
+        event = output.get("event")
+        data = output.get("data")
+        if not isinstance(event, dict) or not isinstance(data, dict):
+            return None
+        obj = data.get("object")
+        if not isinstance(obj, dict) or not obj.get("id"):
+            return None
+        kind = event.get("type")
+        resource = "template" if str(kind).startswith("template_") else "document"
+        name = obj.get("name") or obj["id"]
+        lines = [f"SignWell {str(kind).replace('_', ' ')}: {name}"]
+        lines += bullet_lines([("Status", obj.get("status")), ("At (Unix time)", event.get("time")),
+            ("Account ID", data.get("account_id")), (f"{resource.title()} ID", obj["id"])])
+        actor_key = "related_recipient" if kind in {"document_sms_failed", "document_sms_opted_out"} else "related_signer"
+        if actor_key in event and isinstance(event[actor_key], dict):
+            actor = event[actor_key]
+            lines += bullet_lines([("Recipient", actor.get("name")), ("Email", actor.get("email"))])
+        for field in ("subject", "message"):
+            if field in obj and obj[field]:
+                lines.append(f"{field.title()}: {prune_empty(str(obj[field]), max_str=1500)}")
+        lines.append(f"To act: get_{resource} {resource}_id={obj['id']}.")
+        return {"text": "\n".join(lines), "conversation_key": f"signwell:{data.get('account_id')}:{resource}:{obj['id']}",
+            "title": str(name)}
+
     async def execute(self, context):
         op = self.config.config
+        if isinstance(op, SignwellOnEventConfig):
+            return self.no_event_output("on_event")
         credential = self.config.credentials
         if credential is None:
             raise ValueError("Connect a SignWell API key")
