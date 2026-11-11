@@ -31,7 +31,7 @@ class FormstepAPITokenCredential(BaseModel):
     @field_validator("api_token", mode="before")
     @classmethod
     def token(cls, value):
-        value = clean_secret(value, field_name="API token")
+        value = clean_secret(value, field_name="API token", key=True)
         if any(char.isspace() for char in value):
             raise ValueError("Paste the API token without a Bearer prefix")
         return value

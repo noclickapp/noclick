@@ -143,3 +143,9 @@ def test_manual_credential_default():
     credential = native.FormstepAPITokenCredential(api_token=TOKEN)
     assert credential.credential_type == "formstep_api_token"
     assert native.FormstepNode.connection_evidence.operation == "list_workspaces"
+
+
+@pytest.mark.parametrize("token", ["https://example.com/settings/tokens", "s3crét\u200bvalue"])
+def test_manual_token_rejects_addresses_and_non_ascii(token):
+    with pytest.raises(ValidationError):
+        native.FormstepAPITokenCredential(api_token=token)
