@@ -11,7 +11,7 @@ const ChatwootIcon = ({ className, style }: { className?: string; style?: CSSPro
 export const ChatwootNode: NodeDefinition = {
     type: 'automation-chatwoot',
     label: 'Chatwoot',
-    description: 'Manage support contacts, route conversations, send replies and private notes',
+    description: 'Start workflows from messages and conversations, manage contacts, route support and send replies',
     category: 'support',
     keywords: ['support', 'helpdesk', 'customer service', 'live chat'],
     Icon: ChatwootIcon,

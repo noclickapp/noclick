@@ -5,6 +5,8 @@ Uses a user API token from Profile Settings. Each operation makes one documented
 request; list operations return one provider page, including its metadata.
 """
 
+import hashlib
+import hmac
 import json
 import time
 from typing import Annotated, Any, Literal, Union
@@ -14,6 +16,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, field_validato
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import assert_url_allowed, normalize_https_origin
 
 
@@ -198,12 +201,47 @@ class SendMessage(ConversationID):
     private: bool = Field(False, title="Private Note", description="Yes creates an internal note; No sends a public reply.")
 
 
+class ChatwootWebhookConfig(WebhookTriggerConfigBase):
+    webhook_url: str | None = Field(
+        None, title="Webhook URL", description="Registered with Chatwoot automatically. Requires an account administrator and a Chatwoot version that returns a webhook signing secret.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+def trigger_operation(value: str, title: str):
+    return Field(value, title=title, json_schema_extra={
+        "const": value, "ui:hidden": True, "x-display-name": title,
+        "x-category": "Triggers", "x-is-trigger": True,
+    })
+
+
+class OnMessageCreated(ChatwootWebhookConfig):
+    operation: Literal["on_message_created"] = trigger_operation("on_message_created", "On New Message")
+    message_type: Literal["incoming", "outgoing", "all"] = Field(
+        "incoming", title="Message Direction", description="Incoming customer messages by default. Choose all to include agent replies and template messages.")
+
+
+class OnConversationCreated(ChatwootWebhookConfig):
+    operation: Literal["on_conversation_created"] = trigger_operation("on_conversation_created", "On New Conversation")
+
+
+class OnConversationStatusChanged(ChatwootWebhookConfig):
+    operation: Literal["on_conversation_status_changed"] = trigger_operation("on_conversation_status_changed", "On Conversation Status Changed")
+
+
+TRIGGER_EVENTS = {
+    "on_message_created": "message_created",
+    "on_conversation_created": "conversation_created",
+    "on_conversation_status_changed": "conversation_status_changed",
+}
+
+
 ChatwootConfig = Annotated[Union[
     GetProfile, ListInboxes, ListAgents, ListTeams, ListContacts, SearchContacts,
     GetContact, CreateContact, UpdateContact, ListContactConversations,
     ListConversations, GetConversation, CreateConversation, AssignConversation,
     SetConversationStatus, SetConversationPriority, ListConversationLabels,
     SetConversationLabels, ListMessages, SendMessage,
+    OnMessageCreated, OnConversationCreated, OnConversationStatusChanged,
 ], Discriminator("operation")]
 
 
@@ -247,13 +285,97 @@ def parse_json(value, kind, name):
     return result
 
 
-class ChatwootNode(WorkflowNode):
+class ChatwootNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-chatwoot"
     connection_evidence = ConnectionEvidence(field="inbox_id", noun="inboxes", identity_operation="get_profile")
 
     @classmethod
     def get_config_model(cls):
         return ChatwootNodeConfig
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        # https://developers.chatwoot.com/api-reference/webhooks/add-a-webhook
+        event = TRIGGER_EVENTS.get((config or {}).get("operation"))
+        if not event:
+            raise ValueError("Choose a Chatwoot trigger before registering its webhook")
+        credentials = ChatwootAPITokenCredential.model_validate(credential)
+        path = f"/api/v1/accounts/{credentials.account_id}/webhooks"
+        result = await cls.request(credentials, "POST", path, body={
+            "url": webhook_url, "name": f"NoClick {node_id}", "subscriptions": [event],
+        })
+        if not isinstance(result, dict) or not result.get("id"):
+            raise ValueError("Chatwoot did not return a webhook ID")
+        if not result.get("secret"):
+            # Older releases deliver unsigned webhooks. Remove the unusable
+            # registration so retries do not leave orphan subscriptions.
+            await cls.request(credentials, "DELETE", f"{path}/{int(result['id'])}")
+            raise ValueError("Chatwoot did not return a signing secret; upgrade to a version with signed webhook delivery")
+        return {"external_webhook_id": str(result["id"]), "signing_secret": result["secret"]}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        # https://developers.chatwoot.com/api-reference/webhooks/delete-a-webhook
+        external_id = (config or {}).get("external_webhook_id")
+        if external_id is None or not credential:
+            return
+        credentials = ChatwootAPITokenCredential.model_validate(credential)
+        await cls.request(credentials, "DELETE", f"/api/v1/accounts/{credentials.account_id}/webhooks/{int(external_id)}")
+
+    @classmethod
+    def verify_webhook_signature(cls, body: bytes, headers: dict[str, str], config: dict[str, Any]) -> bool:
+        # https://www.chatwoot.com/hc/user-guide/articles/1677693021-how-to-use-webhooks
+        secret = (config or {}).get("signing_secret")
+        normalized = {key.lower(): value for key, value in headers.items()}
+        timestamp = normalized.get("x-chatwoot-timestamp", "")
+        signature = normalized.get("x-chatwoot-signature", "")
+        if not secret or not timestamp.isdigit() or abs(time.time() - int(timestamp)) > 300:
+            return False
+        expected = "sha256=" + hmac.new(str(secret).encode(), timestamp.encode() + b"." + body, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(expected, signature)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event = TRIGGER_EVENTS.get((config or {}).get("operation"))
+        if not event or payload.get("event") != event:
+            return False
+        if event == "message_created":
+            direction = (config or {}).get("message_type", "incoming")
+            return direction == "all" or payload.get("message_type") == direction
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        # The guide defines message attributes and conversation attributes
+        # separately. Read only the fields documented for that event family.
+        payload = output if "event" in output else output.get("data", {})
+        event = payload.get("event")
+        if event not in TRIGGER_EVENTS.values():
+            return super().resolve_agent_event(output)
+        if event == "message_created":
+            sender = payload.get("sender") or {}
+            conversation = payload.get("conversation") or {}
+            account = payload.get("account") or {}
+            # The guide's introductory example uses display_id; its expanded
+            # Conversation attributes use id. Both are documented shapes.
+            conversation_id = conversation["display_id"] if "display_id" in conversation else conversation.get("id")
+            contact = payload["contact"] if "contact" in payload else (conversation.get("meta") or {}).get("sender") or {}
+            account_id = account.get("id")
+            actor = contact.get("name") or sender.get("name") or "Customer"
+            lines = [f"Chatwoot new {payload.get('message_type')} message from {actor}:",
+                     str(payload.get("content") or "(no text)"),
+                     f"Message ID: {payload.get('id')}; contact ID: {contact.get('id')}; sender ID: {sender.get('id')}"]
+        else:
+            conversation_id = payload.get("id")
+            account_id = payload.get("account_id")
+            contact = (payload.get("meta") or {}).get("sender") or {}
+            actor = contact.get("name") or "Customer"
+            lines = [f"Chatwoot {event.replace('_', ' ')} for {actor}.",
+                     f"Status: {payload.get('status')}; inbox ID: {payload.get('inbox_id')}; contact ID: {contact.get('id')}"]
+        lines.append(f"Account ID: {account_id}; conversation ID: {conversation_id}")
+        lines.append(f"To act: get_conversation or send_message with conversation_id={conversation_id}.")
+        return {"text": "\n".join(lines), "conversation_key": f"chatwoot:{account_id}:{conversation_id}",
+                "title": f"Chatwoot conversation {conversation_id}: {actor}"}
 
     @classmethod
     async def request(cls, credentials, method, path, *, params=None, body=None):
@@ -296,6 +418,11 @@ class ChatwootNode(WorkflowNode):
         started = time.monotonic()
         config, credentials = self.config.config, self.config.credentials
         op = config.operation
+        if op in TRIGGER_EVENTS:
+            payload = inputs or self.node_data.get("config", {}).get("_triggerPayload") or {}
+            if self.filter_trigger_payload(payload, config.model_dump()):
+                return {"status": "success", "operation": op, "data": payload}
+            return {"status": "no_event", "operation": op, "data": {}}
         method, route = ROUTES[op]
         values = config.model_dump(exclude_none=True)
         values.pop("operation")

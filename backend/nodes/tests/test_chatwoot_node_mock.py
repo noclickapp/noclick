@@ -222,3 +222,125 @@ async def test_invalid_json_before_request(field, value, op, credential, monkeyp
     config = {"operation": op, "contact_id" if op == "update_contact" else "conversation_id": 123, field: value}
     with pytest.raises(ValueError, match="must be"):
         await node(config, credential).execute({})
+
+
+# Comments removed and the guide's documented Conversation attributes expanded;
+# placeholder values ("integer", "string") are preserved verbatim.
+EVENTS = json.loads((Path(__file__).parent / "fixtures/chatwoot/events.json").read_text())
+WEBHOOK_RESPONSE = {
+    "id": 123, "url": "<string>", "name": "<string>",
+    "subscriptions": ["conversation_created"], "secret": "<string>", "account_id": 123,
+}  # https://developers.chatwoot.com/api-reference/webhooks/add-a-webhook
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("event", EVENTS)
+async def test_webhook_registration_delivery_and_cleanup(event, credential, monkeypatch):
+    from nodes.chatwoot_node import TRIGGER_EVENTS
+    calls = []
+
+    def transport(request):
+        calls.append(request)
+        return httpx.Response(200, json=WEBHOOK_RESPONSE if request.method == "POST" else {})
+
+    intercept(monkeypatch, transport)
+    operation = next(op for op, name in TRIGGER_EVENTS.items() if name == event)
+    config = {"operation": operation}
+    state = await ChatwootNode._register_external_webhook(
+        webhook_url="https://example.com/webhook", credential=credential, config=config, node_id="test")
+    assert state == {"external_webhook_id": "123", "signing_secret": "<string>"}
+    assert calls[0].method == "POST"
+    assert calls[0].url.path == "/api/v1/accounts/1/webhooks"
+    assert json.loads(calls[0].content) == {
+        "url": "https://example.com/webhook", "name": "NoClick test", "subscriptions": [event]}
+    payload = EVENTS[event]["body"]
+    assert ChatwootNode.filter_trigger_payload(payload, config)
+    output = ChatwootNode.resolve_trigger_payload(payload, config)
+    assert output == payload
+    agent = ChatwootNode.resolve_agent_event(output)
+    assert agent["text"] and agent["title"]
+    if event == "message_created":
+        assert "Hi" in agent["text"] and "contact-name" in agent["text"]
+        assert "conversation_id=1" in agent["text"]
+        assert agent["conversation_key"] == "chatwoot:1:1"
+    else:
+        assert "Status: string" in agent["text"] and "inbox ID: integer" in agent["text"]
+        assert "contact ID: integer" in agent["text"]
+        assert agent["conversation_key"] == "chatwoot:integer:integer"
+    direct = await node(config, credential).execute(payload)
+    assert direct["data"] == payload and direct["status"] == "success"
+    assert ChatwootNode.resolve_agent_event(direct) == agent
+    assert (await node(config, credential).execute({}))["status"] == "no_event"
+    await ChatwootNode._unregister_external_webhook(
+        credential=credential, config={**config, **state}, node_id="test")
+    assert calls[1].method == "DELETE"
+    assert calls[1].url.path == "/api/v1/accounts/1/webhooks/123"
+    assert len(calls) == 2
+
+
+def test_signature_matches_provider_documented_algorithm(monkeypatch):
+    import hashlib
+    import hmac
+    monkeypatch.setattr("nodes.chatwoot_node.time.time", lambda: 1700000000)
+    body = json.dumps(EVENTS["message_created"]["body"]).encode()
+    secret, timestamp = "<string>", "1700000000"
+    signature = "sha256=" + hmac.new(secret.encode(), timestamp.encode() + b"." + body, hashlib.sha256).hexdigest()
+    headers = {"X-Chatwoot-Timestamp": timestamp, "X-Chatwoot-Signature": signature}
+    config = {"signing_secret": secret}
+    assert ChatwootNode.verify_webhook_signature(body, headers, config)
+    assert ChatwootNode.verify_webhook_signature(body, {k.lower(): v for k, v in headers.items()}, config)
+    assert not ChatwootNode.verify_webhook_signature(body + b" ", headers, config)
+    assert not ChatwootNode.verify_webhook_signature(body, headers, {"signing_secret": "wrong"})
+    assert not ChatwootNode.verify_webhook_signature(body, headers, {})
+    assert not ChatwootNode.verify_webhook_signature(body, {}, config)
+    for timestamp in ("1699999699", "1700000301", "bad", ""):
+        changed = {**headers, "X-Chatwoot-Timestamp": timestamp}
+        changed["X-Chatwoot-Signature"] = "sha256=" + hmac.new(secret.encode(), timestamp.encode() + b"." + body, hashlib.sha256).hexdigest()
+        assert not ChatwootNode.verify_webhook_signature(body, changed, config)
+
+
+@pytest.mark.asyncio
+async def test_unsigned_older_instance_registration_is_removed(credential, monkeypatch):
+    calls = []
+
+    def transport(request):
+        calls.append(request)
+        return httpx.Response(200, json={**WEBHOOK_RESPONSE, "secret": None} if request.method == "POST" else {})
+
+    intercept(monkeypatch, transport)
+    with pytest.raises(ValueError, match="signing secret"):
+        await ChatwootNode._register_external_webhook(
+            webhook_url="https://example.com/webhook", credential=credential,
+            config={"operation": "on_message_created"}, node_id="test")
+    assert [r.method for r in calls] == ["POST", "DELETE"]
+    assert calls[1].url.path == "/api/v1/accounts/1/webhooks/123"
+
+
+@pytest.mark.asyncio
+async def test_registration_permission_error(credential, monkeypatch):
+    intercept(monkeypatch, lambda r: httpx.Response(403, json={"error": "Access denied"}))
+    with pytest.raises(ValueError, match="403"):
+        await ChatwootNode._register_external_webhook(
+            webhook_url="https://example.com/webhook", credential=credential,
+            config={"operation": "on_message_created"}, node_id="test")
+
+
+@pytest.mark.asyncio
+async def test_registration_missing_id(credential, monkeypatch):
+    intercept(monkeypatch, lambda r: httpx.Response(200, json={}))
+    with pytest.raises(ValueError, match="webhook ID"):
+        await ChatwootNode._register_external_webhook(
+            webhook_url="https://example.com/webhook", credential=credential,
+            config={"operation": "on_message_created"}, node_id="test")
+
+
+def test_trigger_filter_does_not_run_for_other_events_or_outgoing_replies():
+    incoming = EVENTS["message_created"]["body"]
+    config = {"operation": "on_message_created"}
+    assert ChatwootNode.filter_trigger_payload(incoming, config)
+    assert not ChatwootNode.filter_trigger_payload({**incoming, "message_type": "outgoing"}, config)
+    assert ChatwootNode.filter_trigger_payload({**incoming, "message_type": "outgoing"}, {**config, "message_type": "all"})
+    assert ChatwootNode.filter_trigger_payload({**incoming, "message_type": "outgoing"}, {**config, "message_type": "outgoing"})
+    assert not ChatwootNode.filter_trigger_payload(EVENTS["conversation_created"]["body"], config)
+    assert not ChatwootNode.filter_trigger_payload({}, config)
+    assert not ChatwootNode.filter_trigger_payload(incoming, {"operation": "send_message"})
