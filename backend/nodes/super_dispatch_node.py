@@ -9,12 +9,15 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Annotated, Literal, Union
 
+import hmac
+
 import httpx
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 BASE_URL = "https://carrier.superdispatch.com/v1"
@@ -286,8 +289,29 @@ class DeclineOffer(_Input):
     offer_id: int = Field(..., ge=1)
 
 
+ORDER_EVENTS = (
+    "order.created", "order.updated", "order.assigned", "order.picked_up",
+    "order.delivered", "order.cancelled",
+)
+
+
+class OnOrderEvent(WebhookTriggerConfigBase):
+    """Start a workflow or agent when an order changes in Carrier TMS."""
+    model_config = ConfigDict(extra="forbid", json_schema_extra={"x-requires-webhook": True})
+    operation: Literal["on_order_event"] = Field("on_order_event", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+        "x-display-name": "On Order Event",
+    })
+    event_type: Literal[*ORDER_EVENTS] = Field(
+        "order.created", title="Order event", description="The order change that starts this workflow.",
+        json_schema_extra={"enumNames": ["Order created", "Order updated", "Driver assigned", "Order picked up", "Order delivered", "Order cancelled"]})
+    webhook_url: str | None = Field(None, title="Webhook URL",
+        description="Registered automatically. Super Dispatch allows one subscription per event per application; use a separate application for another workflow listening to the same event.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
 SuperDispatchConfig = Annotated[Union[
-    ListCarriers, GetCarrier, ListDrivers, GetDriver, ListOrders, GetOrder, CreateOrder, UpdateOrder, DeleteOrder, MarkOrderPickedUp, MarkOrderDelivered, AssignDriver, UnassignDriver, CancelOrder, GetDriverLocation, ListVehicles, GetVehicle, CreateVehicle, UpdateVehicle, DeleteVehicle, ListOffers, GetOffer, AcceptOffer, DeclineOffer
+    OnOrderEvent, ListCarriers, GetCarrier, ListDrivers, GetDriver, ListOrders, GetOrder, CreateOrder, UpdateOrder, DeleteOrder, MarkOrderPickedUp, MarkOrderDelivered, AssignDriver, UnassignDriver, CancelOrder, GetDriverLocation, ListVehicles, GetVehicle, CreateVehicle, UpdateVehicle, DeleteVehicle, ListOffers, GetOffer, AcceptOffer, DeclineOffer
 ], Field(discriminator="operation")]
 
 
@@ -324,7 +348,7 @@ ROUTES = {
 }
 
 
-class SuperDispatchNode(WorkflowNode):
+class SuperDispatchNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-super-dispatch"
     connection_evidence = ConnectionEvidence(noun="carriers", operation="list_carriers")
 
@@ -332,7 +356,105 @@ class SuperDispatchNode(WorkflowNode):
     def get_config_model(cls):
         return SuperDispatchFullConfig
 
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"event_type": config.get("event_type", "order.created")}
+
+    @classmethod
+    async def _subscription_request(cls, credential, event, method, webhook_url=None):
+        if event not in ORDER_EVENTS:
+            raise ValueError("Choose a supported Super Dispatch order event")
+        key = SuperDispatchAPIKeyCredential.model_validate(credential or {}).api_key
+        kwargs = {"headers": {"Authorization": "Bearer " + key, "Accept": "application/json"}}
+        if method == "POST":
+            kwargs["json"] = {"callback_url": webhook_url}
+        try:
+            async with guarded_async_client(timeout=30, trust_env=False, follow_redirects=False) as client:
+                response = await client.request(method, BASE_URL + f"/webhooks/{event}/subscriptions/", **kwargs)
+        except httpx.RequestError:
+            raise ValueError("Super Dispatch could not be reached; retry trigger registration") from None
+        if method == "DELETE" and response.status_code == 404:
+            return None
+        if not 200 <= response.status_code < 300:
+            # The provider may echo both the API key and the callback URL. Keep errors local.
+            raise ValueError(f"Super Dispatch webhook {method} failed (HTTP {response.status_code})")
+        if method == "DELETE":
+            return None
+        try:
+            payload = response.json()
+        except ValueError:
+            raise ValueError("Super Dispatch returned an invalid webhook subscription") from None
+        if not isinstance(payload, dict):
+            raise ValueError("Super Dispatch returned an invalid webhook subscription")
+        # The current webhook docs show a top-level subscription, including this token.
+        # The OpenAPI 1.0.0 response incorrectly omits the token and wraps callback_url in data.
+        secret = payload.get("verification_token")
+        if not isinstance(secret, str) or not secret:
+            raise ValueError("Super Dispatch did not return a webhook verification token")
+        return {"external_webhook_id": event, "signing_secret": secret}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        return await cls._subscription_request(
+            credential, config.get("event_type", "order.created"), "POST", webhook_url)
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        event = config.get("external_webhook_id")
+        if event:
+            await cls._subscription_request(credential, event, "DELETE")
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        """The provider uses a shared verification token, not a body HMAC.
+
+        https://developer.superdispatch.com/carrier/docs/webhooks/#verifying-webhook-requests
+        """
+        expected = config.get("signing_secret")
+        received = next((v for k, v in headers.items()
+                         if k.lower() == "x-super-dispatch-verification-token"), None)
+        return bool(isinstance(expected, str) and expected and isinstance(received, str)
+                    and hmac.compare_digest(expected.encode(), received.encode()))
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        # Use the current provider docs' action field; OpenAPI's event_type is stale.
+        return bool(isinstance(payload, dict)
+                    and payload.get("action") == config.get("event_type", "order.created")
+                    and isinstance(payload.get("data"), dict))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if not cls.filter_trigger_payload(payload, config):
+            return cls.no_event_output("on_order_event")
+        # Do not expose the inbound verification token carried in _webhook headers.
+        return {"status": "success", "action": payload["action"],
+                "guid": payload.get("guid"), "occurred_at": payload.get("occurred_at"),
+                "data": payload["data"]}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("action") not in ORDER_EVENTS:
+            return None
+        order = output.get("data")
+        if not isinstance(order, dict) or not order.get("id"):
+            return None
+        order_id = order["id"]
+        happened = output["action"].removeprefix("order.").replace("_", " ")
+        lines = [f"Super Dispatch order {order_id} {happened}."]
+        if order.get("status"):
+            lines.append(f"Order status: {order['status']}")
+        if output.get("occurred_at"):
+            lines.append(f"Occurred at: {output['occurred_at']}")
+        if output.get("guid"):
+            lines.append(f"Delivery ID: {output['guid']}")
+        lines.append(f"To act: get_order order_id={order_id}; use update_order or assign_driver with the same order_id.")
+        return {"text": "\n".join(lines), "conversation_key": str(order_id),
+                "title": f"Super Dispatch order {order_id}"}
+
     async def execute(self, inputs):
+        if isinstance(self.config.config, OnOrderEvent):
+            return self.no_event_output("on_order_event", "Waiting for a Super Dispatch order event")
         credential = self.config.credentials
         if credential is None:
             raise ValueError("Connect a Super Dispatch Carrier API key")

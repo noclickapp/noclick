@@ -721,6 +721,157 @@
       "title": "MarkOrderPickedUp",
       "type": "object"
     },
+    "OnOrderEvent": {
+      "additionalProperties": false,
+      "description": "Start a workflow or agent when an order changes in Carrier TMS.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_order_event",
+          "default": "on_order_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Order Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "order.created",
+          "description": "The order change that starts this workflow.",
+          "enum": [
+            "order.created",
+            "order.updated",
+            "order.assigned",
+            "order.picked_up",
+            "order.delivered",
+            "order.cancelled"
+          ],
+          "enumNames": [
+            "Order created",
+            "Order updated",
+            "Driver assigned",
+            "Order picked up",
+            "Order delivered",
+            "Order cancelled"
+          ],
+          "title": "Order event",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically. Super Dispatch allows one subscription per event per application; use a separate application for another workflow listening to the same event.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "OnOrderEvent",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "OrderBody": {
       "additionalProperties": false,
       "properties": {
@@ -1441,6 +1592,7 @@
           "list_vehicles": "#/$defs/ListVehicles",
           "mark_order_delivered": "#/$defs/MarkOrderDelivered",
           "mark_order_picked_up": "#/$defs/MarkOrderPickedUp",
+          "on_order_event": "#/$defs/OnOrderEvent",
           "unassign_driver": "#/$defs/UnassignDriver",
           "update_order": "#/$defs/UpdateOrder",
           "update_vehicle": "#/$defs/UpdateVehicle"
@@ -1448,6 +1600,9 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/OnOrderEvent"
+        },
         {
           "$ref": "#/$defs/ListCarriers"
         },

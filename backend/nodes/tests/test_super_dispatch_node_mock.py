@@ -137,3 +137,76 @@ def test_super_dispatch_rejects_invalid_config(config):
 def test_super_dispatch_contact_email_format():
     with pytest.raises(ValidationError):
         module.Contact(name="Jane Smith", phone="+1987654321", email="invalid")
+
+
+WEBHOOKS = json.loads((Path(__file__).parent / "fixtures/super-dispatch/webhooks.json").read_text())
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("event", module.ORDER_EVENTS)
+async def test_super_dispatch_register_unregister_order_events(monkeypatch, event):
+    calls = transport(monkeypatch, lambda req: httpx.Response(201, json=WEBHOOKS["subscription"])
+                      if req.method == "POST" else httpx.Response(204))
+    cls = module.SuperDispatchNode
+    config = {"operation": "on_order_event", "event_type": event}
+    extra = await cls._register_external_webhook(webhook_url="https://example.com/hook", credential=CREDENTIAL, config=config, node_id="test")
+    assert extra == {"external_webhook_id": event, "signing_secret": WEBHOOKS["subscription"]["verification_token"]}
+    assert json.loads(calls[0].content) == {"callback_url": "https://example.com/hook"}
+    assert cls.registration_fingerprint_fields(config) == {"event_type": event}
+    await cls._unregister_external_webhook(credential=CREDENTIAL, config={**config, **extra}, node_id="test")
+    assert [req.method for req in calls] == ["POST", "DELETE"]
+    for req in calls:
+        assert str(req.url) == module.BASE_URL + f"/webhooks/{event}/subscriptions/"
+        assert req.headers["Authorization"] == "Bearer " + KEY
+
+
+def test_super_dispatch_documented_delivery_and_agent_turn():
+    cls = module.SuperDispatchNode
+    event = WEBHOOKS["order_created"]
+    config = {"event_type": "order.created", "signing_secret": WEBHOOKS["subscription"]["verification_token"]}
+    headers = {"X-Super-Dispatch-Verification-Token": config["signing_secret"]}
+    assert cls.verify_webhook_signature(json.dumps(event).encode(), headers, config)
+    assert cls.verify_webhook_signature(b"{}", {k.lower(): v for k, v in headers.items()}, config)
+    assert not cls.verify_webhook_signature(b"{}", {}, config)
+    assert not cls.verify_webhook_signature(b"{}", {"x-super-dispatch-verification-token": "wrong"}, config)
+    assert not cls.verify_webhook_signature(b"{}", headers, {})
+    assert cls.filter_trigger_payload(event, config)
+    assert not cls.filter_trigger_payload(event, {"event_type": "order.delivered"})
+    assert not cls.filter_trigger_payload({"action": "order.created", "data": []}, config)
+    output = cls.resolve_trigger_payload({**event, "_webhook": {"headers": headers}}, config)
+    assert "_webhook" not in output
+    assert config["signing_secret"] not in json.dumps(output)
+    agent = cls.resolve_agent_event(output)
+    assert agent["conversation_key"] == "38093183"
+    assert "created" in agent["text"] and "new" in agent["text"]
+    assert "get_order order_id=38093183" in agent["text"]
+    assert event["occurred_at"] in agent["text"]
+    assert event["guid"] in agent["text"]
+    assert cls.resolve_agent_event({"status": "no_event"}) is None
+
+
+@pytest.mark.asyncio
+async def test_super_dispatch_manual_trigger_run_has_no_event(monkeypatch):
+    calls = transport(monkeypatch, lambda req: pytest.fail("Manual trigger runs must not call the provider"))
+    output = await make({"operation": "on_order_event"}).execute({"data": {"id": 123}})
+    assert output["status"] == "no_event"
+    assert not calls
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("reply", [httpx.Response(400, json={"error": KEY}), httpx.Response(201, json={"data": {"callback_url": "https://example.com"}}), httpx.Response(201, json=[])])
+async def test_super_dispatch_bad_registration_fails_closed(monkeypatch, reply):
+    transport(monkeypatch, lambda req: reply)
+    with pytest.raises(ValueError) as exc:
+        await module.SuperDispatchNode._register_external_webhook(webhook_url="https://example.com", credential=CREDENTIAL, config={"event_type": "order.created"}, node_id="test")
+    assert KEY not in str(exc.value)
+
+
+@pytest.mark.asyncio
+async def test_super_dispatch_teardown_idempotent_and_safe(monkeypatch):
+    calls = transport(monkeypatch, lambda req: httpx.Response(404))
+    await module.SuperDispatchNode._unregister_external_webhook(credential=CREDENTIAL, config={"external_webhook_id": "order.created"}, node_id="test")
+    assert len(calls) == 1
+    with pytest.raises(ValueError):
+        await module.SuperDispatchNode._unregister_external_webhook(credential=CREDENTIAL, config={"external_webhook_id": "../orders"}, node_id="test")
+    assert len(calls) == 1

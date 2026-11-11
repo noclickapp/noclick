@@ -1,0 +1,18 @@
+{
+  "source": "https://developer.superdispatch.com/carrier/docs/webhooks/",
+  "order_created": {
+    "action": "order.created",
+    "guid": "550e8400-e29b-41d4-a716-446655440000",
+    "occurred_at": "2025-01-15T14:30:00.000000+0000",
+    "data": {
+      "id": 38093183,
+      "status": "new"
+    }
+  },
+  "subscription": {
+    "is_active": true,
+    "action": "<webhook_action>",
+    "verification_token": "a1f9c8e3b4d2f7e6...",
+    "callback_url": "<callback_url>"
+  }
+}

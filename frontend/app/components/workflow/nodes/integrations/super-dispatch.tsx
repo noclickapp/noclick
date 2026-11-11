@@ -11,11 +11,11 @@ const SuperDispatchIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.I
 );
 SuperDispatchIcon.displayName = 'SuperDispatchIcon';
 
-// Official favicon, converted to PNG; provenance is recorded beside the icon.
+// Official Carrier TMS app mark; provenance is recorded beside the SVG.
 export const SuperDispatchNode: NodeDefinition = {
     type: 'automation-super-dispatch',
     label: 'Super Dispatch',
-    description: 'Carrier orders, drivers, vehicles and load offers',
+    description: 'Carrier orders, drivers, vehicles, load offers and order event triggers',
     category: 'industry',
     Icon: SuperDispatchIcon,
     iconColor: '',
