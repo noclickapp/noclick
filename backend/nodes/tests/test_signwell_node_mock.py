@@ -198,6 +198,10 @@ def test_documented_events_reach_agent_with_resource_identity(kind):
         'document_sms_failed' if kind.startswith('document_sms_') else 'document_viewed')
     payload = copy.deepcopy(EVENTS[sample]['body'])
     payload['event']['type'] = kind
+    if kind not in {'document_viewed', 'document_declined', 'document_signed'}:
+        payload['event'].pop('related_signer', None)
+    if kind == 'document_sms_opted_out':
+        payload['data']['object']['recipients'][0]['sms']['delivery_status'] = 'suppressed'
     config = {'operation': 'on_event', 'event_type': kind, 'signing_secret': '3ca1189b-ae29-4a9e-878d-5c53dee86987'}
     message = f"{kind}@{payload['event']['time']}".encode()
     payload['event']['hash'] = hmac.new(config['signing_secret'].encode(), message, hashlib.sha256).hexdigest()
@@ -218,8 +222,9 @@ def test_documented_events_reach_agent_with_resource_identity(kind):
     assert kind.replace('_', ' ') in agent['text']
     assert config['signing_secret'] not in agent['text']
     if sample == 'document_viewed':
-        assert 'Christian Jordan' in agent['text']
         assert 'Please complete this example agreement' in agent['text']
+    if kind in {'document_viewed', 'document_declined', 'document_signed'}:
+        assert 'Christian Jordan' in agent['text']
     if sample == 'document_sms_failed':
         assert 'Jane Doe' in agent['text']
 

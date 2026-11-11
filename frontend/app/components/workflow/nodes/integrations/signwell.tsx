@@ -3,7 +3,6 @@ import type { CSSProperties } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
-import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const SignwellIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <img src="/icons/signwell.svg" alt="" aria-hidden="true" className={className}
