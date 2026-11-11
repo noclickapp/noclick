@@ -14,5 +14,6 @@
       "timestamp": 1705312200
     }
   },
-  "source": "https://github.com/rmyndharis/OpenWA/blob/main/docs/22-n8n-integration.md"
+  "source": "https://github.com/rmyndharis/OpenWA/blob/main/docs/22-n8n-integration.md",
+  "redactions": "The documented chatId/from use reviewed fictional WhatsApp JID 12025550101@c.us for public export; payload structure and other fields are retained."
 }
