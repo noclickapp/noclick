@@ -8,10 +8,8 @@ system prompt so it knows what nodes it can use.
 
 from __future__ import annotations
 
-from typing import Union, get_args, get_origin
-
 from nodes.core.registry import NODE_REGISTRY, is_listed
-from ..operation_catalog import get_native_agent_tools_for_node_type
+from ..operation_catalog import get_native_agent_tools_for_node_type, get_operations_for_node_type
 from ..structural_tools import STRUCTURAL_AGENT_TOOL_PROVIDERS, STRUCTURAL_AGENT_TOOL_TYPES
 from utils.node_search import by_popularity, knows_demand
 

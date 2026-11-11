@@ -243,13 +243,17 @@ def _score(e: Entry, query_words: Sequence[str], whole: str) -> Optional[Hit]:
 
 
 def search(query: str, *, node_types: Optional[Iterable[str]] = None, limit: Optional[int] = None) -> List[Hit]:
-    """The node types ``query`` fits, the best first. A query of only stop words fits none."""
+    """The node types ``query`` fits, the best first. A query of only stop words fits none. Unscoped, it leaves
+    out a retired type (``registry.is_listed``); one ``node_types`` names is still read."""
+    from nodes.core.registry import is_listed
+
     entries = _index()[0]
     query_words = list(dict.fromkeys(words(query)))
     whole = compact(query)
     if not query_words and not whole:
         return []
-    pool = entries.values() if node_types is None else (entries[t] for t in node_types if t in entries)
+    pool = ((e for e in entries.values() if is_listed(e.node_type)) if node_types is None
+            else (entries[t] for t in node_types if t in entries))
     hits = [h for h in (_score(e, query_words, whole) for e in pool) if h is not None]
     hits.sort(key=lambda h: (-h.score, h.entry.slug))
     return hits[:limit] if limit else hits
