@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/farmbrite-dark.svg",
+  "source": "https://app.farmbrite.com/",
+  "source_page": "https://app.farmbrite.com/",
+  "source_description": "Provider-authored data:image/svg+xml logo in the public app login page img; its separate two-path leaf symbol is also used in the official app icon at https://app.farmbrite.com/icons/icon-192x192.png.",
+  "retrieved_at": "2026-11-11",
+  "license": "Farmbrite brand mark, used nominatively; trademark rights remain with Farmbrite.",
+  "sha256": "9059132c9749f354b3c3461e01eeee5aadc8f6f8b104e25d47d4006439c88135",
+  "source_svg_sha256": "a205ee76f85113d6f6567befd47d30ddd7e0beaca4c0747918f59fc6ecc4e915",
+  "edits": [
+    "Decoded the provider-authored inline SVG from the public app login page without altering path data.",
+    "Removed g#farmbrite containing the two wordmark paths; retained both original symbol paths and their transforms.",
+    "Cropped viewBox to 25 17 67 138 and matched width/height to the retained mark.",
+    "Recoloured only the dark teal #0B4040 symbol path to #FFFFFF for dark tiles; retained the original #34A853 green path."
+  ],
+  "notes": "The company app icon uses this two-part leaf symbol. Only the symbol is retained, without the app icon green tile or a new background. No paths were written, traced or generated."
+}
