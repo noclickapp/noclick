@@ -4,6 +4,8 @@
 // the Setup step, the chat's setup and build cards and the builder's asks all draw) run it, so an AI account connects
 // the same way wherever it's added; a provide link runs it too, over the link's own calls (`via`).
 import { useMemo, useState, type ReactNode } from 'react';
+import { ArrowUpRight } from 'lucide-react';
+import { BrandIcon } from '~/components/shared/BrandIcon';
 import { UpgradePopup } from '~/components/utils/UpgradePopup';
 import { AgentOAuthConnect, type AgentOAuthComponentProps } from '~/components/workflow/AgentOAuthConnect';
 import { ConnectApp, type ConnectAccountRow, type ConnectStage } from '~/components/credential/connect/ConnectApp';
@@ -57,12 +59,28 @@ export function agentKeyMethod(provider: ModelProvider, label = 'API key'): Prov
 /** The provider a key method saves as. */
 const keyProvider = (method: ProvideCredentialMethod) => method.credential_type.replace(/^agent_/, '') as ModelProvider;
 
-/** A company's ways in: each subscription sign-in, then each provider's key. */
-export function companyMethods(company: AiCompany): ProvideCredentialMethod[] {
-    return [
+/** A plan's sign-in button: the plan's mark, whose sign-in it opens, and that it opens in a new tab. Every plan
+ *  sign-in draws this one (AiConnect's, and New agent's connect dialog). */
+export function PlanSignInButton({ type, label, onClick, disabled }: { type: string; label: string; onClick: () => void; disabled?: boolean }) {
+    const icon = getCredentialIcon(type);
+    return (
+        <button type="button" onClick={onClick} disabled={disabled} className={cn(BUTTON_PRIMARY, 'h-11 w-full justify-center gap-2 text-[14px]')}>
+            {/* A one-colour mark takes the button's ink; a coloured one (Claude's spark) keeps its own. */}
+            <BrandIcon Icon={icon.Icon} iconColor={icon.iconColor || 'text-current'} className="h-[18px] w-[18px] shrink-0" />
+            {label}
+            <ArrowUpRight className="h-4 w-4 shrink-0 opacity-60" strokeWidth={2} />
+        </button>
+    );
+}
+
+/** A company's ways in: each subscription sign-in, then each provider's key; only the one whose credential type is
+ *  `only`, where given. */
+export function companyMethods(company: AiCompany, only?: string): ProvideCredentialMethod[] {
+    const all = [
         ...company.signIns.filter((type) => type in AGENT_SIGN_IN_NAMES).map(agentSignInMethod),
         ...company.keys.map((provider) => agentKeyMethod(provider, company.keys.length > 1 ? `${getProviderMetadata(provider)?.title ?? provider} API key` : 'API key')),
     ];
+    return only ? all.filter((m) => m.credential_type === only) : all;
 }
 
 type SendEvent = NonNullable<AgentOAuthComponentProps['sendEvent']>;
