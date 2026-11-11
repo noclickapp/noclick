@@ -1,0 +1,7 @@
+{
+  "source_url": "https://raw.githubusercontent.com/Giphy/giphy-js/ea20a90638b4ff01255582dcf8aab5dcf209f750/packages/react-components/stories/mock-data/gifs.json",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "JSON whitespace formatting only. Complete provider-owned SDK mock response retained."
+  ]
+}

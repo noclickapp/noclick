@@ -1,6 +1,6 @@
 """GIPHY v1 GIF and sticker discovery using a manually supplied API key.
 
-The pinned 1.0 contract contains ten GET endpoints and no upload endpoint.
+Ten catalogue reads and two recent-search poll triggers use only GET endpoints.
 Public catalogue reads establish key reachability, never account ownership.
 """
 from __future__ import annotations
@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 
 
 class GiphyApiKeyCredential(BaseModel):
@@ -119,8 +120,34 @@ class RandomSticker(_Random):
     operation: Literal["random_sticker"] = "random_sticker"
 
 
+class _NewSearch(PollTriggerConfigBase):
+    model_config = ConfigDict(extra="forbid", hide_input_in_errors=True,
+        json_schema_extra={"x-requires-webhook": True})
+    q: str = Field(..., min_length=1, max_length=50, title="Search query",
+        description="Watch this search, or use @username to watch a public verified channel.")
+    lang: str | None = Field(None, pattern=r"^[a-z]{2}$", description="Two-letter ISO 639-1 language code.")
+    rating: Literal["g", "pg", "pg-13", "r"] | None = None
+    limit: int = Field(50, ge=1, le=50, title="Recent results per poll",
+        description="Check this many most recent matches. Existing matches are baselined when armed. Matches that leave this window between polls can be missed; narrow the query or shorten the schedule.")
+
+
+class OnNewGif(_NewSearch):
+    """Watch recent GIF search results for new matches."""
+    operation: Literal["on_new_gif"] = Field("on_new_gif", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New GIF",
+    })
+
+
+class OnNewSticker(_NewSearch):
+    """Watch recent sticker search results for new matches."""
+    operation: Literal["on_new_sticker"] = Field("on_new_sticker", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Sticker",
+    })
+
+
 GiphyOperation = Annotated[Union[SearchGifs, TrendingGifs, TranslateGif, RandomGif, GetGif,
-    GetGifs, SearchStickers, TrendingStickers, TranslateSticker, RandomSticker], Field(discriminator="operation")]
+    GetGifs, SearchStickers, TrendingStickers, TranslateSticker, RandomSticker,
+    OnNewGif, OnNewSticker], Field(discriminator="operation")]
 
 
 class GiphyNodeConfig(NodeConfig[GiphyOperation, GiphyApiKeyCredential]):
@@ -147,7 +174,7 @@ def _redact(value, key):
     return value
 
 
-class GiphyNode(WorkflowNode):
+class GiphyNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-giphy"
     connection_evidence = ConnectionEvidence(operation="get_trending_gifs", noun="public trending GIFs", proves="reachability")
 
@@ -155,14 +182,47 @@ class GiphyNode(WorkflowNode):
     def get_config_model(cls):
         return GiphyNodeConfig
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in {"on_new_gif", "on_new_sticker"}:
+            return output.get("status") == "success" and bool(output.get("new_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if output.get("operation") not in {"on_new_gif", "on_new_sticker"}:
+            return super().resolve_agent_event(output)
+        items = output.get("data")
+        if not isinstance(items, list) or not items:
+            return None
+        noun = "GIF" if output["operation"] == "on_new_gif" else "sticker"
+        lines = [f"GIPHY: {len(items)} new {noun} match(es) for {str(output.get('query', ''))[:50]!r}."]
+        for item in items[:10]:
+            who = f" by @{str(item['username'])[:100]}" if item.get("username") else ""
+            lines.append(f"- {str(item.get('title') or noun)[:200]}{who} (id {item['id']})")
+            if item.get("url"):
+                lines.append(f"  {str(item['url'])[:500]}")
+        if len(items) > 10:
+            lines.append(f"- and {len(items) - 10} more matches")
+        return {"text": "\n".join(lines), "conversation_key": None, "title": f"New GIPHY {noun} matches"}
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a GIPHY API key")
         op = self.config.config
         key = self.config.credentials.api_key
-        params = op.model_dump(exclude={"operation", "gif_id"}, exclude_none=True)
+        polling = isinstance(op, _NewSearch)
+        if polling:
+            # GIPHY's official JS SDK SearchOptions documents sort=recent:
+            # https://github.com/Giphy/giphy-js/blob/ea20a90638b4ff01255582dcf8aab5dcf209f750/packages/fetch-api/src/option-types.ts
+            params = {name: getattr(op, name) for name in ("q", "lang", "rating", "limit")
+                      if getattr(op, name) is not None}
+            params.update(sort="recent", offset=0)
+            route = "/gifs/search" if isinstance(op, OnNewGif) else "/stickers/search"
+        else:
+            params = op.model_dump(exclude={"operation", "gif_id"}, exclude_none=True)
+            route = ROUTES[op.operation]
         params["api_key"] = key
-        route = ROUTES[op.operation]
         if isinstance(op, GetGif):
             route = route.replace("{gifId}", quote(op.gif_id, safe=""))
         try:
@@ -181,7 +241,7 @@ class GiphyNode(WorkflowNode):
                 return {"status": "error", "http_status": response.status_code,
                     "error": _redact(message, key) if isinstance(message, str) else "GIPHY did not confirm this read"}
             data = body.get("data") if isinstance(body, dict) else None
-            expected = list if op.operation in _LISTS else dict
+            expected = list if polling or op.operation in _LISTS else dict
             if not isinstance(data, expected):
                 raise ValueError("GIPHY returned an unexpected data envelope")
             output = {"status": "success", "operation": op.operation, "data": data,
@@ -189,6 +249,16 @@ class GiphyNode(WorkflowNode):
             for name in ("pagination", "meta"):
                 if isinstance(body.get(name), dict):
                     output[name] = body[name]
-            return _redact(output, key)
+            output = _redact(output, key)
+            if polling:
+                items = output["data"]
+                if any(not isinstance(item, dict) or isinstance(item.get("id"), bool)
+                       or not isinstance(item.get("id"), (str, int)) or not str(item["id"])
+                       for item in items):
+                    raise ValueError("GIPHY returned a search result without a valid ID")
+                # The shared poll family owns baseline, scope and persistent dedup.
+                output["data"] = await self._filter_unseen(items, lambda item: str(item["id"]))
+                output.update(new_count=len(output["data"]), query=op.q)
+            return output
         except httpx.HTTPError:
             raise ValueError("The GIPHY request could not be completed") from None

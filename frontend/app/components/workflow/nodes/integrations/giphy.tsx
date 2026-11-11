@@ -11,7 +11,7 @@ const GiphyIcon = ({ className, style }: { className?: string; style?: CSSProper
 
 export const GiphyNode: NodeDefinition = {
     type: 'automation-giphy', category: 'media', label: 'GIPHY',
-    description: 'Search, find trending content and retrieve GIFs and stickers',
+    description: 'Search and retrieve GIFs and stickers, or trigger on new search matches',
     Icon: GiphyIcon, keywords: ['gif', 'gifs', 'stickers', 'giphy'], iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={GiphyIcon} iconColor="" />),
