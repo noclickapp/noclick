@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/wowza.svg",
+  "source": "https://developer.wowza.com/assets/wowza-for-devs-logo-horiz-new.d8a361dfaac6cf102160fbd45c63b0f9146775e1dbc5873dc0a797cec7b8a357.97aca8ca.svg",
+  "source_page": "https://developer.wowza.com/",
+  "date": "2026-11-11",
+  "license": "Wowza trademark; used to identify the integration",
+  "sha256": "b37b4a8b42ce96c4c81659b70b79bcf77f154219795cb7c441be2d9100a6467a",
+  "edits": [
+    "Removed the white developer wordmark path and white circular background path; retained the two original orange app-mark paths unchanged.",
+    "Cropped the viewBox from 0 0 297 70 to 0 0 70 70; set intrinsic size to 70 by 70."
+  ],
+  "notes": "The official developer portal header supplies this current Wowza symbol. Orange paths remain exactly #FF8400; the open counters are transparent."
+}

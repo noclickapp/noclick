@@ -1,0 +1,19 @@
+{
+  "source": "https://developer.wowza.com/_bundle/wsc-api-docs/openapi.json?download=#/components/schemas/VideoListModel",
+  "body": {
+    "id": "2aa3343e-2fb5-42c3-8671-b52c24b7c3e2",
+    "name": "My video",
+    "description": "A new video for my business.",
+    "unpublished_at": "2025-01-01T12:33:22Z",
+    "published_at": "2024-01-01T12:33:22Z",
+    "tags": [
+      "foo",
+      "bar"
+    ],
+    "ad_keywords": "special_ads",
+    "created_at": "2024-01-01T12:33:22Z",
+    "updated_at": "2024-01-01T12:33:22Z",
+    "state": "FINISHED",
+    "playback_token_behavior": "NO_TOKEN"
+  }
+}

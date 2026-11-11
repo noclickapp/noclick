@@ -1,0 +1,13 @@
+{
+  "source": "https://developer.wowza.com/_bundle/wsc-api-docs/openapi.json?download=#/components/schemas/Error401",
+  "body": {
+    "meta": {
+      "status": 401,
+      "code": "ERR-401-InvalidToken",
+      "title": "JWT is invalid",
+      "message": "Token is invalid.",
+      "description": "",
+      "links": []
+    }
+  }
+}
