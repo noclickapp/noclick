@@ -48,8 +48,9 @@ export function getFieldsFromSchema(credentialSchema: Schema | undefined): Crede
         });
 }
 
-/** Where a way in stands among an app's: a sign-in first, then an API key, then a PAT, then the rest; a sign-in that
- *  needs your own OAuth app last. Connections and a provide link order the same ways in by it. */
+/** Where a way in stands among an app's: a sign-in first, then an API key, then a PAT, then the rest (a vendor's MCP
+ *  server among them, a second way in); a sign-in that needs your own OAuth app last. Connections and a provide link
+ *  order the same ways in by it. */
 export function wayInRank(method: Parameters<typeof kindFromBackendMethod>[0] & Pick<ProvideCredentialMethod, 'credential_type' | 'requires_custom_client'>): number {
     const kind = kindFromBackendMethod(method);
     if (kind === 'oauth' || kind === 'agent_oauth') return method.requires_custom_client ? 4 : 0;

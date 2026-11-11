@@ -11,9 +11,21 @@
    "title": "CanvaOAuthCredential",
    "oauth_provider": "canva",
    "method": "oauth",
-   "hidden": false,
+   "hidden": true,
    "pinned": true,
    "borrowed": false
+  },
+  {
+   "type": "canva_mcp",
+   "title": "Canva MCP",
+   "oauth_provider": null,
+   "method": "mcp",
+   "hidden": false,
+   "pinned": true,
+   "borrowed": false,
+   "linked_fields": [
+    "mcp_server_url"
+   ]
   }
  ],
  "operations": [

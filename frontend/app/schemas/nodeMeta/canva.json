@@ -5,6 +5,8 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Canva MCP": "canva_mcp",
+    "CanvaMcpCredential": "canva_mcp",
     "CanvaOAuthCredential": "canva_oauth"
   },
   "providerLabels": {
