@@ -2,14 +2,13 @@
 
 https://api.doqs.dev/v1/openapi.json
 Binary response contract: https://docs.doqs.dev/pdf-filling/fill-template
-and https://docs.doqs.dev/pdf-generator/render. PDFs are returned as base64
-so they survive workflow JSON serialization. No additional download is made.
+and https://docs.doqs.dev/pdf-generator/render. PDFs use BinaryOutput so the
+executor stores them and returns usable file references. No additional download is made.
 The four published operations provide no webhook registration, time filter,
 or time ordering suitable for an incremental poll trigger.
 """
 from __future__ import annotations
 
-import base64
 import json
 from typing import Annotated, Any, Literal, Union
 from urllib.parse import quote
@@ -18,6 +17,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 
 API_BASE = "https://api.doqs.dev/v1"
@@ -165,7 +165,8 @@ class DoqsNode(WorkflowNode):
         mime = response.headers.get("content-type", "").split(";", 1)[0].strip().lower()
         result = {"status": "success", "operation": operation, "status_code": response.status_code}
         if mime == "application/pdf" and operation in {"fill_template", "render_pdf"}:
-            return {**result, "pdf_base64": base64.b64encode(response.content).decode("ascii"), "mime_type": mime,
+            return {**result, "file": BinaryOutput(data=response.content, content_type=mime,
+                    filename="filled-template.pdf" if operation == "fill_template" else "rendered.pdf"), "mime_type": mime,
                 "submission_id": response.headers.get("x-submission-id")}
         try:
             data = response.json()

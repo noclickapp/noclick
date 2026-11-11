@@ -3,13 +3,13 @@
 List fixtures are schema-shaped test data, not live recordings. Binary sentinels
 exercise the response format described in the provider's fill/render docs.
 """
-import base64
 import json
 
 import httpx
 import pytest
 from pydantic import ValidationError
 
+from nodes.core.binary_output import BinaryOutput, resolve_binary_outputs
 from nodes.doqs_node import DoqsAPIKeyCredential, DoqsNode, DoqsNodeConfig, ENDPOINTS
 
 KEY = "doqs-test-secret"
@@ -66,7 +66,10 @@ async def test_fill_request_and_documented_pdf_response(monkeypatch):
 
     mock_api(monkeypatch, transport)
     result = await node({"operation": "fill_template", "template_id": "template-1", "data": '{"customer":"Ada","approved":true}'}).execute({})
-    assert base64.b64decode(result["pdf_base64"]) == PDF
+    assert isinstance(result["file"], BinaryOutput)
+    assert result["file"].data == PDF
+    assert result["file"].content_type == "application/pdf"
+    assert result["file"].filename == "filled-template.pdf"
     assert result["mime_type"] == "application/pdf"
 
 
@@ -92,8 +95,38 @@ async def test_render_all_contract_fields(monkeypatch):
         "margin_top": "10mm", "margin_bottom": "1cm", "margin_left": "0px", "margin_right": "0.1in",
         "presigned_upload_url": "https://storage.example.test/file?signature=abc", "presigned_upload_method": "POST"}).execute({})
     assert result["submission_id"] == "submission-1"
-    assert base64.b64decode(result["pdf_base64"]) == PDF
+    assert isinstance(result["file"], BinaryOutput)
+    assert result["file"].data == PDF
+    assert result["file"].content_type == "application/pdf"
+    assert result["file"].filename == "rendered.pdf"
     assert len(requests) == 1  # Doqs performs the upload; NoClick never fetches that URL.
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("config,filename", [
+    ({"operation": "fill_template", "template_id": "template-1"}, "filled-template.pdf"),
+    ({"operation": "render_pdf", "template_html": "Invoice"}, "rendered.pdf"),
+])
+async def test_doqs_pdf_resolves_to_workflow_file(monkeypatch, config, filename):
+    mock_api(monkeypatch, lambda request: httpx.Response(200, content=PDF,
+        headers={"content-type": "application/pdf", "x-submission-id": "submission-1"}))
+    stored = []
+
+    async def store(**kwargs):
+        stored.append(kwargs)
+        return {"download_url": "https://files.example.test/document.pdf", "mime_type": "application/pdf",
+            "name": filename, "size_bytes": len(PDF)}
+
+    monkeypatch.setattr("nodes.core.binary_output.create_resource_from_bytes", store)
+    output = await node(config).execute({})
+    result = await resolve_binary_outputs(output, user_id="user-1", workflow_id="workflow-1", node_id="doqs-1")
+    assert stored == [{"user_id": "user-1", "workflow_id": "workflow-1", "node_id": "doqs-1", "organization_id": None,
+        "body": PDF, "content_type": "application/pdf", "filename": filename}]
+    assert result["file"] == {"url": "https://files.example.test/document.pdf", "mime_type": "application/pdf",
+        "name": filename, "size_bytes": len(PDF)}
+    assert result["submission_id"] == "submission-1"
+    assert "pdf_base64" not in result
+    json.dumps(result)  # Canonical workflow output is JSON-safe after storage.
 
 
 @pytest.mark.asyncio
