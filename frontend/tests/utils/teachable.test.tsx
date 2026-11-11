@@ -22,7 +22,7 @@ describe('Teachable native wiring', () => {
         expect(getNodeMetadata(NODE)?.label).toBe('Teachable');
         expect(TeachableNode.type).toBe(NODE);
         const markup = renderToStaticMarkup(<TeachableIcon style={{ width: 48, height: 48, filter: 'drop-shadow(0 1px 2px black)' }} />);
-        expect(markup).toContain('src="/icons/teachable.png"');
+        expect(markup).toContain('src="/icons/teachable.svg"');
         expect(markup).toContain('object-fit:contain');
         expect(markup).toContain('filter:drop-shadow(0 1px 2px black)');
     });

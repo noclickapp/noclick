@@ -1,0 +1,76 @@
+{
+  "path": "frontend/public/icons/kapso-dark.svg",
+  "source": "https://kapso.com/android-chrome-512x512.png",
+  "found_at": "https://kapso.com/",
+  "source_kind": "traced from company site (web app icon at https://kapso.com/android-chrome-512x512.png, served by its own site)",
+  "retrieved": "2026-11-12",
+  "edits": [
+    "traced from the raster with vtracer 0.6.15 through the accuracy gate (every measure passed; scores below)",
+    "removed the #0c0a09 tile behind the mark (the app icon's background) from the gated trace, then cropped again",
+    "viewBox cropped to the mark (2% pad)"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: Kapso's app icon is a black tile with a white K. A black tile can't be seen on the dark theme, so the tile is left out: dark mode shows the white K, light mode shows it black.",
+  "traced": true,
+  "trace": {
+    "tool": "trace_gate 1 (scripts/trace_gate.py) with vtracer 0.6.15",
+    "setting": {
+      "engine": "vtracer",
+      "mode": "polygon",
+      "corner": 60,
+      "length": 4.0,
+      "splice": 45,
+      "speckle": null,
+      "alphamax": 1.0,
+      "opttol": 0.2,
+      "work": 2048,
+      "precision": 1
+    },
+    "source_url": "https://kapso.com/android-chrome-512x512.png",
+    "source_sha256": "a2957453cd43cea69e599f4d2d5f5995fd2ee2ce4ddf673ef7209129da52c1b8",
+    "source_size": [
+      512,
+      512
+    ],
+    "source_palette": [
+      "#0c0a09",
+      "#ffffff"
+    ],
+    "background": "transparent",
+    "scores": {
+      "iou": 0.99975,
+      "edge_f": 1.0,
+      "edge_max": 1.0,
+      "edge_p99": 1.0,
+      "edge_chamfer": 0.09,
+      "de3_share": 0.0,
+      "de_p99": 0.0,
+      "ssim": 0.9963,
+      "paths": 2,
+      "nodes": 343,
+      "bytes": 3404,
+      "specks": 0,
+      "foreign_colours": [],
+      "missing_colours": []
+    },
+    "thresholds": {
+      "iou": 0.99,
+      "edge_f": 0.98,
+      "edge_max": 1.5,
+      "de3_share": 0.005,
+      "ssim": 0.97,
+      "specks": 0,
+      "nodes": 2000,
+      "bytes": 24000
+    },
+    "source_limits": {
+      "min_mark_px": 320,
+      "max_colours": 10,
+      "max_off_palette": 0.01,
+      "max_flat_noise": 0.005
+    },
+    "calibration": "work/trace/calib in the icon review (official SVGs rasterised, traced and compared with the vector)"
+  },
+  "license": "Kapso brand mark, used nominatively to identify the connected service; trademark rights remain with Kapso.",
+  "sha256": "0bba7574d63578817c207f993fadd3a4741f3fd1e31bf7fc1cf6ee04cbd1c9b7"
+}

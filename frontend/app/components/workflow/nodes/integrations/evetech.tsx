@@ -5,15 +5,10 @@ import type { CSSProperties } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
-// This checkout predates ThemedBrandImg; use the documented theme-pair fallback.
 const EvetechIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <>
-        <img src="/icons/evetech.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' }} />
-        <img src="/icons/evetech-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' }} />
-    </>
+    <ThemedBrandImg light="/icons/evetech.svg" dark="/icons/evetech-dark.svg" className={className} style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const EvetechNode: NodeDefinition = {

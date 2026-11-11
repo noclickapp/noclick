@@ -1084,18 +1084,6 @@
       "sha256": "93d43e1d1450170451e086a80bc3e1ac1d17af20a9d559daf7ca59b8f95aca9a"
     },
     {
-      "path": "frontend/public/icons/rebrandly.png",
-      "source": "https://cdn.prod.website-files.com/688a5cbe40e5592f8f57f7b5/689e38d55fe7006d4bab62fc_Rebrandly.png",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "edf07c2a7f323aa7fc58b2a49acd36d6c7d4a7d8b96646f6d84f21356d072766"
-    },
-    {
-      "path": "frontend/public/icons/rebrandly.png.provenance.json",
-      "source": "https://cdn.prod.website-files.com/688a5cbe40e5592f8f57f7b5/689e38d55fe7006d4bab62fc_Rebrandly.png (source recorded by the integration favicon provenance sidecar)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "9a3a6f769c3c57c5d1b436054ad84af1844771dba7c5d059cab9877d3ef4ec4f"
-    },
-    {
       "path": "frontend/public/icons/singlestore-brand.png",
       "source": "https://www.singlestore.com/ (official brand artwork retained from the integration; source and SHA-256 recorded in its original icon commit)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",

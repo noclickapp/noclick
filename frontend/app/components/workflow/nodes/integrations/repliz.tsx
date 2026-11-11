@@ -2,11 +2,9 @@ import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const ReplizIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
-    ({ className, style, ...props }, ref) => <>
-        <img ref={ref} src="/icons/repliz.svg" alt="" className={`${className || ''} dark:hidden`} style={style} {...props} />
-        <img src="/icons/repliz-dark.svg" alt="" className={`${className || ''} hidden dark:block`} style={style} {...props} />
-    </>,
+    ({ className, style, ...props }, ref) => <ThemedBrandImg {...props} light="/icons/repliz.svg" dark="/icons/repliz-dark.svg" ref={ref} className={className} style={style} />,
 );
 ReplizIcon.displayName = 'ReplizIcon';
 export const ReplizNode: NodeDefinition = {

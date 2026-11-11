@@ -7,7 +7,7 @@ import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nod
 
 const RebrandlyIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/rebrandly.png" alt="" className={className} style={style} {...props} />
+        <img ref={ref} src="/icons/rebrandly.svg" alt="" className={className} style={style} {...props} />
     ),
 );
 RebrandlyIcon.displayName = 'RebrandlyIcon';

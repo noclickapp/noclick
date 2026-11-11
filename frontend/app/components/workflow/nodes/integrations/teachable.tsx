@@ -5,16 +5,16 @@ import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nod
 
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
-// Vector brand artwork from https://iconlogovector.com/logo/teachable
+// Teachable's app icon, traced from its Google Play listing; the provenance sits beside the SVG.
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/teachable.png" alt="" aria-hidden="true" className={className}
+    <img src="/icons/teachable.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const TeachableIcon: SvgIconComponent = forwardRef<
     HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>
 >(({ style, ...props }, ref) => (
-    <img {...props} ref={ref} src="/icons/teachable.png" alt=""
+    <img {...props} ref={ref} src="/icons/teachable.svg" alt=""
         style={{ ...style, objectFit: 'contain' }} />
 ));
 TeachableIcon.displayName = 'TeachableIcon';

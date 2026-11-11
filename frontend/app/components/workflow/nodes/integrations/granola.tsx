@@ -7,7 +7,7 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 // Sourced brand artwork: https://www.granola.ai
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/granola-preferred-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const GranolaIcon: SvgIconComponent = forwardRef<
