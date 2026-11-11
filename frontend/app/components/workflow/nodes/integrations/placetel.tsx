@@ -10,8 +10,8 @@ const PlacetelIcon = ({ className, style }: { className?: string; style?: CSSPro
 );
 
 export const PlacetelNode: NodeDefinition = {
-    type: 'automation-placetel', category: 'communication', label: 'Placetel', keywords: ['phone', 'voicemail', 'SIP', 'SMS', 'fax'],
-    description: 'Automate contacts, calls, SMS, faxes, phone numbers and call groups',
+    type: 'automation-placetel', category: 'communication', label: 'Placetel', keywords: ['phone', 'voicemail', 'SIP', 'SMS', 'fax', 'incoming call', 'missed call', 'call answered', 'call ended', 'trigger'],
+    description: 'Start workflows from call events and automate contacts, calls, SMS and faxes',
     Icon: PlacetelIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={PlacetelIcon} iconColor="" />),

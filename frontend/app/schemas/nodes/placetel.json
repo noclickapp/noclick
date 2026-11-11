@@ -1395,6 +1395,566 @@
       "title": "ListSipUsersConfig",
       "type": "object"
     },
+    "OnCallAcceptedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "description": "Set a shared secret in Placetel Settings \u2192 External APIs, then paste the same secret here. Requires Placetel PROFI. Enable notifications for the phone numbers you want to watch; leave their call routing unchanged.",
+          "minLength": 1,
+          "title": "Webhook Signing Secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "numbers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional phone numbers to subscribe to. Leave empty for all enabled numbers.",
+          "title": "Phone Numbers"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Placetel automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_call_accepted",
+          "default": "on_call_accepted",
+          "title": "On Call Answered",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Call Answered",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "signing_secret"
+      ],
+      "title": "OnCallAcceptedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OnCallEndedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "description": "Set a shared secret in Placetel Settings \u2192 External APIs, then paste the same secret here. Requires Placetel PROFI. Enable notifications for the phone numbers you want to watch; leave their call routing unchanged.",
+          "minLength": 1,
+          "title": "Webhook Signing Secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "numbers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional phone numbers to subscribe to. Leave empty for all enabled numbers.",
+          "title": "Phone Numbers"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Placetel automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_call_ended",
+          "default": "on_call_ended",
+          "title": "On Call Ended",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Call Ended",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "signing_secret"
+      ],
+      "title": "OnCallEndedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OnIncomingCallConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "description": "Set a shared secret in Placetel Settings \u2192 External APIs, then paste the same secret here. Requires Placetel PROFI. Enable notifications for the phone numbers you want to watch; leave their call routing unchanged.",
+          "minLength": 1,
+          "title": "Webhook Signing Secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "numbers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional phone numbers to subscribe to. Leave empty for all enabled numbers.",
+          "title": "Phone Numbers"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Placetel automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_incoming_call",
+          "default": "on_incoming_call",
+          "title": "On Incoming Call",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Incoming Call",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "signing_secret"
+      ],
+      "title": "OnIncomingCallConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OnOutgoingCallConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "description": "Set a shared secret in Placetel Settings \u2192 External APIs, then paste the same secret here. Requires Placetel PROFI. Enable notifications for the phone numbers you want to watch; leave their call routing unchanged.",
+          "minLength": 1,
+          "title": "Webhook Signing Secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "numbers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional phone numbers to subscribe to. Leave empty for all enabled numbers.",
+          "title": "Phone Numbers"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Placetel automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_outgoing_call",
+          "default": "on_outgoing_call",
+          "title": "On Outgoing Call",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Outgoing Call",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "signing_secret"
+      ],
+      "title": "OnOutgoingCallConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "PlacetelAPIKeyCredential": {
       "properties": {
         "credential_type": {
@@ -1876,6 +2436,10 @@
           "list_numbers": "#/$defs/ListNumbersConfig",
           "list_recordings": "#/$defs/ListRecordingsConfig",
           "list_sip_users": "#/$defs/ListSipUsersConfig",
+          "on_call_accepted": "#/$defs/OnCallAcceptedConfig",
+          "on_call_ended": "#/$defs/OnCallEndedConfig",
+          "on_incoming_call": "#/$defs/OnIncomingCallConfig",
+          "on_outgoing_call": "#/$defs/OnOutgoingCallConfig",
           "send_fax": "#/$defs/SendFaxConfig",
           "send_sms": "#/$defs/SendSmsConfig",
           "update_contact": "#/$defs/UpdateContactConfig",
@@ -1884,6 +2448,18 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/OnIncomingCallConfig"
+        },
+        {
+          "$ref": "#/$defs/OnOutgoingCallConfig"
+        },
+        {
+          "$ref": "#/$defs/OnCallAcceptedConfig"
+        },
+        {
+          "$ref": "#/$defs/OnCallEndedConfig"
+        },
         {
           "$ref": "#/$defs/GetMeConfig"
         },

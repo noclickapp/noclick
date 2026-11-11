@@ -1,0 +1,34 @@
+{
+  "IncomingCall": {
+    "event": "IncomingCall",
+    "from": "022129191999",
+    "to": "022129191999",
+    "call_id": "f4591ba315d81671d7a06c2a3b4f963dafd119de39cb26edd8a6476676b2f447",
+    "direction": "in"
+  },
+  "OutgoingCall": {
+    "event": "OutgoingCall",
+    "from": "022129191999",
+    "to": "022129191999",
+    "call_id": "f4591ba315d81671d7a06c2a3b4f963dafd119de39cb26edd8a6476676b2f447",
+    "direction": "out",
+    "peer": "7777abcdefg@fpbx.de"
+  },
+  "CallAccepted": {
+    "event": "CallAccepted",
+    "from": "022129191999",
+    "to": "022129191999",
+    "call_id": "f4591ba315d81671d7a06c2a3b4f963dafd119de39cb26edd8a6476676b2f447",
+    "direction": "in",
+    "peer": "7777abcdefg@fpbx.de"
+  },
+  "HungUp": {
+    "event": "HungUp",
+    "from": "022129191999",
+    "to": "022129191999",
+    "call_id": "f4591ba315d81671d7a06c2a3b4f963dafd119de39cb26edd8a6476676b2f447",
+    "direction": "in",
+    "type": "missed",
+    "duration": "0"
+  }
+}

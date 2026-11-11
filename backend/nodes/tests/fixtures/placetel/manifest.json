@@ -1,4 +1,8 @@
 {
   "source": "https://api.placetel.de/v2/swagger_doc",
-  "description": "Me property examples copied from definitions.Me in the provider contract (version 2.0.0). Synthetic API keys and request test data do not identify a live account."
+  "description": "Me property examples copied from definitions.Me in the provider contract (version 2.0.0). Synthetic API keys and request test data do not identify a live account.",
+  "call_events": {
+    "source": "https://github.com/Placetel/call-control-notify-api#our-post-request",
+    "description": "Call event fields and example values transcribed from the provider tables. Duration is a string because deliveries are form encoded. The exact full-body HMAC example is tested separately."
+  }
 }

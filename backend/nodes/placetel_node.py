@@ -6,6 +6,10 @@ never retried automatically, including calls, SMS and outbound faxes.
 """
 from __future__ import annotations
 
+import hashlib
+import hmac
+from urllib.parse import parse_qsl, quote
+
 from datetime import date, datetime
 from typing import Annotated, Literal, Union
 
@@ -15,6 +19,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 
 BASE_URL = "https://api.placetel.de/v2"
 
@@ -295,7 +300,60 @@ class SendSmsConfig(_Operation):
     message: str = Field(..., title='Message', description='Your message')
 
 
+# Notifications: https://github.com/Placetel/call-control-notify-api#our-post-request
+class _CallTriggerConfig(WebhookTriggerConfigBase):
+    signing_secret: str = Field(..., title="Webhook Signing Secret", min_length=1, repr=False,
+        description="Set a shared secret in Placetel Settings → External APIs, then paste the same secret here. Requires Placetel PROFI. Enable notifications for the phone numbers you want to watch; leave their call routing unchanged.",
+        json_schema_extra={"ui:widget": "password"})
+    numbers: list[str] | None = Field(None, title="Phone Numbers",
+        description="Optional phone numbers to subscribe to. Leave empty for all enabled numbers.")
+    webhook_url: str | None = Field(None, title="Webhook URL",
+        description="Registered with Placetel automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+class OnIncomingCallConfig(_CallTriggerConfig):
+    operation: Literal["on_incoming_call"] = Field("on_incoming_call", title="On Incoming Call", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "On Incoming Call",
+    })
+
+
+class OnOutgoingCallConfig(_CallTriggerConfig):
+    operation: Literal["on_outgoing_call"] = Field("on_outgoing_call", title="On Outgoing Call", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "On Outgoing Call",
+    })
+
+
+class OnCallAcceptedConfig(_CallTriggerConfig):
+    operation: Literal["on_call_accepted"] = Field("on_call_accepted", title="On Call Answered", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "On Call Answered",
+    })
+
+
+class OnCallEndedConfig(_CallTriggerConfig):
+    operation: Literal["on_call_ended"] = Field("on_call_ended", title="On Call Ended", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "On Call Ended",
+    })
+
+
+CALL_EVENTS = {
+    "on_incoming_call": ("IncomingCall", "incoming"),
+    "on_outgoing_call": ("OutgoingCall", "outgoing"),
+    "on_call_accepted": ("CallAccepted", "accepted"),
+    "on_call_ended": ("HungUp", "hungup"),
+}
+
+
 Operation = Annotated[Union[
+    OnIncomingCallConfig,
+    OnOutgoingCallConfig,
+    OnCallAcceptedConfig,
+    OnCallEndedConfig,
+
     GetMeConfig,
     ListContactsConfig,
     GetContactConfig,
@@ -620,7 +678,8 @@ OPERATIONS = {'get_me': {'method': 'GET',
               'response_body': False}}
 
 
-class PlacetelNode(WorkflowNode):
+class PlacetelNode(ExternalWebhookTriggerMixin, WorkflowNode):
+    webhook_replace_stale_endpoint = True
     integration_type = "automation-placetel"
     connection_evidence = ConnectionEvidence(noun="Placetel account", identity_operation="get_me")
 
@@ -628,7 +687,98 @@ class PlacetelNode(WorkflowNode):
     def get_config_model(cls):
         return PlacetelNodeConfig
 
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"numbers": config.get("numbers"), "signing_secret": config.get("signing_secret")}
+
+    @staticmethod
+    async def _subscription_request(credential, method, path, *, body=None):
+        token = PlacetelAPIKeyCredential.model_validate(credential).api_key
+        async with httpx.AsyncClient(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, BASE_URL + path,
+                headers={"Authorization": "Bearer " + token, "Accept": "application/json"},
+                **({"json": body} if body is not None else {}))
+        if response.status_code != (200 if method == "PUT" else 204):
+            raise ValueError(f"Placetel subscription request failed (HTTP {response.status_code})")
+        return response.json() if method == "PUT" else None
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        parsed = cls.parse_config({"config": config, "credentials": credential}).config
+        if parsed.operation not in CALL_EVENTS:
+            raise ValueError("Choose a Placetel call trigger")
+        flag = CALL_EVENTS[parsed.operation][1]
+        # The API requires a service name; each workflow node owns its subscription.
+        body = {"service": f"NoClick {node_id}", "url": webhook_url,
+                **{value[1]: value[1] == flag for value in CALL_EVENTS.values()}, "phone": False}
+        if parsed.numbers:
+            body["numbers"] = parsed.numbers
+        data = await cls._subscription_request(credential, "PUT", "/subscriptions", body=body)
+        if not isinstance(data, dict) or not isinstance(data.get("id"), str) or not data["id"]:
+            raise ValueError("Placetel did not return a subscription ID")
+        return {"external_webhook_id": data["id"], "signing_secret": parsed.signing_secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        subscription_id = config.get("external_webhook_id")
+        if not subscription_id:
+            return
+        if not credential:
+            raise ValueError("Connect Placetel to remove its subscription")
+        await cls._subscription_request(credential, "DELETE",
+            "/subscriptions/" + quote(str(subscription_id), safe=""))
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        secret = config.get("signing_secret")
+        if not secret:
+            return False
+        signature = next((v for k, v in headers.items() if k.lower() == "x-placetel-signature"), "")
+        expected = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
+        return isinstance(signature, str) and signature.isascii() and hmac.compare_digest(signature, expected)
+
+    @staticmethod
+    def _call_payload(payload):
+        # The platform wraps non-JSON deliveries in raw; Placetel posts form data.
+        if "event" in payload:
+            return payload
+        raw = payload.get("raw")
+        if isinstance(raw, bytes):
+            raw = raw.decode("utf-8")
+        return dict(parse_qsl(raw, keep_blank_values=True)) if isinstance(raw, str) else {}
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        expected = CALL_EVENTS.get(config.get("operation"))
+        if expected is None:
+            return False
+        event = cls._call_payload(payload)
+        return (event.get("event") == expected[0] and
+                all(isinstance(event.get(key), str) and event.get(key) for key in ("call_id", "from", "to", "direction")))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        return cls._call_payload(payload)
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        event = cls._call_payload(output)
+        kind = event.get("event")
+        if kind not in {value[0] for value in CALL_EVENTS.values()} or not event.get("call_id"):
+            return None
+        labels = {"IncomingCall": "Incoming call", "OutgoingCall": "Outgoing call",
+                  "CallAccepted": "Call answered", "HungUp": "Call ended"}
+        title = f"{labels[kind]} from {event.get('from')} to {event.get('to')}"
+        lines = [f"Placetel: {title}", f"Direction: {event.get('direction')}", f"Call ID: {event['call_id']}"]
+        if kind in {"OutgoingCall", "CallAccepted"} and "peer" in event:
+            lines.append(f"SIP user: {event['peer']}")
+        if kind == "HungUp":
+            lines.extend([f"Outcome: {event.get('type')}", f"Duration: {event.get('duration')} seconds"])
+        return {"text": "\n".join(lines), "conversation_key": event["call_id"], "title": title}
+
     async def execute(self, inputs):
+        if self.config and isinstance(self.config.config, _CallTriggerConfig):
+            return self.no_event_output(self.config.config.operation)
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Placetel API key")
         config = self.config.config
