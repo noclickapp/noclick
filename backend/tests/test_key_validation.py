@@ -298,3 +298,27 @@ async def test_a_key_with_no_free_check_is_unknown(monkeypatch):
     _patch_requests(monkeypatch)  # any request would raise IndexError
     assert (await check_provider_key("GEMINI_API_KEY", "k")).verdict == "unknown"
     assert (await check_provider_key("OPENROUTER_API_KEY", "")).verdict == "unknown"
+
+
+def test_the_providers_own_words_are_read_out_of_every_wrapper():
+    """What a provider said, out of the stack of wrappers a turn's error carries (2026-11-10's refused OpenRouter key),
+    as short as it came; None when nothing in it is the provider's own words."""
+    from nodes.agent.provider_errors import classify_provider_error
+    from nodes.core.connection_evidence import PROVIDER_WORDS_MAX, provider_words
+
+    nested = ("Node agent failed: OpenRouter rejected the API key. Re-check the key or create a new one at "
+              "https://openrouter.ai/settings/keys and connect it again.\nProvider message: litellm.AuthenticationError:"
+              ' AuthenticationError: OpenrouterException - {"error":{"message":"User not found.","code":401}}')
+    found = classify_provider_error(nested)
+    assert (found.headline, provider_words(nested)) == ("OpenRouter rejected the API key.", "User not found.")
+    # Rewritten again (the card's text), the same words come out.
+    assert provider_words(found.message) == "User not found."
+    assert provider_words('{"type":"error","error":{"type":"authentication_error","message":"invalid x-api-key"}}') \
+        == "invalid x-api-key"
+    assert provider_words("litellm.AuthenticationError: OpenrouterException - User not found") is None
+    assert provider_words("Your credit balance is too low to access the Anthropic API.") == (
+        "Your credit balance is too low to access the Anthropic API.")  # one bare line is its own words
+    assert provider_words("Node agent failed: something broke") is None
+    assert provider_words(None) is None
+    long = provider_words('{"error": {"message": "' + "x " * 300 + '"}}')
+    assert len(long) <= PROVIDER_WORDS_MAX and long.endswith("…")

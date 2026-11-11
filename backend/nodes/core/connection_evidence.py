@@ -351,6 +351,30 @@ def _said(body: Dict[str, Any]) -> Optional[str]:
     return next((c.strip() for c in candidates if isinstance(c, str) and c.strip()), None)
 
 
+# The provider's own words, kept short enough for a card or a text.
+PROVIDER_WORDS_MAX = 200
+
+
+# What frames a provider's words rather than being them: an exception's name, a node's or NoClick's prefix.
+_WRAPPED = re.compile(r"(?:Error|Exception)\b\s*[:-]|\bfailed:|Provider message:|Details:")
+
+
+def provider_words(text: Optional[str]) -> Optional[str]:
+    """The provider's own words in ``text`` and nothing around them: the message of the last JSON object carrying one
+    (``User not found.`` out of ``Node agent failed: … Provider message: litellm.AuthenticationError: …
+    {"error":{"message":"User not found.","code":401}}``), else ``text`` itself when it's one bare line with nothing
+    wrapped around it; at most ``PROVIDER_WORDS_MAX`` characters. None otherwise: wrappers are never the provider's
+    words."""
+    said = next((s for _, _, body in reversed(_json_objects(text or "")) if (s := _said(body))), None)
+    if said is None:
+        bare = (text or "").strip()
+        if not bare or "\n" in bare or "{" in bare or _WRAPPED.search(bare):
+            return None
+        said = bare
+    said = " ".join(said.split())
+    return said if len(said) <= PROVIDER_WORDS_MAX else said[:PROVIDER_WORDS_MAX - 1].rstrip() + "…"
+
+
 def provider_message(text: str) -> str:
     """A JSON error body read for the provider's own message, never the envelope around it.
 

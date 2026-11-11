@@ -984,12 +984,17 @@ SIGN_IN_REFUSED = "sign_in_refused"
 REFUSED_REASONS = (KEY_REFUSED, SIGN_IN_REFUSED)
 
 
-async def mark_credential_refused(pool, credential_id: str, reason: str) -> bool:
-    """Stamp a credential as refused by its provider (``REFUSED_REASONS``): it reads as disconnected until it's
-    reconnected. Idempotent: an earlier mark stays."""
+# What the provider said when it refused a credential, in its metadata beside the mark.
+REFUSED_SAID_KEY = "refused_said"
+
+
+async def mark_credential_refused(pool, credential_id: str, reason: str, said: Optional[str] = None) -> bool:
+    """Stamp a credential as refused by its provider (``REFUSED_REASONS``), with the provider's own words (``said``)
+    in its metadata: it reads as disconnected until it's reconnected. Idempotent: an earlier mark stays."""
     tag = await pool.execute(
-        "UPDATE credentials SET revoked_at = now(), revoked_reason = $2 WHERE id = $1::uuid AND revoked_at IS NULL",
-        credential_id, reason)
+        "UPDATE credentials SET revoked_at = now(), revoked_reason = $2, "
+        "metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object($3::text, $4::text) "
+        "WHERE id = $1::uuid AND revoked_at IS NULL", credential_id, reason, REFUSED_SAID_KEY, said)
     return tag.endswith(" 1")
 
 
@@ -997,8 +1002,9 @@ async def clear_credential_refused(pool, credential_id: str) -> bool:
     """Lift a refusal NoClick stamped (``mark_credential_refused``) once the provider accepts the credential again;
     any other revocation stays."""
     tag = await pool.execute(
-        "UPDATE credentials SET revoked_at = NULL, revoked_reason = NULL WHERE id = $1::uuid "
-        "AND revoked_reason = ANY($2::text[])", credential_id, list(REFUSED_REASONS))
+        "UPDATE credentials SET revoked_at = NULL, revoked_reason = NULL, metadata = metadata - $3::text "
+        "WHERE id = $1::uuid AND revoked_reason = ANY($2::text[])", credential_id, list(REFUSED_REASONS),
+        REFUSED_SAID_KEY)
     return tag.endswith(" 1")
 
 

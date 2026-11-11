@@ -69,6 +69,11 @@ class ProviderError:
     message: str   # full user-facing rewrite (includes the original detail)
     detail: str    # provider's verbatim text, trimmed
 
+    @property
+    def headline(self) -> str:
+        """NoClick's one line for it (``provider_headline``)."""
+        return provider_headline(self.provider, self.kind)
+
     def action(self) -> Optional[Dict[str, str]]:
         """The one thing the user should do next, for the UI to render as a
         button. None when there is nothing to click — a provider outage or a
@@ -434,6 +439,14 @@ def format_provider_message(provider: str, kind: str, detail: str) -> str:
     trimmed = (detail or "").strip()[:_DETAIL_MAX_LEN]
     tail_label = "Details:" if provider == "noclick" else "Provider message:"
     return f"{body}\n\n{tail_label} {trimmed}" if trimmed else body
+
+
+def provider_headline(provider: str, kind: str) -> str:
+    """NoClick's one line for a classified provider error: its message's first sentence, without how to fix it or the
+    provider's own words (``OpenRouter rejected the API key.``), for a card or a text beside its button."""
+    body = format_provider_message(provider, kind, "")
+    found = re.match(r".+?[.!?](?=\s|$)", body, re.S)
+    return found.group(0) if found else body
 
 
 def classify_provider_error(
