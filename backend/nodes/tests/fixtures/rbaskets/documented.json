@@ -1,0 +1,137 @@
+{
+  "source": "https://raw.githubusercontent.com/darklynx/request-baskets/master/doc/api-swagger.yaml",
+  "examples": {
+    "Version": {
+      "name": "request-baskets",
+      "version": "v1.0.0",
+      "commit": "4cc08434223ff04fbe2e45f2f6eeb9b0a39a279e",
+      "commit_short": "4cc0843",
+      "source_code": "https://github.com/darklynx/request-baskets"
+    },
+    "ServiceStats": {
+      "baskets_count": 28,
+      "empty_baskets_count": 12,
+      "requests_count": 5120,
+      "requests_total_count": 21847,
+      "max_basket_size": 1027,
+      "avg_basket_size": 217,
+      "top_baskets_size": [
+        {
+          "name": "basket22",
+          "requests_count": 62,
+          "requests_total_count": 315,
+          "last_request_date": 1550106301288
+        }
+      ],
+      "top_baskets_recent": [
+        {
+          "name": "basket22",
+          "requests_count": 62,
+          "requests_total_count": 315,
+          "last_request_date": 1550106301288
+        }
+      ]
+    },
+    "BasketInfo": {
+      "name": "basket22",
+      "requests_count": 62,
+      "requests_total_count": 315,
+      "last_request_date": 1550106301288
+    },
+    "Baskets": {
+      "names": [
+        "basket22",
+        "mybasket",
+        "test123"
+      ],
+      "count": 118,
+      "has_more": true
+    },
+    "Config": {
+      "forward_url": "https://myservice.example.com/events-collector",
+      "proxy_response": false,
+      "insecure_tls": false,
+      "expand_path": true,
+      "capacity": 250
+    },
+    "Token": {
+      "token": "MJeIzgE1D6aze..."
+    },
+    "Requests": {
+      "requests": [
+        {
+          "date": 1550300604712,
+          "headers": {
+            "Content-Type": [
+              "application/json"
+            ],
+            "Accept": [
+              "application/json",
+              "application/xml"
+            ],
+            "Connection": [
+              "close"
+            ]
+          },
+          "content_length": 24,
+          "body": "user=abc_test&status=200",
+          "method": "POST",
+          "path": "/basket1/data",
+          "query": "name=basket1&version=12"
+        }
+      ],
+      "count": 200,
+      "total_count": 3023,
+      "has_more": true
+    },
+    "Request": {
+      "date": 1550300604712,
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ],
+        "Accept": [
+          "application/json",
+          "application/xml"
+        ],
+        "Connection": [
+          "close"
+        ]
+      },
+      "content_length": 24,
+      "body": "user=abc_test&status=200",
+      "method": "POST",
+      "path": "/basket1/data",
+      "query": "name=basket1&version=12"
+    },
+    "Headers": {
+      "Content-Type": [
+        "application/json"
+      ],
+      "Accept": [
+        "application/json",
+        "application/xml"
+      ],
+      "Connection": [
+        "close"
+      ]
+    },
+    "Response": {
+      "status": 200,
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ],
+        "Accept": [
+          "application/json",
+          "application/xml"
+        ],
+        "Connection": [
+          "close"
+        ]
+      },
+      "body": "Success",
+      "is_template": false
+    }
+  }
+}
