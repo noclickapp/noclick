@@ -190,3 +190,179 @@ def test_temporal_documented_cli_role_spelling_maps_to_http_enum():
     access = native.AccountAccess(role="finance-admin")
     assert access.model_dump(exclude_none=True) == {"role": "ROLE_FINANCE_ADMIN"}
     assert native.AccountAccess(role="read").role == "ROLE_READ"
+
+
+AUDIT = json.loads(
+    (Path(__file__).parent / "fixtures/temporal/audit_logs.json").read_text()
+)["body"]["logs"]
+
+
+def poll_state(instance):
+    state = {}
+
+    async def update(mutator, **kwargs):
+        new_state, result = mutator(dict(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+
+    instance._update_node_state = update
+    return state
+
+
+@pytest.mark.asyncio
+async def test_temporal_documented_audit_logs_baseline_fresh_dedup_and_agent(
+    monkeypatch,
+):
+    # These are the provider's verbatim example records, including protobuf timestamps.
+    instance = node({"operation": "on_new_audit_log"})
+    state = poll_state(instance)
+    requests = transport(monkeypatch, {"logs": AUDIT[:1]})
+    baseline = await instance.execute({})
+    assert baseline["audit_logs"] == []
+    assert instance.trigger_produced_no_event(baseline)
+    assert native.TemporalNode.resolve_agent_event(baseline) is None
+    assert state["seen_ids"] == [AUDIT[0]["logId"]]
+    request = requests[0]
+    assert request.url.path == "/cloud/audit-logs" and request.method == "GET"
+    assert request.headers["temporal-cloud-api-version"] == native.API_VERSION
+    start = native.datetime.fromisoformat(request.url.params["startTimeInclusive"])
+    end = native.datetime.fromisoformat(request.url.params["endTimeExclusive"])
+    assert end - start == native.timedelta(minutes=60)
+    transport(monkeypatch, {"logs": AUDIT})
+    output = await instance.execute({})
+    assert output["audit_logs"] == AUDIT[1:]
+    assert instance.trigger_emitted_event(output)
+    event = native.TemporalNode.resolve_agent_event(output)
+    for text in ["user@email.com", "UserLogin", AUDIT[1]["logId"], "OK", "acceptance"]:
+        assert text in event["text"]
+    duplicate = await instance.execute({})
+    assert duplicate["audit_logs"] == []
+    assert instance.trigger_produced_no_event(duplicate)
+
+
+@pytest.mark.asyncio
+async def test_temporal_audit_pagination_uses_fixed_time_bounds_before_dedup(
+    monkeypatch,
+):
+    requests = []
+
+    def reply(request):
+        requests.append(request)
+        if len(requests) == 1:
+            return httpx.Response(
+                200, json={"logs": AUDIT[:1], "nextPageToken": "next + token"}
+            )
+        return httpx.Response(200, json={"logs": AUDIT[1:]})
+
+    monkeypatch.setattr(
+        native,
+        "guarded_async_client",
+        lambda **kw: httpx.AsyncClient(transport=httpx.MockTransport(reply), **kw),
+    )
+    instance = node({"operation": "on_new_audit_log", "operation_filter": "UserLogin"})
+    state = poll_state(instance)
+    await instance.execute({})
+    assert state["seen_ids"] == [row["logId"] for row in AUDIT]
+    assert requests[1].url.params["pageToken"] == "next + token"
+    for key in ["startTimeInclusive", "endTimeExclusive"]:
+        assert requests[0].url.params[key] == requests[1].url.params[key]
+    assert "operation_filter" not in requests[0].url.params
+
+
+@pytest.mark.asyncio
+async def test_temporal_audit_filter_and_scope_rebaseline(monkeypatch):
+    from nodes.core.poll_trigger import poll_scope
+
+    instance = node(
+        {"operation": "on_new_audit_log", "operation_filter": "CreateNamespace"}
+    )
+    state = poll_state(instance)
+    transport(monkeypatch, {"logs": AUDIT})
+    await instance.execute({})
+    assert state["seen_ids"] == []
+    original = {"operation": "on_new_audit_log", "operation_filter": "UserLogin"}
+    assert poll_scope(native.TemporalNode, original) == poll_scope(
+        native.TemporalNode, {**original, "label": "New label", "webhook_id": "new-id"}
+    )
+    changed = {**original, "operation_filter": "CreateNamespace"}
+    assert poll_scope(native.TemporalNode, original) != poll_scope(
+        native.TemporalNode, changed
+    )
+    # A different parsed watch scope establishes its own baseline without replaying history.
+    instance = node(original)
+
+    async def update(mutator, **kwargs):
+        replacement, result = mutator(dict(state))
+        if replacement is not None:
+            state.update(replacement)
+        return result
+
+    instance._update_node_state = update
+    output = await instance.execute({})
+    assert output["audit_logs"] == []
+    assert state["seen_ids"] == [row["logId"] for row in AUDIT]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {"logs": {}},
+        {"logs": [1]},
+        {"logs": [{}]},
+        {"logs": [{"logId": 1}]},
+        {"logs": [{"logId": ""}]},
+        {"nextPageToken": 1},
+    ],
+)
+async def test_temporal_invalid_audit_page_never_consumes_state(monkeypatch, payload):
+    transport(monkeypatch, payload)
+    instance = node({"operation": "on_new_audit_log"})
+    state = poll_state(instance)
+    with pytest.raises(ValueError, match="invalid audit log page"):
+        await instance.execute({})
+    assert state == {}
+
+
+@pytest.mark.asyncio
+async def test_temporal_incomplete_audit_scan_never_consumes_state(monkeypatch):
+    instance = node({"operation": "on_new_audit_log"})
+    state = poll_state(instance)
+    transport(monkeypatch, {"logs": AUDIT, "nextPageToken": "repeated"})
+    with pytest.raises(ValueError, match="repeated"):
+        await instance.execute({})
+    assert state == {}
+    counter = 0
+
+    def reply(request):
+        nonlocal counter
+        counter += 1
+        return httpx.Response(200, json={"logs": [], "nextPageToken": str(counter)})
+
+    monkeypatch.setattr(
+        native,
+        "guarded_async_client",
+        lambda **kw: httpx.AsyncClient(transport=httpx.MockTransport(reply), **kw),
+    )
+    with pytest.raises(ValueError, match="20 pages"):
+        await instance.execute({})
+    assert counter == 20 and state == {}
+
+
+def test_temporal_audit_schema_and_config():
+    from nodes.core.poll_trigger import PollTriggerConfigBase
+
+    config = native.OnNewAuditLogConfig()
+    assert isinstance(config, PollTriggerConfigBase)
+    assert config.schedule.frequency == "minutes"
+    field = config.model_fields["operation"].json_schema_extra
+    assert field["x-is-trigger"] is True
+    for values in [
+        {"lookback_minutes": 0},
+        {"lookback_minutes": 43201},
+        {"operation_filter": ""},
+    ]:
+        with pytest.raises(ValidationError):
+            native.OnNewAuditLogConfig(**values)

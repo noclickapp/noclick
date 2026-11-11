@@ -7,7 +7,9 @@ Transport and version: https://docs.temporal.io/ops
 """
 from __future__ import annotations
 
+import json
 import re
+from datetime import datetime, timedelta, timezone
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
 
@@ -16,6 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -438,8 +441,40 @@ class ListApiKeysConfig(_Page):
     owner_type: Literal["OWNER_TYPE_USER", "OWNER_TYPE_SERVICE_ACCOUNT"] | None = None
 
 
+class OnNewAuditLogConfig(PollTriggerConfigBase):
+    """New Temporal Cloud audit log. Requires Account Owner or Global Administrator.
+
+    Baselines existing logs when armed. Monitors control plane activity (namespace,
+    user and access changes), not Workflow or Activity execution events.
+    """
+
+    operation: Literal["on_new_audit_log"] = Field(
+        "on_new_audit_log",
+        json_schema_extra={
+            "ui:hidden": True,
+            "x-is-trigger": True,
+            "x-category": "Triggers",
+            "x-display-name": "New Audit Log",
+        },
+    )
+    lookback_minutes: int = Field(
+        60,
+        ge=1,
+        le=43200,
+        title="Lookback (minutes)",
+        description="Recheck this rolling time window for delayed logs; choose a window longer than the polling interval and expected downtime. Temporal retains 30 days. At most 10,000 logs may be in the window.",
+    )
+    operation_filter: str | None = Field(
+        None,
+        min_length=1,
+        title="Operation filter",
+        description="Optional exact audit operation, e.g. CreateNamespace or UserLogin. Leave empty for all operations. Filtering happens after fetching all pages.",
+    )
+
+
 TemporalConfig = Annotated[
     Union[
+        OnNewAuditLogConfig,
         GetAccountConfig,
         GetCurrentIdentityConfig,
         GetAsyncOperationConfig,
@@ -470,6 +505,17 @@ class TemporalFullConfig(NodeConfig[TemporalConfig, TemporalAPIKeyCredential]):
 
 
 ROUTES = {
+    "on_new_audit_log": {
+        "method": "GET",
+        "path": "/cloud/audit-logs",
+        "query": {
+            "page_size": "pageSize",
+            "page_token": "pageToken",
+            "start_time": "startTimeInclusive",
+            "end_time": "endTimeExclusive",
+        },
+        "body": {},
+    },
     "get_account": {"method": "GET", "path": "/cloud/account", "query": {}, "body": {}},
     "get_current_identity": {
         "method": "GET",
@@ -652,7 +698,7 @@ def _redact(value, secret):
     return value
 
 
-class TemporalNode(WorkflowNode):
+class TemporalNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-temporal"
     connection_evidence = ConnectionEvidence(
         operation="get_current_identity", noun="Temporal Cloud identity"
@@ -662,13 +708,88 @@ class TemporalNode(WorkflowNode):
     def get_config_model(cls):
         return TemporalFullConfig
 
-    async def execute(self, inputs):
-        config = self.config.config
-        credential = self.config.credentials
-        if credential is None:
-            raise ValueError("Connect a Temporal API key")
-        route = ROUTES[config.operation]
-        values = config.model_dump(exclude_none=True)
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or "audit_logs" not in output:
+            return super().resolve_agent_event(output)
+        logs = output["audit_logs"]
+        if not logs:
+            return None
+        lines = [
+            "Temporal Cloud: new control plane audit activity.",
+            "OK records API acceptance; it does not establish completed provisioning.",
+        ]
+        for log in logs[:10]:
+            principal = log.get("principal") or {}
+            who = principal.get("name") or principal.get("id") or "Unknown principal"
+            lines.append(
+                f"- {who}: {log.get('operation') or 'Audit operation'} "
+                f"(status {log.get('status') or 'unspecified'}, log {log['logId']}). "
+                f"Recorded: {json.dumps(log.get('emitTime'))}. "
+                f"Principal: {json.dumps(principal)}. "
+                f"Request/async operation ID: {log.get('asyncOperationId') or 'none'}. "
+                f"Details: {json.dumps(log.get('rawDetails') or {}, ensure_ascii=False)}"
+            )
+        if len(logs) > 10:
+            lines.append(f"And {len(logs) - 10} more logs in the trigger output.")
+        return {
+            "text": "\n".join(lines),
+            "conversation_key": None,
+            "title": "Temporal Cloud audit activity",
+        }
+
+    async def _poll_audit_logs(self, config, credential):
+        # Fix both bounds across pages so newly arriving records cannot move the window.
+        end = datetime.now(timezone.utc)
+        values = {
+            "page_size": 500,
+            "start_time": (
+                end - timedelta(minutes=config.lookback_minutes)
+            ).isoformat(),
+            "end_time": end.isoformat(),
+        }
+        logs = []
+        tokens = set()
+        for _ in range(20):
+            data = await self._request(ROUTES[config.operation], values, credential)
+            rows, token = data.get("logs", []), data.get("nextPageToken", "")
+            if (
+                not isinstance(rows, list)
+                or not isinstance(token, str)
+                or any(
+                    not isinstance(row, dict)
+                    or not isinstance(row.get("logId"), str)
+                    or not row["logId"]
+                    for row in rows
+                )
+            ):
+                raise ValueError("Temporal returned an invalid audit log page")
+            logs.extend(rows)
+            if len(logs) > 10000:
+                raise ValueError(
+                    "Temporal audit window exceeds 10,000 logs; shorten the lookback"
+                )
+            if not token:
+                break
+            if token in tokens:
+                raise ValueError("Temporal repeated an audit log page token")
+            tokens.add(token)
+            values["page_token"] = token
+        else:
+            raise ValueError(
+                "Temporal audit window exceeds 20 pages; shorten the lookback"
+            )
+        selected = [
+            row
+            for row in logs
+            if not config.operation_filter
+            or row.get("operation") == config.operation_filter
+        ]
+        fresh = await self._filter_unseen(selected, lambda row: row["logId"])
+        fresh = _redact(fresh, credential.api_key)
+        return {"status": "success", "audit_logs": fresh, "new_log_count": len(fresh)}
+
+    async def _request(self, route, values, credential):
         path = route["path"]
         for field in re.findall(r"{([^}]+)}", path):
             path = path.replace("{" + field + "}", quote(values[field], safe=""))
@@ -716,6 +837,18 @@ class TemporalNode(WorkflowNode):
             or data.get("errors")
         ):
             raise ValueError("Temporal returned an invalid response or error envelope")
+        return data
+
+    async def execute(self, inputs):
+        config = self.config.config
+        credential = self.config.credentials
+        if credential is None:
+            raise ValueError("Connect a Temporal API key")
+        if isinstance(config, OnNewAuditLogConfig):
+            return await self._poll_audit_logs(config, credential)
+        data = await self._request(
+            ROUTES[config.operation], config.model_dump(exclude_none=True), credential
+        )
         result = {"status": "success", "data": _redact(data, credential.api_key)}
         if config.operation in LIST_KEYS:
             # Protobuf JSON omits empty repeated fields. An absent array is a valid empty page.

@@ -20,8 +20,8 @@ export const TemporalNode: NodeDefinition = {
     category: 'developer-tools',
     label: 'Temporal',
     description:
-        'Manage Temporal Cloud namespaces, users, service accounts and access; inspect provisioning status',
-    keywords: ['Temporal Cloud', 'Cloud Ops', 'namespace', 'orchestration'],
+        'Manage Temporal Cloud namespaces, users, service accounts and access; inspect provisioning status and trigger on new Cloud audit logs',
+    keywords: ['Temporal Cloud', 'Cloud Ops', 'namespace', 'orchestration', 'audit log', 'trigger'],
     Icon: TemporalIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
