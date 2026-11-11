@@ -1,0 +1,72 @@
+{
+  "path": "frontend/public/icons/casebook.svg",
+  "source": "https://gohub.casebook.net/hubfs/logo-raspberry-square-2.png",
+  "found_at": "https://gohub.casebook.net/knowledge (<link rel=\"shortcut icon\">)",
+  "source_kind": "traced from company docs",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "traced from the raster with vtracer 0.6.15 through the accuracy gate (every measure passed; scores below) (the same raster the icon used before, sha256 matching its earlier provenance)",
+    "viewBox cropped to the mark (2% pad)"
+  ],
+  "traced": true,
+  "trace": {
+    "tool": "trace_gate 1 (scripts/trace_gate.py) with vtracer 0.6.15",
+    "setting": {
+      "engine": "vtracer",
+      "mode": "polygon",
+      "corner": 60,
+      "length": 4.0,
+      "splice": 45,
+      "speckle": null,
+      "alphamax": 1.0,
+      "opttol": 0.2,
+      "work": 1024,
+      "precision": 1
+    },
+    "source_url": "https://gohub.casebook.net/hubfs/logo-raspberry-square-2.png",
+    "source_sha256": "a15d04dd87655a5d5839842d9f91911b02cf5ff71a3ef1aba19ece85448c133b",
+    "source_size": [
+      536,
+      510
+    ],
+    "source_palette": [
+      "#e30b5c"
+    ],
+    "background": "transparent",
+    "scores": {
+      "iou": 0.99641,
+      "edge_f": 1.0,
+      "edge_max": 1.0,
+      "edge_p99": 1.0,
+      "edge_chamfer": 0.143,
+      "de3_share": 0.0,
+      "de_p99": 0.0,
+      "ssim": 0.9993,
+      "paths": 1,
+      "nodes": 238,
+      "bytes": 2308,
+      "specks": 0,
+      "foreign_colours": [],
+      "missing_colours": []
+    },
+    "thresholds": {
+      "iou": 0.99,
+      "edge_f": 0.98,
+      "edge_max": 1.5,
+      "de3_share": 0.005,
+      "ssim": 0.97,
+      "specks": 0,
+      "nodes": 2000,
+      "bytes": 24000
+    },
+    "source_limits": {
+      "min_mark_px": 320,
+      "max_colours": 10,
+      "max_off_palette": 0.01,
+      "max_flat_noise": 0.005
+    },
+    "calibration": "work/trace/calib in the icon review (official SVGs rasterised, traced and compared with the vector)"
+  },
+  "license": "Casebook brand mark, used nominatively to identify the connected service; trademark rights remain with Casebook.",
+  "sha256": "18723f0bc5eca3788c31633f74b0eb8faf853c95d85691ee18af61c3dadf47df"
+}

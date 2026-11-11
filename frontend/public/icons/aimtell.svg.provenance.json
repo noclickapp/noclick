@@ -1,0 +1,74 @@
+{
+  "path": "frontend/public/icons/aimtell.svg",
+  "source": "https://aimtell.com/images/icons/icon-512x512.png",
+  "found_at": "https://aimtell.com/",
+  "source_kind": "traced from company site (apple-touch-icon)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "traced from the raster with vtracer 0.6.15 through the accuracy gate (every measure passed; scores below)",
+    "viewBox cropped to the mark (2% pad)"
+  ],
+  "notes": "Aimtell's own icon is its wordmark on a green tile (with 'Powered by DMS'); the trace keeps it as the current icon shows it. note: aimtell.svg fills 100% of its canvas with a coloured tile; fine only if that tile is the brand's own app icon",
+  "traced": true,
+  "trace": {
+    "tool": "trace_gate 1 (scripts/trace_gate.py) with vtracer 0.6.15",
+    "setting": {
+      "engine": "vtracer",
+      "mode": "polygon",
+      "corner": 60,
+      "length": 4.0,
+      "splice": 45,
+      "speckle": null,
+      "alphamax": 1.0,
+      "opttol": 0.2,
+      "work": 2048,
+      "precision": 1
+    },
+    "source_url": "https://aimtell.com/images/icons/icon-512x512.png",
+    "source_sha256": "b8426117eeaf54bc611f73ed90a294970388c91e8faf91eb9939dbb04d53163a",
+    "source_size": [
+      500,
+      500
+    ],
+    "source_palette": [
+      "#009933",
+      "#ffffff"
+    ],
+    "background": "tile",
+    "scores": {
+      "iou": 1.0,
+      "edge_f": 1.0,
+      "edge_max": 1.0,
+      "edge_p99": 1.0,
+      "edge_chamfer": 0.057,
+      "de3_share": 0.0,
+      "de_p99": 0.0,
+      "ssim": 0.9989,
+      "paths": 31,
+      "nodes": 960,
+      "bytes": 8990,
+      "specks": 0,
+      "foreign_colours": [],
+      "missing_colours": []
+    },
+    "thresholds": {
+      "iou": 0.99,
+      "edge_f": 0.98,
+      "edge_max": 1.5,
+      "de3_share": 0.005,
+      "ssim": 0.97,
+      "specks": 0,
+      "nodes": 2000,
+      "bytes": 24000
+    },
+    "source_limits": {
+      "min_mark_px": 320,
+      "max_colours": 10,
+      "max_off_palette": 0.01,
+      "max_flat_noise": 0.005
+    },
+    "calibration": "work/trace/calib in the icon review (official SVGs rasterised, traced and compared with the vector)"
+  },
+  "license": "Aimtell brand mark, used nominatively to identify the connected service; trademark rights remain with Aimtell.",
+  "sha256": "21bbd0e2232a441cc844e651de8e31bc503d0d4088586274004e47e122843cdc"
+}

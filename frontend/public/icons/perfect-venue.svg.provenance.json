@@ -1,0 +1,72 @@
+{
+  "path": "frontend/public/icons/perfect-venue.svg",
+  "source": "https://app.perfectvenue.com/android-chrome-512x512.png",
+  "found_at": "https://d1ncproxrxpof2.cloudfront.net/manifest.json (the web app manifest linked from https://app.perfectvenue.com/login)",
+  "source_kind": "traced from company app/login page (web app manifest icon)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "traced from the raster with vtracer 0.6.15 through the accuracy gate (every measure passed; scores below) (the same raster the icon used before, sha256 matching its earlier provenance)",
+    "viewBox cropped to the mark (2% pad)"
+  ],
+  "traced": true,
+  "trace": {
+    "tool": "trace_gate 1 (scripts/trace_gate.py) with vtracer 0.6.15",
+    "setting": {
+      "engine": "vtracer",
+      "mode": "polygon",
+      "corner": 60,
+      "length": 4.0,
+      "splice": 45,
+      "speckle": null,
+      "alphamax": 1.0,
+      "opttol": 0.2,
+      "work": 2048,
+      "precision": 1
+    },
+    "source_url": "https://app.perfectvenue.com/android-chrome-512x512.png",
+    "source_sha256": "ef54bf2e6b81450358227157acfe1f56803f0b6849d5e0f032af17061bf50c23",
+    "source_size": [
+      512,
+      512
+    ],
+    "source_palette": [
+      "#fe6257"
+    ],
+    "background": "transparent",
+    "scores": {
+      "iou": 0.99755,
+      "edge_f": 1.0,
+      "edge_max": 1.0,
+      "edge_p99": 1.0,
+      "edge_chamfer": 0.03,
+      "de3_share": 0.0,
+      "de_p99": 0.0,
+      "ssim": 0.9979,
+      "paths": 1,
+      "nodes": 690,
+      "bytes": 6936,
+      "specks": 0,
+      "foreign_colours": [],
+      "missing_colours": []
+    },
+    "thresholds": {
+      "iou": 0.99,
+      "edge_f": 0.98,
+      "edge_max": 1.5,
+      "de3_share": 0.005,
+      "ssim": 0.97,
+      "specks": 0,
+      "nodes": 2000,
+      "bytes": 24000
+    },
+    "source_limits": {
+      "min_mark_px": 320,
+      "max_colours": 10,
+      "max_off_palette": 0.01,
+      "max_flat_noise": 0.005
+    },
+    "calibration": "work/trace/calib in the icon review (official SVGs rasterised, traced and compared with the vector)"
+  },
+  "license": "Perfect Venue brand mark, used nominatively to identify the connected service; trademark rights remain with Perfect Venue.",
+  "sha256": "b8fbb4ef7e06408caa4820973bc4f45d471bb843db7b4779a18cdd9349357b7a"
+}
