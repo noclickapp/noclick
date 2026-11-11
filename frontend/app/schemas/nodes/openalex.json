@@ -2063,11 +2063,19 @@
           "list_sources": "#/$defs/OpenAlexListSourcesConfig",
           "list_subfields": "#/$defs/OpenAlexListSubfieldsConfig",
           "list_topics": "#/$defs/OpenAlexListTopicsConfig",
-          "list_works": "#/$defs/OpenAlexListWorksConfig"
+          "list_works": "#/$defs/OpenAlexListWorksConfig",
+          "on_new_or_updated_work": "#/$defs/OpenAlexOnUpdatedWorkConfig",
+          "on_new_work": "#/$defs/OpenAlexOnNewWorkConfig"
         },
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/OpenAlexOnNewWorkConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexOnUpdatedWorkConfig"
+        },
         {
           "$ref": "#/$defs/OpenAlexListWorksConfig"
         },

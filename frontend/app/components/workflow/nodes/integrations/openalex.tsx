@@ -11,7 +11,7 @@ const OpenAlexIcon = ({ className, style }: { className?: string; style?: CSSPro
 
 export const OpenAlexNode: NodeDefinition = {
     type: 'automation-openalex', category: 'content-research', label: 'OpenAlex',
-    description: 'Search scholarly works, authors, institutions, journals, funders and research topics',
+    description: 'Search scholarly data and watch the latest 100 matching works for new records or updates (Member+ or Partner)',
     keywords: ['papers', 'research', 'citations', 'DOI', 'ORCID', 'scholarly'],
     Icon: OpenAlexIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
