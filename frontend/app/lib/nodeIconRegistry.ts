@@ -25,6 +25,24 @@ export function setNodeIconData(data: Record<string, SerializedNodeMeta>): void 
     }
 }
 
+/** Where a page's icon map is when it's a file of its own: `/api/node-icons/<version>`, which the page preloads. */
+export const nodeIconsPath = (version: string) => `/api/node-icons/${version}`;
+const PRELOADED = 'link[rel="preload"][as="fetch"][href*="/api/node-icons/"]';
+
+/** Before the page hydrates: the icon map its HTML preloads (the dashboard's), so its first render has the icons the
+ *  server drew. A page without one has nothing to wait for. */
+export async function loadPreloadedNodeIcons(doc: Document = document): Promise<void> {
+    const href = doc.querySelector<HTMLLinkElement>(PRELOADED)?.href;
+    if (!href) return;
+    try {
+        const res = await fetch(href);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        setNodeIconData(await res.json());
+    } catch (error) {
+        console.error('[nodeIcons] the icon map didn’t load:', error);
+    }
+}
+
 /** Serialized icon metadata for one node type (undefined if not loaded/unknown). */
 export function getNodeIconMeta(type: string): SerializedNodeMeta | undefined {
     return _nodeIconData[type];

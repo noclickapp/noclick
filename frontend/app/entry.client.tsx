@@ -8,6 +8,7 @@ import '~/lib/cryptoRandomUuidPolyfill';
 import { HydratedRouter } from 'react-router/dom';
 import { startTransition, StrictMode } from 'react';
 import { hydrateRoot } from 'react-dom/client';
+import { loadPreloadedNodeIcons } from '~/lib/nodeIconRegistry';
 
 // Prevent crashes from third-party DOM mutations (PostHog, browser extensions,
 // Google Translate, etc.) during React's commit phase. React assumes exclusive
@@ -128,11 +129,14 @@ if (process.env.NODE_ENV === 'development') {
     });
 }
 
-startTransition(() => {
-    hydrateRoot(
-        document,
-        <StrictMode>
-            <HydratedRouter />
-        </StrictMode>
-    );
-});
+// A page whose icon map is a file of its own (the dashboard's) hydrates with it, as the server rendered.
+void loadPreloadedNodeIcons().then(() =>
+    startTransition(() => {
+        hydrateRoot(
+            document,
+            <StrictMode>
+                <HydratedRouter />
+            </StrictMode>
+        );
+    })
+);

@@ -14,6 +14,7 @@
 // is pre-rendered to an HTML string here and the client renders it via
 // <SerializedIcon> (app/components/shared/SerializedIcon) — so the registry stays
 // entirely server-side and the client bundle carries only serialized data.
+import { createHash } from 'node:crypto';
 import '~/lib/nodeSchemas.server';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement, type ComponentType } from 'react';
@@ -236,6 +237,18 @@ let _all: Record<string, SerializedNodeMeta> | null = null;
  *  every node's credential schema, about 200 ms, which every dashboard document paid. */
 export function getAllSerializedNodeMeta(): Record<string, SerializedNodeMeta> {
     return (_all ??= buildAllSerializedNodeMeta());
+}
+
+let _file: { version: string; body: string } | null = null;
+
+/** The icon map as a file of its own (`routes/api/node-icons.$version`): its JSON, and a version naming it (a digest
+ *  of that JSON), under which a browser keeps it for good. */
+export function getNodeIconsFile(): { version: string; body: string } {
+    if (!_file) {
+        const body = JSON.stringify(getAllSerializedNodeMeta());
+        _file = { version: createHash('sha256').update(body).digest('hex').slice(0, 16), body };
+    }
+    return _file;
 }
 
 function buildAllSerializedNodeMeta(): Record<string, SerializedNodeMeta> {
