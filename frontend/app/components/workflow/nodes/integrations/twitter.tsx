@@ -6,14 +6,10 @@ import type { CSSProperties } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const XIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <>
-        <img src="/icons/twitter.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' }} />
-        <img src="/icons/twitter-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' }} />
-    </>
+    <ThemedBrandImg light="/icons/twitter.svg" dark="/icons/twitter-dark.svg" className={className} style={style} />
 );
 
 const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };

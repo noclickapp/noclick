@@ -7,17 +7,13 @@ import type { CSSProperties } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };
 
 // WordPress's W mark, with a white file for dark mode
 const WordPressIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <>
-        <img src="/icons/wordpress.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' }} />
-        <img src="/icons/wordpress-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' }} />
-    </>
+    <ThemedBrandImg light="/icons/wordpress.svg" dark="/icons/wordpress-dark.svg" className={className} style={style} />
 );
 
 const WordPressNodeComponent = (props: NodeProps) => {

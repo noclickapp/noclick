@@ -5,29 +5,14 @@ import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };
 
 // Create icon component from SVG file
 const PostgresIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <>
-            <img
-                ref={ref}
-                src="/icons/postgres.svg"
-                alt=""
-                className={`${className ?? ''} dark:hidden`}
-                style={style}
-                {...props}
-            />
-            <img
-                src="/icons/postgres-dark.svg"
-                alt=""
-                className={`${className ?? ''} hidden dark:block`}
-                style={style}
-                {...props}
-            />
-        </>
+        <ThemedBrandImg light="/icons/postgres.svg" dark="/icons/postgres-dark.svg" className={className} style={style} {...props} ref={ref} />
     )
 );
 PostgresIcon.displayName = 'PostgresIcon';

@@ -6,16 +6,12 @@ import type { CSSProperties } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 // TikTok's note from its own site, with its black top layer for light mode; source and edits are in the provenance files.
 // Rendered inline so width/height/style/className pass-through work correctly.
 const TikTokIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <>
-        <img src="/icons/tiktok.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' }} />
-        <img src="/icons/tiktok-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' }} />
-    </>
+    <ThemedBrandImg light="/icons/tiktok.svg" dark="/icons/tiktok-dark.svg" className={className} style={style} />
 );
 
 const DIMENSIONS = { width: 90, height: 90, iconSize: 58 };
