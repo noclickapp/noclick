@@ -1,0 +1,75 @@
+{
+  "path": "frontend/public/icons/beatapi-dark.svg",
+  "source": "https://beatapi.io/logo-dark.png",
+  "found_at": "https://beatapi.io/ (header switches /logo-light.webp and /logo-dark.webp by theme; the same-named PNGs sit at the site root) and https://docs.beatapi.io/ (Fern light/dark logos)",
+  "source_kind": "traced from company site (header logo)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "traced from the raster with vtracer 0.6.15 through the accuracy gate (every measure passed; scores below) (the same raster the icon used before, sha256 matching its earlier provenance)",
+    "viewBox cropped to the mark (2% pad)",
+    "the brand's own file for dark backgrounds, traced through the same gate (found at https://beatapi.io/ (header switches /logo-light.webp and /logo-dark.webp by theme; the same-named PNGs sit at the site root) and https://docs.beatapi.io/ (Fern light/dark logos))"
+  ],
+  "variant": "dark mode",
+  "traced": true,
+  "trace": {
+    "tool": "trace_gate 1 (scripts/trace_gate.py) with vtracer 0.6.15",
+    "setting": {
+      "engine": "vtracer",
+      "mode": "spline",
+      "corner": 60,
+      "length": 4.0,
+      "splice": 45,
+      "speckle": null,
+      "alphamax": 1.0,
+      "opttol": 0.2,
+      "work": 1024,
+      "precision": 2
+    },
+    "source_url": "https://beatapi.io/logo-dark.png",
+    "source_sha256": "8f3611113890efc3ad2aee497b77624888f654e98dd452dee49ea0c73260793e",
+    "source_size": [
+      1024,
+      1024
+    ],
+    "source_palette": [
+      "#f6f9ff",
+      "#3784ff"
+    ],
+    "background": "transparent",
+    "scores": {
+      "iou": 0.99493,
+      "edge_f": 1.0,
+      "edge_max": 1.0,
+      "edge_p99": 1.0,
+      "edge_chamfer": 0.064,
+      "de3_share": 0.0,
+      "de_p99": 0.0,
+      "ssim": 0.999,
+      "paths": 7,
+      "nodes": 301,
+      "bytes": 12011,
+      "specks": 0,
+      "foreign_colours": [],
+      "missing_colours": []
+    },
+    "thresholds": {
+      "iou": 0.99,
+      "edge_f": 0.98,
+      "edge_max": 1.5,
+      "de3_share": 0.005,
+      "ssim": 0.97,
+      "specks": 0,
+      "nodes": 2000,
+      "bytes": 24000
+    },
+    "source_limits": {
+      "min_mark_px": 320,
+      "max_colours": 10,
+      "max_off_palette": 0.01,
+      "max_flat_noise": 0.005
+    },
+    "calibration": "work/trace/calib in the icon review (official SVGs rasterised, traced and compared with the vector)"
+  },
+  "license": "BeatAPI brand mark, used nominatively to identify the connected service; trademark rights remain with BeatAPI.",
+  "sha256": "1b9ced77cff43ab6eff4f945749dde8cc93f211be3eaa687487f77a0fed2aeca"
+}

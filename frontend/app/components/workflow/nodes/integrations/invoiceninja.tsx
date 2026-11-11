@@ -3,10 +3,10 @@ import type { CSSProperties } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const InvoiceNinjaIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/invoiceninja-brand.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <ThemedBrandImg light="/icons/invoiceninja-brand.svg" dark="/icons/invoiceninja-brand-dark.svg" className={className} style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const InvoiceNinjaNode: NodeDefinition = {

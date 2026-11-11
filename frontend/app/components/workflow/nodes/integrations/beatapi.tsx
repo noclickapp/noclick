@@ -11,7 +11,7 @@ const BeatapiIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <ThemedBrandImg light="/icons/beatapi.png" dark="/icons/beatapi-dark.png" className={className} style={style} {...props} ref={ref} />
+    <ThemedBrandImg {...props} light="/icons/beatapi.svg" dark="/icons/beatapi-dark.svg" className={className} style={style} ref={ref} />
 ));
 BeatapiIcon.displayName = 'BeatapiIcon';
 

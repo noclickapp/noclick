@@ -1,0 +1,72 @@
+{
+  "path": "frontend/public/icons/just-one-api.svg",
+  "source": "https://docs.justoneapi.com/logo/logo.png?v=2",
+  "found_at": "https://docs.justoneapi.com/en/ (VitePress site logo)",
+  "source_kind": "traced from company docs",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "traced from the raster with vtracer 0.6.15 through the accuracy gate (every measure passed; scores below) (the same raster the icon used before, sha256 matching its earlier provenance)",
+    "viewBox cropped to the mark (2% pad)"
+  ],
+  "traced": true,
+  "trace": {
+    "tool": "trace_gate 1 (scripts/trace_gate.py) with vtracer 0.6.15",
+    "setting": {
+      "engine": "vtracer",
+      "mode": "polygon",
+      "corner": 60,
+      "length": 4.0,
+      "splice": 45,
+      "speckle": null,
+      "alphamax": 1.0,
+      "opttol": 0.2,
+      "work": 2048,
+      "precision": 1
+    },
+    "source_url": "https://docs.justoneapi.com/logo/logo.png?v=2",
+    "source_sha256": "d3ee5ccd227a1816aa5ba475a9216b17ff5ce231401942c5bb9cd699df02dcf8",
+    "source_size": [
+      1200,
+      1200
+    ],
+    "source_palette": [
+      "#2ec4b6"
+    ],
+    "background": "transparent",
+    "scores": {
+      "iou": 0.99493,
+      "edge_f": 1.0,
+      "edge_max": 1.0,
+      "edge_p99": 1.0,
+      "edge_chamfer": 0.061,
+      "de3_share": 0.0,
+      "de_p99": 0.0,
+      "ssim": 0.9997,
+      "paths": 1,
+      "nodes": 602,
+      "bytes": 5864,
+      "specks": 0,
+      "foreign_colours": [],
+      "missing_colours": []
+    },
+    "thresholds": {
+      "iou": 0.99,
+      "edge_f": 0.98,
+      "edge_max": 1.5,
+      "de3_share": 0.005,
+      "ssim": 0.97,
+      "specks": 0,
+      "nodes": 2000,
+      "bytes": 24000
+    },
+    "source_limits": {
+      "min_mark_px": 320,
+      "max_colours": 10,
+      "max_off_palette": 0.01,
+      "max_flat_noise": 0.005
+    },
+    "calibration": "work/trace/calib in the icon review (official SVGs rasterised, traced and compared with the vector)"
+  },
+  "license": "Just One API brand mark, used nominatively to identify the connected service; trademark rights remain with Just One API.",
+  "sha256": "def2d37cf27eb0c6e75a815d7d35335edf099439a3d88e7b1893173e5eb874da"
+}

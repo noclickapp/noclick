@@ -2,6 +2,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 import { JWPlayerNode } from '~/components/workflow/nodes/integrations/jwplayer';
 import { NODE_DEFINITION_FILES } from '~/components/workflow/nodes/nodeDefinitions';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
@@ -35,14 +36,18 @@ describe('JWX native property metadata', () => {
         expect(data.harmlessSidecar).toBe('kept');
         expect(JSON.stringify(fixture)).not.toContain('"api_secret":');
     });
-    it('preserves the current official PNG bytes and contained-image surface', () => {
-        const icon = readFileSync(new URL('../../public/icons/jwplayer.png', import.meta.url));
-        expect(createHash('sha256').update(icon).digest('hex')).toBe(fixture.icon.sha256);
-        expect(icon.readUInt32BE(16)).toBe(fixture.icon.width);
-        expect(icon.readUInt32BE(20)).toBe(fixture.icon.height);
+    it('shows the traced official mark, one file per theme, as a contained image', () => {
+        for (const [file, variant] of [[fixture.icon.light, 'light mode'], [fixture.icon.dark, 'dark mode']]) {
+            const icon = readFileSync(new URL(`../../public${file}`, import.meta.url));
+            const provenance = JSON.parse(readFileSync(new URL(`../../public${file}.provenance.json`, import.meta.url), 'utf8'));
+            expect(createHash('sha256').update(icon).digest('hex')).toBe(provenance.sha256);
+            expect(provenance.traced).toBe(true);
+            expect(provenance.variant).toBe(variant);
+        }
         const render = (JWPlayerNode.Icon as any).render({ style: { width: 48 } }, null);
-        expect(render.type).toBe('img');
-        expect(render.props.src).toBe(fixture.icon.path);
+        expect(render.type).toBe(ThemedBrandImg);
+        expect(render.props.light).toBe(fixture.icon.light);
+        expect(render.props.dark).toBe(fixture.icon.dark);
         expect(render.props.style).toEqual({ objectFit: 'contain', width: 48 });
     });
     it('automatically selects an owned native credential, excluding foreign descriptors', () => {

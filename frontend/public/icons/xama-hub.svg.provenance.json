@@ -1,0 +1,75 @@
+{
+  "path": "frontend/public/icons/xama-hub.svg",
+  "source": "https://xamatech.com/favicon.ico",
+  "found_at": "https://xamatech.com/",
+  "source_kind": "traced from company site (favicon)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "traced from the raster with vtracer 0.6.15 through the accuracy gate (every measure passed; scores below)",
+    "viewBox cropped to the mark (2% pad)"
+  ],
+  "variant": "light mode",
+  "traced": true,
+  "trace": {
+    "tool": "trace_gate 1 (scripts/trace_gate.py) with vtracer 0.6.15",
+    "setting": {
+      "engine": "vtracer",
+      "mode": "spline",
+      "corner": 60,
+      "length": 4.0,
+      "splice": 45,
+      "speckle": null,
+      "alphamax": 1.0,
+      "opttol": 0.2,
+      "work": 1024,
+      "precision": 2
+    },
+    "source_url": "https://xamatech.com/favicon.ico",
+    "source_sha256": "b52b9abef93853c568163ed8b54c385d9be0d1e8ca9c04ad80dc8b6bc28f47d5",
+    "source_size": [
+      901,
+      901
+    ],
+    "source_palette": [
+      "#000000",
+      "#e04790",
+      "#ffffff"
+    ],
+    "background": "transparent",
+    "scores": {
+      "iou": 0.99821,
+      "edge_f": 1.0,
+      "edge_max": 1.0,
+      "edge_p99": 1.0,
+      "edge_chamfer": 0.121,
+      "de3_share": 0.0,
+      "de_p99": 0.0,
+      "ssim": 0.9906,
+      "paths": 4,
+      "nodes": 334,
+      "bytes": 13704,
+      "specks": 0,
+      "foreign_colours": [],
+      "missing_colours": []
+    },
+    "thresholds": {
+      "iou": 0.99,
+      "edge_f": 0.98,
+      "edge_max": 1.5,
+      "de3_share": 0.005,
+      "ssim": 0.97,
+      "specks": 0,
+      "nodes": 2000,
+      "bytes": 24000
+    },
+    "source_limits": {
+      "min_mark_px": 320,
+      "max_colours": 10,
+      "max_off_palette": 0.01,
+      "max_flat_noise": 0.005
+    },
+    "calibration": "work/trace/calib in the icon review (official SVGs rasterised, traced and compared with the vector)"
+  },
+  "license": "Xama Hub brand mark, used nominatively to identify the connected service; trademark rights remain with Xama Hub.",
+  "sha256": "6c732f22c12e569ce28c5b8d10a1e377144135e77c78b43c9b672133eb433e5f"
+}

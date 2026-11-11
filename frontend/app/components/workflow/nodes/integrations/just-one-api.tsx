@@ -12,7 +12,7 @@ const JustOneApiIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/just-one-api.png"
+        src="/icons/just-one-api.svg"
         alt=""
         aria-hidden="true"
         className={className}

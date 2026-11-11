@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const XamaHubIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/xama-hub.png" dark="/icons/xama-hub-dark.png" className={className} style={style} />
+    <ThemedBrandImg light="/icons/xama-hub.svg" dark="/icons/xama-hub-dark.svg" className={className} style={style} />
 );
 
 export const XamaHubNode: NodeDefinition = {

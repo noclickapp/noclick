@@ -2,11 +2,11 @@ import { forwardRef, memo } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const JWPlayerIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/jwplayer.png" alt="" className={className}
-            style={{ objectFit: 'contain', ...style }} {...props} />
+        <ThemedBrandImg {...props} light="/icons/jwplayer.svg" dark="/icons/jwplayer-dark.svg" ref={ref} className={className} style={{ objectFit: 'contain', ...style }} />
     )
 );
 JWPlayerIcon.displayName = 'JWPlayerIcon';
