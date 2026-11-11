@@ -40,7 +40,7 @@ class SuprSendAPIKeyCredential(BaseModel):
     @field_validator("api_key", mode="before")
     @classmethod
     def key(cls, value):
-        value = clean_secret(value, field_name="API key")
+        value = clean_secret(value, field_name="API key", key=True)
         if any(c.isspace() for c in value):
             raise ValueError("Paste the API key without the Bearer prefix")
         return value

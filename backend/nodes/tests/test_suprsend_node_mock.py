@@ -64,6 +64,11 @@ def test_reject_invalid_manual_credentials(credential):
 def test_manual_credential_type_has_default():
     assert native.SuprSendAPIKeyCredential(api_key='synthetic-key').credential_type == 'suprsend_api_key'
 
+@pytest.mark.parametrize('value', ['issued–key', 'issued\u200bkey', 'https://example.com/settings/tokens'])
+def test_credential_class_itself_rejects_non_ascii_or_address_keys(value):
+    with pytest.raises(ValueError):
+        native.SuprSendAPIKeyCredential(api_key=value)
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize('status', [301, 401, 403, 404, 422, 429, 500])
 async def test_rejection_is_not_success_and_key_is_redacted(monkeypatch, status):
