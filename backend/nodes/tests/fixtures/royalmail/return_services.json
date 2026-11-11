@@ -1,0 +1,19 @@
+{
+  "source": "https://api.parcel.royalmail.com/doc/v1/click-and-drop-api-v1.yaml",
+  "body": {
+    "services": [
+      {
+        "carrierGuid": "e90e87c8-4ea6-49ec-a387-64ba37f66d84",
+        "carrierServiceGuid": "3824a10c-1a2b-4e66-b82f-efa236a86cd9",
+        "serviceName": "Tracked Returns 24",
+        "serviceCode": "TSN"
+      },
+      {
+        "carrierGuid": "e90e87c8-4ea6-49ec-a387-64ba37f66d84",
+        "carrierServiceGuid": "262a663e-633c-4507-a834-fa69a6b7d112",
+        "serviceName": "Tracked Returns 48",
+        "serviceCode": "TSS"
+      }
+    ]
+  }
+}

@@ -1,0 +1,2970 @@
+{
+  "$defs": {
+    "CreateOrders": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_orders",
+          "default": "create_orders",
+          "title": "Create Orders",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "items": {
+          "description": "Orders with recipient, orderDate, subtotal, shippingCostCharged and total. Providing addressBookReference or product SKU plus details can update the account's address book or product catalogue.",
+          "items": {
+            "$ref": "#/$defs/RMCreateOrderRequest"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "CreateOrders",
+      "type": "object"
+    },
+    "CreateReturn": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_return",
+          "default": "create_return",
+          "title": "Create Return Shipment (OBA)",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service": {
+          "$ref": "#/$defs/RMServiceCode"
+        },
+        "shipment": {
+          "$ref": "#/$defs/RMShipment"
+        }
+      },
+      "required": [
+        "service",
+        "shipment"
+      ],
+      "title": "CreateReturn",
+      "type": "object"
+    },
+    "DeleteOrders": {
+      "additionalProperties": false,
+      "properties": {
+        "orderIdentifiers": {
+          "description": "Up to 100 IDs or quoted order references, separated by semicolons. Example: 1001;\"my-reference\". Do not percent-encode; NoClick encodes references.",
+          "minLength": 1,
+          "title": "Orderidentifiers",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_orders",
+          "default": "delete_orders",
+          "description": "Permanently delete the selected orders.",
+          "title": "Delete Orders",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "orderIdentifiers"
+      ],
+      "title": "DeleteOrders",
+      "type": "object"
+    },
+    "GetLabels": {
+      "additionalProperties": false,
+      "properties": {
+        "orderIdentifiers": {
+          "description": "Up to 100 IDs or quoted order references, separated by semicolons. Example: 1001;\"my-reference\". Do not percent-encode; NoClick encodes references.",
+          "minLength": 1,
+          "title": "Orderidentifiers",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_labels",
+          "default": "get_labels",
+          "title": "Get Labels or Documents (OBA)",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "documentType": {
+          "default": "postageLabel",
+          "enum": [
+            "postageLabel",
+            "despatchNote",
+            "CN22",
+            "CN23",
+            "commercialInvoice"
+          ],
+          "title": "Documenttype",
+          "type": "string"
+        },
+        "includeReturnsLabel": {
+          "default": false,
+          "title": "Includereturnslabel",
+          "type": "boolean"
+        },
+        "includeCN": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includecn"
+        },
+        "includeCommercialInvoice": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includecommercialinvoice"
+        }
+      },
+      "required": [
+        "orderIdentifiers"
+      ],
+      "title": "GetLabels",
+      "type": "object"
+    },
+    "GetManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_manifest",
+          "default": "get_manifest",
+          "title": "Get Manifest",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "manifestIdentifier": {
+          "description": "Manifest number returned by Manifest Eligible Orders.",
+          "title": "Manifestidentifier",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manifestIdentifier"
+      ],
+      "title": "GetManifest",
+      "type": "object"
+    },
+    "GetOrderDetails": {
+      "additionalProperties": false,
+      "properties": {
+        "orderIdentifiers": {
+          "description": "Up to 100 IDs or quoted order references, separated by semicolons. Example: 1001;\"my-reference\". Do not percent-encode; NoClick encodes references.",
+          "minLength": 1,
+          "title": "Orderidentifiers",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_order_details",
+          "default": "get_order_details",
+          "title": "Get Specific Order Details (ChannelShipper)",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "orderIdentifiers"
+      ],
+      "title": "GetOrderDetails",
+      "type": "object"
+    },
+    "GetOrders": {
+      "additionalProperties": false,
+      "properties": {
+        "orderIdentifiers": {
+          "description": "Up to 100 IDs or quoted order references, separated by semicolons. Example: 1001;\"my-reference\". Do not percent-encode; NoClick encodes references.",
+          "minLength": 1,
+          "title": "Orderidentifiers",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_orders",
+          "default": "get_orders",
+          "title": "Get Specific Orders",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "orderIdentifiers"
+      ],
+      "title": "GetOrders",
+      "type": "object"
+    },
+    "ListCarriers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_carriers",
+          "default": "list_carriers",
+          "title": "List Account Carriers",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCarriers",
+      "type": "object"
+    },
+    "ListOLPServices": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_olp_services",
+          "default": "list_olp_services",
+          "title": "List Royal Mail OLP Services",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "country": {
+          "description": "ISO 3166-1 alpha-3 destination, for example GBR.",
+          "maxLength": 3,
+          "minLength": 3,
+          "title": "Country",
+          "type": "string"
+        },
+        "weight": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Weight"
+        },
+        "postcode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postcode"
+        },
+        "packageFormat": {
+          "anyOf": [
+            {
+              "enum": [
+                "Letter",
+                "LargeLetter",
+                "SmallParcel",
+                "MediumParcel",
+                "LargeParcel"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Packageformat",
+          "enum": [
+            "Letter",
+            "LargeLetter",
+            "SmallParcel",
+            "MediumParcel",
+            "LargeParcel"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "country"
+      ],
+      "title": "ListOLPServices",
+      "type": "object"
+    },
+    "ListOrderDetails": {
+      "additionalProperties": false,
+      "description": "ChannelShipper accounts only.",
+      "properties": {
+        "operation": {
+          "const": "list_order_details",
+          "default": "list_order_details",
+          "title": "List Order Details (ChannelShipper)",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "pageSize": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "startDateTime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Startdatetime"
+        },
+        "endDateTime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enddatetime"
+        },
+        "continuationToken": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuationtoken"
+        }
+      },
+      "title": "ListOrderDetails",
+      "type": "object"
+    },
+    "ListOrders": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "List Orders",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "pageSize": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "startDateTime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Startdatetime"
+        },
+        "endDateTime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enddatetime"
+        },
+        "continuationToken": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuationtoken"
+        }
+      },
+      "title": "ListOrders",
+      "type": "object"
+    },
+    "ListReturnServices": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_return_services",
+          "default": "list_return_services",
+          "title": "List Return Services (OBA)",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListReturnServices",
+      "type": "object"
+    },
+    "ListServices": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "List Shipping Services",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "destinationCountryCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Destinationcountrycode"
+        },
+        "destinationPostcode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Destinationpostcode"
+        },
+        "packagingFormat": {
+          "anyOf": [
+            {
+              "enum": [
+                "Letter",
+                "LargeLetter",
+                "SmallParcel",
+                "MediumParcel",
+                "Parcel",
+                "Documents"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Packagingformat",
+          "enum": [
+            "Letter",
+            "LargeLetter",
+            "SmallParcel",
+            "MediumParcel",
+            "Parcel",
+            "Documents"
+          ],
+          "x-enum-searchable": true
+        },
+        "packageWeight": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Packageweight"
+        },
+        "carrierGuid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Carrierguid"
+        },
+        "shippingAccountName": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shippingaccountname"
+        }
+      },
+      "title": "ListServices",
+      "type": "object"
+    },
+    "ManifestOrders": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "manifest_orders",
+          "default": "manifest_orders",
+          "title": "Manifest Eligible Orders",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "shippingAccountName": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when the account has multiple shipping accounts. Manifests all eligible orders in Label Generated and Despatched statuses.",
+          "title": "Shippingaccountname"
+        }
+      },
+      "title": "ManifestOrders",
+      "type": "object"
+    },
+    "OnNewOrder": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_order",
+          "default": "on_new_order",
+          "title": "On New Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        },
+        "startDateTime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional lower bound for order filtering. The first complete poll establishes a baseline without emitting historical orders.",
+          "title": "Startdatetime"
+        }
+      },
+      "title": "OnNewOrder",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "RMAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 25,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "firstName": {
+          "maxLength": 150,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastName": {
+          "maxLength": 150,
+          "title": "Lastname",
+          "type": "string"
+        },
+        "companyName": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyname"
+        },
+        "addressLine1": {
+          "maxLength": 250,
+          "title": "Addressline1",
+          "type": "string"
+        },
+        "addressLine2": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addressline2"
+        },
+        "addressLine3": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addressline3"
+        },
+        "city": {
+          "maxLength": 100,
+          "title": "City",
+          "type": "string"
+        },
+        "county": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "County"
+        },
+        "postcode": {
+          "maxLength": 25,
+          "title": "Postcode",
+          "type": "string"
+        },
+        "country": {
+          "maxLength": 50,
+          "title": "Country",
+          "type": "string"
+        },
+        "countryIsoCode": {
+          "description": "ISO 3166-1 alpha-3 country code (e.g. GBR, USA)",
+          "maxLength": 3,
+          "title": "Countryisocode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName",
+        "addressLine1",
+        "city",
+        "postcode",
+        "country",
+        "countryIsoCode"
+      ],
+      "title": "RMAddress",
+      "type": "object"
+    },
+    "RMAddressRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "fullName": {
+          "anyOf": [
+            {
+              "maxLength": 210,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fullname"
+        },
+        "companyName": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyname"
+        },
+        "addressLine1": {
+          "maxLength": 100,
+          "title": "Addressline1",
+          "type": "string"
+        },
+        "addressLine2": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addressline2"
+        },
+        "addressLine3": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addressline3"
+        },
+        "city": {
+          "maxLength": 100,
+          "title": "City",
+          "type": "string"
+        },
+        "county": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "County"
+        },
+        "postcode": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postcode"
+        },
+        "countryCode": {
+          "maxLength": 3,
+          "title": "Countrycode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "addressLine1",
+        "city",
+        "countryCode"
+      ],
+      "title": "RMAddressRequest",
+      "type": "object"
+    },
+    "RMBillingDetailsRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RMAddressRequest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "phoneNumber": {
+          "anyOf": [
+            {
+              "maxLength": 25,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phonenumber"
+        },
+        "emailAddress": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emailaddress"
+        }
+      },
+      "title": "RMBillingDetailsRequest",
+      "type": "object"
+    },
+    "RMCreateOrderRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "orderReference": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orderreference"
+        },
+        "isRecipientABusiness": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates if the recipient is a business or not. Mandatory for Business senders on orders shipping from Great Britain to Northern Ireland, which require additional information for B2B shipments. (Business senders are OBA accounts and OLP accounts declaring themselves as a Business sender).",
+          "title": "Isrecipientabusiness"
+        },
+        "recipient": {
+          "$ref": "#/$defs/RMRecipientDetailsRequest"
+        },
+        "sender": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RMSenderDetailsRequest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "billing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RMBillingDetailsRequest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "packages": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/RMShipmentPackageRequest"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Packages"
+        },
+        "orderDate": {
+          "format": "date-time",
+          "title": "Orderdate",
+          "type": "string"
+        },
+        "plannedDespatchDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Planneddespatchdate"
+        },
+        "specialInstructions": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Specialinstructions"
+        },
+        "subtotal": {
+          "description": "The total value of all the goods in the order, excluding tax. This should not include retail shipping costs",
+          "maximum": 999999,
+          "minimum": 0,
+          "title": "Subtotal",
+          "type": "number"
+        },
+        "shippingCostCharged": {
+          "description": "The shipping costs you charged to your customer",
+          "maximum": 999999,
+          "minimum": 0,
+          "title": "Shippingcostcharged",
+          "type": "number"
+        },
+        "otherCosts": {
+          "anyOf": [
+            {
+              "maximum": 999999,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Othercosts"
+        },
+        "customsDutyCosts": {
+          "anyOf": [
+            {
+              "maximum": 99999.99,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Customs Duty Costs is only supported in DDP (Delivery Duty Paid) services",
+          "title": "Customsdutycosts"
+        },
+        "total": {
+          "description": "The sum of order subtotal, tax and retail shipping costs",
+          "maximum": 999999,
+          "minimum": 0,
+          "title": "Total",
+          "type": "number"
+        },
+        "currencyCode": {
+          "anyOf": [
+            {
+              "maxLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currencycode"
+        },
+        "deliveryTerm": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies how customs duties, taxes, and handling fees are paid for international shipments. Accepted values are  DDP, IOSS_DDP, DDU_DAP, IOSS_DDU, DTP, IOSS_DTP .   N.B. If no value is provided, the delivery term saved on your account is used, or DDU_DAP if none is saved.",
+          "title": "Deliveryterm"
+        },
+        "customsDeclarationCategory": {
+          "anyOf": [
+            {
+              "enum": [
+                "gift",
+                "commercialSample",
+                "documents",
+                "other",
+                "returnedGoods",
+                "commercialSaleOfGoods",
+                "eCommerceSaleOfGoods"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Customs Declaration Category for the whole order. When provided it is used instead of the product level categories.",
+          "title": "Customsdeclarationcategory",
+          "enum": [
+            "gift",
+            "commercialSample",
+            "documents",
+            "other",
+            "returnedGoods",
+            "commercialSaleOfGoods",
+            "eCommerceSaleOfGoods"
+          ],
+          "x-enum-searchable": true
+        },
+        "postageDetails": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RMPostageDetailsRequest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/RMTagRequest"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RMLabelGenerationRequest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "orderTax": {
+          "anyOf": [
+            {
+              "maximum": 999999,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The total tax charged for the order",
+          "title": "Ordertax"
+        },
+        "containsDangerousGoods": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates that the package contents contain a dangerous goods item",
+          "title": "Containsdangerousgoods"
+        },
+        "dangerousGoodsUnCode": {
+          "anyOf": [
+            {
+              "maxLength": 4,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UN Code of the dangerous goods",
+          "title": "Dangerousgoodsuncode"
+        },
+        "dangerousGoodsDescription": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the dangerous goods",
+          "title": "Dangerousgoodsdescription"
+        },
+        "dangerousGoodsQuantity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Quantity or volume of the dangerous goods",
+          "title": "Dangerousgoodsquantity"
+        },
+        "importer": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RMImporter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "recipient",
+        "orderDate",
+        "subtotal",
+        "shippingCostCharged",
+        "total"
+      ],
+      "title": "RMCreateOrderRequest",
+      "type": "object"
+    },
+    "RMCustomerReference": {
+      "additionalProperties": false,
+      "properties": {
+        "reference": {
+          "maxLength": 50,
+          "title": "Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reference"
+      ],
+      "title": "RMCustomerReference",
+      "type": "object"
+    },
+    "RMDimensionsRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "heightInMms": {
+          "title": "Heightinmms",
+          "type": "integer"
+        },
+        "widthInMms": {
+          "title": "Widthinmms",
+          "type": "integer"
+        },
+        "depthInMms": {
+          "title": "Depthinmms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "heightInMms",
+        "widthInMms",
+        "depthInMms"
+      ],
+      "title": "RMDimensionsRequest",
+      "type": "object"
+    },
+    "RMImporter": {
+      "additionalProperties": false,
+      "properties": {
+        "companyName": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyname"
+        },
+        "addressLine1": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addressline1"
+        },
+        "addressLine2": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addressline2"
+        },
+        "addressLine3": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addressline3"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "postcode": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postcode"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "businessName": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Businessname"
+        },
+        "contactName": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contactname"
+        },
+        "phoneNumber": {
+          "anyOf": [
+            {
+              "maxLength": 25,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phonenumber"
+        },
+        "emailAddress": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emailaddress"
+        },
+        "vatNumber": {
+          "anyOf": [
+            {
+              "maxLength": 15,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vatnumber"
+        },
+        "eoriNumber": {
+          "anyOf": [
+            {
+              "maxLength": 18,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eorinumber"
+        },
+        "isABusiness": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isabusiness"
+        }
+      },
+      "title": "RMImporter",
+      "type": "object"
+    },
+    "RMLabelGenerationRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "includeLabelInResponse": {
+          "title": "Includelabelinresponse",
+          "type": "boolean"
+        },
+        "includeCN": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includecn"
+        },
+        "includeReturnsLabel": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includereturnslabel"
+        }
+      },
+      "required": [
+        "includeLabelInResponse"
+      ],
+      "title": "RMLabelGenerationRequest",
+      "type": "object"
+    },
+    "RMPostageDetailsRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "sendNotificationsTo": {
+          "anyOf": [
+            {
+              "enum": [
+                "sender",
+                "recipient",
+                "billing"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sendnotificationsto",
+          "enum": [
+            "sender",
+            "recipient",
+            "billing"
+          ],
+          "x-enum-searchable": true
+        },
+        "serviceCode": {
+          "anyOf": [
+            {
+              "maxLength": 10,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Servicecode"
+        },
+        "shippingAccountName": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the shipping account to use for this order. Required if the account has more than one shipping account. Must match a shippingAccountName returned by GET /carriers.",
+          "title": "Shippingaccountname"
+        },
+        "serviceRegisterCode": {
+          "anyOf": [
+            {
+              "maxLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Serviceregistercode"
+        },
+        "consequentialLoss": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Consequentialloss"
+        },
+        "receiveEmailNotification": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Receiveemailnotification"
+        },
+        "receiveSmsNotification": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Receivesmsnotification"
+        },
+        "guaranteedSaturdayDelivery": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This field has been deprecated",
+          "title": "Guaranteedsaturdaydelivery"
+        },
+        "requestSignatureUponDelivery": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requestsignatureupondelivery"
+        },
+        "isLocalCollect": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Islocalcollect"
+        },
+        "safePlace": {
+          "anyOf": [
+            {
+              "maxLength": 90,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Safeplace"
+        },
+        "department": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department"
+        },
+        "AIRNumber": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For B2B orders shipping from Great Britain to Northern Ireland, this field can be used to provide the Recipient UKIMs number.",
+          "title": "Airnumber"
+        },
+        "IOSSNumber": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Iossnumber"
+        },
+        "requiresExportLicense": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requiresexportlicense"
+        },
+        "commercialInvoiceNumber": {
+          "anyOf": [
+            {
+              "maxLength": 35,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This field has been deprecated. Use commercialInvoiceNumber at the package level instead.",
+          "title": "Commercialinvoicenumber"
+        },
+        "commercialInvoiceDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This field has been deprecated. Use commercialInvoiceDate at the package level instead.",
+          "title": "Commercialinvoicedate"
+        },
+        "recipientEoriNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recipienteorinumber"
+        }
+      },
+      "title": "RMPostageDetailsRequest",
+      "type": "object"
+    },
+    "RMProductItemRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 800,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "SKU": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The presence or not of field  SKU  and other fields in the request body will determine which of the following behaviours occur:-  1) A minimum of  SKU ,  unitValue ,  unitWeightInGrams  and  quantity  provided - In addition to the provided product fields being used for the order creation, an existing account Product with matching SKU will be overwritten with all provided product parameters. If no existing account Product with matching SKU can be found then a new product will be created with the provided SKU and product parameters. 2)  SKU ,  quantity  provided and  no other fields  provided - An account Product with the provided SKU will be used for the order if it exists. 3)  SKU not provided  and a minimum of  unitValue ,  unitWeightInGrams  and  quantity  provided - All provided product fields will be used for the order creation. 4) All other scenarios will result in a validation error. Required for EU shipments on items declared as eCommerceSaleOfGoods or commercialSaleOfGoods",
+          "title": "Sku"
+        },
+        "ReferenceId": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The non-standardised manufacturer's product reference code for the item. This field will be deprecated in the future. Please use 'NonStandardisedManufacturerId' instead.",
+          "title": "Referenceid"
+        },
+        "ContentsPieceURL": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A URL linking directly to the specific product page for the item being shipped. Must point to an individual product listing, not a general shop homepage or category page.",
+          "title": "Contentspieceurl"
+        },
+        "NonStandardisedManufacturerId": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The non-standardised manufacturer's product reference code for the item.  Required for EU shipments on items declared as eCommerceSaleOfGoods or commercialSaleOfGoods",
+          "title": "Nonstandardisedmanufacturerid"
+        },
+        "StandardisedManufacturerId": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The standardised manufacturer's product reference code for the item (e.g. GTIN, EAN, UPC).  If NonStandardisedManufacturerId isn't provided, this value is also used as the NonStandardisedManufacturerId.",
+          "title": "Standardisedmanufacturerid"
+        },
+        "PgaReferenceNumber": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The PGA (Partner Government Agency) reference number for the item. Can only contain A-Z, 0-9, spaces, full stops, hyphens and forward slashes.  USA Shipments only",
+          "title": "Pgareferencenumber"
+        },
+        "quantity": {
+          "description": "The number of units in a given line",
+          "maximum": 999999,
+          "minimum": 1,
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "unitValue": {
+          "anyOf": [
+            {
+              "maximum": 999999,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The price of a single unit excluding tax",
+          "title": "Unitvalue"
+        },
+        "unitWeightInGrams": {
+          "anyOf": [
+            {
+              "maximum": 999999,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unitweightingrams"
+        },
+        "customsDescription": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A description of the goods in the item, used for customs.",
+          "title": "Customsdescription"
+        },
+        "extendedCustomsDescription": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extendedcustomsdescription"
+        },
+        "customsCode": {
+          "anyOf": [
+            {
+              "maxLength": 10,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customscode"
+        },
+        "originCountryCode": {
+          "anyOf": [
+            {
+              "maxLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Origincountrycode"
+        },
+        "customsDeclarationCategory": {
+          "anyOf": [
+            {
+              "enum": [
+                "none",
+                "gift",
+                "commercialSample",
+                "documents",
+                "other",
+                "returnedGoods",
+                "commercialSaleOfGoods",
+                "eCommerceSaleOfGoods"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customsdeclarationcategory",
+          "enum": [
+            "none",
+            "gift",
+            "commercialSample",
+            "documents",
+            "other",
+            "returnedGoods",
+            "commercialSaleOfGoods",
+            "eCommerceSaleOfGoods"
+          ],
+          "x-enum-searchable": true
+        },
+        "requiresExportLicence": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requiresexportlicence"
+        },
+        "stockLocation": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stocklocation"
+        },
+        "useOriginPreference": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Useoriginpreference"
+        },
+        "supplementaryUnits": {
+          "anyOf": [
+            {
+              "maxLength": 17,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplementaryunits"
+        },
+        "licenseNumber": {
+          "anyOf": [
+            {
+              "maxLength": 41,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Licensenumber"
+        },
+        "certificateNumber": {
+          "anyOf": [
+            {
+              "maxLength": 41,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Certificatenumber"
+        }
+      },
+      "required": [
+        "quantity"
+      ],
+      "title": "RMProductItemRequest",
+      "type": "object"
+    },
+    "RMRecipientDetailsRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RMAddressRequest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "phoneNumber": {
+          "anyOf": [
+            {
+              "maxLength": 25,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phonenumber"
+        },
+        "emailAddress": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emailaddress"
+        },
+        "addressBookReference": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The presence or not of  addressBookReference  and a valid  recipient address object  in the request body will determine which of the following behaviours occur:-  1) addressBookReference  provided  and a valid recipient address object  provided  - In addition to the provided recipient address fields being used for the order creation, an existing account Address Book Reference with matching addressBookReference will be overwritten with all provided recipient address fields, including phone and email. If no existing account Address Book Reference with matching addressBookReference can be found then a new one will be created with the provided addressBookReference and address fields, including phone and email. 2) addressBookReference  provided  and a valid recipient address object  not provided  - An account Address Book Reference with the provided addressBookReference will be used for the order if it exists. 3) addressBookReference  not provided  and a valid recipient address object  provided  - All provided recipient address fields, including phone and email, will be used for the order creation. 4) All other scenarios will result in a validation error.",
+          "title": "Addressbookreference"
+        }
+      },
+      "title": "RMRecipientDetailsRequest",
+      "type": "object"
+    },
+    "RMSenderDetailsRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "tradingName": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tradingname"
+        },
+        "phoneNumber": {
+          "anyOf": [
+            {
+              "maxLength": 25,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Either phoneNumber or emailAddress is required for USA shipments.",
+          "title": "Phonenumber"
+        },
+        "emailAddress": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Either phoneNumber or emailAddress is required for USA shipments.",
+          "title": "Emailaddress"
+        }
+      },
+      "title": "RMSenderDetailsRequest",
+      "type": "object"
+    },
+    "RMServiceCode": {
+      "additionalProperties": false,
+      "properties": {
+        "serviceCode": {
+          "description": "Return service code. Obtain available values from GET /returns/services.",
+          "title": "Servicecode",
+          "type": "string"
+        },
+        "serviceRegisterCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Serviceregistercode"
+        }
+      },
+      "required": [
+        "serviceCode"
+      ],
+      "title": "RMServiceCode",
+      "type": "object"
+    },
+    "RMShipment": {
+      "additionalProperties": false,
+      "properties": {
+        "shippingAddress": {
+          "$ref": "#/$defs/RMAddress"
+        },
+        "returnAddress": {
+          "$ref": "#/$defs/RMAddress"
+        },
+        "customerReference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RMCustomerReference"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "shippingAddress",
+        "returnAddress"
+      ],
+      "title": "RMShipment",
+      "type": "object"
+    },
+    "RMShipmentPackageRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "weightInGrams": {
+          "maximum": 30000,
+          "minimum": 1,
+          "title": "Weightingrams",
+          "type": "integer"
+        },
+        "packageFormatIdentifier": {
+          "description": "If you have a ChannelShipper account, you can also pass the name of any of your custom package formats instead of the values below.   Enum: 'undefined', 'letter', 'largeLetter', 'smallParcel', 'mediumParcel', 'largeParcel', 'parcel', 'documents'",
+          "title": "Packageformatidentifier",
+          "type": "string"
+        },
+        "customPackageFormatIdentifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This field will be deprecated in the future. Please use 'packageFormatIdentifier' for custom package formats from ChannelShipper.",
+          "title": "Custompackageformatidentifier"
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RMDimensionsRequest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "contents": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/RMProductItemRequest"
+              },
+              "minItems": 0,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contents"
+        },
+        "commercialInvoice": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Commercial invoice encoded as a base64 PDF string, under 2MB.",
+          "title": "Commercialinvoice"
+        },
+        "supportingDocuments": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional supporting documents, each encoded as a base64 PDF string, under 2MB.",
+          "title": "Supportingdocuments"
+        },
+        "commercialInvoiceNumber": {
+          "anyOf": [
+            {
+              "maxLength": 35,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Commercial invoice number for this package.",
+          "title": "Commercialinvoicenumber"
+        },
+        "commercialInvoiceDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date of the commercial invoice for this package. If a commercial invoice is provided without a date, the current date is used. The current date is also used if the minimum value '0001-01-01' is supplied.",
+          "title": "Commercialinvoicedate"
+        }
+      },
+      "required": [
+        "weightInGrams",
+        "packageFormatIdentifier"
+      ],
+      "title": "RMShipmentPackageRequest",
+      "type": "object"
+    },
+    "RMTagRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "title": "RMTagRequest",
+      "type": "object"
+    },
+    "RMUpdateOrderStatusRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "orderIdentifier": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orderidentifier"
+        },
+        "orderReference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orderreference"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "new",
+                "despatchedByOtherCourier",
+                "despatched"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "\" despatchedByOtherCourier  \":  Reserved for ChannelShipper customers only - please visit\n ChannelShipper.com  for more information \n\n\" new  \": This will remove the order from its batch. Order information will not be lost during this process.\n\nPlease be aware labels generated on orders which are then set to \"new\" (reset) are no longer valid\nand must be destroyed. If the order is required to be despatched after setting to \"new\" status, a new\nlabel must be generated to attach to the item.\n\nCancelled label information is automatically shared with Royal Mail Revenue Protection, and should a\ncancelled label be identified on an item in the Royal Mail Network, you will be charged on your account\nand an additional handling fee applied.",
+          "title": "Status",
+          "enum": [
+            "new",
+            "despatchedByOtherCourier",
+            "despatched"
+          ],
+          "x-enum-searchable": true
+        },
+        "trackingNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trackingnumber"
+        },
+        "despatchDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Despatchdate"
+        },
+        "shippingCarrier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shippingcarrier"
+        },
+        "shippingService": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shippingservice"
+        }
+      },
+      "title": "RMUpdateOrderStatusRequest",
+      "type": "object"
+    },
+    "RetryManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "retry_manifest",
+          "default": "retry_manifest",
+          "title": "Retry Manifest",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "manifestIdentifier": {
+          "description": "Manifest number returned by Manifest Eligible Orders.",
+          "title": "Manifestidentifier",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manifestIdentifier"
+      ],
+      "title": "RetryManifest",
+      "type": "object"
+    },
+    "RoyalMailAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "royalmail_api_token",
+          "default": "royalmail_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Royal Mail API Token",
+      "type": "object",
+      "x-credential-instructions": "In ChannelShipper or Royal Mail Click & Drop, open Settings \u2192 Integrations \u2192 Royal Mail API and copy the API token. Paste only the token, without Bearer. Account features determine whether ChannelShipper details, OBA labels/returns or OLP services are available.",
+      "x-credential-url": "https://api.parcel.royalmail.com/"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "UpdateOrderStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_order_status",
+          "default": "update_order_status",
+          "title": "Set Order Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "items": {
+          "description": "Exactly one orderIdentifier or orderReference per item. Resetting to new cancels existing labels: destroy them and generate replacements before shipping.",
+          "items": {
+            "$ref": "#/$defs/RMUpdateOrderStatusRequest"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "UpdateOrderStatus",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_orders": "#/$defs/CreateOrders",
+          "create_return": "#/$defs/CreateReturn",
+          "delete_orders": "#/$defs/DeleteOrders",
+          "get_labels": "#/$defs/GetLabels",
+          "get_manifest": "#/$defs/GetManifest",
+          "get_order_details": "#/$defs/GetOrderDetails",
+          "get_orders": "#/$defs/GetOrders",
+          "list_carriers": "#/$defs/ListCarriers",
+          "list_olp_services": "#/$defs/ListOLPServices",
+          "list_order_details": "#/$defs/ListOrderDetails",
+          "list_orders": "#/$defs/ListOrders",
+          "list_return_services": "#/$defs/ListReturnServices",
+          "list_services": "#/$defs/ListServices",
+          "manifest_orders": "#/$defs/ManifestOrders",
+          "on_new_order": "#/$defs/OnNewOrder",
+          "retry_manifest": "#/$defs/RetryManifest",
+          "update_order_status": "#/$defs/UpdateOrderStatus"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListOrders"
+        },
+        {
+          "$ref": "#/$defs/ListOrderDetails"
+        },
+        {
+          "$ref": "#/$defs/GetOrders"
+        },
+        {
+          "$ref": "#/$defs/GetOrderDetails"
+        },
+        {
+          "$ref": "#/$defs/DeleteOrders"
+        },
+        {
+          "$ref": "#/$defs/CreateOrders"
+        },
+        {
+          "$ref": "#/$defs/UpdateOrderStatus"
+        },
+        {
+          "$ref": "#/$defs/ListCarriers"
+        },
+        {
+          "$ref": "#/$defs/ListServices"
+        },
+        {
+          "$ref": "#/$defs/GetLabels"
+        },
+        {
+          "$ref": "#/$defs/ManifestOrders"
+        },
+        {
+          "$ref": "#/$defs/GetManifest"
+        },
+        {
+          "$ref": "#/$defs/RetryManifest"
+        },
+        {
+          "$ref": "#/$defs/ListReturnServices"
+        },
+        {
+          "$ref": "#/$defs/CreateReturn"
+        },
+        {
+          "$ref": "#/$defs/ListOLPServices"
+        },
+        {
+          "$ref": "#/$defs/OnNewOrder"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RoyalMailAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Royalmail Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

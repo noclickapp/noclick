@@ -1,0 +1,8 @@
+{
+  "source": "https://api.parcel.royalmail.com/doc/v1/click-and-drop-api-v1.yaml",
+  "body": {
+    "manifestNumber": 1001,
+    "status": "Completed",
+    "documentPdf": "Base64 encoded PDF document"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/royalmail-dark.svg",
+  "source": "https://www.royalmailgroup.com/images/icons/favicons/safari-pinned-tab.svg",
+  "source_page": "https://www.royalmailgroup.com/",
+  "date": "2026-11-11",
+  "license": "Royal Mail trademark; used solely to identify the Royal Mail integration",
+  "sha256": "d813aa7dd8950a95c747fb760daed9514ecbd3c960db2935d92f8064776d0eb4",
+  "edits": [
+    "Removed XML declaration, external DTD and generator metadata",
+    "Recoloured the black silhouette white for dark backgrounds"
+  ],
+  "notes": "Official Royal Mail Group pinned-tab favicon (pillarbox), used as the company favicon fallback; the current parcel site publishes its Royal Mail header logo as AVIF. No new paths or background were added."
+}
