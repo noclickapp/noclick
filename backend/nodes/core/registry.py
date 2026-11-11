@@ -9,7 +9,7 @@ import logging
 from pathlib import Path
 from collections.abc import Mapping, MutableMapping
 from typing import Dict, Optional, Tuple, Type, Any, Union
-from nodes.core.base import WorkflowNode
+from nodes.core.base import Retirement, WorkflowNode
 from nodes.core.discovery import Declaration, declare_nodes, merge_node_entries
 
 logger = logging.getLogger(__name__)
