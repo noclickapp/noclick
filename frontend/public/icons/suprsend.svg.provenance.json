@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/suprsend.svg",
+  "source": "https://cdn.prod.website-files.com/62a87a4ff7326e1bc863e8f3/66f5a9fd9f6f495c1df1a504_suprsend-logo-inverted.svg",
+  "source_page": "https://www.suprsend.com/",
+  "retrieved_at": "2026-11-11",
+  "license": "Trademark; used to identify SuprSend integration",
+  "sha256": "42abd9dffad14fae86344504ec358da00f9f9fd5d963d71f5d9f5a9988cf7a65",
+  "edits": [
+    "Removed wordmark paths, retaining the first 12 original coloured symbol paths.",
+    "Cropped viewBox to symbol: 5 0 22 33. No path data or colours changed."
+  ],
+  "notes": "Official multicolour app mark from the company website footer. No background added. All 12 original symbol facets retained."
+}
