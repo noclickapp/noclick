@@ -5,7 +5,10 @@ import { useCallback, useEffect, useRef } from 'react';
 /** How long the pointer rests on a row before it counts as intent. */
 const REST_MS = 60;
 
-export function useIntent(ahead: (id: string) => void): (id: string) => { onPointerEnter: () => void; onPointerLeave: () => void; onFocus: () => void } {
+/** A row's handlers that read ahead what it opens. */
+export type Intent = (id: string) => { onPointerEnter: () => void; onPointerLeave: () => void; onFocus: () => void };
+
+export function useIntent(ahead: (id: string) => void): Intent {
     const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
     const latest = useRef(ahead);
     latest.current = ahead;

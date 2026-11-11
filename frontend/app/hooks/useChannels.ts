@@ -33,6 +33,8 @@ export interface Channels {
     channels: Channel[];
     agents: AgentChoice[];
     history(channelId: string): ChannelHistory | undefined;
+    /** Read a channel's history ahead of its opening (a row the pointer rests on), as opening it would. */
+    prefetch(channelId: string): void;
     loadOlder(channelId: string): Promise<void>;
     refresh(): void;
     post(channelId: string, text: string, attachments: ChannelAttachment[]): Promise<void>;
@@ -195,14 +197,20 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
         void readAgents();
     }, [readLists, readAgents]);
 
-    // A channel's history loads the first time it opens; later it's kept current by changes. One held from an earlier
-    // mount shows at once and catches up.
+    // A channel's history loads the first time it opens (or is read ahead); later it's kept current by changes. One
+    // held from an earlier mount shows at once and catches up.
+    const bringUp = useCallback(
+        (channelId: string) => {
+            if (current.current.has(channelId)) return;
+            current.current.add(channelId);
+            if (historiesRef.current[channelId]) void catchUp(channelId);
+            else void openHistory(channelId);
+        },
+        [openHistory, catchUp]
+    );
     useEffect(() => {
-        if (!openId || current.current.has(openId)) return;
-        current.current.add(openId);
-        if (historiesRef.current[openId]) void catchUp(openId);
-        else void openHistory(openId);
-    }, [openId, openHistory, catchUp]);
+        if (openId) bringUp(openId);
+    }, [openId, bringUp]);
 
     // Live: read again where a change landed, a burst at a time.
     useEffect(() => {
@@ -294,6 +302,7 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
             channels: lists.channels,
             agents,
             history: (channelId) => histories[channelId],
+            prefetch: bringUp,
             loadOlder: async (channelId) => {
                 const held = historiesRef.current[channelId];
                 if (!held?.older || held.loadingOlder) return;
@@ -385,6 +394,6 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
                 setLists((prev) => ({ ...prev, channels: prev.channels.filter((c) => c.id !== channelId) }));
             },
         }),
-        [lists, agents, histories, transport, setHistory, readLists, readNew, replaceChannel]
+        [lists, agents, histories, transport, setHistory, readLists, readNew, replaceChannel, bringUp]
     );
 }
