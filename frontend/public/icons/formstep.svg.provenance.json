@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/formstep.svg",
+  "source": "https://formstep.io/logo-text-light.svg",
+  "source_page": "https://formstep.io/",
+  "date": "2026-11-11",
+  "license": "Formstep trademark; provider-published brand asset",
+  "sha256": "62ff0a515056dc6c5456db1ac658ac1bb0da3bfca1468a16eaf5a537f9afa9e4",
+  "edits": [
+    "Removed wordmark, brand tile background and unused clip definitions; cropped viewBox to the mark at 16 16 32 32."
+  ],
+  "notes": "Original company symbol cropped from its header SVG. No paths were generated or traced."
+}

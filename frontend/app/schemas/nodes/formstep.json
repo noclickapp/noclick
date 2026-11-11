@@ -1,0 +1,1492 @@
+{
+  "$defs": {
+    "FormstepAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "formstep_api_token",
+          "default": "formstep_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Formstep API Token",
+      "type": "object",
+      "x-credential-instructions": "In Formstep, open OAuth and API Keys in the sidebar. Create a token for the workspace you want to automate and paste it here. Tokens can access one workspace only.",
+      "x-credential-url": "https://docs.formstep.io/developers/api-tokens/"
+    },
+    "FormstepCancelRequestConfig": {
+      "additionalProperties": false,
+      "description": "Withdraw a pending request.",
+      "properties": {
+        "operation": {
+          "const": "cancel_request",
+          "default": "cancel_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "Cancel Request"
+        },
+        "requestId": {
+          "description": "Request ID.",
+          "title": "Request id",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your note for why, kept on the request and sent in the callback.",
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "requestId"
+      ],
+      "title": "FormstepCancelRequestConfig",
+      "type": "object"
+    },
+    "FormstepCreateFolderConfig": {
+      "additionalProperties": false,
+      "description": "Create a folder in a workspace.",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "Create Folder"
+        },
+        "workspaceId": {
+          "description": "Workspace ID.",
+          "title": "Workspace id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Folder name (1\u2013255 characters).",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent folder ID for nesting. Omit for root level.",
+          "title": "Parent id"
+        }
+      },
+      "required": [
+        "workspaceId",
+        "name"
+      ],
+      "title": "FormstepCreateFolderConfig",
+      "type": "object"
+    },
+    "FormstepCreateFormConfig": {
+      "additionalProperties": false,
+      "description": "Create a new empty form.",
+      "properties": {
+        "operation": {
+          "const": "create_form",
+          "default": "create_form",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "Create Form"
+        },
+        "name": {
+          "description": "Form name (1\u2013255 characters).",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "workspaceId": {
+          "description": "Workspace ID.",
+          "title": "Workspace id",
+          "type": "string"
+        },
+        "folderId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Place the form in a folder. Omit to create at workspace root.",
+          "title": "Folder id"
+        }
+      },
+      "required": [
+        "name",
+        "workspaceId"
+      ],
+      "title": "FormstepCreateFormConfig",
+      "type": "object"
+    },
+    "FormstepCreateRequestConfig": {
+      "additionalProperties": false,
+      "description": "Create a request.",
+      "properties": {
+        "operation": {
+          "const": "create_request",
+          "default": "create_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "Create Request"
+        },
+        "formId": {
+          "description": "The published form to assign.",
+          "title": "Form id",
+          "type": "string"
+        },
+        "recipient": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An email is required when `delivery` is `\"email\"`; otherwise it only identifies the person in the Requests page and on their answers.",
+          "title": "Recipient",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "prefill": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Initial answers by field key. The recipient sees them and can change them.",
+          "title": "Prefill",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "readonly": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prefilled keys the recipient cannot change. Every key here must also appear in `prefill`, and a locked required field must be prefilled with a non-empty value.",
+          "title": "Readonly",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Values for the form's hidden fields, by field key. Trusted, unchangeable, and echoed back in the callback. An unknown key is rejected with `UNKNOWN_FIELD_KEY`.",
+          "title": "Context",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your own bookkeeping. Never reaches the form; comes back in callbacks and reads.",
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One of the form's published languages. Defaults to the form's own default.",
+          "title": "Language"
+        },
+        "delivery": {
+          "anyOf": [
+            {
+              "enum": [
+                "none",
+                "email"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "none",
+          "description": "`\"email\"` to have Formstep send the invitation (needs a recipient email, and Pro or Business or one of a Free account's 10 free invitations, which go only to the account's own address), or `\"none\"` to deliver the link yourself.",
+          "title": "Delivery",
+          "enum": [
+            "none",
+            "email"
+          ],
+          "x-enum-searchable": true
+        },
+        "reminders": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Override the form's reminder schedule for this request. An empty array switches reminders off.",
+          "title": "Reminders",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "expiresAt": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Epoch milliseconds. Defaults to 30 days out; 365 days is the maximum.",
+          "title": "Expires at"
+        },
+        "callbackUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where Formstep POSTs the callback when the request ends. HTTPS only, and the host must resolve to a public address.",
+          "title": "Callback url"
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your own id for this request. Filterable in `requests.list`.",
+          "title": "External id"
+        },
+        "idempotencyKey": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeating it with the same body returns the original request with `deduplicated: true`. A different body is rejected. Keys live 30 days.",
+          "title": "Idempotency key"
+        },
+        "domainId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mint the link on one of your custom domains. REST API only.",
+          "title": "Domain id"
+        },
+        "documents": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "items": {
+                  "$ref": "#/$defs/FormstepDocument"
+                },
+                "type": "array"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Files handed to this one recipient, uploaded first with `documents.create`.",
+          "title": "Documents",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "test": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "A dry run: nothing is emailed, the callback carries `\"test\": true`, and the submission counts nowhere.",
+          "title": "Test"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormstepCreateRequestConfig",
+      "type": "object"
+    },
+    "FormstepCreateShareLinkConfig": {
+      "additionalProperties": false,
+      "description": "Create a share link for a form.",
+      "properties": {
+        "operation": {
+          "const": "create_share_link",
+          "default": "create_share_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Share Links",
+          "x-display-name": "Create Share Link"
+        },
+        "formId": {
+          "description": "Form ID. The form must be published; call `forms.publish` first.",
+          "title": "Form id",
+          "type": "string"
+        },
+        "expiresAt": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expiration as a future Unix timestamp in milliseconds. `0` is not accepted here.",
+          "title": "Expires at"
+        },
+        "maxClaims": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of times this link can be used. Must be positive.",
+          "title": "Max claims"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormstepCreateShareLinkConfig",
+      "type": "object"
+    },
+    "FormstepDeleteFormConfig": {
+      "additionalProperties": false,
+      "description": "Move a form to trash.",
+      "properties": {
+        "operation": {
+          "const": "delete_form",
+          "default": "delete_form",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "Delete Form"
+        },
+        "formId": {
+          "description": "Form ID.",
+          "title": "Form id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormstepDeleteFormConfig",
+      "type": "object"
+    },
+    "FormstepDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "documentId": {
+          "title": "Documentid",
+          "type": "string"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "documentId"
+      ],
+      "title": "FormstepDocument",
+      "type": "object"
+    },
+    "FormstepGetAccountConfig": {
+      "additionalProperties": false,
+      "description": "Get information about the authenticated user.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Account"
+        }
+      },
+      "title": "FormstepGetAccountConfig",
+      "type": "object"
+    },
+    "FormstepGetFormConfig": {
+      "additionalProperties": false,
+      "description": "Get full details for a single form, including questions, cover, logo, and a preview URL.",
+      "properties": {
+        "operation": {
+          "const": "get_form",
+          "default": "get_form",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "Get Form"
+        },
+        "formId": {
+          "description": "Form ID.",
+          "title": "Form id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormstepGetFormConfig",
+      "type": "object"
+    },
+    "FormstepGetRequestConfig": {
+      "additionalProperties": false,
+      "description": "Get one request in full: status, outcome, what was prefilled, its timeline, and, once completed, `answers` and `display` keyed by field key.",
+      "properties": {
+        "operation": {
+          "const": "get_request",
+          "default": "get_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "Get Request"
+        },
+        "requestId": {
+          "description": "Request ID.",
+          "title": "Request id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requestId"
+      ],
+      "title": "FormstepGetRequestConfig",
+      "type": "object"
+    },
+    "FormstepListFieldsConfig": {
+      "additionalProperties": false,
+      "description": "List every field of a form's current published version, with the key to address each one by.",
+      "properties": {
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Fields",
+          "x-display-name": "List Fields"
+        },
+        "formId": {
+          "description": "Form ID. A form that has never been published answers `published: false` with no items.",
+          "title": "Form id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormstepListFieldsConfig",
+      "type": "object"
+    },
+    "FormstepListFoldersConfig": {
+      "additionalProperties": false,
+      "description": "List folders in a workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "List Folders"
+        },
+        "workspaceId": {
+          "description": "Workspace ID.",
+          "title": "Workspace id",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 20,
+          "description": "Page size (1\u2013100).",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response (`nextCursor`).",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "workspaceId"
+      ],
+      "title": "FormstepListFoldersConfig",
+      "type": "object"
+    },
+    "FormstepListFormsConfig": {
+      "additionalProperties": false,
+      "description": "List forms in a workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_forms",
+          "default": "list_forms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "List Forms"
+        },
+        "workspaceId": {
+          "description": "Workspace ID.",
+          "title": "Workspace id",
+          "type": "string"
+        },
+        "folderId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by folder. Pass `null` for root-level forms only. Omit to list all.",
+          "title": "Folder id"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fuzzy name search. Results capped at `limit`; not cursor-paginated.",
+          "title": "Query"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 20,
+          "description": "Page size (1\u2013100).",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response (`nextCursor`).",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "workspaceId"
+      ],
+      "title": "FormstepListFormsConfig",
+      "type": "object"
+    },
+    "FormstepListRequestsConfig": {
+      "additionalProperties": false,
+      "description": "List requests in a workspace or on one form, newest first.",
+      "properties": {
+        "operation": {
+          "const": "list_requests",
+          "default": "list_requests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "List Requests"
+        },
+        "workspaceId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scope to a workspace. Give this or `formId`.",
+          "title": "Workspace id"
+        },
+        "formId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scope to one form.",
+          "title": "Form id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "pending",
+                "completed",
+                "expired",
+                "canceled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Status",
+          "enum": [
+            "pending",
+            "completed",
+            "expired",
+            "canceled"
+          ],
+          "x-enum-searchable": true
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "enum": [
+                "approve",
+                "decline",
+                "changes"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Implies completed requests only, and overrides `status`.",
+          "title": "Outcome",
+          "enum": [
+            "approve",
+            "decline",
+            "changes"
+          ],
+          "x-enum-searchable": true
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your own id, to find the request a run created.",
+          "title": "External id"
+        },
+        "includeTest": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Include requests created with `test: true`.",
+          "title": "Include test"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Page size (1\u2013100).",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response (`nextCursor`).",
+          "title": "Cursor"
+        }
+      },
+      "title": "FormstepListRequestsConfig",
+      "type": "object"
+    },
+    "FormstepListShareLinksConfig": {
+      "additionalProperties": false,
+      "description": "List share links for a form.",
+      "properties": {
+        "operation": {
+          "const": "list_share_links",
+          "default": "list_share_links",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Share Links",
+          "x-display-name": "List Share Links"
+        },
+        "formId": {
+          "description": "Form ID.",
+          "title": "Form id",
+          "type": "string"
+        },
+        "includeRevoked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include revoked links in the result.",
+          "title": "Include revoked"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 20,
+          "description": "Page size (1\u2013100).",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response (`nextCursor`).",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormstepListShareLinksConfig",
+      "type": "object"
+    },
+    "FormstepListSubmissionsConfig": {
+      "additionalProperties": false,
+      "description": "List a form's submissions, newest page first, with cursor pagination.",
+      "properties": {
+        "operation": {
+          "const": "list_submissions",
+          "default": "list_submissions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Submissions",
+          "x-display-name": "List Submissions"
+        },
+        "formId": {
+          "description": "Form ID.",
+          "title": "Form id",
+          "type": "string"
+        },
+        "includeDrafts": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Include responses that were started but never submitted.",
+          "title": "Include drafts"
+        },
+        "translationLanguage": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attach stored AI translations of the answers under `items[].translation.display`. `items[].answers` and `items[].display` always stay the original.",
+          "title": "Translation language"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 20,
+          "description": "Page size (1\u2013100).",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response (`nextCursor`).",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormstepListSubmissionsConfig",
+      "type": "object"
+    },
+    "FormstepListWorkspacesConfig": {
+      "additionalProperties": false,
+      "description": "List the workspaces your token can reach.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "List Workspaces"
+        }
+      },
+      "title": "FormstepListWorkspacesConfig",
+      "type": "object"
+    },
+    "FormstepOnEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Formstep Event",
+          "x-is-trigger": true
+        },
+        "formId": {
+          "title": "Form ID",
+          "type": "string"
+        },
+        "event_type": {
+          "default": "submission_created",
+          "enum": [
+            "submission_created",
+            "request_completed"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormstepOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FormstepPublishFormConfig": {
+      "additionalProperties": false,
+      "description": "Publish a form so it can accept responses, and freeze its field keys into a new snapshot.",
+      "properties": {
+        "operation": {
+          "const": "publish_form",
+          "default": "publish_form",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "Publish Form"
+        },
+        "formId": {
+          "description": "Form ID.",
+          "title": "Form id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormstepPublishFormConfig",
+      "type": "object"
+    },
+    "FormstepRemindRequestConfig": {
+      "additionalProperties": false,
+      "description": "Email the recipient now, without touching the reminder schedule.",
+      "properties": {
+        "operation": {
+          "const": "remind_request",
+          "default": "remind_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "Remind Request"
+        },
+        "requestId": {
+          "description": "Request ID. Must still be pending, and not a test request.",
+          "title": "Request id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requestId"
+      ],
+      "title": "FormstepRemindRequestConfig",
+      "type": "object"
+    },
+    "FormstepUnpublishFormConfig": {
+      "additionalProperties": false,
+      "description": "Take a form offline.",
+      "properties": {
+        "operation": {
+          "const": "unpublish_form",
+          "default": "unpublish_form",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "Unpublish Form"
+        },
+        "formId": {
+          "description": "Form ID.",
+          "title": "Form id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormstepUnpublishFormConfig",
+      "type": "object"
+    },
+    "FormstepUpdateFormConfig": {
+      "additionalProperties": false,
+      "description": "Rename a form, move it between folders, or change its emoji.",
+      "properties": {
+        "operation": {
+          "const": "update_form",
+          "default": "update_form",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "Update Form"
+        },
+        "formId": {
+          "description": "Form ID.",
+          "title": "Form id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New form name (1\u2013255 characters).",
+          "title": "Name"
+        },
+        "folderId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Move form to a folder. Pass `null` to move to workspace root.",
+          "title": "Folder id"
+        },
+        "emoji": {
+          "anyOf": [
+            {
+              "maxLength": 10,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Form emoji (max 10 characters). Pass `null` to clear.",
+          "title": "Emoji"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormstepUpdateFormConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_request": "#/$defs/FormstepCancelRequestConfig",
+          "create_folder": "#/$defs/FormstepCreateFolderConfig",
+          "create_form": "#/$defs/FormstepCreateFormConfig",
+          "create_request": "#/$defs/FormstepCreateRequestConfig",
+          "create_share_link": "#/$defs/FormstepCreateShareLinkConfig",
+          "delete_form": "#/$defs/FormstepDeleteFormConfig",
+          "get_account": "#/$defs/FormstepGetAccountConfig",
+          "get_form": "#/$defs/FormstepGetFormConfig",
+          "get_request": "#/$defs/FormstepGetRequestConfig",
+          "list_fields": "#/$defs/FormstepListFieldsConfig",
+          "list_folders": "#/$defs/FormstepListFoldersConfig",
+          "list_forms": "#/$defs/FormstepListFormsConfig",
+          "list_requests": "#/$defs/FormstepListRequestsConfig",
+          "list_share_links": "#/$defs/FormstepListShareLinksConfig",
+          "list_submissions": "#/$defs/FormstepListSubmissionsConfig",
+          "list_workspaces": "#/$defs/FormstepListWorkspacesConfig",
+          "on_event": "#/$defs/FormstepOnEventConfig",
+          "publish_form": "#/$defs/FormstepPublishFormConfig",
+          "remind_request": "#/$defs/FormstepRemindRequestConfig",
+          "unpublish_form": "#/$defs/FormstepUnpublishFormConfig",
+          "update_form": "#/$defs/FormstepUpdateFormConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FormstepGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepListFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepGetFormConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepCreateFormConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepUpdateFormConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepPublishFormConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepUnpublishFormConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepDeleteFormConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepListFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepListSubmissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepCreateRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepGetRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepListRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepRemindRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepCancelRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepListShareLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepCreateShareLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepListFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/FormstepOnEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FormstepAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Formstep Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,549 @@
+{
+  "get_account": {
+    "params": {},
+    "response": {
+      "ok": true,
+      "data": {
+        "id": "usr_abc123",
+        "email": "you@example.com",
+        "name": "Jane Doe"
+      }
+    },
+    "method": "me.get",
+    "source": "https://docs.formstep.io/developers/rest-api/#me-get"
+  },
+  "list_workspaces": {
+    "params": {},
+    "response": {
+      "ok": true,
+      "data": {
+        "items": [
+          {
+            "id": "ws_abc123",
+            "name": "Acme Inc",
+            "createdAt": 1714041800000,
+            "role": "owner"
+          }
+        ],
+        "nextCursor": null,
+        "hasMore": false,
+        "canPaginate": false
+      }
+    },
+    "method": "workspaces.list",
+    "source": "https://docs.formstep.io/developers/rest-api/#workspaces-list"
+  },
+  "list_forms": {
+    "params": {
+      "workspaceId": "ws_abc123"
+    },
+    "response": {
+      "ok": true,
+      "data": {
+        "items": [
+          {
+            "id": "frm_abc123",
+            "name": "Contact Form",
+            "folderId": null,
+            "workspaceId": "ws_abc123",
+            "isPublished": true,
+            "publishedAt": 1714041851000,
+            "unpublishedAt": null,
+            "createdAt": 1714041800000,
+            "lastEditedAt": 1714042000000,
+            "emoji": null
+          }
+        ],
+        "nextCursor": null,
+        "hasMore": false,
+        "canPaginate": false
+      }
+    },
+    "method": "forms.list",
+    "source": "https://docs.formstep.io/developers/rest-api/#forms-list"
+  },
+  "get_form": {
+    "params": {
+      "formId": "frm_abc123"
+    },
+    "response": {
+      "ok": true,
+      "data": {
+        "id": "frm_abc123",
+        "name": "Event Feedback",
+        "folderId": null,
+        "workspaceId": "ws_abc123",
+        "isPublished": true,
+        "publishedAt": 1714041851000,
+        "unpublishedAt": null,
+        "createdAt": 1714041800000,
+        "lastEditedAt": 1714042000000,
+        "emoji": null,
+        "questions": [
+          {
+            "id": "q_1",
+            "type": "email-input",
+            "inputType": "email",
+            "title": "Your email",
+            "metadata": null
+          },
+          {
+            "id": "q_2",
+            "type": "rating-input",
+            "inputType": "rating",
+            "title": "Overall experience",
+            "metadata": {
+              "kind": "rating",
+              "maxStars": 5
+            }
+          }
+        ],
+        "hasContent": true,
+        "cover": null,
+        "logo": null,
+        "isDeleted": false,
+        "trashedAt": null,
+        "previewUrl": "https://formstep.io/preview/abc..."
+      }
+    },
+    "method": "forms.get",
+    "source": "https://docs.formstep.io/developers/rest-api/#forms-get"
+  },
+  "create_form": {
+    "params": {
+      "name": "Contact",
+      "workspaceId": "ws_abc123"
+    },
+    "response": {
+      "ok": true,
+      "data": {
+        "id": "frm_new123",
+        "name": "Contact",
+        "workspaceId": "ws_abc123",
+        "folderId": null,
+        "isPublished": false,
+        "createdAt": 1714041851000,
+        "previewUrl": "https://formstep.io/preview/abc..."
+      }
+    },
+    "method": "forms.create",
+    "source": "https://docs.formstep.io/developers/rest-api/#forms-create"
+  },
+  "update_form": {
+    "params": {
+      "formId": "frm_abc123",
+      "name": "Updated Name",
+      "emoji": "📋"
+    },
+    "response": {
+      "ok": true,
+      "data": {
+        "id": "frm_abc123",
+        "name": "Updated Name",
+        "folderId": null,
+        "emoji": "📋"
+      }
+    },
+    "method": "forms.update",
+    "source": "https://docs.formstep.io/developers/rest-api/#forms-update"
+  },
+  "list_fields": {
+    "params": {
+      "formId": "j57..."
+    },
+    "response": {
+      "ok": true,
+      "data": {
+        "published": true,
+        "items": [
+          {
+            "key": "company_name",
+            "type": "text",
+            "title": "Company",
+            "required": true,
+            "prefillable": true
+          },
+          {
+            "key": "company_size",
+            "type": "select",
+            "title": "Company size",
+            "required": false,
+            "prefillable": true,
+            "options": [
+              {
+                "key": "1_50",
+                "label": "1–50"
+              },
+              {
+                "key": "51_200",
+                "label": "51–200"
+              }
+            ]
+          },
+          {
+            "key": "satisfaction",
+            "type": "matrix",
+            "title": "How did we do?",
+            "required": false,
+            "prefillable": true,
+            "rows": [
+              {
+                "key": "delivery_speed",
+                "label": "Delivery speed"
+              }
+            ],
+            "columns": [
+              {
+                "key": "very_good",
+                "label": "Very good"
+              },
+              {
+                "key": "poor",
+                "label": "Poor"
+              }
+            ]
+          },
+          {
+            "key": "case_id",
+            "type": "hidden",
+            "title": "Case",
+            "required": false,
+            "prefillable": false,
+            "context": true
+          },
+          {
+            "key": "total",
+            "type": "number",
+            "title": "Total",
+            "required": false,
+            "prefillable": false,
+            "calculated": true
+          }
+        ],
+        "hasMore": false
+      }
+    },
+    "method": "fields.list",
+    "source": "https://docs.formstep.io/developers/rest-api/#fields-list"
+  },
+  "list_submissions": {
+    "params": {
+      "formId": "frm_test"
+    },
+    "response": {
+      "ok": true,
+      "data": {
+        "formId": "frm_abc123",
+        "formName": "Event Feedback",
+        "items": [
+          {
+            "id": "sub_xyz789",
+            "submittedAt": "2026-05-18 18:02:28",
+            "isCompleted": true,
+            "createdAt": "2026-05-18 18:02:19",
+            "answers": {
+              "email": "user@example.com",
+              "plan": "pro",
+              "contacts": [
+                {
+                  "name": "Ada"
+                },
+                {
+                  "name": "Grace"
+                }
+              ]
+            },
+            "display": {
+              "email": "user@example.com",
+              "plan": "Pro",
+              "contacts": "Ada, Grace"
+            }
+          }
+        ],
+        "nextCursor": null,
+        "hasMore": false,
+        "canPaginate": false
+      }
+    },
+    "method": "submissions.list",
+    "source": "https://docs.formstep.io/developers/rest-api/#submissions-list"
+  },
+  "create_request": {
+    "params": {
+      "formId": "j57...",
+      "recipient": {
+        "email": "ada@acme.com",
+        "name": "Ada"
+      },
+      "prefill": {
+        "company_name": "Acme"
+      },
+      "readonly": [
+        "company_name"
+      ],
+      "context": {
+        "case_id": "CASE-9"
+      },
+      "delivery": "email",
+      "externalId": "run-42",
+      "callbackUrl": "https://automation.example/webhook/resume-abc",
+      "idempotencyKey": "run-42"
+    },
+    "response": {
+      "ok": true,
+      "data": {
+        "id": "kd7...",
+        "status": "pending",
+        "url": "https://form.formstep.io/r/rq_...",
+        "deliveryStatus": "queued",
+        "expiresAt": 1794787200000,
+        "createdAt": 1789379200000,
+        "externalId": "run-42",
+        "deduplicated": false
+      }
+    },
+    "method": "requests.create",
+    "source": "https://docs.formstep.io/developers/rest-api/#requests-create"
+  },
+  "get_request": {
+    "params": {
+      "requestId": "rq_test"
+    },
+    "response": {
+      "ok": true,
+      "data": {
+        "id": "kd7...",
+        "formId": "j57...",
+        "status": "completed",
+        "outcome": "approve",
+        "isTest": false,
+        "recipient": {
+          "email": "ada@acme.com",
+          "name": "Ada"
+        },
+        "language": "en",
+        "externalId": "run-42",
+        "metadata": null,
+        "context": {
+          "case_id": "CASE-9"
+        },
+        "prefill": {
+          "company_name": "Acme"
+        },
+        "readonlyKeys": [
+          "company_name"
+        ],
+        "delivery": "email",
+        "deliveryStatus": "sent",
+        "hasCallback": true,
+        "callbackFailedAt": null,
+        "submissionId": "kp2...",
+        "url": "https://form.formstep.io/r/rq_...",
+        "answers": {
+          "company_name": "Acme",
+          "decision": "approve"
+        },
+        "display": {
+          "company_name": "Acme",
+          "decision": "Approve"
+        },
+        "timeline": [
+          {
+            "id": "kd7...:created",
+            "type": "created",
+            "at": 1789379200000
+          },
+          {
+            "id": "kd7...:completed",
+            "type": "completed",
+            "at": 1789465600000
+          }
+        ],
+        "expiresAt": 1794787200000,
+        "completedAt": 1789465600000
+      }
+    },
+    "method": "requests.get",
+    "source": "https://docs.formstep.io/developers/rest-api/#requests-get"
+  },
+  "list_requests": {
+    "params": {
+      "formId": "j57..."
+    },
+    "response": {
+      "ok": true,
+      "data": {
+        "items": [
+          {
+            "id": "kd7...",
+            "formId": "j57...",
+            "formName": "Mortgage documents",
+            "formOrigin": "inline",
+            "status": "pending",
+            "outcome": null,
+            "recipient": {
+              "email": "ada@acme.com",
+              "name": "Ada"
+            },
+            "externalId": "run-42",
+            "deliveryStatus": "sent",
+            "expiresAt": 1794787200000,
+            "createdAt": 1789379200000
+          }
+        ],
+        "nextCursor": null,
+        "hasMore": false
+      }
+    },
+    "method": "requests.list",
+    "source": "https://docs.formstep.io/developers/rest-api/#requests-list"
+  },
+  "list_share_links": {
+    "params": {
+      "formId": "frm_test"
+    },
+    "response": {
+      "ok": true,
+      "data": {
+        "items": [
+          {
+            "id": "sl_abc123",
+            "code": "RPjNes52",
+            "url": "https://formstep.io/RPjNes52",
+            "customDomainUrl": null,
+            "formId": "frm_abc123",
+            "createdAt": 1714041851000,
+            "expiresAt": null,
+            "maxClaims": null,
+            "claimedCount": 7,
+            "isRevoked": false,
+            "revokedAt": null,
+            "customDomainId": null,
+            "customSlug": null
+          }
+        ],
+        "availableCustomDomains": [],
+        "nextCursor": null,
+        "hasMore": false,
+        "canPaginate": false
+      }
+    },
+    "method": "shareLinks.list",
+    "source": "https://docs.formstep.io/developers/rest-api/#sharelinks-list"
+  },
+  "list_folders": {
+    "params": {
+      "workspaceId": "ws_test"
+    },
+    "response": {
+      "ok": true,
+      "data": {
+        "items": [
+          {
+            "id": "fld_abc123",
+            "name": "Customer Feedback",
+            "workspaceId": "ws_abc123",
+            "parentId": null,
+            "createdAt": 1714041800000
+          }
+        ],
+        "nextCursor": null,
+        "hasMore": false,
+        "canPaginate": false
+      }
+    },
+    "method": "folders.list",
+    "source": "https://docs.formstep.io/developers/rest-api/#folders-list"
+  },
+  "create_folder": {
+    "params": {
+      "workspaceId": "ws_test",
+      "name": "Automated intake"
+    },
+    "response": {
+      "ok": true,
+      "data": {
+        "id": "fld_new123",
+        "name": "Customer Feedback",
+        "workspaceId": "ws_abc123",
+        "parentId": null,
+        "createdAt": 1714041851000,
+        "alreadyExisted": false
+      }
+    },
+    "method": "folders.create",
+    "source": "https://docs.formstep.io/developers/rest-api/#folders-create"
+  },
+  "publish_form": {
+    "params": {
+      "formId": "frm_test"
+    },
+    "response": {
+      "ok": true,
+      "data": {}
+    },
+    "synthetic_response": true,
+    "method": "forms.publish",
+    "source": "https://docs.formstep.io/developers/rest-api/#forms-publish"
+  },
+  "unpublish_form": {
+    "params": {
+      "formId": "frm_test"
+    },
+    "response": {
+      "ok": true,
+      "data": {}
+    },
+    "synthetic_response": true,
+    "method": "forms.unpublish",
+    "source": "https://docs.formstep.io/developers/rest-api/#forms-unpublish"
+  },
+  "delete_form": {
+    "params": {
+      "formId": "frm_test"
+    },
+    "response": {
+      "ok": true,
+      "data": {}
+    },
+    "synthetic_response": true,
+    "method": "forms.delete",
+    "source": "https://docs.formstep.io/developers/rest-api/#forms-delete"
+  },
+  "remind_request": {
+    "params": {
+      "requestId": "rq_test"
+    },
+    "response": {
+      "ok": true,
+      "data": {}
+    },
+    "synthetic_response": true,
+    "method": "requests.remind",
+    "source": "https://docs.formstep.io/developers/rest-api/#requests-remind"
+  },
+  "cancel_request": {
+    "params": {
+      "requestId": "rq_test"
+    },
+    "response": {
+      "ok": true,
+      "data": {}
+    },
+    "synthetic_response": true,
+    "method": "requests.cancel",
+    "source": "https://docs.formstep.io/developers/rest-api/#requests-cancel"
+  },
+  "create_share_link": {
+    "params": {
+      "formId": "frm_test"
+    },
+    "response": {
+      "ok": true,
+      "data": {}
+    },
+    "synthetic_response": true,
+    "method": "shareLinks.create",
+    "source": "https://docs.formstep.io/developers/rest-api/#sharelinks-create"
+  }
+}
