@@ -65,7 +65,7 @@ def test_an_app_noclick_lacks_is_not_named():
     """"close" finds iClosed and every app that closes things: none of them Close, and the search says so."""
     hits = node_search.search("close", limit=10)
     assert hits and not node_search.is_named("close", hits)
-    assert node_search.search("46elks") == []
+    assert node_search.search("zorblax") == []  # a word no integration has
 
 
 def test_a_mistyped_type_finds_what_it_meant():
