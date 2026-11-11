@@ -1,5 +1,4 @@
 """SelectPdf v2 wire contracts, binary results, async reads and credential evidence."""
-import base64
 import json
 from pathlib import Path
 
@@ -8,6 +7,7 @@ import pytest
 from pydantic import ValidationError
 from nodes import selectpdf_node as native
 from nodes.core.registry import NodeFactory
+from nodes.core.binary_output import BinaryOutput, resolve_binary_outputs
 
 KEY = 'd290f1ee-6c54-4b01-90e6-d701748f0851'
 JOB = 'd290f1ee-6c54-4b01-90e6-d701748f0852'
@@ -54,7 +54,8 @@ async def test_documented_subscription_proves_account_without_conversion(monkeyp
 async def test_pdf_result_and_exact_route(monkeypatch, operation, extra, path):
     requests = mock(monkeypatch, content=PDF, headers={'content-type': 'application/pdf'})
     result = await node({'operation': operation, **extra}).execute({})
-    assert base64.b64decode(result['pdf_base64']) == PDF
+    assert result['file'] == BinaryOutput(PDF, 'application/pdf', 'selectpdf.pdf')
+    assert 'pdf_base64' not in result
     assert requests[0].url.path == path and requests[0].method == 'POST'
     body = json.loads(requests[0].content)
     assert body['key'] == KEY and 'operation' not in body
@@ -166,7 +167,7 @@ def test_manual_credential_default_and_password_widget():
 
 @pytest.mark.asyncio
 async def test_workflow_pdf_becomes_a_downstream_file_url(monkeypatch):
-    import utils.resource_store as store
+    import nodes.core.binary_output as store
     mock(monkeypatch, content=PDF, headers={'content-type': 'application/pdf'})
     written = []
     async def save(**kwargs):
@@ -177,7 +178,11 @@ async def test_workflow_pdf_becomes_a_downstream_file_url(monkeypatch):
     instance = node({'operation': 'convert_html', 'html': '<h1>Hi</h1>', 'pdf_name': 'report.pdf'})
     instance.user_id = 'test-user'
     instance.workflow_id = 'test-workflow'
-    result = await instance.execute({})
+    raw = await instance.execute({})
+    assert raw['file'] == BinaryOutput(PDF, 'application/pdf', 'report.pdf')
+    assert not written
+    result = await resolve_binary_outputs(raw, user_id=instance.user_id, workflow_id=instance.workflow_id,
+                                          node_id=instance.node_id, organization_id=instance.organization_id)
     assert 'pdf_base64' not in result
     assert result['file'] == {'url': 'https://files.example/selectpdf.pdf', 'mime_type': 'application/pdf',
                               'name': 'report.pdf', 'size_bytes': len(PDF)}

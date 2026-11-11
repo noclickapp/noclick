@@ -1,19 +1,19 @@
 """SelectPdf REST v2, pinned to https://selectpdf.com/api/selectpdf-swagger.json.
 
-Each task makes one documented POST. PDFs are stored as workflow files (base64
-only for context-free runs); async
+Each task makes one documented POST. PDF bytes use the shared BinaryOutput
+resolver for workflow file storage and context-free results; async
 submission returns a job ID for an explicit later read. No automatic retries of
 billable conversions. No webhook or chronological list API is published.
 """
 from __future__ import annotations
 
-import base64
 from typing import Annotated, Literal, Union
 from urllib.parse import urlsplit
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -282,13 +282,7 @@ class SelectPdfNode(WorkflowNode):
             return {**output, "text": response.text}
         if not response.content.startswith(b"%PDF-"):
             raise ValueError("SelectPdf did not return PDF bytes")
-        if self.user_id and self.workflow_id:
-            from utils.resource_store import create_resource_from_bytes
-            ref = await create_resource_from_bytes(
-                user_id=self.user_id, workflow_id=self.workflow_id, node_id=self.node_id,
-                organization_id=self.organization_id, body=response.content,
-                content_type="application/pdf", filename=getattr(config, "pdf_name", None) or "selectpdf.pdf",
-            )
-            return {**output, "file": {"url": ref["download_url"], "mime_type": ref["mime_type"],
-                "name": ref["name"], "size_bytes": ref["size_bytes"]}}
-        return {**output, "pdf_base64": base64.b64encode(response.content).decode("ascii"), "content_type": "application/pdf"}
+        return {**output, "file": BinaryOutput(
+            data=response.content, content_type="application/pdf",
+            filename=getattr(config, "pdf_name", None) or "selectpdf.pdf",
+        )}
