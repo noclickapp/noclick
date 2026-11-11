@@ -1,0 +1,773 @@
+{
+  "source": "https://api.corbit.sa/doc/postman.json",
+  "sha256": "92fe3e0344292716a880d50bc50bb4911aaf20611c26ad5560c87b88745ce9a9",
+  "items": [
+    {
+      "name": "Send SMS (single)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/send",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "send"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"senderName\": \"Mobile.SA\",\n  \"number\": \"966XXXXXXXXX\",\n  \"messageBody\": \"Your code is 4821\",\n  \"sendAtOption\": \"NOW\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "Sends one SMS. The response carries the message `id` to use with the status and report endpoints.\n\n| Field | In | Type | Required | Description |\n|---|---|---|---|---|\n| `Idempotency-Key` | header | string | no | Optional. Retrying with the same key returns the first response (header `Idempotent-Replayed: true`) instead of sending again. |\n| `X-Allow-Duplicate` | header | string | no | Optional. Set to `true` to resend an identical message on purpose (skips duplicate protection for this request only). |\n| `senderName` | body | string | yes | Sender name approved for your account (see the sender names endpoint). |\n| `number` | body | string | yes | Recipient mobile number in international format, digits only (8\u201315 digits), e.g. `966XXXXXXXXX`. |\n| `messageBody` | body | string | yes | Message text, up to 1600 characters. |\n| `sendAtOption` | body | string | no | Delivery timing. `NOW` sends immediately. |"
+      },
+      "response": [
+        {
+          "name": "Accepted",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Success\",\n  \"message\": null,\n  \"data\": {\n    \"message\": {\n      \"id\": \"8493f201-ebcc-4415-8450-18d8d8714f33\",\n      \"status\": \"pending\"\n    }\n  }\n}"
+        },
+        {
+          "name": "Invalid request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Error\",\n  \"message\": \"Invalid destination number: 12 (expected 8-15 digits, international format).\",\n  \"code\": \"VALIDATION\"\n}"
+        },
+        {
+          "name": "Balance exhausted",
+          "code": 402,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Error\",\n  \"message\": \"Insufficient balance (0). Please top up to continue sending.\",\n  \"code\": \"INSUFFICIENT_BALANCE\"\n}"
+        },
+        {
+          "name": "Duplicate message",
+          "code": 409,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Error\",\n  \"message\": \"Duplicate request blocked: same client, destination, and message within the dedup window.\",\n  \"code\": \"DUPLICATE\"\n}"
+        },
+        {
+          "name": "Rate limit exceeded",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Error\",\n  \"message\": \"Rate limit exceeded\",\n  \"code\": \"RATE_LIMIT\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Send SMS (bulk)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/send-bulk",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "send-bulk"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"senderName\": \"Mobile.SA\",\n  \"numbers\": [\n    \"966XXXXXXXXX\",\n    \"966XXXXXXXXX\"\n  ],\n  \"messageBody\": \"Corbit bulk\",\n  \"sendAtOption\": \"Now\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "Sends the same text to many recipients in one request.\n\n| Field | In | Type | Required | Description |\n|---|---|---|---|---|\n| `Idempotency-Key` | header | string | no | Optional. Retrying with the same key returns the first response instead of sending again. |\n| `X-Allow-Duplicate` | header | string | no | Optional. Set to `true` to resend an identical message on purpose. |\n| `senderName` | body | string | yes | Sender name approved for your account. |\n| `numbers` | body | array | yes | Recipient numbers in international format. If any number is invalid the whole request is rejected and nothing is sent. |\n| `messageBody` | body | string | yes | Message text, up to 1600 characters. |\n| `sendAtOption` | body | string | no | Delivery timing. Use `Now` to send immediately. |"
+      },
+      "response": [
+        {
+          "name": "Accepted",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Success\",\n  \"message\": null,\n  \"data\": {\n    \"message\": {\n      \"id\": \"2cb5acc1-fc5a-495e-a610-1f789dec53ff\",\n      \"status\": \"pending\"\n    }\n  }\n}"
+        },
+        {
+          "name": "Invalid request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Error\",\n  \"message\": \"Invalid destination number: 12 (expected 8-15 digits, international format).\",\n  \"code\": \"VALIDATION\"\n}"
+        },
+        {
+          "name": "Balance exhausted",
+          "code": 402,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Error\",\n  \"message\": \"Insufficient balance (0). Please top up to continue sending.\",\n  \"code\": \"INSUFFICIENT_BALANCE\"\n}"
+        },
+        {
+          "name": "Duplicate message",
+          "code": 409,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Error\",\n  \"message\": \"Duplicate request blocked: same client, destination, and message within the dedup window.\",\n  \"code\": \"DUPLICATE\"\n}"
+        },
+        {
+          "name": "Rate limit exceeded",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Error\",\n  \"message\": \"Rate limit exceeded\",\n  \"code\": \"RATE_LIMIT\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Account balance",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/get-balance",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "get-balance"
+          ]
+        },
+        "description": "Returns your remaining balance."
+      },
+      "response": [
+        {
+          "name": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Success\",\n  \"message\": null,\n  \"data\": {\n    \"balance\": 183\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Approved sender names",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/sendernames",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "sendernames"
+          ]
+        },
+        "description": "Lists the sender names on your account and their approval status."
+      },
+      "response": [
+        {
+          "name": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Success\",\n  \"message\": \"Sender names retrieved successfully\",\n  \"data\": [\n    {\n      \"name\": \"Mobile.SA\",\n      \"status\": \"approved\"\n    }\n  ],\n  \"pagination\": {\n    \"total\": 1,\n    \"per_page\": 15,\n    \"current_page\": 1\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Message delivery status",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/message-status/:id",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "message-status",
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "",
+              "description": "Message id returned by the send endpoints."
+            }
+          ]
+        },
+        "description": "Returns the current status of a message accepted by the send endpoints.\n\n| Field | In | Type | Required | Description |\n|---|---|---|---|---|\n| `id` | path | string | yes | Message id returned by the send endpoints. |"
+      },
+      "response": [
+        {
+          "name": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Success\",\n  \"message\": null,\n  \"data\": {\n    \"status\": \"sent\"\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Message delivery report (DLR)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/message-report/:id",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "message-report",
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "",
+              "description": "Message id returned by the send endpoints."
+            }
+          ]
+        },
+        "description": "Returns the detailed delivery report per destination.\n\n| Field | In | Type | Required | Description |\n|---|---|---|---|---|\n| `id` | path | string | yes | Message id returned by the send endpoints. |"
+      },
+      "response": [
+        {
+          "name": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"jobId\": \"moe-XYno7kqZeK0jN8YlMg\",\n  \"msgs\": [\n    {\n      \"destAddress\": \"966XXXXXXXXX\",\n      \"status\": \"unknown\",\n      \"accepted\": false\n    }\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "List message templates",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/gateway/v1/templates",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "gateway",
+            "v1",
+            "templates"
+          ]
+        },
+        "description": "Lists your saved message templates."
+      },
+      "response": [
+        {
+          "name": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Success\",\n  \"data\": [\n    {\n      \"name\": \"otp\",\n      \"text\": \"Hello {{name}}, your code is {{code}}\",\n      \"updatedAt\": \"2026-09-18T10:00:00.000Z\"\n    }\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "Create or replace a template",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/gateway/v1/templates/:name",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "gateway",
+            "v1",
+            "templates",
+            ":name"
+          ],
+          "variable": [
+            {
+              "key": "name",
+              "value": "",
+              "description": "Template name: 1\u201364 letters, digits, `_`, `.` or `-`."
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Hello {{name}}, your code is {{code|0000}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "Saves a template. Use `{{field}}` or `{{field|default}}` for merge fields.\n\n| Field | In | Type | Required | Description |\n|---|---|---|---|---|\n| `name` | path | string | yes | Template name: 1\u201364 letters, digits, `_`, `.` or `-`. |\n| `text` | body | string | yes | Template text with `{{field}}` merge fields, up to 1600 characters. |"
+      },
+      "response": [
+        {
+          "name": "Saved \u2014 merge fields detected",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Success\",\n  \"data\": {\n    \"name\": \"otp\",\n    \"text\": \"Hello {{name}}, your code is {{code|0000}}\",\n    \"fields\": [\n      \"name\",\n      \"code\"\n    ]\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Read a template",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/gateway/v1/templates/:name",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "gateway",
+            "v1",
+            "templates",
+            ":name"
+          ],
+          "variable": [
+            {
+              "key": "name",
+              "value": "",
+              "description": "Template name."
+            }
+          ]
+        },
+        "description": "Returns one saved template.\n\n| Field | In | Type | Required | Description |\n|---|---|---|---|---|\n| `name` | path | string | yes | Template name. |"
+      },
+      "response": [
+        {
+          "name": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Success\",\n  \"data\": {\n    \"name\": \"otp\",\n    \"text\": \"Hello {{name}}\"\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Delete a template",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/gateway/v1/templates/:name",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "gateway",
+            "v1",
+            "templates",
+            ":name"
+          ],
+          "variable": [
+            {
+              "key": "name",
+              "value": "",
+              "description": "Template name."
+            }
+          ]
+        },
+        "description": "Deletes a saved template.\n\n| Field | In | Type | Required | Description |\n|---|---|---|---|---|\n| `name` | path | string | yes | Template name. |"
+      },
+      "response": [
+        {
+          "name": "Deleted",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Success\",\n  \"data\": {\n    \"name\": \"otp\",\n    \"deleted\": true\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Personalized bulk send (merge fields)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/gateway/v1/send-template",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "gateway",
+            "v1",
+            "send-template"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"senderName\": \"Corbit\",\n  \"template\": \"otp\",\n  \"vars\": {\n    \"code\": \"0000\"\n  },\n  \"recipients\": [\n    {\n      \"number\": \"966XXXXXXXXX\",\n      \"vars\": {\n        \"name\": \"Ali\",\n        \"code\": \"4821\"\n      }\n    },\n    \"966XXXXXXXXX\"\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "Sends a saved template (`template`) or inline `text` with `{{field}}` / `{{field|default}}` placeholders. Per-recipient `vars` override the shared `vars`. Recipients whose rendered text is identical are grouped into one bulk send. If any recipient is invalid the whole request is rejected and nothing is sent.\n\n| Field | In | Type | Required | Description |\n|---|---|---|---|---|\n| `Idempotency-Key` | header | string | no | Optional. Retrying with the same key returns the first response instead of sending again. |\n| `senderName` | body | string | yes | Sender name approved for your account. |\n| `template` | body | string | no | Name of a saved template (or send `text` instead). |\n| `vars` | body | object | no | Merge values shared by all recipients. |\n| `recipients` | body | array | yes | Numbers, or `{ number, vars }` objects for per-recipient values. Up to 1000 per request. |"
+      },
+      "response": [
+        {
+          "name": "Accepted (status \"Partial\" if some groups failed)",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Success\",\n  \"message\": null,\n  \"data\": {\n    \"recipients\": 2,\n    \"groups\": 2,\n    \"accepted\": 2,\n    \"rejected\": 0,\n    \"messages\": [\n      {\n        \"numbers\": 1,\n        \"id\": \"8493f201-\u2026\",\n        \"ok\": true\n      }\n    ]\n  }\n}"
+        },
+        {
+          "name": "Balance exhausted",
+          "code": 402,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Error\",\n  \"message\": \"Insufficient balance (0). Please top up to continue sending.\",\n  \"code\": \"INSUFFICIENT_BALANCE\"\n}"
+        },
+        {
+          "name": "Sender name not approved",
+          "code": 403,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Error\",\n  \"message\": \"Sender 'X' is not registered/approved for your account.\",\n  \"code\": \"SENDER_NOT_ALLOWED\"\n}"
+        },
+        {
+          "name": "Invalid recipients / missing fields",
+          "code": 422,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Error\",\n  \"code\": \"VALIDATION\",\n  \"message\": \"1 recipient(s) are invalid; nothing was sent.\",\n  \"errors\": [\n    {\n      \"index\": 1,\n      \"number\": \"966XXXXXXXXX\",\n      \"error\": \"missing fields: name\"\n    }\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "Your rate limit and last known balance",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/gateway/v1/usage",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "gateway",
+            "v1",
+            "usage"
+          ]
+        },
+        "description": "Returns your request rate limit and your last known balance."
+      },
+      "response": [
+        {
+          "name": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Success\",\n  \"data\": {\n    \"rateLimit\": {\n      \"limit\": 1000,\n      \"windowSec\": 60\n    },\n    \"balance\": {\n      \"value\": 183,\n      \"asOf\": \"2026-09-18T10:00:00.000Z\"\n    }\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Sent-message archive",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/gateway/v1/messages?limit=&cursor=&from=&to=&number=&sender=&status=",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "gateway",
+            "v1",
+            "messages"
+          ],
+          "query": [
+            {
+              "key": "limit",
+              "value": "",
+              "description": "Page size, 1\u2013200 (default 50)."
+            },
+            {
+              "key": "cursor",
+              "value": "",
+              "description": "nextCursor from a previous page, to continue."
+            },
+            {
+              "key": "from",
+              "value": "",
+              "description": "Oldest date to include: `2026-09-01`, an ISO date-time, or epoch seconds."
+            },
+            {
+              "key": "to",
+              "value": "",
+              "description": "Newest date to include (a bare date covers that whole day)."
+            },
+            {
+              "key": "number",
+              "value": "",
+              "description": "A destination number, or a piece of it."
+            },
+            {
+              "key": "sender",
+              "value": "",
+              "description": "Sender name."
+            },
+            {
+              "key": "status",
+              "value": "",
+              "description": "`1` also returns each message's delivery status."
+            }
+          ]
+        },
+        "description": "All parameters are optional. Lists the messages sent from your account, newest first: destination, sender, message length and the backend message id(s) \u2014 not the message text. Filter by date, destination number or sender; add `status=1` to also get each message's delivery status (`delivered`, `failed`, `pending`...). A final status is remembered, so it is read once. Paginate with `cursor` (the previous page's `nextCursor`); a filtered page can come back shorter than `limit` \u2014 keep following `nextCursor` until it is `null`.\n\n| Field | In | Type | Required | Description |\n|---|---|---|---|---|\n| `limit` | query | integer | no | Page size, 1\u2013200 (default 50). |\n| `cursor` | query | string | no | nextCursor from a previous page, to continue. |\n| `from` | query | string | no | Oldest date to include: `2026-09-01`, an ISO date-time, or epoch seconds. |\n| `to` | query | string | no | Newest date to include (a bare date covers that whole day). |\n| `number` | query | string | no | A destination number, or a piece of it. |\n| `sender` | query | string | no | Sender name. |\n| `status` | query | string | no | `1` also returns each message's delivery status. |"
+      },
+      "response": [
+        {
+          "name": "OK \u2014 newest first",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Success\",\n  \"data\": {\n    \"messages\": [\n      {\n        \"ts\": \"2026-09-24T10:38:17.000Z\",\n        \"ok\": true,\n        \"destCount\": 1,\n        \"length\": 14,\n        \"to\": [\n          \"201008834539\"\n        ],\n        \"sender\": \"School1\",\n        \"id\": [\n          \"30be7f80-e587-46ac-a5b3-0f89d21c03dd\"\n        ],\n        \"status\": \"delivered\"\n      }\n    ],\n    \"nextCursor\": null\n  }\n}"
+        },
+        {
+          "name": "Invalid date",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"Error\",\n  \"message\": \"\\\"tomorrow\\\" is not a valid date: use 2026-09-24, an ISO date-time, or epoch seconds.\",\n  \"code\": \"VALIDATION\"\n}"
+        }
+      ]
+    }
+  ]
+}
