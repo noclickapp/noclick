@@ -1,0 +1,3367 @@
+{
+  "$defs": {
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "WeatherbitAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "weatherbit_api_key",
+          "default": "weatherbit_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Weatherbit API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Weatherbit API key from your account dashboard. Product access depends on your subscription. NoClick checks the key's subscription usage; this does not identify a person.",
+      "x-credential-url": "https://www.weatherbit.io/account/dashboard"
+    },
+    "WeatherbitGeocodeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "geocode",
+          "default": "geocode",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Geocode",
+          "x-is-trigger": false
+        },
+        "city": {
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional state or province code used with city lookups.",
+          "title": "State"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country Code (2 letter) - to be used with postal_code.",
+          "title": "Country"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal Code. Example: 28546",
+          "title": "Postal Code"
+        },
+        "city_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Weatherbit city ID. Example: 4487042",
+          "title": "City Id"
+        },
+        "station": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Station Call ID.",
+          "title": "Station"
+        }
+      },
+      "required": [
+        "city"
+      ],
+      "title": "WeatherbitGeocodeConfig",
+      "type": "object"
+    },
+    "WeatherbitGetAgricultureForecastConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_agriculture_forecast",
+          "default": "get_agriculture_forecast",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Agriculture Forecast",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "enum": [
+                "M",
+                "S",
+                "I"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)",
+          "title": "Units",
+          "enum": [
+            "M",
+            "S",
+            "I"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "WeatherbitGetAgricultureForecastConfig",
+      "type": "object"
+    },
+    "WeatherbitGetAirQualityForecastConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_air_quality_forecast",
+          "default": "get_air_quality_forecast",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Air Quality Forecast",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+          "title": "City"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal Code. Example: 28546",
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country Code (2 letter) - to be used with postal_code.",
+          "title": "Country"
+        },
+        "hours": {
+          "anyOf": [
+            {
+              "maximum": 240,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of hours to return.",
+          "title": "Hours"
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "WeatherbitGetAirQualityForecastConfig",
+      "type": "object"
+    },
+    "WeatherbitGetAlertsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_alerts",
+          "default": "get_alerts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Alerts",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+          "title": "City"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal Code. Example: 28546",
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country Code (2 letter) - to be used with postal_code.",
+          "title": "Country"
+        },
+        "station": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Station Call ID.",
+          "title": "Station"
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "WeatherbitGetAlertsConfig",
+      "type": "object"
+    },
+    "WeatherbitGetClimateNormalsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_climate_normals",
+          "default": "get_climate_normals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Climate Normals",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "start_day": {
+          "description": "Start Day (MM-DD).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Start Day",
+          "type": "string"
+        },
+        "end_day": {
+          "description": "End Day (MM-DD).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "End Day",
+          "type": "string"
+        },
+        "tp": {
+          "anyOf": [
+            {
+              "enum": [
+                "daily",
+                "hourly",
+                "monthly"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time period of calculation (daily [DEFAULT], or hourly).",
+          "title": "Tp",
+          "enum": [
+            "daily",
+            "hourly",
+            "monthly"
+          ],
+          "x-enum-searchable": true
+        },
+        "units": {
+          "anyOf": [
+            {
+              "enum": [
+                "M",
+                "S",
+                "I"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)",
+          "title": "Units",
+          "enum": [
+            "M",
+            "S",
+            "I"
+          ],
+          "x-enum-searchable": true
+        },
+        "series_year": {
+          "anyOf": [
+            {
+              "enum": [
+                "2010",
+                "2020"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Series year for calculation. 2020 for 1991-2020. 2010 for 1981-2010.",
+          "title": "Series Year",
+          "enum": [
+            "2010",
+            "2020"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "start_day",
+        "end_day"
+      ],
+      "title": "WeatherbitGetClimateNormalsConfig",
+      "type": "object"
+    },
+    "WeatherbitGetCurrentAirQualityConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_air_quality",
+          "default": "get_current_air_quality",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Current Air Quality",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+          "title": "City"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal Code. Example: 28546",
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country Code (2 letter) - to be used with postal_code.",
+          "title": "Country"
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "WeatherbitGetCurrentAirQualityConfig",
+      "type": "object"
+    },
+    "WeatherbitGetCurrentLightningConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_lightning",
+          "default": "get_current_lightning",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Current Lightning",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit result lightning. (Default 1500, Max 2500)",
+          "title": "Limit"
+        },
+        "skip": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of results to skip in response. (Offset)",
+          "title": "Skip"
+        },
+        "search_distance_km": {
+          "anyOf": [
+            {
+              "maximum": 75,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Radial search distance from point in KM. (Default 20 KM - Max 75 KM)",
+          "title": "Search Distance Km"
+        },
+        "search_mins": {
+          "anyOf": [
+            {
+              "maximum": 45,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search time backwards from current time in minutes. (Default 30 minutes - Max 45 minutes)",
+          "title": "Search Mins"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "distance",
+                "time"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort results by either most recent occurrence, or least distance from point. (Default distance)",
+          "title": "Sort",
+          "enum": [
+            "distance",
+            "time"
+          ],
+          "x-enum-searchable": true
+        },
+        "output_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "json",
+                "geojson"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Data type of reponse JSON or GeoJSON. Default JSON.",
+          "title": "Output Type",
+          "enum": [
+            "json",
+            "geojson"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "WeatherbitGetCurrentLightningConfig",
+      "type": "object"
+    },
+    "WeatherbitGetCurrentWeatherConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_weather",
+          "default": "get_current_weather",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Current Weather",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "minutely",
+                  "alerts",
+                  "lightning"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include optional current weather add-ons in the response. Accepts a comma separated list of minutely, lightning, and/or alerts.",
+          "title": "Include"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+          "title": "City"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal Code. Example: 28546",
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country Code (2 letter) - to be used with postal_code.",
+          "title": "Country"
+        },
+        "station": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Station Call ID.",
+          "title": "Station"
+        },
+        "points": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma separated list of points. Example: (35.5, -75.5),(45, 65),(45.12, -130.5)",
+          "title": "Points"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "enum": [
+                "M",
+                "S",
+                "I"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)",
+          "title": "Units",
+          "enum": [
+            "M",
+            "S",
+            "I"
+          ],
+          "x-enum-searchable": true
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "enum": [
+                "ar",
+                "az",
+                "be",
+                "bg",
+                "bs",
+                "ca",
+                "cs",
+                "de",
+                "fi",
+                "fr",
+                "el",
+                "es",
+                "et",
+                "hr",
+                "hu",
+                "id",
+                "it",
+                "is",
+                "kw",
+                "nb",
+                "nl",
+                "pl",
+                "pt",
+                "ro",
+                "ru",
+                "sk",
+                "sl",
+                "sr",
+                "sv",
+                "tr",
+                "uk",
+                "zh",
+                "zh-tw"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>",
+          "title": "Lang",
+          "enum": [
+            "ar",
+            "az",
+            "be",
+            "bg",
+            "bs",
+            "ca",
+            "cs",
+            "de",
+            "fi",
+            "fr",
+            "el",
+            "es",
+            "et",
+            "hr",
+            "hu",
+            "id",
+            "it",
+            "is",
+            "kw",
+            "nb",
+            "nl",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "tr",
+            "uk",
+            "zh",
+            "zh-tw"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "WeatherbitGetCurrentWeatherConfig",
+      "type": "object"
+    },
+    "WeatherbitGetDailyForecastConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_daily_forecast",
+          "default": "get_daily_forecast",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Daily Forecast",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+          "title": "City"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal Code. Example: 28546",
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country Code (2 letter) - to be used with postal_code.",
+          "title": "Country"
+        },
+        "station": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Station Call ID.",
+          "title": "Station"
+        },
+        "days": {
+          "anyOf": [
+            {
+              "maximum": 16,
+              "minimum": 1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of days to return. Default 16.",
+          "title": "Days"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "enum": [
+                "M",
+                "S",
+                "I"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)",
+          "title": "Units",
+          "enum": [
+            "M",
+            "S",
+            "I"
+          ],
+          "x-enum-searchable": true
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "enum": [
+                "ar",
+                "az",
+                "be",
+                "bg",
+                "bs",
+                "ca",
+                "cs",
+                "de",
+                "fi",
+                "fr",
+                "el",
+                "es",
+                "et",
+                "hr",
+                "hu",
+                "id",
+                "it",
+                "is",
+                "kw",
+                "nb",
+                "nl",
+                "pl",
+                "pt",
+                "ro",
+                "ru",
+                "sk",
+                "sl",
+                "sr",
+                "sv",
+                "tr",
+                "uk",
+                "zh",
+                "zh-tw"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>",
+          "title": "Lang",
+          "enum": [
+            "ar",
+            "az",
+            "be",
+            "bg",
+            "bs",
+            "ca",
+            "cs",
+            "de",
+            "fi",
+            "fr",
+            "el",
+            "es",
+            "et",
+            "hr",
+            "hu",
+            "id",
+            "it",
+            "is",
+            "kw",
+            "nb",
+            "nl",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "tr",
+            "uk",
+            "zh",
+            "zh-tw"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "WeatherbitGetDailyForecastConfig",
+      "type": "object"
+    },
+    "WeatherbitGetDailyHistoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_daily_history",
+          "default": "get_daily_history",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Daily History",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+          "title": "City"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal Code. Example: 28546",
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country Code (2 letter) - to be used with postal_code.",
+          "title": "Country"
+        },
+        "station": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Station Call ID.",
+          "title": "Station"
+        },
+        "start_date": {
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "End Date",
+          "type": "string"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "enum": [
+                "M",
+                "S",
+                "I"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)",
+          "title": "Units",
+          "enum": [
+            "M",
+            "S",
+            "I"
+          ],
+          "x-enum-searchable": true
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "enum": [
+                "ar",
+                "az",
+                "be",
+                "bg",
+                "bs",
+                "ca",
+                "cs",
+                "de",
+                "fi",
+                "fr",
+                "el",
+                "es",
+                "et",
+                "hr",
+                "hu",
+                "id",
+                "it",
+                "is",
+                "kw",
+                "nb",
+                "nl",
+                "pl",
+                "pt",
+                "ro",
+                "ru",
+                "sk",
+                "sl",
+                "sr",
+                "sv",
+                "tr",
+                "uk",
+                "zh",
+                "zh-tw"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>",
+          "title": "Lang",
+          "enum": [
+            "ar",
+            "az",
+            "be",
+            "bg",
+            "bs",
+            "ca",
+            "cs",
+            "de",
+            "fi",
+            "fr",
+            "el",
+            "es",
+            "et",
+            "hr",
+            "hu",
+            "id",
+            "it",
+            "is",
+            "kw",
+            "nb",
+            "nl",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "tr",
+            "uk",
+            "zh",
+            "zh-tw"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "start_date",
+        "end_date"
+      ],
+      "title": "WeatherbitGetDailyHistoryConfig",
+      "type": "object"
+    },
+    "WeatherbitGetEnergyForecastConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_energy_forecast",
+          "default": "get_energy_forecast",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Energy Forecast",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "threshold": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Temperature threshold to use to calculate degree days (default 18 C) ",
+          "title": "Threshold"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "enum": [
+                "M",
+                "S",
+                "I"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)",
+          "title": "Units",
+          "enum": [
+            "M",
+            "S",
+            "I"
+          ],
+          "x-enum-searchable": true
+        },
+        "tp": {
+          "anyOf": [
+            {
+              "enum": [
+                "daily",
+                "hourly"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time period of calculation (daily [DEFAULT], or hourly).",
+          "title": "Tp",
+          "enum": [
+            "daily",
+            "hourly"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "WeatherbitGetEnergyForecastConfig",
+      "type": "object"
+    },
+    "WeatherbitGetHistoricalAgricultureConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_historical_agriculture",
+          "default": "get_historical_agriculture",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Historical Agriculture",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "start_date": {
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "End Date",
+          "type": "string"
+        },
+        "tp": {
+          "anyOf": [
+            {
+              "enum": [
+                "daily",
+                "hourly"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time period of calculation (daily [DEFAULT], or hourly).",
+          "title": "Tp",
+          "enum": [
+            "daily",
+            "hourly"
+          ],
+          "x-enum-searchable": true
+        },
+        "units": {
+          "anyOf": [
+            {
+              "enum": [
+                "M",
+                "S",
+                "I"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)",
+          "title": "Units",
+          "enum": [
+            "M",
+            "S",
+            "I"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "start_date",
+        "end_date"
+      ],
+      "title": "WeatherbitGetHistoricalAgricultureConfig",
+      "type": "object"
+    },
+    "WeatherbitGetHistoricalAirQualityConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_historical_air_quality",
+          "default": "get_historical_air_quality",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Historical Air Quality",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+          "title": "City"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal Code. Example: 28546",
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country Code (2 letter) - to be used with postal_code.",
+          "title": "Country"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+          "title": "End Date"
+        },
+        "tz": {
+          "anyOf": [
+            {
+              "enum": [
+                "local",
+                "utc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Assumed timezone option to use for date parameter. Default is local.",
+          "title": "Tz",
+          "enum": [
+            "local",
+            "utc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "WeatherbitGetHistoricalAirQualityConfig",
+      "type": "object"
+    },
+    "WeatherbitGetHistoricalEnergyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_historical_energy",
+          "default": "get_historical_energy",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Historical Energy",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "start_date": {
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "End Date",
+          "type": "string"
+        },
+        "tp": {
+          "anyOf": [
+            {
+              "enum": [
+                "daily",
+                "hourly",
+                "monthly"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time period of calculation (daily [DEFAULT], or hourly).",
+          "title": "Tp",
+          "enum": [
+            "daily",
+            "hourly",
+            "monthly"
+          ],
+          "x-enum-searchable": true
+        },
+        "threshold": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Temperature threshold to use to calculate degree days (default 18 C) ",
+          "title": "Threshold"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "enum": [
+                "M",
+                "S",
+                "I"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)",
+          "title": "Units",
+          "enum": [
+            "M",
+            "S",
+            "I"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "start_date",
+        "end_date"
+      ],
+      "title": "WeatherbitGetHistoricalEnergyConfig",
+      "type": "object"
+    },
+    "WeatherbitGetHistoricalLightningConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_historical_lightning",
+          "default": "get_historical_lightning",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Historical Lightning",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "date": {
+          "description": "Date to retrieve data for. (YYYY-MM-DD)",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Date",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit result lightning. (Default 1500, Max 2500)",
+          "title": "Limit"
+        },
+        "skip": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of results to skip in response. (Offset)",
+          "title": "Skip"
+        },
+        "search_distance_km": {
+          "anyOf": [
+            {
+              "maximum": 75,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Radial search distance from point in KM. (Default 20 KM - Max 75 KM)",
+          "title": "Search Distance Km"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "distance",
+                "time"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort results by either most recent occurrence, or least distance from point. (Default distance)",
+          "title": "Sort",
+          "enum": [
+            "distance",
+            "time"
+          ],
+          "x-enum-searchable": true
+        },
+        "output_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "json",
+                "geojson"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Data type of reponse JSON or GeoJSON. Default JSON.",
+          "title": "Output Type",
+          "enum": [
+            "json",
+            "geojson"
+          ],
+          "x-enum-searchable": true
+        },
+        "tz": {
+          "anyOf": [
+            {
+              "enum": [
+                "local",
+                "utc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Assumed timezone option to use for date parameter. Default is local.",
+          "title": "Tz",
+          "enum": [
+            "local",
+            "utc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "date"
+      ],
+      "title": "WeatherbitGetHistoricalLightningConfig",
+      "type": "object"
+    },
+    "WeatherbitGetHistoryRevisionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_history_revision",
+          "default": "get_history_revision",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get History Revision",
+          "x-is-trigger": false
+        }
+      },
+      "title": "WeatherbitGetHistoryRevisionConfig",
+      "type": "object"
+    },
+    "WeatherbitGetHourlyForecastConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_hourly_forecast",
+          "default": "get_hourly_forecast",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Hourly Forecast",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+          "title": "City"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal Code. Example: 28546",
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country Code (2 letter) - to be used with postal_code.",
+          "title": "Country"
+        },
+        "station": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Station Call ID.",
+          "title": "Station"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "enum": [
+                "M",
+                "S",
+                "I"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)",
+          "title": "Units",
+          "enum": [
+            "M",
+            "S",
+            "I"
+          ],
+          "x-enum-searchable": true
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "enum": [
+                "ar",
+                "az",
+                "be",
+                "bg",
+                "bs",
+                "ca",
+                "cs",
+                "de",
+                "fi",
+                "fr",
+                "el",
+                "es",
+                "et",
+                "hr",
+                "hu",
+                "id",
+                "it",
+                "is",
+                "kw",
+                "nb",
+                "nl",
+                "pl",
+                "pt",
+                "ro",
+                "ru",
+                "sk",
+                "sl",
+                "sr",
+                "sv",
+                "tr",
+                "uk",
+                "zh",
+                "zh-tw"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>",
+          "title": "Lang",
+          "enum": [
+            "ar",
+            "az",
+            "be",
+            "bg",
+            "bs",
+            "ca",
+            "cs",
+            "de",
+            "fi",
+            "fr",
+            "el",
+            "es",
+            "et",
+            "hr",
+            "hu",
+            "id",
+            "it",
+            "is",
+            "kw",
+            "nb",
+            "nl",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "tr",
+            "uk",
+            "zh",
+            "zh-tw"
+          ],
+          "x-enum-searchable": true
+        },
+        "hours": {
+          "anyOf": [
+            {
+              "maximum": 240,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of hours to return.",
+          "title": "Hours"
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "WeatherbitGetHourlyForecastConfig",
+      "type": "object"
+    },
+    "WeatherbitGetHourlyHistoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_hourly_history",
+          "default": "get_hourly_history",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Hourly History",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+          "title": "City"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal Code. Example: 28546",
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country Code (2 letter) - to be used with postal_code.",
+          "title": "Country"
+        },
+        "station": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Station Call ID.",
+          "title": "Station"
+        },
+        "start_date": {
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "End Date",
+          "type": "string"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "enum": [
+                "M",
+                "S",
+                "I"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)",
+          "title": "Units",
+          "enum": [
+            "M",
+            "S",
+            "I"
+          ],
+          "x-enum-searchable": true
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "enum": [
+                "ar",
+                "az",
+                "be",
+                "bg",
+                "bs",
+                "ca",
+                "cs",
+                "de",
+                "fi",
+                "fr",
+                "el",
+                "es",
+                "et",
+                "hr",
+                "hu",
+                "id",
+                "it",
+                "is",
+                "kw",
+                "nb",
+                "nl",
+                "pl",
+                "pt",
+                "ro",
+                "ru",
+                "sk",
+                "sl",
+                "sr",
+                "sv",
+                "tr",
+                "uk",
+                "zh",
+                "zh-tw"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>",
+          "title": "Lang",
+          "enum": [
+            "ar",
+            "az",
+            "be",
+            "bg",
+            "bs",
+            "ca",
+            "cs",
+            "de",
+            "fi",
+            "fr",
+            "el",
+            "es",
+            "et",
+            "hr",
+            "hu",
+            "id",
+            "it",
+            "is",
+            "kw",
+            "nb",
+            "nl",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "tr",
+            "uk",
+            "zh",
+            "zh-tw"
+          ],
+          "x-enum-searchable": true
+        },
+        "tz": {
+          "anyOf": [
+            {
+              "enum": [
+                "local",
+                "utc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Assumed timezone option to use for date parameter. Default is local.",
+          "title": "Tz",
+          "enum": [
+            "local",
+            "utc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "start_date",
+        "end_date"
+      ],
+      "title": "WeatherbitGetHourlyHistoryConfig",
+      "type": "object"
+    },
+    "WeatherbitGetMinutelyForecastConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_minutely_forecast",
+          "default": "get_minutely_forecast",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Minutely Forecast",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+          "title": "City"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal Code. Example: 28546",
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country Code (2 letter) - to be used with postal_code.",
+          "title": "Country"
+        },
+        "station": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Station Call ID.",
+          "title": "Station"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "enum": [
+                "M",
+                "S",
+                "I"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)",
+          "title": "Units",
+          "enum": [
+            "M",
+            "S",
+            "I"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "WeatherbitGetMinutelyForecastConfig",
+      "type": "object"
+    },
+    "WeatherbitGetSubhourlyHistoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_subhourly_history",
+          "default": "get_subhourly_history",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Get Subhourly History",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude component of location.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude component of location.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+          "title": "City"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal Code. Example: 28546",
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country Code (2 letter) - to be used with postal_code.",
+          "title": "Country"
+        },
+        "station": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Station Call ID.",
+          "title": "Station"
+        },
+        "start_date": {
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "End Date",
+          "type": "string"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "enum": [
+                "M",
+                "S",
+                "I"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)",
+          "title": "Units",
+          "enum": [
+            "M",
+            "S",
+            "I"
+          ],
+          "x-enum-searchable": true
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "enum": [
+                "ar",
+                "az",
+                "be",
+                "bg",
+                "bs",
+                "ca",
+                "cs",
+                "de",
+                "fi",
+                "fr",
+                "el",
+                "es",
+                "et",
+                "hr",
+                "hu",
+                "id",
+                "it",
+                "is",
+                "kw",
+                "nb",
+                "nl",
+                "pl",
+                "pt",
+                "ro",
+                "ru",
+                "sk",
+                "sl",
+                "sr",
+                "sv",
+                "tr",
+                "uk",
+                "zh",
+                "zh-tw"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>",
+          "title": "Lang",
+          "enum": [
+            "ar",
+            "az",
+            "be",
+            "bg",
+            "bs",
+            "ca",
+            "cs",
+            "de",
+            "fi",
+            "fr",
+            "el",
+            "es",
+            "et",
+            "hr",
+            "hu",
+            "id",
+            "it",
+            "is",
+            "kw",
+            "nb",
+            "nl",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "tr",
+            "uk",
+            "zh",
+            "zh-tw"
+          ],
+          "x-enum-searchable": true
+        },
+        "tz": {
+          "anyOf": [
+            {
+              "enum": [
+                "local",
+                "utc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Assumed timezone option to use for date parameter. Default is local.",
+          "title": "Tz",
+          "enum": [
+            "local",
+            "utc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "start_date",
+        "end_date"
+      ],
+      "title": "WeatherbitGetSubhourlyHistoryConfig",
+      "type": "object"
+    },
+    "WeatherbitGetSubscriptionUsageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_subscription_usage",
+          "default": "get_subscription_usage",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Subscription Usage",
+          "x-is-trigger": false
+        }
+      },
+      "title": "WeatherbitGetSubscriptionUsageConfig",
+      "type": "object"
+    },
+    "WeatherbitOnNewLightningConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_lightning",
+          "default": "on_new_lightning",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Lightning",
+          "x-is-trigger": true
+        },
+        "lat": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        },
+        "search_distance_km": {
+          "default": 20,
+          "maximum": 75,
+          "minimum": 1,
+          "title": "Search Radius (km)",
+          "type": "integer"
+        },
+        "search_mins": {
+          "default": 45,
+          "description": "Poll more often than this window. Outages beyond it can miss lightning events.",
+          "maximum": 45,
+          "minimum": 1,
+          "title": "Lookback (minutes)",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "WeatherbitOnNewLightningConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "geocode": "#/$defs/WeatherbitGeocodeConfig",
+          "get_agriculture_forecast": "#/$defs/WeatherbitGetAgricultureForecastConfig",
+          "get_air_quality_forecast": "#/$defs/WeatherbitGetAirQualityForecastConfig",
+          "get_alerts": "#/$defs/WeatherbitGetAlertsConfig",
+          "get_climate_normals": "#/$defs/WeatherbitGetClimateNormalsConfig",
+          "get_current_air_quality": "#/$defs/WeatherbitGetCurrentAirQualityConfig",
+          "get_current_lightning": "#/$defs/WeatherbitGetCurrentLightningConfig",
+          "get_current_weather": "#/$defs/WeatherbitGetCurrentWeatherConfig",
+          "get_daily_forecast": "#/$defs/WeatherbitGetDailyForecastConfig",
+          "get_daily_history": "#/$defs/WeatherbitGetDailyHistoryConfig",
+          "get_energy_forecast": "#/$defs/WeatherbitGetEnergyForecastConfig",
+          "get_historical_agriculture": "#/$defs/WeatherbitGetHistoricalAgricultureConfig",
+          "get_historical_air_quality": "#/$defs/WeatherbitGetHistoricalAirQualityConfig",
+          "get_historical_energy": "#/$defs/WeatherbitGetHistoricalEnergyConfig",
+          "get_historical_lightning": "#/$defs/WeatherbitGetHistoricalLightningConfig",
+          "get_history_revision": "#/$defs/WeatherbitGetHistoryRevisionConfig",
+          "get_hourly_forecast": "#/$defs/WeatherbitGetHourlyForecastConfig",
+          "get_hourly_history": "#/$defs/WeatherbitGetHourlyHistoryConfig",
+          "get_minutely_forecast": "#/$defs/WeatherbitGetMinutelyForecastConfig",
+          "get_subhourly_history": "#/$defs/WeatherbitGetSubhourlyHistoryConfig",
+          "get_subscription_usage": "#/$defs/WeatherbitGetSubscriptionUsageConfig",
+          "on_new_lightning": "#/$defs/WeatherbitOnNewLightningConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WeatherbitGetAlertsConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetCurrentWeatherConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetHistoricalLightningConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetCurrentLightningConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetDailyForecastConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetMinutelyForecastConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetAirQualityForecastConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetHistoricalAirQualityConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetCurrentAirQualityConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetHourlyForecastConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetAgricultureForecastConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetHistoricalAgricultureConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetClimateNormalsConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetDailyHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetHourlyHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetSubhourlyHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetEnergyForecastConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetHistoricalEnergyConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGeocodeConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetSubscriptionUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitGetHistoryRevisionConfig"
+        },
+        {
+          "$ref": "#/$defs/WeatherbitOnNewLightningConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WeatherbitAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Weatherbit Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

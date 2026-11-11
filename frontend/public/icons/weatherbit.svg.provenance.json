@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/weatherbit.svg",
+  "source": "https://cdn.weatherbit.io/static/img/logos/weatherbit/color/svg/logo-no-background.svg",
+  "source_page": "https://www.weatherbit.io/",
+  "license": "Proprietary Weatherbit trademark; used to identify the integration",
+  "sha256": "7089fd72881068e1ee9d4b19ef5fe9ad463d6dce9f030b986ce9ac2ac90cb11a",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "Kept the original icon-0 SVG subtree and its original viewBox; removed the wordmark and surrounding layout transforms.",
+    "Removed fixed width and height. Original symbol paths and colors are unchanged.",
+    "Recolored the original white symbol black for visibility on light surfaces."
+  ]
+}
