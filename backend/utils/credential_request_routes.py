@@ -302,14 +302,21 @@ def _node_sibling_methods(node_type: str) -> list[dict]:
 @lru_cache(maxsize=None)
 def _sibling_methods(credential_type: str) -> tuple:
     """The methods offered beside ``credential_type``: those of the first node whose union offers it with others,
-    its owner before the nodes borrowing it."""
+    its owner before the nodes borrowing it. A request for a way in no node offers (one hidden in-app) is answered
+    by the ways in its node offers instead."""
     from nodes.core.catalog import credential_holders
 
-    for node_type, credential in credential_holders(credential_type):
-        if credential["hidden"] or not credential["pinned"]:
+    holders = [(node_type, credential) for node_type, credential in credential_holders(credential_type)
+               if credential["pinned"]]
+    for node_type, credential in holders:
+        if credential["hidden"]:
             continue
         methods = _node_sibling_methods(node_type)
         if any(method['credential_type'] == credential_type for method in methods):
+            return tuple(methods)
+    for node_type, credential in holders:
+        methods = _node_sibling_methods(node_type) if credential["hidden"] else []
+        if methods:
             return tuple(methods)
     return ()
 

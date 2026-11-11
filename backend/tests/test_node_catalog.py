@@ -124,7 +124,7 @@ def test_provide_link_lookups_are_the_schema_sweeps(classes, schemas):
     from utils import credential_request_routes as routes
 
     providers, fields, methods, siblings = {}, {}, {}, {}
-    oauth, definitions, groups = [], [], []
+    oauth, definitions, groups, hidden_groups = [], [], [], []
     for node_type, schema in schemas.items():
         defs = schema.get("$defs", {})
         for title, definition in defs.items():
@@ -140,6 +140,12 @@ def test_provide_link_lookups_are_the_schema_sweeps(classes, schemas):
                  for ref in refs if not defs.get(ref["$ref"].split("/")[-1], {}).get("x-credential-hidden")]
         group = [method for method in group if method]
         groups.extend((node_type, method["credential_type"], group) for method in group)
+        if group:
+            hidden_groups.extend(
+                (node_type, routes._resolve_credential_type(title, defs[title]), group)
+                for title in (ref["$ref"].split("/")[-1] for ref in refs)
+                if defs.get(title, {}).get("x-credential-hidden") and routes._resolve_credential_type(title, defs[title])
+            )
     for _, credential_type, provider in _owners_first(classes, oauth):
         providers.setdefault(credential_type, provider)
     assert routes._oauth_providers_by_type() == providers
@@ -151,6 +157,9 @@ def test_provide_link_lookups_are_the_schema_sweeps(classes, schemas):
             fields[credential_type] = routes._extract_fields_from_schema(definition)
         methods[credential_type] = routes._method_dict_from_defn(title, definition)
     for _, credential_type, group in _owners_first(classes, groups):
+        siblings.setdefault(credential_type, group)
+    # A way in hidden wherever it's declared is answered by the ways in its node offers.
+    for _, credential_type, group in _owners_first(classes, hidden_groups):
         siblings.setdefault(credential_type, group)
     for credential_type in sorted(set(fields) | set(methods) | set(siblings) | set(catalog.credential_types())):
         assert routes._get_credential_fields(credential_type) == fields.get(credential_type, []), credential_type
