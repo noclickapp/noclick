@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/peekalink.svg",
+  "source": "https://docs.peekalink.io/favicon.svg",
+  "source_page": "https://docs.peekalink.io/introduction",
+  "license": "Peekalink trademark; official provider favicon used to identify the integration.",
+  "sha256": "e94799d34e7be8227bc495c45b70e59ef080e88c9b0cbbeb456fb7b6af9f5897",
+  "retrieved_at": "2026-11-11",
+  "edits": [
+    "Removed the original black background rectangle.",
+    "Cropped viewBox to the existing symbol bounds.",
+    "Recoloured original white mark to black for light surfaces."
+  ],
+  "notes": "Official Peekalink documentation favicon, the chain and sparkle app mark. No path data changed."
+}
