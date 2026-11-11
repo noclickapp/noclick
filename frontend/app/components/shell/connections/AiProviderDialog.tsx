@@ -23,11 +23,22 @@ import { sourceLine } from './ConnectedList';
 // A sign-in here attaches to no node: the account is just added, and the map it reports holds only what landed.
 const NO_CREDENTIALS: Record<string, string> = {};
 
-/** Asking someone for the company's key: its link offers the company's plan beside the key where the plan holds the
- *  same account. */
-function askFor(company: AiCompany, credentialType: string): { credentialType: string; signIn?: AskSignIn } {
-    const plan = signInForKey(credentialType);
-    return { credentialType, signIn: plan && company.signIns.includes(plan) ? { agentOAuthType: plan } : undefined };
+/** Another way to run what the dialog connects for ("Or run it on"): its name, the credential type its mark is, and
+ *  what picking it does (the host shows that way instead). */
+export interface OtherWay {
+    key: string;
+    label: string;
+    credentialType: string;
+    onPick: () => void;
+}
+
+const OTHER_WAY =
+    'inline-flex h-11 items-center gap-2.5 rounded-full bg-foreground/[0.05] pl-1.5 pr-4 text-[14px] font-medium text-foreground/90 ring-1 ring-inset ring-foreground/[0.07] transition-colors hover:bg-foreground/[0.09] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
+
+/** A credential type's mark, coloured where its brand is, else in the ink around it. */
+function TypeMark({ type, className }: { type: string; className: string }) {
+    const icon = getCredentialIcon(type);
+    return <BrandIcon Icon={icon.Icon} iconColor={icon.iconColor || 'text-current'} className={cn('shrink-0', className)} />;
 }
 
 /** Asking someone for the company's key: its link offers the company's plan beside the key where the plan holds the
