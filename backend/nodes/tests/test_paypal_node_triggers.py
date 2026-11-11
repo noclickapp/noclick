@@ -93,6 +93,18 @@ def test_paypal_trigger_schema_lifecycle_filter_and_agent_turn():
         assert text in turn["text"]
 
 
+def test_paypal_capture_agent_turn_reads_only_capture_fields():
+    class Capture(dict):
+        def get(self, key, default=None):
+            assert key not in {"payer", "subscriber", "plan_id"}
+            return super().get(key, default)
+
+    event = {**EXAMPLE["event"], "resource": Capture(EXAMPLE["event"]["resource"])}
+    turn = PayPalNode.resolve_agent_event(event)
+    assert "receivingbusiness@example.com" in turn["text"]
+    assert "get_capture capture_id=3Y662965014333303" in turn["text"]
+
+
 @pytest.fixture
 def signed_delivery():
     body = json.dumps(EXAMPLE["event"], separators=(",", ":")).encode()

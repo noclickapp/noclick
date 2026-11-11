@@ -404,12 +404,19 @@ class PayPalNode(ExternalWebhookTriggerMixin, WorkflowNode):
             return super().resolve_agent_event(output)
         related = (resource.get("supplementary_data") or {}).get("related_ids") or {}
         amount = resource.get("amount") or {}
-        payer = resource.get("payer") or resource.get("subscriber") or resource.get("payee") or {}
+        kind = event["event_type"]
+        if kind.startswith("BILLING.SUBSCRIPTION."):
+            payer = resource.get("subscriber") or {}
+        elif kind.startswith("PAYMENT.CAPTURE."):
+            payer = resource.get("payee") or {}
+        elif kind == "PAYMENT.SALE.COMPLETED":
+            payer = resource.get("payer") or {}
+        else:
+            payer = {}
         who = payer.get("email_address") or payer.get("payer_id") or payer.get("merchant_id")
         name = payer.get("name") or {}
         if isinstance(name, dict):
             who = " ".join(str(v) for v in (name.get("given_name"), name.get("surname"), who) if v)
-        kind = event["event_type"]
         rid = resource.get("id") or resource.get("dispute_id")
         title = f"PayPal {kind}: {event.get('summary') or rid or event.get('id')}"
         lines = [title]
@@ -417,7 +424,7 @@ class PayPalNode(ExternalWebhookTriggerMixin, WorkflowNode):
                  ("Amount", " ".join(str(v) for v in (amount.get("value"), amount.get("currency_code")) if v)),
                  ("At", event.get("create_time")), ("Event ID", event.get("id")),
                  ("Resource ID", rid), ("Order ID", related.get("order_id")),
-                 ("Plan ID", resource.get("plan_id"))]
+                 ("Plan ID", resource.get("plan_id") if kind.startswith("BILLING.SUBSCRIPTION.") else None)]
         lines.extend(f"{label}: {value}" for label, value in facts if value)
         for link in resource.get("links") or []:
             if isinstance(link, dict) and link.get("rel") in {"self", "up"} and link.get("href"):
