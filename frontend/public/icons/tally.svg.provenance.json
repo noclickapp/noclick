@@ -1,12 +1,10 @@
 {
   "path": "frontend/public/icons/tally.svg",
   "source": "https://tally.so/favicon.svg",
-  "source_kind": "the current official file (edited)",
-  "retrieved": "2026-11-10",
-  "edits": [
-    "none: the source file as published"
-  ],
-  "variant": "light mode",
+  "source_page": "https://tally.so/",
+  "date": "2026-11-11",
   "license": "Tally vendor trademark; official website favicon",
-  "sha256": "fefba3256dcca1455cc4db0076dd3e9494c50edb6768b4a15ea8c9f5ea10d408"
+  "sha256": "fefba3256dcca1455cc4db0076dd3e9494c50edb6768b4a15ea8c9f5ea10d408",
+  "edits": [],
+  "notes": "Official Tally app mark from its own SVG favicon. Transparent background; no added tile. The dark variant recolours only the original black mark."
 }
