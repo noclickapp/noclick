@@ -9,7 +9,7 @@ import uuid
 import pytest
 
 from repositories import conversation_history
-from scripts import backfill_conversation_history as backfill
+import scripts.backfill_conversation_history as backfill
 
 pytestmark = pytest.mark.asyncio
 
