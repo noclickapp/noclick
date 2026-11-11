@@ -107,6 +107,11 @@ export interface AgentChatFileAttachment {
 export interface AgentChatMessage {
     turnId?: string;
     notification?: boolean;
+    /** The model's reasoning summaries while the turn worked, each a short line, as they arrived (live only). */
+    thoughts?: { text: string; at: number }[];
+    /** On a coordinator note passing on a space's news (an alert, an answer to a question asked there): the space, by
+     *  its id and the label its NoClick goes by there ("NoClick · Launch"). */
+    space?: { id: string; label: string };
     /** On a coordinator note: the automation whose failed run or agent message woke the turn. */
     signal?: CoordinatorSignalRef;
     /** On a coordinator note: a workflow started on a public page, set up from the card drawn under it. */
