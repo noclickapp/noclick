@@ -1,9 +1,14 @@
 """Native organization-token Polar metadata workflows, pinned to API 2026-10."""
 from __future__ import annotations
 
+import base64
+import hashlib
+import hmac
 import json
 import logging
 import re
+import time
+from urllib.parse import quote
 from contextvars import ContextVar
 from typing import Annotated, Literal, Optional, Union
 
@@ -11,6 +16,7 @@ from opentelemetry.instrumentation.utils import suppress_instrumentation
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StringConstraints, field_validator, model_serializer, model_validator
 
 from nodes.core.base import NodeConfig, ValidationResult, WorkflowNode
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -25,8 +31,8 @@ ProductName = Annotated[str, StringConstraints(strict=True, min_length=3, max_le
 BenefitDescription = Annotated[str, StringConstraints(strict=True, min_length=3, max_length=42)]
 Metadata = Annotated[dict[Annotated[str, StringConstraints(strict=True, min_length=1, max_length=40, pattern=r'^[A-Za-z0-9_.-]+$')], Union[Annotated[str, StringConstraints(strict=True, min_length=1, max_length=500)], StrictBool, StrictInt, Annotated[StrictFloat, Field(allow_inf_nan=False)]]], Field(max_length=50)]
 Kind = Literal['products', 'customers', 'benefits', 'subscriptions', 'orders']
-Scope = Literal['organizations:read', 'products:read', 'products:write', 'customers:read', 'customers:write', 'benefits:read', 'benefits:write', 'subscriptions:read', 'orders:read']
-Operation = Literal['check_connection', 'get_organization', 'list_products', 'get_product', 'create_draft_product', 'update_product_metadata', 'archive_product', 'delete_product', 'list_customers', 'get_customer', 'create_customer', 'update_customer_metadata', 'delete_customer', 'list_benefits', 'get_benefit', 'create_draft_custom_benefit', 'update_custom_benefit_metadata', 'delete_custom_benefit', 'list_subscriptions', 'get_subscription', 'list_orders', 'get_order']
+Scope = Literal['organizations:read', 'products:read', 'products:write', 'customers:read', 'customers:write', 'benefits:read', 'benefits:write', 'subscriptions:read', 'orders:read', 'webhooks:write']
+Operation = Literal['on_order_event', 'on_subscription_event', 'on_customer_event', 'check_connection', 'get_organization', 'list_products', 'get_product', 'create_draft_product', 'update_product_metadata', 'archive_product', 'delete_product', 'list_customers', 'get_customer', 'create_customer', 'update_customer_metadata', 'delete_customer', 'list_benefits', 'get_benefit', 'create_draft_custom_benefit', 'update_custom_benefit_metadata', 'delete_custom_benefit', 'list_subscriptions', 'get_subscription', 'list_orders', 'get_order']
 OPERATIONS = ('check_connection', 'get_organization', 'list_products', 'get_product', 'create_draft_product', 'update_product_metadata', 'archive_product', 'delete_product', 'list_customers', 'get_customer', 'create_customer', 'update_customer_metadata', 'delete_customer', 'list_benefits', 'get_benefit', 'create_draft_custom_benefit', 'update_custom_benefit_metadata', 'delete_custom_benefit', 'list_subscriptions', 'get_subscription', 'list_orders', 'get_order')
 _private_http = ContextVar('polar_private_http', default=False)
 
@@ -62,8 +68,8 @@ class PolarOrganizationAccessTokenCredential(BaseModel):
     organization_access_token: Annotated[str, StringConstraints(strict=True, min_length=24, max_length=4096, pattern=r'^polar_oat_[A-Za-z0-9_-]+$')] = Field(title='Organization Access Token', repr=False, json_schema_extra={'ui:widget': 'password'}, description='Existing OAT from this environment. No PAT, customer session, OAuth client secret, or partner token interchange.')
     environment: Literal['sandbox', 'production'] = Field(title='Polar Environment', description='Select explicitly; tokens and organizations are separate in each environment.')
     organization_id: UUID = Field(title='Organization ID')
-    declared_scopes: list[Scope] = Field(min_length=1, max_length=9, title='Configured Token Scopes', description='Existing OAT permissions plus local restrictions. These supplied values are not token introspection or proof of a provider grant.')
-    allowed_operations: list[Operation] = Field(min_length=1, max_length=22, title='Allowed Operations')
+    declared_scopes: list[Scope] = Field(min_length=1, max_length=10, title='Configured Token Scopes', description='Existing OAT permissions plus local restrictions. These supplied values are not token introspection or proof of a provider grant.')
+    allowed_operations: list[Operation] = Field(min_length=1, max_length=25, title='Allowed Operations')
     resource_bindings: list[PolarResourceBinding] = Field(default_factory=list, max_length=250, title='Current Resource Restrictions', description='If a kind has bindings, reads are limited to those IDs. Existing-resource writes require a binding; deletion also requires owned_disposable. Newly created IDs are never added automatically.')
     model_config = ConfigDict(extra='ignore', validate_assignment=True, title='Polar Organization Access Token', json_schema_extra={'x-credential-url': 'https://polar.sh/docs/integrate/authentication', 'x-credential-description': 'Existing organization access token. OAuth partner integration setup and customer portal tokens are separate; no automatic OAuth connection is claimed.'})
 
@@ -253,7 +259,41 @@ class PolarGetOrderConfig(PolarCustomerTarget):
     order_id: UUID = Field(json_schema_extra=_dynamic('order_id', 'customer_id'))
 
 
-PolarConfig = Annotated[Union[PolarCheckConfig, PolarGetOrganizationConfig, PolarListProductsConfig, PolarGetProductConfig, PolarCreateProductConfig, PolarUpdateProductConfig, PolarArchiveProductConfig, PolarDeleteProductConfig, PolarListCustomersConfig, PolarGetCustomerConfig, PolarCreateCustomerConfig, PolarUpdateCustomerConfig, PolarDeleteCustomerConfig, PolarListBenefitsConfig, PolarGetBenefitConfig, PolarCreateBenefitConfig, PolarUpdateBenefitConfig, PolarDeleteBenefitConfig, PolarListSubscriptionsConfig, PolarGetSubscriptionConfig, PolarListOrdersConfig, PolarGetOrderConfig], Field(discriminator='operation')]
+# Event names and payloads: https://polar.sh/docs/openapi/2026-10.openapi.json
+TRIGGER_EVENTS = {
+    'on_order_event': ('order.created', 'order.paid', 'order.updated', 'order.refunded'),
+    'on_subscription_event': ('subscription.created', 'subscription.active', 'subscription.updated', 'subscription.canceled', 'subscription.uncanceled', 'subscription.revoked', 'subscription.past_due'),
+    'on_customer_event': ('customer.created', 'customer.updated', 'customer.deleted'),
+}
+
+
+def _trigger(value, title):
+    return Field(value, title=title, json_schema_extra={'const': value, 'ui:hidden': True,
+        'x-display-name': title, 'x-category': 'Triggers', 'x-is-trigger': True})
+
+
+class PolarWebhookConfig(PolarOrganizationTarget, WebhookTriggerConfigBase):
+    webhook_url: Optional[str] = Field(None, title='Webhook URL',
+        description='Registered with Polar automatically; the token needs webhooks:write.',
+        json_schema_extra={'ui:widget': 'webhook', 'ui:copyable': True, 'ui:loadValue': True})
+
+
+class PolarOnOrderConfig(PolarWebhookConfig):
+    operation: Literal['on_order_event'] = _trigger('on_order_event', 'On Order Event')
+    event_type: Literal[*TRIGGER_EVENTS['on_order_event']] = Field('order.paid', title='Order Event')
+
+
+class PolarOnSubscriptionConfig(PolarWebhookConfig):
+    operation: Literal['on_subscription_event'] = _trigger('on_subscription_event', 'On Subscription Event')
+    event_type: Literal[*TRIGGER_EVENTS['on_subscription_event']] = Field('subscription.active', title='Subscription Event')
+
+
+class PolarOnCustomerConfig(PolarWebhookConfig):
+    operation: Literal['on_customer_event'] = _trigger('on_customer_event', 'On Customer Event')
+    event_type: Literal[*TRIGGER_EVENTS['on_customer_event']] = Field('customer.created', title='Customer Event')
+
+
+PolarConfig = Annotated[Union[PolarOnOrderConfig, PolarOnSubscriptionConfig, PolarOnCustomerConfig, PolarCheckConfig, PolarGetOrganizationConfig, PolarListProductsConfig, PolarGetProductConfig, PolarCreateProductConfig, PolarUpdateProductConfig, PolarArchiveProductConfig, PolarDeleteProductConfig, PolarListCustomersConfig, PolarGetCustomerConfig, PolarCreateCustomerConfig, PolarUpdateCustomerConfig, PolarDeleteCustomerConfig, PolarListBenefitsConfig, PolarGetBenefitConfig, PolarCreateBenefitConfig, PolarUpdateBenefitConfig, PolarDeleteBenefitConfig, PolarListSubscriptionsConfig, PolarGetSubscriptionConfig, PolarListOrdersConfig, PolarGetOrderConfig], Field(discriminator='operation')]
 
 
 class PolarFullConfig(NodeConfig[PolarConfig, PolarOrganizationAccessTokenCredential]):
@@ -292,9 +332,97 @@ class _ProviderFailure(ValueError):
         super().__init__({401: 'Polar rejected authentication.', 403: 'Polar denied the organization, scope or resource.', 404: 'Polar resource or pinned API version was not found.', 409: 'Polar rejected a conflicting resource operation.', 422: 'Polar rejected the documented request.', 429: 'Polar rate limit reached; no automatic retry.'}.get(status, 'Polar returned an unsupported response status.'))
 
 
-class PolarNode(WorkflowNode):
+class PolarNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = 'automation-polar'
     connection_evidence = ConnectionEvidence(operation='check_connection', noun='protected organization API', proves='reachability')
+
+    @staticmethod
+    def _configured_event(config):
+        return config.get('event_type') or {
+            'on_order_event': 'order.paid', 'on_subscription_event': 'subscription.active',
+            'on_customer_event': 'customer.created',
+        }.get(config.get('operation'))
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {'organization_id': config.get('organization_id'), 'event_type': cls._configured_event(config)}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        account = _credential(credential)
+        parsed = PolarFullConfig.model_validate({'config': config, 'credentials': credential}).config
+        if parsed.operation not in TRIGGER_EVENTS:
+            raise ValueError('Choose a Polar trigger.')
+        if parsed.operation not in account.allowed_operations or parsed.organization_id != account.organization_id or 'webhooks:write' not in account.declared_scopes:
+            raise ValueError('Permit the trigger and webhooks:write for this organization.')
+        endpoint = await cls._request(account, None, 'webhooks/endpoints', 'POST', body={
+            'url': webhook_url, 'format': 'raw', 'api_version': VERSION,
+            'events': [parsed.event_type], 'organization_id': parsed.organization_id})
+        return {'external_webhook_id': _text(endpoint['id']), 'signing_secret': _text(endpoint['secret'], 4096)}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = config.get('external_webhook_id')
+        if not endpoint_id:
+            return
+        if not credential:
+            raise ValueError('Connect Polar to remove its webhook endpoint.')
+        account = _credential(credential)
+        if 'webhooks:write' not in account.declared_scopes:
+            raise ValueError('Removing the endpoint needs webhooks:write.')
+        try:
+            await cls._request(account, None, 'webhooks/endpoints', 'DELETE', _text(str(endpoint_id)))
+        except _ProviderFailure as exc:
+            if exc.status != 404:
+                raise
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # https://polar.sh/docs/integrate/webhooks/delivery#custom-validation
+        # Polar's SDK accepts both the current Standard Webhooks key and the legacy key.
+        secret = config.get('signing_secret')
+        lowered = {key.lower(): value for key, value in headers.items()}
+        timestamp = lowered.get('webhook-timestamp', '')
+        delivery_id = lowered.get('webhook-id', '')
+        signature = lowered.get('webhook-signature', '')
+        if not isinstance(secret, str) or not secret or not timestamp.isdigit() or not delivery_id or abs(time.time() - int(timestamp)) > 300:
+            return False
+        message = delivery_id.encode() + b'.' + timestamp.encode() + b'.' + body
+        keys = [secret.encode()]
+        if secret.startswith('whsec_'):
+            try:
+                keys.append(base64.b64decode(secret[6:] + '=' * (-len(secret[6:]) % 4), validate=True))
+            except ValueError:
+                pass
+        expected = [base64.b64encode(hmac.new(key, message, hashlib.sha256).digest()).decode() for key in keys]
+        return any(hmac.compare_digest(part[3:], digest) for part in signature.split() if part.startswith('v1,') for digest in expected)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event = payload.get('type')
+        if event not in TRIGGER_EVENTS.get(config.get('operation'), ()) or event != cls._configured_event(config):
+            return False
+        return isinstance(payload.get('data'), dict)
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        event = output.get('type')
+        if event not in {name for group in TRIGGER_EVENTS.values() for name in group}:
+            return super().resolve_agent_event(output)
+        record = output.get('data')
+        if not isinstance(record, dict) or not record.get('id'):
+            return None
+        customer = record if event.startswith('customer.') else record.get('customer') or {}
+        who = customer.get('name') or customer.get('email') or customer.get('id') or 'Customer'
+        lines = [f"Polar {event}: {who}", f"At: {output.get('timestamp')}",
+            f"Organization: {customer.get('organization_id')}", f"Resource ID: {record['id']}"]
+        if not event.startswith('customer.'):
+            lines.extend([f"Customer ID: {record.get('customer_id')}", f"Product ID: {record.get('product_id')}", f"Status: {record.get('status')}"])
+            if event.startswith('order.'):
+                lines.append(f"Total: {record.get('total_amount')} {record.get('currency')} (minor currency units)")
+            else:
+                lines.append(f"Amount: {record.get('amount')} {record.get('currency')} (minor currency units)")
+        return {'text': '\n'.join(lines), 'conversation_key': str(record['id']), 'title': f'Polar {event}: {who}'}
 
     @classmethod
     def get_config_model(cls):
@@ -341,11 +469,15 @@ class PolarNode(WorkflowNode):
 
     @classmethod
     async def _request(cls, credential, authority, kind, method='GET', resource_id=None, *, params=None, body=None):
-        if kind not in ('organizations', 'products', 'customers', 'benefits', 'subscriptions', 'orders') or method not in ('GET', 'POST', 'PATCH', 'DELETE'):
+        if kind not in ('organizations', 'products', 'customers', 'benefits', 'subscriptions', 'orders', 'webhooks/endpoints') or method not in ('GET', 'POST', 'PATCH', 'DELETE'):
             raise ValueError('Unsupported closed Polar route.')
-        if kind in ('organizations', 'subscriptions', 'orders') and method != 'GET' or method != 'GET' and kind not in ('products', 'customers', 'benefits') or method == 'POST' and resource_id is not None or method in ('PATCH', 'DELETE') and resource_id is None:
+        if kind in ('organizations', 'subscriptions', 'orders') and method != 'GET' or method != 'GET' and kind not in ('products', 'customers', 'benefits', 'webhooks/endpoints') or method == 'POST' and resource_id is not None or method in ('PATCH', 'DELETE') and resource_id is None:
             raise ValueError('Unsupported native Polar method/resource combination.')
-        suffix = '/' + _uuid(resource_id) if resource_id else '/'
+        if resource_id:
+            identifier = quote(_text(str(resource_id)), safe='') if kind == 'webhooks/endpoints' else _uuid(resource_id)
+            suffix = '/' + identifier
+        else:
+            suffix = '' if kind == 'webhooks/endpoints' else '/'
         host = 'sandbox-api.polar.sh' if credential.environment == 'sandbox' else 'api.polar.sh'
         await cls._recheck(authority, credential)
         _private(credential, {'params': params, 'body': body})
@@ -357,7 +489,7 @@ class PolarNode(WorkflowNode):
                         status = response.status_code
                         if status != (201 if method == 'POST' else 204 if method == 'DELETE' else 200):
                             raise _ProviderFailure(status)
-                        if response.headers.get('Polar-Version') != VERSION:
+                        if response.headers.get('Polar-Version', VERSION if kind == 'webhooks/endpoints' else None) != VERSION:
                             raise ValueError('Polar response did not confirm the pinned API version.')
                         chunks, size = [], 0
                         async for chunk in response.aiter_bytes():
@@ -546,6 +678,8 @@ class PolarNode(WorkflowNode):
         try:
             if not isinstance(self.config, PolarFullConfig) or self.config.credentials is None:
                 raise ValueError('Native credentials and config are required.')
+            if self.config.config.operation in TRIGGER_EVENTS:
+                return self.no_event_output(self.config.config.operation)
             credential = _credential(self.config.credentials.model_dump())
             if 'credentials' in self.node_data and _credential(self.node_data['credentials']).model_dump() != credential.model_dump():
                 raise ValueError('Raw credential differs from its parsed current shape.')

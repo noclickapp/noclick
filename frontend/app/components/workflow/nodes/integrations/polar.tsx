@@ -14,7 +14,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 export const PolarNode: NodeDefinition = {
     type: 'automation-polar',
     label: 'Polar',
-    description: 'Organization product, customer and benefit metadata workflows',
+    description: 'React to order, subscription and customer events, and manage organization metadata',
     category: 'finance-accounting',
     Icon: OfficialBrandIcon,
     iconColor: '',

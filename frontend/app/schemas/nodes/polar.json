@@ -1058,6 +1058,470 @@
       "title": "PolarListSubscriptionsConfig",
       "type": "object"
     },
+    "PolarOnCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "description": "Must equal the current OAT organization and selected environment.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Organization Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Polar automatically; the token needs webhooks:write.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_customer_event",
+          "default": "on_customer_event",
+          "title": "On Customer Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Customer Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "customer.created",
+          "enum": [
+            "customer.created",
+            "customer.updated",
+            "customer.deleted"
+          ],
+          "title": "Customer Event",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "PolarOnCustomerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PolarOnOrderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "description": "Must equal the current OAT organization and selected environment.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Organization Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Polar automatically; the token needs webhooks:write.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_order_event",
+          "default": "on_order_event",
+          "title": "On Order Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Order Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "order.paid",
+          "enum": [
+            "order.created",
+            "order.paid",
+            "order.updated",
+            "order.refunded"
+          ],
+          "title": "Order Event",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "PolarOnOrderConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PolarOnSubscriptionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "description": "Must equal the current OAT organization and selected environment.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Organization Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Polar automatically; the token needs webhooks:write.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_subscription_event",
+          "default": "on_subscription_event",
+          "title": "On Subscription Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Subscription Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "subscription.active",
+          "enum": [
+            "subscription.created",
+            "subscription.active",
+            "subscription.updated",
+            "subscription.canceled",
+            "subscription.uncanceled",
+            "subscription.revoked",
+            "subscription.past_due"
+          ],
+          "title": "Subscription Event",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "PolarOnSubscriptionConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "PolarOrganizationAccessTokenCredential": {
       "properties": {
         "credential_type": {
@@ -1102,11 +1566,12 @@
               "benefits:read",
               "benefits:write",
               "subscriptions:read",
-              "orders:read"
+              "orders:read",
+              "webhooks:write"
             ],
             "type": "string"
           },
-          "maxItems": 9,
+          "maxItems": 10,
           "minItems": 1,
           "title": "Configured Token Scopes",
           "type": "array"
@@ -1114,6 +1579,9 @@
         "allowed_operations": {
           "items": {
             "enum": [
+              "on_order_event",
+              "on_subscription_event",
+              "on_customer_event",
               "check_connection",
               "get_organization",
               "list_products",
@@ -1139,7 +1607,7 @@
             ],
             "type": "string"
           },
-          "maxItems": 22,
+          "maxItems": 25,
           "minItems": 1,
           "title": "Allowed Operations",
           "type": "array"
@@ -1537,6 +2005,9 @@
           "list_orders": "#/$defs/PolarListOrdersConfig",
           "list_products": "#/$defs/PolarListProductsConfig",
           "list_subscriptions": "#/$defs/PolarListSubscriptionsConfig",
+          "on_customer_event": "#/$defs/PolarOnCustomerConfig",
+          "on_order_event": "#/$defs/PolarOnOrderConfig",
+          "on_subscription_event": "#/$defs/PolarOnSubscriptionConfig",
           "update_custom_benefit_metadata": "#/$defs/PolarUpdateBenefitConfig",
           "update_customer_metadata": "#/$defs/PolarUpdateCustomerConfig",
           "update_product_metadata": "#/$defs/PolarUpdateProductConfig"
@@ -1544,6 +2015,15 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/PolarOnOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/PolarOnSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/PolarOnCustomerConfig"
+        },
         {
           "$ref": "#/$defs/PolarCheckConfig"
         },

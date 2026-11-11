@@ -333,3 +333,73 @@ async def test_raw_credential_mismatch_still_rejected(transport):
     instance.node_data['credentials'] = {**credential(), 'environment': 'production'}
     assert (await instance.execute({}))['status'] == 'error'
     assert transport.requests == []
+
+
+# Event envelope and fields: https://polar.sh/docs/openapi/2026-10.openapi.json.
+# These synthetic records exercise the documented customer/order/subscription schemas.
+@pytest.mark.parametrize('operation,event,record', [
+    (op, event, {'on_order_event': ORDER, 'on_subscription_event': SUBSCRIPTION, 'on_customer_event': CUSTOMER}[op])
+    for op, events in provider.TRIGGER_EVENTS.items() for event in events
+])
+def test_trigger_delivery_and_agent_turn(operation, event, record):
+    payload = {'type': event, 'timestamp': '2026-01-01T00:00:00.000000Z', 'api_version': VERSION, 'data': deepcopy(record)}
+    config = {'operation': operation, 'event_type': event, 'organization_id': ORG}
+    assert Node.filter_trigger_payload(payload, config)
+    assert not Node.filter_trigger_payload(payload, {**config, 'event_type': 'order.unsupported'})
+    assert Node.resolve_trigger_payload(payload, config) is payload
+    turn = Node.resolve_agent_event(payload)
+    assert event in turn['text'] and record['id'] in turn['text'] and ORG in turn['text']
+    assert turn['conversation_key'] == record['id']
+    assert Node.registration_fingerprint_fields(config) == {'event_type': event, 'organization_id': ORG}
+
+
+@pytest.mark.parametrize('legacy', [False, True])
+def test_polar_documented_signature_keys_and_tampering(monkeypatch, legacy):
+    import base64
+    import hashlib
+    import hmac
+    # Both schemes: https://polar.sh/docs/integrate/webhooks/delivery#custom-validation.
+    secret = 'whsec_' + base64.b64encode(b'unit-test-signing-key').decode().rstrip('=')
+    key = secret.encode() if legacy else b'unit-test-signing-key'
+    monkeypatch.setattr(provider.time, 'time', lambda: 1800000000)
+    body = json.dumps({'type': 'customer.created', 'timestamp': '2026-01-01T00:00:00.000000Z', 'api_version': VERSION, 'data': CUSTOMER}).encode()
+    signature = base64.b64encode(hmac.new(key, b'delivery-id.1800000000.' + body, hashlib.sha256).digest()).decode()
+    headers = {'Webhook-Id': 'delivery-id', 'Webhook-Timestamp': '1800000000', 'Webhook-Signature': 'v1,invalid v1,' + signature}
+    assert Node.verify_webhook_signature(body, headers, {'signing_secret': secret})
+    assert not Node.verify_webhook_signature(body + b' ', headers, {'signing_secret': secret})
+    for field, value in [('Webhook-Id', 'other'), ('Webhook-Timestamp', '1799999699'), ('Webhook-Timestamp', '1800000301')]:
+        assert not Node.verify_webhook_signature(body, {**headers, field: value}, {'signing_secret': secret})
+    assert not Node.verify_webhook_signature(body, {}, {'signing_secret': secret})
+    assert not Node.verify_webhook_signature(body, headers, {})
+
+
+@pytest.mark.asyncio
+async def test_webhook_registration_cleanup_and_restrictions(monkeypatch):
+    raw = credential()
+    raw['allowed_operations'].append('on_order_event')
+    raw['declared_scopes'].append('webhooks:write')
+    config = {'operation': 'on_order_event', 'event_type': 'order.paid', 'organization_id': ORG}
+    requests = []
+    def response(request):
+        requests.append(request)
+        assert request.headers['Authorization'] == 'Bearer ' + TOKEN
+        assert request.headers['Polar-Version'] == VERSION
+        if request.method == 'POST':
+            assert request.url.path == '/v1/webhooks/endpoints'
+            assert json.loads(request.content) == {'url': 'https://example.com/webhook', 'format': 'raw', 'api_version': VERSION, 'events': ['order.paid'], 'organization_id': ORG}
+            return httpx.Response(201, json={'id': 'endpoint-id', 'secret': 'whsec_dGVzdC1rZXk='})
+        assert request.method == 'DELETE' and request.url.path == '/v1/webhooks/endpoints/endpoint-id'
+        return httpx.Response(204)
+    monkeypatch.setattr(provider, 'guarded_async_client', lambda **kwargs: httpx.AsyncClient(transport=httpx.MockTransport(response)))
+    registration = await Node._register_external_webhook(webhook_url='https://example.com/webhook', credential=raw, config=config, node_id='test')
+    assert registration == {'external_webhook_id': 'endpoint-id', 'signing_secret': 'whsec_dGVzdC1rZXk='}
+    await Node._unregister_external_webhook(credential=raw, config={**config, **registration}, node_id='test')
+    assert len(requests) == 2
+    for bad in ({**raw, 'declared_scopes': ['organizations:read']}, {**raw, 'allowed_operations': ['check_connection']}):
+        with pytest.raises(ValueError):
+            await Node._register_external_webhook(webhook_url='https://example.com/webhook', credential=bad, config=config, node_id='test')
+    with pytest.raises(ValueError):
+        await Node._register_external_webhook(webhook_url='https://example.com/webhook', credential=raw, config={**config, 'organization_id': FOREIGN}, node_id='test')
+    manual = NodeFactory.create_node(node_id='trigger', node_type=NODE_TYPE, node_data={'config': config, 'credentials': raw}, sio=None, user_id='test')
+    assert (await manual.execute({}))['status'] == 'no_event'
+    assert len(requests) == 2
