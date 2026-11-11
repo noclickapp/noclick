@@ -18,7 +18,8 @@ import { getProviderConfig, getProviderConfigByCredentialType, oauthNeedsInAppSe
 import { getServiceForCredentialType } from '~/utils/credentialTypes';
 import { credentialAppName } from '~/utils/credentialIcons';
 import { kindFromBackendMethod } from '~/lib/credentialMethodKind';
-import { agentCompanyOf, agentCredentialProvider } from '~/lib/agentCredentialModel';
+import { AGENT_SIGN_IN_NAMES, agentCompanyOf, agentCredentialProvider, signInForKey } from '~/lib/agentCredentialModel';
+import { getProviderMetadata, type ModelProvider } from '~/types/provider';
 import { AiConnect, companyMethods, type AiConnectVia } from '~/components/shell/connections/AiConnect';
 import { aiCompanies } from '~/components/shell/connections/aiAccounts';
 import { ConnectApp } from './connect/ConnectApp';
@@ -55,6 +56,8 @@ export interface ProvideRequestDetails {
   expires_at: string;
   /** Where the requester asked the person to be sent once provided. */
   redirect_url?: string | null;
+  /** The harness the asking agent runs on when it takes no plan: why the link offers an AI key without its sign-in. */
+  sign_in_withheld?: string | null;
 }
 
 /** Convert credential_type to human-readable label */
@@ -196,6 +199,18 @@ function linkAiWays(credentialType: string, offered: ProvideCredentialMethod[]):
   return company ? offeredWays(companyMethods(company), offered) : [];
 }
 
+/** Why a link offers an AI key without its plan's sign-in: the agent asking runs where no plan does. */
+function WithheldSignIn({ keyType, harness }: { keyType: string; harness: string }) {
+  const plan = signInForKey(keyType);
+  if (!plan || !AGENT_SIGN_IN_NAMES[plan]) return null;
+  const runsOn = harness === 'llm' ? 'NoClick’s own agent' : getProviderMetadata(harness as ModelProvider)?.title ?? harness;
+  return (
+    <p className="mb-5 text-[13px] leading-relaxed text-muted-foreground" data-testid="sign-in-withheld">
+      Sign in with {AGENT_SIGN_IN_NAMES[plan].signInWith} isn’t offered here: the agent this is for runs on {runsOn}, which takes an API key.
+    </p>
+  );
+}
+
 /** Only what's typed in is sent: a sign-in sends nothing, and says nothing of it. */
 function EncryptedNote() {
   return (
@@ -279,15 +294,18 @@ export function CredentialProvideFlow({
   const aiWays = linkAiWays(request.details.credential_type, methods);
   if (aiWays.length) {
     return (
-      <AiConnect
-        app={app}
-        methods={aiWays}
-        credentialIds={NO_CREDENTIALS}
-        onCredentialIdsChange={attachNowhere}
-        onSignedIn={async () => onProvided()}
-        onKeySaved={async (_credential, verification) => onProvided(verification)}
-        via={via}
-      />
+      <>
+        {request.details.sign_in_withheld && <WithheldSignIn keyType={request.details.credential_type} harness={request.details.sign_in_withheld} />}
+        <AiConnect
+          app={app}
+          methods={aiWays}
+          credentialIds={NO_CREDENTIALS}
+          onCredentialIdsChange={attachNowhere}
+          onSignedIn={async () => onProvided()}
+          onKeySaved={async (_credential, verification) => onProvided(verification)}
+          via={via}
+        />
+      </>
     );
   }
 

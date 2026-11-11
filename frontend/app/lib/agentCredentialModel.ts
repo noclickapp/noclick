@@ -657,3 +657,12 @@ export function agentCompanyOf(credentialType: string): AgentCompany | undefined
     if (!credentialType.startsWith('agent_')) return undefined;
     return agentCompanies().find((company) => company.members.some((member) => acceptedAgentCredentialTypes(member).includes(credentialType)));
 }
+
+/** The plan sign-in holding the same account as an `agent_<provider>` key: the provider's own, else that of the harness
+ *  running on its key (an Anthropic key's Claude plan). The backend's `_key_sign_ins` mirrors it. */
+export function signInForKey(keyType: string): string | undefined {
+    const provider = agentCredentialProvider(keyType);
+    if (!provider || keyType.endsWith('_oauth')) return undefined;
+    const alias = agentCredentialProvider(AGENT_VENDOR_KEY_ALIAS[provider]);
+    return AGENT_OAUTH_ALIAS[provider] ?? (alias ? AGENT_OAUTH_ALIAS[alias] : undefined);
+}

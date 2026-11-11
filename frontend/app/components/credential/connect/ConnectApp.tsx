@@ -10,7 +10,7 @@ import { ArrowUpRight, ChevronRight } from 'lucide-react';
 import { ConnectionVerdict } from '~/components/credential/ConnectionVerdict';
 import type { ProvideCredentialMethod } from '~/components/credential/CredentialMethodConnect';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '~/components/shell/buttons';
-import { AskSomeoneForm, INLINE_ACTION, type AskTransport } from '~/components/workflow/CredentialRequestActions';
+import { AskSomeoneForm, INLINE_ACTION, type AskSignIn, type AskTransport } from '~/components/workflow/CredentialRequestActions';
 import { kindFromBackendMethod, type CredentialMethodKind } from '~/lib/credentialMethodKind';
 import { cn } from '~/lib/utils';
 import { copyMethodOf, keyNoun, methodCopy, sourceLink, withArticle, type MethodCopy } from '~/utils/credentialCopy';
@@ -52,7 +52,7 @@ export interface ConnectAppProps {
     /** A broken account's way back, as its Connections tile offers it. */
     onReconnectAccount?: (id: string) => void;
     /** Asking someone else; omitted, nothing offers it (the provide page is someone else already). */
-    ask?: { credentialType: string; send?: AskTransport; email?: string };
+    ask?: { credentialType: string; send?: AskTransport; email?: string; signIn?: AskSignIn };
     /** Hears an account land. */
     onConnected?: (result: ConnectResult) => void;
     /** False where the host shows what landed itself (the node panel's picker, the provide page's own last step). */
@@ -155,7 +155,7 @@ export function ConnectApp({
     if (stage === 'ask' && ask) {
         return (
             <div ref={stageRef} className="space-y-5 pb-5 pt-1">
-                <AskSomeoneForm credentialType={ask.credentialType} app={app} send={ask.send} initialEmail={ask.email} />
+                <AskSomeoneForm credentialType={ask.credentialType} app={app} send={ask.send} signIn={ask.signIn} initialEmail={ask.email} />
                 <button type="button" onClick={() => setStage('connect')} className={INLINE_ACTION}>
                     Connect it yourself instead
                 </button>

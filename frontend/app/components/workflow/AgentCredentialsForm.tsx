@@ -20,7 +20,7 @@ import { ConnectionVerdict, StoredVerdict } from '~/components/credential/Connec
 import { AiConnect, agentKeyMethod, agentSignInMethod } from '~/components/shell/connections/AiConnect';
 import { FIELD_LABEL } from '~/components/shell/fields';
 import { NOTICE_MARK, NOTICE_TITLE } from '~/components/shell/notices';
-import { INLINE_ACTION } from './CredentialRequestActions';
+import { INLINE_ACTION, type AskSignIn } from './CredentialRequestActions';
 import { AgentEnvVarsSection } from './AgentEnvVarsSection';
 import { hasAgentOAuthConnect } from './AgentOAuthConnect';
 import {
@@ -37,9 +37,10 @@ import {
     isPrimaryAgentCredentialKey,
     isSignInOnlyAgentProvider,
     sameAccountAgentProviders,
+    signInForKey,
     AGENT_ENV_CREDENTIAL_TYPE,
 } from '~/lib/agentCredentialModel';
-import { isCliAgentModel, cliHarnessBinary } from '~/lib/agentChat';
+import { isCliAgentModel, cliHarnessBinary, CLI_MODEL_PROVIDER } from '~/lib/agentChat';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 import { isLocalEdition } from '~/lib/edition';
 import { useInstanceCapabilities } from '~/hooks/useInstanceCapabilities';
@@ -188,6 +189,15 @@ export function AgentCredentialsForm({
         if (provider === ModelProvider.XAI && offered('xai')) return 'agent_xai_oauth';
         return null;
     }, [provider, selectedModel, effectiveModel, agentSignIns]);
+
+    // Asking someone for the key: its link offers the plan this agent runs on beside it, or says which harness takes
+    // none (a Claude plan runs only in Claude Code).
+    const askSignIn = useMemo<AskSignIn | undefined>(() => {
+        const plan = credentialType ? signInForKey(credentialType) : undefined;
+        if (!plan || !Object.values(agentSignIns).includes(plan)) return undefined;
+        if (oauthCredentialType === plan) return { agentOAuthType: plan };
+        return { agentOAuthWithheld: isCliAgentModel(selectedModel) ? CLI_MODEL_PROVIDER[selectedModel] : 'llm' };
+    }, [credentialType, agentSignIns, oauthCredentialType, selectedModel]);
 
     // The ways in: the sign-in first, where the harness takes one, then the provider's own key.
     const methods = useMemo(
@@ -602,7 +612,7 @@ export function AgentCredentialsForm({
                             onSignedIn={signedIn}
                             onKeySaved={keySaved}
                             // Compact hosts already belong to someone asking.
-                            ask={!compact && credentialType ? { credentialType } : undefined}
+                            ask={!compact && credentialType ? { credentialType, signIn: askSignIn } : undefined}
                         />
                     </div>
                 ) : (

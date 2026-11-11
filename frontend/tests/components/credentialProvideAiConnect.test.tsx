@@ -6,6 +6,8 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { appNameForCredentialType, CredentialProvideFlow, type ProvideRequestDetails } from '~/components/credential/CredentialProvideFlow';
 import type { ProvideCredentialMethod } from '~/components/credential/CredentialMethodConnect';
+import { AskSomeoneForm } from '~/components/workflow/CredentialRequestActions';
+import { signInForKey } from '~/lib/agentCredentialModel';
 
 const keyMethod = (credential_type: string, env: string, label: string): ProvideCredentialMethod => ({
     credential_type,
@@ -149,4 +151,44 @@ it('orders an app’s ways in as Connections does: a sign-in first', () => {
         />
     );
     expect(tabs()).toEqual(['Sign in', 'Personal access token']);
+});
+
+it('says why a link offers an AI key without its plan: the agent asking runs where no plan does', () => {
+    render(
+        <CredentialProvideFlow
+            token="t"
+            apiBase=""
+            held={request({ available_methods: [keyMethod('agent_anthropic', 'ANTHROPIC_API_KEY', 'Anthropic API Key')], sign_in_withheld: 'opencode' })}
+            onProvided={() => {}}
+        />
+    );
+    expect(screen.getByTestId('sign-in-withheld').textContent).toBe(
+        'Sign in with Claude isn’t offered here: the agent this is for runs on OpenCode, which takes an API key.'
+    );
+    expect(screen.queryByRole('button', { name: 'Sign in with Claude' })).toBeNull();
+});
+
+it('names the plan holding the same account as a key, as the backend checks it', () => {
+    expect(signInForKey('agent_anthropic')).toBe('agent_claude_code_oauth');
+    expect(signInForKey('agent_claude_code')).toBe('agent_claude_code_oauth');
+    expect(signInForKey('agent_openai')).toBe('agent_codex_oauth');
+    expect(signInForKey('agent_gemini')).toBeUndefined();
+    expect(signInForKey('agent_claude_code_oauth')).toBeUndefined();
+});
+
+it('an ask for an AI key carries the sign-in its link offers', async () => {
+    const send = vi.fn<(event: Record<string, unknown>) => Promise<{ success: boolean; provide_url: string }>>(async () => ({
+        success: true,
+        provide_url: 'https://noclick.test/credential/provide/x',
+    }));
+    Object.assign(navigator, { clipboard: { writeText: vi.fn(async () => {}) } });
+    render(<AskSomeoneForm credentialType="agent_anthropic" app="Anthropic" send={send} signIn={{ agentOAuthType: 'agent_claude_code_oauth' }} />);
+    fireEvent.click(screen.getByRole('button', { name: /Copy a link instead/ }));
+    await waitFor(() => expect(send).toHaveBeenCalled());
+    expect(send.mock.calls[0][0]).toMatchObject({
+        event_name: 'credential:request:create',
+        credential_type: 'agent_anthropic',
+        agent_oauth_type: 'agent_claude_code_oauth',
+        agent_oauth_withheld: undefined,
+    });
 });

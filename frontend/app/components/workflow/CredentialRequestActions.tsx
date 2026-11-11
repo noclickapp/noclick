@@ -1,7 +1,7 @@
 // Asking someone else for a credential: their email (sent as a request whose page lets them connect it without a
 // NoClick account) or a link to send however you like. The connect flow swaps its body to `AskSomeoneForm`.
 
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useId, useMemo, useState } from 'react';
 import { Check, Link2, Loader2, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { sendEventAsync } from '~/lib/socket-sender';
@@ -13,6 +13,13 @@ import { cn } from '~/lib/utils';
 /** A `sendEventAsync`-shaped transport, so a design lab can answer the request itself. */
 export type AskTransport = OAuthExchange;
 
+/** For an AI provider's key: the plan its link offers beside it, or the harness the asking agent runs on when that
+ *  takes no plan (the link then says why it offers the key alone). */
+export interface AskSignIn {
+    agentOAuthType?: string;
+    agentOAuthWithheld?: string;
+}
+
 /** A switch inside a line of text (another way in, asking someone, back): ink that underlines on hover, so it reads as
  *  an action beside the muted words around it without competing with the primary. */
 export const INLINE_ACTION =
@@ -20,12 +27,16 @@ export const INLINE_ACTION =
 
 /** Asking someone else for a credential: by email, or as a link to send however you like. Both make a credential
  *  request whose page (/credential/provide) lets them connect it without a NoClick account. */
-export function useAskForCredential(credentialType: string, send: AskTransport = sendEventAsync) {
+export function useAskForCredential(credentialType: string, send: AskTransport = sendEventAsync, signIn?: AskSignIn) {
     const [sending, setSending] = useState(false);
     const [sentTo, setSentTo] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [copying, setCopying] = useState(false);
     const [copied, setCopied] = useState(false);
+
+    // An older backend ignores fields it doesn't know.
+    const { agentOAuthType, agentOAuthWithheld } = signIn ?? {};
+    const options = useMemo(() => ({ agent_oauth_type: agentOAuthType, agent_oauth_withheld: agentOAuthWithheld }), [agentOAuthType, agentOAuthWithheld]);
 
     // A link-mode request (no email), its provide URL copied for the user to hand off (Slack, DM, etc.).
     const copyLink = useCallback(async () => {
@@ -36,6 +47,7 @@ export function useAskForCredential(credentialType: string, send: AskTransport =
                 request_id: `cred-req-link-${Date.now()}`,
                 credential_type: credentialType,
                 frontend_url: window.location.origin,
+                ...options,
             });
             if (response?.provide_url) {
                 await navigator.clipboard.writeText(response.provide_url);
@@ -51,7 +63,7 @@ export function useAskForCredential(credentialType: string, send: AskTransport =
         } finally {
             setCopying(false);
         }
-    }, [credentialType, send]);
+    }, [credentialType, send, options]);
 
     const sendEmail = useCallback(
         async (email: string, message: string) => {
@@ -66,6 +78,7 @@ export function useAskForCredential(credentialType: string, send: AskTransport =
                     credential_type: credentialType,
                     message: message.trim() || undefined,
                     frontend_url: window.location.origin,
+                    ...options,
                 });
                 if (response?.success) setSentTo(email.trim());
                 else setError(response?.error || 'Couldn’t send the request. Try again, or copy a link instead.');
@@ -75,7 +88,7 @@ export function useAskForCredential(credentialType: string, send: AskTransport =
                 setSending(false);
             }
         },
-        [credentialType, send]
+        [credentialType, send, options]
     );
 
     return { copyLink, copying, copied, sendEmail, sending, sentTo, error };
@@ -87,17 +100,19 @@ export function AskSomeoneForm({
     credentialType,
     app,
     send,
+    signIn,
     initialEmail = '',
     sent,
 }: {
     credentialType: string;
     app: string;
     send?: AskTransport;
+    signIn?: AskSignIn;
     initialEmail?: string;
     /** Open on the sent state, for the design lab. */
     sent?: string;
 }) {
-    const ask = useAskForCredential(credentialType, send);
+    const ask = useAskForCredential(credentialType, send, signIn);
     const [email, setEmail] = useState(initialEmail);
     const [message, setMessage] = useState('');
     const [noting, setNoting] = useState(false);

@@ -10,6 +10,7 @@ import { ConnectApp, type ConnectAccountRow, type ConnectStage } from '~/compone
 import { CredentialCreatePanel, saveRefusal, type CredentialSaveResult } from '~/components/credential/CredentialCreatePanel';
 import type { CredentialField } from '~/components/credential/CredentialFieldInput';
 import type { ProvideCredentialMethod } from '~/components/credential/CredentialMethodConnect';
+import type { AskSignIn } from '~/components/workflow/CredentialRequestActions';
 import { createAgentKey, getFieldLabel, getPlaceholder, shouldMaskField, type CreatedAgentCredential } from '~/hooks/useAgentApiKey';
 import { AGENT_SIGN_IN_NAMES, getAgentCredentialType } from '~/lib/agentCredentialModel';
 import { isPlanLimitError } from '~/lib/planLimitErrors';
@@ -147,8 +148,8 @@ export function AiConnect({
     onKeySaved: (credential: CreatedAgentCredential, verification: CredentialTestConnectionResponse | null) => Promise<void>;
     accounts?: ConnectAccountRow[];
     onOpenAccount?: (id: string) => void;
-    /** Offer asking someone who can (the credential type the request names). */
-    ask?: { credentialType: string };
+    /** Offer asking someone who can (the credential type the request names, and the sign-in its link offers). */
+    ask?: { credentialType: string; signIn?: AskSignIn };
     onStage?: (stage: ConnectStage) => void;
     /** Connect over a provide link's calls instead of the signed-in app's socket. */
     via?: AiConnectVia;

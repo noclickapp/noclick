@@ -6,6 +6,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { CREDENTIALS_CHANGED_EVENT } from '~/components/shared/popups/CreateCredentialDialog';
 import { connectDialogHeader, type ConnectAccountRow } from '~/components/credential/connect/ConnectApp';
+import type { AskSignIn } from '~/components/workflow/CredentialRequestActions';
+import { signInForKey } from '~/lib/agentCredentialModel';
 import { invalidateCredentialsCache } from '~/utils/credentialAutoSelect';
 import { ShellDialog } from '../ShellDialog';
 import { companyAccountRow } from './accountNames';
@@ -17,6 +19,13 @@ import { sourceLine } from './ConnectedList';
 // A sign-in here attaches to no node: the account is just added.
 const NO_CREDENTIALS: Record<string, string> = {};
 const attachNowhere = () => {};
+
+/** Asking someone for the company's key: its link offers the company's plan beside the key where the plan holds the
+ *  same account. */
+function askFor(company: AiCompany, credentialType: string): { credentialType: string; signIn?: AskSignIn } {
+    const plan = signInForKey(credentialType);
+    return { credentialType, signIn: plan && company.signIns.includes(plan) ? { agentOAuthType: plan } : undefined };
+}
 
 /** An account in the company's list: what it is (its email, login or the name you gave it; else its plan or "API
  *  key") and, under it, what's wrong, whose it is, or when it was added. */
@@ -80,7 +89,7 @@ export function AiProviderDialog({
                     onKeySaved={connected}
                     accounts={own.map(accountRow)}
                     onOpenAccount={onOpenAccount}
-                    ask={{ credentialType: methods[methods.length - 1].credential_type }}
+                    ask={askFor(shown, methods[methods.length - 1].credential_type)}
                     onStage={(stage) => setAsking(stage === 'ask')}
                 />
             )}
