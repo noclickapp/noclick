@@ -61,7 +61,7 @@ def test_the_generated_schema_publishes_each_retirement():
 
 def test_no_backend_listing_offers_a_retired_type():
     builder_types = set(re.findall(r"[a-z0-9]+(?:-[a-z0-9]+)+", _get_available_node_types()))
-    assert "automation-slack" in builder_types
+    assert "automation-serverless-function" in builder_types  # integrations are named only where demand is known
     assert not builder_types & set(RETIRED)
 
     connectable = {op["node_type"] for op in credential_operations._connectable_operations()}
