@@ -1,0 +1,1057 @@
+{
+  "$defs": {
+    "RunscopeCreateBucket": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_bucket",
+          "default": "create_bucket",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Buckets",
+          "x-display-name": "Create Bucket",
+          "x-is-trigger": false
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Bucket name",
+          "type": "string"
+        },
+        "team_id": {
+          "minLength": 1,
+          "title": "Team ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "team_id"
+      ],
+      "title": "RunscopeCreateBucket",
+      "type": "object"
+    },
+    "RunscopeCreateSharedEnvironment": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_shared_environment",
+          "default": "create_shared_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "Create Shared Environment",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Complete documented resource body. For environment updates, supply the full current configuration with your changes.",
+          "title": "Environment JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "payload_json"
+      ],
+      "title": "RunscopeCreateSharedEnvironment",
+      "type": "object"
+    },
+    "RunscopeCreateStep": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_step",
+          "default": "create_step",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Steps",
+          "x-display-name": "Create Step",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        },
+        "test_id": {
+          "minLength": 1,
+          "title": "Test Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Complete documented resource body. For environment updates, supply the full current configuration with your changes.",
+          "title": "Step JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "test_id",
+        "payload_json"
+      ],
+      "title": "RunscopeCreateStep",
+      "type": "object"
+    },
+    "RunscopeCreateTest": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_test",
+          "default": "create_test",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tests",
+          "x-display-name": "Create Test",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Complete documented resource body. For environment updates, supply the full current configuration with your changes.",
+          "title": "Test JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "payload_json"
+      ],
+      "title": "RunscopeCreateTest",
+      "type": "object"
+    },
+    "RunscopeCreateTestEnvironment": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_test_environment",
+          "default": "create_test_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "Create Test Environment",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        },
+        "test_id": {
+          "minLength": 1,
+          "title": "Test Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Complete documented resource body. For environment updates, supply the full current configuration with your changes.",
+          "title": "Environment JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "test_id",
+        "payload_json"
+      ],
+      "title": "RunscopeCreateTestEnvironment",
+      "type": "object"
+    },
+    "RunscopeDeleteBucket": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_bucket",
+          "default": "delete_bucket",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Buckets",
+          "x-display-name": "Delete Bucket",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_key"
+      ],
+      "title": "RunscopeDeleteBucket",
+      "type": "object"
+    },
+    "RunscopeDeleteStep": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_step",
+          "default": "delete_step",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Steps",
+          "x-display-name": "Delete Step",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        },
+        "test_id": {
+          "minLength": 1,
+          "title": "Test Id",
+          "type": "string"
+        },
+        "step_id": {
+          "minLength": 1,
+          "title": "Step Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "test_id",
+        "step_id"
+      ],
+      "title": "RunscopeDeleteStep",
+      "type": "object"
+    },
+    "RunscopeDeleteTest": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_test",
+          "default": "delete_test",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tests",
+          "x-display-name": "Delete Test",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        },
+        "test_id": {
+          "minLength": 1,
+          "title": "Test Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "test_id"
+      ],
+      "title": "RunscopeDeleteTest",
+      "type": "object"
+    },
+    "RunscopeGetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Account",
+          "x-is-trigger": false
+        }
+      },
+      "title": "RunscopeGetAccount",
+      "type": "object"
+    },
+    "RunscopeGetBucket": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_bucket",
+          "default": "get_bucket",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Buckets",
+          "x-display-name": "Get Bucket",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_key"
+      ],
+      "title": "RunscopeGetBucket",
+      "type": "object"
+    },
+    "RunscopeGetTest": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_test",
+          "default": "get_test",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tests",
+          "x-display-name": "Get Test",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        },
+        "test_id": {
+          "minLength": 1,
+          "title": "Test Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "test_id"
+      ],
+      "title": "RunscopeGetTest",
+      "type": "object"
+    },
+    "RunscopeGetTestMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_test_metrics",
+          "default": "get_test_metrics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tests",
+          "x-display-name": "Get Test Metrics",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        },
+        "test_id": {
+          "minLength": 1,
+          "title": "Test Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "test_id"
+      ],
+      "title": "RunscopeGetTestMetrics",
+      "type": "object"
+    },
+    "RunscopeListBuckets": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_buckets",
+          "default": "list_buckets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Buckets",
+          "x-display-name": "List Buckets",
+          "x-is-trigger": false
+        }
+      },
+      "title": "RunscopeListBuckets",
+      "type": "object"
+    },
+    "RunscopeListSharedEnvironments": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_shared_environments",
+          "default": "list_shared_environments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "List Shared Environments",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_key"
+      ],
+      "title": "RunscopeListSharedEnvironments",
+      "type": "object"
+    },
+    "RunscopeListSteps": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_steps",
+          "default": "list_steps",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Steps",
+          "x-display-name": "List Steps",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        },
+        "test_id": {
+          "minLength": 1,
+          "title": "Test Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "test_id"
+      ],
+      "title": "RunscopeListSteps",
+      "type": "object"
+    },
+    "RunscopeListTeamAgents": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_team_agents",
+          "default": "list_team_agents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "List Team Agents",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "minLength": 1,
+          "title": "Team Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "RunscopeListTeamAgents",
+      "type": "object"
+    },
+    "RunscopeListTeamIntegrations": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_team_integrations",
+          "default": "list_team_integrations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "List Team Integrations",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "minLength": 1,
+          "title": "Team Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "RunscopeListTeamIntegrations",
+      "type": "object"
+    },
+    "RunscopeListTeamPeople": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_team_people",
+          "default": "list_team_people",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "List Team People",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "minLength": 1,
+          "title": "Team Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "RunscopeListTeamPeople",
+      "type": "object"
+    },
+    "RunscopeListTestEnvironments": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_test_environments",
+          "default": "list_test_environments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "List Test Environments",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        },
+        "test_id": {
+          "minLength": 1,
+          "title": "Test Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "test_id"
+      ],
+      "title": "RunscopeListTestEnvironments",
+      "type": "object"
+    },
+    "RunscopeListTests": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tests",
+          "default": "list_tests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tests",
+          "x-display-name": "List Tests",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_key"
+      ],
+      "title": "RunscopeListTests",
+      "type": "object"
+    },
+    "RunscopeOnTestCompleted": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_test_completed",
+          "default": "on_test_completed",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Test Completed",
+          "x-is-trigger": true
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket key",
+          "type": "string"
+        },
+        "test_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: receive only this test. Leave empty for every test using the shared environment.",
+          "title": "Test ID filter"
+        },
+        "environment_id": {
+          "description": "Adds this callback to the chosen shared environment while retaining its other settings. Tests using or inheriting this environment notify this trigger. Avoid concurrent environment edits during activation.",
+          "minLength": 1,
+          "title": "Environment ID",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "environment_id"
+      ],
+      "title": "RunscopeOnTestCompleted",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "RunscopeTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "runscope_api_token",
+          "default": "runscope_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Runscope Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "In Runscope Applications, create an application and copy its Personal Access Token. Paste that token here. Your own account is authorized automatically. NoClick sends it as a Bearer token. The token must allow the reads and writes you select.",
+      "x-credential-url": "https://www.runscope.com/applications"
+    },
+    "RunscopeUpdateSharedEnvironment": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_shared_environment",
+          "default": "update_shared_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "Update Shared Environment",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        },
+        "environment_id": {
+          "minLength": 1,
+          "title": "Environment Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Complete documented resource body. For environment updates, supply the full current configuration with your changes.",
+          "title": "Environment JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "environment_id",
+        "payload_json"
+      ],
+      "title": "RunscopeUpdateSharedEnvironment",
+      "type": "object"
+    },
+    "RunscopeUpdateStep": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_step",
+          "default": "update_step",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Steps",
+          "x-display-name": "Update Step",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        },
+        "test_id": {
+          "minLength": 1,
+          "title": "Test Id",
+          "type": "string"
+        },
+        "step_id": {
+          "minLength": 1,
+          "title": "Step Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Complete documented resource body. For environment updates, supply the full current configuration with your changes.",
+          "title": "Step JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "test_id",
+        "step_id",
+        "payload_json"
+      ],
+      "title": "RunscopeUpdateStep",
+      "type": "object"
+    },
+    "RunscopeUpdateTest": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_test",
+          "default": "update_test",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tests",
+          "x-display-name": "Update Test",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        },
+        "test_id": {
+          "minLength": 1,
+          "title": "Test Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Complete documented resource body. For environment updates, supply the full current configuration with your changes.",
+          "title": "Test JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "test_id",
+        "payload_json"
+      ],
+      "title": "RunscopeUpdateTest",
+      "type": "object"
+    },
+    "RunscopeUpdateTestEnvironment": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_test_environment",
+          "default": "update_test_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "Update Test Environment",
+          "x-is-trigger": false
+        },
+        "bucket_key": {
+          "minLength": 1,
+          "title": "Bucket Key",
+          "type": "string"
+        },
+        "test_id": {
+          "minLength": 1,
+          "title": "Test Id",
+          "type": "string"
+        },
+        "environment_id": {
+          "minLength": 1,
+          "title": "Environment Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Complete documented resource body. For environment updates, supply the full current configuration with your changes.",
+          "title": "Environment JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "bucket_key",
+        "test_id",
+        "environment_id",
+        "payload_json"
+      ],
+      "title": "RunscopeUpdateTestEnvironment",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_bucket": "#/$defs/RunscopeCreateBucket",
+          "create_shared_environment": "#/$defs/RunscopeCreateSharedEnvironment",
+          "create_step": "#/$defs/RunscopeCreateStep",
+          "create_test": "#/$defs/RunscopeCreateTest",
+          "create_test_environment": "#/$defs/RunscopeCreateTestEnvironment",
+          "delete_bucket": "#/$defs/RunscopeDeleteBucket",
+          "delete_step": "#/$defs/RunscopeDeleteStep",
+          "delete_test": "#/$defs/RunscopeDeleteTest",
+          "get_account": "#/$defs/RunscopeGetAccount",
+          "get_bucket": "#/$defs/RunscopeGetBucket",
+          "get_test": "#/$defs/RunscopeGetTest",
+          "get_test_metrics": "#/$defs/RunscopeGetTestMetrics",
+          "list_buckets": "#/$defs/RunscopeListBuckets",
+          "list_shared_environments": "#/$defs/RunscopeListSharedEnvironments",
+          "list_steps": "#/$defs/RunscopeListSteps",
+          "list_team_agents": "#/$defs/RunscopeListTeamAgents",
+          "list_team_integrations": "#/$defs/RunscopeListTeamIntegrations",
+          "list_team_people": "#/$defs/RunscopeListTeamPeople",
+          "list_test_environments": "#/$defs/RunscopeListTestEnvironments",
+          "list_tests": "#/$defs/RunscopeListTests",
+          "on_test_completed": "#/$defs/RunscopeOnTestCompleted",
+          "update_shared_environment": "#/$defs/RunscopeUpdateSharedEnvironment",
+          "update_step": "#/$defs/RunscopeUpdateStep",
+          "update_test": "#/$defs/RunscopeUpdateTest",
+          "update_test_environment": "#/$defs/RunscopeUpdateTestEnvironment"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RunscopeGetAccount"
+        },
+        {
+          "$ref": "#/$defs/RunscopeListTeamPeople"
+        },
+        {
+          "$ref": "#/$defs/RunscopeListTeamIntegrations"
+        },
+        {
+          "$ref": "#/$defs/RunscopeListTeamAgents"
+        },
+        {
+          "$ref": "#/$defs/RunscopeListBuckets"
+        },
+        {
+          "$ref": "#/$defs/RunscopeGetBucket"
+        },
+        {
+          "$ref": "#/$defs/RunscopeCreateBucket"
+        },
+        {
+          "$ref": "#/$defs/RunscopeDeleteBucket"
+        },
+        {
+          "$ref": "#/$defs/RunscopeListTests"
+        },
+        {
+          "$ref": "#/$defs/RunscopeGetTest"
+        },
+        {
+          "$ref": "#/$defs/RunscopeCreateTest"
+        },
+        {
+          "$ref": "#/$defs/RunscopeUpdateTest"
+        },
+        {
+          "$ref": "#/$defs/RunscopeDeleteTest"
+        },
+        {
+          "$ref": "#/$defs/RunscopeListSteps"
+        },
+        {
+          "$ref": "#/$defs/RunscopeCreateStep"
+        },
+        {
+          "$ref": "#/$defs/RunscopeUpdateStep"
+        },
+        {
+          "$ref": "#/$defs/RunscopeDeleteStep"
+        },
+        {
+          "$ref": "#/$defs/RunscopeListTestEnvironments"
+        },
+        {
+          "$ref": "#/$defs/RunscopeCreateTestEnvironment"
+        },
+        {
+          "$ref": "#/$defs/RunscopeUpdateTestEnvironment"
+        },
+        {
+          "$ref": "#/$defs/RunscopeListSharedEnvironments"
+        },
+        {
+          "$ref": "#/$defs/RunscopeCreateSharedEnvironment"
+        },
+        {
+          "$ref": "#/$defs/RunscopeUpdateSharedEnvironment"
+        },
+        {
+          "$ref": "#/$defs/RunscopeGetTestMetrics"
+        },
+        {
+          "$ref": "#/$defs/RunscopeOnTestCompleted"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RunscopeTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Runscope Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
