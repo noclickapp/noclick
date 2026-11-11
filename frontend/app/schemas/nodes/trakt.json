@@ -1,0 +1,1930 @@
+{
+  "$defs": {
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "TraktAddListItemConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "media_type": {
+          "default": "movies",
+          "description": "A show/season history or collection write can affect its episodes, as Trakt documents.",
+          "enum": [
+            "movies",
+            "shows",
+            "seasons",
+            "episodes"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Trakt numeric ID, not the history entry or list item ID.",
+          "exclusiveMinimum": 0,
+          "title": "Item Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "default": "me",
+          "maxLength": 200,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "list_id": {
+          "description": "Personal list slug or Trakt list ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "List Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_list_item",
+          "default": "add_list_item",
+          "title": "Add List Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Add List Item",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "item_id",
+        "list_id"
+      ],
+      "title": "TraktAddListItemConfig",
+      "type": "object"
+    },
+    "TraktAddToCollectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "media_type": {
+          "default": "movies",
+          "description": "A show/season history or collection write can affect its episodes, as Trakt documents.",
+          "enum": [
+            "movies",
+            "shows",
+            "seasons",
+            "episodes"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Trakt numeric ID, not the history entry or list item ID.",
+          "exclusiveMinimum": 0,
+          "title": "Item Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "add_to_collection",
+          "default": "add_to_collection",
+          "title": "Add To Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Add To Collection",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "TraktAddToCollectionConfig",
+      "type": "object"
+    },
+    "TraktAddToHistoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "media_type": {
+          "default": "movies",
+          "description": "A show/season history or collection write can affect its episodes, as Trakt documents.",
+          "enum": [
+            "movies",
+            "shows",
+            "seasons",
+            "episodes"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Trakt numeric ID, not the history entry or list item ID.",
+          "exclusiveMinimum": 0,
+          "title": "Item Id",
+          "type": "integer"
+        },
+        "watched_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UTC ISO 8601 watched time; omit to use Trakt's current time.",
+          "format": "date-time",
+          "title": "Watched At"
+        },
+        "operation": {
+          "const": "add_to_history",
+          "default": "add_to_history",
+          "title": "Add To History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Add To History",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "TraktAddToHistoryConfig",
+      "type": "object"
+    },
+    "TraktAddToWatchlistConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "media_type": {
+          "default": "movies",
+          "description": "A show/season history or collection write can affect its episodes, as Trakt documents.",
+          "enum": [
+            "movies",
+            "shows",
+            "seasons",
+            "episodes"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Trakt numeric ID, not the history entry or list item ID.",
+          "exclusiveMinimum": 0,
+          "title": "Item Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "add_to_watchlist",
+          "default": "add_to_watchlist",
+          "title": "Add To Watchlist",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Add To Watchlist",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "TraktAddToWatchlistConfig",
+      "type": "object"
+    },
+    "TraktCreateListConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "user_id": {
+          "default": "me",
+          "maxLength": 200,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "privacy": {
+          "default": "private",
+          "description": "Public and link lists can be read by other people.",
+          "enum": [
+            "private",
+            "link",
+            "friends",
+            "public"
+          ],
+          "title": "Privacy",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Create List",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TraktCreateListConfig",
+      "type": "object"
+    },
+    "TraktGetLastActivitiesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_last_activities",
+          "default": "get_last_activities",
+          "title": "Get Last Activities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Get Last Activities",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TraktGetLastActivitiesConfig",
+      "type": "object"
+    },
+    "TraktGetMovieConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Trakt ID or slug.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_movie",
+          "default": "get_movie",
+          "title": "Get Movie",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Get Movie",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TraktGetMovieConfig",
+      "type": "object"
+    },
+    "TraktGetSettingsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_settings",
+          "default": "get_settings",
+          "title": "Get Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Get Settings",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TraktGetSettingsConfig",
+      "type": "object"
+    },
+    "TraktGetShowConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Trakt ID or slug.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_show",
+          "default": "get_show",
+          "title": "Get Show",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Get Show",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TraktGetShowConfig",
+      "type": "object"
+    },
+    "TraktListCollectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Explicit page number; lists return only this page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Results per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "type": {
+          "default": "movies",
+          "enum": [
+            "movies",
+            "shows"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_collection",
+          "default": "list_collection",
+          "title": "List Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "List Collection",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TraktListCollectionConfig",
+      "type": "object"
+    },
+    "TraktListEpisodeHistoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Explicit page number; lists return only this page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Results per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "user_id": {
+          "default": "me",
+          "description": "Trakt username, user slug or me for the signed-in account.",
+          "maxLength": 200,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "start_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive UTC ISO 8601 watched timestamp.",
+          "format": "date-time",
+          "title": "Start At"
+        },
+        "end_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclusive UTC ISO 8601 watched timestamp.",
+          "format": "date-time",
+          "title": "End At"
+        },
+        "operation": {
+          "const": "list_episode_history",
+          "default": "list_episode_history",
+          "title": "List Episode History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "List Episode History",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TraktListEpisodeHistoryConfig",
+      "type": "object"
+    },
+    "TraktListListsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Explicit page number; lists return only this page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Results per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "user_id": {
+          "default": "me",
+          "maxLength": 200,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "List Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "List Lists",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TraktListListsConfig",
+      "type": "object"
+    },
+    "TraktListMovieHistoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Explicit page number; lists return only this page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Results per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "user_id": {
+          "default": "me",
+          "description": "Trakt username, user slug or me for the signed-in account.",
+          "maxLength": 200,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "start_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive UTC ISO 8601 watched timestamp.",
+          "format": "date-time",
+          "title": "Start At"
+        },
+        "end_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclusive UTC ISO 8601 watched timestamp.",
+          "format": "date-time",
+          "title": "End At"
+        },
+        "operation": {
+          "const": "list_movie_history",
+          "default": "list_movie_history",
+          "title": "List Movie History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "List Movie History",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TraktListMovieHistoryConfig",
+      "type": "object"
+    },
+    "TraktListTrendingMoviesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Explicit page number; lists return only this page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Results per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_trending_movies",
+          "default": "list_trending_movies",
+          "title": "List Trending Movies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "List Trending Movies",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TraktListTrendingMoviesConfig",
+      "type": "object"
+    },
+    "TraktListWatchlistConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Explicit page number; lists return only this page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Results per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "type": {
+          "default": "movies",
+          "enum": [
+            "movies",
+            "shows",
+            "seasons",
+            "episodes"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "sort_by": {
+          "default": "added",
+          "enum": [
+            "rank",
+            "added",
+            "title",
+            "released",
+            "runtime",
+            "popularity",
+            "random"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sort_how": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort How",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_watchlist",
+          "default": "list_watchlist",
+          "title": "List Watchlist",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "List Watchlist",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TraktListWatchlistConfig",
+      "type": "object"
+    },
+    "TraktOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "trakt_oauth",
+          "default": "trakt_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Application client ID for a pasted token; defaults to the instance's TRAKT_CLIENT_ID.",
+          "title": "Client ID"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 expiry from OAuth, when available.",
+          "title": "Token expiry"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Trakt OAuth",
+      "type": "object",
+      "x-credential-instructions": "Sign in to Trakt. The instance administrator registers an app and configures TRAKT_CLIENT_ID and TRAKT_REDIRECT_URI. Trakt uses PKCE and rotating refresh tokens. To connect by hand, paste an existing user access token and its application's client ID. Without a refresh token, reconnect when the access token expires.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://app.trakt.tv/settings/apps",
+      "x-oauth-provider": "trakt",
+      "x-oauth-scopes": [
+        "public"
+      ]
+    },
+    "TraktOnEpisodeWatchedConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "default": "me",
+          "maxLength": 200,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "start_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional UTC ISO 8601 boundary; polls at most 2,000 entries and baselines existing watches on activation.",
+          "format": "date-time",
+          "title": "Start At"
+        },
+        "operation": {
+          "const": "on_episode_watched",
+          "default": "on_episode_watched",
+          "title": "On Episode Watched",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Episode Watched",
+          "x-is-trigger": true
+        }
+      },
+      "title": "TraktOnEpisodeWatchedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TraktOnMovieWatchedConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "default": "me",
+          "maxLength": 200,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "start_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional UTC ISO 8601 boundary; polls at most 2,000 entries and baselines existing watches on activation.",
+          "format": "date-time",
+          "title": "Start At"
+        },
+        "operation": {
+          "const": "on_movie_watched",
+          "default": "on_movie_watched",
+          "title": "On Movie Watched",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Movie Watched",
+          "x-is-trigger": true
+        }
+      },
+      "title": "TraktOnMovieWatchedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TraktOnWatchlistItemAddedConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "type": {
+          "default": "movies",
+          "enum": [
+            "movies",
+            "shows",
+            "seasons",
+            "episodes"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "operation": {
+          "const": "on_watchlist_item_added",
+          "default": "on_watchlist_item_added",
+          "title": "On Watchlist Item Added",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Watchlist Item Added",
+          "x-is-trigger": true
+        }
+      },
+      "title": "TraktOnWatchlistItemAddedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TraktRateItemConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "media_type": {
+          "default": "movies",
+          "description": "A show/season history or collection write can affect its episodes, as Trakt documents.",
+          "enum": [
+            "movies",
+            "shows",
+            "seasons",
+            "episodes"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Trakt numeric ID, not the history entry or list item ID.",
+          "exclusiveMinimum": 0,
+          "title": "Item Id",
+          "type": "integer"
+        },
+        "rating": {
+          "description": "Rating from 1 to 10.",
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Rating",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "rate_item",
+          "default": "rate_item",
+          "title": "Rate Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Rate Item",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "item_id",
+        "rating"
+      ],
+      "title": "TraktRateItemConfig",
+      "type": "object"
+    },
+    "TraktRemoveFromCollectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "media_type": {
+          "default": "movies",
+          "description": "A show/season history or collection write can affect its episodes, as Trakt documents.",
+          "enum": [
+            "movies",
+            "shows",
+            "seasons",
+            "episodes"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Trakt numeric ID, not the history entry or list item ID.",
+          "exclusiveMinimum": 0,
+          "title": "Item Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "remove_from_collection",
+          "default": "remove_from_collection",
+          "title": "Remove From Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Remove From Collection",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "TraktRemoveFromCollectionConfig",
+      "type": "object"
+    },
+    "TraktRemoveFromHistoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "media_type": {
+          "default": "movies",
+          "description": "A show/season history or collection write can affect its episodes, as Trakt documents.",
+          "enum": [
+            "movies",
+            "shows",
+            "seasons",
+            "episodes"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Trakt numeric ID, not the history entry or list item ID.",
+          "exclusiveMinimum": 0,
+          "title": "Item Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "remove_from_history",
+          "default": "remove_from_history",
+          "title": "Remove From History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Remove From History",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "TraktRemoveFromHistoryConfig",
+      "type": "object"
+    },
+    "TraktRemoveFromWatchlistConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "media_type": {
+          "default": "movies",
+          "description": "A show/season history or collection write can affect its episodes, as Trakt documents.",
+          "enum": [
+            "movies",
+            "shows",
+            "seasons",
+            "episodes"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Trakt numeric ID, not the history entry or list item ID.",
+          "exclusiveMinimum": 0,
+          "title": "Item Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "remove_from_watchlist",
+          "default": "remove_from_watchlist",
+          "title": "Remove From Watchlist",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Remove From Watchlist",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "TraktRemoveFromWatchlistConfig",
+      "type": "object"
+    },
+    "TraktRemoveListItemConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "media_type": {
+          "default": "movies",
+          "description": "A show/season history or collection write can affect its episodes, as Trakt documents.",
+          "enum": [
+            "movies",
+            "shows",
+            "seasons",
+            "episodes"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Trakt numeric ID, not the history entry or list item ID.",
+          "exclusiveMinimum": 0,
+          "title": "Item Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "default": "me",
+          "maxLength": 200,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "list_id": {
+          "description": "Personal list slug or Trakt list ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "List Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remove_list_item",
+          "default": "remove_list_item",
+          "title": "Remove List Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Remove List Item",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "item_id",
+        "list_id"
+      ],
+      "title": "TraktRemoveListItemConfig",
+      "type": "object"
+    },
+    "TraktRemoveRatingConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "media_type": {
+          "default": "movies",
+          "description": "A show/season history or collection write can affect its episodes, as Trakt documents.",
+          "enum": [
+            "movies",
+            "shows",
+            "seasons",
+            "episodes"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Trakt numeric ID, not the history entry or list item ID.",
+          "exclusiveMinimum": 0,
+          "title": "Item Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "remove_rating",
+          "default": "remove_rating",
+          "title": "Remove Rating",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Remove Rating",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "TraktRemoveRatingConfig",
+      "type": "object"
+    },
+    "TraktSearchConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Explicit page number; lists return only this page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Results per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "type": {
+          "default": "movie",
+          "enum": [
+            "movie",
+            "show",
+            "episode",
+            "person",
+            "list"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trakt",
+          "x-display-name": "Search",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "TraktSearchConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_list_item": "#/$defs/TraktAddListItemConfig",
+          "add_to_collection": "#/$defs/TraktAddToCollectionConfig",
+          "add_to_history": "#/$defs/TraktAddToHistoryConfig",
+          "add_to_watchlist": "#/$defs/TraktAddToWatchlistConfig",
+          "create_list": "#/$defs/TraktCreateListConfig",
+          "get_last_activities": "#/$defs/TraktGetLastActivitiesConfig",
+          "get_movie": "#/$defs/TraktGetMovieConfig",
+          "get_settings": "#/$defs/TraktGetSettingsConfig",
+          "get_show": "#/$defs/TraktGetShowConfig",
+          "list_collection": "#/$defs/TraktListCollectionConfig",
+          "list_episode_history": "#/$defs/TraktListEpisodeHistoryConfig",
+          "list_lists": "#/$defs/TraktListListsConfig",
+          "list_movie_history": "#/$defs/TraktListMovieHistoryConfig",
+          "list_trending_movies": "#/$defs/TraktListTrendingMoviesConfig",
+          "list_watchlist": "#/$defs/TraktListWatchlistConfig",
+          "on_episode_watched": "#/$defs/TraktOnEpisodeWatchedConfig",
+          "on_movie_watched": "#/$defs/TraktOnMovieWatchedConfig",
+          "on_watchlist_item_added": "#/$defs/TraktOnWatchlistItemAddedConfig",
+          "rate_item": "#/$defs/TraktRateItemConfig",
+          "remove_from_collection": "#/$defs/TraktRemoveFromCollectionConfig",
+          "remove_from_history": "#/$defs/TraktRemoveFromHistoryConfig",
+          "remove_from_watchlist": "#/$defs/TraktRemoveFromWatchlistConfig",
+          "remove_list_item": "#/$defs/TraktRemoveListItemConfig",
+          "remove_rating": "#/$defs/TraktRemoveRatingConfig",
+          "search": "#/$defs/TraktSearchConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TraktGetSettingsConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktGetLastActivitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktGetMovieConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktGetShowConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktListTrendingMoviesConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktListMovieHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktListEpisodeHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktListWatchlistConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktAddToWatchlistConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktRemoveFromWatchlistConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktAddToHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktRemoveFromHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktRateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktRemoveRatingConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktAddToCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktRemoveFromCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktListCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktListListsConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktCreateListConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktAddListItemConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktRemoveListItemConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktOnMovieWatchedConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktOnEpisodeWatchedConfig"
+        },
+        {
+          "$ref": "#/$defs/TraktOnWatchlistItemAddedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TraktOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Trakt Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

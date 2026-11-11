@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/trakt-dark.svg",
+  "source": "https://developer.trakt.tv/favicon.svg",
+  "found_at": "https://developer.trakt.tv/docs/pkce (rel=icon type=image/svg+xml)",
+  "retrieved": "2026-11-11",
+  "license": "Trakt trademark; nominative use identifying the connected service.",
+  "sha256": "b86d95d23428e54f4dc655f332cc028d9fb6a0f230956eb4d3433cfc0d728eac",
+  "edits": [
+    "Kept only the original inner mark group; removed developer blueprint background, grid and construction circles.",
+    "Removed the mark group transform and set viewBox to -1 -1 62 62, preserving the full original stroke bounds.",
+    "Recoloured original strokes #ffffff for theme visibility."
+  ],
+  "notes": "Current Trakt app symbol from its own developer site favicon, used because the company branding page returns HTTP 403. No path data was changed or generated. No background tile is retained."
+}
