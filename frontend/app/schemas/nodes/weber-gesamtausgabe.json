@@ -1,0 +1,1068 @@
+{
+  "$defs": {
+    "CreateDocumentID": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_document_id",
+          "default": "create_document_id",
+          "title": "Create Document ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Document ID"
+        },
+        "docType": {
+          "description": "Request a fresh ID; this does not create or upload a document.",
+          "items": {
+            "enum": [
+              "biblio",
+              "diaries",
+              "documents",
+              "letters",
+              "news",
+              "orgs",
+              "persons",
+              "places",
+              "thematicCommentaries",
+              "var",
+              "works",
+              "writings"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Doctype",
+          "type": "array"
+        }
+      },
+      "required": [
+        "docType"
+      ],
+      "title": "CreateDocumentID",
+      "type": "object"
+    },
+    "FindCodeByElement": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "One-based first result. Add the number of returned items for the next page.",
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this request; no automatic pagination.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "docType": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "biblio",
+                  "diaries",
+                  "documents",
+                  "letters",
+                  "news",
+                  "orgs",
+                  "persons",
+                  "places",
+                  "thematicCommentaries",
+                  "var",
+                  "works",
+                  "writings"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document types"
+        },
+        "operation": {
+          "const": "find_code_by_element",
+          "default": "find_code_by_element",
+          "title": "Find XML Code Samples",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Find XML Code Samples"
+        },
+        "element": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Element",
+          "type": "string"
+        },
+        "namespace": {
+          "default": "http://www.tei-c.org/ns/1.0",
+          "description": "XML namespace URI, sent as a filter only.",
+          "title": "Namespace",
+          "type": "string"
+        }
+      },
+      "required": [
+        "element"
+      ],
+      "title": "FindCodeByElement",
+      "type": "object"
+    },
+    "FindDocumentsByAuthor": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "One-based first result. Add the number of returned items for the next page.",
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this request; no automatic pagination.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "docType": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "biblio",
+                  "diaries",
+                  "documents",
+                  "letters",
+                  "news",
+                  "orgs",
+                  "persons",
+                  "places",
+                  "thematicCommentaries",
+                  "var",
+                  "works",
+                  "writings"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document types"
+        },
+        "operation": {
+          "const": "find_documents_by_author",
+          "default": "find_documents_by_author",
+          "title": "Find Documents by Author",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Find Documents by Author"
+        },
+        "authorID": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Author ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "authorID"
+      ],
+      "title": "FindDocumentsByAuthor",
+      "type": "object"
+    },
+    "FindDocumentsByDate": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "One-based first result. Add the number of returned items for the next page.",
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this request; no automatic pagination.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "docType": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "biblio",
+                  "diaries",
+                  "documents",
+                  "letters",
+                  "news",
+                  "orgs",
+                  "persons",
+                  "places",
+                  "thematicCommentaries",
+                  "var",
+                  "works",
+                  "writings"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document types"
+        },
+        "operation": {
+          "const": "find_documents_by_date",
+          "default": "find_documents_by_date",
+          "title": "Find Documents by Date",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Find Documents by Date"
+        },
+        "fromDate": {
+          "description": "Earliest historical document date (YYYY-MM-DD), not creation time in the API.",
+          "format": "date",
+          "title": "Fromdate",
+          "type": "string"
+        },
+        "toDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latest historical document date (YYYY-MM-DD).",
+          "title": "Todate"
+        }
+      },
+      "required": [
+        "fromDate"
+      ],
+      "title": "FindDocumentsByDate",
+      "type": "object"
+    },
+    "FindDocumentsByMention": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "One-based first result. Add the number of returned items for the next page.",
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this request; no automatic pagination.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "docType": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "biblio",
+                  "diaries",
+                  "documents",
+                  "letters",
+                  "news",
+                  "orgs",
+                  "persons",
+                  "places",
+                  "thematicCommentaries",
+                  "var",
+                  "works",
+                  "writings"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document types"
+        },
+        "operation": {
+          "const": "find_documents_by_mention",
+          "default": "find_documents_by_mention",
+          "title": "Find Documents by Mention",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Find Documents by Mention"
+        },
+        "docID": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Mentioned document ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "docID"
+      ],
+      "title": "FindDocumentsByMention",
+      "type": "object"
+    },
+    "GetApplicationStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_application_status",
+          "default": "get_application_status",
+          "title": "Get Application Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Application Status"
+        }
+      },
+      "title": "GetApplicationStatus",
+      "type": "object"
+    },
+    "GetDocuments": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_documents",
+          "default": "get_documents",
+          "title": "Get Documents by ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Documents by ID"
+        },
+        "docID": {
+          "description": "WeGA ID such as A002068, or the documented WeGA, VIAF, Wikidata or GND URI. Sent as a path value, never fetched as a URL.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Document ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "docID"
+      ],
+      "title": "GetDocuments",
+      "type": "object"
+    },
+    "GetFacets": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "One-based first result. Add the number of returned items for the next page.",
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this request; no automatic pagination.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "docType": {
+          "items": {
+            "enum": [
+              "biblio",
+              "diaries",
+              "documents",
+              "letters",
+              "news",
+              "orgs",
+              "persons",
+              "places",
+              "thematicCommentaries",
+              "var",
+              "works",
+              "writings"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Document types",
+          "type": "array"
+        },
+        "operation": {
+          "const": "get_facets",
+          "default": "get_facets",
+          "title": "Get Search Facets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Search Facets"
+        },
+        "facet": {
+          "enum": [
+            "addressee",
+            "authors",
+            "biblioType",
+            "composers",
+            "dedicatees",
+            "docLang",
+            "docSource",
+            "docStatus",
+            "docTypeSubClass",
+            "editors",
+            "facsimile",
+            "forenames",
+            "geonamesFeatureClass",
+            "journals",
+            "keywords",
+            "keywords_biblio",
+            "librettists",
+            "lyricists",
+            "occupations",
+            "persons",
+            "placeOfAddressee",
+            "placeOfSender",
+            "placenames",
+            "places",
+            "pubPlace",
+            "publisher",
+            "repository",
+            "residences",
+            "sender",
+            "series",
+            "sex",
+            "sources-details-cat",
+            "sources-meta-cat",
+            "surnames",
+            "textType",
+            "works",
+            "workTitle"
+          ],
+          "title": "Facet",
+          "type": "string"
+        },
+        "scope": {
+          "description": "indices or a WeGA document ID.",
+          "pattern": "^(?:indices|A[A-F0-9]{6})$",
+          "title": "Scope",
+          "type": "string"
+        },
+        "term": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Term"
+        }
+      },
+      "required": [
+        "docType",
+        "facet",
+        "scope"
+      ],
+      "title": "GetFacets",
+      "type": "object"
+    },
+    "GetPreferences": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_preferences",
+          "default": "get_preferences",
+          "title": "Get Session Preferences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Session Preferences"
+        }
+      },
+      "title": "GetPreferences",
+      "type": "object"
+    },
+    "ListDocuments": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "One-based first result. Add the number of returned items for the next page.",
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this request; no automatic pagination.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "docType": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "biblio",
+                  "diaries",
+                  "documents",
+                  "letters",
+                  "news",
+                  "orgs",
+                  "persons",
+                  "places",
+                  "thematicCommentaries",
+                  "var",
+                  "works",
+                  "writings"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document types"
+        },
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "List Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Documents"
+        }
+      },
+      "title": "ListDocuments",
+      "type": "object"
+    },
+    "ListRepositories": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "One-based first result. Add the number of returned items for the next page.",
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this request; no automatic pagination.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_repositories",
+          "default": "list_repositories",
+          "title": "List Repositories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Repositories"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "WeGA city ID, e.g. A130002 (Berlin).",
+          "title": "City"
+        }
+      },
+      "title": "ListRepositories",
+      "type": "object"
+    },
+    "ListRepositoryItems": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "One-based first result. Add the number of returned items for the next page.",
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this request; no automatic pagination.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_repository_items",
+          "default": "list_repository_items",
+          "title": "List Repository Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Repository Items"
+        },
+        "siglum": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RISM siglum, e.g. D-B.",
+          "title": "Siglum"
+        },
+        "term": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Term"
+        },
+        "orderby": {
+          "anyOf": [
+            {
+              "enum": [
+                "idno",
+                "docID",
+                "sortdate",
+                "docType",
+                "title"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "sortdate is the historical item's date, not when WeGA added or updated it.",
+          "title": "Orderby",
+          "enum": [
+            "idno",
+            "docID",
+            "sortdate",
+            "docType",
+            "title"
+          ],
+          "x-enum-searchable": true
+        },
+        "orderdir": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orderdir",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListRepositoryItems",
+      "type": "object"
+    },
+    "OnThisDay": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "One-based first result. Add the number of returned items for the next page.",
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this request; no automatic pagination.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "docType": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "biblio",
+                  "diaries",
+                  "documents",
+                  "letters",
+                  "news",
+                  "orgs",
+                  "persons",
+                  "places",
+                  "thematicCommentaries",
+                  "var",
+                  "works",
+                  "writings"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document types"
+        },
+        "operation": {
+          "const": "find_on_this_day",
+          "default": "find_on_this_day",
+          "title": "Find On This Day Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Find On This Day Events"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Month/day and latest year for historical events. Omit for the provider's current date.",
+          "title": "Date"
+        }
+      },
+      "title": "OnThisDay",
+      "type": "object"
+    },
+    "SearchEntities": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "One-based first result. Add the number of returned items for the next page.",
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this request; no automatic pagination.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "docType": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "biblio",
+                  "diaries",
+                  "documents",
+                  "letters",
+                  "news",
+                  "orgs",
+                  "persons",
+                  "places",
+                  "thematicCommentaries",
+                  "var",
+                  "works",
+                  "writings"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document types"
+        },
+        "operation": {
+          "const": "search_entities",
+          "default": "search_entities",
+          "title": "Search Entities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Search Entities"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search query"
+        }
+      },
+      "title": "SearchEntities",
+      "type": "object"
+    },
+    "SetPreferences": {
+      "additionalProperties": false,
+      "description": "Set preferences for this HTTP session and return the response. No saved account or browser session is attached; these preferences do not carry into another workflow request.",
+      "properties": {
+        "operation": {
+          "const": "set_preferences",
+          "default": "set_preferences",
+          "title": "Set Session Preferences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Set Session Preferences"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "enum": [
+                10,
+                25,
+                50
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "line-wrap": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line-Wrap"
+        },
+        "thematicCommentaries-marker": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Thematiccommentaries-Marker"
+        },
+        "rdg-marker": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rdg-Marker"
+        },
+        "textConst-marker": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Textconst-Marker"
+        },
+        "supplied-marker": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplied-Marker"
+        },
+        "note-marker": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note-Marker"
+        }
+      },
+      "title": "SetPreferences",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_document_id": "#/$defs/CreateDocumentID",
+          "find_code_by_element": "#/$defs/FindCodeByElement",
+          "find_documents_by_author": "#/$defs/FindDocumentsByAuthor",
+          "find_documents_by_date": "#/$defs/FindDocumentsByDate",
+          "find_documents_by_mention": "#/$defs/FindDocumentsByMention",
+          "find_on_this_day": "#/$defs/OnThisDay",
+          "get_application_status": "#/$defs/GetApplicationStatus",
+          "get_documents": "#/$defs/GetDocuments",
+          "get_facets": "#/$defs/GetFacets",
+          "get_preferences": "#/$defs/GetPreferences",
+          "list_documents": "#/$defs/ListDocuments",
+          "list_repositories": "#/$defs/ListRepositories",
+          "list_repository_items": "#/$defs/ListRepositoryItems",
+          "search_entities": "#/$defs/SearchEntities",
+          "set_preferences": "#/$defs/SetPreferences"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SearchEntities"
+        },
+        {
+          "$ref": "#/$defs/ListDocuments"
+        },
+        {
+          "$ref": "#/$defs/GetDocuments"
+        },
+        {
+          "$ref": "#/$defs/FindDocumentsByAuthor"
+        },
+        {
+          "$ref": "#/$defs/FindDocumentsByMention"
+        },
+        {
+          "$ref": "#/$defs/FindDocumentsByDate"
+        },
+        {
+          "$ref": "#/$defs/OnThisDay"
+        },
+        {
+          "$ref": "#/$defs/ListRepositories"
+        },
+        {
+          "$ref": "#/$defs/ListRepositoryItems"
+        },
+        {
+          "$ref": "#/$defs/FindCodeByElement"
+        },
+        {
+          "$ref": "#/$defs/GetFacets"
+        },
+        {
+          "$ref": "#/$defs/GetApplicationStatus"
+        },
+        {
+          "$ref": "#/$defs/CreateDocumentID"
+        },
+        {
+          "$ref": "#/$defs/GetPreferences"
+        },
+        {
+          "$ref": "#/$defs/SetPreferences"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Weber-gesamtausgabe Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

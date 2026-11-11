@@ -1,0 +1,603 @@
+[
+  {
+    "provider": "weber-gesamtausgabe",
+    "node_type": "automation-weber-gesamtausgabe",
+    "checked": 15,
+    "passed": 15,
+    "failed": 0,
+    "fixture_errors": 0,
+    "response_checked": 15,
+    "auth_checked": 0,
+    "scope_checked": 0,
+    "skipped": 0,
+    "coverage": {
+      "implemented": 15,
+      "total": 15
+    },
+    "operations": [
+      {
+        "operation": "search_entities",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://weber-gesamtausgabe.de/api/v1/search/entity?offset=1&limit=10&docType=biblio&q=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /search/entity",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "d83d9517e79d1c29c59be18174aa92ffb20c94662ff2791ed7fd5673dca2f842"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "offset": 1,
+          "limit": 10,
+          "docType": [
+            "biblio"
+          ],
+          "operation": "search_entities",
+          "q": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_documents",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://weber-gesamtausgabe.de/api/v1/documents?offset=1&limit=10&docType=biblio",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /documents",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "d83d9517e79d1c29c59be18174aa92ffb20c94662ff2791ed7fd5673dca2f842"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "offset": 1,
+          "limit": 10,
+          "docType": [
+            "biblio"
+          ],
+          "operation": "list_documents"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_documents",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://weber-gesamtausgabe.de/api/v1/documents/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /documents/{docID}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "d83d9517e79d1c29c59be18174aa92ffb20c94662ff2791ed7fd5673dca2f842"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_documents",
+          "docID": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "find_documents_by_author",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://weber-gesamtausgabe.de/api/v1/documents/findByAuthor/1?offset=1&limit=10&docType=biblio",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /documents/findByAuthor/{authorID}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "d83d9517e79d1c29c59be18174aa92ffb20c94662ff2791ed7fd5673dca2f842"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "offset": 1,
+          "limit": 10,
+          "docType": [
+            "biblio"
+          ],
+          "operation": "find_documents_by_author",
+          "authorID": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "find_documents_by_mention",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://weber-gesamtausgabe.de/api/v1/documents/findByMention/1?offset=1&limit=10&docType=biblio",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /documents/findByMention/{docID}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "d83d9517e79d1c29c59be18174aa92ffb20c94662ff2791ed7fd5673dca2f842"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "offset": 1,
+          "limit": 10,
+          "docType": [
+            "biblio"
+          ],
+          "operation": "find_documents_by_mention",
+          "docID": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "find_documents_by_date",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://weber-gesamtausgabe.de/api/v1/documents/findByDate?offset=1&limit=10&docType=biblio&fromDate=2024-01-01&toDate=2024-01-01",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /documents/findByDate",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "d83d9517e79d1c29c59be18174aa92ffb20c94662ff2791ed7fd5673dca2f842"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "offset": 1,
+          "limit": 10,
+          "docType": [
+            "biblio"
+          ],
+          "operation": "find_documents_by_date",
+          "fromDate": "2024-01-01",
+          "toDate": "2024-01-01"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "find_on_this_day",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://weber-gesamtausgabe.de/api/v1/documents/otd?offset=1&limit=10&docType=biblio&date=2024-01-01",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /documents/otd",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "24ce6d4aa28d8812f32c2ed95d992b8f110d48a815400f1862089cd5609258cb"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "offset": 1,
+          "limit": 10,
+          "docType": [
+            "biblio"
+          ],
+          "operation": "find_on_this_day",
+          "date": "2024-01-01"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_repositories",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://weber-gesamtausgabe.de/api/v1/repositories?offset=1&limit=10&city=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /repositories",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "84821db6e805c81b48d3b634b80fefa2956f697d55981b036981f61efb05ca80"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "offset": 1,
+          "limit": 10,
+          "operation": "list_repositories",
+          "city": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_repository_items",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://weber-gesamtausgabe.de/api/v1/repositories/items?offset=1&limit=10&siglum=1&term=1&orderby=idno&orderdir=asc",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /repositories/items",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "387e41947733131452cb67b06cea70107d195f992e88effc10f11bf4ec4abe97"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "offset": 1,
+          "limit": 10,
+          "operation": "list_repository_items",
+          "siglum": "1",
+          "term": "1",
+          "orderby": "idno",
+          "orderdir": "asc"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "find_code_by_element",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://weber-gesamtausgabe.de/api/v1/code/findByElement/1?offset=1&limit=10&docType=biblio&namespace=http%3A%2F%2Fwww.tei-c.org%2Fns%2F1.0",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /code/findByElement/{element}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "fc2ff72ac7e844c1eaff62162c8365511b9e3da638106164d8e8e9764272b8da"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "offset": 1,
+          "limit": 10,
+          "docType": [
+            "biblio"
+          ],
+          "operation": "find_code_by_element",
+          "element": "1",
+          "namespace": "http://www.tei-c.org/ns/1.0"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_facets",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://weber-gesamtausgabe.de/api/v1/facets/addressee?offset=1&limit=10&docType=biblio&scope=indices&term=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /facets/{facet}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "c878a576542268bce598fa2f1a360dba1dfd306871efe44b8846609e17e4caa1"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "offset": 1,
+          "limit": 10,
+          "docType": [
+            "biblio"
+          ],
+          "operation": "get_facets",
+          "facet": "addressee",
+          "scope": "indices",
+          "term": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_application_status",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://weber-gesamtausgabe.de/api/v1/application/status",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /application/status",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "df5eede9352c5028e57a6ab68417abd86cd541b81f4074fa8bd0817a8aadc929"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_application_status"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "create_document_id",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://weber-gesamtausgabe.de/api/v1/application/newID?docType=biblio",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /application/newID",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "e5e6f56ea2e2263cc5df78932dfa623568d4d2a32b2f5108aa6ba7a538789d1d"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_document_id",
+          "docType": [
+            "biblio"
+          ]
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_preferences",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://weber-gesamtausgabe.de/api/v1/application/preferences",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /application/preferences",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "75c051505560032a0239c65e7e037b154ad996e329e6b04430b916508c6be28c"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_preferences"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "set_preferences",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://weber-gesamtausgabe.de/api/v1/application/preferences",
+            "content_type": "application/json",
+            "body": "{\"limit\":10,\"line-wrap\":false,\"thematicCommentaries-marker\":false,\"rdg-marker\":false,\"textConst-marker\":false,\"supplied-marker\":false,\"note-marker\":false}",
+            "auth_placement": null,
+            "headers": {
+              "host": "weber-gesamtausgabe.de",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "content-length": "154",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /application/preferences",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "75c051505560032a0239c65e7e037b154ad996e329e6b04430b916508c6be28c"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "set_preferences",
+          "limit": 10,
+          "line-wrap": false,
+          "thematicCommentaries-marker": false,
+          "rdg-marker": false,
+          "textConst-marker": false,
+          "supplied-marker": false,
+          "note-marker": false
+        },
+        "trigger": null,
+        "passed": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "path": "frontend/public/icons/weber-gesamtausgabe.svg",
+  "source": "https://weber-gesamtausgabe.de/safari-pinned-tab.svg",
+  "source_page": "https://weber-gesamtausgabe.de/en/Index",
+  "date": "2026-11-11",
+  "license": "Provider brand mark; retained for identification of the Carl-Maria-von-Weber-Gesamtausgabe.",
+  "sha256": "5a137049ac6de8f04d9b81a8eab743799b17d944cd3ada1c45c1ca6b8bd7ad0d",
+  "edits": [],
+  "notes": "Official Safari pinned-tab favicon linked by the provider site; used as the app mark rather than the header wordmark. Original path data and viewBox retained."
+}
