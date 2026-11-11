@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/speechmatics-dark.svg",
+  "source": "https://www.speechmatics.com/_next/static/media/SM-Logo-White.3b8f903d.svg",
+  "found_at": "https://www.speechmatics.com/ and https://www.speechmatics.com/brand (the site's own logo files)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the 'SPEECHMATICS' wordmark (element 0)",
+    "cropped the viewBox to the symbol",
+    "stripped editor metadata",
+    "dark file taken from the company's white logo: kept only the symbol's subpaths 0,1 of its single compound path, cropped"
+  ],
+  "variant": "dark mode",
+  "notes": "The brand page's own 'SVG' downloads (static/assets/logos/logo_speechmatics_black.svg / _white.svg) only wrap a PNG pattern, so they were not used; the site's SM-Logo files are real vectors. The white logo's symbol is drawn very slightly differently (ring a touch thicker) from the teal one; the light file alone passes icon_check on dark, but teal on near-black is low-contrast, so the dark file uses Speechmatics' own white version.",
+  "license": "Speechmatics brand mark, used nominatively to identify the connected service; trademark rights remain with Speechmatics.",
+  "sha256": "750103e3bd7ced89993c564dce51768b68624d4403195ceb417a3acfe1614311"
+}

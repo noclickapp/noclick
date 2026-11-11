@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/unifi-dark.svg",
+  "source": "https://ui.com/microsite/static/logoUnifi-BeB3oKkZ.svg",
+  "found_at": "https://ui.com/ (the microsite's JS bundle loads it as the UniFi logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the U and its three pixel squares (element 0 subpath 5, element 1 subpaths 0,1); removed 'niFi'",
+    "cleaned",
+    "cropped the viewBox to the U",
+    "#212427 -> #FFFFFF on the whole mark"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: the UniFi app icon is a white U on a blue gradient tile, published only as PNG/ICO; Ubiquiti's SVGs carry the U in charcoal #212427 without a tile. Shipped the bare U (charcoal on light, white on dark), so it no longer shows UniFi's blue.",
+  "license": "Ubiquiti (UniFi) brand mark, used nominatively to identify the connected service; trademark rights remain with Ubiquiti (UniFi).",
+  "sha256": "7b6d4144f5025cea3261db232c376b4723e8560c5f57d443ffc79668f202d505"
+}

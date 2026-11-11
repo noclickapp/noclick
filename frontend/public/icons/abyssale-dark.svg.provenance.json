@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/abyssale-dark.svg",
+  "source": "https://raw.githubusercontent.com/getabyssale/n8n-nodes-abyssale/HEAD/nodes/Abyssale/icons/abyssale-dark.svg",
+  "found_at": "https://github.com/getabyssale/n8n-nodes-abyssale (Abyssale's own n8n node, org getabyssale, which also hosts abyssale-sdk and abyssale-python-sdk)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the mint square background rect (element 0)",
+    "cropped the viewBox to the A",
+    "cleaned",
+    "#131314 -> #69FFAD on the A (the mint is the same file's own tile colour and the webclip's A colour)"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: bare A (dark #131314 in light mode, mint #69FFAD in dark mode) or the n8n mint tile with the dark A kept as one file. The brand's app icon is the mint A on a dark teal (#0A363A) tile, but no SVG of that tile exists (webclip/favicons are PNG, abyssale.com/brand|press|media-kit are 404, the app's favicons are PNG). The company's own SVGs of the A are the n8n icons (black tile + lavender A, mint tile + #131314 A) and the app loader. I shipped the bare A: #131314 in light mode (matches the black Abyssale wordmark), mint #69FFAD in dark mode (matches the app icon's A). Reviewer may prefer the n8n mint tile with dark A kept as-is (downloads/abyssale/src10/abyssale-dark.svg) as one file for both themes.",
+  "license": "Abyssale brand mark, used nominatively to identify the connected service; trademark rights remain with Abyssale.",
+  "sha256": "853c44011603e08ce77fc8ad49048d75f4e3e1a9f17bed7e5b08729f15b3c426"
+}
