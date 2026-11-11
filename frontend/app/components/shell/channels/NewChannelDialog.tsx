@@ -1,11 +1,10 @@
 // Starting a channel: its name (kept as Slack keeps them: lowercase words and
-// dashes), a one-line topic, whether agents answer every message or only
-// their @-mentions, and which of your agents join: those in your Automations
-// and your platform agents. In a workspace, a platform agent that isn't one of
-// its members joins the workspace too.
+// dashes), a one-line topic, and which of your agents join: those in your
+// Automations and your platform agents. Agents in it answer every message. In a
+// workspace, a platform agent that isn't one of its members joins the workspace
+// too.
 import { useState, type FormEvent } from 'react';
 import { Check, Hash } from 'lucide-react';
-import { SegmentedControl } from '~/components/ui/segmented-control';
 import { NodeMark } from '~/components/dashboard/primitives';
 import { ShellDialog } from '~/components/shell/ShellDialog';
 import { BUTTON_GHOST, BUTTON_PRIMARY } from '~/components/shell/buttons';
@@ -14,12 +13,11 @@ import { cn } from '~/lib/utils';
 import { MemberAvatar } from './avatars';
 import type { AccountMenuUser } from '~/components/nav/AccountMenu';
 import { agentGroups, channelSlug, hueFor } from './model';
-import type { AgentChoice, ChannelMode } from './types';
+import type { AgentChoice } from './types';
 
 export interface NewChannelInput {
     name: string;
     topic: string;
-    mode: ChannelMode;
     agents: AgentChoice[];
 }
 
@@ -43,7 +41,6 @@ export function NewChannelDialog({
 }) {
     const [name, setName] = useState('');
     const [topic, setTopic] = useState('');
-    const [mode, setMode] = useState<ChannelMode>('all');
     const [picked, setPicked] = useState<ReadonlySet<string>>(new Set());
     const [problem, setProblem] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
@@ -52,7 +49,6 @@ export function NewChannelDialog({
     const reset = () => {
         setName('');
         setTopic('');
-        setMode('all');
         setPicked(new Set());
         setProblem(null);
     };
@@ -75,7 +71,7 @@ export function NewChannelDialog({
         setBusy(true);
         setProblem(null);
         try {
-            await onCreate({ name: slug, topic: topic.trim(), mode, agents: agents.filter((a) => picked.has(a.id)) });
+            await onCreate({ name: slug, topic: topic.trim(), agents: agents.filter((a) => picked.has(a.id)) });
             onOpenChange(false);
             reset();
         } catch (err) {
@@ -125,19 +121,6 @@ export function NewChannelDialog({
                     <span className={FIELD_LABEL}>Topic</span>
                     <input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="What it’s for, in a line" maxLength={250} className={FIELD} />
                 </label>
-                <div>
-                    <span className={FIELD_LABEL}>Agents answer</span>
-                    <SegmentedControl
-                        className="w-full rounded-xl"
-                        buttonClassName="h-9 flex-1 text-[13px]"
-                        options={[
-                            { value: 'all', label: 'Every message' },
-                            { value: 'mentions', label: 'When @-mentioned' },
-                        ]}
-                        value={mode}
-                        onChange={setMode}
-                    />
-                </div>
                 <div>
                     <span className={FIELD_LABEL}>Agents</span>
                     {agents.length ? (

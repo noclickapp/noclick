@@ -110,7 +110,7 @@ function Intro({
                             </li>
                         ))}
                     </ul>
-                    <p className="mt-4 text-[13px] text-muted-foreground">{modeLine(channel.mode, agents, { named: false })}.</p>
+                    {channel.mode === 'mentions' && <p className="mt-4 text-[13px] text-muted-foreground">{modeLine(channel.mode, agents, { named: false })}.</p>}
                 </>
             ) : (
                 <p className="mt-4 text-[13px] text-muted-foreground">No agents here yet: add one from the members menu, or with /invite.</p>

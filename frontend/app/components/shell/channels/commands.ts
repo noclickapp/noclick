@@ -4,12 +4,12 @@
 // channel through the API; /summarize answers you alone, and /remind and
 // /automate hand the ask to NoClick, which keeps reminders and builds
 // automations.
-import { Archive, AlarmClock, CornerDownRight, MessagesSquare, PenLine, ScrollText, UserMinus, UserPlus, Workflow, type LucideIcon } from 'lucide-react';
+import { Archive, AlarmClock, CornerDownRight, PenLine, ScrollText, UserMinus, UserPlus, Workflow, type LucideIcon } from 'lucide-react';
 import { authorMember } from './model';
 import type { ChannelMember, ChannelMessage } from './types';
 
 export interface ChannelCommand {
-    name: 'summarize' | 'handoff' | 'invite' | 'remove' | 'topic' | 'mode' | 'close' | 'remind' | 'automate';
+    name: 'summarize' | 'handoff' | 'invite' | 'remove' | 'topic' | 'close' | 'remind' | 'automate';
     description: string;
     /** What follows the command, shown as its hint. */
     args?: string;
@@ -22,7 +22,6 @@ export const CHANNEL_COMMANDS: ChannelCommand[] = [
     { name: 'invite', description: 'Add one of your agents', args: '@agent', icon: UserPlus },
     { name: 'remove', description: 'Take a member out', args: '@name', icon: UserMinus },
     { name: 'topic', description: 'Change the channel topic', args: 'new topic', icon: PenLine },
-    { name: 'mode', description: 'Agents answer @-mentions, or every message', args: 'mentions | all', icon: MessagesSquare },
     { name: 'close', description: 'Close the channel', icon: Archive },
     { name: 'remind', description: 'Ask NoClick to remind you', args: 'me to … in 2h', icon: AlarmClock },
     { name: 'automate', description: 'Ask NoClick to turn this into an automation', args: 'what should happen', icon: Workflow },
