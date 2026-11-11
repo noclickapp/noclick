@@ -165,3 +165,27 @@ it('folds a thread of notes written before they named their automation into one 
         'https://noclick.com/b/q2',
     ]);
 });
+
+describe('a space’s news', () => {
+    const SPACE = { id: 'ws-launch', label: 'NoClick · Launch' };
+
+    it('never folds: each says which space it’s from', () => {
+        const runs = updatesOf([note('First.'), note('Priya needs your sign-off.', { space: SPACE }), note('The answer: Friday.', { space: SPACE }), note('Second.')]);
+        expect([...runs.keys()]).toEqual([]);
+    });
+
+    it('draws as NoClick’s note from the space, its label opening the space’s NoClick channel in Work', async () => {
+        render(<CoordinatorTranscript messages={[note('Priya needs your sign-off on the launch post.', { space: SPACE })]} isStreaming={false} errorReason={null} />);
+        const news = screen.getByTestId('space-news');
+        expect(await screen.findByText('Priya needs your sign-off on the launch post.')).toBeTruthy();
+        const opened: { tab: string; params?: Record<string, string | null> }[] = [];
+        const listen = (e: Event) => opened.push((e as CustomEvent).detail);
+        window.addEventListener('noclick:switch-tab', listen);
+        fireEvent.click(screen.getByRole('button', { name: 'NoClick · Launch' }));
+        window.removeEventListener('noclick:switch-tab', listen);
+        expect(opened).toHaveLength(1);
+        expect(opened[0].tab).toBe('work');
+        expect(opened[0].params).toMatchObject({ space: 'ws-launch', channel: 'noclick', thread: null, agent: null });
+        expect(news.querySelector('svg, img')).toBeTruthy();
+    });
+});

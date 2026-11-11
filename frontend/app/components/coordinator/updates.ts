@@ -22,9 +22,9 @@ export interface UpdateEntry {
     notes: UpdateNote[];
 }
 
-// A setup note carries its own card, so it never folds into the run.
+// A setup note carries its own card, and a space's news says which space it's from, so neither folds into the run.
 function isNote(msg: AgentChatMessage): boolean {
-    return !!msg.notification && !msg.isUser && !msg.error && !!msg.text && !msg.content?.length && !msg.setup;
+    return !!msg.notification && !msg.isUser && !msg.error && !!msg.text && !msg.content?.length && !msg.setup && !msg.space;
 }
 
 /** The runs of notes that fold into a card, keyed by every index a run covers: any run about an automation, and

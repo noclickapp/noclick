@@ -23,6 +23,7 @@ import { callsOf, readChannelText, readEmailText, type CallGroup, type ChannelMe
 import { clockTime, duration, shortWhen, whenAt } from './format';
 import { alarmIdsOf, jobIdsOf, SetupNoteCard, TurnCards, turnWorkDrawing } from './toolCards';
 import { outOfFundsCard, TurnAskedProvider } from './toolCardRegistry';
+import { SpaceNewsNote } from './SpaceNewsNote';
 import { entriesOf, updatesOf } from './updates';
 
 // A finished turn's steps never change, so each is read once.
@@ -209,6 +210,7 @@ function Transcript({ jobs, ...props }: Omit<TranscriptProps, 'jobs' | 'useJobs'
                     </>
                 );
             }
+            if (msg.notification && msg.space) return <SpaceNewsNote msg={{ ...msg, space: msg.space }} />;
             if (!msg.isUser || msg.trigger) return undefined;
             if (msg.channel === 'whatsapp_text') return <WhatsAppTurn msg={msg} />;
             if (msg.channel === 'imessage_text') return <IMessageTurn msg={msg} />;
