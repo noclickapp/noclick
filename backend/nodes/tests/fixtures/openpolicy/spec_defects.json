@@ -1,0 +1,76 @@
+[
+  {
+    "operations": [
+      "evaluate_document",
+      "evaluate_webhook_document",
+      "post_query"
+    ],
+    "classification": "d",
+    "description": "The pin declares application/yaml only; official examples and request headers explicitly accept application/json.",
+    "source": "https://www.openpolicyagent.org/docs/rest-api#get-a-document-with-input"
+  },
+  {
+    "operations": [
+      "patch_document"
+    ],
+    "classification": "d",
+    "description": "The pin declares application/json only; official PATCH request headers require application/json-patch+json.",
+    "source": "https://www.openpolicyagent.org/docs/rest-api#patch-a-document"
+  },
+  {
+    "operations": [
+      "list_policies"
+    ],
+    "classification": "d",
+    "description": "200Result incorrectly limits AST package.path.type to import/package and expression terms/value to arrays; the official example uses var/string, scalar values, and a terms object.",
+    "source": "https://www.openpolicyagent.org/docs/rest-api#list-policies"
+  },
+  {
+    "operations": [
+      "get_policy"
+    ],
+    "classification": "d",
+    "description": "GET policy incorrectly reuses the list result array schema; the official result is one policy object.",
+    "source": "https://www.openpolicyagent.org/docs/rest-api#get-a-policy"
+  },
+  {
+    "operations": [
+      "evaluate_document"
+    ],
+    "classification": "d",
+    "description": "The pin reuses policy-list result: array; documented decisions include result: true (and an absent result for undefined decisions).",
+    "source": "https://www.openpolicyagent.org/docs/rest-api#get-a-document-with-input"
+  },
+  {
+    "operations": [
+      "evaluate_webhook_document"
+    ],
+    "classification": "d",
+    "description": "The pin requires an object response envelope; the documented v0 response is the bare boolean true.",
+    "source": "https://www.openpolicyagent.org/docs/rest-api#get-a-document-webhook"
+  },
+  {
+    "operations": [
+      "compile_query"
+    ],
+    "classification": "d",
+    "description": "The pin reuses policy-list result: array; partial evaluation returns result: {queries: ...}.",
+    "source": "https://www.openpolicyagent.org/docs/rest-api#partially-evaluate-a-query"
+  },
+  {
+    "operations": [
+      "simple_query"
+    ],
+    "classification": "d",
+    "description": "The pin omits response content; the official example returns the JSON string \"hello, alice\". The harness therefore fabricates an empty 200 body (advisory).",
+    "source": "https://www.openpolicyagent.org/docs/rest-api#execute-a-simple-query"
+  },
+  {
+    "operations": [
+      "get_health"
+    ],
+    "classification": "d",
+    "description": "The pin omits response content; official healthy responses return the JSON object {}. The harness fabricates an empty 200 body (advisory).",
+    "source": "https://www.openpolicyagent.org/docs/rest-api#health-api"
+  }
+]

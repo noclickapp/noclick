@@ -1,0 +1,10 @@
+{
+  "path": "frontend/public/icons/openpolicy.svg",
+  "source": "https://raw.githubusercontent.com/open-policy-agent/opa/main/logo/logo.svg",
+  "page": "https://github.com/open-policy-agent/opa/tree/main/logo",
+  "license": "Apache-2.0; Open Policy Agent trademark used for integration identification",
+  "sha256": "d1e44e40c057e9b6014e6527c9e75c640a0cfcd7cdef2c27e82bd483f9a937a1",
+  "retrieved_at": "2026-11-11",
+  "edits": [],
+  "notes": "Official standalone OPA app mark, unchanged. The current website favicon embeds a raster; this publisher-owned vector mark is used instead."
+}
