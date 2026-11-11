@@ -15,7 +15,7 @@ TwelveDataIcon.displayName = 'TwelveDataIcon';
 export const TwelveDataNode: NodeDefinition = {
     type: 'automation-twelve-data',
     label: 'Twelve Data',
-    description: 'Market prices, time series, currencies, financials and technical indicators',
+    description: 'Market prices, time series, currencies, financials, technical indicators and new or updated price bar triggers',
     category: 'finance-accounting',
     keywords: ['twelvedata', 'stocks', 'forex', 'crypto', 'market data', 'financial data'],
     Icon: TwelveDataIcon,

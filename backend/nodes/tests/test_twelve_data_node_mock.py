@@ -151,3 +151,82 @@ def test_twelve_data_manual_credential_and_bounded_inputs():
     ]:
         with pytest.raises(ValueError):
             native.TwelveDataNode.parse_config({"config": config})
+
+
+def memory_state(monkeypatch, instance, state):
+    async def update(mutator, **kwargs):
+        new_state, result = mutator(copy.deepcopy(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+    monkeypatch.setattr(instance, "_update_node_state", update)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("case", ["new", "updated", "repoint"], ids=lambda case: "twelve-data-poll-" + case)
+async def test_twelve_data_poll_baseline_changes_and_agent(monkeypatch, case):
+    # Baseline and updates use the provider's recorded example; mutations model subsequent polls.
+    payload = copy.deepcopy(PUBLISHED["GET /time_series"]["body"])
+    instance = node({"operation": "on_new_or_updated_bar", "symbol": "AAPL", "interval": "1min"})
+    state = {}
+    memory_state(monkeypatch, instance, state)
+    calls = transport(monkeypatch, payload)
+    baseline = await instance.execute({})
+    assert baseline["bars"] == [] and instance.trigger_produced_no_event(baseline)
+    assert instance.resolve_agent_event(baseline) is None
+    assert dict(calls[0].url.params) == {"symbol": "AAPL", "interval": "1min", "outputsize": "100", "order": "desc", "timezone": "UTC"}
+    if case == "new":
+        payload["values"][0]["datetime"] = "2021-09-16 16:00:00"
+    elif case == "updated":
+        payload["values"][0]["close"] = "148.86000"
+    else:
+        state["scope"] = "previous-instrument"
+    output = await instance.execute({})
+    if case == "repoint":
+        assert output["bar_count"] == 0
+    else:
+        assert output["bars"] == payload["values"] and instance.trigger_emitted_event(output)
+        assert instance.should_propagate_output(output, {"operation": "on_new_or_updated_bar"})
+        event = instance.resolve_agent_event(output)
+        assert all(value in event["text"] for value in ["AAPL", "1min", payload["values"][0]["datetime"], payload["values"][0]["close"]])
+    repeated = await instance.execute({})
+    assert repeated["bar_count"] == 0 and instance.trigger_produced_no_event(repeated)
+    assert not instance.should_propagate_output(repeated, {"operation": "on_new_or_updated_bar"})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("payload", [{}, {"values": None}, {"values": [{"datetime": "2021-09-16"}]}], ids=["twelve-data-empty", "twelve-data-null", "twelve-data-malformed"])
+async def test_twelve_data_poll_invalid_response_does_not_advance_state(monkeypatch, payload):
+    instance = node({"operation": "on_new_or_updated_bar", "symbol": "AAPL", "interval": "1min"})
+    state = {}
+    memory_state(monkeypatch, instance, state)
+    transport(monkeypatch, payload)
+    with pytest.raises(ValueError, match="malformed price bars"):
+        await instance.execute({})
+    assert state == {}
+
+
+@pytest.mark.asyncio
+async def test_twelve_data_poll_error_does_not_advance_state(monkeypatch):
+    instance = node({"operation": "on_new_or_updated_bar", "symbol": "AAPL", "interval": "1min"})
+    state = {}
+    memory_state(monkeypatch, instance, state)
+    transport(monkeypatch, {"status": "error", "code": 429, "message": "Rate limit"}, 429)
+    assert (await instance.execute({}))["success"] is False
+    assert state == {}
+
+
+@pytest.mark.asyncio
+async def test_twelve_data_poll_optional_volume_and_empty_window(monkeypatch):
+    payload = copy.deepcopy(PUBLISHED["GET /time_series"]["body"])
+    payload["values"][0].pop("volume")
+    instance = node({"operation": "on_new_or_updated_bar", "symbol": "AAPL", "interval": "1min"})
+    state = {"seen_ids": []}
+    memory_state(monkeypatch, instance, state)
+    transport(monkeypatch, payload)
+    output = await instance.execute({})
+    assert output["bar_count"] == 1
+    assert "volume unavailable" in instance.resolve_agent_event(output)["text"]
+    payload["values"] = []
+    assert (await instance.execute({}))["bar_count"] == 0

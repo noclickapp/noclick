@@ -5,6 +5,9 @@ time-series reads, and account usage supplies the connection evidence.
 """
 from __future__ import annotations
 
+import hashlib
+import json
+
 from typing import Annotated, Literal, Union
 from urllib.parse import urlencode, quote
 
@@ -14,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from utils.ssrf import guarded_async_client
 
 BASE = "https://api.twelvedata.com"
@@ -225,10 +229,24 @@ class BatchTimeSeries(_Input):
         return ",".join(parts)
 
 
+class OnNewOrUpdatedBar(PollTriggerConfigBase, _Symbol):
+    """Watch recent bars; baseline history when armed. The current bar may change.
+
+    Changes outside the selected window cannot be recovered.
+    Contract: https://twelvedata.com/docs/market-data/time-series
+    """
+    operation: Literal["on_new_or_updated_bar"] = Field("on_new_or_updated_bar", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+        "x-display-name": "New or updated price bar",
+    })
+    interval: Interval = Field(..., description="Time between price bars, e.g. 1min or 1day.")
+    outputsize: int = Field(100, ge=1, le=5000, description="Recent bars to watch per poll. Changes outside this window are not detected. Each poll consumes API credits.")
+
+
 TwelveDataConfig = Annotated[Union[GetAPIUsage, SearchSymbols, ListStocks, ListForexPairs,
     ListCryptocurrencies, GetPrice, GetQuote, GetTimeSeries, GetExchangeRate, ConvertCurrency,
     GetProfile, GetStatistics, GetIncomeStatement, GetBalanceSheet, GetCashFlow, ListDividends,
-    ListSplits, ListEarnings, GetRSI, GetSMA, GetMACD, BatchTimeSeries], Field(discriminator="operation")]
+    ListSplits, ListEarnings, GetRSI, GetSMA, GetMACD, BatchTimeSeries, OnNewOrUpdatedBar], Field(discriminator="operation")]
 
 
 class TwelveDataFullConfig(NodeConfig[TwelveDataConfig, TwelveDataAPIKeyCredential]):
@@ -244,6 +262,7 @@ ROUTES = {
     "get_balance_sheet": "/balance_sheet", "get_cash_flow": "/cash_flow", "list_dividends": "/dividends",
     "list_splits": "/splits", "list_earnings": "/earnings", "get_rsi": "/rsi", "get_sma": "/sma",
     "get_macd": "/macd", "batch_time_series": "/batch",
+    "on_new_or_updated_bar": "/time_series",
 }
 
 
@@ -258,7 +277,7 @@ def _redact(value, key):
     return value
 
 
-class TwelveDataNode(WorkflowNode):
+class TwelveDataNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-twelve-data"
     connection_evidence = ConnectionEvidence(operation="get_api_usage", noun="account API usage", label_keys=("name",))
 
@@ -266,12 +285,42 @@ class TwelveDataNode(WorkflowNode):
     def get_config_model(cls):
         return TwelveDataFullConfig
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") == "on_new_or_updated_bar":
+            return bool(output.get("bar_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if output.get("operation") != "on_new_or_updated_bar":
+            return super().resolve_agent_event(output)
+        bars = output.get("bars") or []
+        if not bars:
+            return None
+        lines = [f"- {bar['datetime']}: open {bar['open']}, high {bar['high']}, "
+                 f"low {bar['low']}, close {bar['close']}, volume {bar.get('volume', 'unavailable')}"
+                 for bar in bars[:10]]
+        if len(bars) > 10:
+            lines.append(f"- … and {len(bars) - 10} more bars")
+        return {"text": f"Twelve Data: {len(bars)} new or updated {output['interval']} price bar(s) "
+                f"for {output['symbol']} ({output.get('exchange') or output.get('mic_code') or 'selected market'}). "
+                "Intraday times are UTC; daily/weekly/monthly times use the exchange timezone. "
+                "The current bar may still change.\n" + "\n".join(lines),
+                "conversation_key": None}
+
     async def execute(self, inputs):
         if self.config.credentials is None:
             raise ValueError("Connect a Twelve Data API key")
         config, key = self.config.config, self.config.credentials.api_key
         params = config.model_dump(exclude_none=True, exclude={"operation"})
         body = None
+        if isinstance(config, OnNewOrUpdatedBar):
+            # Never send schedule/webhook infrastructure to the provider.
+            params = {name: getattr(config, name) for name in
+                      ("symbol", "exchange", "mic_code", "country", "interval", "outputsize")
+                      if getattr(config, name) is not None}
+            params.update(order="desc", timezone="UTC")
         if config.operation == "batch_time_series":
             # URLs are assembled locally, never accepted from workflow input.
             body = {f"req_{i}": {"url": "/time_series?" + urlencode({"symbol": symbol,
@@ -288,12 +337,30 @@ class TwelveDataNode(WorkflowNode):
             raise ValueError("Twelve Data request could not be completed or decoded") from None
         if not isinstance(payload, dict):
             raise ValueError("Twelve Data returned an unexpected JSON response")
-        if response.status_code != 200 or payload.get("status") == "error" or (isinstance(payload.get("code"), int) and payload["code"] >= 400):
+        # Successful time-series responses have no error-code field.
+        code = payload.get("code") if not isinstance(config, OnNewOrUpdatedBar) or response.status_code != 200 or payload.get("status") == "error" else None
+        if response.status_code != 200 or payload.get("status") == "error" or (isinstance(code, int) and code >= 400):
             output = {"status": "error", "success": False, "http_status": response.status_code,
                 "status_code": payload.get("code") if type(payload.get("code")) is int and payload["code"] >= 400 else response.status_code,
                 "code": payload.get("code"), "error": payload.get("message") or "Twelve Data did not complete this request"}
         else:
             output = {"status": "success", "success": True, "operation": config.operation, "data": payload}
+            if isinstance(config, OnNewOrUpdatedBar):
+                bars = payload.get("values")
+                if not isinstance(bars, list) or any(
+                    not isinstance(bar, dict) or any(not isinstance(bar.get(name), str) or not bar[name]
+                        for name in ("datetime", "open", "high", "low", "close")) for bar in bars
+                ):
+                    raise ValueError("Twelve Data returned malformed price bars")
+                def version(bar):
+                    # Only documented TimeSeriesItem fields identify a bar version.
+                    fields = [bar.get(name) for name in ("datetime", "open", "high", "low", "close", "volume")]
+                    return hashlib.sha256(json.dumps(fields).encode()).hexdigest()
+                fresh = await self._filter_unseen(sorted(bars, key=lambda bar: bar["datetime"]), version)
+                meta = payload.get("meta") or {}
+                output.update(bars=fresh, bar_count=len(fresh), symbol=config.symbol,
+                              interval=config.interval, exchange=config.exchange or meta.get("exchange"),
+                              mic_code=config.mic_code or meta.get("mic_code"))
             if config.operation == "get_api_usage":
                 if not isinstance(payload.get("timestamp"), str) or any(type(payload.get(k)) is not int or payload[k] < 0 for k in ("current_usage", "plan_limit")):
                     raise ValueError("Twelve Data account usage could not be verified")
