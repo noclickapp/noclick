@@ -659,6 +659,156 @@
       "title": "SignableMergeField",
       "type": "object"
     },
+    "SignableOnEventConfig": {
+      "description": "Start a workflow when the selected Signable event happens.\n\nRequires a paid plan that supports webhooks. Signable's signed-webhook\nearly access is supported when the account has that feature enabled.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Signable Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "signed-envelope-complete",
+          "description": "Envelope complete means all required parties finished; envelope signed means one party signed.",
+          "enum": [
+            "send-envelope",
+            "signed-envelope",
+            "cancelled-envelope",
+            "expired-envelope",
+            "signed-envelope-complete",
+            "qes-ready",
+            "qes-signed",
+            "qes-failed",
+            "rejected-envelope",
+            "opened-envelope",
+            "bounced-envelope",
+            "send-envelope-failed",
+            "add-template",
+            "add-contact",
+            "add-user"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically. Unavailable on Signable Pay As You Go plans.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "SignableOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "SignableParty": {
       "additionalProperties": false,
       "properties": {
@@ -941,6 +1091,7 @@
           "list_envelopes": "#/$defs/SignableListEnvelopesConfig",
           "list_templates": "#/$defs/SignableListTemplatesConfig",
           "list_users": "#/$defs/SignableListUsersConfig",
+          "on_event": "#/$defs/SignableOnEventConfig",
           "remind_envelope": "#/$defs/SignableRemindEnvelopeConfig",
           "send_draft_envelope": "#/$defs/SignableSendDraftEnvelopeConfig",
           "update_contact": "#/$defs/SignableUpdateContactConfig",
@@ -949,6 +1100,9 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/SignableOnEventConfig"
+        },
         {
           "$ref": "#/$defs/SignableListEnvelopesConfig"
         },

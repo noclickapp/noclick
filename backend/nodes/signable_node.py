@@ -7,12 +7,16 @@ reported as delivered. API keys use Basic auth with the documented password x.
 from __future__ import annotations
 
 import base64
+import hashlib
+import hmac
+import time
 from typing import Annotated, Literal, Union
-from urllib.parse import quote
+from urllib.parse import parse_qsl, quote
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -235,7 +239,67 @@ class SignableGetSettingsConfig(_Input):
     operation: Literal["get_settings"] = "get_settings"
 
 
+# Event names and per-event fields come from the pinned Signable OpenAPI 1.0.0.
+# Widget subscription and delivery names disagree, so they are not offered.
+EVENT_FIELDS = {
+    "send-envelope": ("envelope_fingerprint", "envelope_documents", "envelope_download", "contact_id",
+        "contact_name", "contact_email", "action", "action_date", "envelope_meta",
+        "envelope_signing_embed"),
+    "signed-envelope": ("envelope_fingerprint", "envelope_documents", "envelope_fields",
+        "envelope_download", "contact_id", "contact_name", "contact_email", "company_id", "user_id",
+        "signature_fingerprint", "client_ip", "envelope_meta", "action", "action_date"),
+    "cancelled-envelope": ("envelope_fingerprint", "envelope_title", "action", "action_date",
+        "envelope_meta", "company_id", "user_id", "client_ip"),
+    "expired-envelope": ("envelope_fingerprint", "envelope_title", "user_id", "action", "action_date",
+        "company_id"),
+    "signed-envelope-complete": ("envelope_fingerprint", "envelope_documents", "envelope_download",
+        "envelope_fields", "envelope_meta", "action", "action_date", "company_id", "user_id", "client_ip"),
+    "qes-ready": ("envelope_fingerprint", "envelope_meta", "party_id", "contact_id", "contact_name",
+        "contact_email", "signing_page_link", "verification_session_expires_at", "company_id", "action",
+        "action_date"),
+    "qes-signed": ("envelope_fingerprint", "envelope_documents", "envelope_fields", "envelope_download",
+        "party_id", "contact_id", "contact_name", "contact_email", "signature_fingerprint", "user_id",
+        "envelope_meta", "company_id", "action", "action_date"),
+    "qes-failed": ("envelope_fingerprint", "envelope_meta", "failure_reason", "failure_message",
+        "company_id", "action", "action_date"),
+    "rejected-envelope": ("action", "action_date", "envelope_fingerprint", "document_id", "document_title",
+        "contact_id", "contact_name", "contact_email", "signature_fingerprint", "envelope_meta",
+        "client_ip"),
+    "opened-envelope": ("action", "action_date", "company_id", "contact_id", "contact_name",
+        "contact_email", "envelope_fingerprint", "envelope_documents", "envelope_download", "envelope_meta",
+        "user_id", "client_ip"),
+    "bounced-envelope": ("action", "action_date", "company_id", "envelope_bounce_email",
+        "envelope_bounce_reason", "envelope_bounce_url", "envelope_fingerprint", "client_ip"),
+    "send-envelope-failed": ("action", "action_date", "envelope_fingerprint", "envelope_meta",
+        "failure_reason", "failure_message", "company_id"),
+    "add-template": ("action", "action_date", "company_id", "template_fingerprint", "template_title",
+        "template_page_total", "template_pages", "template_thumbnails", "client_ip"),
+    "add-contact": ("action", "action_date", "company_id", "contact_id", "contact_name", "contact_email",
+        "client_ip"),
+    "add-user": ("action", "action_date", "company_id", "user_id", "user_name", "user_email", "role",
+        "client_ip"),
+}
+SIGNABLE_EVENTS = tuple(EVENT_FIELDS)
+
+
+class SignableOnEventConfig(WebhookTriggerConfigBase):
+    """Start a workflow when the selected Signable event happens.
+
+    Requires a paid plan that supports webhooks. Signable's signed-webhook
+    early access is supported when the account has that feature enabled.
+    """
+    operation: Literal["on_event"] = Field("on_event", json_schema_extra={
+        "x-is-trigger": True, "x-display-name": "On Signable Event", "x-category": "Triggers"})
+    event_type: Literal[*SIGNABLE_EVENTS] = Field(
+        "signed-envelope-complete", title="Event",
+        description="Envelope complete means all required parties finished; envelope signed means one party signed.")
+    webhook_url: str | None = Field(None, title="Webhook URL",
+        description="Registered automatically. Unavailable on Signable Pay As You Go plans.",
+        json_schema_extra={"ui:widget": "webhook", "ui:loadValue": True, "ui:copyable": True})
+
+
 SignableOperation = Annotated[Union[
+    SignableOnEventConfig,
     SignableListEnvelopesConfig, SignableCreateEnvelopeConfig, SignableGetEnvelopeConfig,
     SignableSendDraftEnvelopeConfig, SignableDeleteEnvelopeConfig, SignableRemindEnvelopeConfig,
     SignableCancelEnvelopeConfig, SignableExpireEnvelopeConfig, SignableUpdateEnvelopePartyConfig,
@@ -277,7 +341,10 @@ ROUTES = {
 }
 
 
-class SignableNode(WorkflowNode):
+class SignableNode(ExternalWebhookTriggerMixin, WorkflowNode):
+    # Signing secrets are issued only for signed-webhook early access accounts.
+    webhook_signing_secret_not_issued = True
+    webhook_replace_stale_endpoint = True
     integration_type = "automation-signable"
     connection_evidence = ConnectionEvidence(operation="list_contacts", noun="contacts",
         label_keys=("contact_name", "contact_email", "contact_id"))
@@ -286,7 +353,118 @@ class SignableNode(WorkflowNode):
     def get_config_model(cls):
         return SignableNodeConfig
 
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"event_type": config.get("event_type", "signed-envelope-complete")}
+
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, body=None):
+        key = SignableAPIKeyCredential.model_validate(credential).api_key
+        auth = "Basic " + base64.b64encode((key + ":x").encode()).decode()
+        async with guarded_async_client(timeout=60, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, BASE + path,
+                headers={"Authorization": auth, "Accept": "application/json"},
+                **({"json": body} if body is not None else {}))
+        if method == "DELETE" and response.status_code == 404:
+            return {}
+        if not 200 <= response.status_code < 300:
+            raise ValueError(f"Signable webhook request failed ({response.status_code})")
+        data = response.json()
+        if not isinstance(data, dict) or data.get("http", 200) >= 400:
+            raise ValueError("Signable rejected the webhook request")
+        return data
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event = config.get("event_type", "signed-envelope-complete")
+        if event not in SIGNABLE_EVENTS:
+            raise ValueError("Choose a supported Signable event")
+        data = await cls._webhook_request(credential, "POST", "/webhooks",
+            {"webhook_url": webhook_url, "webhook_type": event})
+        if not data.get("webhook_id"):
+            raise ValueError("Signable did not return the webhook ID")
+        # https://developers.signable.app/early-access/ea-signed-webhooks
+        # Only enrolled accounts receive this field at creation.
+        return {"external_webhook_id": str(data["webhook_id"]),
+                "signing_secret": data.get("webhook_secret")}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        webhook_id = config.get("external_webhook_id")
+        if not webhook_id:
+            return
+        if not credential:
+            raise ValueError("Connect Signable to remove its webhook")
+        if not str(webhook_id).isdigit():
+            raise ValueError("Invalid Signable webhook ID")
+        await cls._webhook_request(credential, "DELETE", f"/webhooks/{webhook_id}")
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        """Base64 HMAC-SHA256 over the raw body for signed-webhook accounts.
+
+        Signing is early access; standard deliveries have no signature. Once
+        registration issues a secret, missing or invalid signatures fail closed.
+        """
+        headers = {k.lower(): v for k, v in headers.items()}
+        secret = config.get("signing_secret")
+        signature = headers.get("signature", "")
+        if not secret:
+            return not signature
+        timestamp = headers.get("x-signable-webhook", "")
+        if not timestamp.isascii() or not timestamp.isdigit() or len(timestamp) > 12 or abs(time.time() - int(timestamp)) > 300:
+            return False
+        expected = base64.b64encode(hmac.new(secret.encode(), body, hashlib.sha256).digest()).decode()
+        return hmac.compare_digest(expected.encode(), signature.encode())
+
+    @classmethod
+    def _delivery_payload(cls, payload):
+        # The generic receiver preserves non-JSON wire bodies in `raw`.
+        # Signable's standard payloads are form-encoded, not JSON.
+        if "action" in payload:
+            return payload
+        meta = payload.get("_webhook", {})
+        headers = {k.lower(): v for k, v in meta.get("headers", {}).items()}
+        if "application/x-www-form-urlencoded" not in headers.get("content-type", ""):
+            return {}
+        try:
+            fields = parse_qsl(payload.get("raw", ""), keep_blank_values=True,
+                               strict_parsing=True, max_num_fields=100)
+        except ValueError:
+            return {}
+        return {**dict(fields), "_webhook": meta}
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event = cls._delivery_payload(payload)
+        return config.get("operation") == "on_event" and event.get("action") == config.get(
+            "event_type", "signed-envelope-complete")
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        return cls._delivery_payload(payload)
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        event = output.get("action")
+        if event not in EVENT_FIELDS:
+            return None
+        # Each event has its own schema; read only its documented fields.
+        facts = {k: output.get(k) for k in EVENT_FIELDS[event]}
+        resource = facts.get("envelope_fingerprint") or facts.get("template_fingerprint") or facts.get("contact_id") or facts.get("user_id")
+        title = "Signable " + event.replace("-", " ")
+        lines = [title]
+        for key, value in facts.items():
+            if value is not None and value != "":
+                lines.append(f"{key.replace('_', ' ')}: {value}")
+        if facts.get("envelope_fingerprint"):
+            lines.append(f"To act: get_envelope envelope_fingerprint={resource}.")
+        return {"text": "\n".join(lines), "title": title,
+                "conversation_key": f"signable:{'envelope' if facts.get('envelope_fingerprint') else event}:{resource}"}
+
     async def execute(self, inputs):
+        if self.config.config.operation == "on_event":
+            return self.no_event_output("on_event")
         if not self.config.credentials:
             raise ValueError("Connect a Signable API key")
         cfg = self.config.config

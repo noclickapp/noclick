@@ -11,7 +11,7 @@ const SignableIcon = ({ className, style }: { className?: string; style?: CSSPro
 
 export const SignableNode: NodeDefinition = {
     type: 'automation-signable', category: 'documents', label: 'Signable',
-    description: 'Send and track signature envelopes, manage contacts and templates',
+    description: 'Start workflows from Signable events, send envelopes, and manage contacts and templates',
     Icon: SignableIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={SignableIcon} iconColor="" />),
