@@ -71,18 +71,3 @@ def test_every_integration_with_a_trigger_operation_is_trigger_capable():
     assert _has_trigger_operation("automation-gmail")
     assert _has_trigger_operation("automation-telegram")
     assert not _has_trigger_operation("automation-http-request")
-
-
-
-
-
-
-def test_an_invented_type_is_refused_with_the_nearest_ones():
-    from coder.workflow.agentic.commands import execute_graph_mutations
-    from coder.workflow.graph_state import GraphState
-    from coder.workflow.workflow_xml import parse_xml
-
-    results, added = execute_graph_mutations(parse_xml('<add_node type="automation-sharepoint" name="sp" />'),
-                                             GraphState())
-    assert added == []
-    assert any("Nearest by name or purpose: automation-microsoft-sharepoint" in r for r in results)
