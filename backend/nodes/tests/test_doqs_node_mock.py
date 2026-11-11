@@ -4,6 +4,7 @@ List fixtures are schema-shaped test data, not live recordings. Binary sentinels
 exercise the response format described in the provider's fill/render docs.
 """
 import json
+from pathlib import Path
 
 import httpx
 import pytest
