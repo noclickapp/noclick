@@ -109,15 +109,6 @@ async def ensure_native_db_pool():
     THIS test's loop. If a prior test left a pool on a stale loop, close it
     before initing a fresh one on ``asyncio.get_running_loop()``.
     """
-    # tests/mocks/mock_asyncpg.py sets a "mock_user:mock_pass@localhost"
-    # stub URL at import time so URL parsing never precedes the sys.modules
-    # asyncpg mock. The native pool would try to actually connect to it, so
-    # override with the real local Postgres unless the env already set one.
-    _url = os.environ.get("POSTGRES_POOLER_URL", "")
-    if (not _url) or "mock_user:mock_pass" in _url:
-        os.environ["POSTGRES_POOLER_URL"] = (
-            "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
-        )
     import asyncio as _asyncio
     from utils import database_pool as _db
     current = _asyncio.get_running_loop()
@@ -126,8 +117,13 @@ async def ensure_native_db_pool():
             await _db.close_native_pool()
         except Exception as e:
             logger.debug("[test] close_native_pool on stale loop failed: %s", e)
-    url = os.environ["POSTGRES_POOLER_URL"]
-    if _db._native_pool is None and url not in _refused_pool_urls:
+    # Only a database the environment names (a job's own): never a laptop's
+    # local Supabase by default, which CI doesn't have. tests/mocks/mock_asyncpg.py
+    # sets a "mock_user:mock_pass@localhost" stub URL at import, which names none.
+    url = os.environ.get("POSTGRES_POOLER_URL", "")
+    if "mock_user:mock_pass" in url:
+        url = ""
+    if url and _db._native_pool is None and url not in _refused_pool_urls:
         try:
             await _db.init_native_pool()
         except Exception as e:

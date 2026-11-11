@@ -6,11 +6,10 @@ the agent exactly once as a platform note on its next turn — without this the
 agent only ever knew 'awaiting approval' and answered wrongly after the
 builder had already run.
 
-Repo SQL runs against the LOCAL postgres (skipped when unreachable); the
-handler and relay composition are unit-tested with fakes.
+Repo SQL runs against the test Postgres container; the handler and relay
+composition are unit-tested with fakes.
 """
 import asyncio
-import os
 import uuid
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
@@ -19,43 +18,21 @@ import pytest
 
 from utils.access_control import Permission
 
-LOCAL_DSN = os.environ.get(
-    "NC_TEST_POSTGRES_URL", "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
-)
-
-
-# ── repo SQL (real local DB) ─────────────────────────────────────────────────
-
-
-@pytest.fixture
-async def local_pool():
-    import asyncpg
-
-    from utils.database_pool import setup_asyncpg_codecs
-
-    try:
-        pool = await asyncpg.create_pool(
-            LOCAL_DSN, min_size=1, max_size=2, timeout=5, init=setup_asyncpg_codecs,
-        )
-    except Exception:
-        pytest.skip("local postgres unavailable")
-    try:
-        yield pool
-    finally:
-        await pool.close()
+# ── repo SQL (real Postgres) ─────────────────────────────────────────────────
 
 
 @pytest.mark.asyncio
-async def test_fetch_and_mark_builder_decisions_roundtrip(local_pool):
+async def test_fetch_and_mark_builder_decisions_roundtrip(postgres_pool):
     from repositories.conversation import ConversationRepo
 
-    repo = ConversationRepo(local_pool)
+    repo = ConversationRepo(postgres_pool)
     cid = f"ck:test:{uuid.uuid4().hex[:8]}:__interface_chat__"
-    # conversations.user_id FKs auth.users — use any real local user.
-    async with local_pool.acquire() as conn:
-        row = await conn.fetchrow("SELECT id FROM auth.users LIMIT 1")
-    if not row:
-        pytest.skip("no local users to satisfy the conversations FK")
+    # conversations.user_id FKs auth.users.
+    async with postgres_pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "INSERT INTO auth.users (email, raw_user_meta_data) VALUES ($1, '{}'::jsonb) RETURNING id",
+            f"{uuid.uuid4().hex[:8]}@example.com",
+        )
     user_id = str(row["id"])
     try:
         # A proposal card, its verdict, and normal chat traffic around them.
@@ -104,7 +81,7 @@ async def test_fetch_and_mark_builder_decisions_roundtrip(local_pool):
         assert await repo.fetch_unrelayed_builder_events(cid) == []
 
         # Marking must not disturb the surrounding events (order + content).
-        async with local_pool.acquire() as conn:
+        async with postgres_pool.acquire() as conn:
             row = await conn.fetchrow(
                 "SELECT events FROM conversations WHERE conversation_id=$1", cid
             )
@@ -119,7 +96,7 @@ async def test_fetch_and_mark_builder_decisions_roundtrip(local_pool):
         ] == ["user", "builder_prompt", "assistant", "builder_decision",
               "builder_decision", "builder_ask", "builder_result"]
     finally:
-        async with local_pool.acquire() as conn:
+        async with postgres_pool.acquire() as conn:
             await conn.execute("DELETE FROM conversations WHERE conversation_id=$1", cid)
 
 
