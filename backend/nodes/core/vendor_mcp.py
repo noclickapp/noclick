@@ -153,8 +153,19 @@ def mcp_credential(
 
 
 def mcp_credential_class(credential_type: Optional[str]) -> Optional[Type[McpCredential]]:
-    """The declared class for a vendor-MCP credential type, else None."""
-    return _DECLARED.get(credential_type or "")
+    """The declared class for a vendor-MCP credential type, else None. An integration imports at its first
+    lookup, so a type not declared yet is found through the node catalog, importing only the node declaring it."""
+    declared = _DECLARED.get(credential_type or "")
+    if declared is not None or not credential_type:
+        return declared
+    from nodes.core.catalog import credential_holders
+
+    if not any(credential["method"] == MCP_METHOD for _, credential in credential_holders(credential_type)):
+        return None
+    from nodes.core.credential_connect import resolve_credential_class
+
+    resolved = resolve_credential_class(credential_type)
+    return resolved[1] if resolved and issubclass(resolved[1], McpCredential) else None
 
 
 def server_of(credential_type: Optional[str]) -> Optional[McpServer]:

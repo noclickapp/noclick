@@ -6,6 +6,10 @@ agent tools it gives, and what it refuses. The database-backed halves (the clien
 store, storing, refreshing through the choke point, the provide link) are in
 test_vendor_mcp_postgres.py."""
 
+import json
+import subprocess
+import sys
+from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
 import httpx
@@ -100,6 +104,33 @@ async def test_notion_and_calendly_declare_their_servers_beside_their_own_ways_i
     assert declared is not None and declared.mcp_server.url == url and declared.mcp_server.client_env is None
     assert vendor_mcp.node_type_of(credential_type) == node_type
     assert len(credential_classes_for_node(node)) == 3  # its sign-in and key stay
+
+
+_FRESH_LOOKUP = """
+import json, sys
+from nodes.core import vendor_mcp
+from nodes.core.discovery import Declaration
+from nodes.core.registry import DISCOVERED_NODE_ENTRIES
+
+declared_before = "canva_mcp" in vendor_mcp._DECLARED
+server = vendor_mcp.server_of("canva_mcp")
+plain = vendor_mcp.is_mcp_credential({"credential_type": "2chat_api_key"})
+imported = sorted(e.integration_type for e in DISCOVERED_NODE_ENTRIES.values()
+                  if isinstance(e, Declaration) and e.module in sys.modules)
+print(json.dumps({"declared_before": declared_before, "server": server and server.url, "plain": plain,
+                  "imported": imported}))
+"""
+
+
+async def test_a_declared_server_is_found_before_its_integration_is_imported():
+    """Integrations import at their first lookup, so the process answering a connect may not have
+    imported the node declaring its server: the node catalog finds it, importing only that node."""
+    done = subprocess.run([sys.executable, "-c", _FRESH_LOOKUP], cwd=Path(__file__).resolve().parents[1],
+                          capture_output=True, text=True, timeout=600)
+    assert done.returncode == 0, done.stderr[-4000:]
+    assert json.loads(done.stdout.strip().splitlines()[-1]) == {
+        "declared_before": False, "server": "https://api.canva.com/connect/v1/mcp", "plain": False,
+        "imported": ["automation-canva"]}
 
 
 async def test_a_nodes_own_refresh_never_spends_an_mcp_token(monkeypatch):
