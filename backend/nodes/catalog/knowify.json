@@ -18,6 +18,34 @@
  ],
  "operations": [
   {
+   "name": "on_new_or_updated_projects",
+   "display_name": "On New or Updated Projects",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_new_or_updated_clients",
+   "display_name": "On New or Updated Clients",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_new_or_updated_invoices",
+   "display_name": "On New or Updated Invoices",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_new_or_updated_tasks",
+   "display_name": "On New or Updated Tasks",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
    "name": "list_clients",
    "display_name": null,
    "category": null,

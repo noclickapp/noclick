@@ -215,3 +215,123 @@ async def test_connection_shows_project_names(transport):
     )
     assert result.reachable is True
     assert [sample.label for sample in result.samples] == ["Acme HQ Buildout"]
+
+
+@pytest.fixture
+def poll_node():
+    def create(operation):
+        config = {"config": {"operation": operation}, "credentials": AUTH}
+        node = module.KnowifyNode("poll", "automation-knowify", config,
+                                  config=module.KnowifyNode.parse_config(config))
+        state = {}
+
+        async def update(mutator, **kwargs):
+            new_state, result = mutator(dict(state))
+            if new_state is not None:
+                state.clear()
+                state.update(new_state)
+            return result
+
+        node._update_node_state = update
+        return node, state
+    return create
+
+
+def documented_row(resource):
+    from pathlib import Path
+
+    contract = json.loads((Path(__file__).parent / "fixtures/knowify/contract-poll.json").read_text())
+    schema = contract["schemas"][resource[:-1].title() + "Output"]
+    # Exact per-field examples from Knowify's published response schema.
+    return {key: field["example"] for key, field in schema["properties"].items()
+            if "example" in field}
+
+
+def page(rows, *, more=False, total=None):
+    return {"data": rows, "meta": {"total": total if total is not None else len(rows),
+                                   "limit": 200, "offset": 0, "has_more": more}}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", module.POLL_RESOURCES)
+async def test_poll_baseline_new_update_and_unchanged(transport, poll_node, operation):
+    from nodes.core.poll_trigger import poll_scope
+
+    requests, replies = transport
+    node, state = poll_node(operation)
+    resource, label = module.POLL_RESOURCES[operation]
+    row = documented_row(resource)
+    replies.append((200, page([row])))
+    assert (await node.execute({}))["change_count"] == 0
+    assert state["seen_ids"]
+    assert state["scope"] == poll_scope(module.KnowifyNode, {"operation": operation})
+    assert state["scope"] == poll_scope(module.KnowifyNode, {"operation": operation, "label": "Renamed"})
+    replies.append((200, page([row])))
+    assert (await node.execute({}))["change_count"] == 0
+    # Model a later edit and a second record using the same documented schema.
+    updated = {**row, "DateModified": "2026-11-05T20:54:18Z"}
+    added = {**row, "Id": row["Id"] + 1}
+    replies.append((200, page([updated, added])))
+    output = await node.execute({})
+    assert output["changes"] == [updated, added]
+    assert node.trigger_emitted_event(output)
+    event = node.resolve_agent_event(output)
+    assert row[label] in event["text"]
+    assert str(row["Id"]) in event["text"]
+    assert resource in event["text"]
+    assert module.KnowifyNode.should_propagate_output(output, {"operation": operation})
+    replies.append((200, page([updated, added])))
+    empty = await node.execute({})
+    assert empty["change_count"] == 0
+    assert node.trigger_produced_no_event(empty)
+    assert node.resolve_agent_event(empty) is None
+    assert not module.KnowifyNode.should_propagate_output(empty, {"operation": operation})
+    params = dict(requests[0].url.params)
+    assert params["order[0][0]"] == "DateModified"
+    assert params["order[1][0]"] == "Id"
+    assert requests[0].url.path == "/api/v2/" + resource
+
+
+@pytest.mark.asyncio
+async def test_poll_all_pages_and_overlap(transport, poll_node):
+    requests, replies = transport
+    node, state = poll_node("on_new_or_updated_projects")
+    state["seen_ids"] = []
+    row = documented_row("projects")
+    second = {**row, "Id": row["Id"] + 1}
+    replies.extend([(200, page([row], more=True, total=201)),
+                    (200, page([row, second], total=201))])
+    output = await node.execute({})
+    assert output["changes"] == [row, second]
+    assert [r.url.params["offset"] for r in requests] == ["0", "200"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("payload", [
+    {"data": [], "meta": {"has_more": True, "total": 1}},
+    {"data": [{"Id": "invalid"}], "meta": {"has_more": False, "total": 1}},
+    {"data": [], "meta": {"has_more": True, "total": 5001}},
+    {"data": [], "meta": {"has_more": False}},
+])
+async def test_poll_incomplete_scan_never_consumes_state(transport, poll_node, payload):
+    _, replies = transport
+    node, state = poll_node("on_new_or_updated_projects")
+    replies.append((200, payload))
+    with pytest.raises(ValueError):
+        await node.execute({})
+    assert state == {}
+
+
+@pytest.mark.asyncio
+async def test_poll_nullable_modified_timestamp(transport, poll_node):
+    _, replies = transport
+    node, state = poll_node("on_new_or_updated_clients")
+    state["seen_ids"] = []
+    row = {**documented_row("clients"), "DateModified": None}
+    replies.append((200, page([row])))
+    assert (await node.execute({}))["changes"] == [row]
+    replies.append((200, page([row])))
+    assert (await node.execute({}))["change_count"] == 0
+    changed = {**row, "ClientName": "Updated client"}
+    replies.append((200, page([changed])))
+    assert (await node.execute({}))["changes"] == [changed]

@@ -1,10 +1,14 @@
 """Knowify v2 operations: https://developer.knowify.com/api-docs/v2-json."""
+import hashlib
+import json
+
 from typing import Annotated, Literal, Union
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from utils.ssrf import guarded_async_client
 
 BASE_URL = "https://developer.knowify.com/api/v2"
@@ -229,8 +233,44 @@ class GetCompany(_Config):
     operation: Literal["get_company"] = Field("get_company", title="Get Company")
 
 
+class OnNewOrUpdatedProjects(PollTriggerConfigBase):
+    operation: Literal["on_new_or_updated_projects"] = Field(
+        "on_new_or_updated_projects", title="On New or Updated Projects",
+        json_schema_extra={"x-is-trigger": True, "x-category": "Triggers",
+                           "x-display-name": "On New or Updated Projects"},
+    )
+
+
+class OnNewOrUpdatedClients(PollTriggerConfigBase):
+    operation: Literal["on_new_or_updated_clients"] = Field(
+        "on_new_or_updated_clients", title="On New or Updated Clients",
+        json_schema_extra={"x-is-trigger": True, "x-category": "Triggers",
+                           "x-display-name": "On New or Updated Clients"},
+    )
+
+
+class OnNewOrUpdatedInvoices(PollTriggerConfigBase):
+    operation: Literal["on_new_or_updated_invoices"] = Field(
+        "on_new_or_updated_invoices", title="On New or Updated Invoices",
+        json_schema_extra={"x-is-trigger": True, "x-category": "Triggers",
+                           "x-display-name": "On New or Updated Invoices"},
+    )
+
+
+class OnNewOrUpdatedTasks(PollTriggerConfigBase):
+    operation: Literal["on_new_or_updated_tasks"] = Field(
+        "on_new_or_updated_tasks", title="On New or Updated Tasks",
+        json_schema_extra={"x-is-trigger": True, "x-category": "Triggers",
+                           "x-display-name": "On New or Updated Tasks"},
+    )
+
+
 Operation = Annotated[
     Union[
+        OnNewOrUpdatedProjects,
+        OnNewOrUpdatedClients,
+        OnNewOrUpdatedInvoices,
+        OnNewOrUpdatedTasks,
         ListClients,
         GetClient,
         CreateClient,
@@ -327,7 +367,15 @@ BODY_FIELDS = {
 }
 
 
-class KnowifyNode(WorkflowNode):
+POLL_RESOURCES = {
+    "on_new_or_updated_projects": ("projects", "ProjectName"),
+    "on_new_or_updated_clients": ("clients", "ClientName"),
+    "on_new_or_updated_invoices": ("invoices", "InvoiceNumber"),
+    "on_new_or_updated_tasks": ("tasks", "Description"),
+}
+
+
+class KnowifyNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-knowify"
     connection_evidence = ConnectionEvidence(
         operation="list_projects",
@@ -339,26 +387,17 @@ class KnowifyNode(WorkflowNode):
     def get_config_model(cls):
         return KnowifyConfig
 
-    async def execute(self, inputs):
-        config = self.config.config
+    @staticmethod
+    def _list_page(data):
+        rows, meta = data.get("data"), data.get("meta")
+        if (not isinstance(rows, list) or not isinstance(meta, dict)
+                or any(not isinstance(row, dict) for row in rows)
+                or type(meta.get("has_more")) is not bool):
+            raise ValueError("Knowify list response is missing data or meta")
+        return rows, meta
+
+    async def _request(self, method, path, params, body=None):
         credential = self.config.credentials
-        if not credential:
-            raise ValueError("Connect a Knowify session token")
-        method, path, resource = ROUTES[config.operation]
-        if isinstance(config, _Record):
-            path = path.format(id=config.record_id)
-        params = (
-            {"limit": config.limit, "offset": config.offset}
-            if isinstance(config, _Page)
-            else {}
-        )
-        body = None
-        if method in {"POST", "PATCH"}:
-            body = {
-                wire: getattr(config, field)
-                for field, wire in BODY_FIELDS[resource].items()
-                if getattr(config, field) is not None
-            }
         async with guarded_async_client(
             timeout=30, trust_env=False, follow_redirects=False
         ) as client:
@@ -383,22 +422,113 @@ class KnowifyNode(WorkflowNode):
         ):
             raise ValueError("Expected a bounded Knowify JSON response")
         data = response.json()
-        if (
-            not isinstance(data, dict)
-            or data.get("error")
-            or data.get("didSucceed") is False
-        ):
+        if not isinstance(data, dict):
             raise ValueError("Knowify returned an invalid response")
+        return data
+
+    async def _poll_changes(self, operation):
+        resource, _ = POLL_RESOURCES[operation]
+        records = {}
+        # A complete snapshot is required before saving seen versions. Fail a
+        # large/incomplete scan without consuming events; never silently truncate.
+        for page in range(25):
+            data = await self._request("GET", "/" + resource, {
+                "limit": 200, "offset": page * 200,
+                "order[0][0]": "DateModified", "order[0][1]": "DESC",
+                "order[1][0]": "Id", "order[1][1]": "DESC",
+            })
+            rows, meta = self._list_page(data)
+            for row in rows:
+                if type(row.get("Id")) is not int:
+                    raise ValueError("Knowify change record is missing its ID")
+            total = meta.get("total")
+            if type(total) is not int or total < 0:
+                raise ValueError("Knowify list response is missing its total")
+            if total > 5000:
+                raise ValueError("Knowify polling supports at most 5,000 records per resource")
+            for row in rows:
+                # Offset pages can overlap when records change during the scan.
+                # The newest occurrence wins, and one version emits only once.
+                records.setdefault(row["Id"], row)
+            if not meta["has_more"] or page * 200 + len(rows) >= total:
+                break
+            if not rows:
+                raise ValueError("Knowify returned an empty page with more records pending")
+        else:
+            raise ValueError("Knowify polling supports at most 5,000 records per resource")
+        fresh = await self._filter_unseen(
+            list(records.values()), self._record_version
+        )
+        return {"status": "success", "resource": resource, "changes": fresh,
+                "change_count": len(fresh)}
+
+    @staticmethod
+    def _record_version(row):
+        # DateModified is nullable in Knowify's contract. A stable content hash
+        # still detects edits when the provider has no modification timestamp.
+        version = row.get("DateModified") or hashlib.sha256(
+            json.dumps(row, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        return f"{row['Id']}:{version}"
+
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in POLL_RESOURCES:
+            return bool(output.get("change_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if "changes" not in output:
+            return super().resolve_agent_event(output)
+        changes = output["changes"]
+        if not changes:
+            return None
+        resource = output["resource"]
+        label = next(label for name, label in POLL_RESOURCES.values() if name == resource)
+        lines = []
+        for row in changes[:10]:
+            context = []
+            if resource in {"projects", "invoices"} and row.get("ClientId") is not None:
+                context.append(f"client {row['ClientId']}")
+            if resource in {"invoices", "tasks"} and row.get("ProjectId") is not None:
+                context.append(f"project {row['ProjectId']}")
+            who = (row.get("ModifiedBy") or row.get("CreatedBy")) if resource != "projects" else None
+            if who is not None:
+                context.append(f"by user {who}")
+            when = row.get("DateModified") or "time unavailable"
+            lines.append(f"- {row.get(label) or resource.rstrip('s')} (ID {row['Id']}), "
+                         f"changed {when}" + ("; " + ", ".join(context) if context else ""))
+        if len(changes) > 10:
+            lines.append(f"- and {len(changes) - 10} more (see changes)")
+        return {"text": f"Knowify: {len(changes)} new or updated {resource}:\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def execute(self, inputs):
+        config = self.config.config
+        credential = self.config.credentials
+        if not credential:
+            raise ValueError("Connect a Knowify session token")
+        if config.operation in POLL_RESOURCES:
+            return await self._poll_changes(config.operation)
+        method, path, resource = ROUTES[config.operation]
+        if isinstance(config, _Record):
+            path = path.format(id=config.record_id)
+        params = (
+            {"limit": config.limit, "offset": config.offset}
+            if isinstance(config, _Page)
+            else {}
+        )
+        body = None
+        if method in {"POST", "PATCH"}:
+            body = {
+                wire: getattr(config, field)
+                for field, wire in BODY_FIELDS[resource].items()
+                if getattr(config, field) is not None
+            }
+        data = await self._request(method, path, params, body)
         if isinstance(config, _Page):
-            rows, meta = data.get("data"), data.get("meta")
-            if (
-                not isinstance(rows, list)
-                or not isinstance(meta, dict)
-                or any(not isinstance(row, dict) for row in rows)
-            ):
-                raise ValueError("Knowify list response is missing data or meta")
-            if type(meta.get("has_more")) is not bool:
-                raise ValueError("Knowify list response is missing has_more")
+            rows, meta = self._list_page(data)
             return {
                 "status": "success",
                 "data": rows,
