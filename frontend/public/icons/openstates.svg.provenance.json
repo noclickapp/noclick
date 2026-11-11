@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/openstates.svg",
+  "source": "https://raw.githubusercontent.com/openstates/openstates.org/main/static/images/OS_openstates-icon.svg",
+  "page": "https://github.com/openstates/openstates.org/blob/main/static/images/OS_openstates-icon.svg",
+  "date": "2026-11-11",
+  "license": "MIT; Open States brand mark, retained for identification",
+  "sha256": "d0d3102de49ba91ba224d36aa306bae8867fa466c725be0ee03fc45d2dc65083",
+  "edits": [
+    "Cropped viewBox to the publisher mark"
+  ],
+  "notes": "Publisher app mark from its own repository, not the older wordmark or a namesake. Orange preserved."
+}

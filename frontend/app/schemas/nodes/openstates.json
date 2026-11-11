@@ -1,0 +1,1428 @@
+{
+  "$defs": {
+    "OpenStatesAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "openstates_api_key",
+          "default": "openstates_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Open States API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your activated Open States API key from your profile and paste it here.",
+      "x-credential-url": "https://open.pluralpolicy.com/accounts/profile/"
+    },
+    "OpenStatesFindLegislatorsConfig": {
+      "properties": {
+        "operation": {
+          "const": "find_legislators",
+          "default": "find_legislators",
+          "title": "Find Legislators by Location",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "People",
+          "x-display-name": "Find Legislators by Location",
+          "x-is-trigger": false
+        },
+        "lat": {
+          "description": "Latitude of point.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lng": {
+          "description": "Longitude of point.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lng",
+          "type": "number"
+        },
+        "include": {
+          "default": [],
+          "description": "Additional information to include in the response.",
+          "items": {
+            "enum": [
+              "other_names",
+              "other_identifiers",
+              "links",
+              "sources",
+              "offices"
+            ],
+            "type": "string"
+          },
+          "title": "Include",
+          "type": "array"
+        }
+      },
+      "required": [
+        "lat",
+        "lng"
+      ],
+      "title": "OpenStatesFindLegislatorsConfig",
+      "type": "object"
+    },
+    "OpenStatesGetBillByIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_bill_by_id",
+          "default": "get_bill_by_id",
+          "title": "Get Bill by Open States ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bills",
+          "x-display-name": "Get Bill by Open States ID",
+          "x-is-trigger": false
+        },
+        "openstates_bill_id": {
+          "description": "Openstates bill id",
+          "minLength": 1,
+          "title": "Openstates Bill Id",
+          "type": "string"
+        },
+        "include": {
+          "default": [],
+          "description": "Include",
+          "items": {
+            "enum": [
+              "sponsorships",
+              "abstracts",
+              "other_titles",
+              "other_identifiers",
+              "actions",
+              "sources",
+              "documents",
+              "versions",
+              "votes",
+              "related_bills"
+            ],
+            "type": "string"
+          },
+          "title": "Include",
+          "type": "array"
+        }
+      },
+      "required": [
+        "openstates_bill_id"
+      ],
+      "title": "OpenStatesGetBillByIdConfig",
+      "type": "object"
+    },
+    "OpenStatesGetBillConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_bill",
+          "default": "get_bill",
+          "title": "Get Bill by Jurisdiction and Session",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bills",
+          "x-display-name": "Get Bill by Jurisdiction and Session",
+          "x-is-trigger": false
+        },
+        "jurisdiction": {
+          "description": "Jurisdiction",
+          "minLength": 1,
+          "title": "Jurisdiction",
+          "type": "string"
+        },
+        "session": {
+          "description": "Session",
+          "minLength": 1,
+          "title": "Session",
+          "type": "string"
+        },
+        "bill_id": {
+          "description": "Bill id",
+          "minLength": 1,
+          "title": "Bill Id",
+          "type": "string"
+        },
+        "include": {
+          "default": [],
+          "description": "Include",
+          "items": {
+            "enum": [
+              "sponsorships",
+              "abstracts",
+              "other_titles",
+              "other_identifiers",
+              "actions",
+              "sources",
+              "documents",
+              "versions",
+              "votes",
+              "related_bills"
+            ],
+            "type": "string"
+          },
+          "title": "Include",
+          "type": "array"
+        }
+      },
+      "required": [
+        "jurisdiction",
+        "session",
+        "bill_id"
+      ],
+      "title": "OpenStatesGetBillConfig",
+      "type": "object"
+    },
+    "OpenStatesGetCommitteeConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_committee",
+          "default": "get_committee",
+          "title": "Get Committee",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Committees",
+          "x-display-name": "Get Committee",
+          "x-is-trigger": false
+        },
+        "committee_id": {
+          "description": "Committee id",
+          "minLength": 1,
+          "title": "Committee Id",
+          "type": "string"
+        },
+        "include": {
+          "default": [],
+          "description": "Additional includes for the Committee response.",
+          "items": {
+            "enum": [
+              "memberships",
+              "links",
+              "sources"
+            ],
+            "type": "string"
+          },
+          "title": "Include",
+          "type": "array"
+        }
+      },
+      "required": [
+        "committee_id"
+      ],
+      "title": "OpenStatesGetCommitteeConfig",
+      "type": "object"
+    },
+    "OpenStatesGetEventConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Get Legislative Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get Legislative Event",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "description": "Event id",
+          "minLength": 1,
+          "title": "Event Id",
+          "type": "string"
+        },
+        "include": {
+          "default": [],
+          "description": "Additional includes for the Event response.",
+          "items": {
+            "enum": [
+              "links",
+              "sources",
+              "media",
+              "documents",
+              "participants",
+              "agenda"
+            ],
+            "type": "string"
+          },
+          "title": "Include",
+          "type": "array"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "OpenStatesGetEventConfig",
+      "type": "object"
+    },
+    "OpenStatesGetJurisdictionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_jurisdiction",
+          "default": "get_jurisdiction",
+          "title": "Get Jurisdiction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jurisdictions",
+          "x-display-name": "Get Jurisdiction",
+          "x-is-trigger": false
+        },
+        "jurisdiction_id": {
+          "description": "Jurisdiction id",
+          "minLength": 1,
+          "title": "Jurisdiction Id",
+          "type": "string"
+        },
+        "include": {
+          "default": [],
+          "description": "Additional includes for the Jurisdiction response.",
+          "items": {
+            "enum": [
+              "organizations",
+              "legislative_sessions",
+              "latest_runs"
+            ],
+            "type": "string"
+          },
+          "title": "Include",
+          "type": "array"
+        }
+      },
+      "required": [
+        "jurisdiction_id"
+      ],
+      "title": "OpenStatesGetJurisdictionConfig",
+      "type": "object"
+    },
+    "OpenStatesListCommitteesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_committees",
+          "default": "list_committees",
+          "title": "List Committees",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Committees",
+          "x-display-name": "List Committees",
+          "x-is-trigger": false
+        },
+        "jurisdiction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by jurisdiction name or ID.",
+          "title": "Jurisdiction"
+        },
+        "classification": {
+          "anyOf": [
+            {
+              "enum": [
+                "committee",
+                "subcommittee"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Classification",
+          "title": "Classification",
+          "enum": [
+            "committee",
+            "subcommittee"
+          ],
+          "x-enum-searchable": true
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ocd-organization ID of parent committee.",
+          "title": "Parent"
+        },
+        "chamber": {
+          "anyOf": [
+            {
+              "enum": [
+                "legislature",
+                "executive",
+                "lower",
+                "upper",
+                "government"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Chamber of committee, generally upper or lower.",
+          "title": "Chamber",
+          "enum": [
+            "legislature",
+            "executive",
+            "lower",
+            "upper",
+            "government"
+          ],
+          "x-enum-searchable": true
+        },
+        "include": {
+          "default": [],
+          "description": "Additional includes for the Committee response.",
+          "items": {
+            "enum": [
+              "memberships",
+              "links",
+              "sources"
+            ],
+            "type": "string"
+          },
+          "title": "Include",
+          "type": "array"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Per page",
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "OpenStatesListCommitteesConfig",
+      "type": "object"
+    },
+    "OpenStatesListEventsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List Legislative Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "List Legislative Events",
+          "x-is-trigger": false
+        },
+        "jurisdiction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by jurisdiction name or ID.",
+          "title": "Jurisdiction"
+        },
+        "deleted": {
+          "default": false,
+          "description": "Return events marked as deleted?",
+          "title": "Deleted",
+          "type": "boolean"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit results to those starting before a given datetime.",
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit results to those starting before a given datetime.",
+          "title": "After"
+        },
+        "require_bills": {
+          "default": false,
+          "description": "Limit results to events with associated bills.",
+          "title": "Require Bills",
+          "type": "boolean"
+        },
+        "include": {
+          "default": [],
+          "description": "Additional includes for the Event response.",
+          "items": {
+            "enum": [
+              "links",
+              "sources",
+              "media",
+              "documents",
+              "participants",
+              "agenda"
+            ],
+            "type": "string"
+          },
+          "title": "Include",
+          "type": "array"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Per page",
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "OpenStatesListEventsConfig",
+      "type": "object"
+    },
+    "OpenStatesListJurisdictionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_jurisdictions",
+          "default": "list_jurisdictions",
+          "title": "List Jurisdictions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jurisdictions",
+          "x-display-name": "List Jurisdictions",
+          "x-is-trigger": false
+        },
+        "classification": {
+          "anyOf": [
+            {
+              "enum": [
+                "state",
+                "municipality",
+                "country"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter returned jurisdictions by type.",
+          "title": "Classification",
+          "enum": [
+            "state",
+            "municipality",
+            "country"
+          ],
+          "x-enum-searchable": true
+        },
+        "include": {
+          "default": [],
+          "description": "Additional information to include in response.",
+          "items": {
+            "enum": [
+              "organizations",
+              "legislative_sessions",
+              "latest_runs"
+            ],
+            "type": "string"
+          },
+          "title": "Include",
+          "type": "array"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 52,
+          "description": "Per page",
+          "maximum": 52,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "OpenStatesListJurisdictionsConfig",
+      "type": "object"
+    },
+    "OpenStatesOnBillUpdatedConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_bill_updated",
+          "default": "on_bill_updated",
+          "title": "On New or Updated Bill",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New or Updated Bill",
+          "x-is-trigger": true
+        },
+        "jurisdiction": {
+          "description": "Jurisdiction name or ID to monitor.",
+          "minLength": 1,
+          "title": "Jurisdiction",
+          "type": "string"
+        },
+        "session": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional legislative session identifier.",
+          "title": "Session"
+        },
+        "updated_since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only monitor bills updated since this fixed date (ISO 8601).",
+          "title": "Updated Since"
+        }
+      },
+      "required": [
+        "jurisdiction"
+      ],
+      "title": "OpenStatesOnBillUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OpenStatesSearchBillsConfig": {
+      "properties": {
+        "operation": {
+          "const": "search_bills",
+          "default": "search_bills",
+          "title": "Search Bills",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bills",
+          "x-display-name": "Search Bills",
+          "x-is-trigger": false
+        },
+        "jurisdiction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by jurisdiction name or ID.",
+          "title": "Jurisdiction"
+        },
+        "session": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by session identifier.",
+          "title": "Session"
+        },
+        "chamber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by chamber of origination.",
+          "title": "Chamber"
+        },
+        "identifier": {
+          "default": [],
+          "description": "Filter to only include bills with this identifier.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Identifier",
+          "type": "array"
+        },
+        "classification": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by classification, e.g. bill or resolution",
+          "title": "Classification"
+        },
+        "subject": {
+          "default": [],
+          "description": "Filter by one or more subjects.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Subject",
+          "type": "array"
+        },
+        "updated_since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to only include bills with updates since a given date.",
+          "title": "Updated Since"
+        },
+        "created_since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to only include bills created since a given date.",
+          "title": "Created Since"
+        },
+        "action_since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to only include bills with an action since a given date.",
+          "title": "Action Since"
+        },
+        "sort": {
+          "default": "updated_desc",
+          "description": "Desired sort order for bill results.",
+          "enum": [
+            "updated_asc",
+            "updated_desc",
+            "first_action_asc",
+            "first_action_desc",
+            "latest_action_asc",
+            "latest_action_desc"
+          ],
+          "title": "Sort",
+          "type": "string"
+        },
+        "sponsor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to only include bills sponsored by a given name or person ID.",
+          "title": "Sponsor"
+        },
+        "sponsor_classification": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter matched sponsors to only include particular types of sponsorships.",
+          "title": "Sponsor Classification"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by full text search term.",
+          "title": "Q"
+        },
+        "include": {
+          "default": [],
+          "description": "Additional information to include in response.",
+          "items": {
+            "enum": [
+              "sponsorships",
+              "abstracts",
+              "other_titles",
+              "other_identifiers",
+              "actions",
+              "sources",
+              "documents",
+              "versions",
+              "votes",
+              "related_bills"
+            ],
+            "type": "string"
+          },
+          "title": "Include",
+          "type": "array"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 10,
+          "description": "Per page",
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "OpenStatesSearchBillsConfig",
+      "type": "object"
+    },
+    "OpenStatesSearchPeopleConfig": {
+      "properties": {
+        "operation": {
+          "const": "search_people",
+          "default": "search_people",
+          "title": "Search People",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "People",
+          "x-display-name": "Search People",
+          "x-is-trigger": false
+        },
+        "jurisdiction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by jurisdiction name or id.",
+          "title": "Jurisdiction"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by name, case-insensitive match.",
+          "title": "Name"
+        },
+        "id": {
+          "default": [],
+          "description": "Filter by id, can be specified multiple times for multiple people.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Id",
+          "type": "array"
+        },
+        "org_classification": {
+          "anyOf": [
+            {
+              "enum": [
+                "legislature",
+                "executive",
+                "lower",
+                "upper",
+                "government"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by current role.",
+          "title": "Org Classification",
+          "enum": [
+            "legislature",
+            "executive",
+            "lower",
+            "upper",
+            "government"
+          ],
+          "x-enum-searchable": true
+        },
+        "district": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by district name.",
+          "title": "District"
+        },
+        "include": {
+          "default": [],
+          "description": "Additional information to include in response.",
+          "items": {
+            "enum": [
+              "other_names",
+              "other_identifiers",
+              "links",
+              "sources",
+              "offices"
+            ],
+            "type": "string"
+          },
+          "title": "Include",
+          "type": "array"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 10,
+          "description": "Per page",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "OpenStatesSearchPeopleConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "find_legislators": "#/$defs/OpenStatesFindLegislatorsConfig",
+          "get_bill": "#/$defs/OpenStatesGetBillConfig",
+          "get_bill_by_id": "#/$defs/OpenStatesGetBillByIdConfig",
+          "get_committee": "#/$defs/OpenStatesGetCommitteeConfig",
+          "get_event": "#/$defs/OpenStatesGetEventConfig",
+          "get_jurisdiction": "#/$defs/OpenStatesGetJurisdictionConfig",
+          "list_committees": "#/$defs/OpenStatesListCommitteesConfig",
+          "list_events": "#/$defs/OpenStatesListEventsConfig",
+          "list_jurisdictions": "#/$defs/OpenStatesListJurisdictionsConfig",
+          "on_bill_updated": "#/$defs/OpenStatesOnBillUpdatedConfig",
+          "search_bills": "#/$defs/OpenStatesSearchBillsConfig",
+          "search_people": "#/$defs/OpenStatesSearchPeopleConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OpenStatesSearchBillsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenStatesGetBillByIdConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenStatesGetBillConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenStatesSearchPeopleConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenStatesFindLegislatorsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenStatesListJurisdictionsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenStatesGetJurisdictionConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenStatesListCommitteesConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenStatesGetCommitteeConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenStatesListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenStatesGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenStatesOnBillUpdatedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OpenStatesAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Openstates Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
