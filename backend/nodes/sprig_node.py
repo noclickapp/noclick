@@ -179,9 +179,14 @@ def _json(value, kind, field):
 
 
 def _redact(value, secret):
-    if isinstance(value, str): return value.replace(secret, "[redacted]")
-    if isinstance(value, list): return [_redact(v, secret) for v in value]
-    if isinstance(value, dict): return {_redact(k, secret): _redact(v, secret) for k, v in value.items()}
+    if isinstance(value, str):
+        return value.replace(secret, "[redacted]") if secret in value else value
+    if isinstance(value, list):
+        redacted = [_redact(v, secret) for v in value]
+        return value if all(a is b for a, b in zip(value, redacted)) else redacted
+    if isinstance(value, dict):
+        redacted = {_redact(k, secret): _redact(v, secret) for k, v in value.items()}
+        return value if all(k in redacted and redacted[k] is v for k, v in value.items()) else redacted
     return value
 
 
@@ -237,7 +242,9 @@ class SprigNode(ScheduledPollTriggerMixin, WorkflowNode):
                 raise ValueError("Sprig returned an invalid response page")
             items.extend(data["data"])
             cursor = data.get("cursor")
-            if not cursor: break
+            # The export cursor identifies a position, not a promise of another
+            # full page. A short page completes this bounded export read.
+            if not cursor or len(data["data"]) < params["limit"]: break
             if cursor in visited: raise ValueError("Sprig returned a repeated response cursor")
             visited.add(cursor)
         else:

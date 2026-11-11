@@ -41,7 +41,7 @@
   },
   "on_new_response": {
     "config": {
-      "sid": 30402
+      "sid": 1
     },
     "source": "https://docs.sprig.com/reference/sprig-api/v1/get-v1-responses-1"
   }

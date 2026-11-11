@@ -12,6 +12,7 @@ from nodes.core.poll_trigger import poll_scope
 
 FIXTURES = Path(__file__).parent / 'fixtures' / 'sprig'
 EXAMPLE = json.loads((FIXTURES / 'response.json').read_text())['body']
+PAGE_EXAMPLE = json.loads((FIXTURES / 'response-page.json').read_text())['body']
 INPUTS = json.loads((FIXTURES / 'inputs.json').read_text())
 KEY = 'sprig-fixture-key'
 ID = '11111111-1111-4111-8111-111111111111'
@@ -122,11 +123,13 @@ async def test_poll_drains_pages_and_deduplicates_overlapping_pages(monkeypatch)
     monkeypatch.setattr(sprig.SprigNode, '_filter_unseen', unseen)
     def pages(r):
         body = deepcopy(EXAMPLE)
-        if 'cursor' not in r.url.params: body['cursor'] = 'next'
+        if 'cursor' not in r.url.params:
+            body['cursor'] = 'next'
+            body['data'] = [dict(body['data'][0], questionId=239618 + i) for i in range(1000)]
         return httpx.Response(200, json=body)
     requests = transport(monkeypatch, pages)
     result = await node({'operation': 'on_new_response'}).execute({})
-    assert result['new_response_count'] == 1 and len(requests) == 2 and len(checkpoints[0]) == 1
+    assert result['new_response_count'] == 1000 and len(requests) == 2 and len(checkpoints[0]) == 1000
 
 
 @pytest.mark.asyncio
@@ -134,7 +137,7 @@ async def test_cursor_cycle_never_consumes_poll_state(monkeypatch):
     calls = []
     async def unseen(self, items, key): calls.append(items); return items
     monkeypatch.setattr(sprig.SprigNode, '_filter_unseen', unseen)
-    body = {**EXAMPLE, 'cursor': 'loop'}
+    body = {**EXAMPLE, 'cursor': 'loop', 'data': [dict(EXAMPLE['data'][0], questionId=i) for i in range(1000)]}
     requests = transport(monkeypatch, body)
     with pytest.raises(ValueError, match='repeated'): await node({'operation': 'on_new_response'}).execute({})
     assert len(requests) == 2 and not calls
@@ -158,3 +161,27 @@ def test_manual_credential_default_and_trigger_schema():
     schema = sprig.SprigNodeConfig.model_json_schema()
     assert schema['$defs']['SprigOnNewResponseConfig']['properties']['operation']['x-is-trigger'] is True
     assert sprig.SprigNode.connection_evidence.operation == 'list_studies'
+
+
+@pytest.mark.asyncio
+async def test_documented_short_page_with_position_cursor_emits_new_response(monkeypatch):
+    async def update(self, mutate, **kw):
+        _, result = mutate({'seen_ids': []})
+        return result
+    monkeypatch.setattr(sprig.SprigNode, '_update_node_state', update)
+    requests = transport(monkeypatch, PAGE_EXAMPLE)
+    n = node({'operation': 'on_new_response', 'sid': 1})
+    result = await n.execute({})
+    assert len(requests) == 1 and result['new_response_count'] == 1
+    event = n.resolve_agent_event(result)
+    assert '2603' in event['text'] and 'Option 2' in event['text']
+    assert PAGE_EXAMPLE['data'][0]['responseGroupUid'] in event['text']
+
+
+def test_success_response_redaction_preserves_unmodified_mappings():
+    data = {'data': [{'id': '1', 'name': 'account data'}]}
+    assert sprig._redact(data, KEY) is data
+    echoed = {'data': [{'name': 'echo ' + KEY}], KEY: KEY}
+    cleaned = sprig._redact(echoed, KEY)
+    assert KEY not in str(cleaned)
+    assert echoed['data'][0]['name'] == 'echo ' + KEY

@@ -1,0 +1,22 @@
+{
+  "body": {
+    "cursor": "cursor",
+    "data": [
+      {
+        "createdAt": "2022-07-27T21:12:10.875Z",
+        "externalUserId": "2603",
+        "questionId": 2,
+        "questionText": "What options did you prefer?",
+        "questionType": "MULTIPLECHOICE",
+        "response": "Option 2",
+        "responseGroupUid": "b96b109f-040c-412a-9ca4-4d694ccaec90",
+        "selectedIndexes": 2,
+        "surveyId": 1,
+        "updatedAt": "2022-07-27T21:12:10.875Z",
+        "visitorId": 0,
+        "visitorUuid": "ba050493-0292-4099-9262-8e18c7406e81"
+      }
+    ]
+  },
+  "source": "https://docs.sprig.com/reference/sprig-api/v1/get-v1-responses-1"
+}
