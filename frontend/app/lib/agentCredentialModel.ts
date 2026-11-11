@@ -650,3 +650,10 @@ export function agentCompanies(): AgentCompany[] {
     companies = out;
     return out;
 }
+
+/** The company an agent credential type is an account with (`agent_claude_code_oauth` → Anthropic), as Connections
+ *  lists it; undefined for any other type. */
+export function agentCompanyOf(credentialType: string): AgentCompany | undefined {
+    if (!credentialType.startsWith('agent_')) return undefined;
+    return agentCompanies().find((company) => company.members.some((member) => acceptedAgentCredentialTypes(member).includes(credentialType)));
+}

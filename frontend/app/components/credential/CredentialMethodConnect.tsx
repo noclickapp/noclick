@@ -15,7 +15,7 @@ import {
     type CredentialMethodKind,
 } from '~/lib/credentialMethodKind';
 import { type CredentialField } from './CredentialFieldInput';
-import { CredentialCreatePanel, type CredentialSaveResult } from './CredentialCreatePanel';
+import { CredentialCreatePanel, saveRefusal, type CredentialSaveResult } from './CredentialCreatePanel';
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 import { RedirectOAuthProvideMethod } from './RedirectOAuthProvideMethod';
 import { AgentOAuthProvideMethod } from './AgentOAuthProvideMethod';
@@ -73,6 +73,45 @@ export interface CredentialMethodConnectProps {
     steps?: boolean;
 }
 
+/** What a provide link's /provide answered for typed-in values, in the socket's `credential:create` reply shape, so
+ *  every key form reads a refusal the same way. */
+export interface ProvidedKey {
+    success: boolean;
+    credential_id?: string;
+    verification?: CredentialTestConnectionResponse | null;
+    error?: string;
+    field_errors?: Record<string, string> | null;
+    hint?: string | null;
+    reachable?: boolean | null;
+}
+
+/** Send typed-in values through a provide link, as `credentialType` (the request's own, or a sibling it offers). */
+export async function provideKey(
+    apiBase: string,
+    token: string,
+    credentialType: string,
+    data: Record<string, string>,
+    onRequestEnded?: () => void,
+): Promise<ProvidedKey> {
+    const url = `${apiBase}/api/credential-request/${token}/provide`;
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential_data: data, credential_type: credentialType }),
+    });
+    if (!res.ok) {
+        if (requestEnded(res, url)) onRequestEnded?.();
+        // The connect seam refuses with {message, field_errors, hint}; older/other errors are a plain detail string.
+        const detail = (await res.json().catch(() => ({}))).detail;
+        if (detail && typeof detail === 'object') {
+            return { success: false, error: detail.message || 'Failed to provide credential', field_errors: detail.field_errors ?? null, hint: detail.hint ?? null, reachable: detail.reachable };
+        }
+        return { success: false, error: detail || 'Failed to provide credential' };
+    }
+    const body = await res.json().catch(() => ({}));
+    return { success: true, credential_id: body?.credential_id, verification: body?.verification ?? null };
+}
+
 /** api_key — the connect form the in-app UI uses (CredentialCreatePanel) persisting through the token-scoped
  *  /provide endpoint. Anonymous surfaces can't name the owner's credential; the backend applies its default name. */
 function ApiKeyMethod({ method, apiBase, token, serviceName, onProvided, onRequestEnded, howTo, showSources = true, steps = false }: CredentialMethodConnectProps) {
@@ -89,32 +128,11 @@ function ApiKeyMethod({ method, apiBase, token, serviceName, onProvided, onReque
 
     const save = useCallback(async (_name: string, data: Record<string, string>): Promise<CredentialSaveResult> => {
         try {
-            const url = `${apiBase}/api/credential-request/${token}/provide`;
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                // Always name the chosen sibling; the backend keeps the request's own
-                // type when it matches and validates against siblings otherwise.
-                body: JSON.stringify({ credential_data: data, credential_type: method.credential_type }),
-            });
-            if (!res.ok) {
-                if (requestEnded(res, url)) onRequestEnded?.();
-                const e = await res.json().catch(() => ({}));
-                // The connect seam refuses with {message, field_errors, hint};
-                // older/other errors are a plain detail string.
-                const detail = e.detail;
-                if (detail && typeof detail === 'object') {
-                    return {
-                        error: detail.message || 'Failed to provide credential',
-                        fieldErrors: detail.field_errors ?? null,
-                        hint: detail.hint ?? null,
-                        rejected: detail.reachable === false,
-                    };
-                }
-                return detail || 'Failed to provide credential';
-            }
-            const body = await res.json().catch(() => ({}));
-            onProvided(body?.verification ?? null);
+            // Always name the chosen sibling; the backend keeps the request's own type when it matches and validates
+            // against siblings otherwise.
+            const response = await provideKey(apiBase, token, method.credential_type, data, onRequestEnded);
+            if (!response.success) return saveRefusal(response);
+            onProvided(response.verification ?? null);
             return null;
         } catch {
             return 'Failed to submit credential. Please try again.';

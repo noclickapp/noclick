@@ -14,7 +14,9 @@ import {
     type ProvideRequestDetails,
 } from '~/components/credential/CredentialProvideFlow';
 import { DIALOG_MARK } from '~/components/shell/ShellDialog';
+import { AiMark } from '~/components/shell/connections/aiAccounts';
 import { connectDialogHeader } from '~/components/credential/connect/connectHeader';
+import { agentCompanyOf } from '~/lib/agentCredentialModel';
 
 /** The requester's return address with the result appended, from the backend
  *  (it validates the address and reads the stored credential id). */
@@ -71,6 +73,10 @@ export function ProvideCredentialView({
         () => (details ? getCredentialIcon(details.credential_type) : null),
         [details]
     );
+    // An AI account wears its company's mark, as its Connections dialog does.
+    const company = details
+        ? agentCompanyOf(details.credential_type)
+        : undefined;
     const app = useMemo(
         () =>
             details ? appNameForCredentialType(details.credential_type) : null,
@@ -90,19 +96,24 @@ export function ProvideCredentialView({
         <div className="min-h-dvh bg-background text-foreground flex flex-col items-center px-4 py-12 sm:py-16">
             <PublicThemeToggle />
             <div className="w-full max-w-[440px] flex flex-col">
-                <span className={DIALOG_MARK}>
-                    {credentialIcon?.hasServiceIcon ? (
-                        <BrandIcon
-                            Icon={credentialIcon.Icon}
-                            iconColor={
-                                credentialIcon.iconColor || 'text-foreground'
-                            }
-                            className="h-[22px] w-[22px]"
-                        />
-                    ) : (
-                        <KeyRound className="h-5 w-5 text-muted-foreground" />
-                    )}
-                </span>
+                {company ? (
+                    <AiMark provider={company.members[0]} size="lg" />
+                ) : (
+                    <span className={DIALOG_MARK}>
+                        {credentialIcon?.hasServiceIcon ? (
+                            <BrandIcon
+                                Icon={credentialIcon.Icon}
+                                iconColor={
+                                    credentialIcon.iconColor ||
+                                    'text-foreground'
+                                }
+                                className="h-[22px] w-[22px]"
+                            />
+                        ) : (
+                            <KeyRound className="h-5 w-5 text-muted-foreground" />
+                        )}
+                    </span>
+                )}
                 <h1 className="mt-5 font-brand text-[26px] font-medium leading-tight tracking-[-0.02em] [text-wrap:balance]">
                     {provided
                         ? doneTitle

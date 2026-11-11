@@ -2,7 +2,7 @@
 // in the order a person should meet them (a sign-in first, a key next, a sign-in that needs your own OAuth app last).
 // NodeCredentials and the connect dialog read the same list, and `methodFromRequirement` puts each in the shape the
 // public provide page gets from the backend, so one connect UI serves both.
-import { kindFromCredentialType } from '~/lib/credentialMethodKind';
+import { kindFromBackendMethod, kindFromCredentialType } from '~/lib/credentialMethodKind';
 import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { getCredentialTypeFromSchema } from '~/utils/credentialTypes';
@@ -20,8 +20,6 @@ export interface CredentialRequirement {
     description: string;
     schema?: Schema; // JSON Schema defining credential structure
 }
-
-const isOAuth = (credentialSchema: Schema | undefined): boolean => kindFromCredentialType(credentialSchema?.['x-credential-type']) === 'oauth';
 
 /** The fields a credential class asks for, from its JSON schema. */
 export function getFieldsFromSchema(credentialSchema: Schema | undefined): CredentialField[] {
@@ -50,14 +48,23 @@ export function getFieldsFromSchema(credentialSchema: Schema | undefined): Crede
         });
 }
 
-/** OAuth first, then an API key, then a PAT, then the rest; an OAuth sign-in that needs your own app comes last. */
-function priority(req: CredentialRequirement): number {
-    if (isOAuth(req.schema)) return req.schema?.['x-oauth-requires-custom-client'] ? 4 : 0;
-    const type = req.credential_type.toLowerCase();
+/** Where a way in stands among an app's: a sign-in first, then an API key, then a PAT, then the rest; a sign-in that
+ *  needs your own OAuth app last. Connections and a provide link order the same ways in by it. */
+export function wayInRank(method: Parameters<typeof kindFromBackendMethod>[0] & Pick<ProvideCredentialMethod, 'credential_type' | 'requires_custom_client'>): number {
+    const kind = kindFromBackendMethod(method);
+    if (kind === 'oauth' || kind === 'agent_oauth') return method.requires_custom_client ? 4 : 0;
+    const type = method.credential_type.toLowerCase();
     if (type.includes('api_key') || type.includes('apikey')) return 1;
     if (type.includes('pat') || type.includes('personal_access_token')) return 2;
     return 3;
 }
+
+const priority = (req: CredentialRequirement): number =>
+    wayInRank({
+        credential_type: req.credential_type,
+        method_kind: kindFromCredentialType(req.schema?.['x-credential-type']),
+        requires_custom_client: !!req.schema?.['x-oauth-requires-custom-client'],
+    });
 
 /** Every credential class a node schema accepts, humanized and in order. `isVisible` hides a class pending approval. */
 export function requirementsFromSchema(schemaData: Schema, isVisible: (credentialSchema: Schema) => boolean = () => true): CredentialRequirement[] {

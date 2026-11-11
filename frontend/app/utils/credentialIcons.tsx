@@ -163,3 +163,8 @@ export function getOAuthProviderIcon(provider: string): { Icon: IconCmp; iconCol
     if (config?.Icon) return { Icon: config.Icon as IconCmp, iconColor: config.iconColor ?? '', hasServiceIcon: true };
     return { Icon: KeyRound, iconColor: '', hasServiceIcon: false };
 }
+
+/** The app whose mark a credential type wears, as the catalog names it ("Twilio" for `twilio_account`). */
+export function credentialAppName(credentialType: string): string | undefined {
+    return Object.values(getNodeIconData()).find((meta) => meta.credentialKeys?.includes(credentialType))?.label;
+}

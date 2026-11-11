@@ -50,30 +50,32 @@ function describe(company: AgentCompany, signIns: string[]): { line: string; use
     return { line, uses: `${list(parts)} for your agents.` };
 }
 
-/** The AI companies this instance can connect, in the credential model's order; one it has no way to connect is left out. */
+/** The AI companies, in the credential model's order, each with the subscription sign-ins `agentSignIns` (provider key →
+ *  credential type) offers; one with no way to connect is left out. */
+export function aiCompanies(agentSignIns: Record<string, string>): AiCompany[] {
+    return agentCompanies().flatMap((company): AiCompany[] => {
+        const signIns = [
+            ...new Set(
+                company.members
+                    .map((member) => AGENT_OAUTH_PROVIDER_KEY[member])
+                    .map((key) => (key ? agentSignIns[key] : undefined))
+                    .filter((type): type is string => !!type && hasAgentOAuthConnect(type))
+            ),
+        ];
+        const keyOf = (member: ModelProvider) => (getProviderMetadata(member)?.requiredApiKeys?.[0] ?? []).join('+');
+        const keys = company.members.filter(
+            (member, i, all) => !isSignInOnlyAgentProvider(member) && !!keyOf(member) && all.findIndex((other) => !isSignInOnlyAgentProvider(other) && keyOf(other) === keyOf(member)) === i
+        );
+        if (!signIns.length && !keys.length) return [];
+        const credentialTypes = [...new Set(company.members.flatMap((member) => acceptedAgentCredentialTypes(member)))];
+        return [{ ...company, signIns, keys, credentialTypes, ...describe(company, signIns) }];
+    });
+}
+
+/** The AI companies this instance can connect. */
 export function useAiCompanies(): AiCompany[] {
     const { agentSignIns } = useInstanceCapabilities();
-    return useMemo(
-        () =>
-            agentCompanies().flatMap((company): AiCompany[] => {
-                const signIns = [
-                    ...new Set(
-                        company.members
-                            .map((member) => AGENT_OAUTH_PROVIDER_KEY[member])
-                            .map((key) => (key ? agentSignIns[key] : undefined))
-                            .filter((type): type is string => !!type && hasAgentOAuthConnect(type))
-                    ),
-                ];
-                const keyOf = (member: ModelProvider) => (getProviderMetadata(member)?.requiredApiKeys?.[0] ?? []).join('+');
-                const keys = company.members.filter(
-                    (member, i, all) => !isSignInOnlyAgentProvider(member) && !!keyOf(member) && all.findIndex((other) => !isSignInOnlyAgentProvider(other) && keyOf(other) === keyOf(member)) === i
-                );
-                if (!signIns.length && !keys.length) return [];
-                const credentialTypes = [...new Set(company.members.flatMap((member) => acceptedAgentCredentialTypes(member)))];
-                return [{ ...company, signIns, keys, credentialTypes, ...describe(company, signIns) }];
-            }),
-        [agentSignIns]
-    );
+    return useMemo(() => aiCompanies(agentSignIns), [agentSignIns]);
 }
 
 type Glyph = ComponentType<{ className?: string }>;

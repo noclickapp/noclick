@@ -49,6 +49,16 @@ export function toSaveFailure(result: CredentialSaveResult): CredentialSaveFailu
   return typeof result === 'string' ? { error: result } : result;
 }
 
+/** A connect seam's refusal (the socket's `credential:create` reply or a provide link's) as the panel shows it. */
+export function saveRefusal(reply: { error?: string | null; message?: string | null; field_errors?: Record<string, string> | null; hint?: string | null; reachable?: boolean | null }): CredentialSaveFailure {
+  return {
+    error: reply.error || reply.message || 'Failed to create credential',
+    fieldErrors: reply.field_errors ?? null,
+    hint: reply.hint ?? null,
+    rejected: reply.reachable === false,
+  };
+}
+
 /** The value turned down: a reply that says the provider refused it, says what to change, or names a field. Anything
  *  else (a timeout, a failure of ours) is a plain error line, never put in the provider's mouth. */
 function isRejection(result: CredentialSaveResult): boolean {

@@ -2,7 +2,8 @@
 // credential request by token and connect it through the same flow the app's
 // dialog uses (ConnectApp), each way in drawn by the
 // method-kind registry (CredentialMethodConnect — API keys, redirect OAuth,
-// agent sign-ins, WhatsApp QR, and any future kind). Extracted from
+// agent sign-ins, WhatsApp QR, and any future kind); an AI account connects
+// through Connections' own flow (AiConnect) over the link's calls. Extracted from
 // credential.provide.$token so OTHER anonymous surfaces (the builder input
 // bridge) embed the exact same logic and UX instead of re-implementing
 // per-node credential UIs (2026-07-19: the bridge's hand-rolled connect
@@ -15,12 +16,19 @@ import { Loader2, Shield, Clock, X } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { getProviderConfig, getProviderConfigByCredentialType, oauthNeedsInAppSelection } from '~/utils/oauthProviders';
 import { getServiceForCredentialType } from '~/utils/credentialTypes';
+import { credentialAppName } from '~/utils/credentialIcons';
 import { kindFromBackendMethod } from '~/lib/credentialMethodKind';
+import { agentCompanyOf, agentCredentialProvider } from '~/lib/agentCredentialModel';
+import { AiConnect, companyMethods, type AiConnectVia } from '~/components/shell/connections/AiConnect';
+import { aiCompanies } from '~/components/shell/connections/aiAccounts';
 import { ConnectApp } from './connect/ConnectApp';
+import { wayInRank } from './credentialMethods';
 import {
   CredentialMethodConnect,
+  provideKey,
   type ProvideCredentialMethod,
 } from './CredentialMethodConnect';
+import { provideLinkTransport } from './provideLinkTransport';
 import { fixWordCasing, humanizeCredentialLabel } from '~/utils/credentialLabels';
 import type { CredentialField } from './CredentialFieldInput';
 
@@ -156,10 +164,50 @@ export function signsInOnlyInApp(method: ProvideCredentialMethod): boolean {
   return kindFromBackendMethod(method) === 'oauth' && (!method.oauth_provider || oauthNeedsInAppSelection(method.oauth_provider));
 }
 
-/** The app a request is for, as the catalog names it ("Notion"), else its sign-in's provider, else its type. */
+/** The app a request is for, as Connections names it: an AI account's company ("Anthropic"), else the app as the
+ *  catalog names it ("Notion"), else its sign-in's provider, else its type. */
 export function appNameForCredentialType(credentialType: string): string {
-  return getServiceForCredentialType(credentialType)?.label ?? getProviderConfigByCredentialType(credentialType)?.name ?? formatCredentialType(credentialType);
+  return (
+    agentCompanyOf(credentialType)?.title ??
+    getServiceForCredentialType(credentialType)?.label ??
+    credentialAppName(credentialType) ??
+    getProviderConfigByCredentialType(credentialType)?.name ??
+    formatCredentialType(credentialType)
+  );
 }
+
+/** Of a company's ways in (Connections' own, in its order and words), those a link offers: each the request lists, a
+ *  key under the type the request names when it takes the same values. */
+function offeredWays(ways: ProvideCredentialMethod[], offered: ProvideCredentialMethod[]): ProvideCredentialMethod[] {
+  const values = (method: ProvideCredentialMethod) => method.credential_fields.map((f) => f.name).join('+');
+  const isKey = (method: ProvideCredentialMethod) => kindFromBackendMethod(method) === 'api_key';
+  return ways.flatMap((way) => {
+    const match = offered.find((o) => o.credential_type === way.credential_type) ?? (isKey(way) ? offered.find((o) => isKey(o) && values(o) === values(way)) : undefined);
+    return match ? [{ ...way, credential_type: match.credential_type }] : [];
+  });
+}
+
+/** An AI account's ways in on a link: its company's, as Connections offers them, that the link lists. The sign-ins it
+ *  lists stand in for the instance's, since the backend offers only those it can finish. */
+function linkAiWays(credentialType: string, offered: ProvideCredentialMethod[]): ProvideCredentialMethod[] {
+  if (!agentCompanyOf(credentialType)) return [];
+  const signIns = offered.filter((m) => kindFromBackendMethod(m) === 'agent_oauth').map((m) => [agentCredentialProvider(m.credential_type), m.credential_type]);
+  const company = aiCompanies(Object.fromEntries(signIns)).find((c) => c.credentialTypes.includes(credentialType));
+  return company ? offeredWays(companyMethods(company), offered) : [];
+}
+
+/** Only what's typed in is sent: a sign-in sends nothing, and says nothing of it. */
+function EncryptedNote() {
+  return (
+    <p className="mt-2 flex items-center gap-2 text-[12.5px] leading-relaxed text-muted-foreground">
+      <Shield className="h-3.5 w-3.5 shrink-0" />
+      It’s encrypted as soon as you send it.
+    </p>
+  );
+}
+
+const NO_CREDENTIALS: Record<string, string> = {};
+const attachNowhere = () => {};
 
 export function CredentialProvideFlow({
   token,
@@ -192,6 +240,15 @@ export function CredentialProvideFlow({
   }, [details]);
 
   const app = useMemo(() => (details ? appNameForCredentialType(details.credential_type) : ''), [details]);
+  // An AI account connects as Connections connects it (AiConnect), over the link's own calls.
+  const via = useMemo<AiConnectVia>(() => ({
+    signIn: (credentialType) => provideLinkTransport(apiBase, token, credentialType),
+    saveKey: async (method, values) => {
+      const reply = await provideKey(apiBase, token, method.credential_type, values);
+      return reply.success ? { ...reply, credential: { id: reply.credential_id ?? '', name: app, credential_type: method.credential_type } } : reply;
+    },
+    keyNote: <EncryptedNote />,
+  }), [apiBase, token, app]);
 
   if (request.status === 'loading') {
     return (
@@ -215,8 +272,24 @@ export function CredentialProvideFlow({
   // A shared link offers only the ways in it can finish: Instagram's Facebook sign-in, which picks the account after
   // its popup, only said it couldn't be used here (2026-11-06). With no other way in, it still says why.
   const usable = request.methods.filter((method) => !signsInOnlyInApp(method));
-  const methods = usable.length ? usable : request.methods;
+  // In the order Connections offers them: a sign-in first.
+  const methods = [...(usable.length ? usable : request.methods)].sort((a, b) => wayInRank(a) - wayInRank(b));
   if (!methods.length) return null;
+
+  const aiWays = linkAiWays(request.details.credential_type, methods);
+  if (aiWays.length) {
+    return (
+      <AiConnect
+        app={app}
+        methods={aiWays}
+        credentialIds={NO_CREDENTIALS}
+        onCredentialIdsChange={attachNowhere}
+        onSignedIn={async () => onProvided()}
+        onKeySaved={async (_credential, verification) => onProvided(verification)}
+        via={via}
+      />
+    );
+  }
 
   return (
     <div className="space-y-2">
@@ -239,13 +312,7 @@ export function CredentialProvideFlow({
               showSources={ctx.showSources}
               note={ctx.note}
             />
-            {/* Only what's typed in is sent: a sign-in sends nothing, and says so in its own line. */}
-            {kindFromBackendMethod(method) === 'api_key' && (
-              <p className="mt-2 flex items-center gap-2 text-[12.5px] leading-relaxed text-muted-foreground">
-                <Shield className="h-3.5 w-3.5 shrink-0" />
-                It’s encrypted as soon as you send it.
-              </p>
-            )}
+            {kindFromBackendMethod(method) === 'api_key' && <EncryptedNote />}
           </>
         )}
       />

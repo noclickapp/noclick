@@ -6,28 +6,17 @@ import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { CREDENTIALS_CHANGED_EVENT } from '~/components/shared/popups/CreateCredentialDialog';
 import { connectDialogHeader, type ConnectAccountRow } from '~/components/credential/connect/ConnectApp';
-import type { ProvideCredentialMethod } from '~/components/credential/CredentialMethodConnect';
-import { AGENT_SIGN_IN_NAMES } from '~/lib/agentCredentialModel';
-import { getProviderMetadata } from '~/types/provider';
 import { invalidateCredentialsCache } from '~/utils/credentialAutoSelect';
 import { ShellDialog } from '../ShellDialog';
 import { companyAccountRow } from './accountNames';
 import type { ConnectedAccount } from './accounts';
-import { AiConnect, agentKeyMethod, agentSignInMethod } from './AiConnect';
+import { AiConnect, companyMethods } from './AiConnect';
 import { AiMark, type AiCompany } from './aiAccounts';
 import { sourceLine } from './ConnectedList';
 
 // A sign-in here attaches to no node: the account is just added.
 const NO_CREDENTIALS: Record<string, string> = {};
 const attachNowhere = () => {};
-
-/** A company's ways in: each subscription sign-in, then each provider's key. */
-function companyMethods(company: AiCompany): ProvideCredentialMethod[] {
-    return [
-        ...company.signIns.filter((type) => type in AGENT_SIGN_IN_NAMES).map(agentSignInMethod),
-        ...company.keys.map((provider) => agentKeyMethod(provider, company.keys.length > 1 ? `${getProviderMetadata(provider)?.title ?? provider} API key` : 'API key')),
-    ];
-}
 
 /** An account in the company's list: what it is (its email, login or the name you gave it; else its plan or "API
  *  key") and, under it, what's wrong, whose it is, or when it was added. */

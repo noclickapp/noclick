@@ -2,12 +2,12 @@
 // and its API key, the key as two steps (open the company's console, then paste it), the accounts you already have.
 // Connections' company dialog (AiProviderDialog) and the agent node's credential panel (AgentCredentialsForm, which
 // the Setup step, the chat's setup and build cards and the builder's asks all draw) run it, so an AI account connects
-// the same way wherever it's added.
-import { useState } from 'react';
+// the same way wherever it's added; a provide link runs it too, over the link's own calls (`via`).
+import { useMemo, useState, type ReactNode } from 'react';
 import { UpgradePopup } from '~/components/utils/UpgradePopup';
-import { AgentOAuthConnect } from '~/components/workflow/AgentOAuthConnect';
+import { AgentOAuthConnect, type AgentOAuthComponentProps } from '~/components/workflow/AgentOAuthConnect';
 import { ConnectApp, type ConnectAccountRow, type ConnectStage } from '~/components/credential/connect/ConnectApp';
-import { CredentialCreatePanel, type CredentialSaveResult } from '~/components/credential/CredentialCreatePanel';
+import { CredentialCreatePanel, saveRefusal, type CredentialSaveResult } from '~/components/credential/CredentialCreatePanel';
 import type { CredentialField } from '~/components/credential/CredentialFieldInput';
 import type { ProvideCredentialMethod } from '~/components/credential/CredentialMethodConnect';
 import { createAgentKey, getFieldLabel, getPlaceholder, shouldMaskField, type CreatedAgentCredential } from '~/hooks/useAgentApiKey';
@@ -17,6 +17,7 @@ import { cn } from '~/lib/utils';
 import { getProviderMetadata, type ModelProvider } from '~/types/provider';
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 import { BUTTON_PRIMARY } from '../buttons';
+import type { AiCompany } from './aiAccounts';
 
 /** A subscription sign-in as a way in ("Claude plan"). */
 export function agentSignInMethod(type: string): ProvideCredentialMethod {
@@ -54,6 +55,36 @@ export function agentKeyMethod(provider: ModelProvider, label = 'API key'): Prov
 /** The provider a key method saves as. */
 const keyProvider = (method: ProvideCredentialMethod) => method.credential_type.replace(/^agent_/, '') as ModelProvider;
 
+/** A company's ways in: each subscription sign-in, then each provider's key. */
+export function companyMethods(company: AiCompany): ProvideCredentialMethod[] {
+    return [
+        ...company.signIns.filter((type) => type in AGENT_SIGN_IN_NAMES).map(agentSignInMethod),
+        ...company.keys.map((provider) => agentKeyMethod(provider, company.keys.length > 1 ? `${getProviderMetadata(provider)?.title ?? provider} API key` : 'API key')),
+    ];
+}
+
+type SendEvent = NonNullable<AgentOAuthComponentProps['sendEvent']>;
+
+/** A key's save, as the socket's `credential:create` replies to it. */
+interface KeyReply {
+    success?: boolean;
+    credential?: CreatedAgentCredential | null;
+    verification?: CredentialTestConnectionResponse | null;
+    error?: string | null;
+    message?: string | null;
+    field_errors?: Record<string, string> | null;
+    hint?: string | null;
+    reachable?: boolean | null;
+}
+
+/** A host that connects through something other than the signed-in app's socket (a provide link): where a sign-in's
+ *  calls go, how a key is saved, and the line under a key's form. Keep it stable across renders. */
+export interface AiConnectVia {
+    signIn: (credentialType: string) => SendEvent;
+    saveKey: (method: ProvideCredentialMethod, values: Record<string, string>) => Promise<KeyReply>;
+    keyNote?: ReactNode;
+}
+
 /** A subscription sign-in: one button that says whose sign-in it opens, the sign-in's own note under it; pressed, the
  *  sign-in's own flow (a device code, a pasted code) runs in its place. */
 function SignIn({
@@ -61,13 +92,16 @@ function SignIn({
     credentialIds,
     onCredentialIdsChange,
     onSignedIn,
+    via,
 }: {
     type: string;
     credentialIds: Record<string, string>;
     onCredentialIdsChange: (ids: Record<string, string>) => void;
     onSignedIn: () => Promise<void>;
+    via?: AiConnectVia;
 }) {
     const names = AGENT_SIGN_IN_NAMES[type];
+    const sendEvent = useMemo(() => via?.signIn(type), [via, type]);
     return (
         <div data-testid={`sign-in-${type}`}>
             <AgentOAuthConnect
@@ -75,6 +109,7 @@ function SignIn({
                 credentialIds={credentialIds}
                 onCredentialIdsChange={onCredentialIdsChange}
                 onCredentialCreated={onSignedIn}
+                sendEvent={sendEvent}
                 renderStart={(start, note) => (
                     <div className="space-y-2.5">
                         <button type="button" onClick={start} className={cn(BUTTON_PRIMARY, 'h-10 w-full justify-center')}>
@@ -99,6 +134,7 @@ export function AiConnect({
     onOpenAccount,
     ask,
     onStage,
+    via,
 }: {
     /** Who the account is with, as the flow names it ("Anthropic"). */
     app: string;
@@ -114,23 +150,25 @@ export function AiConnect({
     /** Offer asking someone who can (the credential type the request names). */
     ask?: { credentialType: string };
     onStage?: (stage: ConnectStage) => void;
+    /** Connect over a provide link's calls instead of the signed-in app's socket. */
+    via?: AiConnectVia;
 }) {
     const [planLimitError, setPlanLimitError] = useState<string | null>(null);
 
-    const saveKey = (provider: ModelProvider) => async (name: string, data: Record<string, string>): Promise<CredentialSaveResult> => {
+    const saveKey = (method: ProvideCredentialMethod) => async (name: string, data: Record<string, string>): Promise<CredentialSaveResult> => {
         try {
-            const response = await createAgentKey(provider, data, name);
+            const response: KeyReply = via ? await via.saveKey(method, data) : await createAgentKey(keyProvider(method), data, name);
             if (response?.success && response.credential) {
-                await onKeySaved(response.credential as CreatedAgentCredential, response.verification ?? null);
+                await onKeySaved(response.credential, response.verification ?? null);
                 return null;
             }
             const message = response?.error || response?.message || 'Failed to create credential';
-            if (isPlanLimitError(message)) {
+            if (!via && isPlanLimitError(message)) {
                 setPlanLimitError(message);
                 return null;
             }
-            // The provider's key probe refused it: its words, under who refused. Anything else is a plain error.
-            return { error: message, rejected: response?.reachable === false };
+            // The provider's key probe refused it: its words, under who refused; per-field verdicts under their inputs.
+            return saveRefusal({ ...response, error: message });
         } catch (err) {
             return err instanceof Error ? err.message : 'Failed to create credential';
         }
@@ -143,9 +181,12 @@ export function AiConnect({
                 methods={methods}
                 renderMethod={(method, ctx) =>
                     method.agent_oauth_kind ? (
-                        <SignIn type={method.agent_oauth_kind} credentialIds={credentialIds} onCredentialIdsChange={onCredentialIdsChange} onSignedIn={onSignedIn} />
+                        <SignIn type={method.agent_oauth_kind} credentialIds={credentialIds} onCredentialIdsChange={onCredentialIdsChange} onSignedIn={onSignedIn} via={via} />
                     ) : (
-                        <CredentialCreatePanel fields={method.credential_fields} app={app} instructions={ctx.howTo} showSources={ctx.showSources} onSave={saveKey(keyProvider(method))} />
+                        <>
+                            <CredentialCreatePanel fields={method.credential_fields} app={app} instructions={ctx.howTo} showSources={ctx.showSources} onSave={saveKey(method)} />
+                            {via?.keyNote}
+                        </>
                     )
                 }
                 accounts={accounts}
@@ -155,13 +196,16 @@ export function AiConnect({
                 showResult={false}
                 onStage={onStage}
             />
-            <UpgradePopup
-                isOpen={!!planLimitError}
-                onOpenChange={(open) => {
-                    if (!open) setPlanLimitError(null);
-                }}
-                errorMessage={planLimitError || ''}
-            />
+            {/* A plan's limits are the signed-in account's; a link's visitor has none. */}
+            {!via && (
+                <UpgradePopup
+                    isOpen={!!planLimitError}
+                    onOpenChange={(open) => {
+                        if (!open) setPlanLimitError(null);
+                    }}
+                    errorMessage={planLimitError || ''}
+                />
+            )}
         </>
     );
 }
