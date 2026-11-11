@@ -23,6 +23,8 @@ export interface ChannelHistory {
     loading: boolean;
     loadingOlder: boolean;
     error: string | null;
+    /** Kept in this browser from an earlier session (some of it left out): catching up replaces it whole. */
+    restored?: boolean;
 }
 
 export interface Channels {
@@ -95,12 +97,23 @@ interface Lists {
 /** What a transport's page last held (its lists, agents and the histories it opened), so a page mounted again over the
  *  same transport shows it at once and reads it again in place. Changes that landed meanwhile went unheard: every list
  *  is read again on mount, and each kept history again the first time it's opened. */
-interface Held {
+export interface ChannelsHeld {
     lists: Lists;
     agents: AgentChoice[];
     histories: Record<string, ChannelHistory>;
 }
-const held = new WeakMap<ChannelsTransport, Held>();
+const held = new WeakMap<ChannelsTransport, ChannelsHeld>();
+
+/** What a page over `transport` holds now; null before it read anything. */
+export function heldBy(transport: ChannelsTransport): ChannelsHeld | null {
+    return held.get(transport) ?? null;
+}
+
+/** Puts what a page held before (an earlier visit, kept in this browser) under `transport`, unless it holds something
+ *  already: a page mounted over it then shows it at once and reads it all again, as after a return. */
+export function hold(transport: ChannelsTransport, kept: ChannelsHeld): void {
+    if (!held.has(transport)) held.set(transport, kept);
+}
 
 export function useChannels(transport: ChannelsTransport, openId: string | null): Channels {
     const [lists, setLists] = useState<Lists>(() => held.get(transport)?.lists ?? { loading: true, error: null, workspaces: [], channels: [] });
@@ -161,16 +174,19 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
     );
 
     /** A history held from an earlier mount, brought up to date in place: its newest page read again (what changed on
-     *  it, what's gone from it), the older messages it held kept. */
+     *  it, what's gone from it), the older messages it held kept while they run on into that page. When more came
+     *  meanwhile than a page holds (or it was kept from an earlier session), what it held is dropped: the page starts
+     *  the history again, its older ones a click away, never with a hole in it. */
     const catchUp = useCallback(
         async (channelId: string) => {
             try {
                 const page = await transport.history(channelId);
                 const from = page.messages.length ? time(page.messages[0]) : Infinity;
                 setHistory(channelId, (h) => {
-                    const older = page.older ? h.messages.filter((m) => !m.pending && !m.ephemeral && time(m) < from) : [];
+                    const joins = !h.restored && page.messages.length > 0 && h.messages.some((m) => m.id === page.messages[0].id);
+                    const older = page.older && joins ? h.messages.filter((m) => !m.pending && !m.ephemeral && time(m) < from) : [];
                     const local = h.messages.filter((m) => m.pending || m.ephemeral);
-                    return { ...h, older: older.length ? h.older : page.older, messages: mergeMessages(older, [...page.messages, ...local]) };
+                    return { ...h, restored: false, older: older.length ? h.older : page.older, messages: mergeMessages(older, [...page.messages, ...local]) };
                 });
             } catch (e) {
                 console.warn('[channels] catching up failed:', e);
