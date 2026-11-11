@@ -30,7 +30,7 @@ class MeshyAPIKeyCredential(BaseModel):
     @field_validator("api_key", mode="before")
     @classmethod
     def key(cls, value):
-        value = clean_secret(value, field_name="API Key")
+        value = clean_secret(value, field_name="API Key", key=True)
         if any(c.isspace() for c in value):
             raise ValueError("Paste the API key without a Bearer prefix")
         return value

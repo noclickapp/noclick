@@ -255,3 +255,12 @@ def test_poll_scope_ignores_canvas_metadata():
         **config, 'label': 'My tasks', 'goal': 'Watch tasks',
         'schedule': {'frequency': 'minutes', 'interval': 10}})
     assert poll_scope(native.MeshyNode, config) != poll_scope(native.MeshyNode, {'operation': 'on_new_remesh'})
+
+
+@pytest.mark.parametrize('value,reason', [
+    ('https://example.com/settings/tokens', 'web address'),
+    ('s3crét\u200bvalue', 'which no key has'),
+])
+def test_meshy_api_key_rejects_addresses_and_non_ascii_before_requests(value, reason):
+    with pytest.raises(ValueError, match=reason):
+        native.MeshyAPIKeyCredential(api_key=value)
