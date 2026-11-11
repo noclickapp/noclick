@@ -1,0 +1,673 @@
+{
+  "$defs": {
+    "AnnouncementAudio": {
+      "additionalProperties": false,
+      "properties": {
+        "announcement_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Announcement Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "announcement_id"
+      ],
+      "title": "AnnouncementAudio",
+      "type": "object"
+    },
+    "CallOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "a_leg_only": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "A Leg Only"
+        },
+        "a_leg_caller_id": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "A Leg Caller Id"
+        },
+        "connect_key": {
+          "anyOf": [
+            {
+              "maximum": 9,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Connect Key"
+        },
+        "cancel_key": {
+          "anyOf": [
+            {
+              "maximum": 9,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cancel Key"
+        },
+        "play_audio": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/AnnouncementAudio"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Play Audio"
+        }
+      },
+      "title": "CallOptions",
+      "type": "object"
+    },
+    "CreateCall": {
+      "description": "Ring the from party first, then connect them to the to party.",
+      "properties": {
+        "operation": {
+          "const": "create_call",
+          "default": "create_call",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calls",
+          "x-display-name": "Create Phone Call",
+          "x-is-trigger": false
+        },
+        "from_number": {
+          "description": "First party to ring (a leg), for example 442035159999.",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "From Number",
+          "type": "string"
+        },
+        "to_number": {
+          "description": "Second party to ring (b leg), for example 442035159995.",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "To Number",
+          "type": "string"
+        },
+        "caller_id": {
+          "description": "Caller ID shown to the second party.",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Caller ID",
+          "type": "string"
+        },
+        "announcement_at": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Seconds after answer to play the announcement.",
+          "title": "Announcement At"
+        },
+        "announcement_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Announcement Id"
+        },
+        "hangup_at": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Seconds after answer to hang up.",
+          "title": "Hangup At"
+        },
+        "hangup_announcement_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hangup Announcement Id"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CallOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "from_number",
+        "to_number",
+        "caller_id"
+      ],
+      "title": "CreateCall",
+      "type": "object"
+    },
+    "SureVoIPCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "surevoip_basic",
+          "default": "surevoip_basic",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "description": "Your SureVoIP API username.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "API Username",
+          "type": "string"
+        },
+        "password": {
+          "description": "Your SureVoIP API password.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "username",
+        "password"
+      ],
+      "title": "Surevoip Account",
+      "type": "object",
+      "x-credential-instructions": "Enter your SureVoIP API username and password for HTTP Basic authentication. Use the credentials supplied by SureVoIP for API access. NoClick sends them only to api.surevoip.co.uk and reads your customer account location to check the connection.",
+      "x-credential-url": "https://www.surevoip.co.uk/support/wiki/api_documentation"
+    },
+    "SureVoIPGetAnnouncement": {
+      "properties": {
+        "operation": {
+          "const": "get_announcement",
+          "default": "get_announcement",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Announcements",
+          "x-display-name": "Get Announcement",
+          "x-is-trigger": false
+        },
+        "account": {
+          "minimum": 1,
+          "title": "Customer Account ID",
+          "type": "integer"
+        },
+        "announcement_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Announcement ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account",
+        "announcement_id"
+      ],
+      "title": "SureVoIPGetAnnouncement",
+      "type": "object"
+    },
+    "SureVoIPGetCustomer": {
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Get Customer",
+          "x-is-trigger": false
+        },
+        "account": {
+          "minimum": 1,
+          "title": "Customer Account ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "account"
+      ],
+      "title": "SureVoIPGetCustomer",
+      "type": "object"
+    },
+    "SureVoIPGetServiceStatus": {
+      "properties": {
+        "operation": {
+          "const": "get_service_status",
+          "default": "get_service_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Support",
+          "x-display-name": "Get Service Status",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPGetServiceStatus",
+      "type": "object"
+    },
+    "SureVoIPListAnnouncements": {
+      "properties": {
+        "operation": {
+          "const": "list_announcements",
+          "default": "list_announcements",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Announcements",
+          "x-display-name": "List Global Announcements",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPListAnnouncements",
+      "type": "object"
+    },
+    "SureVoIPListAreacodes": {
+      "properties": {
+        "operation": {
+          "const": "list_areacodes",
+          "default": "list_areacodes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Numbers",
+          "x-display-name": "List Area Codes",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPListAreacodes",
+      "type": "object"
+    },
+    "SureVoIPListBilling": {
+      "properties": {
+        "operation": {
+          "const": "list_billing",
+          "default": "list_billing",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Billing",
+          "x-display-name": "List Billing Details",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPListBilling",
+      "type": "object"
+    },
+    "SureVoIPListCharges": {
+      "properties": {
+        "operation": {
+          "const": "list_charges",
+          "default": "list_charges",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Billing",
+          "x-display-name": "List Charges",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPListCharges",
+      "type": "object"
+    },
+    "SureVoIPListContacts": {
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "List Contacts",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPListContacts",
+      "type": "object"
+    },
+    "SureVoIPListCustomerAnnouncements": {
+      "properties": {
+        "operation": {
+          "const": "list_customer_announcements",
+          "default": "list_customer_announcements",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Announcements",
+          "x-display-name": "List Customer Announcements",
+          "x-is-trigger": false
+        },
+        "account": {
+          "minimum": 1,
+          "title": "Customer Account ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "account"
+      ],
+      "title": "SureVoIPListCustomerAnnouncements",
+      "type": "object"
+    },
+    "SureVoIPListCustomers": {
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Find Customer Account",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPListCustomers",
+      "type": "object"
+    },
+    "SureVoIPListHostedDomains": {
+      "properties": {
+        "operation": {
+          "const": "list_hosted_domains",
+          "default": "list_hosted_domains",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "List Hosted VoIP Domains",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPListHostedDomains",
+      "type": "object"
+    },
+    "SureVoIPListMobileAccounts": {
+      "properties": {
+        "operation": {
+          "const": "list_mobile_accounts",
+          "default": "list_mobile_accounts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "List Mobile Accounts",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPListMobileAccounts",
+      "type": "object"
+    },
+    "SureVoIPListNumbers": {
+      "properties": {
+        "operation": {
+          "const": "list_numbers",
+          "default": "list_numbers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Numbers",
+          "x-display-name": "List Available Number Allocations",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPListNumbers",
+      "type": "object"
+    },
+    "SureVoIPListPartners": {
+      "properties": {
+        "operation": {
+          "const": "list_partners",
+          "default": "list_partners",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "List Partner Accounts",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPListPartners",
+      "type": "object"
+    },
+    "SureVoIPListPortedNumbers": {
+      "properties": {
+        "operation": {
+          "const": "list_ported_numbers",
+          "default": "list_ported_numbers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Numbers",
+          "x-display-name": "List Ported Numbers",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPListPortedNumbers",
+      "type": "object"
+    },
+    "SureVoIPListSipAccounts": {
+      "properties": {
+        "operation": {
+          "const": "list_sip_accounts",
+          "default": "list_sip_accounts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "List SIP Accounts",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPListSipAccounts",
+      "type": "object"
+    },
+    "SureVoIPListSms": {
+      "properties": {
+        "operation": {
+          "const": "list_sms",
+          "default": "list_sms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "List SMS",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPListSms",
+      "type": "object"
+    },
+    "SureVoIPListTopups": {
+      "properties": {
+        "operation": {
+          "const": "list_topups",
+          "default": "list_topups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Billing",
+          "x-display-name": "List Credit Topups",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SureVoIPListTopups",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_call": "#/$defs/CreateCall",
+          "get_announcement": "#/$defs/SureVoIPGetAnnouncement",
+          "get_customer": "#/$defs/SureVoIPGetCustomer",
+          "get_service_status": "#/$defs/SureVoIPGetServiceStatus",
+          "list_announcements": "#/$defs/SureVoIPListAnnouncements",
+          "list_areacodes": "#/$defs/SureVoIPListAreacodes",
+          "list_billing": "#/$defs/SureVoIPListBilling",
+          "list_charges": "#/$defs/SureVoIPListCharges",
+          "list_contacts": "#/$defs/SureVoIPListContacts",
+          "list_customer_announcements": "#/$defs/SureVoIPListCustomerAnnouncements",
+          "list_customers": "#/$defs/SureVoIPListCustomers",
+          "list_hosted_domains": "#/$defs/SureVoIPListHostedDomains",
+          "list_mobile_accounts": "#/$defs/SureVoIPListMobileAccounts",
+          "list_numbers": "#/$defs/SureVoIPListNumbers",
+          "list_partners": "#/$defs/SureVoIPListPartners",
+          "list_ported_numbers": "#/$defs/SureVoIPListPortedNumbers",
+          "list_sip_accounts": "#/$defs/SureVoIPListSipAccounts",
+          "list_sms": "#/$defs/SureVoIPListSms",
+          "list_topups": "#/$defs/SureVoIPListTopups"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CreateCall"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListSms"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListCustomers"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPGetCustomer"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListContacts"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListBilling"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListCharges"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListTopups"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListSipAccounts"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListNumbers"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListAreacodes"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListCustomerAnnouncements"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPGetAnnouncement"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListAnnouncements"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListHostedDomains"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListMobileAccounts"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListPartners"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPListPortedNumbers"
+        },
+        {
+          "$ref": "#/$defs/SureVoIPGetServiceStatus"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SureVoIPCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Surevoip Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

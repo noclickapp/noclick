@@ -1,0 +1,24 @@
+{
+  "config": {
+    "operation": "create_call",
+    "from_number": "442035159999",
+    "to_number": "442035159995",
+    "caller_id": "01224900123",
+    "announcement_at": "180",
+    "announcement_id": "hgCRVfWB4hGRSEAkICyA",
+    "hangup_at": "300",
+    "hangup_announcement_id": "RVfWB4hGRSEAkIXYCyA",
+    "options": {
+      "a_leg_only": 1,
+      "a_leg_caller_id": "01224900123",
+      "connect_key": 1,
+      "cancel_key": 2,
+      "play_audio": [
+        {
+          "announcement_id": "zgL4QmsB6hGmv5YnsW_4lQ"
+        }
+      ]
+    }
+  },
+  "source": "https://raw.githubusercontent.com/SureVoIP/API-Specification/master/openapi/components/schemas/CreateCall.yaml"
+}
