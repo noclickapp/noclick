@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/signal8-dark.svg",
+  "source": "https://raw.githubusercontent.com/signal8ai/n8n-nodes-signal8/main/icons/signal8.dark.svg",
+  "source_page": "https://github.com/signal8ai/n8n-nodes-signal8/tree/main/icons",
+  "date": "2026-11-11",
+  "license": "MIT (official Signal8 n8n package); trademark belongs to Signal8",
+  "sha256": "a12544635e0476356d478b3cdf9df54810b035bfb34f3ea454e3a7f4fe6036ce",
+  "edits": [
+    "Cropped viewBox to the original mark path bounds; path data, transform and official colours unchanged."
+  ],
+  "notes": "Official Signal8 app mark with provider-supplied light and dark colours; no wordmark or background."
+}

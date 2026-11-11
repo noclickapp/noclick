@@ -1,0 +1,1686 @@
+{
+  "$defs": {
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "Signal8APIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "signal8_api_key",
+          "default": "signal8_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Signal8 API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste an API key from the Signal8 developer portal. Requests consume Signal8 API credits. The connection read proves key acceptance, not account identity.",
+      "x-credential-url": "https://signal8.ai/developer"
+    },
+    "Signal8GetBatchQuotesConfig": {
+      "additionalProperties": false,
+      "description": "Batch quote fetch by explicit ticker list.",
+      "properties": {
+        "operation": {
+          "const": "get_batch_quotes",
+          "default": "get_batch_quotes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tickers": {
+          "description": "Up to 500 comma-separated ticker symbols, for example AAPL,MSFT.",
+          "maxLength": 2999,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}(?:,[A-Za-z]{1,5}){0,499}$",
+          "title": "Tickers",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tickers"
+      ],
+      "title": "Signal8GetBatchQuotesConfig",
+      "type": "object"
+    },
+    "Signal8GetCandlesConfig": {
+      "additionalProperties": false,
+      "description": "Get historical OHLCV candles.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_candles",
+          "default": "get_candles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "enum": [
+                "1",
+                "5",
+                "15",
+                "30",
+                "60",
+                "240",
+                "D",
+                "W",
+                "M"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Candle resolution: intraday minutes (1, 5, 15, 30, 60, 240), D (daily, default), W (weekly), or M (monthly).",
+          "title": "Resolution",
+          "enum": [
+            "1",
+            "5",
+            "15",
+            "30",
+            "60",
+            "240",
+            "D",
+            "W",
+            "M"
+          ],
+          "x-enum-searchable": true
+        },
+        "period": {
+          "anyOf": [
+            {
+              "enum": [
+                "1M",
+                "3M",
+                "6M",
+                "1Y",
+                "5Y",
+                "ALL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lookback period shorthand (default 1Y). Ignored when from/to are provided.",
+          "title": "Period",
+          "enum": [
+            "1M",
+            "3M",
+            "6M",
+            "1Y",
+            "5Y",
+            "ALL"
+          ],
+          "x-enum-searchable": true
+        },
+        "from": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start of an explicit range as a UNIX timestamp (takes precedence over period).",
+          "title": "From"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End of an explicit range as a UNIX timestamp (takes precedence over period).",
+          "title": "To"
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "Signal8GetCandlesConfig",
+      "type": "object"
+    },
+    "Signal8GetCashPositionConfig": {
+      "additionalProperties": false,
+      "description": "Get cash position model & runway.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_cash_position",
+          "default": "get_cash_position",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "Signal8GetCashPositionConfig",
+      "type": "object"
+    },
+    "Signal8GetCompanyConfig": {
+      "additionalProperties": false,
+      "description": "Get company profile.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "Signal8GetCompanyConfig",
+      "type": "object"
+    },
+    "Signal8GetComplianceConfig": {
+      "additionalProperties": false,
+      "description": "Get full compliance evaluation.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_compliance",
+          "default": "get_compliance",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "Signal8GetComplianceConfig",
+      "type": "object"
+    },
+    "Signal8GetDilutionInstrumentsConfig": {
+      "additionalProperties": false,
+      "description": "Get dilution instrument rows by family.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_dilution_instruments",
+          "default": "get_dilution_instruments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "family": {
+          "description": "Which instrument family to return.",
+          "enum": [
+            "warrants",
+            "convertibles",
+            "preferred",
+            "shelfs",
+            "atms",
+            "elocs",
+            "s1_offerings",
+            "equity_plans",
+            "exchangeables",
+            "recent_offerings"
+          ],
+          "title": "Family",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "family"
+      ],
+      "title": "Signal8GetDilutionInstrumentsConfig",
+      "type": "object"
+    },
+    "Signal8GetDilutionRiskConfig": {
+      "additionalProperties": false,
+      "description": "Get dilution risk assessment.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_dilution_risk",
+          "default": "get_dilution_risk",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "Signal8GetDilutionRiskConfig",
+      "type": "object"
+    },
+    "Signal8GetDilutionSnapshotConfig": {
+      "additionalProperties": false,
+      "description": "Get the dilution snapshot summary.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_dilution_snapshot",
+          "default": "get_dilution_snapshot",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "Signal8GetDilutionSnapshotConfig",
+      "type": "object"
+    },
+    "Signal8GetEarningsConfig": {
+      "additionalProperties": false,
+      "description": "Get earnings reports.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_earnings",
+          "default": "get_earnings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of reports to return (1-100, default 20)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "Signal8GetEarningsConfig",
+      "type": "object"
+    },
+    "Signal8GetFinancialsConfig": {
+      "additionalProperties": false,
+      "description": "Get financial statements.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_financials",
+          "default": "get_financials",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 40,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of periods to return (1-40, default 10)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "Signal8GetFinancialsConfig",
+      "type": "object"
+    },
+    "Signal8GetFloatConfig": {
+      "additionalProperties": false,
+      "description": "Get float breakdown.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_float",
+          "default": "get_float",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "Signal8GetFloatConfig",
+      "type": "object"
+    },
+    "Signal8GetOwnershipConfig": {
+      "additionalProperties": false,
+      "description": "Get comprehensive ownership breakdown.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_ownership",
+          "default": "get_ownership",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "Signal8GetOwnershipConfig",
+      "type": "object"
+    },
+    "Signal8GetQuoteConfig": {
+      "additionalProperties": false,
+      "description": "Get stock quote.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_quote",
+          "default": "get_quote",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "Signal8GetQuoteConfig",
+      "type": "object"
+    },
+    "Signal8GetShortInterestConfig": {
+      "additionalProperties": false,
+      "description": "Get short interest.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_short_interest",
+          "default": "get_short_interest",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "Signal8GetShortInterestConfig",
+      "type": "object"
+    },
+    "Signal8ListActiveStocksConfig": {
+      "additionalProperties": false,
+      "description": "Most active stocks by volume.",
+      "properties": {
+        "operation": {
+          "const": "list_active_stocks",
+          "default": "list_active_stocks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "limit",
+          "title": "Limit"
+        },
+        "marketCapMin": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "marketCapMin",
+          "title": "Marketcapmin"
+        },
+        "marketCapMax": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "marketCapMax",
+          "title": "Marketcapmax"
+        },
+        "session": {
+          "anyOf": [
+            {
+              "const": "regular",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only `regular` is accepted on this route. `premarket` /\n`afterhours` produce `400 INVALID_INPUT`.",
+          "title": "Session"
+        }
+      },
+      "title": "Signal8ListActiveStocksConfig",
+      "type": "object"
+    },
+    "Signal8ListCompanyNewsConfig": {
+      "additionalProperties": false,
+      "description": "Get company news.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_company_news",
+          "default": "list_company_news",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of articles (1-50, default 20)",
+          "title": "Limit"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number for pagination (default 0)",
+          "title": "Page"
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "Signal8ListCompanyNewsConfig",
+      "type": "object"
+    },
+    "Signal8ListFilingsConfig": {
+      "additionalProperties": false,
+      "description": "Search and list filings.",
+      "properties": {
+        "operation": {
+          "const": "list_filings",
+          "default": "list_filings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ciks": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated CIK numbers (e.g. \"0000320193,0001018724\").",
+          "title": "Ciks"
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Results per page (default: 25, max: 100).",
+          "title": "Pagesize"
+        },
+        "formTypes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated form types (e.g. \"10-K,10-Q,8-K,S-1\").",
+          "title": "Formtypes"
+        },
+        "dateFrom": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date filter (YYYY-MM-DD).",
+          "title": "Datefrom"
+        },
+        "dateTo": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date filter (YYYY-MM-DD).",
+          "title": "Dateto"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text query over filing bodies. Syntax: unquoted words must ALL appear; \"quoted phrase\" = exact wording; OR between alternatives; -word / -\"phrase\" to exclude; `w1 NEAR/10 w2` (also `NEAR(10)`, bare `NEAR` = 10) = words close together; `word*` = prefix of 4+ letters; `$AAPL` or a capitalised ticker scopes to that company; a form code (`8-K`), `item 5.02` / `8-K 1.05` and a bare year (`2024`) scope to that form / 8-K item / year. The archive's reading of the query is reported in `meta.understanding` (disable with understand=false). Ranked when sort=relevance. Rows then carry `rank` and `snippet`.",
+          "title": "Q"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "newest",
+                "relevance"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "newest (acceptance time, default) or relevance (requires q; best match first). Any other value is a 400.",
+          "title": "Sort",
+          "enum": [
+            "newest",
+            "relevance"
+          ],
+          "x-enum-searchable": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque keyset cursor from a previous response's pagination.nextCursor. Use instead of page for deep, stable paging.",
+          "title": "Cursor"
+        },
+        "acceptedFrom": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Acceptance-time lower bound (ISO-8601). Rows without an acceptance time compare on filing date.",
+          "title": "Acceptedfrom"
+        },
+        "acceptedTo": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Acceptance-time upper bound (ISO-8601).",
+          "title": "Acceptedto"
+        }
+      },
+      "title": "Signal8ListFilingsConfig",
+      "type": "object"
+    },
+    "Signal8ListGainersConfig": {
+      "additionalProperties": false,
+      "description": "Top gainers (close-to-close or extended-hours).",
+      "properties": {
+        "operation": {
+          "const": "list_gainers",
+          "default": "list_gainers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 20,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results (1-20, default 10)",
+          "title": "Limit"
+        },
+        "marketCapMin": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "marketCapMin",
+          "title": "Marketcapmin"
+        },
+        "marketCapMax": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "marketCapMax",
+          "title": "Marketcapmax"
+        },
+        "session": {
+          "anyOf": [
+            {
+              "enum": [
+                "premarket",
+                "regular",
+                "afterhours"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Session window. `regular` (default) ranks by close-to-close.\n`premarket` uses `pre_market_change_percent`; `afterhours` uses\n`after_hours_change_percent`. Extended-hours sessions only\nreturn rows whose corresponding extended-hours columns are\npopulated by the most recent ingest.",
+          "title": "Session",
+          "enum": [
+            "premarket",
+            "regular",
+            "afterhours"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "Signal8ListGainersConfig",
+      "type": "object"
+    },
+    "Signal8ListInsiderTransactionsConfig": {
+      "additionalProperties": false,
+      "description": "Get insider transaction history.",
+      "properties": {
+        "ticker": {
+          "description": "Company ticker, for example AAPL.",
+          "maxLength": 5,
+          "minLength": 1,
+          "pattern": "^[A-Za-z]{1,5}$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_insider_transactions",
+          "default": "list_insider_transactions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of results (1-500, default 100)",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of results to skip (default 0)",
+          "title": "Offset"
+        },
+        "year": {
+          "anyOf": [
+            {
+              "maximum": 2100,
+              "minimum": 2000,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only transactions in this calendar year (2000-2100).",
+          "title": "Year"
+        },
+        "month": {
+          "anyOf": [
+            {
+              "maximum": 12,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only transactions in this month (1-12). Combine with `year`.",
+          "title": "Month"
+        },
+        "transactionCode": {
+          "anyOf": [
+            {
+              "enum": [
+                "P",
+                "S",
+                "A",
+                "M",
+                "F",
+                "G",
+                "C",
+                "W",
+                "J",
+                "K",
+                "L",
+                "U",
+                "H",
+                "D",
+                "I",
+                "O",
+                "Z"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only transactions with this SEC Form 4 transaction code\n(case-insensitive). Common codes: `P` purchase, `S` sale, `A` award,\n`M` option exercise, `F` tax withholding, `G` gift. Any other value\nreturns 400 `INVALID_INPUT`.",
+          "title": "Transactioncode",
+          "enum": [
+            "P",
+            "S",
+            "A",
+            "M",
+            "F",
+            "G",
+            "C",
+            "W",
+            "J",
+            "K",
+            "L",
+            "U",
+            "H",
+            "D",
+            "I",
+            "O",
+            "Z"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "Signal8ListInsiderTransactionsConfig",
+      "type": "object"
+    },
+    "Signal8ListLosersConfig": {
+      "additionalProperties": false,
+      "description": "Top losers (close-to-close or extended-hours).",
+      "properties": {
+        "operation": {
+          "const": "list_losers",
+          "default": "list_losers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "limit",
+          "title": "Limit"
+        },
+        "marketCapMin": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "marketCapMin",
+          "title": "Marketcapmin"
+        },
+        "marketCapMax": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "marketCapMax",
+          "title": "Marketcapmax"
+        },
+        "session": {
+          "anyOf": [
+            {
+              "enum": [
+                "premarket",
+                "regular",
+                "afterhours"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Session window. `regular` (default) ranks by close-to-close.\n`premarket` uses `pre_market_change_percent`; `afterhours` uses\n`after_hours_change_percent`.",
+          "title": "Session",
+          "enum": [
+            "premarket",
+            "regular",
+            "afterhours"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "Signal8ListLosersConfig",
+      "type": "object"
+    },
+    "Signal8OnNewFilingConfig": {
+      "description": "Watch the newest 100 SEC filings in this scope each interval.\n\nHigh-volume scopes can exceed this rolling window: use a company filter\nand a short schedule. Signal8 archive coverage is not proof of SEC absence.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_filing",
+          "default": "on_new_filing",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "On New SEC Filing",
+          "x-is-trigger": true
+        },
+        "ciks": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated company CIKs. Narrow busy feeds to avoid exceeding the 100-filing polling window.",
+          "title": "Ciks"
+        },
+        "formTypes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated SEC forms, for example 10-K,10-Q,8-K.",
+          "title": "Formtypes"
+        }
+      },
+      "title": "Signal8OnNewFilingConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "Signal8SearchCompaniesConfig": {
+      "additionalProperties": false,
+      "description": "Search companies.",
+      "properties": {
+        "operation": {
+          "const": "search_companies",
+          "default": "search_companies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "description": "Search query (company name or ticker), 1-200 characters after trimming.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Q",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of results (1-100, default 20)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "Signal8SearchCompaniesConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_batch_quotes": "#/$defs/Signal8GetBatchQuotesConfig",
+          "get_candles": "#/$defs/Signal8GetCandlesConfig",
+          "get_cash_position": "#/$defs/Signal8GetCashPositionConfig",
+          "get_company": "#/$defs/Signal8GetCompanyConfig",
+          "get_compliance": "#/$defs/Signal8GetComplianceConfig",
+          "get_dilution_instruments": "#/$defs/Signal8GetDilutionInstrumentsConfig",
+          "get_dilution_risk": "#/$defs/Signal8GetDilutionRiskConfig",
+          "get_dilution_snapshot": "#/$defs/Signal8GetDilutionSnapshotConfig",
+          "get_earnings": "#/$defs/Signal8GetEarningsConfig",
+          "get_financials": "#/$defs/Signal8GetFinancialsConfig",
+          "get_float": "#/$defs/Signal8GetFloatConfig",
+          "get_ownership": "#/$defs/Signal8GetOwnershipConfig",
+          "get_quote": "#/$defs/Signal8GetQuoteConfig",
+          "get_short_interest": "#/$defs/Signal8GetShortInterestConfig",
+          "list_active_stocks": "#/$defs/Signal8ListActiveStocksConfig",
+          "list_company_news": "#/$defs/Signal8ListCompanyNewsConfig",
+          "list_filings": "#/$defs/Signal8ListFilingsConfig",
+          "list_gainers": "#/$defs/Signal8ListGainersConfig",
+          "list_insider_transactions": "#/$defs/Signal8ListInsiderTransactionsConfig",
+          "list_losers": "#/$defs/Signal8ListLosersConfig",
+          "on_new_filing": "#/$defs/Signal8OnNewFilingConfig",
+          "search_companies": "#/$defs/Signal8SearchCompaniesConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Signal8SearchCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8GetCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8GetQuoteConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8GetCandlesConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8ListCompanyNewsConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8GetFinancialsConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8GetEarningsConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8GetShortInterestConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8GetFloatConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8GetCashPositionConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8GetDilutionRiskConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8GetDilutionSnapshotConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8GetDilutionInstrumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8GetOwnershipConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8ListInsiderTransactionsConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8GetComplianceConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8ListGainersConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8ListLosersConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8ListActiveStocksConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8GetBatchQuotesConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8ListFilingsConfig"
+        },
+        {
+          "$ref": "#/$defs/Signal8OnNewFilingConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Signal8APIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Signal8 Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Get the latest AAPL quote",
+    "Watch new SEC filings for these companies",
+    "Assess dilution risk for VNRX"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
