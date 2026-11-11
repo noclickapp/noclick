@@ -2022,6 +2022,162 @@
       "title": "WorkableOffersidapproveCopyConfig",
       "type": "object"
     },
+    "WorkableOnEventConfig": {
+      "description": "Receive candidate and employee events registered with Workable automatically.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Workable Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "candidate_created",
+          "description": "The Workable event that starts the workflow.",
+          "enum": [
+            "candidate_created",
+            "candidate_moved",
+            "candidate_deleted",
+            "employee_created",
+            "employee_updated",
+            "employee_published",
+            "onboarding_completed",
+            "timeoff_updated"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "job_shortcode": {
+          "default": "",
+          "description": "Candidate events only. Leave blank for all jobs.",
+          "title": "Job shortcode",
+          "type": "string"
+        },
+        "stage_slug": {
+          "default": "",
+          "description": "Candidate events only, for example hired. Leave blank for all stages.",
+          "title": "Stage slug",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Workable automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "WorkableOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "WorkablePerformanceReviewTemplatesCreateConfig": {
       "description": "Creates a performance review master template for the account. Required scope: `w_reviews`. Requires a user token with permission to manage performance templates.\n\nThe `questionnaire` is normalised before being persisted \u2014 `position` is auto-assigned when omitted, and `type` / `semantic_type` accept either snake_case (e.g. `star_rated`) or PascalCase (e.g. `StarRated`). The response is returned in snake_case.",
       "properties": {
@@ -3533,6 +3689,7 @@
           "new-jobsshortcoderecruiters": "#/$defs/WorkableNewJobsshortcoderecruitersConfig",
           "offersidapprove-copy": "#/$defs/WorkableOffersidapproveCopyConfig",
           "offersidapprove-copy-1": "#/$defs/WorkableOffersidapproveCopy1Config",
+          "on_event": "#/$defs/WorkableOnEventConfig",
           "performance-review-templates-create": "#/$defs/WorkablePerformanceReviewTemplatesCreateConfig",
           "performance-review-templates-get": "#/$defs/WorkablePerformanceReviewTemplatesGetConfig",
           "performance-review-templates-list": "#/$defs/WorkablePerformanceReviewTemplatesListConfig",
@@ -3817,6 +3974,9 @@
         },
         {
           "$ref": "#/$defs/WorkableSubscriptionsidConfig"
+        },
+        {
+          "$ref": "#/$defs/WorkableOnEventConfig"
         }
       ],
       "title": "Config"

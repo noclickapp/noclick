@@ -2,13 +2,17 @@
 
 The operation catalog is a snapshot of the callable endpoints in Workable's
 official API index: https://workable.readme.io/llms.txt. It excludes the
-separate public jobs endpoint and webhook event payload documentation. The
+separate public jobs endpoint. Trigger delivery and signing follow
+https://workable.readme.io/reference/webhook-subscriptions-candidates-employees
+and its candidate-events and employee-events payload references. The
 offer approval path removes the documentation's stray `` (COPY)`` suffix;
 the page's title and endpoint description both identify ``/offers/:id/approve``.
 """
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 import logging
 import re
@@ -21,6 +25,7 @@ from pydantic import AnyHttpUrl, BaseModel, ConfigDict, Field, create_model, fie
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 
 logger = logging.getLogger(__name__)
 
@@ -1946,8 +1951,30 @@ def _operation_model(spec: dict[str, Any]) -> type[BaseModel]:
 WORKABLE_CONFIGS = {
     name: _operation_model(spec) for name, spec in WORKABLE_OPERATIONS.items()
 }
+WORKABLE_TRIGGER_EVENTS = (
+    "candidate_created", "candidate_moved", "candidate_deleted",
+    "employee_created", "employee_updated", "employee_published",
+    "onboarding_completed", "timeoff_updated",
+)
+
+
+class WorkableOnEventConfig(WebhookTriggerConfigBase):
+    """Receive candidate and employee events registered with Workable automatically."""
+
+    operation: Literal["on_event"] = Field("on_event", json_schema_extra={
+        "const": "on_event", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On Workable Event",
+    })
+    event_type: Literal[*WORKABLE_TRIGGER_EVENTS] = Field(
+        "candidate_created", title="Event", description="The Workable event that starts the workflow.")
+    job_shortcode: str = Field("", title="Job shortcode", description="Candidate events only. Leave blank for all jobs.")
+    stage_slug: str = Field("", title="Stage slug", description="Candidate events only, for example hired. Leave blank for all stages.")
+    webhook_url: Optional[str] = Field(None, title="Webhook URL", description="Registered with Workable automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
 WorkableConfig = Annotated[
-    Union[tuple(WORKABLE_CONFIGS.values())], Field(discriminator="operation")
+    Union[tuple(WORKABLE_CONFIGS.values()) + (WorkableOnEventConfig,)], Field(discriminator="operation")
 ]
 
 
@@ -1964,7 +1991,7 @@ def _response_payload(response: httpx.Response) -> Any:
         return {"text": response.text}
 
 
-class WorkableNode(WorkflowNode):
+class WorkableNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-workable"
     """Workable hiring and employee workflows."""
 
@@ -1980,10 +2007,118 @@ class WorkableNode(WorkflowNode):
     def get_config_model(cls):
         return WorkableNodeConfig
 
+    @staticmethod
+    def _webhook_account(credential):
+        credential = WorkableAccessTokenCredential.model_validate(credential)
+        return (
+            f"https://{credential.subdomain}.workable.com/spi/v3",
+            {"Authorization": f"Bearer {credential.access_token}", "Accept": "application/json"},
+            credential,
+        )
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        """POST /subscriptions; account-token deliveries use that token as their HMAC key."""
+        trigger = WorkableOnEventConfig.model_validate(config)
+        base, headers, account = cls._webhook_account(credential)
+        body = {"target": str(AnyHttpUrl(webhook_url)), "event": trigger.event_type}
+        if trigger.event_type.startswith("candidate_") and (trigger.job_shortcode or trigger.stage_slug):
+            body["args"] = {"account_id": account.subdomain, "job_shortcode": trigger.job_shortcode,
+                            "stage_slug": trigger.stage_slug}
+        async with httpx.AsyncClient(timeout=30) as client:
+            response = await client.post(f"{base}/subscriptions", headers=headers, json=body)
+            response.raise_for_status()
+            subscription_id = response.json().get("id")
+        if subscription_id is None or not str(subscription_id):
+            raise ValueError("Workable did not return a subscription ID")
+        return {"external_webhook_id": str(subscription_id), "signing_secret": account.access_token}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        subscription_id = config.get("external_webhook_id")
+        if subscription_id is None:
+            return
+        base, headers, _ = cls._webhook_account(credential)
+        async with httpx.AsyncClient(timeout=30) as client:
+            response = await client.delete(f"{base}/subscriptions/{quote(str(subscription_id), safe='')}", headers=headers)
+            if response.status_code not in (404, 410):
+                response.raise_for_status()
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        trigger = WorkableOnEventConfig.model_validate(config)
+        fields = {"event_type": trigger.event_type}
+        if trigger.event_type.startswith("candidate_"):
+            fields.update(job_shortcode=trigger.job_shortcode, stage_slug=trigger.stage_slug)
+        return fields
+
+    @classmethod
+    def verify_webhook_signature(cls, body: bytes, headers: dict[str, str], config: dict[str, Any]) -> bool:
+        """Workable's Encryption docs specify HMAC SHA256 over the unchanged request payload."""
+        secret = config.get("signing_secret")
+        signature = next((v for k, v in headers.items() if k.lower() == "x-workable-signature"), "")
+        if not secret or not isinstance(signature, str) or not re.fullmatch(r"[0-9a-f]{64}", signature):
+            return False
+        expected = hmac.new(str(secret).encode(), body, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(expected, signature)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event = payload.get("event_type")
+        selected = config.get("event_type", "candidate_created")
+        if selected == "timeoff_updated":
+            return event in ("timeoff_request_approved", "timeoff_request_reverted")
+        return event == selected and selected in WORKABLE_TRIGGER_EVENTS
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        """Describe documented resources without guessing an actor or an employee profile URL."""
+        if not isinstance(output, dict):
+            return None
+        kind = output.get("event_type")
+        if kind not in (*WORKABLE_TRIGGER_EVENTS, "timeoff_request_approved", "timeoff_request_reverted"):
+            return None
+        data = output.get("data")
+        if not isinstance(data, dict):
+            return None
+        resource = output.get("resource_type")
+        resource_id = data.get("id") if resource == "candidate" else output.get("id")
+        if not resource_id:
+            return None
+        title = f"Workable {str(kind).replace('_', ' ')}"
+        lines = [title, f"{resource} ID: {resource_id}", f"At: {output.get('fired_at')}"]
+        if resource == "candidate":
+            job = data.get("job") or {}
+            name = data.get("name") or resource_id
+            title += f": {name}"
+            lines += [f"Candidate: {name} ({data.get('email')})", f"Job: {job.get('title')} ({job.get('shortcode')})",
+                      f"Stage: {data.get('stage')}", f"Profile: {data.get('profile_url')}",
+                      f"Summary: {str(data.get('summary') or '')[:1500]}",
+                      f"Cover letter: {str(data.get('cover_letter') or '')[:1500]}",
+                      f"To act: job-candidates-show id={resource_id}; move-candidate id={resource_id}."]
+        elif kind == "employee_created":
+            name = f"{data.get('firstname') or ''} {data.get('lastname') or ''}".strip()
+            title += f": {name or resource_id}"
+            lines += [f"Employee: {name}", f"Role: {data.get('job_title')}", f"Starts: {data.get('start_date')}"]
+        elif kind == "employee_published":
+            lines.append(f"Work email: {data.get('workEmail')}")
+        elif kind == "onboarding_completed":
+            employee = data.get("employeeFormStep") or {}
+            lines.append(f"Employee: {employee.get('firstname')} {employee.get('lastname')}")
+        elif kind in ("timeoff_request_approved", "timeoff_request_reverted"):
+            lines += [f"Time off request: {data.get('id')} — {data.get('category_name')} ({data.get('state')})",
+                      f"Period: {data.get('formatted_period')}", f"Updated by: {data.get('updated_by')}"]
+        if resource == "employee":
+            lines += [f"Details: {json.dumps(data, ensure_ascii=False)[:3500]}",
+                      f"To act: employeesid id={resource_id} to fetch the employee record."]
+        return {"text": "\n".join(lines), "title": title, "conversation_key": f"{resource}:{resource_id}"}
+
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         started = time.monotonic()
         if not self.config or not isinstance(self.config, WorkableNodeConfig):
             raise ValueError("Workable configuration is required")
+        if isinstance(self.config.config, WorkableOnEventConfig):
+            return self.no_event_output("on_event")
         credentials = self.config.credentials
         if not credentials:
             raise ValueError("Workable credentials are required")

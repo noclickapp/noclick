@@ -1,6 +1,9 @@
 """Mocked contract tests for every Workable operation in the official reference."""
 
+import hashlib
+import hmac
 import json
+from pathlib import Path
 from urllib.parse import quote
 
 import httpx
@@ -175,3 +178,100 @@ def test_subscription_accepts_existing_json_string_config():
     config = WORKABLE_CONFIGS["webhook-subscriptions"](
         body='{"target":"https://example.test/hook","event":"employee_created"}')
     assert config.body.event == "employee_created"
+
+
+# Real example deliveries from Workable's candidate-events and employee-events pages.
+EVENTS = json.loads((Path(__file__).parent / "fixtures/workable/events.json").read_text())
+
+
+def test_trigger_schema_and_lifecycle_fields():
+    schema = module.WorkableOnEventConfig.model_json_schema()
+    assert schema["properties"]["operation"]["x-is-trigger"] is True
+    assert schema["x-requires-webhook"] is True
+    config = module.WorkableOnEventConfig(external_webhook_id=42, signing_secret="secret")
+    assert config.model_dump()["signing_secret"] == "secret"
+    assert config.external_webhook_id == 42
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("event_type", module.WORKABLE_TRIGGER_EVENTS)
+async def test_trigger_registers_and_unregisters_documented_subscription(event_type, monkeypatch):
+    seen = []
+    real_client = httpx.AsyncClient
+    def respond(request):
+        seen.append(request)
+        return httpx.Response(201, json={"id": 42}) if request.method == "POST" else httpx.Response(204)
+    monkeypatch.setattr(module.httpx, "AsyncClient", lambda **kw: real_client(transport=httpx.MockTransport(respond), **kw))
+    config = {"operation": "on_event", "event_type": event_type, "job_shortcode": "GROOV005", "stage_slug": "hired"}
+    credential = {"access_token": "test-token", "subdomain": "acme"}
+    registered = await WorkableNode._register_external_webhook(webhook_url="https://example.test/hook", credential=credential, config=config, node_id="test")
+    assert registered == {"external_webhook_id": "42", "signing_secret": "test-token"}
+    body = json.loads(seen[0].content)
+    assert body["target"] == "https://example.test/hook"
+    assert body["event"] == event_type
+    assert seen[0].url == "https://acme.workable.com/spi/v3/subscriptions"
+    assert seen[0].headers["authorization"] == "Bearer test-token"
+    if event_type.startswith("candidate_"):
+        assert body["args"] == {"account_id": "acme", "job_shortcode": "GROOV005", "stage_slug": "hired"}
+    else:
+        assert "args" not in body
+    await WorkableNode._unregister_external_webhook(credential=credential, config={**config, **registered}, node_id="test")
+    assert seen[1].method == "DELETE"
+    assert seen[1].url == "https://acme.workable.com/spi/v3/subscriptions/42"
+
+
+@pytest.mark.asyncio
+async def test_registration_failure_and_deleted_subscription(monkeypatch):
+    real_client = httpx.AsyncClient
+    monkeypatch.setattr(module.httpx, "AsyncClient", lambda **kw: real_client(transport=httpx.MockTransport(lambda r: httpx.Response(409)), **kw))
+    kwargs = dict(credential={"access_token": "test-token", "subdomain": "acme"}, config={"operation": "on_event"}, node_id="test")
+    with pytest.raises(httpx.HTTPStatusError):
+        await WorkableNode._register_external_webhook(webhook_url="https://example.test/hook", **kwargs)
+    monkeypatch.setattr(module.httpx, "AsyncClient", lambda **kw: real_client(transport=httpx.MockTransport(lambda r: httpx.Response(404)), **kw))
+    await WorkableNode._unregister_external_webhook(**{**kwargs, "config": {"external_webhook_id": "42"}})
+
+
+@pytest.mark.parametrize("event", EVENTS)
+def test_documented_deliveries_signature_routing_and_agent_turn(event):
+    payload = EVENTS[event]["body"]
+    raw = json.dumps(payload).encode()
+    signature = hmac.new(b"account-token", raw, hashlib.sha256).hexdigest()
+    config = {"operation": "on_event", "event_type": "timeoff_updated" if event.startswith("timeoff_") else event, "signing_secret": "account-token"}
+    headers = {"X-Workable-Signature": signature}
+    assert WorkableNode.verify_webhook_signature(raw, headers, config)
+    assert WorkableNode.verify_webhook_signature(raw, {"x-workable-signature": signature}, config)
+    assert not WorkableNode.verify_webhook_signature(raw+b" ", headers, config)
+    assert not WorkableNode.verify_webhook_signature(raw, headers, {"signing_secret": "other"})
+    assert not WorkableNode.verify_webhook_signature(raw, {"X-Workable-Signature": "é"}, config)
+    assert not WorkableNode.verify_webhook_signature(raw, {}, config)
+    assert not WorkableNode.verify_webhook_signature(raw, headers, {})
+    assert WorkableNode.filter_trigger_payload(payload, config)
+    assert not WorkableNode.filter_trigger_payload(payload, {"event_type": "unknown"})
+    output = WorkableNode.resolve_trigger_payload(payload, config)
+    assert output is payload
+    agent = WorkableNode.resolve_agent_event(output)
+    assert agent["conversation_key"] == ("candidate:3fc9a80f" if event == "candidate_moved" else "employee:"+payload["id"])
+    assert payload["event_type"].replace("_", " ") in agent["text"]
+    assert "To act:" in agent["text"]
+    assert payload["fired_at"] in agent["text"]
+    if event == "candidate_moved":
+        assert "Jj Botha" in agent["text"] and "Office Manager" in agent["text"]
+        assert payload["data"]["profile_url"] in agent["text"]
+    if event.startswith("timeoff_"):
+        assert payload["data"]["updated_by"] in agent["text"]
+
+
+@pytest.mark.asyncio
+async def test_trigger_manual_run_has_no_event():
+    full = WorkableNodeConfig(config=module.WorkableOnEventConfig())
+    node = WorkableNode("test", "automation-workable", {}, config=full)
+    output = await node.execute({"unrelated": {"secret": "never copy"}})
+    assert output["status"] == "no_event" and output["data"] == {}
+    assert WorkableNode.resolve_agent_event(output) is None
+
+
+def test_trigger_registration_fingerprint_changes_with_candidate_filters():
+    base = {"operation": "on_event", "event_type": "candidate_created"}
+    assert WorkableNode.registration_fingerprint_fields(base) != WorkableNode.registration_fingerprint_fields({**base, "stage_slug": "hired"})
+    employee = {"operation": "on_event", "event_type": "employee_created"}
+    assert WorkableNode.registration_fingerprint_fields(employee) == WorkableNode.registration_fingerprint_fields({**employee, "stage_slug": "hired"})

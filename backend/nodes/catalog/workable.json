@@ -590,11 +590,18 @@
    "category": "Webhooks",
    "description": "Unsubscribe from an event. Required scope: `r_candidates` or `r_employees`. Accessible with all token types.",
    "is_trigger": false
+  },
+  {
+   "name": "on_event",
+   "display_name": "On Workable Event",
+   "category": "Triggers",
+   "description": "Receive candidate and employee events registered with Workable automatically.",
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null
 }
