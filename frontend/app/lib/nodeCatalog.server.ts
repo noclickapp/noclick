@@ -227,15 +227,20 @@ const HARNESS_AGENT_LABELS: Record<string, string> = {
     hermes: 'Hermes',
 };
 
-let _credentialMarks: Map<string, string[]> | null = null;
+let _all: Record<string, SerializedNodeMeta> | null = null;
 
 /** Serialized icon metadata for EVERY node type (for the authed app's icon paths),
  *  plus synthetic `agent:<harness>` entries so light surfaces (the workflow-browser
- *  card pill) can show an agent node's actual harness mark without brand imports. */
+ *  card pill) can show an agent node's actual harness mark without brand imports.
+ *  The same for every request, so built once per server process: building it walks
+ *  every node's credential schema, about 200 ms, which every dashboard document paid. */
 export function getAllSerializedNodeMeta(): Record<string, SerializedNodeMeta> {
+    return (_all ??= buildAllSerializedNodeMeta());
+}
+
+function buildAllSerializedNodeMeta(): Record<string, SerializedNodeMeta> {
     const map = getSerializedNodeMetaMap(listAllNodeTypes());
-    _credentialMarks ??= credentialMarks((type) => !!map[type]?.iconHtml);
-    for (const [type, credentialKeys] of _credentialMarks) {
+    for (const [type, credentialKeys] of credentialMarks((type) => !!map[type]?.iconHtml)) {
         if (map[type]) map[type] = { ...map[type], credentialKeys };
     }
     for (const type of Object.keys(map)) {
