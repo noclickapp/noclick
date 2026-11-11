@@ -86,6 +86,10 @@ def greenmail():
         f"-Dgreenmail.users=ana:{ANA_PASSWORD}@acme.test,bob:{BOB_PASSWORD}@acme.test",
         "-Dgreenmail.tls.keystore.file=/certs/test.p12", "-Dgreenmail.tls.keystore.password=changeit",
     ])
+    try:
+        client.images.get(IMAGE)
+    except docker.errors.ImageNotFound:  # containers.create, unlike run, doesn't pull
+        client.images.pull(IMAGE)
     container = client.containers.create(
         IMAGE, environment={"GREENMAIL_OPTS": opts},
         ports={"3993/tcp": None, "3465/tcp": None, "3143/tcp": None, "3025/tcp": None},
