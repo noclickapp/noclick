@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/redirection.svg",
+  "source": "https://redirection.io/media/logos/horizontal-logo-blue-text-black.svg",
+  "found_at": "https://api.redirection.io/docs.json (info.x-logo.url)",
+  "retrieved": "2026-11-11",
+  "license": "redirection.io trademark; nominative use to identify the service.",
+  "edits": [
+    "Removed wordmark paths; retained the original blue symbol path unchanged.",
+    "Cropped viewBox to 0 0 150 150; removed fixed dimensions."
+  ],
+  "notes": "The blue circular symbol is the company mark, with transparent arrow counters and no added background. Blue reads on light and dark tiles.",
+  "sha256": "1c98f06b643b0cea6f8f526f4bb82f8fe49fa3bbd462c9416ae4c612b4b93302"
+}

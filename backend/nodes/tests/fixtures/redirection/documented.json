@@ -1,0 +1,241 @@
+{
+  "source": "https://redirection.io/documentation/developer-documentation/public-api",
+  "organization": {
+    "id": "859fb30e-5c02-11eb-b66c-fa163e4748ca",
+    "name": "ACME agency",
+    "projects": [
+      {
+        "id": "060201ae-88ad-4043-bd02-4661be4fcbd0",
+        "metadata": [],
+        "name": "ACME project",
+        "plan": "starter_1000",
+        "slug": "acme-project"
+      }
+    ],
+    "slug": "acme-agency"
+  },
+  "rules": [
+    {
+      "id": "20fdf49e-85db-461f-bde9-033974870329",
+      "trigger": {
+        "source": "/blog/some-source-url",
+        "methods": [],
+        "requestHeaders": [],
+        "responseStatusCodes": [],
+        "ipAddress": null,
+        "sampling": null
+      },
+      "actions": [
+        {
+          "location": "/blog/blog-post-new-url",
+          "statusCode": 302,
+          "type": "redirection"
+        }
+      ],
+      "markers": [],
+      "variables": [],
+      "examples": [],
+      "priority": 10,
+      "description": "This rule redirects an article of the blog to its new URL",
+      "metadata": [],
+      "enabled": true,
+      "tags": [
+        "CMS",
+        "blog",
+        "created with the API"
+      ]
+    }
+  ],
+  "created_redirection": [
+    {
+      "id": "0184097b-82dd-3cf6-1199-e39f730f2cce",
+      "status": "add",
+      "rule": {
+        "id": "12b93f68-32b8-4efb-9484-241c8421bb8a",
+        "trigger": {
+          "ipAddress": null,
+          "methods": [],
+          "requestHeaders": [],
+          "responseStatusCodes": [],
+          "sampling": null,
+          "source": "/blog/some-source-url"
+        },
+        "actions": [
+          {
+            "location": "/blog/blog-post-new-url",
+            "statusCode": 302,
+            "type": "redirection"
+          }
+        ],
+        "description": null,
+        "enabled": true,
+        "examples": [],
+        "markers": [],
+        "metadata": [],
+        "priority": 0,
+        "tags": [],
+        "variables": []
+      }
+    }
+  ],
+  "drafts": [
+    {
+      "id": "01840988-96f5-f1df-9841-69af039d6aa6",
+      "rule": {
+        "actions": [
+          {
+            "location": "/blog/blog-post-new-url",
+            "statusCode": 302,
+            "type": "redirection"
+          }
+        ],
+        "description": "This rule redirects an article of the blog to its new URL",
+        "enabled": false,
+        "examples": [],
+        "id": "20fdf49e-85db-461f-bde9-033974870329",
+        "markers": [],
+        "metadata": [],
+        "priority": 10,
+        "tags": [
+          "CMS",
+          "blog",
+          "created with the API"
+        ],
+        "trigger": {
+          "ipAddress": null,
+          "methods": [],
+          "requestHeaders": [],
+          "responseStatusCodes": [],
+          "sampling": null,
+          "source": "/blog/some-source-url"
+        },
+        "variables": []
+      },
+      "status": "add"
+    }
+  ],
+  "contract_source": "https://api.redirection.io/docs.json",
+  "contract_version": "2.0.0",
+  "requests": {
+    "get_organization": {
+      "method": "GET",
+      "path": "/organization",
+      "status": 200
+    },
+    "list_projects": {
+      "method": "GET",
+      "path": "/projects",
+      "status": 200
+    },
+    "get_project": {
+      "method": "GET",
+      "path": "/projects/{id}",
+      "status": 200
+    },
+    "create_project": {
+      "method": "POST",
+      "path": "/projects",
+      "status": 201
+    },
+    "delete_project": {
+      "method": "DELETE",
+      "path": "/projects/{id}",
+      "status": 204
+    },
+    "list_rules": {
+      "method": "GET",
+      "path": "/rules",
+      "status": 200
+    },
+    "get_rule": {
+      "method": "GET",
+      "path": "/rules/{id}",
+      "status": 200
+    },
+    "create_redirection": {
+      "method": "POST",
+      "path": "/redirections",
+      "status": 201
+    },
+    "create_rule": {
+      "method": "POST",
+      "path": "/rules",
+      "status": 201
+    },
+    "update_rule": {
+      "method": "PUT",
+      "path": "/rules/{id}",
+      "status": 200
+    },
+    "delete_rule": {
+      "method": "DELETE",
+      "path": "/rules/{id}",
+      "status": 200
+    },
+    "get_rule_statistics": {
+      "method": "GET",
+      "path": "/rules/{id}/statistics",
+      "status": 200
+    },
+    "list_drafts": {
+      "method": "GET",
+      "path": "/drafts",
+      "status": 200
+    },
+    "get_draft": {
+      "method": "GET",
+      "path": "/drafts/{id}",
+      "status": 200
+    },
+    "delete_draft": {
+      "method": "DELETE",
+      "path": "/drafts/{id}",
+      "status": 204
+    },
+    "publish_project": {
+      "method": "POST",
+      "path": "/projects/{id}/publish",
+      "status": 204
+    },
+    "list_domains": {
+      "method": "GET",
+      "path": "/domains",
+      "status": 200
+    },
+    "get_domain": {
+      "method": "GET",
+      "path": "/domains/{id}",
+      "status": 200
+    },
+    "create_domain": {
+      "method": "POST",
+      "path": "/domains",
+      "status": 201
+    },
+    "delete_domain": {
+      "method": "DELETE",
+      "path": "/domains/{id}",
+      "status": 204
+    },
+    "list_instances": {
+      "method": "GET",
+      "path": "/instances",
+      "status": 200
+    },
+    "get_instance": {
+      "method": "GET",
+      "path": "/instances/{id}",
+      "status": 200
+    },
+    "delete_instance": {
+      "method": "DELETE",
+      "path": "/instances/{id}",
+      "status": 204
+    },
+    "list_ips": {
+      "method": "GET",
+      "path": "/ips",
+      "status": 200
+    }
+  }
+}
