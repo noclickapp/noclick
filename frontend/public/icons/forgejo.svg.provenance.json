@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/forgejo.svg",
+  "source": "https://forgejo.org/favicon.svg",
+  "found_at": "https://forgejo.org/ (<link rel=icon type=svg>)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "cleaned only"
+  ],
+  "notes": "Current file already right; final is a cleaned copy with provenance now proven. Codeberg (the brand repo) returned 504.",
+  "license": "Forgejo brand mark, used nominatively to identify the connected service; trademark rights remain with Forgejo.",
+  "sha256": "7835b918548fee3b6c429c4c812489cb52d23ed54615f9318a89731a7b4877aa"
+}

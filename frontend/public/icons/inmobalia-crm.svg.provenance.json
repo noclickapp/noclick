@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/inmobalia-crm.svg",
+  "source": "https://www.inmoba.com/wp-content/themes/inmoba/src/images/inmoba.svg",
+  "found_at": "https://www.inmoba.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "kept the seven blue dots (elements 0-6), removed the grey \"inmoba\" wordmark",
+    "cropped the viewBox to the mark"
+  ],
+  "notes": "No white background, readable on both themes; a monochrome safari-pinned-tab.svg also exists but the coloured logo is the brand.",
+  "license": "Inmoba (Inmobalia CRM) brand mark, used nominatively to identify the connected service; trademark rights remain with Inmoba (Inmobalia CRM).",
+  "sha256": "8da99db851f582ea516dacc7668455a541b16443225ec27b7571395a5ee3f4c9"
+}

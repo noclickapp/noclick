@@ -27,7 +27,7 @@ describe('native PredictLeads wiring', () => {
     beforeEach(() => invalidateCredentialsCache());
     it('registers the native editor and sourced brand asset', () => {
         expect(NODE_DEFINITION_FILES.filter(([nodeType]) => nodeType === type)).toEqual([[type, 'integrations/predictleads']]);
-        expect(renderToStaticMarkup(createElement(PredictLeadsNode.Icon as ComponentType<any>))).toContain('/icons/predictleads-preferred-brand.svg');
+        expect(renderToStaticMarkup(createElement(PredictLeadsNode.Icon as ComponentType<any>))).toContain('/icons/predictleads.svg');
         expect(PredictLeadsNode.iconColor).toBe('');
     });
     it('keeps the supplied header pair masked and manual, with an explicit local credit grant', () => {
@@ -62,7 +62,7 @@ describe('native PredictLeads wiring', () => {
     });
     it('uses the same brand asset for saved credentials', () => {
         setNodeIconData({ [type]: { type, label: PredictLeadsNode.label, description: '', iconColor: '',
-            iconHtml: '<img src="/icons/predictleads-preferred-brand.svg" />', dimensions: PredictLeadsNode.dimensions,
+            iconHtml: '<img src="/icons/predictleads.svg" />', dimensions: PredictLeadsNode.dimensions,
             credentialKeys: credentialMarks(() => true).get(type) } });
         expect(getCredentialIcon(family).hasServiceIcon).toBe(true);
     });

@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/elevenlabs.svg",
+  "source": "https://elevenlabs.io/icon.svg",
+  "found_at": "https://elevenlabs.io/",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "removed the white rounded-tile rect (element 0): it vanishes on light",
+    "cropped"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: ElevenLabs' own app icon is the bars on a white rounded tile; I shipped bars only (black light / white dark). Alternative: the tile as-is (no edge on light).",
+  "license": "ElevenLabs brand mark, used nominatively to identify the connected service; trademark rights remain with ElevenLabs.",
+  "sha256": "77c3f1ef46f9afc14d798f4eeff091db64200746c3e4cf11a83a62d39b66fc0c"
+}

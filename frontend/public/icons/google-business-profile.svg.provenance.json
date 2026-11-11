@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/google-business-profile.svg",
+  "source": "https://www.gstatic.com/images/branding/productlogos/google_my_business/v7/192px.svg",
+  "found_at": "https://www.google.com/business/ (page references the gstatic productlogos)",
+  "source_kind": "company site (gstatic product logos)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "deleted the one embedded <image> (a 20%-opacity PNG drop shadow) so the file has no raster",
+    "cropped viewBox",
+    "cleaned metadata"
+  ],
+  "notes": "DECISION: Google's own file carried a faint PNG shadow; removed it (deletion only) to satisfy no-raster rule. Mark is Google's 'google_my_business' product logo (the storefront), which is still the Business Profile icon on gstatic.",
+  "license": "Google Business Profile brand mark, used nominatively to identify the connected service; trademark rights remain with Google Business Profile.",
+  "sha256": "cd22517eb8f9fae1d968eabac9712d04fd8b44e92886ab1e5534e3e61b8fd9ee"
+}

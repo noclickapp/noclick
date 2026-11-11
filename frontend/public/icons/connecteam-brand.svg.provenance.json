@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/connecteam-brand.svg",
+  "source": "https://connecteam.com/wp-content/themes/connecteam/assets/images/favicon/favicon.svg?v=rntkff",
+  "found_at": "https://connecteam.com/ (rel=icon svg)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "removed the white rounded-rect background (element 0)",
+    "cropped the viewBox to the mark"
+  ],
+  "notes": "Mark is blue, readable on both themes; no dark file.",
+  "license": "Connecteam brand mark, used nominatively to identify the connected service; trademark rights remain with Connecteam.",
+  "sha256": "50540ab2ddf2adb3e64fb6b8ae0c84627823dbd18da9d979c67f93469787e952"
+}

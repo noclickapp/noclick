@@ -1,5 +1,5 @@
 // Bitrise exposes current protected app, branch and build metadata reads.
-// The original official white icon is contained on a dark background.
+// Bitrise's own Bit Bot mark (its site's SVG favicon); source and edits are in its provenance file.
 import { type ImgHTMLAttributes } from 'react';
 import { type NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
@@ -7,7 +7,7 @@ import { type NodeDefinition } from '~/components/workflow/nodes/types';
 
 export const BitriseIcon = ({ style, ...props }: ImgHTMLAttributes<HTMLImageElement>) => (
     <img {...props} src="/icons/bitrise.svg" alt="Bitrise"
-        style={{ objectFit: 'contain', background: '#492f78', borderRadius: 8, padding: 8, ...style }} />
+        style={{ objectFit: 'contain', ...style }} />
 );
 const BitriseNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={BitriseIcon} iconColor="" />;
 export const BitriseNode: NodeDefinition = {

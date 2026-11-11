@@ -6,7 +6,7 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
-// Sourced brand artwork: https://logos.composio.dev/api/predict_leads
+// PredictLeads' favicon from https://predictleads.com/
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/predictleads-preferred-brand.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, objectFit: 'contain' }} />

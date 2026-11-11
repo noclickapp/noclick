@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/word.svg",
+  "source": "https://res.cdn.office.net/files/fabric-cdn-prod_20251008.001/assets/brand-icons/product/svg/word_48x1.svg",
+  "found_at": "https://res.cdn.office.net (Fluent UI Microsoft 365 product icons; same path pattern as earlier powerpoint/onenote fixes)",
+  "source_kind": "company site (Office CDN product icons)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "cleaned metadata only"
+  ],
+  "license": "Microsoft Word brand mark, used nominatively to identify the connected service; trademark rights remain with Microsoft Word.",
+  "sha256": "accd66cd168d97986adef1fa3157ee6b426121c2cfde231fde02f7e6ca4cfdc7"
+}

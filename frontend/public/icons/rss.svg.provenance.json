@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/rss.svg",
+  "source": "https://commons.wikimedia.org/wiki/Special:FilePath/Feed-icon.svg",
+  "found_at": "https://commons.wikimedia.org/wiki/File:Feed-icon.svg",
+  "source_kind": "Wikimedia Commons",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "cleaned only"
+  ],
+  "notes": "icon_check notes the coloured tile: it is the standard feed icon's own tile. Fine on both themes.",
+  "license": "RSS (feed icon) brand mark, used nominatively to identify the connected service; trademark rights remain with RSS (feed icon).",
+  "sha256": "0db3e8367c67646c47bf9c8ad1031b7ccf531d70a3aabca6ebe7f9aed24d868b"
+}

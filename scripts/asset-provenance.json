@@ -208,12 +208,6 @@
       "sha256": "e3fcf84f775012f47d824c0b831612bd43762ab339aa2683504512fa850db890"
     },
     {
-      "path": "frontend/public/icons/connecteam-brand.svg",
-      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "957a3050ba6d2733668ca50fceeb18814ac67185da90c97acf36a06fa20ab16c"
-    },
-    {
       "path": "frontend/public/icons/connecteam.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -266,12 +260,6 @@
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "b28847ba6d31fcdfc24b02c825e2650f7a5eec346d5898b2807bfb037979821f"
-    },
-    {
-      "path": "frontend/public/icons/elasticsearch.svg",
-      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "8cb0742cb2265405656556d297957e38e1b67d6e58e99584e01e2b18519c8758"
     },
     {
       "path": "frontend/public/icons/exa.svg",
@@ -478,12 +466,6 @@
       "sha256": "525f03eccee834d18c664e78cbd6d0efd44b675d9c651befda73de767fbc38c1"
     },
     {
-      "path": "frontend/public/icons/linkedin.svg",
-      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "d7eda336932f0d00305d408d77eb70cb69b9f9218a03634410e2406a6569dcea"
-    },
-    {
       "path": "frontend/public/icons/loops.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -634,12 +616,6 @@
       "sha256": "649cdd1afbe71f520beff6e38e0f71b7145e02e443a9bb8130684329ffc662e7"
     },
     {
-      "path": "frontend/public/icons/postgres.svg",
-      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "fafe3c882c9aac6d63749dea1a2ba593d21d112cb6b0be2e62f019779efe6fbe"
-    },
-    {
       "path": "frontend/public/icons/posthog.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -670,12 +646,6 @@
       "sha256": "cd5988bd28a3d9e75af0c2bc38f22ebb8e70c1fc7c7763782f1f520ca15d6ed3"
     },
     {
-      "path": "frontend/public/icons/reddit.svg",
-      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "cdbf3767a537367707ecd34ae4db4644bbcc93c7ff8e026447e9cfbb03e8f087"
-    },
-    {
       "path": "frontend/public/icons/redis-logo.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -698,12 +668,6 @@
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "6e08acd9cbdafc5135da53a3afbee68d995d2be3815a890b12dd4158e763230e"
-    },
-    {
-      "path": "frontend/public/icons/semrush.svg",
-      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "0dbfbdbaffca27542581bc92357552ec73cb0880ac5b0183fbf7c996bdc69514"
     },
     {
       "path": "frontend/public/icons/sheets.svg",
@@ -952,12 +916,6 @@
       "sha256": "79a15cffa5267cf7acf8d036e7f406a8225fa84e19d4c68dbbcf90e697a1eed1"
     },
     {
-      "path": "frontend/public/icons/bitrise.svg",
-      "source": "https://cdn.prod.website-files.com/5db35de024bb983af1b4e151/5e05f06777d741b88a37f65d_bitrise-icon.svg (Bitrise official website icon, https://bitrise.io)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "fddfa4897d8ea1ae1c2461cec117d6a5cde653cb9e4d33a6f5407b7b34360d1d"
-    },
-    {
       "path": "frontend/public/icons/clay-brand.png",
       "source": "https://cdn.prod.website-files.com/61477f2c24a826836f969afe/6a3a92ab2ebcb50096cbd51a_dot-com_favicon_2026_512.png (unmodified Clay brand mark from https://www.clay.com/; byte-for-byte verified)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -1058,30 +1016,6 @@
       "source": "https://www.mindbodyonline.com/themes/mindbody/dist/patterns/images/global/mindbody-logos/mb-logo.svg (unmodified provider-published SVG; byte-for-byte verified)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "afa6ada776545ce8839f278ff2877a285b07643b55b6ef5796550013faa497a8"
-    },
-    {
-      "path": "frontend/public/icons/mindbody-brand.svg",
-      "source": "https://www.mindbodyonline.com/themes/mindbody/images/icons/favicons/mindbody-favicon.svg (unmodified provider-published SVG; byte-for-byte verified)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "272cc5f021c2df86f0fa9868c79c09e447257c426e5c686b4c85b8d5b965bab6"
-    },
-    {
-      "path": "frontend/public/icons/predictleads.svg",
-      "source": "https://docs.predictleads.com/vite/assets/predictleads-favicon-9dD7SpqR.svg (unmodified official developer-docs favicon; byte-for-byte verified)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "144e9db69930bf23e38852aa1ba574bb7acbb046f6f59ad10711344145961c98"
-    },
-    {
-      "path": "frontend/public/icons/predictleads-preferred-brand.svg",
-      "source": "https://logos.composio.dev/api/predict_leads (brand path verified against source; white rounded background and inset canvas)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "d4fc0fe2098f6406268163dd8f641c1e8d86a35a8e6d3041f294d3af6fd742ab"
-    },
-    {
-      "path": "frontend/public/icons/predictleads.provenance.json",
-      "source": "NoClick PredictLeads integration provenance record for https://docs.predictleads.com/vite/assets/predictleads-favicon-9dD7SpqR.svg",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "8e183b294bc5ee0b9a78e5b056a50fcad797ca348c0e8a13eece4040760be476"
     },
     {
       "path": "frontend/public/icons/sematext.svg",
@@ -1360,12 +1294,6 @@
       "sha256": "f6cdc801de57ea0227a910debfb14dd8e0cf36c671f573b0a1871bb6fe497155"
     },
     {
-      "path": "frontend/public/icons/forgejo.svg",
-      "source": "https://forgejo.org/favicon.svg",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "acfeda65446d1c17c5d8e62e18b70a6616ef20df81e7de93ff791a3b11d4be28"
-    },
-    {
       "path": "frontend/public/icons/fountain-brand-vector.svg",
       "source": "https://fountain.com (Fountain published logo; cropped and framed for icon variants)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -1376,12 +1304,6 @@
       "source": "https://www.fountain.com/in/fountain-india (Fountain published artwork)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "f697ee4ced4fb6fbc55ac0c80c459f36f42dfb76382e639b4e1a6fccaaaf2d91"
-    },
-    {
-      "path": "frontend/public/icons/fountain-preferred-brand.svg",
-      "source": "https://fountain.com (Fountain published logo; cropped and framed for icon variants)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "504a4a8b330b025a65192fe0041279a4b29ba9f80ddd811bac47ad9cdc71f72c"
     },
     {
       "path": "frontend/public/icons/fountain.svg",

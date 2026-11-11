@@ -11,14 +11,23 @@ const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };
 // Create icon component from SVG file
 const PostgresIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img
-            ref={ref}
-            src="/icons/postgres.svg"
-            alt=""
-            className={className}
-            style={style}
-            {...props}
-        />
+        <>
+            <img
+                ref={ref}
+                src="/icons/postgres.svg"
+                alt=""
+                className={`${className ?? ''} dark:hidden`}
+                style={style}
+                {...props}
+            />
+            <img
+                src="/icons/postgres-dark.svg"
+                alt=""
+                className={`${className ?? ''} hidden dark:block`}
+                style={style}
+                {...props}
+            />
+        </>
     )
 );
 PostgresIcon.displayName = 'PostgresIcon';

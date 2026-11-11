@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/postgres.svg",
+  "source": "https://commons.wikimedia.org/wiki/Special:FilePath/Postgresql_elephant.svg",
+  "found_at": "https://commons.wikimedia.org/wiki/File:Postgresql_elephant.svg",
+  "source_kind": "Wikimedia Commons",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "removed an empty zero-size path (element 11)",
+    "cropped viewBox to the mark",
+    "cleaned metadata"
+  ],
+  "variant": "light mode",
+  "notes": "The current staging file is a #0074BD redraw, not the project's #336791. Official logo carries a black outline, hence the dark file with a white outline.",
+  "license": "PostgreSQL brand mark, used nominatively to identify the connected service; trademark rights remain with PostgreSQL.",
+  "sha256": "fead63c2f1d326656e6ab5593a6921ed9817715b1aba46738093818e0a87b108"
+}

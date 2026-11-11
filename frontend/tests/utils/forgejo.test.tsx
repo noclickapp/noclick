@@ -2,7 +2,6 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeAll, describe, expect, it } from 'vitest';
-import ForgejoIcon from '~/components/icons/ForgejoIcon';
 import { ForgejoNode } from '~/components/workflow/nodes/integrations/forgejo';
 import { NODE_SCHEMAS, getNodeCredentialInfo, isAgentToolProviderType, loadNodeSchemas } from '~/utils/nodeSchemas';
 import { getCredentialTypeFromSchemaTitle } from '~/utils/credentialTypeMap';
@@ -40,7 +39,8 @@ describe('Forgejo native metadata', () => {
   });
   it('preserves exact official artwork and supplied canvas filter', () => {
     const filter = 'grayscale(100%) brightness(0.4) drop-shadow(0 4px 12px #0004)';
-    const html = renderToStaticMarkup(<ForgejoIcon style={{ width: 48, height: 48, filter }} />);
+    const Icon = ForgejoNode.Icon as React.ComponentType<{ style?: React.CSSProperties }>;
+    const html = renderToStaticMarkup(<Icon style={{ width: 48, height: 48, filter }} />);
     expect(html).toContain('/icons/forgejo.svg');
     expect(html).toContain('object-fit:contain');
     expect(html).toContain(`filter:${filter}`);

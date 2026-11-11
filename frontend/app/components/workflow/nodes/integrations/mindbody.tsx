@@ -7,7 +7,7 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
 
-// Unmodified compact brand asset from https://www.mindbodyonline.com/
+// Mindbody's favicon M from https://www.mindbodyonline.com/; source and edits are in its provenance file.
 import type { CSSProperties as BrandCSSProperties } from 'react';
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/mindbody-brand.svg" alt="" aria-hidden="true" className={className}

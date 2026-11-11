@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/mindbody-brand.svg",
+  "source": "https://www.mindbodyonline.com/themes/mindbody/images/icons/favicons/mindbody-favicon.svg",
+  "found_at": "https://www.mindbodyonline.com/ (rel=icon image/svg+xml)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "added viewBox=\"0 0 1000 1000\" to the root svg (it had none)",
+    "cleaned metadata"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: favicon SVG is a generator export (svgjs wrapper, nested svg) but its M is a clean 1-path vector, not a trace. Light file = brand tile (circle); dark file = mint M alone because the dark-grey tile blends into the dark well. Light file is a circle app tile (the brand's own).",
+  "license": "Mindbody brand mark, used nominatively to identify the connected service; trademark rights remain with Mindbody.",
+  "sha256": "31c2ff429cabbd8f9b4aca24691fa951be166d9744162695e839e7ae6012576e"
+}

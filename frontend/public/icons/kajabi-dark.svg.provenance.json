@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/kajabi-dark.svg",
+  "source": "https://cdn.prod.website-files.com/693317e747432cd054b3bdc6/693a057a27ade1233a0c9ed9_Footer%20Icon.svg",
+  "found_at": "https://www.kajabi.com/ (footer logo link)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "removed the off-white #FDFDFC tile the footer icon draws behind the K (element 0)",
+    "cropped the viewBox to the K (pad 0.02)",
+    "cleaned",
+    "dark mode: the K's gradient stops, black by default, set to #FFFFFF with their opacities kept, as kajabi.com's favicon shows the K light on dark"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: Kajabi has rebranded; the blue K now on staging is the retired logo, the current mark is this black/grey K. One file for both themes (the brand's own tile). The site also has a dark-tile version (Kajabi Dark Logo.svg, r3-3) but its SVG lacks the K's left triangle (renders as an hourglass), so it was not used. icon_check flags the tile as a background and lost_light on the near-white tile; the K itself is clearly visible on both wells. Shipped without the off-white tile (it read as a white square on the dark theme); light file is the footer icon's K, dark file the same K in white, as kajabi.com's favicon (a light K on a black tile) shows it.",
+  "license": "Kajabi brand mark, used nominatively to identify the connected service; trademark rights remain with Kajabi.",
+  "sha256": "fcd42ba8007373b9227d351aadaf3181fed4d3d1f8301ae49699263ffd464aa6"
+}

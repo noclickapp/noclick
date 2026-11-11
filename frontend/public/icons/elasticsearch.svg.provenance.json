@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/elasticsearch.svg",
+  "source": "https://www.elastic.co/favicon.svg",
+  "found_at": "https://www.elastic.co/ (rel=icon svg)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "removed the white halo shape behind the six coloured blobs (element 0)",
+    "cropped the viewBox to the mark"
+  ],
+  "notes": "DECISION: Elastic's current company mark is the six-blob colour cluster; the current icon is the older striped \"E\" Elasticsearch product mark (simple-icons elasticsearch.svg has that striped one, CC0). elastic.co no longer shows a separate Elasticsearch mark (its Elasticsearch page carries the Elastic logo). The cluster is the official favicon so it is shipped; the striped one is the alternative.",
+  "license": "Elastic brand mark, used nominatively to identify the connected service; trademark rights remain with Elastic.",
+  "sha256": "5d7da4c3ef0f8599f7a513a0f440ee2b5149efc7c2ccc7c1cb655c47b4655e37"
+}

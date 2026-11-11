@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/bluesky.svg",
+  "source": "https://github.com/simple-icons/simple-icons/blob/16.37.0/icons/bluesky.svg",
+  "found_at": "simple-icons 16.37.0 (the npm package simple-icons, CC0), icon 'bluesky'",
+  "source_kind": "simple-icons",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "added fill #1185FE to the single path"
+  ],
+  "notes": "bsky.app's own safari-pinned-tab.svg is a potrace auto-trace and it has no SVG favicon, so simple-icons used.",
+  "license": "Bluesky brand mark, used nominatively to identify the connected service; trademark rights remain with Bluesky.",
+  "sha256": "3a827da75dc07daa76555fd9f0335cbbffef70b20991d532f1e0a43da0cbd60a"
+}

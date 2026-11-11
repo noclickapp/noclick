@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/predictleads.svg",
+  "source": "https://predictleads.com/vite/assets/predictleads-favicon-9dD7SpqR.svg",
+  "found_at": "https://predictleads.com/ (rel=icon image/svg+xml)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "cleaned metadata only; used as published (stroke-only mark, no background)"
+  ],
+  "notes": "Replaces the staging file that put the mark on a white rounded tile (background). Purple reads on both wells.",
+  "license": "PredictLeads brand mark, used nominatively to identify the connected service; trademark rights remain with PredictLeads.",
+  "sha256": "9c8967b6b65fcee10022e121dd23fdc1a883c3cb122d9130e66f1ea467492e8a"
+}
