@@ -1,4 +1,8 @@
-"""Shippo API-key schema and REST contracts without a live account."""
+"""Shippo API-key schema and REST contracts without a live account.
+
+Documented webhook fixtures replace credential-shaped AWS access-key IDs in
+signed download URLs with explicit placeholders.
+"""
 
 import hashlib
 import hmac
