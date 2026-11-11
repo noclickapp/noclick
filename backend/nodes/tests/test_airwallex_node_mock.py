@@ -230,7 +230,6 @@ async def test_registration_rejects_missing_secret_and_unregistration_failures(m
     with pytest.raises(ValueError, match='HTTP 403'):
         await native.AirwallexNode._unregister_external_webhook(credential=CREDENTIAL,
             config={'external_webhook_id': 'wh_example'}, node_id='n')
-    assert native.AirwallexNode.registration_fingerprint_fields({'operation': 'list_transfers'}) == {}
 
 
 @pytest.mark.asyncio
@@ -240,3 +239,19 @@ async def test_webhook_delete_absent_endpoint_is_idempotent(monkeypatch):
     monkeypatch.setattr(native.AirwallexNode, '_request', absent)
     await native.AirwallexNode._unregister_external_webhook(credential=CREDENTIAL,
         config={'external_webhook_id': 'wh_example'}, node_id='n')
+
+
+def test_registration_fingerprint_declares_event_before_operation_selection():
+    from utils.webhook_manager import registration_fingerprint
+
+    cls = native.AirwallexNode
+    assert cls.registration_fingerprint_fields({}) == {'event_type': None}
+    assert cls.registration_fingerprint_fields({'event_type': 'selected-event'}) == {'event_type': 'selected-event'}
+    for operation, default in native.TRIGGER_DEFAULTS.items():
+        implicit = {'operation': operation}
+        explicit = {**implicit, 'event_type': default}
+        changed = {**implicit, 'event_type': next(event for event in (native.DEPOSIT_EVENTS if operation == 'on_deposit_event' else native.TRANSFER_EVENTS) if event != default)}
+        assert cls.registration_fingerprint_fields(implicit) == {'event_type': default}
+        original = registration_fingerprint(cls, operation, 'fixture-credential', implicit)
+        assert original == registration_fingerprint(cls, operation, 'fixture-credential', explicit)
+        assert original != registration_fingerprint(cls, operation, 'fixture-credential', changed)

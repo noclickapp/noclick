@@ -287,7 +287,7 @@ class AirwallexNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     @classmethod
     def registration_fingerprint_fields(cls, config):
-        return {"event_type": cls._event_type(config)} if config.get("operation") in TRIGGER_DEFAULTS else {}
+        return {"event_type": config.get("event_type") or TRIGGER_DEFAULTS.get(config.get("operation"))}
 
     @classmethod
     async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
