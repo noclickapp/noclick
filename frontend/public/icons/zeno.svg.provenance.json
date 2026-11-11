@@ -1,0 +1,10 @@
+{
+  "path": "frontend/public/icons/zeno.svg",
+  "source": "https://zeno.fm/favicon.svg",
+  "source_page": "https://zeno.fm/",
+  "date": "2026-11-11",
+  "license": "Zeno trademark; used to identify the integration",
+  "sha256": "6ca6d199940de120bf2ba2f1863c7e6a3d443c7089ce61d0678810c1fc79249d",
+  "edits": [],
+  "notes": "Official SVG favicon linked by the provider homepage; yellow app mark, no wordmark, unchanged."
+}
