@@ -14,7 +14,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 export const TeachableIcon: SvgIconComponent = forwardRef<
     HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>
 >(({ style, ...props }, ref) => (
-    <img {...props} ref={ref} src="/icons/teachable.png" alt=""
+    <img {...props} ref={ref} src="/icons/teachable.svg" alt=""
         style={{ ...style, objectFit: 'contain' }} />
 ));
 TeachableIcon.displayName = 'TeachableIcon';
