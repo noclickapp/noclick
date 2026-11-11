@@ -15,13 +15,7 @@ const NextcloudIcon: SvgIconComponent = forwardRef<
         src="/icons/nextcloud.svg"
         alt=""
         className={className}
-        style={{
-            ...style,
-            objectFit: 'contain',
-            backgroundColor: '#0082c9',
-            padding: 6,
-            borderRadius: 8,
-        }}
+        style={style}
         {...props}
     />
 ));

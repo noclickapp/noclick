@@ -1,6 +1,10 @@
 {
   "path": "frontend/public/icons/nextcloud.svg",
-  "source": "https://raw.githubusercontent.com/nextcloud/server/master/core/img/logo/logo.svg",
-  "license": "Nextcloud trademark; used to identify the Nextcloud integration (server repository AGPL-3.0-or-later)",
-  "sha256": "7b762288d5b7bf4d5d3fd83c5caac1792dc525f1aab4b70968cb9fb9a113867f"
+  "source": "https://raw.githubusercontent.com/nextcloud/desktop/master/theme/colored/Nextcloud-icon-square.svg",
+  "source_page": "https://github.com/nextcloud/desktop/blob/master/theme/colored/Nextcloud-icon-square.svg",
+  "retrieved_at": "2026-11-11",
+  "license": "Nextcloud trademark; used to identify the Nextcloud integration; official Nextcloud desktop repository asset",
+  "sha256": "b31e10e695f9fa80f11ca9e45299922b37e82bcc3dfa31527811cf77e2830c25",
+  "edits": [],
+  "notes": "Official Nextcloud desktop square application icon, retained byte-for-byte. The blue gradient square is part of the brand-owned SVG, not a CSS tile. Its white mark remains visible against that blue background in light and dark themes."
 }
