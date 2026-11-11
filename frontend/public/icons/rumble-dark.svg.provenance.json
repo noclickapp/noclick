@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/rumble-dark.svg",
+  "source": "https://www.runzero.com/images/svg/runzero-dragos-light.svg",
+  "found_at": "https://www.runzero.com/",
+  "retrieved": "2026-11-11",
+  "license": "runZero trademark; nominative use to identify the service.",
+  "edits": [
+    "Removed wordmark and Dragos tagline; retained provider elements logomark-zero and logomark-r.",
+    "Cropped viewBox to the mark."
+  ],
+  "notes": "Current runZero app mark for Rumble Network Discovery, renamed runZero in 2022.",
+  "sha256": "dbe38b89b86e1c8b2612d3d9067355a56d7556a23d28a3066b9f800928ee0979"
+}
