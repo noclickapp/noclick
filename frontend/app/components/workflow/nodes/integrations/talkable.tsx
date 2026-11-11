@@ -6,7 +6,10 @@ import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nod
 
 const TalkableIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/talkable.svg" alt="" className={className} style={style} {...props} />
+        <>
+            <img {...props} ref={ref} src="/icons/talkable.svg" alt="" className={`${className ?? ''} dark:hidden`} style={style} />
+            <img {...props} src="/icons/talkable-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={style} />
+        </>
     ),
 );
 TalkableIcon.displayName = 'TalkableIcon';

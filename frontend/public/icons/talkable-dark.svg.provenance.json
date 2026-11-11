@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/talkable-dark.svg",
+  "source": "https://www.talkable.com/wp-content/uploads/2021/12/talkable-favicon.svg",
+  "source_page": "https://www.talkable.com/",
+  "date": "2026-11-11",
+  "license": "Talkable brand mark used nominatively to identify the connected service; trademark rights remain with its owner.",
+  "sha256": "d9a21eb97988ee49e99fc8ac9ee5544594b624213c5d8e70ddfd6bd98c25bcb3",
+  "edits": [
+    "Recolour only the T polygon fill from #1C2940 to #FFFFFF for dark-tile contrast; preserve the orange #FC501E rays, all path data, polygon points and viewBox."
+  ],
+  "notes": "Talkable\u2019s own SVG favicon, linked on its company website, supplies the standalone T-and-rays mark. No wordmark, added background, traced geometry or generated path data."
+}
