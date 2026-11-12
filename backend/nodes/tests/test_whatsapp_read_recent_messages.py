@@ -130,12 +130,13 @@ async def test_it_reads_only_the_chats_active_in_the_window_of_the_kind_asked():
 
     direct = await _read(WhatsAppReadRecentMessagesConfig(chats="direct"), ACCOUNT, MESSAGES)
     assert [c["chat_id"] for c in direct["chats"]] == [DIRECT]  # never status updates or channels
+    asked_at = time.time()  # NOW is the module's import time: a long suite runs this test much later
     everything = await _read(WhatsAppReadRecentMessagesConfig(), ACCOUNT, MESSAGES)
     assert [c["chat_id"] for c in everything["chats"]] == [GROUP, DIRECT]  # most recently active first
     assert everything["chat_count"] == 2 and everything["message_count"] == 5
     assert everything["truncated"] is False
     since = datetime.strptime(everything["since"], "%Y-%m-%dT%H:%MZ").replace(tzinfo=timezone.utc).timestamp()
-    assert abs(since - (NOW - 24 * HOUR)) < 120
+    assert abs(since - (asked_at - 24 * HOUR)) < 120
 
     wider = await _read(WhatsAppReadRecentMessagesConfig(hours=48), ACCOUNT, MESSAGES)
     assert [c["chat_id"] for c in wider["chats"]] == [GROUP, DIRECT, OLD_GROUP, "12025550107@c.us"]
