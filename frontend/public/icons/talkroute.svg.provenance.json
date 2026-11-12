@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/talkroute.svg",
+  "source": "https://talkroute.com/wp-content/uploads/2021/03/logo_text_041020a.svg",
+  "source_page": "https://talkroute.com/ (header logo <img>, served through its NitroPack CDN cdn-bmgai.nitrocdn.com/.../talkroute.com/wp-content/uploads/2021/03/logo_text_041020a.svg)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "601bf91798e4bb5530d2d450b4090d4b854ccbd882d1038934854f461e438ab9",
+  "edits": [
+    "kept only the symbol: the grey speech-bubble C and S (#424242) and the orange arrow (#FF7100), elements 1-5",
+    "removed the opacity-0 white background rect (element 0) and the #333 'Talkroute' wordmark (elements 6-14)",
+    "cropped the viewBox to the mark (svgtool crop --pad 0.02)",
+    "svgtool clean"
+  ],
+  "checked_against": "https://talkroute.com/wp-content/uploads/2023/12/favicon-152x152-1.png (the PR's current file): the same grey bubble-C/S with the orange arrow, same colours. api.talkroute.com matches talkroute.com.",
+  "source_sha256": "57105026201c3e628a0e198eec93aae2d4b46d024552d11beee616ec5762d70c"
+}
