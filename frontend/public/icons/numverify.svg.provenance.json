@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/numverify.svg",
   "source": "https://numverify.com/images/coming_soon_api_img/suite_icon_numverify.svg",
-  "license": "numverify brand mark used nominatively to identify the service; trademark rights remain with APILayer.",
-  "sha256": "fa9160e4c431313d1e5eea84b8d99cf9202e163dd0b683d4a4f2634032f031b2"
+  "source_page": "https://numverify.com/ (the APILayer product-suite chips: <img class=\"suite-chip-icon\" ... alt=\"Numverify\">)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "143dc695a16aa42cb05cfc14518c6aaddb800d3af15e279fd4f133f74c4bcba4",
+  "edits": [
+    "cropped the viewBox to the mark (pad 0.02)",
+    "fill currentColor -> #000000 (what an <img> already renders it as; made explicit)"
+  ],
+  "checked_against": "numverify.com's own product-suite chip for Numverify (the source page); apilayer.net / numverify.com are the integration's hosts. Its apple-touch-icon https://numverify.com/images/icons/numverify_icon.png is a navy tile with a circled handset (raster only).",
+  "source_sha256": "fa9160e4c431313d1e5eea84b8d99cf9202e163dd0b683d4a4f2634032f031b2"
 }
