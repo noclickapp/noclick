@@ -414,10 +414,6 @@ async def test_refresh_does_not_echo_nonstandard_error_codes(
         {"access_token": ""},
         {"access_token": {"secret": "private-marker"}},
         {"access_token": "fixture-access", "expires_in": "private-marker"},
-        {
-            "access_token": "fixture-access",
-            "api_domain": "https://private-marker.invalid",
-        },
     ],
 )
 async def test_refresh_malformed_success_is_sanitized(provider, caplog, body):
@@ -426,6 +422,14 @@ async def test_refresh_malformed_success_is_sanitized(provider, caplog, body):
     with pytest.raises(ValueError) as caught:
         await refresh_access_token("fixture-refresh")
     assert str(caught.value) == "Token refresh failed: invalid response"
+    assert "private-marker" not in str(caught.value) + caplog.text
+
+
+async def test_refresh_off_domain_api_domain_names_the_field_not_the_value(provider, caplog):
+    token, _ = provider
+    token.respond(200, json={"access_token": "fixture-access", "api_domain": "https://private-marker.invalid"})
+    with pytest.raises(ValueError, match="Pipedrive API domain") as caught:
+        await refresh_access_token("fixture-refresh")
     assert "private-marker" not in str(caught.value) + caplog.text
 
 

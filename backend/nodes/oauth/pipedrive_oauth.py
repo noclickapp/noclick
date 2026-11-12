@@ -280,6 +280,10 @@ async def refresh_access_token(
             logger.error("[PipedriveOAuth] Token refresh failed: %s", detail)
             raise ValueError(f"Token refresh failed: {detail}")
 
+        # A rotated API domain off pipedrive.com is refused in its own words; they name the field, never the value.
+        api_domain = token_data.get("api_domain")
+        if api_domain is not None:
+            api_domain = normalize_pipedrive_api_domain(api_domain)
         try:
             if (
                 not isinstance(token_data.get("access_token"), str)
@@ -297,7 +301,7 @@ async def refresh_access_token(
                 # Rotation may omit a replacement; keep the current refresh token.
                 refresh_token=token_data.get("refresh_token", refresh_token),
                 expires_at=expires_at,
-                api_domain=token_data.get("api_domain"),
+                api_domain=api_domain,
                 token_type=token_data.get("token_type", "Bearer"),
             )
         except (ValueError, TypeError, KeyError, OverflowError):
