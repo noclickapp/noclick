@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/dynatrace.svg",
+  "source": "https://brandfolder.com/s/78wf38hgs9vcfj69qk7pnp3v (Dynatrace's Brandfolder share '54 Assets from Dynatrace', created by a dynatrace.com account; its 'download all' zip Dynatrace-selected-assets.zip, file Dt_Logo_Color-Vertical.svg)",
+  "source_page": "https://www.dynatrace.com/company/press-kit/ ('Download logos' link)",
+  "source_kind": "brand kit",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "fdabb7ddfc59cd712675a4d9461d3e01b1d8173a8018c5d0592dc588083668f6",
+  "edits": [
+    "kept elements 9-14, the signet (#1496FF, #1284EA, #B4DC00, #6F2DA8, #591F91, #73BE28); dropped the 'dynatrace' wordmark (elements 0-8, #1A1A1A)",
+    "clean",
+    "cropped the viewBox to the signet with 2% pad"
+  ],
+  "checked_against": "https://dt-cdn.net/images/favicon-48x48-transparent-48-9b4df9c769.png (dynatrace.com favicon, the PR's current icon): same four-sided signet, same colours, open centre; api host api.dynatrace.com",
+  "source_sha256": "746cb793ca50d0bec7785747a7b05d284da34192d36fcd6ee9fe539876d547f6"
+}
