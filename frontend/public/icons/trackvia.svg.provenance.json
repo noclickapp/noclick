@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/trackvia.svg",
-  "source": "https://developer.trackvia.com/brand/favicon.svg",
-  "license": "TrackVia brand mark, used nominatively to identify the connected service; trademark rights remain with TrackVia.",
-  "sha256": "0c02e302674986b9f523c50757a506015e098f6b555aaf77dcf61a555cbf3a07"
+  "source": "https://developer.trackvia.com/brand/trackvia-icon-two-color.svg",
+  "source_page": "https://developer.trackvia.com/ (header/brand assets; the PR's current favicon.svg is the same mark from https://developer.trackvia.com/brand/favicon.svg, sha256 matches the PR file)",
+  "source_kind": "company docs",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "ca415d1125b75c7284bb68ff17264d70f6fd4e75cb9822c7e9c4388547887fa5",
+  "edits": [
+    "clean (editor ids/data-names)",
+    "cropped the viewBox to the mark, pad 0.02"
+  ],
+  "checked_against": "https://trackvia.com/apple-touch-icon.png (same blue swoosh + navy T shapes); api hosts developer.trackvia.com / go.trackvia.com",
+  "source_sha256": "7fe6cb22c4bd66d9fbc0f5bcd650129e2b7d0d6646f393b04453248d1ad3dfbe"
 }

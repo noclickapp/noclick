@@ -1,32 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- TrackVia brand mark, for the browser tab.
-
-     Geometry: the `iconTwoColor` master, at
-     @xvia-nova/design-system-tokens/assets/brand/trackvia-icon-two-color.svg, which the
-     `favicon` role in `brandUsage` names. The master artwork is 738.52 x 630.98. The
-     viewBox here is square, 738.52, and offset 53.77 on y, so the mark centres in the
-     square box a favicon renders into. Nova's own favicon.svg makes that same change.
-     Re-derive from the master rather than edit the geometry here.
-
-     Colour: one deliberate difference from Nova's file. Nova paints `.cls-1` with the
-     dark navy of the two-colour master and states that the mark then reads on light and
-     dark tab chrome alike. It does not. Two of the three shapes carry `.cls-1`, and that
-     navy all but vanishes on a dark tab. So the rule below repaints `.cls-1` white under
-     `prefers-color-scheme: dark`.
-
-     That white is not a new colour. It is `.cls-1` from the `iconReversed` master, at
-     assets/brand/trackvia-icon-reversed.svg. The two masters share identical path data
-     and an identical `.cls-2`. They differ in `.cls-1` alone. So this file is the union
-     of the two, and it invents nothing.
-
-     __tests__/brand-icons.test.mjs holds all of that: the paths match the master, the
-     light fills match the two-colour master, and the dark fill matches the reversed one.
-
-     The 32 pixel PNG beside this file cannot adapt. A raster carries no media query.
-     Every browser that reads an SVG icon takes this file first, because app/layout.tsx
-     lists it first. The PNG serves the rest. -->
-<svg width="738.52" height="738.52" viewBox="0 -53.77 738.52 738.52" xmlns="http://www.w3.org/2000/svg">
-<defs>
+<svg xmlns="http://www.w3.org/2000/svg" id="Layer_2" viewBox="-14.770 -14.770 768.061 660.521">
+  <defs>
     <style>
       .cls-1 {
         fill: #0a1a37;
@@ -35,15 +8,9 @@
       .cls-2 {
         fill: #2d76d4;
       }
-
-      @media (prefers-color-scheme: dark) {
-        .cls-1 {
-          fill: #fff;
-        }
-      }
     </style>
   </defs>
-  <g id="Layer_1-2" data-name="Layer 1">
+  <g id="Layer_1-2">
     <g>
       <path class="cls-2" d="M2.75,29.13l90.82,149.94S315.66,73.01,738.52,0H19.1C4.23.15-4.87,16.36,2.75,29.13Z"/>
       <path class="cls-1" d="M369.48,178.93l-216.73,71.71c-6.94,2.3-9.94,10.44-6.16,16.69l211.55,349.87c10.84,18.53,37.69,18.32,48.24-.37l70.51-119.86-98.21-313.19c-1.2-3.88-5.31-6.05-9.19-4.86Z"/>
