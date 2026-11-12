@@ -6,7 +6,10 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const AmplemarketIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/amplemarket.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <>
+            <img ref={ref} src="/icons/amplemarket.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} {...props} />
+            <img src="/icons/amplemarket-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} {...props} />
+        </>
     ),
 );
 AmplemarketIcon.displayName = 'AmplemarketIcon';
