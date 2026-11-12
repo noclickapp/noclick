@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/formaloo.svg",
+  "source": "https://cdn.prod.website-files.com/656ce8668244222553627f66/6abc2e432719dc31da90f875_Formaloo%20logo.svg",
+  "source_page": "https://www.formaloo.com/ (header <img class=\"oi-nav-logo\">)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "70a84c1bb1c817e1650ba2c84900993d395e884d3ea60d1cfb01214df5ebd4f8",
+  "edits": [
+    "kept the mark (element 0, the #1C232E circle, and element 1, the #FAF9F5 bar); dropped the 'Formaloo' wordmark (element 2)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "clean"
+  ],
+  "checked_against": "formaloo.com's own icons: https://cdn.prod.website-files.com/656ce8668244222553627f66/6acf747c06b1bbe4a812cc48_formaloo-webclip-256.png (apple-touch-icon: navy circle, cream bar) and https://cdn.prod.website-files.com/656ce8668244222553627f66/6acf74a4902afd600f76df66_formaloo-mark%20(1).png (dark-scheme favicon: cream circle, navy bar); the same mark is https://raw.githubusercontent.com/formaloo/formaloo-cursor-plugin/main/assets/logo.svg in Formaloo's GitHub org (Oct 2026)",
+  "source_sha256": "8b58cbfc3531bb32072ebf398ecd5ff1c909266e790cf5397b2030d3f3a77af1"
+}
