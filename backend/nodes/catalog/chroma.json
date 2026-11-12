@@ -37,9 +37,9 @@
   },
   {
    "name": "search",
-   "display_name": "Search (Text)",
+   "display_name": "Search",
    "category": "Records",
-   "description": "Full-text / semantic search using query text — Chroma embeds it server-side via an attached function.",
+   "description": "Dense, sparse, or hybrid search using Chroma's Search payloads.",
    "is_trigger": false
   },
   {
@@ -186,7 +186,7 @@
    "name": "add_attached_function_input",
    "display_name": "Add Function Input",
    "category": "Functions",
-   "description": "Add input data to an attached function (e.g. provide documents to embed).",
+   "description": "Add another input collection to an attached function.",
    "is_trigger": false
   },
   {
