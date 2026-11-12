@@ -13,14 +13,11 @@ import { resolveAgentModelKind } from '~/lib/harnessBrand';
 import { BrandIcon, type BrandIconComponent } from '~/components/shared/BrandIcon';
 import { serializedIconComponent } from '~/components/shared/SerializedIcon';
 import { getNodeIconData } from '~/lib/nodeIconRegistry';
-import {
-    buildAgentInitialConfig,
-    describeAgentSeed,
-    doesAgentQueryMatch,
-} from '~/lib/agentModelMatch';
+import { describeAgentSeed, matchAgentQuery } from '~/lib/agentModelMatch';
 import { useModels } from '~/hooks/useModels';
 import type { Model } from '~/types/model';
 import {
+    getAgentQueryScore,
     getNodeSearchScore,
     getOperationSearchMatch,
     nodeSearchIndexEntry,
