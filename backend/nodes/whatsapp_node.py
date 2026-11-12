@@ -346,34 +346,6 @@ def chat_number(chat: Any) -> Optional[str]:
     return digits or None
 
 
-def _chat_key(chat_id: Any) -> str:
-    """A chat id spelled one way for comparison: a phone chat arrives as either
-    @c.us or @s.whatsapp.net, and a bare phone number names the same chat."""
-    local, _, server = wahooks_chat_id(chat_id).partition("@")
-    return f"{local}@{'s.whatsapp.net' if server == 'c.us' else server}"
-
-
-def _stanza_id(message: Any) -> Optional[str]:
-    """The WhatsApp stanza id of a WAHA message record (``key.id``). It is the
-    same id on both ends of one message: a send result carries it at
-    ``key.id``, and the receiving connection's inbound delivery at
-    ``payload._data.key.id`` (``payload.id`` = ``false_<chat>_<stanza>``)."""
-    key = message.get("key") if isinstance(message, dict) else None
-    stanza = key.get("id") if isinstance(key, dict) else None
-    return stanza if isinstance(stanza, str) and stanza else None
-
-
-def chat_number(chat: Any) -> Optional[str]:
-    """The phone digits a chat id or number names (+12025550101,
-    12025550101@c.us, 12025550101:3@s.whatsapp.net all name the same one);
-    None for a @lid, group or channel, which name no number."""
-    local, _, server = str(chat or "").strip().partition("@")
-    if server and server not in ("c.us", "s.whatsapp.net"):
-        return None
-    digits = "".join(ch for ch in local.split(":", 1)[0] if ch.isdigit())
-    return digits or None
-
-
 def _chat_picker_field(
     title: str, description: str = _RECIPIENT_DESC, *, field_name: str
 ) -> Any:
