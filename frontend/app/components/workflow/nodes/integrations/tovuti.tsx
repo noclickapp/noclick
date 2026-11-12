@@ -20,7 +20,6 @@ const TovutiIcon = ({
         style={
             {
                 ...style,
-                '--brand-invert': 0,
                 objectFit: 'contain',
             } as CSSProperties
         }
