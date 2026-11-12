@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/sprig.svg",
-  "source": "https://cdn.prod.website-files.com/651206cc884d0caef0f4c520/69b0b2e42b98b28ddbf9a387_Sprig_Logo.svg",
-  "license": "Sprig trademark; official publisher asset used to identify the Sprig integration",
-  "sha256": "bcb1a3942e8517e570ff97bd7763d12cdbf340d8e3c1ddd2a6d37e45dcd2c79b"
+  "source": "https://app.sprig.com/static/media/sprig-circle.2f44e07a.svg",
+  "source_page": "https://app.sprig.com/ (the app's current bundle static/js/main.6e83e8fe.js: Sprig's own avatar, drawn where the audit feed's user is \"Sprig\")",
+  "source_kind": "company app/login page",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "d1c7ef31ea3ffceebe29b620dfa349dd28ce1a1fccdca5bda3b27552ec243b80",
+  "edits": [
+    "none to the drawing: svgtool crop (viewBox already 0 0 24 24, unchanged; width/height attributes dropped). The yellow circle is Sprig's own, in its own file."
+  ],
+  "checked_against": "https://sprig.com favicon (webflow 6a0f3c48054debea297393ee_favicon.png, 512px) and https://app.sprig.com/favicons/apple-touch-icon.png: the same S letterform (flat-cut terminals) on a yellow tile; api hosts app.sprig.com / api.sprig.com match.",
+  "source_sha256": "2f44e07a3783c677827e83f3aac761ba8f71e823ba39a7f418fbd86c4d4cbb23"
 }
