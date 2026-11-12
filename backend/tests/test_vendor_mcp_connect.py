@@ -212,6 +212,17 @@ async def test_the_callback_must_be_this_apps_own(monkeypatch):
     assert not allowed("https://app.example/elsewhere")
 
 
+async def test_the_callback_may_come_from_a_sibling_of_a_www_app(monkeypatch):
+    monkeypatch.setenv("FRONTEND_URL", "https://www.app.example")
+    allowed = mcp_connect.allowed_callback
+    assert allowed("https://www.app.example/api/auth/mcp/callback")
+    assert allowed("https://app.example/api/auth/mcp/callback")
+    assert allowed("https://staging.app.example/api/auth/mcp/callback")
+    assert not allowed("https://app.example.evil.example/api/auth/mcp/callback")
+    assert not allowed("https://evilapp.example/api/auth/mcp/callback")
+    assert not allowed("http://staging.app.example/api/auth/mcp/callback")
+
+
 # ------------------------------------------------------------------ discovery
 
 

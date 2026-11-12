@@ -90,7 +90,10 @@ def allowed_callback(redirect_uri: str) -> bool:
         return False
     if parts.scheme == app.scheme and parts.netloc.lower() == app.netloc.lower():
         return True
-    return parts.scheme == "https" and host.endswith("." + app_host)
+    # The app's site, not just its host: with the app at www.noclick.com, staging.example.test (which talks to the
+    # same backend) is a sibling, not a subdomain, and its sign-ins were refused (11-12).
+    site = app_host[4:] if app_host.startswith("www.") else app_host
+    return parts.scheme == "https" and (host == site or host.endswith("." + site))
 
 
 def _seal(payload: Dict[str, Any]) -> str:
