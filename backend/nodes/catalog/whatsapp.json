@@ -254,6 +254,13 @@
    "is_trigger": false
   },
   {
+   "name": "read_recent_messages",
+   "display_name": "Read Recent Messages",
+   "category": "Chats",
+   "description": "Read every chat's messages from the last few hours in one call, compactly: per chat, one line per message (\"<UTC time> <sender>: <text>\", your own as You, media as [image] or [voice note] with its caption), oldest first, with no ids or media data. The cheap read for a digest or summary across chats (QR credentials)",
+   "is_trigger": false
+  },
+  {
    "name": "list_contacts",
    "display_name": "List Contacts",
    "category": "Chats",
