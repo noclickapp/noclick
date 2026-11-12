@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/easybizy-dark.svg",
+  "source": "https://easybizy.net/wp-content/uploads/2025/05/Group-3268.svg",
+  "source_page": "https://easybizy.net/wp-json/wp/v2/media (Easybizy's WordPress media library, item 31 'Group 3268'; the site header shows the same logo as Group-3268-1.png)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "214ce9f2428758d8bcfd7db8f9e53473c8a201e174c44a2bbacd3fa3aaaeee72",
+  "edits": [
+    "kept only element 0, the paperclip (#2E2E2E); dropped the 'easybizy' lettering (elements 1-9)",
+    "clean",
+    "cropped the viewBox to the paperclip with 2% pad",
+    "#2E2E2E -> #FFFFFF on the paperclip (element 0), which vanishes on the dark tile; white is the clip's colour in Easybizy's own app icon"
+  ],
+  "checked_against": "https://easybizy.net/wp-content/uploads/2025/07/Easybizy_Logo-Variations-1.png (the official lockup: this exact rounded-end clip beside 'easybizy') and https://easybizy.net/wp-content/uploads/2025/05/Easybizy_Logo-Variations.png (favicon/app icon: a white clip on a #2E2E2E circle); api host api.easybizy.net",
+  "source_sha256": "53cab5780afdda475526e7ece4c357de062ab888165f657983b4c471e7b91274"
+}
