@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/us-global-mail-dark.svg",
+  "source": "https://www.usglobalmail.com/wp-content/uploads/2025/12/USGM-footer.svg",
+  "source_page": "https://docs.usglobalmail.com/ (docs header logo; byte-identical to https://www.usglobalmail.com/wp-content/uploads/2025/12/USGM-logo-Dark-Blue-1.svg, the homepage header logo)",
+  "source_kind": "company docs",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "06a9383bdcdbd6533ca3d8ac59fb3b18c74ab37fc5cc1421b12143453a7652d9",
+  "edits": [
+    "kept only the eagle + envelope symbol (elements 13-16), dropped the 'US Global Mail' wordmark (elements 0-12)",
+    "clean",
+    "cropped the viewBox to the mark, pad 0.02",
+    "US Global Mail's own reversed (footer) lockup: white eagle, orange envelope; kept elements 13-16, dropped the wordmark (0-12); clean; cropped, pad 0.02"
+  ],
+  "checked_against": "https://www.usglobalmail.com/wp-content/uploads/2025/12/cropped-favicon-192x192.png (same navy eagle carrying an orange envelope); api hosts *.usglobalmail.com",
+  "source_sha256": "2b36cdbf3058922a99c00c9b8f783469211f1114fe9938252f70f80f95e5134b"
+}

@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/us-global-mail.svg",
   "source": "https://docs.usglobalmail.com/_fern-files/us-global-mail.docs.buildwithfern.com/2b36cdbf3058922a99c00c9b8f783469211f1114fe9938252f70f80f95e5134b/assets/logo-light.svg",
-  "license": "US Global Mail trademark; unmodified publisher logo used to identify the integration",
-  "sha256": "2b36cdbf3058922a99c00c9b8f783469211f1114fe9938252f70f80f95e5134b"
+  "source_page": "https://docs.usglobalmail.com/ (docs header logo; byte-identical to https://www.usglobalmail.com/wp-content/uploads/2025/12/USGM-logo-Dark-Blue-1.svg, the homepage header logo)",
+  "source_kind": "company docs",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "d65a2ec6d915956d84c9ba6cd50acd11303eeefe42df6752233a201719ab90a7",
+  "edits": [
+    "kept only the eagle + envelope symbol (elements 13-16), dropped the 'US Global Mail' wordmark (elements 0-12)",
+    "clean",
+    "cropped the viewBox to the mark, pad 0.02"
+  ],
+  "checked_against": "https://www.usglobalmail.com/wp-content/uploads/2025/12/cropped-favicon-192x192.png (same navy eagle carrying an orange envelope); api hosts *.usglobalmail.com",
+  "source_sha256": "2b36cdbf3058922a99c00c9b8f783469211f1114fe9938252f70f80f95e5134b"
 }
