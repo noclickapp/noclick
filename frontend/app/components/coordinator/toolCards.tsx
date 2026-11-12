@@ -54,7 +54,7 @@ const CARDS: Record<string, ToolCard> = {
     purchase_link: PaymentCard,
 };
 
-function cardFor(call: CoordinatorToolCall): ReactNode {
+function cardFor(call: CoordinatorToolCall, turn: readonly CoordinatorToolCall[]): ReactNode {
     if (call.running || !call.result) return null;
     const links = refusalLinks(call);
     if (links.length) return <RefusalCard call={call} links={links} />;
@@ -63,7 +63,7 @@ function cardFor(call: CoordinatorToolCall): ReactNode {
     // A search's pages join the turn's one Sources list (TurnCards), never a list of their own.
     if (call.tool === 'web_search') return null;
     const Card = CARDS[call.tool] ?? MATCHED_CARDS.find((m) => m.match(call))?.Card;
-    return Card ? <Card call={call} /> : null;
+    return Card ? <Card call={call} turn={turn} /> : null;
 }
 
 /** The jobs a turn's calls started, for reading their progress back. */
@@ -103,7 +103,7 @@ export function SetupNoteCard({ id, setup }: { id: string; setup: CoordinatorSet
 export function TurnCards({ calls, text }: { calls: readonly CoordinatorToolCall[]; text?: string }) {
     const sources = turnSources(calls, text);
     const cards = calls.flatMap((call) => {
-        const card = cardFor(call);
+        const card = cardFor(call, calls);
         return card ? [<div key={call.id}>{card}</div>] : [];
     });
     if (!sources.length && !cards.length) return null;

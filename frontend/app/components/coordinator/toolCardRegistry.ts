@@ -7,7 +7,8 @@ import type { CoordinatorToolCall } from '~/lib/coordinatorToolCalls';
 import type { NewestCard } from './canvases';
 import type { CoordinatorSetupRef } from '~/types/socket-events.generated';
 
-export type ToolCard = (props: { call: CoordinatorToolCall }) => ReactNode;
+// `turn` is every call of the turn the card is drawn under, for a card that draws several of them as one.
+export type ToolCard = (props: { call: CoordinatorToolCall; turn?: readonly CoordinatorToolCall[] }) => ReactNode;
 
 // What the owner asked in the message a turn answers, for the cards under that turn's reply (an MCP server's card opens
 // on the agent the owner named); null where no message of theirs started the turn.
