@@ -9,6 +9,7 @@ import { useAgentOAuthAnalytics } from '~/hooks/useAgentOAuthAnalytics';
 import { isPrimaryAgentCredentialKey } from '~/lib/agentCredentialModel';
 import type { AgentOAuthComponentProps } from './AgentOAuthConnect';
 import { SignInStarting } from './DeviceCodePanel';
+import { openTabForLater } from '~/lib/oauthPopup';
 
 interface ClaudeCodeOAuthProps {
     credentialIds: Record<string, string>;
@@ -47,6 +48,7 @@ export function ClaudeCodeOAuth({
         setState({ status: 'loading' });
         setPastedCode('');
         analytics.started();
+        const tab = openTabForLater();
         try {
             const response = await send({
                 event_name: 'claude-code:auth:start',
@@ -60,8 +62,9 @@ export function ClaudeCodeOAuth({
                     authSessionId: response.auth_session_id,
                     credentialId,
                 });
-                window.open(response.auth_url, '_blank');
+                tab.go(response.auth_url);
             } else {
+                tab.close();
                 analytics.failed('start', response?.message);
                 setState({
                     status: 'error',
@@ -69,6 +72,7 @@ export function ClaudeCodeOAuth({
                 });
             }
         } catch (err) {
+            tab.close();
             analytics.failed('start', err instanceof Error ? err.message : String(err));
             setState({
                 status: 'error',

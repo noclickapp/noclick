@@ -48,3 +48,30 @@ it('binds reconnect to the selected credential and retains the credential ID', a
     await waitFor(() => expect(onChange).toHaveBeenCalledWith({ agent_claude_code_oauth: 'saved' }));
     expect(send.mock.calls.map(([request]) => request.credential_id)).toEqual(['saved', 'saved']);
 });
+
+it('opens the sign-in tab inside the click and points it at the page once the server answers', async () => {
+    const tab = { opener: {} as unknown, closed: false, location: { href: '' }, close: vi.fn() };
+    const open = vi.spyOn(window, 'open').mockReturnValue(tab as unknown as Window);
+    let answer: (value: unknown) => void = () => {};
+    const send = vi.fn().mockReturnValueOnce(new Promise((resolve) => { answer = resolve; }));
+    render(<ClaudeCodeOAuth credentialIds={{}} onCredentialIdsChange={vi.fn()} onCredentialCreated={async () => {}} sendEvent={send} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Connect with Claude account' }));
+    // Opened before the server answered: a tab opened after an await is a blocked pop-up.
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(tab.opener).toBeNull();
+    answer({ success: true, auth_url: 'https://claude.example/authorize', auth_session_id: 's' });
+    await screen.findByLabelText('Authorization code');
+    expect(tab.location.href).toBe('https://claude.example/authorize');
+    expect(open).toHaveBeenCalledTimes(1);
+});
+
+it('closes the waiting tab when the sign-in can’t start', async () => {
+    const tab = { opener: {} as unknown, closed: false, location: { href: '' }, close: vi.fn() };
+    vi.spyOn(window, 'open').mockReturnValue(tab as unknown as Window);
+    const send = vi.fn().mockResolvedValueOnce({ success: false, message: 'Sign-in is unavailable' });
+    render(<ClaudeCodeOAuth credentialIds={{}} onCredentialIdsChange={vi.fn()} onCredentialCreated={async () => {}} sendEvent={send} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Connect with Claude account' }));
+    await screen.findByText('Sign-in is unavailable');
+    expect(tab.close).toHaveBeenCalled();
+    expect(tab.location.href).toBe('');
+});
