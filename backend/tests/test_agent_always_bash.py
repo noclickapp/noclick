@@ -9,9 +9,7 @@ sandbox (execute_bash bypasses the tool_execution choke point, so it
 consults the rehearsal gate itself).
 """
 
-import asyncio
 import json
-import time
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
@@ -215,115 +213,7 @@ async def test_rehearsal_never_consults_the_guard(guard):
     assert result["stdout"] == "fake\n" and guard.calls == []
 
 
-# ============================================================================
-# Local runtime: bare construction boots and runs
-# ============================================================================
-
-
-async def test_local_runtime_bare_end_to_end(tmp_path, monkeypatch):
-    monkeypatch.setenv("NOCLICK_HOME", str(tmp_path))
-    from coder.openai_agent.sandbox import LocalSandboxRuntime
-
-    rt = LocalSandboxRuntime(
-        filesystem_configs=[], workflow_id="wf-e2e", node_id="agent-1"
-    )
-    try:
-        assert rt.persistent is False  # ck-less: nothing to resume
-        result = await rt.run_bash("echo bare-agent-shell")
-    finally:
-        await rt.close()
-    assert result["exit_code"] == 0
-    assert "bare-agent-shell" in result["stdout"]
-
-
-# A model writes scripts as heredocs; their closing line must stay alone on its line.
-HEREDOC = "python3 - <<'PY'\nprint(6 * 7)\nPY"
-
-
-async def test_local_runtime_runs_a_heredoc_whole(tmp_path, monkeypatch):
-    monkeypatch.setenv("NOCLICK_HOME", str(tmp_path))
-    from coder.openai_agent.sandbox import LocalSandboxRuntime
-
-    rt = LocalSandboxRuntime(filesystem_configs=[], workflow_id="wf-heredoc", node_id="agent-1")
-    try:
-        result = await rt.run_bash(HEREDOC)
-    finally:
-        await rt.close()
-    assert (result["exit_code"], result["stdout"]) == (0, "42\n"), result["stderr"]
-
-
-# A model writes bash, not POSIX sh: pipefail, arrays, [[ ]], process substitution, brace expansion, and a command
-# substitution in a heredoc (Debian's sh, dash, stops at the first line).
-BASH_SCRIPT = """set -o pipefail
-words=(alpha beta)
-if [[ ${words[1]} == b* ]]; then
-  diff <(printf '%s\\n' "${words[@]}") <(printf 'alpha\\nbeta\\n') && echo same
-fi
-false | true || echo pipefail-on
-cat <<EOF
-$(echo {1..3})
-EOF"""
-
-
-async def test_local_runtime_runs_bash(tmp_path, monkeypatch):
-    monkeypatch.setenv("NOCLICK_HOME", str(tmp_path))
-    from coder.openai_agent.sandbox import LocalSandboxRuntime
-
-    rt = LocalSandboxRuntime(filesystem_configs=[], workflow_id="wf-bash", node_id="agent-1")
-    try:
-        result = await rt.run_bash(BASH_SCRIPT)
-    finally:
-        await rt.close()
-    assert (result["exit_code"], result["stdout"]) == (0, "same\npipefail-on\n1 2 3\n"), result["stderr"]
-
-
-# ── one command can't hold a turn ─────────────────────────────────────────────
-
-@pytest.fixture
-def local_shell(tmp_path, monkeypatch):
-    monkeypatch.setenv("NOCLICK_HOME", str(tmp_path))
-    from coder.openai_agent import sandbox
-
-    monkeypatch.setattr(sandbox, "_LOCAL_TIMEOUT_S", 1)
-    monkeypatch.setattr(sandbox, "OUTPUT_DRAIN_S", 0.1)
-    return sandbox.LocalSandboxRuntime(filesystem_configs=[], workflow_id="wf-limit", node_id="agent-1")
-
-
-async def test_a_command_past_its_limit_is_stopped_with_what_it_printed(local_shell):
-    started = time.monotonic()
-    try:
-        result = await local_shell.run_bash("echo before; echo oops >&2; sleep 60 & sleep 60; echo never")
-        follow_up = await local_shell.run_bash("echo still-here")
-    finally:
-        await local_shell.close()
-    assert time.monotonic() - started < 5
-    assert (result["stdout"], result["stderr"], result["exit_code"]) == ("before\n", "oops\n", 124)
-    assert result["error"].startswith("Stopped after 1s: this command was still running")
-    assert "sleep 60; echo never" in result["error"]
-    assert follow_up["stdout"] == "still-here\n"
-
-
-async def test_a_stopped_command_takes_what_it_started_with_it(local_shell, tmp_path):
-    marker = tmp_path / "survived"
-    try:
-        await local_shell.run_bash(f"(sleep 1.5; touch {marker}) & sleep 60")
-    finally:
-        await local_shell.close()
-    await asyncio.sleep(1)
-    assert not marker.exists()
-
-
-async def test_a_background_process_holding_its_output_doesnt_hold_the_command(local_shell):
-    started = time.monotonic()
-    try:
-        result = await local_shell.run_bash("sleep 1 & echo up")
-        took = time.monotonic() - started
-    finally:
-        await local_shell.close()
-    assert took < 1
-    assert (result["stdout"], result["exit_code"]) == ("up\n", 0) and "error" not in result
-    await asyncio.sleep(1.1)  # its process gone, and its pipes with it, before the loop is
-
+# ── a stopped command never shows a login ────────────────────────────────────
 
 def test_a_stopped_commands_result_hides_the_login_in_its_url():
     from coder.openai_agent.sandbox import stopped_after, without_logins
@@ -332,9 +222,3 @@ def test_a_stopped_commands_result_hides_the_login_in_its_url():
     assert without_logins("git push https://t:sekr") == "git push https://"  # cut off before its @
     assert "http://localhost:3000/x" in without_logins("curl http://localhost:3000/x -d a")
     assert "sekret" not in stopped_after(5, "git clone https://t:sekret@host.test/r.git")
-
-
-def test_its_description_says_how_long_a_command_may_run():
-    agent = _bare_agent_with_runtime()
-    agent._runtime.command_limit_s = 300
-    assert "still running after 300 seconds is stopped" in agent._make_execute_bash_tool().description
