@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/podium.svg",
+  "source": "https://cms.podium.com/wp-content/uploads/2023/01/External-Press-Kit.zip (External-Press Kit/Logo/SVG/Podium_Logo_Black.svg)",
+  "source_page": "https://www.podium.com/press (press kit download)",
+  "source_kind": "brand kit",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "5a5ad8e9a97ce64684841bc7c65da1a82d263337453524bd90af448f81ba9ad0",
+  "edits": [
+    "kept only the speech-bubble 'P' polygon (element 0), dropped the 'Podium' letters (elements 1-7)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "clean"
+  ],
+  "checked_against": "podium.com's current favicons (https://framerusercontent.com/images/4gqv9jvs9hvUdBSIsaFzsn6Dbg.png light, DoGHTnt1kZz2qSaeF0nWJcgCs.png dark) and apple-touch-icon Vbe9RzQBTjFehHJFS2aivWlPTh0.png; the header lockup in podium.com's page today has the identical bubble polygon (0,0 / 0,13.526 / 6.497,22.95 / 14.022,22.95 / 10.08,13.526 / 18.962,13.526 / 18.962,0, same proportions); api hosts developer.podium.com / api.podium.com match",
+  "source_sha256": "170eb729d9fddd4997978b081c6d06cefcfd7698c1b7e8cce183eb806016325d"
+}
