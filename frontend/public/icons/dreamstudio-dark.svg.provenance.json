@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/dreamstudio-dark.svg",
+  "source": "https://platform.stability.ai/brand/s-mark.svg",
+  "source_page": "https://platform.stability.ai/ (<link rel=\"icon\" href=\"/brand/s-mark.svg\" type=\"image/svg+xml\">)",
+  "source_kind": "company site (SVG favicon)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "6f1b62ac2967121ecaef0136e766606660de756344a20c23c0b26c5586d4fd66",
+  "edits": [
+    "dropped element 0, the #1E1E1E rounded-square tile with a #606060 stroke (the gate refuses a black background over 99% of the canvas, and it vanishes on the dark theme)",
+    "cropped the viewBox to the 'S.' with 2% pad",
+    "light file: #EEEEEE -> #1E1E1E on the S and the dot (the #1E1E1E is the brand's own dark ink, the fill of the Stability wordmark the PR shipped)",
+    "none: the dark file is the 'S.' in its original #EEEEEE, tile removed and cropped"
+  ],
+  "checked_against": "the same favicon drawn on its own tile (platform.stability.ai), and the Stability wordmark the PR shipped (mintcdn stability-ai logo/light.svg, whose 's' and '.' are this S. mark); api hosts api.stability.ai / platform.stability.ai",
+  "source_sha256": "91e1b7a2abf2c304b89f4381b53f66aa19cef1148dc74f35a889eda0aa7213f3"
+}
