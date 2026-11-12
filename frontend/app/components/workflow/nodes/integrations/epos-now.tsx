@@ -13,19 +13,32 @@ const EposNowIcon = ({
     className?: string;
     style?: CSSProperties;
 }) => (
-    <img
-        src="/icons/epos-now.png"
-        alt=""
-        aria-hidden="true"
-        className={className}
-        style={
-            {
-                ...style,
-                '--brand-invert': 0,
-                objectFit: 'contain',
-            } as CSSProperties
-        }
-    />
+    <>
+        <img
+            src="/icons/epos-now.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} dark:hidden`}
+            style={
+                {
+                    ...style,
+                    objectFit: 'contain',
+                } as CSSProperties
+            }
+        />
+        <img
+            src="/icons/epos-now-dark.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} hidden dark:block`}
+            style={
+                {
+                    ...style,
+                    objectFit: 'contain',
+                } as CSSProperties
+            }
+        />
+    </>
 );
 
 export const EposNowNode: NodeDefinition = {
