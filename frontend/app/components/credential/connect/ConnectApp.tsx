@@ -85,7 +85,23 @@ function tabLabel(way: Way, ways: Way[], app: string): string {
     if (way.kind === 'qr_scan') return 'QR code';
     if (way.kind === 'purchase') return 'Buy a number';
     if (way.kind === 'mcp') return 'MCP';
-    return keyNoun(copyMethodOf(way.method), app);
+    const noun = keyNoun(copyMethodOf(way.method), app);
+    if (noun.length <= SHORT_TAB) return noun;
+    // A long noun is cut to its kind ("Integration token" → "Token"; the panel names it in full), unless another
+    // tab would read the same.
+    const short = shortNoun(noun);
+    const same = ways.filter((w) => w !== way && !isSignIn(w.kind) && w.kind !== 'qr_scan' && w.kind !== 'purchase' && w.kind !== 'mcp');
+    return short && !same.some((w) => shortNoun(keyNoun(copyMethodOf(w.method), app)) === short) ? short : noun;
+}
+
+// The longest key noun a tab shows whole ("API key", "Bot token"); a longer one wraps the tab onto two lines.
+const SHORT_TAB = 10;
+
+/** A key noun's kind, the words a tab keeps: "Personal access token" → "Token", "Service account key" → "Key". */
+function shortNoun(noun: string): string | undefined {
+    const kind = /\b(api key|access key|key|token|secret|password)$/i.exec(noun)?.[1];
+    if (!kind) return undefined;
+    return /^api key$/i.test(kind) ? 'API key' : kind.charAt(0).toUpperCase() + kind.slice(1).toLowerCase();
 }
 
 // "Internal integration token" → "internal integration token"; "API key" and brands stay.

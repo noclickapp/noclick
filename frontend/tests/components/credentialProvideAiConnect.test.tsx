@@ -150,7 +150,7 @@ it('orders an app’s ways in as Connections does: a sign-in first', () => {
             onProvided={() => {}}
         />
     );
-    expect(tabs()).toEqual(['Sign in', 'Personal access token']);
+    expect(tabs()).toEqual(['Sign in', 'Token']);
 });
 
 it('says why a link offers an AI key without its plan: the agent asking runs where no plan does', () => {

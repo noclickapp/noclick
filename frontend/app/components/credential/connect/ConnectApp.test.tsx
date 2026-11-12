@@ -36,7 +36,7 @@ describe('ConnectApp', () => {
     it('switches between the ways in, and shows a key as get it, then paste it', async () => {
         render(<ConnectApp app="Notion" methods={[signIn('notion_oauth', 'NotionOAuth'), token]} renderMethod={renderMethod} />);
         const tabs = screen.getAllByRole('tab').map((t) => t.textContent);
-        expect(tabs).toEqual(['Sign in', 'Integration token']);
+        expect(tabs).toEqual(['Sign in', 'Token']);
         expect(screen.getByTestId('form-notion_oauth')).toBeTruthy();
 
         // Real tabs: arrow keys move between the ways in, and each way is its own panel.
@@ -45,8 +45,8 @@ describe('ConnectApp', () => {
         fireEvent.keyDown(signInTab, { key: 'ArrowRight' });
         // Radix moves focus on the next tick.
         await act(async () => { await new Promise((r) => setTimeout(r, 0)); });
-        expect(document.activeElement).toBe(screen.getByRole('tab', { name: 'Integration token' }));
-        fireEvent.mouseDown(screen.getByRole('tab', { name: 'Integration token' }), { button: 0 });
+        expect(document.activeElement).toBe(screen.getByRole('tab', { name: 'Token' }));
+        fireEvent.mouseDown(screen.getByRole('tab', { name: 'Token' }), { button: 0 });
         expect(screen.getByRole('tabpanel')).toBeTruthy();
         expect(screen.getByText('Get an internal integration token')).toBeTruthy();
         expect(screen.getByText('Create an internal integration. Then share the desired pages/databases with your integration.')).toBeTruthy();
@@ -105,6 +105,8 @@ describe('ConnectApp', () => {
         render(<ConnectApp app="Instagram" methods={methods} renderMethod={renderMethod} />);
         const names = screen.getAllByRole('tab').map((t) => t.textContent);
         expect(names.slice(0, 2)).toEqual(['Instagram Login', 'Facebook Login']);
+        // Two tokens keep their full names, since "Token" twice wouldn't tell them apart.
+        expect(names.slice(2)).toEqual(['System user token', 'Page access token']);
         expect(screen.getByRole('tablist').className).toContain('grid-cols-2');
     });
 

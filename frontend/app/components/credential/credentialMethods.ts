@@ -49,9 +49,13 @@ export function getFieldsFromSchema(credentialSchema: Schema | undefined): Crede
 }
 
 /** Where a way in stands among an app's: a sign-in first, then an API key, then a PAT, then the rest (a vendor's MCP
- *  server among them, a second way in); a sign-in that needs your own OAuth app last. Connections and a provide link
- *  order the same ways in by it. */
-export function wayInRank(method: Parameters<typeof kindFromBackendMethod>[0] & Pick<ProvideCredentialMethod, 'credential_type' | 'requires_custom_client'>): number {
+ *  server among them, a second way in); a sign-in that needs your own OAuth app later, and one still in preview last
+ *  (shown only to accounts its flag lets in, while the provider reviews NoClick's app, so it may not work yet: Canva's
+ *  sign-in led its dialog and failed, 2026-11-12). Connections and a provide link order the same ways in by it. */
+export function wayInRank(
+    method: Parameters<typeof kindFromBackendMethod>[0] & Pick<ProvideCredentialMethod, 'credential_type' | 'requires_custom_client'> & { preview?: boolean }
+): number {
+    if (method.preview) return 5;
     const kind = kindFromBackendMethod(method);
     if (kind === 'oauth' || kind === 'agent_oauth') return method.requires_custom_client ? 4 : 0;
     const type = method.credential_type.toLowerCase();
@@ -65,6 +69,7 @@ const priority = (req: CredentialRequirement): number =>
         credential_type: req.credential_type,
         method_kind: kindFromCredentialType(req.schema?.['x-credential-type']),
         requires_custom_client: !!req.schema?.['x-oauth-requires-custom-client'],
+        preview: !!req.schema?.['x-credential-hidden'],
     });
 
 /** Every credential class a node schema accepts, humanized and in order. `isVisible` hides a class pending approval. */
