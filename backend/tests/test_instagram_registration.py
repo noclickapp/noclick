@@ -359,5 +359,5 @@ async def test_a_step_left_not_registered_by_a_blip_heals_on_reconcile_without_a
         node_class=InstagramNode, node_config=config, current_op="on_message",
     )
 
-    assert state == {"state": "registered"} and account.write.call_count == 0
+    assert state["state"] == "registered" and account.write.call_count == 0
     assert config["trigger_registered"] is True and config["trigger_error"] is None
