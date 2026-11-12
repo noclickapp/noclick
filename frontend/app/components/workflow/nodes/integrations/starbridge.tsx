@@ -4,7 +4,7 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 const StarbridgeIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/starbridge.png" alt="" aria-hidden="true" className={className} style={{ ...style, objectFit: 'contain' }} />
+    <img src="/icons/starbridge.svg" alt="" aria-hidden="true" className={className} style={{ ...style, objectFit: 'contain' }} />
 );
 export const StarbridgeNode: NodeDefinition = {
     type: 'automation-starbridge', category: 'crm-sales', label: 'Starbridge',
