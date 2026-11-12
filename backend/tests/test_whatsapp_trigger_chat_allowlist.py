@@ -17,7 +17,7 @@ from fastapi import FastAPI
 from coder.workflow.operation_catalog import validate_node_config
 from nodes.whatsapp_node import WhatsAppNode
 from utils import capabilities, webhook_routes
-from utils.capabilities import TRIGGER_DELIVERY
+from utils.capabilities import ACCOUNT_UNCLAIMED, TRIGGER_DELIVERY
 
 RECEIVE = {"operation": "receive_message"}
 GROUP = "120000000000000001@g.us"
@@ -143,6 +143,7 @@ def route(monkeypatch):
     monkeypatch.setattr(webhook_routes, "update_webhook_stats", lambda *_: None)
     monkeypatch.setattr("utils.fire_budget.over_fire_budget", AsyncMock(return_value=False))
     monkeypatch.delitem(capabilities._providers, TRIGGER_DELIVERY, raising=False)
+    monkeypatch.delitem(capabilities._providers, ACCOUNT_UNCLAIMED, raising=False)
     app = FastAPI()
     app.include_router(webhook_routes.router)
     return httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test"), run
