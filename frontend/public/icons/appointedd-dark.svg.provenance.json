@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/appointedd-dark.svg",
+  "source": "https://cdn.prod.website-files.com/68432e14f4a2458e4bda9029/684336837985489eee6872c4_appointedd_logo.svg",
+  "source_page": "https://www.appointedd.com/ (header logo <img>)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "0811ced142afe62a153d8d972896e8691a039b7abb96ee1a0ae402558908bc47",
+  "edits": [
+    "kept the mark (elements 0-3: magenta #DE028E circle, blue #90D5EF circle, white 'a', purple #CC40B9 overlap), dropped the 'appointedd' wordmark (elements 4-13)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "clean",
+    "light-mode file only: the white 'a' (element 2) recoloured #FFFFFF -> #15181A, the logo's own text colour, because its stem and bowl edge stand outside the circles and vanished on the light tile (17%)",
+    "none: the dark file is the cropped mark in its original colours (white 'a' reads on the dark tile)"
+  ],
+  "checked_against": "https://cdn.prod.website-files.com/68432e14f4a2458e4bda9029/688109c6d8acddc2938e0b0f_appointedd_webclip.png (the PR's file) and the site favicon 684bc6a8581b01cf8412a734_Favicon.png: the same two overlapping circles with the white 'a' and purple overlap. json-api.appointedd.com matches.",
+  "source_sha256": "8a393af6b546302d2e26deea2d926751144258b7ddd0f0e7927d01588bcbc89e"
+}
