@@ -10,18 +10,38 @@ import { useLoaderData } from 'react-router';
 import { getAllSerializedNodeMeta } from '~/lib/nodeCatalog.server';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
 import { ProvideCredentialView } from '~/components/credential/ProvideCredentialView';
+import { appNameForCredentialType } from '~/components/credential/CredentialProvideFlow';
 import { buildSeoMeta } from '~/lib/seo';
+import { connectPreview } from '~/lib/linkPreviews';
+import { AGENT_SIGN_IN_NAMES } from '~/lib/agentCredentialModel';
 
-export const meta: MetaFunction = () =>
-  buildSeoMeta({
-    title: 'Provide Credentials - NoClick',
-    description: 'Securely share credentials with a NoClick workflow.',
-    indexable: false,
-  });
+export const meta: MetaFunction = ({ data }) =>
+  buildSeoMeta({ ...connectPreview((data as JsonPayloadOf<typeof loader> | undefined)?.account ?? null), indexable: false });
 
 const API_BASE = typeof window !== 'undefined'
   ? ((window as unknown as { ENV?: { API_URL?: string } }).ENV?.API_URL || import.meta.env.VITE_API_URL || '')
   : (process.env.API_URL || '');
+
+// The account the request asks for, as a chat's preview of the link names it ("Connect your Claude account"): read
+// once on the server, and only its name leaves the loader. A request that has ended, or couldn't be read, previews as
+// any account; the page reads it again itself.
+async function requestedAccount(token: string): Promise<string | null> {
+  const api = process.env.VITE_API_URL || process.env.API_URL || '';
+  const res = await fetch(`${api}/api/credential-request/${encodeURIComponent(token)}`, {
+    headers: { Accept: 'application/json' },
+    signal: AbortSignal.timeout(4000),
+  }).catch((error: unknown) => {
+    console.warn('[credential-provide] reading the request for its preview failed:', error);
+    return null;
+  });
+  if (!res?.ok) {
+    if (res && ![404, 410, 429].includes(res.status)) console.warn(`[credential-provide] the request's preview read answered ${res.status}`);
+    return null;
+  }
+  const { credential_type: type } = (await res.json()) as { credential_type?: string };
+  // A plan is an account with what it signs in with (a Claude plan is a Claude account); anything else, its app.
+  return type ? (AGENT_SIGN_IN_NAMES[type]?.signInWith ?? appNameForCredentialType(type)) : null;
+}
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { token } = params;
@@ -31,7 +51,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
   // Serialize node-icon metadata so the client can resolve node-backed brand
   // icons (Apollo, Slack, …) via the same resolver Settings uses, without
   // pulling in the heavy node registry. Static + identical for every user.
-  return json({ token, nodeIconData: getAllSerializedNodeMeta() });
+  const nodeIconData = getAllSerializedNodeMeta();
+  // The app names its account through the same catalog.
+  setNodeIconData(nodeIconData);
+  return json({ token, nodeIconData, account: await requestedAccount(token) });
 }
 
 export default function ProvideCredentialPage() {
