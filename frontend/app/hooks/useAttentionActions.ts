@@ -11,6 +11,7 @@ import { dismissAttention } from '~/hooks/useDashboardOverview';
 import { socketCall as call } from '~/lib/socketCall';
 import { goToWorkflowNode, navigateToWorkflow } from '~/lib/navigation';
 import { openCreateCredential } from '~/components/shared/popups/CreateCredentialDialog';
+import { openTabForLater } from '~/lib/oauthPopup';
 
 export type AttentionActions = Pick<
     DashboardActions,
@@ -133,7 +134,7 @@ export function useAttentionActions(refresh: () => Promise<void>): AttentionActi
                 navigator.clipboard?.writeText(url).then(() => toast.success('Link copied')).catch(() => toast.error('Could not copy'));
             },
             openLink: (item) => {
-                if (item.link) window.open(new URL(item.link, window.location.origin).toString(), '_blank', 'noopener');
+                if (item.link) openTabForLater({ url: new URL(item.link, window.location.origin).toString() });
             },
             cancelCredentialRequest: (item) => {
                 dismissAttention(item.id);

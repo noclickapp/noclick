@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { OAuthExchange } from '~/hooks/oauth/OAuthExchangeContext';
 import { MCP_CALLBACK_PATH, MCP_CALLBACK_TYPE } from '~/lib/mcpCallback';
 import { oauthChannelName } from '~/lib/oauthChannel';
+import { openTabForLater } from '~/lib/oauthPopup';
 import { sendEventAsync } from '~/lib/socket-sender';
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 
@@ -150,20 +151,15 @@ export function useMcpConnect({
         setError(null);
         setStage('starting');
         // Opened while the click still counts, so no popup blocker stops it; pointed at the sign-in once it's known.
-        const width = 520;
-        const height = 720;
-        const popup = window.open(
-            'about:blank',
-            `mcp-connect-${credentialType}`,
-            `width=${width},height=${height},left=${window.screenX + (window.outerWidth - width) / 2},top=${window.screenY + (window.outerHeight - height) / 2},popup=yes`
-        );
+        const signIn = openTabForLater({ name: `mcp-connect-${credentialType}`, popup: { width: 520, height: 720 } });
+        const popup = signIn.window;
         const started = (await sendEvent({
             event_name: 'mcp:connect:start',
             credential_type: credentialType,
             redirect_uri: `${window.location.origin}${MCP_CALLBACK_PATH}`,
         }).catch(failure)) as Started;
         if (!started?.success || !started.flow) {
-            popup?.close();
+            signIn.close();
             setError(started?.error || 'The connection could not start.');
             setStage('idle');
             return;
@@ -174,12 +170,12 @@ export function useMcpConnect({
             kind: started.kind ?? 'oauth',
         };
         if (started.kind === 'key') {
-            popup?.close();
+            signIn.close();
             setStage('key');
             return;
         }
         if (started.kind === 'none') {
-            popup?.close();
+            signIn.close();
             await finish({});
             return;
         }
@@ -192,7 +188,7 @@ export function useMcpConnect({
         }
         listen(started.state!);
         setStage('signing_in');
-        popup.location.href = started.authorization_url!;
+        signIn.go(started.authorization_url!);
     }, [credentialType, sendEvent, finish, listen]);
 
     const submitKey = useCallback(

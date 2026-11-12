@@ -5,6 +5,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useOAuthAuthorizeParams, useOAuthExchange } from './OAuthExchangeContext';
 import { augmentScopes } from '~/utils/oauthProviders';
+import { openTabForLater } from '~/lib/oauthPopup';
 
 interface GoogleOAuthResult {
     success: boolean;
@@ -145,18 +146,12 @@ export function useGoogleOAuth(options: UseGoogleOAuthOptions = {}) {
             ...authorizeParamsRef.current,
         });
 
-        // Calculate popup position (centered on screen)
-        const width = 500;
-        const height = 600;
-        const left = window.screenX + (window.outerWidth - width) / 2;
-        const top = window.screenY + (window.outerHeight - height) / 2;
-
         // Open OAuth flow in new popup window (unified route for all Google APIs)
-        const popup = window.open(
-            `/api/auth/google/authorize?${params.toString()}`,
-            'google-oauth',
-            `width=${width},height=${height},left=${left},top=${top},popup=yes`
-        );
+        const popup = openTabForLater({
+            url: `/api/auth/google/authorize?${params.toString()}`,
+            name: 'google-oauth',
+            popup: { width: 500, height: 600 },
+        }).window;
 
         // Handle case where popup was blocked
         if (!popup) {

@@ -5,6 +5,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useOAuthExchange } from './OAuthExchangeContext';
+import { openTabForLater } from '~/lib/oauthPopup';
 
 interface ZendeskOAuthResult {
     success: boolean;
@@ -126,18 +127,12 @@ export function useZendeskOAuth(options: UseZendeskOAuthOptions = {}) {
             scopes: (scopes && scopes.length ? scopes : ZENDESK_DEFAULT_SCOPES).join(','),
         });
 
-        // Calculate popup position (centered on screen)
-        const width = 500;
-        const height = 700;
-        const left = window.screenX + (window.outerWidth - width) / 2;
-        const top = window.screenY + (window.outerHeight - height) / 2;
-
         // Open OAuth flow in new popup window
-        const popup = window.open(
-            `/api/auth/zendesk/authorize?${params.toString()}`,
-            'zendesk-oauth',
-            `width=${width},height=${height},left=${left},top=${top},popup=yes`
-        );
+        const popup = openTabForLater({
+            url: `/api/auth/zendesk/authorize?${params.toString()}`,
+            name: 'zendesk-oauth',
+            popup: { width: 500, height: 700 },
+        }).window;
 
         // Handle case where popup was blocked
         if (!popup) {

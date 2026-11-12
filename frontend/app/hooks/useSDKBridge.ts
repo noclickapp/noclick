@@ -14,6 +14,7 @@ import {
   requireScopedNodeIds,
   requireScopedStateNode,
 } from '~/lib/sdkBridgeScope';
+import { holdSignInWindow } from '~/lib/oauthPopup';
 
 interface SDKRequest {
   type: 'noclick:request';
@@ -580,11 +581,15 @@ export function useSDKBridge(params: UseSDKBridgeParams | null) {
             respondError(id, 'OAuth not available in this context');
             break;
           }
+          // The sign-in window opens now, while the app's click still counts: finding the provider and scopes below
+          // reads every node schema, and a window opened after that is a blocked pop-up.
+          const releaseWindow = holdSignInWindow();
           // Provider and scopes from the node schema that declares the type (most reliable source), else the
           // provider config.
           Promise.all([findOAuthScopesForCredentialType(credType), import('~/utils/oauthProviders')]).then(([schemaInfo, { getProviderKeyFromCredentialType }]) => {
             const providerKey = schemaInfo?.provider || getProviderKeyFromCredentialType(credType);
             if (!providerKey) {
+              releaseWindow();
               respondError(id, `Unknown credential type: ${credType}`);
               return;
             }
@@ -608,7 +613,9 @@ export function useSDKBridge(params: UseSDKBridgeParams | null) {
             // Trigger the OAuth flow — scopes from schema, readable name from credential type
             const credName = credType.replace(/_oauth$/, '').replace(/_/g, ' ');
             oauthConnect(providerKey, credName, scopes);
+            releaseWindow();
           }).catch((e) => {
+            releaseWindow();
             respondError(id, e instanceof Error ? e.message : 'Failed to look up the credential type');
           });
           break;

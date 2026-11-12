@@ -17,7 +17,7 @@ import type { DeviceAuthorization } from '~/hooks/oauth/useGenericDeviceOAuth';
 import { useEffect, useState } from 'react';
 import { ArrowUpRight, ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
 import { SecretInput } from '~/components/workflow/SecretInput';
-import { getOAuthConnectInput, providerSupportsOrgConsent } from '~/utils/oauthProviders';
+import { getOAuthConnectInput, normalizeConnectInput, providerSupportsOrgConsent } from '~/utils/oauthProviders';
 import { getSchemaTitleFromCredentialType } from '~/utils/credentialTypes';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { inSentence } from '~/utils/credentialCopy';
@@ -92,20 +92,6 @@ export interface OAuthConnectFormProps {
 
 // An action inside a line of text: ink that underlines on hover, as the connect dialog's switches are.
 const SHELL_INLINE = 'rounded-sm text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
-
-function escapeRegExp(s: string): string {
-    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-/** Strip protocol/path and the domain suffix, lowercased — the tenant slug the OAuth host needs. */
-function normalizeConnectInput(raw: string, suffix: string): string {
-    return raw
-        .trim()
-        .toLowerCase()
-        .replace(/^https?:\/\//, '')
-        .replace(/\/.*$/, '')
-        .replace(new RegExp(escapeRegExp(suffix) + '$'), '');
-}
 
 /**
  * Schema metadata stores callback paths rather than a hosted deployment URL.
@@ -307,7 +293,7 @@ export function OAuthConnectForm({
     if (deviceAuthorization?.provider === provider) return (
         <DeviceCodePanel provider={displayName} userCode={deviceAuthorization.userCode}
             verificationUrl={deviceAuthorization.verificationUrl} polling={deviceAuthorization.polling}
-            onApproved={deviceAuthorization.check} onCancel={() => onCancel?.()} />
+            onApproved={deviceAuthorization.check} onCancel={() => onCancel?.()} copied={deviceAuthorization.copied} />
     );
     return (
         <div className="space-y-4">

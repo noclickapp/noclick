@@ -5,6 +5,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useOAuthExchange } from './OAuthExchangeContext';
+import { openTabForLater } from '~/lib/oauthPopup';
 
 interface PostHogOAuthResult {
     success: boolean;
@@ -97,16 +98,11 @@ export function usePostHogOAuth(options: UsePostHogOAuthOptions = {}) {
         const params = new URLSearchParams();
         if (scopes && scopes.length) params.set('scopes', scopes.join(' '));
 
-        const width = 500;
-        const height = 700;
-        const left = window.screenX + (window.outerWidth - width) / 2;
-        const top = window.screenY + (window.outerHeight - height) / 2;
-
-        const popup = window.open(
-            `/api/auth/posthog/authorize?${params.toString()}`,
-            'posthog-oauth',
-            `width=${width},height=${height},left=${left},top=${top},popup=yes`,
-        );
+        const popup = openTabForLater({
+            url: `/api/auth/posthog/authorize?${params.toString()}`,
+            name: 'posthog-oauth',
+            popup: { width: 500, height: 700 },
+        }).window;
         if (!popup) {
             setIsConnecting(false);
             isConnectingRef.current = false;

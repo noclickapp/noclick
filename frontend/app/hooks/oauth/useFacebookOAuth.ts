@@ -9,6 +9,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useOAuthExchange } from './OAuthExchangeContext';
+import { openTabForLater } from '~/lib/oauthPopup';
 
 interface FacebookOAuthResult {
     success: boolean;
@@ -228,16 +229,11 @@ export function useFacebookOAuth(options: UseFacebookOAuthOptions = {}) {
             scopes: mergedScopes.join(','),
         });
 
-        const width = 600;
-        const height = 700;
-        const left = window.screenX + (window.outerWidth - width) / 2;
-        const top = window.screenY + (window.outerHeight - height) / 2;
-
-        const popup = window.open(
-            `/api/auth/facebook/authorize?${params.toString()}`,
-            'facebook-oauth',
-            `width=${width},height=${height},left=${left},top=${top},popup=yes`
-        );
+        const popup = openTabForLater({
+            url: `/api/auth/facebook/authorize?${params.toString()}`,
+            name: 'facebook-oauth',
+            popup: { width: 600, height: 700 },
+        }).window;
 
         if (!popup) {
             setIsConnecting(false);

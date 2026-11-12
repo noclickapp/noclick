@@ -14,6 +14,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { augmentScopes } from '~/utils/oauthProviders';
 import { useOAuthAuthorizeParams, useOAuthExchange } from './OAuthExchangeContext';
 import { oauthChannelName } from '~/lib/oauthChannel';
+import { openTabForLater } from '~/lib/oauthPopup';
 
 export interface OAuthHookResult {
     success: boolean;
@@ -264,11 +265,6 @@ export function createOAuthHook(config: OAuthHookConfig) {
                 credentialNameRef.current = credentialName;
                 setError(null);
 
-                const width = 500;
-                const height = 700;
-                const left = window.screenX + (window.outerWidth - width) / 2;
-                const top = window.screenY + (window.outerHeight - height) / 2;
-
                 const authorizeUrl = new URL(
                     buildAuthorizeUrl(activeConfig, credentialName, scopes, options),
                     window.location.origin
@@ -303,13 +299,13 @@ export function createOAuthHook(config: OAuthHookConfig) {
                         return;
                     }
                 }
-                const popup = window.open(
-                    authorizeUrl.pathname + authorizeUrl.search,
-                    activeConfig.broadcastChannel
+                const popup = openTabForLater({
+                    url: authorizeUrl.pathname + authorizeUrl.search,
+                    name: activeConfig.broadcastChannel
                         ? `${provider}-oauth-${authorizeUrl.searchParams.get('callback_channel')}`
                         : `${provider}-oauth`,
-                    `width=${width},height=${height},left=${left},top=${top},popup=yes`
-                );
+                    popup: { width: 500, height: 700 },
+                }).window;
 
                 if (!popup) {
                     channelRef.current?.close();

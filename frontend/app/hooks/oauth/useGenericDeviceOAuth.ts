@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useOAuthExchange } from './OAuthExchangeContext';
 import type { UseOAuthHookOptions } from './createOAuthHook';
+import { copyWhenKnown, openTabForLater } from '~/lib/oauthPopup';
 
 export interface DeviceAuthorization {
     provider: string;
     userCode: string;
     verificationUrl: string;
     polling: boolean;
+    /** The code is on the clipboard. */
+    copied?: boolean;
     check: () => void;
 }
 
@@ -37,19 +40,23 @@ export function useGenericDeviceOAuth(options: UseOAuthHookOptions) {
             const current = generation.current;
             const alive = () => current === generation.current;
             setConnecting(true);
+            // All in the click: the code's copy and the provider's page, which wait for the start to name them.
+            const starting = latest.current.exchange({
+                event_name: 'oauth:device:start',
+                provider,
+                scopes,
+                context,
+            });
+            const copied = copyWhenKnown(starting.then((r) => (r?.success ? r.user_code : null)));
+            const tab = openTabForLater();
             const fail = (message: string) => {
                 if (!alive()) return;
                 cancel();
                 latest.current.options.onError?.(message);
             };
             try {
-                const started = await latest.current.exchange({
-                    event_name: 'oauth:device:start',
-                    provider,
-                    scopes,
-                    context,
-                });
-                if (!alive()) return;
+                const started = await starting;
+                if (!alive()) return tab.close();
                 if (
                     !started?.success ||
                     !started.authorization_id ||
@@ -59,6 +66,7 @@ export function useGenericDeviceOAuth(options: UseOAuthHookOptions) {
                     throw new Error(
                         started?.message || 'Could not start device sign-in'
                     );
+                tab.go(started.verification_uri);
                 const deadline = Date.now() + started.expires_in * 1000;
                 let inFlight = false;
                 const poll = async () => {
@@ -132,11 +140,18 @@ export function useGenericDeviceOAuth(options: UseOAuthHookOptions) {
                     polling: false,
                     check: () => void poll(),
                 });
+                void copied.then(
+                    (ok) =>
+                        ok &&
+                        alive() &&
+                        setAuthorization((value) => value && { ...value, copied: true })
+                );
                 timer.current = setTimeout(
                     () => void poll(),
                     Math.max(1, started.interval) * 1000
                 );
             } catch (error) {
+                tab.close();
                 fail(
                     error instanceof Error
                         ? error.message

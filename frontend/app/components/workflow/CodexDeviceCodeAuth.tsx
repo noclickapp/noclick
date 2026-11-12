@@ -8,6 +8,7 @@ import { sendEventAsync } from '~/lib/socket-sender';
 import { useAgentOAuthAnalytics } from '~/hooks/useAgentOAuthAnalytics';
 import { isPrimaryAgentCredentialKey } from '~/lib/agentCredentialModel';
 import type { AgentOAuthComponentProps } from './AgentOAuthConnect';
+import { copyWhenKnown, openTabForLater } from '~/lib/oauthPopup';
 
 interface CodexDeviceCodeAuthProps {
     credentialIds: Record<string, string>;
@@ -45,6 +46,7 @@ interface DeviceCodeState {
     deviceAuthId?: string;
     interval?: number;
     message?: string;
+    copied?: boolean;
 }
 
 export function CodexDeviceCodeAuth({
@@ -68,11 +70,15 @@ export function CodexDeviceCodeAuth({
     const startFlow = useCallback(async () => {
         setState({ status: 'loading' });
         analytics.started();
+        // All in the click: the code's copy and OpenAI's page, which wait for the start to name them.
+        const started = send({
+            event_name: 'codex:auth:start',
+            request_id: `codex-auth-start-${Date.now()}`,
+        });
+        const copied = copyWhenKnown(started.then((r) => (r?.success ? r.user_code : null)));
+        const tab = openTabForLater();
         try {
-            const response = await send({
-                event_name: 'codex:auth:start',
-                request_id: `codex-auth-start-${Date.now()}`,
-            });
+            const response = await started;
             if (response?.success) {
                 setState({
                     status: 'awaiting_approval',
@@ -82,8 +88,11 @@ export function CodexDeviceCodeAuth({
                     interval: response.interval || 5,
                     message: response.message,
                 });
-                window.open(response.verification_url, '_blank');
+                if (response.verification_url) tab.go(response.verification_url);
+                else tab.close();
+                void copied.then((ok) => ok && setState((prev) => (prev.userCode === response.user_code ? { ...prev, copied: true } : prev)));
             } else {
+                tab.close();
                 analytics.failed('start', response?.message);
                 setState({
                     status: 'error',
@@ -91,6 +100,7 @@ export function CodexDeviceCodeAuth({
                 });
             }
         } catch (err) {
+            tab.close();
             analytics.failed('start', err instanceof Error ? err.message : String(err));
             setState({
                 status: 'error',
@@ -192,6 +202,7 @@ export function CodexDeviceCodeAuth({
                 onCancel={cancel}
                 onApproved={poll}
                 hint={DEVICE_CODE_HINT}
+                copied={state.copied}
             />
         );
     }

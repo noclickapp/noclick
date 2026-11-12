@@ -12,7 +12,7 @@ import { cn } from '~/lib/utils';
 import { useCredentialOAuth } from '~/hooks/useCredentialOAuth';
 import { UpgradePopup } from '~/components/utils/UpgradePopup';
 import { isPlanLimitError } from '~/lib/planLimitErrors';
-import { getProviderConfigNormalized, getProviderConfigByCredentialType, type OAuthProviderConfig } from '~/utils/oauthProviders';
+import { getProviderConfigNormalized, getProviderConfigByCredentialType, normalizeConnectInput, type OAuthProviderConfig } from '~/utils/oauthProviders';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { invalidateCredentialsCache } from '~/utils/credentialAutoSelect';
@@ -297,6 +297,8 @@ function GenerationCredentialSelectorInner({
     // UI state
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [tenant, setTenant] = useState('');
+    const tenantRef = useRef<HTMLInputElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
@@ -458,22 +460,23 @@ function GenerationCredentialSelectorInner({
             | string[]
             | undefined;
 
-        // Shopify requires shop parameter
-        if (providerConfig.oauthProvider === 'shopify') {
-            const shop = prompt('Enter your Shopify store name (e.g., my-store from my-store.myshopify.com):');
-            if (!shop) return;
-            connect(providerConfig.oauthProvider, defaultName, scopes, shop);
-        } else {
-            connect(
-                providerConfig.oauthProvider,
-                defaultName,
-                scopes,
-                undefined,
-                undefined,
-                userScopes
-            );
+        // A store, subdomain or site is asked beside the button, never in a prompt(): the sign-in window opens in the
+        // click, and a prompt held the click past the browser's allowance while the name was typed.
+        const connectInput = providerConfig.connectInput;
+        const named = connectInput ? normalizeConnectInput(tenant, connectInput.suffix) : undefined;
+        if (connectInput && !named) {
+            tenantRef.current?.focus();
+            return;
         }
-    }, [providerConfig, connect, input.credentialType, input.acceptedCredentialTypes, nodeType]);
+        connect(
+            providerConfig.oauthProvider,
+            defaultName,
+            scopes,
+            connectInput?.kind === 'site' ? undefined : named,
+            connectInput?.kind === 'site' ? named : undefined,
+            userScopes
+        );
+    }, [providerConfig, connect, input.credentialType, input.acceptedCredentialTypes, nodeType, tenant]);
 
     // Start creating a new credential inline
     const handleStartCreate = useCallback((schema: CredentialSchemaInfo) => {
@@ -758,6 +761,22 @@ function GenerationCredentialSelectorInner({
 
                 {renderDropdown()}
             </div>
+
+            {hasOAuth && ProviderIcon && providerConfig?.connectInput && (
+                <label className="flex items-center gap-1.5 text-sm">
+                    <span className="sr-only">{providerConfig.connectInput.label}</span>
+                    <input
+                        ref={tenantRef}
+                        value={tenant}
+                        onChange={(e) => setTenant(e.target.value)}
+                        placeholder={providerConfig.connectInput.placeholder}
+                        autoComplete="off"
+                        spellCheck={false}
+                        className="min-w-0 flex-1 rounded-lg border border-border bg-foreground/[0.03] px-3 py-2 font-mono text-sm text-foreground placeholder:font-sans dark:border-white/[0.08]"
+                    />
+                    <span className="shrink-0 text-muted-foreground">{providerConfig.connectInput.suffix}</span>
+                </label>
+            )}
 
             {/* OAuth Connect button */}
             {hasOAuth && ProviderIcon && (

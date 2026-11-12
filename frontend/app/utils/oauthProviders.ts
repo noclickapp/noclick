@@ -1216,6 +1216,16 @@ export function getOAuthConnectInput(
     return base;
 }
 
+/** Strip protocol/path and the domain suffix, lowercased — the tenant slug the OAuth host needs. */
+export function normalizeConnectInput(raw: string, suffix: string): string {
+    return raw
+        .trim()
+        .toLowerCase()
+        .replace(/^https?:\/\//, '')
+        .replace(/\/.*$/, '')
+        .replace(new RegExp(suffix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$'), '');
+}
+
 /** Whether a provider's OAuth needs an in-app selection step the public provide link
  *  can't complete (Facebook/Instagram account, Supabase project). Used to gate the link. */
 export function oauthNeedsInAppSelection(

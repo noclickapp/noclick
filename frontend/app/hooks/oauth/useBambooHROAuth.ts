@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useOAuthExchange } from './OAuthExchangeContext';
+import { openTabForLater } from '~/lib/oauthPopup';
 
 interface BambooHROAuthResult {
     success: boolean;
@@ -116,16 +117,11 @@ export function useBambooHROAuth(options: UseBambooHROAuthOptions = {}) {
             scopes: (scopes && scopes.length ? scopes : BAMBOOHR_DEFAULT_SCOPES).join(','),
         });
 
-        const width = 500;
-        const height = 700;
-        const left = window.screenX + (window.outerWidth - width) / 2;
-        const top = window.screenY + (window.outerHeight - height) / 2;
-
-        const popup = window.open(
-            `/api/auth/bamboohr/authorize?${params.toString()}`,
-            'bamboohr-oauth',
-            `width=${width},height=${height},left=${left},top=${top},popup=yes`
-        );
+        const popup = openTabForLater({
+            url: `/api/auth/bamboohr/authorize?${params.toString()}`,
+            name: 'bamboohr-oauth',
+            popup: { width: 500, height: 700 },
+        }).window;
 
         if (!popup) {
             setIsConnecting(false);

@@ -4,6 +4,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { sendEventAsync } from '~/lib/socket-sender';
+import { openTabForLater } from '~/lib/oauthPopup';
 
 // MCP OAuth discovery result from backend
 export interface MCPOAuthDiscoveryResult {
@@ -198,6 +199,15 @@ export function useMCPOAuth(options: UseMCPOAuthOptions = {}) {
 
         setIsConnecting(true);
         setError(null);
+        // Opened now, inside the click: registering a client first is an await, after which the browser blocks it.
+        const signIn = openTabForLater({ name: 'mcp-oauth', popup: { width: 600, height: 700 } });
+        const popup = signIn.window;
+        if (!popup) {
+            setIsConnecting(false);
+            setError('Popup was blocked. Please allow popups for this site.');
+            optionsRef.current.onError?.('Popup was blocked');
+            return;
+        }
 
         try {
             // Get client ID - either from dynamic registration or use default
@@ -257,24 +267,9 @@ export function useMCPOAuth(options: UseMCPOAuthOptions = {}) {
             const authUrl = `${discoveryResult.authorization_endpoint}?${params.toString()}`;
             console.log('[useMCPOAuth] Opening authorization URL:', authUrl);
 
-            // Calculate popup position (centered on screen)
-            const width = 600;
-            const height = 700;
-            const left = window.screenX + (window.outerWidth - width) / 2;
-            const top = window.screenY + (window.outerHeight - height) / 2;
-
-            // Open OAuth flow in popup window
-            const popup = window.open(
-                authUrl,
-                'mcp-oauth',
-                `width=${width},height=${height},left=${left},top=${top},popup=yes`
-            );
-
-            // Handle case where popup was blocked
-            if (!popup) {
+            // Closed while the client registered: as closing it mid-sign-in, a cancel.
+            if (!signIn.go(authUrl)) {
                 setIsConnecting(false);
-                setError('Popup was blocked. Please allow popups for this site.');
-                optionsRef.current.onError?.('Popup was blocked');
                 oauthStateRef.current = null;
                 return;
             }
@@ -298,6 +293,7 @@ export function useMCPOAuth(options: UseMCPOAuthOptions = {}) {
                 }
             }, 500);
         } catch (err) {
+            signIn.close();
             const errorMsg = err instanceof Error ? err.message : 'Failed to start OAuth flow';
             console.error('[useMCPOAuth] Connect error:', errorMsg);
             setError(errorMsg);

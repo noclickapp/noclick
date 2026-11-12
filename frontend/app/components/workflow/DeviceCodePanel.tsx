@@ -2,8 +2,8 @@
 // code to enter, where to enter it, and a way to say it's been approved. One
 // panel for every provider that signs in this way, and the line every sign-in
 // shows while it starts.
-import type { ReactNode } from 'react';
-import { Loader2 } from 'lucide-react';
+import { useState, type ReactNode } from 'react';
+import { Check, Copy, Loader2 } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 
 export function DeviceCodePanel({
@@ -14,6 +14,7 @@ export function DeviceCodePanel({
     onCancel,
     onApproved,
     hint,
+    copied = false,
 }: {
     provider: string;
     userCode?: string;
@@ -23,7 +24,18 @@ export function DeviceCodePanel({
     onApproved: () => void;
     /** A provider's own line under the code: what to do when its page refuses the approval. */
     hint?: ReactNode;
+    /** The sign-in already put the code on the clipboard (copyWhenKnown). */
+    copied?: boolean;
 }) {
+    const [copiedHere, setCopiedHere] = useState<string | null>(null);
+    const isCopied = copied || (!!userCode && copiedHere === userCode);
+    const copy = () => {
+        if (!userCode) return;
+        navigator.clipboard?.writeText(userCode).then(
+            () => setCopiedHere(userCode),
+            () => undefined
+        );
+    };
     return (
         <div className="space-y-3" data-testid="device-code-panel">
             <div>
@@ -45,7 +57,22 @@ export function DeviceCodePanel({
                     .
                 </p>
             </div>
-            <div className="select-all rounded-xl bg-foreground/[0.05] py-3 text-center font-mono text-2xl font-semibold tracking-[0.2em] text-foreground">{userCode}</div>
+            <div className="space-y-1.5">
+                <div className="select-all rounded-xl bg-foreground/[0.05] py-3 text-center font-mono text-2xl font-semibold tracking-[0.2em] text-foreground">{userCode}</div>
+                {isCopied ? (
+                    <p className="flex items-center justify-center gap-1.5 text-[12.5px] text-muted-foreground" data-testid="device-code-copied">
+                        <Check className="h-3.5 w-3.5" />
+                        Code copied
+                    </p>
+                ) : (
+                    userCode && (
+                        <button type="button" onClick={copy} className="mx-auto flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[12.5px] text-muted-foreground transition-colors hover:text-foreground">
+                            <Copy className="h-3.5 w-3.5" />
+                            Copy code
+                        </button>
+                    )
+                )}
+            </div>
             {hint && (
                 <p className="text-[12.5px] leading-snug text-muted-foreground" data-testid="device-code-hint">
                     {hint}
