@@ -1,0 +1,56 @@
+{
+  "path": "frontend/public/icons/securitytrails.svg",
+  "source": "https://files.readme.io/da41e72-icon.png",
+  "found_at": "https://docs.securitytrails.com/docs/authentication (developer documentation icon)",
+  "source_kind": "hand-built from developer docs icon (500 px)",
+  "retrieved": "2026-11-12",
+  "edits": [
+    "built by hand from exact geometry fitted to the official raster (hand_constructed; construction and measures below)",
+    "viewBox cropped to the drawing (2% pad), one viewBox for both theme files"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION (brand colour): the navy disc is low-contrast on the dark tile; the dark file is SecurityTrails' own reversed form (COLOUR_BRIEF 2a).",
+  "hand_constructed": true,
+  "hand": {
+    "tool": "hand 1 (scripts/hand.py) with scripts/hand_marks/securitytrails.py",
+    "construction": "a circle, and the ST as one outline of straight segments (the T is an exact rectangle) and fitted curves (the S), its corners sharpened where the edges meet",
+    "source_url": "https://files.readme.io/da41e72-icon.png",
+    "source_sha256": "2502915fedac2525007681345b0d05e6b8795d3ff1e1b869e299de8422dc5cc9",
+    "source_size": [
+      500,
+      500
+    ],
+    "measured_at": "the source's own size, 500x500 px",
+    "verification": "every measure at the source's own resolution: silhouette IoU, boundary F within 1 source px, the largest boundary distance in source px, the share of the interior more than CIEDE2000 3 off, SSIM at 22/48/96 px on the app's four tiles, fills sampled from the source; then the SVG drawn at 384 px and inspected for wobbles",
+    "measures": {
+      "iou": 0.9997,
+      "edge_f": 1.0,
+      "edge_max": 1.0,
+      "edge_p99": 1.0,
+      "edge_chamfer": 0.022,
+      "de3_share": 0.0,
+      "de_p99": 0.0,
+      "ssim": 0.9957,
+      "paths": 1,
+      "nodes": 29,
+      "bytes": 1093,
+      "specks": 0,
+      "foreign_colours": [],
+      "missing_colours": [],
+      "gradients": [],
+      "gradient_stops": []
+    },
+    "bars": {
+      "iou": 0.99,
+      "edge_f": 0.98,
+      "edge_max": 1.5,
+      "de3_share": 0.005,
+      "ssim": 0.97,
+      "specks": 0,
+      "nodes": 2000,
+      "bytes": 24000
+    }
+  },
+  "license": "SecurityTrails brand mark, used nominatively to identify the connected service; trademark rights remain with SecurityTrails.",
+  "sha256": "f43c913006bd31418b874ef95a0bf21c00f6ec9c77323d758503061e02480a35"
+}

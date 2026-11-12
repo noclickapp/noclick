@@ -1,0 +1,85 @@
+{
+  "path": "frontend/public/icons/securitytrails-dark.svg",
+  "source": "https://files.readme.io/da41e72-icon.png",
+  "found_at": "https://docs.securitytrails.com/docs/authentication (developer documentation icon)",
+  "source_kind": "hand-built from developer docs icon (500 px)",
+  "retrieved": "2026-11-12",
+  "edits": [
+    "built by hand from exact geometry fitted to the official raster (hand_constructed; construction and measures below)",
+    "viewBox cropped to the drawing (2% pad), one viewBox for both theme files",
+    "dark mode: SecurityTrails' own reversed icon (status page): the same drawing with the disc white and the ST navy, checked against that 95 px file"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION (brand colour): the navy disc is low-contrast on the dark tile; the dark file is SecurityTrails' own reversed form (COLOUR_BRIEF 2a).",
+  "hand_constructed": true,
+  "hand": {
+    "tool": "hand 1 (scripts/hand.py) with scripts/hand_marks/securitytrails.py",
+    "construction": "a circle, and the ST as one outline of straight segments (the T is an exact rectangle) and fitted curves (the S), its corners sharpened where the edges meet",
+    "source_url": "https://files.readme.io/da41e72-icon.png",
+    "source_sha256": "2502915fedac2525007681345b0d05e6b8795d3ff1e1b869e299de8422dc5cc9",
+    "source_size": [
+      500,
+      500
+    ],
+    "measured_at": "the source's own size, 500x500 px",
+    "verification": "every measure at the source's own resolution: silhouette IoU, boundary F within 1 source px, the largest boundary distance in source px, the share of the interior more than CIEDE2000 3 off, SSIM at 22/48/96 px on the app's four tiles, fills sampled from the source; then the SVG drawn at 384 px and inspected for wobbles",
+    "measures": {
+      "iou": 0.9997,
+      "edge_f": 1.0,
+      "edge_max": 1.0,
+      "edge_p99": 1.0,
+      "edge_chamfer": 0.022,
+      "de3_share": 0.0,
+      "de_p99": 0.0,
+      "ssim": 0.9957,
+      "paths": 1,
+      "nodes": 29,
+      "bytes": 1093,
+      "specks": 0,
+      "foreign_colours": [],
+      "missing_colours": [],
+      "gradients": [],
+      "gradient_stops": []
+    },
+    "bars": {
+      "iou": 0.99,
+      "edge_f": 0.98,
+      "edge_max": 1.5,
+      "de3_share": 0.005,
+      "ssim": 0.97,
+      "specks": 0,
+      "nodes": 2000,
+      "bytes": 24000
+    },
+    "checked_against": {
+      "url": "https://dka575ofm4ao0.cloudfront.net/pages-favicon_logos/original/134780/icon-dark-small.png",
+      "found_at": "https://status.securitytrails.com/ (its icon, the reversed form: white disc, navy ST)",
+      "sha256": "b00a18692fdfe6e54482f5ab64828ff63ef130303ff95ff40d54512c8b852b00",
+      "size": [
+        95,
+        95
+      ],
+      "measures": {
+        "iou": 0.99541,
+        "edge_f": 1.0,
+        "edge_max": 1.0,
+        "edge_p99": 1.0,
+        "edge_chamfer": 0.09,
+        "de3_share": 0.0,
+        "de_p99": 0.0,
+        "ssim": 0.9702,
+        "paths": 1,
+        "nodes": 29,
+        "bytes": 1093,
+        "specks": 0,
+        "foreign_colours": [],
+        "missing_colours": [],
+        "gradients": [],
+        "gradient_stops": []
+      }
+    },
+    "variant": "dark mode: SecurityTrails' own reversed icon (status page): the same drawing with the disc white and the ST navy, checked against that 95 px file"
+  },
+  "license": "SecurityTrails brand mark, used nominatively to identify the connected service; trademark rights remain with SecurityTrails.",
+  "sha256": "d758f7e82b97f7af8655f0789ca10d8c711b5b65ebe9add080dba9b36f5711c1"
+}

@@ -1,0 +1,56 @@
+{
+  "path": "frontend/public/icons/postal-data-api.svg",
+  "source": "https://postaldatapi.com/android-chrome-512x512.png",
+  "found_at": "https://postaldatapi.com/ (<link rel=\"icon\" sizes=\"512x512\">)",
+  "source_kind": "hand-built from company site icon (512 px), with the pin and disc paths from its favicon.svg",
+  "retrieved": "2026-11-12",
+  "edits": [
+    "built by hand from exact geometry fitted to the official raster (hand_constructed; construction and measures below)",
+    "viewBox cropped to the drawing (2% pad)"
+  ],
+  "hand_constructed": true,
+  "hand": {
+    "tool": "hand 1 (scripts/hand.py) with scripts/hand_marks/postal_data_api.py",
+    "construction": "the pin and its white disc are PostalDataPI's own paths from favicon.svg (the mark it serves as its favicon), placed by one fitted scale and offset; favicon.svg sets the \"i\" as live text in the viewer's sans-serif, so the \"i\" is built here, a rectangle and a rounded dot fitted to the 512 px icon; the \"POSTAL DATA\" lettering under the pin in that icon is not part of the favicon's mark and is left out",
+    "source_url": "https://postaldatapi.com/android-chrome-512x512.png",
+    "source_sha256": "ec9907461cbf5aa6fbd19d1db7614a187fafc6f917fcb3e7be37090ba5694a11",
+    "source_size": [
+      512,
+      512
+    ],
+    "measured_at": "the source's own size, 512x512 px",
+    "verification": "every measure at the source's own resolution: silhouette IoU, boundary F within 1 source px, the largest boundary distance in source px, the share of the interior more than CIEDE2000 3 off, SSIM at 22/48/96 px on the app's four tiles, fills sampled from the source; then the SVG drawn at 384 px and inspected for wobbles",
+    "measures": {
+      "iou": 0.99972,
+      "edge_f": 1.0,
+      "edge_max": 1.0,
+      "edge_p99": 1.0,
+      "edge_chamfer": 0.011,
+      "de3_share": 0.0,
+      "de_p99": 0.0,
+      "ssim": 0.9996,
+      "paths": 3,
+      "nodes": 27,
+      "bytes": 944,
+      "specks": 0,
+      "foreign_colours": [],
+      "missing_colours": [],
+      "gradients": [],
+      "gradient_stops": []
+    },
+    "bars": {
+      "iou": 0.99,
+      "edge_f": 0.98,
+      "edge_max": 1.5,
+      "de3_share": 0.005,
+      "ssim": 0.97,
+      "specks": 0,
+      "nodes": 2000,
+      "bytes": 24000
+    },
+    "source_vector_url": "https://postaldatapi.com/favicon.svg",
+    "source_vector_sha256": "4c6b7b3adb59f2a9896db19322759403168b2d53f587710d8536ce155c608c8e"
+  },
+  "license": "PostalDataPI brand mark, used nominatively to identify the connected service; trademark rights remain with PostalDataPI.",
+  "sha256": "171dbe4ff05077ab5ba3069714b1fe40499ede7eb7655c3e16442a874c2bdc79"
+}
