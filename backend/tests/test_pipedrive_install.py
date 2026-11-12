@@ -6,6 +6,7 @@ the isolated Postgres testcontainer, never production or customer accounts.
 
 import asyncio
 import uuid
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
 import httpx
@@ -370,8 +371,8 @@ async def test_refresh_failure_keeps_the_oauth_code_not_the_body(
 ):
     span = MagicMock()
     span.is_recording = lambda: True
-    # The opentelemetry module itself: other code may ask it for a context's span while this runs.
-    monkeypatch.setattr("nodes.oauth.token_errors.trace.get_current_span", lambda *_args: span)
+    # token_errors' own name for the module: patching opentelemetry itself hands this mock to every span lookup.
+    monkeypatch.setattr("nodes.oauth.token_errors.trace", SimpleNamespace(get_current_span=lambda: span))
     token, _ = provider
     token.respond(
         status,
@@ -397,8 +398,8 @@ async def test_refresh_does_not_echo_nonstandard_error_codes(
 ):
     span = MagicMock()
     span.is_recording = lambda: True
-    # The opentelemetry module itself: other code may ask it for a context's span while this runs.
-    monkeypatch.setattr("nodes.oauth.token_errors.trace.get_current_span", lambda *_args: span)
+    # token_errors' own name for the module: patching opentelemetry itself hands this mock to every span lookup.
+    monkeypatch.setattr("nodes.oauth.token_errors.trace", SimpleNamespace(get_current_span=lambda: span))
     token, _ = provider
     token.respond(status, json={"error": code, "error_description": "private-marker"})
     with pytest.raises(ValueError) as caught:
