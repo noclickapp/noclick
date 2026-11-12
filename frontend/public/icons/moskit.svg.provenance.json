@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/moskit.svg",
   "source": "https://assets.moskitcrm.com/ollow/logo-preto.svg",
-  "license": "Ollow (formerly Moskit) trademark; used to identify the Moskit integration",
-  "sha256": "9feebec921aab5c8ef920fd40a5ed903ca4954015717429fcc16291e18abaea4"
+  "source_page": "assets.moskitcrm.com (the PR's recorded source; same file, sha256 matches the current icon)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "c77dfceba592fb1833eb782e5851ca2a1495895125d8b7efa960bbc4fd8ef645",
+  "edits": [
+    "kept only the symbol: orange bar (element 4), purple bar (element 3), green speech bubble (element 5); dropped the dark 'ollow' wordmark paths (elements 0, 1, 2, 6, 7)",
+    "svgtool clean",
+    "cropped the viewBox to the symbol (pad 0.02)"
+  ],
+  "checked_against": "Google Play 'Ollow (Moskit)' by Blanq Tecnologia (downloads/moskit/r5-16/google.png) and App Store 'Ollow (Moskit)' (downloads/moskit/r5-3/app.png): the same orange bar, purple bar, green bubble; www.moskitcrm.com redirects to www.ollow.com.br/crm",
+  "source_sha256": "9feebec921aab5c8ef920fd40a5ed903ca4954015717429fcc16291e18abaea4"
 }
