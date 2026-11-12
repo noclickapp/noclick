@@ -6,8 +6,8 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 // Unmodified vendor artwork from https://www.repairdesk.co/
 const RepairDeskIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/repairdesk-brand.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+    <img src="/icons/repairdesk.svg" alt="" aria-hidden="true" className={className}
+        style={{ ...style, objectFit: 'contain' } as CSSProperties} />
 );
 export const RepairDeskNode: NodeDefinition = {
     type: 'automation-repairdesk', label: 'RepairDesk', category: 'industry',

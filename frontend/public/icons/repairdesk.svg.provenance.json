@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/repairdesk.svg",
+  "source": "https://d1v4k1xgetr2r1.cloudfront.net/rd-cdn/2025/12/12064509/rdLogo201.svg",
+  "source_page": "https://www.repairdesk.co/ (header logo <img>, wp-image-27143)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "70b5941c4cd3a2ee845fc0e062414179625ee8bc4c36cd4671203b44aa515e70",
+  "edits": [
+    "kept only the symbol (elements 10 and 11: the #C3E9B3 rounded shape and the #0F766E disc); removed the 'RepairDesk' wordmark paths (elements 0-9)",
+    "cropped the viewBox to the symbol with --pad 0.02",
+    "cleaned"
+  ],
+  "checked_against": "https://www.repairdesk.co/ favicon (rd-cdn/2024/11/.../RD-2.0-Icon-favicon-32x32-1.png) and https://app.repairdesk.co/favicon.ico (256 px): the same pale-green rounded shape with a teal disc; the node calls api.repairdesk.co",
+  "source_sha256": "e42f2c9d0f402168e95ca9d036a15804f22e362cb0611d4ff5a1e189d9b9dc3b"
+}
