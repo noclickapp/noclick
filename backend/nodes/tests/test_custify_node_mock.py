@@ -150,7 +150,7 @@ async def test_custify_poll_pages_dedup_versions_and_agent_event(monkeypatch, op
     assert result['new_item_count'] == 2 and len(requests) == 2
     assert requests[1].url.params['page'] == '2'
     if operation == 'on_task_updated':
-        assert json.loads(requests[0].url.params['sorting']) == {'field':'updated_at','direction':'desc'}
+        assert 'sorting' not in requests[0].url.params and 'sort' not in requests[0].url.params
     else:
         assert requests[0].url.params['sort'] == 'openedAt'
     event = native.CustifyNode.resolve_agent_event(result)

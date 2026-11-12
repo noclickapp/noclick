@@ -306,9 +306,8 @@ class CustifyNode(ScheduledPollTriggerMixin, WorkflowNode):
         rows = []
         # Read every page or fail without advancing dedup state; never silently truncate a scope.
         for page in range(1, 101):
-            params = {"itemsPerPage": 50, "page": page}
-            params.update({"sorting": json.dumps({"field": "updated_at", "direction": "desc"})} if task
-                          else {"sort": "openedAt", "order": "desc"})
+            # Every page is read, so the task poll needs no sort order.
+            params = {"itemsPerPage": 50, "page": page, **({} if task else {"sort": "openedAt", "order": "desc"})}
             data = await self._request(credential, "GET", path, params=params)
             if not isinstance(data, dict) or not isinstance(data.get(key), list):
                 raise ValueError("Custify returned an invalid poll list")
