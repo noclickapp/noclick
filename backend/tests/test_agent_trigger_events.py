@@ -391,13 +391,13 @@ class TestAgentResolveTriggerEvent:
 
 
 # A group message as WAHooks delivers it to a QR-linked WhatsApp trigger.
-GROUP_ID = '120363000000000001@g.us'
+GROUP_ID = '120000000000000001@g.us'
 GROUP_MESSAGE = {
     'event': 'message',
     'payload': {
         'from': GROUP_ID,
         'body': 'Is order 42 ready?',
-        '_data': {'key': {'remoteJid': GROUP_ID, 'participant': '15550000001@c.us'}, 'pushName': 'Sam'},
+        '_data': {'key': {'remoteJid': GROUP_ID, 'participant': '12025550101@c.us'}, 'pushName': 'Sam'},
     },
 }
 
