@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/hubflo.svg",
+  "source": "https://cdn.hubflo.com/assets/logo-hubflo-inline-e65d32db84d3f8bf59722e488d2bb173d29e84fb594248582617810b556b4ad0.svg",
+  "source_page": "https://app.hubflo.com/users/sign_in (the app's sign-in page logo)",
+  "source_kind": "company app/login page",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "849dba24d897298f4e403139d71ba32f29d9a10a64fd14ee4001b9430174b304",
+  "edits": [
+    "kept only the two half-disc symbol paths (elements 0-1: #ECB22D and #162040), dropped the 'hubflo' wordmark (elements 2-3)",
+    "cropped the viewBox to the symbol with --pad 0.02",
+    "svgtool clean"
+  ],
+  "checked_against": "Hubflo App Store icon (Hubflo by Hubflo, is1-ssl.mzstatic.com/.../132616db-9b9b-c264-216a-49c...): the same yellow and white half discs split by a diagonal gap, on a navy tile; the PR's current file (hubflo.com/favicon.png) is the same mark on a navy disc. Same company: app.hubflo.com API host, client portal / CRM description.",
+  "source_sha256": "e1042e699c46ba5af8268839cca110cc79855900794334b43920f290c5acc2df"
+}
