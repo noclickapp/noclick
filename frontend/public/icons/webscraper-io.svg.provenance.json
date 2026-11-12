@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/webscraper-io.svg",
+  "source": "https://webscraper.io/icon.svg",
+  "source_page": "https://webscraper.io/ (<link rel=\"icon\" href=\"/icon.svg\" type=\"image/svg+xml\">)",
+  "source_kind": "company site (SVG favicon)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "080f4fea84a914be11acb1bea77c4a1c39a9df0d42a3a1a6b7e4bc0cdcfd34c1",
+  "edits": [
+    "clean",
+    "removed the leading Illustrator generator comment",
+    "cropped the viewBox to the mark, pad 0.02"
+  ],
+  "checked_against": "https://webscraper.io/favicon.png and the PR's https://webscraper.io/logo-icon.png (same teal web hexagon, same #30ACBF/#00AEBE teal); api hosts *.webscraper.io",
+  "source_sha256": "fd28bff5bd39d1c5c388b130cad92c05f534b91501ac67e8cbe0a356edfd3b8d"
+}
