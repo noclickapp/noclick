@@ -303,6 +303,8 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
                       ))
                     : undefined
             }
+            footerEnd={coordinator.composerControls?.model}
+            below={coordinator.composerControls?.footer}
             className={empty && !inPhone ? 'px-0 pb-0 pt-0 sm:px-0' : undefined}
         />
     );

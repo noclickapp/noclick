@@ -40,6 +40,9 @@ export interface CoordinatorChat {
     /** What sits on the composer's top edge: the work the account's agents are doing, drawn by the platform that
      *  runs them (hosted: the tab of what's at work). It draws nothing when nothing is going. */
     ComposerTab?: ComponentType<ComposerTabProps>;
+    /** The coordinator's own switchers, drawn by the platform that runs it: its model beside Send, and the row under
+     *  the box (the account its model runs on, where it runs, its budget). */
+    composerControls?: { model: ReactNode; footer: ReactNode };
 }
 
 /** What the composer's tab reads: the thread, the work its turns started as the thread follows it, and how to start
