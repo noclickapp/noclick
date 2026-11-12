@@ -7,8 +7,10 @@ The one way such media becomes run-usable — fetchable by the agent, playable
 in the run popup, digestible by ``nodes.core.media_digest`` — is to stream it
 into workflow resources at delivery time and carry the public capability URL
 instead. Each provider's ``transform_trigger_payload`` decides WHICH url and
-WHICH auth, then calls :func:`rehost_inbound_media`; media a node already
-read as bytes (an IMAP attachment) is kept by :func:`store_inbound_media`.
+WHICH auth, then calls :func:`rehost_inbound_media` (or
+:func:`copy_inbound_media`, to say something about media over its cap);
+media a node already read as bytes (an IMAP attachment) is kept by
+:func:`store_inbound_media`.
 
 The returned dict is the ``media`` slot every consumer reads (the frontend's
 ``deriveInboundMedia`` keys on ``rehosted`` + ``url``):
@@ -91,7 +93,18 @@ async def _workflow_owner(pool, workflow_id: str):
     )
 
 
-async def rehost_inbound_media(
+async def rehost_inbound_media(pool, **copy_args) -> Optional[Dict[str, Any]]:
+    """:func:`copy_inbound_media` for a channel with nothing to say about media
+    over its cap: ``None``, and the delivery proceeds with the original payload —
+    media too large to keep is still a message."""
+    try:
+        return await copy_inbound_media(pool, **copy_args)
+    except MediaTooLarge as e:
+        logger.warning(f"[inbound_media] {e} — delivering without content")
+        return None
+
+
+async def copy_inbound_media(
     pool,
     *,
     workflow_id: str,
@@ -116,6 +129,8 @@ async def rehost_inbound_media(
     catches them and keeps the original payload. The URL is never logged: a
     provider URL may carry a credential in its path.
     """
+    if declared_size is not None and declared_size > max_bytes:
+        raise MediaTooLarge(source, declared_size, max_bytes)
     owner = await _workflow_owner(pool, workflow_id)
     if not owner:
         return None
@@ -126,22 +141,26 @@ async def rehost_inbound_media(
         timeout=timeout_s, trusted_exact_urls=trusted_exact_urls
     ) as client:
         async with client.stream("GET", url, headers=headers or {}) as resp:
-            resp.raise_for_status()
-            content_type_header = resp.headers.get("content-type")
-            async for chunk in resp.aiter_bytes():
-                total += len(chunk)
-                if total > max_bytes:
-                    logger.warning(
-                        f"[inbound_media] {source}: media exceeds rehost cap "
-                        f"({max_bytes} bytes) — delivering without content"
-                    )
-                    return None
-                chunks.append(chunk)
-
-    mime = mimetype or content_type_header or "application/octet-stream"
-    name = filename or url.rsplit("/", 1)[-1].split("?", 1)[0] or "inbound-media"
-    return await _store(owner, workflow_id=workflow_id, node_id=node_id, body=b"".join(chunks),
-                        source=source, mime=mime, name=name)
+            try:
+                resp.raise_for_status()
+            except httpx.HTTPStatusError as e:
+                raise MediaFetchFailed(f"{source}: HTTP {e.response.status_code}") from None
+            length = resp.headers.get("content-length") or ""
+            if length.isdigit() and int(length) > max_bytes:
+                raise MediaTooLarge(source, int(length), max_bytes)
+            mime = mimetype or resp.headers.get("content-type") or "application/octet-stream"
+            name = filename or url.rsplit("/", 1)[-1].split("?", 1)[0] or "inbound-media"
+            resource = await create_resource_from_stream(
+                user_id=str(owner["owner_id"]),
+                workflow_id=str(workflow_id),
+                node_id=node_id,
+                organization_id=str(owner["organization_id"]) if owner["organization_id"] else None,
+                chunks=_capped(resp.aiter_bytes(), source, max_bytes),
+                content_type=mime,
+                filename=name,
+                metadata={"source": source},
+            )
+    return _media_slot(resource, source=source, mime=mime, name=name)
 
 
 async def store_inbound_media(
@@ -178,6 +197,10 @@ async def _store(owner, *, workflow_id: str, node_id: Optional[str], body: bytes
         filename=name,
         metadata={"source": source},
     )
+    return _media_slot(resource, source=source, mime=mime, name=name)
+
+
+def _media_slot(resource: Dict[str, Any], *, source: str, mime: str, name: str) -> Dict[str, Any]:
     logger.info(
         f"[inbound_media] {source}: rehosted {resource['size_bytes']} bytes "
         f"({mime}) as resource {resource['resource_id']}"
