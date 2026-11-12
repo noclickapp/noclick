@@ -202,6 +202,122 @@ def wahooks_chat_id(recipient: Any) -> str:
     return raw if server else f"{local}@s.whatsapp.net"
 
 
+# ``read_recent_messages``: every active chat read at once, a line per message, so a digest costs one small tool
+# result instead of a raw page per chat (ids, media blobs and nulls are ~90% of a page's JSON).
+_RECENT_CHATS_PAGE = 200
+_RECENT_CHAT_PAGES = 10
+_RECENT_PAGE = 100
+_RECENT_READS = 8
+_RECENT_TEXT_CHARS = 600
+_MEDIA_LABELS = {"audio": "voice note", "ptt": "voice note", "vcard": "contact card", "multi_vcard": "contact cards"}
+# Status updates, channels and broadcast lists are nobody's conversation.
+_NOT_A_CHAT = ("@broadcast", "@newsletter")
+
+
+def _recent_chat_kind(chat: Dict[str, Any]) -> Optional[str]:
+    chat_id = str(chat.get("id") or "")
+    if not chat_id or chat_id.endswith(_NOT_A_CHAT):
+        return None
+    return "groups" if chat.get("isGroup") or chat_id.endswith("@g.us") else "direct"
+
+
+def _active_chats(client, conn_id: str, since: float, kind: str, wanted: int) -> Tuple[List[Dict[str, Any]], bool]:
+    """The chats of ``kind`` with a message since ``since``, most recently active first, at most ``wanted``, and
+    whether more were. get_chats lists the most recently active first, so the first older chat ends the scan."""
+    found: List[Dict[str, Any]] = []
+    for page_no in range(_RECENT_CHAT_PAGES):
+        page = client.get_chats(conn_id, limit=_RECENT_CHATS_PAGE, offset=page_no * _RECENT_CHATS_PAGE)
+        for chat in page:
+            last = (chat.get("lastMessage") or {}).get("timestamp")
+            if last is None:
+                continue
+            if last < since:
+                return found, False
+            chat_kind = _recent_chat_kind(chat)
+            if chat_kind is None or kind not in ("all", chat_kind):
+                continue
+            if len(found) == wanted:
+                return found, True
+            found.append(chat)
+        if len(page) < _RECENT_CHATS_PAGE:
+            return found, False
+    return found, True
+
+
+def _chat_messages_since(client, conn_id: str, chat_id: str, since: float,
+                         limit: int) -> Tuple[List[Dict[str, Any]], bool]:
+    """A chat's messages since ``since``, oldest first, at most ``limit`` (the newest), and whether it had more."""
+    kept: List[Dict[str, Any]] = []
+    before = None
+    while True:
+        page = client.get_messages(conn_id, chat_id, limit=_RECENT_PAGE, before=before)
+        messages = page.get("messages") or []
+        for message in messages:  # newest first
+            if message["timestamp"] < since:
+                return kept[::-1], False
+            if len(kept) == limit:
+                return kept[::-1], True
+            kept.append(message)
+        before = page.get("nextBefore")
+        if not messages or not before:
+            return kept[::-1], False
+
+
+def _recent_line(message: Dict[str, Any], *, chat_name: str, clock: str) -> str:
+    at = datetime.fromtimestamp(message["timestamp"], timezone.utc).strftime(clock)
+    who = ("You" if message.get("fromMe") else message.get("senderPushName")
+           or (message.get("senderJid") or "").partition("@")[0] or chat_name)
+    text = " ".join((message.get("text") or "").split())
+    if len(text) > _RECENT_TEXT_CHARS:
+        text = text[:_RECENT_TEXT_CHARS] + "…"
+    kind = message.get("type") or "text"
+    if kind != "text":
+        text = f"[{_MEDIA_LABELS.get(kind, kind)}] {text}".rstrip()
+    return f"{at} {who}: {text}"
+
+
+async def _read_recent_messages(api_key: str, conn_id: str, config: "WhatsAppReadRecentMessagesConfig") -> Dict[str, Any]:
+    """``read_recent_messages``: the active chats listed once, then each read in a worker thread (the client is
+    sync), a few at a time."""
+    from wahooks import WAHooks
+
+    since = time.time() - config.hours * 3600
+    clock = "%H:%M" if config.hours <= 24 else "%m-%d %H:%M"
+
+    def active():
+        with WAHooks(api_key=api_key) as client:
+            return _active_chats(client, conn_id, since, config.chats, config.max_chats)
+
+    def read(chat):
+        with WAHooks(api_key=api_key) as client:
+            return _chat_messages_since(client, conn_id, chat["id"], since, config.per_chat_limit)
+
+    chats, truncated = await asyncio.to_thread(active)
+    gate = asyncio.Semaphore(_RECENT_READS)
+
+    async def gated(chat):
+        async with gate:
+            return await asyncio.to_thread(read, chat)
+
+    out = []
+    for chat, (messages, more) in zip(chats, await asyncio.gather(*(gated(chat) for chat in chats))):
+        if not messages:
+            continue
+        name = chat.get("name") or chat["id"].partition("@")[0]
+        entry = {"chat_id": chat["id"], "name": name, "group": _recent_chat_kind(chat) == "groups",
+                 "messages": [_recent_line(m, chat_name=name, clock=clock) for m in messages]}
+        if more:
+            entry["more"] = True
+        out.append(entry)
+    return {
+        "since": datetime.fromtimestamp(since, timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),
+        "chats": out,
+        "chat_count": len(out),
+        "message_count": sum(len(c["messages"]) for c in out),
+        "truncated": truncated,
+    }
+
+
 def _chat_key(chat_id: Any) -> str:
     """A chat id spelled one way for comparison: a phone chat arrives as either
     @c.us or @s.whatsapp.net, and a bare phone number names the same chat."""
@@ -228,6 +344,13 @@ def chat_number(chat: Any) -> Optional[str]:
         return None
     digits = "".join(ch for ch in local.split(":", 1)[0] if ch.isdigit())
     return digits or None
+
+
+def _chat_key(chat_id: Any) -> str:
+    """A chat id spelled one way for comparison: a phone chat arrives as either
+    @c.us or @s.whatsapp.net, and a bare phone number names the same chat."""
+    local, _, server = wahooks_chat_id(chat_id).partition("@")
+    return f"{local}@{'s.whatsapp.net' if server == 'c.us' else server}"
 
 
 def _stanza_id(message: Any) -> Optional[str]:
