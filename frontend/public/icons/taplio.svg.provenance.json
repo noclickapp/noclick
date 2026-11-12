@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/taplio.svg",
+  "source": "https://cdn.prod.website-files.com/6939243f5769a4de787769c3/693924d326086608602c8c20_Taplio%20Logo_lemlist.svg",
+  "source_page": "https://taplio.com/ (nav logo <img class=logo-img>)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "7012f09b32d8faaa8a9889ed5bd4b997b6d3786c2b8dfa0716edd3fb74b36ce7",
+  "edits": [
+    "kept only the symbol: the blue #2C58B6 rounded-square tile and its white square ring and inner square (elements 6-8)",
+    "removed the navy #213856 'taplio' wordmark (elements 0-5)",
+    "cropped the viewBox to the tile (svgtool crop, no pad: the blue rounded square is Taplio's own app icon)",
+    "svgtool clean"
+  ],
+  "checked_against": "https://cdn.prod.website-files.com/6939243f5769a4de787769c3/693fd25c10dab46c2d863cbd_taplio_webclip.png (taplio.com apple-touch-icon, 256px) and its favicon: the same blue rounded tile with the white square-in-square. api.taplio.com / app.taplio.com match taplio.com.",
+  "source_sha256": "02a83224c3ff63d029c08a33cf58647b053b47bd1aeef126b6355480dc9bd524"
+}
