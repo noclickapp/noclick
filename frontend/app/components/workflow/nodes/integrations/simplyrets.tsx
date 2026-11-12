@@ -12,14 +12,13 @@ const SimplyRETSIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/simplyrets.png"
+        src="/icons/simplyrets.svg"
         alt=""
         aria-hidden="true"
         className={className}
         style={
             {
                 ...style,
-                '--brand-invert': 0,
                 objectFit: 'contain',
             } as CSSProperties
         }

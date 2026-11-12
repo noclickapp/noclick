@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/simplyrets.svg",
+  "source": "https://docs.simplyrets.com/assets/img/simplyrets-logo-horizontal.svg",
+  "source_page": "https://docs.simplyrets.com/ (header logo <img class=\"site-logo-light\">)",
+  "source_kind": "company docs",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "2644f54f9b59bffe37b4a378374e1d876d6de87ce5a36ce67b416acfb5c3114e",
+  "edits": [
+    "kept the symbol (element 1, the #47a447 green disc, and element 2, the white house); dropped the three fill:none rects (elements 0, 3, 4)",
+    "deleted the 'SimplyRETS' wordmark, which in this file is a <text> element (svgtool keep only handles drawn shapes, so it was removed with a deletion-only lxml step; nothing added or changed)",
+    "cropped the viewBox to the disc with --pad 0.02",
+    "cleaned"
+  ],
+  "checked_against": "https://simplyrets.com/images/favicon.png (the site's favicon and the PR's recorded source: the same white house with chimney on a green disc); the node calls api.simplyrets.com",
+  "source_sha256": "2f6f539f89308de12ceeccfb62c55f05150f7806aa50e0eaf928b1732a169419"
+}
