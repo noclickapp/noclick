@@ -10,6 +10,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -33,6 +34,11 @@ class SupermemoryAPIKeyCredential(BaseModel):
 
 class _Input(BaseModel):
     model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
+
+# Supermemory's own MCP server: agents get its tools through a person's Supermemory sign-in.
+SupermemoryMcpCredential = mcp_credential("supermemory", "https://mcp.supermemory.ai/mcp", app="Supermemory")
+SupermemoryCredential = Union[SupermemoryAPIKeyCredential, SupermemoryMcpCredential]
+
 
 Namespace = Annotated[str, Field(min_length=1, max_length=100, pattern=r"^[a-zA-Z0-9_:-]+$")]
 ResourceID = Annotated[str, Field(min_length=1, max_length=255)]
@@ -227,7 +233,7 @@ SupermemoryConfig = Annotated[Union[
     SupermemoryCountDocumentMemoriesConfig,
 ], Field(discriminator="operation")]
 
-class SupermemoryFullConfig(NodeConfig[SupermemoryConfig, SupermemoryAPIKeyCredential]):
+class SupermemoryFullConfig(NodeConfig[SupermemoryConfig, SupermemoryCredential]):
     pass
 
 ROUTES = {'add_document': ('POST', '/ns/{namespace}/document'),
@@ -264,6 +270,7 @@ QUERY_FIELDS = {
 
 class SupermemoryNode(WorkflowNode):
     integration_type = "automation-supermemory"
+    credential_provider_labels = {"supermemory": "Supermemory Account"}
     connection_evidence = ConnectionEvidence(
         noun="namespaces", operation="list_namespaces", label_keys=("namespace", "id"))
 

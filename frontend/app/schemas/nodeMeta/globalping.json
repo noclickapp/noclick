@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Globalping API Token": "globalping_api_token",
+    "Globalping MCP": "globalping_mcp",
+    "GlobalpingMcpCredential": "globalping_mcp",
     "GlobalpingTokenCredential": "globalping_api_token"
   },
   "providerLabels": {
-    "globalping": "Globalping API Token"
+    "globalping": "Globalping Account"
   },
   "autoSelectCredential": true
 }

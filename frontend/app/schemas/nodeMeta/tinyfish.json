@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "TinyFish MCP": "tinyfish_mcp",
     "Tinyfish API Key": "tinyfish_api_key",
-    "TinyfishAPIKeyCredential": "tinyfish_api_key"
+    "TinyfishAPIKeyCredential": "tinyfish_api_key",
+    "TinyfishMcpCredential": "tinyfish_mcp"
   },
   "providerLabels": {
-    "tinyfish": "Tinyfish API Key"
+    "tinyfish": "TinyFish Account"
   },
   "autoSelectCredential": true
 }

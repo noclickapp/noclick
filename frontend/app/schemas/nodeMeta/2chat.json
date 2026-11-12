@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "2Chat API Key": "2chat_api_key",
-    "TwoChatAPIKeyCredential": "2chat_api_key"
+    "2Chat MCP": "two_chat_mcp",
+    "TwoChatAPIKeyCredential": "2chat_api_key",
+    "TwoChatMcpCredential": "two_chat_mcp"
   },
   "providerLabels": {
-    "2chat": "2Chat API Key"
+    "2chat": "2Chat Account"
   },
   "autoSelectCredential": true
 }

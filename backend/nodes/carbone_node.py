@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
@@ -180,6 +181,11 @@ class CarboneGetStatus(_Input):
     operation: Literal["get_status"] = "get_status"
 
 
+# Carbone's own MCP server: agents get its tools through a person's Carbone sign-in.
+CarboneMcpCredential = mcp_credential("carbone", "https://mcp.carbone.io", app="Carbone")
+CarboneCredential = Union[CarboneAPITokenCredential, CarboneMcpCredential]
+
+
 CarboneConfig = Annotated[Union[
     CarboneUploadTemplate, CarboneUpdateTemplate, CarboneDownloadTemplate,
     CarboneDeleteTemplate, CarboneListTemplates, CarboneListCategories,
@@ -188,7 +194,7 @@ CarboneConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class CarboneNodeConfig(NodeConfig[CarboneConfig, CarboneAPITokenCredential]):
+class CarboneNodeConfig(NodeConfig[CarboneConfig, CarboneCredential]):
     pass
 
 
@@ -210,6 +216,7 @@ def _filename(response, default):
 
 class CarboneNode(WorkflowNode):
     integration_type = "automation-carbone"
+    credential_provider_labels = {"carbone": "Carbone Account"}
     connection_evidence = ConnectionEvidence(noun="templates", operation="list_templates", label_keys=("name", "id", "versionId"))
 
     @classmethod

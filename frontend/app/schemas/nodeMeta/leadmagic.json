@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "LeadMagic MCP": "leadmagic_mcp",
     "Leadmagic API Key": "leadmagic_api_key",
-    "LeadmagicAPIKeyCredential": "leadmagic_api_key"
+    "LeadmagicAPIKeyCredential": "leadmagic_api_key",
+    "LeadmagicMcpCredential": "leadmagic_mcp"
   },
   "providerLabels": {
-    "leadmagic": "Leadmagic API Key"
+    "leadmagic": "LeadMagic Account"
   },
   "autoSelectCredential": true
 }

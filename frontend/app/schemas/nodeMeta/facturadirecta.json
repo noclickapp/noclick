@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "FacturaDirecta API Key": "facturadirecta_api_key",
-    "FacturaDirectaAPIKeyCredential": "facturadirecta_api_key"
+    "FacturaDirecta MCP": "facturadirecta_mcp",
+    "FacturaDirectaAPIKeyCredential": "facturadirecta_api_key",
+    "FacturadirectaMcpCredential": "facturadirecta_mcp"
   },
   "providerLabels": {
-    "facturadirecta": "FacturaDirecta API Key"
+    "facturadirecta": "FacturaDirecta Account"
   },
   "autoSelectCredential": true
 }

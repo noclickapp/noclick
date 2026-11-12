@@ -10,6 +10,7 @@ from urllib.parse import quote
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -241,10 +242,15 @@ class GetAsyncResultConfig(VideoDbInput):
     operation: Literal["get_async_result"] = Field("get_async_result", json_schema_extra={"ui:hidden": True})
     response_id: str = Field(..., min_length=1)
 
+# VideoDB's own MCP server: agents get its tools through a person's VideoDB sign-in.
+VideoDbMcpCredential = mcp_credential("video_db", "https://mcp.videodb.io/mcp", app="VideoDB")
+VideoDbCredential = Union[VideoDbAPIKeyCredential, VideoDbMcpCredential]
+
+
 VideoDbConfig = Annotated[Union[GetAccountConfig, ListCollectionsConfig, CreateCollectionConfig, GetCollectionConfig, UpdateCollectionConfig, DeleteCollectionConfig, UploadMediaConfig, SearchCollectionConfig, ListVideosConfig, GetVideoConfig, UpdateVideoConfig, DeleteVideoConfig, CreateVideoStreamConfig, GetVideoTranscriptionConfig, GenerateVideoTranscriptionConfig, GetVideoIndexConfig, CreateVideoIndexConfig, SearchVideoConfig, GetVideoScenesConfig, CreateVideoScenesConfig, GenerateVideoClipConfig, ListAudiosConfig, ListImagesConfig, GetAsyncResultConfig], Field(discriminator="operation")]
 
 
-class VideoDbFullConfig(NodeConfig[VideoDbConfig, VideoDbAPIKeyCredential]):
+class VideoDbFullConfig(NodeConfig[VideoDbConfig, VideoDbCredential]):
     pass
 
 
@@ -253,6 +259,7 @@ ROUTES = {'get_account': ('GET', '/user', [], []), 'list_collections': ('GET', '
 
 class VideoDbNode(WorkflowNode):
     integration_type = "automation-video-db"
+    credential_provider_labels = {"video_db": "VideoDB Account"}
     connection_evidence = ConnectionEvidence(noun="VideoDB account", identity_operation="get_account",
         identity_keys=("user_name", "user_email", "user_id"))
 

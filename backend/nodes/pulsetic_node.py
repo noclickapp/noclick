@@ -20,6 +20,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, WrapValidator, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
@@ -158,10 +159,15 @@ class GetStatusPageConfig(_Common):
     status_page_id: ResourceID = Field(..., description="Exact status-page ID. Secrets, domains, subscription/settings fields are omitted.", json_schema_extra={"x-resource-type": "pulsetic_status_page_id"})
 
 
+# Pulsetic's own MCP server: agents get its tools through a person's Pulsetic sign-in.
+PulseticMcpCredential = mcp_credential("pulsetic", "https://api.pulsetic.com/mcp", app="Pulsetic")
+PulseticCredential = Union[PulseticAPIKeyCredential, PulseticMcpCredential]
+
+
 PulseticOperation = Annotated[Union[ListMonitorsConfig, GetMonitorConfig, ListSnapshotsConfig, ListChecksConfig, ListEventsConfig, GetStatsConfig, GetDowntimeConfig, ListHeartbeatsConfig, GetHeartbeatConfig, ListStatusPagesConfig, GetStatusPageConfig], Field(discriminator="operation")]
 
 
-class PulseticNodeConfig(NodeConfig[PulseticOperation, PulseticAPIKeyCredential]):
+class PulseticNodeConfig(NodeConfig[PulseticOperation, PulseticCredential]):
     pass
 
 

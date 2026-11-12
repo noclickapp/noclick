@@ -10,6 +10,7 @@ from typing import Annotated, Literal, Union
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client, SSRFError
@@ -178,6 +179,11 @@ class EzekiaDeleteTask(_Input):
     task_id: int = Field(..., ge=1)
 
 
+# Ezekia's own MCP server: agents get its tools through a person's Ezekia sign-in.
+EzekiaMcpCredential = mcp_credential("ezekia", "https://mcp.ezekia.com", app="Ezekia")
+EzekiaCredential = Union[EzekiaAPITokenCredential, EzekiaMcpCredential]
+
+
 EzekiaConfig = Annotated[Union[
     EzekiaGetMe,
     EzekiaListPeople,
@@ -199,7 +205,7 @@ EzekiaConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class EzekiaFullConfig(NodeConfig[EzekiaConfig, EzekiaAPITokenCredential]):
+class EzekiaFullConfig(NodeConfig[EzekiaConfig, EzekiaCredential]):
     pass
 
 
@@ -234,6 +240,7 @@ def _redact(value, secret):
 
 class EzekiaNode(WorkflowNode):
     integration_type = "automation-ezekia"
+    credential_provider_labels = {"ezekia": "Ezekia Account"}
     connection_evidence = ConnectionEvidence(noun="Ezekia account", identity_operation="get_me", identity_keys=("fullName", "email"))
 
     @classmethod

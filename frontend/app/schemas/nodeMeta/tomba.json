@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Tomba API Key": "tomba_api_key",
-    "TombaApiKeyCredential": "tomba_api_key"
+    "Tomba MCP": "tomba_mcp",
+    "TombaApiKeyCredential": "tomba_api_key",
+    "TombaMcpCredential": "tomba_mcp"
   },
   "providerLabels": {
-    "tomba": "Tomba API Key"
+    "tomba": "Tomba Account"
   },
   "autoSelectCredential": true
 }

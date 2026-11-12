@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -212,13 +213,18 @@ class ScrapePages(_Input):
         return self
 
 
+# Icypeas's own MCP server: agents get its tools through a person's Icypeas sign-in.
+IcypeasMcpCredential = mcp_credential("icypeas", "https://mcp.icypeas.com/mcp", app="Icypeas")
+IcypeasCredential = Union[IcypeasAPIKeyCredential, IcypeasMcpCredential]
+
+
 IcypeasConfig = Annotated[Union[GetSubscription, ReadBulkProgress, CreateBulkSearch,
     CreateDomainSearch, CreateEmailSearch, CreateEmailVerification, FindCompanyURL,
     FindProfileURL, FindURLs, ReadResults, ReverseEmailLookup, ReverseEmailLookups,
     ScrapeCompany, ScrapeProfile, ScrapePages], Field(discriminator="operation")]
 
 
-class IcypeasFullConfig(NodeConfig[IcypeasConfig, IcypeasAPIKeyCredential]):
+class IcypeasFullConfig(NodeConfig[IcypeasConfig, IcypeasCredential]):
     pass
 
 
@@ -253,6 +259,7 @@ def _redact(value, key):
 
 class IcypeasNode(WorkflowNode):
     integration_type = "automation-icypeas"
+    credential_provider_labels = {"icypeas": "Icypeas Account"}
     connection_evidence = ConnectionEvidence(noun="Icypeas subscription", identity_operation="get_subscription", identity_keys=("userId",))
 
     @classmethod

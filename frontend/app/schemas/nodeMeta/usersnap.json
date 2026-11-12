@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Usersnap API Token": "usersnap_api_token",
+    "Usersnap MCP": "usersnap_mcp",
+    "UsersnapMcpCredential": "usersnap_mcp",
     "UsersnapTokenCredential": "usersnap_api_token"
   },
   "providerLabels": {
-    "usersnap": "Usersnap API Token"
+    "usersnap": "Usersnap Account"
   },
   "autoSelectCredential": true
 }

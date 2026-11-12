@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Logo Dev API Key": "logo_dev_api_key",
-    "LogoDevCredential": "logo_dev_api_key"
+    "Logo.dev MCP": "logo_dev_mcp",
+    "LogoDevCredential": "logo_dev_api_key",
+    "LogoDevMcpCredential": "logo_dev_mcp"
   },
   "providerLabels": {
-    "logo_dev": "Logo Dev API Key"
+    "logo_dev": "Logo.dev Account"
   },
   "autoSelectCredential": true
 }

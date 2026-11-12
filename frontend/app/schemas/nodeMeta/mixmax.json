@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Mixmax API Token": "mixmax_api_token",
-    "MixmaxAPITokenCredential": "mixmax_api_token"
+    "Mixmax MCP": "mixmax_mcp",
+    "MixmaxAPITokenCredential": "mixmax_api_token",
+    "MixmaxMcpCredential": "mixmax_mcp"
   },
   "providerLabels": {
-    "mixmax": "Mixmax API Token"
+    "mixmax": "Mixmax Account"
   },
   "autoSelectCredential": true
 }

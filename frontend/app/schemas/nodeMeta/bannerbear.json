@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Bannerbear API Key": "bannerbear_api_key",
-    "BannerbearAPIKeyCredential": "bannerbear_api_key"
+    "Bannerbear MCP": "bannerbear_mcp",
+    "BannerbearAPIKeyCredential": "bannerbear_api_key",
+    "BannerbearMcpCredential": "bannerbear_mcp"
   },
   "providerLabels": {
-    "bannerbear": "Bannerbear API Key"
+    "bannerbear": "Bannerbear Account"
   },
   "autoSelectCredential": true
 }

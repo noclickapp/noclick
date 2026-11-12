@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import SSRFError, guarded_async_client
@@ -219,6 +220,11 @@ class ConductorListFavoriteModelsConfig(_Input):
     operation: Literal["list_favorite_models"] = Field("list_favorite_models", json_schema_extra={"ui:hidden": True})
 
 
+# Conductor's own MCP server: agents get its tools through a person's Conductor sign-in.
+ConductorMcpCredential = mcp_credential("conductor", "https://api.conductor.build/mcp", app="Conductor")
+ConductorCredential = Union[ConductorAPIKeyCredential, ConductorMcpCredential]
+
+
 ConductorConfig = Annotated[Union[
     ConductorGetIdentityConfig,
     ConductorListProjectsConfig,
@@ -247,7 +253,7 @@ ConductorConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ConductorFullConfig(NodeConfig[ConductorConfig, ConductorAPIKeyCredential]):
+class ConductorFullConfig(NodeConfig[ConductorConfig, ConductorCredential]):
     pass
 
 
@@ -290,6 +296,7 @@ def _redact(value, secret):
 
 class ConductorNode(WorkflowNode):
     integration_type = "automation-conductor"
+    credential_provider_labels = {"conductor": "Conductor Account"}
     connection_evidence = ConnectionEvidence(
         noun="Conductor account", identity_operation="get_identity",
         identity_keys=("name", "email", "organizationName", "userId"),

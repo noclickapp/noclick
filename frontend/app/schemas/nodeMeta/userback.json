@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Userback API Token": "userback_api_token",
-    "UserbackAPITokenCredential": "userback_api_token"
+    "Userback MCP": "userback_mcp",
+    "UserbackAPITokenCredential": "userback_api_token",
+    "UserbackMcpCredential": "userback_mcp"
   },
   "providerLabels": {
-    "userback": "Userback API Token"
+    "userback": "Userback Account"
   },
   "autoSelectCredential": true
 }

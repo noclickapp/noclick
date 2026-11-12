@@ -11,6 +11,7 @@ from typing import Annotated, Literal, Union
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -162,13 +163,17 @@ class FlagDomains(_Input):
     comment: str | None = None
 
 
+# Logo.dev's own MCP server: agents get its tools through a person's Logo.dev sign-in.
+LogoDevMcpCredential = mcp_credential("logo_dev", "https://mcp.logo.dev/mcp", app="Logo.dev")
+
+
 Operation = Annotated[Union[GetBrand, GetBrandById, GetBrandLogo, GetBrandmark, SearchBrands,
     GetSubscription, SubscribeBrand, UnsubscribeBrand, CreateWebhookEndpoint, ListWebhookEndpoints,
     GetWebhookEndpoint, UpdateWebhookEndpoint, DeleteWebhookEndpoint, GetWebhookSecret,
     RotateWebhookSecret, GetAccount, FlagDomains], Field(discriminator="operation")]
 
 
-class LogoDevConfig(NodeConfig[Operation, LogoDevCredential]):
+class LogoDevConfig(NodeConfig[Operation, Union[LogoDevCredential, LogoDevMcpCredential]]):
     pass
 
 
@@ -196,6 +201,7 @@ ROUTES = {
 
 class LogoDevNode(WorkflowNode):
     integration_type = "automation-logo-dev"
+    credential_provider_labels = {"logo_dev": "Logo.dev Account"}
     connection_evidence = ConnectionEvidence(operation="get_account", noun="Logo Dev account plan and credits")
 
     @classmethod

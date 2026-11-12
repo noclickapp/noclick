@@ -8,6 +8,7 @@ from uuid import UUID
 import httpx
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, StrictBool, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -164,15 +165,21 @@ class MailslurpDeleteContactConfig(_Input):
     contactId: UUID = Field(...)
 
 
+# MailSlurp's own MCP server: agents get its tools through a person's MailSlurp sign-in.
+MailslurpMcpCredential = mcp_credential("mailslurp", "https://api.mailslurp.com/mcp", app="MailSlurp")
+MailslurpCredential = Union[MailslurpAPIKeyCredential, MailslurpMcpCredential]
+
+
 MailslurpConfig = Annotated[Union[MailslurpGetAccountConfig, MailslurpListInboxesConfig, MailslurpCreateInboxConfig, MailslurpGetInboxConfig, MailslurpUpdateInboxConfig, MailslurpDeleteInboxConfig, MailslurpListEmailsConfig, MailslurpSendEmailConfig, MailslurpGetEmailConfig, MailslurpReplyToEmailConfig, MailslurpDeleteEmailConfig, MailslurpMarkEmailReadConfig, MailslurpListSentEmailsConfig, MailslurpGetSentEmailConfig, MailslurpListContactsConfig, MailslurpCreateContactConfig, MailslurpGetContactConfig, MailslurpDeleteContactConfig], Field(discriminator="operation")]
 
-class MailslurpFullConfig(NodeConfig[MailslurpConfig, MailslurpAPIKeyCredential]):
+class MailslurpFullConfig(NodeConfig[MailslurpConfig, MailslurpCredential]):
     pass
 
 ROUTES = {'get_account': ('GET', '/user/info', [], []), 'list_inboxes': ('GET', '/inboxes/paginated', ['page', 'size', 'sort', 'search', 'tag'], []), 'create_inbox': ('POST', '/inboxes', ['name', 'description', 'inboxType', 'expiresIn'], []), 'get_inbox': ('GET', '/inboxes/{inboxId}', [], []), 'update_inbox': ('PATCH', '/inboxes/{inboxId}', [], ['name', 'description', 'favourite']), 'delete_inbox': ('DELETE', '/inboxes/{inboxId}', [], []), 'list_emails': ('GET', '/inboxes/{inboxId}/emails', ['size', 'sort', 'unreadOnly'], []), 'send_email': ('POST', '/inboxes/{inboxId}', [], ['to', 'subject', 'body', 'isHTML']), 'get_email': ('GET', '/emails/{emailId}', [], []), 'reply_to_email': ('PUT', '/emails/{emailId}', [], ['body', 'isHTML']), 'delete_email': ('DELETE', '/emails/{emailId}', [], []), 'mark_email_read': ('PATCH', '/emails/{emailId}/read', ['read'], []), 'list_sent_emails': ('GET', '/sent', ['page', 'size', 'sort', 'inboxId'], []), 'get_sent_email': ('GET', '/sent/{id}', [], []), 'list_contacts': ('GET', '/contacts', [], []), 'create_contact': ('POST', '/contacts', [], ['firstName', 'lastName', 'emailAddresses']), 'get_contact': ('GET', '/contacts/{contactId}', [], []), 'delete_contact': ('DELETE', '/contacts/{contactId}', [], [])}
 
 class MailslurpNode(WorkflowNode):
     integration_type = "automation-mailslurp"
+    credential_provider_labels = {"mailslurp": "MailSlurp Account"}
     connection_evidence = ConnectionEvidence(noun="MailSlurp account", identity_operation="get_account", identity_keys=("emailAddress", "id"))
 
     @classmethod

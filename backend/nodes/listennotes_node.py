@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -285,6 +286,11 @@ class DeletePlaylistItemConfig(_Input):
     item_id: int = Field(..., ge=1, description='Integer playlist-item ID returned by GET /playlists/{id} or the add-item endpoint, not a podcast or episode UUID.')
 
 
+# Listen Notes's own MCP server: agents get its tools through a person's Listen Notes sign-in.
+ListennotesMcpCredential = mcp_credential("listennotes", "https://mcp.listennotes.com/mcp/", app="Listen Notes")
+ListenNotesCredential = Union[ListenNotesAPIKeyCredential, ListennotesMcpCredential]
+
+
 ListenNotesConfig = Annotated[Union[
     SearchConfig,
     TypeaheadConfig,
@@ -343,7 +349,7 @@ RESPONSE_FIELDS = {
 }
 
 
-class ListenNotesNodeConfig(NodeConfig[ListenNotesConfig, ListenNotesAPIKeyCredential]):
+class ListenNotesNodeConfig(NodeConfig[ListenNotesConfig, ListenNotesCredential]):
     pass
 
 
@@ -378,6 +384,7 @@ ROUTES = {
 
 class ListenNotesNode(WorkflowNode):
     integration_type = "automation-listennotes"
+    credential_provider_labels = {"listennotes": "Listen Notes Account"}
     connection_evidence = ConnectionEvidence(noun="playlists", operation="list_playlists", label_keys=("name", "id"))
 
     @classmethod

@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "GTmetrix MCP": "gtmetrix_mcp",
     "GTmetrixAPIKeyCredential": "gtmetrix_api_key",
-    "Gtmetrix API Key": "gtmetrix_api_key"
+    "Gtmetrix API Key": "gtmetrix_api_key",
+    "GtmetrixMcpCredential": "gtmetrix_mcp"
   },
   "providerLabels": {
-    "gtmetrix": "Gtmetrix API Key"
+    "gtmetrix": "GTmetrix Account"
   },
   "autoSelectCredential": true
 }

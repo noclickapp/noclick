@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, Json, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 API_BASE = "https://api.bannerbear.com/v5"
@@ -36,6 +37,11 @@ class BannerbearAPIKeyCredential(BaseModel):
             "x-credential-instructions": "Create a V5 API key in Bannerbear → API Keys. Enable read and write for images, image_templates, animations, animation_templates and batches, or use an unscoped key. V2 keys are not compatible.",
         },
     )
+
+
+# Bannerbear's own MCP server: agents get its tools through a person's Bannerbear sign-in.
+BannerbearMcpCredential = mcp_credential("bannerbear", "https://mcp.bannerbear.com/", app="Bannerbear")
+BannerbearCredential = Union[BannerbearAPIKeyCredential, BannerbearMcpCredential]
 
 
 def _operation(name: str, category: str):
@@ -242,7 +248,7 @@ BannerbearConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class BannerbearNodeConfig(NodeConfig[BannerbearConfig, BannerbearAPIKeyCredential]):
+class BannerbearNodeConfig(NodeConfig[BannerbearConfig, BannerbearCredential]):
     pass
 
 
@@ -312,6 +318,7 @@ async def _request(api_key: str, operation: str, *, uid=None, params=None, body=
 
 class BannerbearNode(WorkflowNode):
     integration_type = "automation-bannerbear"
+    credential_provider_labels = {"bannerbear": "Bannerbear Account"}
     connection_evidence = ConnectionEvidence(
         field="image_template", noun="image templates", identity_operation="get_account",
         identity_keys=("workspace", "uid"),

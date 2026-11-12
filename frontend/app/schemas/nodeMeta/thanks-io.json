@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Thanks Io API Key": "thanks_io_api_key",
-    "ThanksIoApiKeyCredential": "thanks_io_api_key"
+    "ThanksIoApiKeyCredential": "thanks_io_api_key",
+    "ThanksIoMcpCredential": "thanks_io_mcp",
+    "thanks.io MCP": "thanks_io_mcp"
   },
   "providerLabels": {
-    "thanks_io": "Thanks Io API Key"
+    "thanks_io": "thanks.io Account"
   },
   "autoSelectCredential": true
 }

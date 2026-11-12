@@ -9,6 +9,7 @@ from typing import Annotated, Literal, Union
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -36,6 +37,11 @@ class CarsxeApiKeyCredential(BaseModel):
 
 class _Input(BaseModel):
     model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
+
+
+# CarsXE's own MCP server: agents get its tools through a person's CarsXE sign-in.
+CarsxeMcpCredential = mcp_credential("carsxe", "https://mcp.carsxe.com/mcp", app="CarsXE")
+CarsxeCredential = Union[CarsxeApiKeyCredential, CarsxeMcpCredential]
 
 
 Vin = Annotated[str, Field(min_length=17, max_length=17, pattern=r"^[A-HJ-NPR-Z0-9]{17}$")]
@@ -271,7 +277,7 @@ CarsxeConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class CarsxeFullConfig(NodeConfig[CarsxeConfig, CarsxeApiKeyCredential]):
+class CarsxeFullConfig(NodeConfig[CarsxeConfig, CarsxeCredential]):
     pass
 
 
@@ -311,6 +317,7 @@ def _redact(value, key):
 
 class CarsxeNode(WorkflowNode):
     integration_type = "automation-carsxe"
+    credential_provider_labels = {"carsxe": "CarsXE Account"}
     connection_evidence = ConnectionEvidence(operation="get_ymm_options",
         noun="vehicle catalogue", proves="reachability")
     default_operation = "get_specs"

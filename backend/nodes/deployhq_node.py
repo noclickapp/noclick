@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import SSRFError, guarded_async_client
 
@@ -51,6 +52,11 @@ class _Input(BaseModel):
         if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,127}", value):
             raise ValueError("Enter a DeployHQ identifier or project permalink")
         return value
+
+
+# DeployHQ's own MCP server: agents get its tools through a person's DeployHQ sign-in.
+DeployhqMcpCredential = mcp_credential("deployhq", "https://mcp.deployhq.com/mcp", app="DeployHQ")
+DeployHQCredential = Union[DeployHQAPIKeyCredential, DeployhqMcpCredential]
 
 
 def _operation(name, category):
@@ -197,7 +203,7 @@ DeployHQOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class DeployHQNodeConfig(NodeConfig[DeployHQOperation, DeployHQAPIKeyCredential]):
+class DeployHQNodeConfig(NodeConfig[DeployHQOperation, DeployHQCredential]):
     pass
 
 
@@ -229,6 +235,7 @@ DEPLOYHQ_OPERATIONS = {
 
 class DeployHQNode(WorkflowNode):
     integration_type = "automation-deployhq"
+    credential_provider_labels = {"deployhq": "DeployHQ Account"}
     connection_evidence = ConnectionEvidence(noun="projects", operation="list_projects", label_keys=("name", "permalink", "identifier"))
 
     @classmethod

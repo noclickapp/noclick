@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Carbone API Token": "carbone_api_token",
-    "CarboneAPITokenCredential": "carbone_api_token"
+    "Carbone MCP": "carbone_mcp",
+    "CarboneAPITokenCredential": "carbone_api_token",
+    "CarboneMcpCredential": "carbone_mcp"
   },
   "providerLabels": {
-    "carbone": "Carbone API Token"
+    "carbone": "Carbone Account"
   },
   "autoSelectCredential": true
 }

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Clearout API Token": "clearout_api_token",
-    "ClearoutCredential": "clearout_api_token"
+    "Clearout MCP": "clearout_mcp",
+    "ClearoutCredential": "clearout_api_token",
+    "ClearoutMcpCredential": "clearout_mcp"
   },
   "providerLabels": {
-    "clearout": "Clearout API Token"
+    "clearout": "Clearout Account"
   },
   "autoSelectCredential": true
 }

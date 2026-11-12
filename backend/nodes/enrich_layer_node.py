@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from pydantic import field_validator
@@ -243,6 +244,11 @@ class EnrichLayerGetPersonalEmail(_Input):
     page_size: str | None = Field(None, min_length=1, max_length=4096, description="This controls the maximum number of emails returned per API call. It's useful for limiting credit consumption as the number of emails per identity can vary. The default value is `0`, meaning there's no limit to the number of returned results.")
 
 
+# Enrich Layer's own MCP server: agents get its tools through a person's Enrich Layer sign-in.
+EnrichLayerMcpCredential = mcp_credential("enrich_layer", "https://mcp.enrichlayer.com/mcp", app="Enrich Layer")
+EnrichLayerCredential = Union[EnrichLayerAPIKeyCredential, EnrichLayerMcpCredential]
+
+
 EnrichLayerOperation = Annotated[Union[
     EnrichLayerGetPerson,
     EnrichLayerGetCompany,
@@ -267,7 +273,7 @@ EnrichLayerOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class EnrichLayerConfig(NodeConfig[EnrichLayerOperation, EnrichLayerAPIKeyCredential]):
+class EnrichLayerConfig(NodeConfig[EnrichLayerOperation, EnrichLayerCredential]):
     pass
 
 
@@ -286,6 +292,7 @@ def _redact(value, key):
 
 class EnrichLayerNode(WorkflowNode):
     integration_type = "automation-enrich-layer"
+    credential_provider_labels = {"enrich_layer": "Enrich Layer Account"}
     connection_evidence = ConnectionEvidence(operation="get_credit_balance", noun="account credit balance",
         label_keys=("name",), proves="account")
     edit_examples = ["Enrich a contact from a person profile", "Find employees at a company", "Alert me when Enrich Layer credits are low"]

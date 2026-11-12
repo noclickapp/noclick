@@ -13,6 +13,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -36,6 +37,11 @@ class PlanetScaleServiceToken(BaseModel):
         if any(c.isspace() for c in value) or ":" in value:
             raise ValueError("Paste a current service token without Bearer or a token ID")
         return value
+
+
+# PlanetScale's own MCP server: agents get its tools through a person's PlanetScale sign-in.
+PlanetscaleMcpCredential = mcp_credential("planetscale", "https://mcp.pscale.dev/mcp/planetscale", app="PlanetScale")
+PlanetScaleCredential = Union[PlanetScaleServiceToken, PlanetscaleMcpCredential]
 
 
 Segment = Annotated[str, Field(min_length=1, max_length=255, pattern=r"^[A-Za-z0-9][A-Za-z0-9_.-]*$")]
@@ -216,7 +222,7 @@ PlanetScaleOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class PlanetScaleConfig(NodeConfig[PlanetScaleOperation, PlanetScaleServiceToken]):
+class PlanetScaleConfig(NodeConfig[PlanetScaleOperation, PlanetScaleCredential]):
     pass
 
 
@@ -247,6 +253,7 @@ ROUTES = {
 
 class PlanetScaleNode(WorkflowNode):
     integration_type = "automation-planetscale"
+    credential_provider_labels = {"planetscale": "PlanetScale Account"}
     connection_evidence = ConnectionEvidence(operation="list_organizations", noun="organizations")
 
     @classmethod

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "UniOne API Key": "unione_api_key",
-    "UnioneAPIKeyCredential": "unione_api_key"
+    "UniOne MCP": "unione_mcp",
+    "UnioneAPIKeyCredential": "unione_api_key",
+    "UnioneMcpCredential": "unione_mcp"
   },
   "providerLabels": {
-    "unione": "UniOne API Key"
+    "unione": "UniOne Account"
   },
   "autoSelectCredential": true
 }

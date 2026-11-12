@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, StrictBool, StrictInt, StrictStr, field_validator, model_validator
 
 from nodes.core.base import ConfigValidationError, NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
@@ -352,6 +353,11 @@ class ExtoleSubmitAsyncEventConfig(EventInput):
         json_schema_extra={"const":"submit_async_event","ui:hidden":True,"x-category":"Events","x-is-trigger":False,"x-display-name":"Submit Async Event"})
 
 
+# Extole's own MCP server: agents get its tools through a person's Extole sign-in.
+ExtoleMcpCredential = mcp_credential("extole", "https://mcp.extole.com", app="Extole")
+ExtoleCredential = Union[ExtoleAccessTokenCredential, ExtoleMcpCredential]
+
+
 ExtoleOperation = Annotated[Union[
     ExtoleCheckConnectionConfig,
     ExtoleSearchParticipantsConfig,
@@ -383,7 +389,7 @@ ExtoleOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ExtoleNodeConfig(NodeConfig[ExtoleOperation, ExtoleAccessTokenCredential]):
+class ExtoleNodeConfig(NodeConfig[ExtoleOperation, ExtoleCredential]):
     pass
 
 class Projected(BaseModel):
@@ -514,6 +520,7 @@ def safe_label(value):
 
 class ExtoleNode(WorkflowNode):
     integration_type = "automation-extole"
+    credential_provider_labels = {"extole": "Extole Account"}
     connection_evidence = ConnectionEvidence(
         identity_operation="check_connection", noun="client", identity_keys=("client_id",), proves="account")
 

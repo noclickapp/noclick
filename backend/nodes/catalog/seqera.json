@@ -14,6 +14,18 @@
    "hidden": false,
    "pinned": true,
    "borrowed": false
+  },
+  {
+   "type": "seqera_mcp",
+   "title": "Seqera MCP",
+   "oauth_provider": null,
+   "method": "mcp",
+   "hidden": false,
+   "pinned": true,
+   "borrowed": false,
+   "linked_fields": [
+    "mcp_server_url"
+   ]
   }
  ],
  "operations": [

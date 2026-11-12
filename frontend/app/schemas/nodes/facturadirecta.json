@@ -1111,6 +1111,187 @@
       "x-credential-instructions": "In FacturaDirecta, open Settings > API and integrations. Copy your company ID and create an API key with contacts, products, invoices, estimates and bills read/write permissions. Paste both below. Connection evidence reads your contacts; check API key returns the granted scopes. A successful read does not verify write permissions.",
       "x-credential-url": "https://www.facturadirecta.com/desarrolladores/api/guias/authentication/"
     },
+    "FacturadirectaMcpCredential": {
+      "description": "FacturaDirecta connected through FacturaDirecta's MCP server: agents get its tools.",
+      "properties": {
+        "mcp_server_url": {
+          "title": "MCP server",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Token",
+          "ui:hidden": true
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:hidden": true
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At",
+          "ui:hidden": true
+        },
+        "token_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Type",
+          "ui:hidden": true
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope",
+          "ui:hidden": true
+        },
+        "token_endpoint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id",
+          "ui:hidden": true
+        },
+        "client_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Secret",
+          "ui:hidden": true
+        },
+        "token_endpoint_auth_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint Auth Method",
+          "ui:hidden": true
+        },
+        "resource_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resource Url",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Api Key",
+          "ui:hidden": true
+        },
+        "account": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account",
+          "ui:hidden": true
+        },
+        "credential_type": {
+          "const": "facturadirecta_mcp",
+          "default": "facturadirecta_mcp",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "mcp_server_url"
+      ],
+      "title": "FacturaDirecta MCP",
+      "type": "object",
+      "x-credential-type": "mcp",
+      "x-mcp-server": "https://mcp.facturadirecta.com",
+      "x-mcp-transport": "shttp"
+    },
     "GetBill": {
       "additionalProperties": false,
       "description": "Get a bill using one documented API operation.",
@@ -2173,11 +2354,15 @@
           "$ref": "#/$defs/FacturaDirectaAPIKeyCredential"
         },
         {
+          "$ref": "#/$defs/FacturadirectaMcpCredential"
+        },
+        {
           "type": "null"
         }
       ],
       "default": null,
-      "description": "Credentials for this node (optional if using environment variables)"
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
     }
   },
   "required": [

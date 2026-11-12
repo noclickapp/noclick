@@ -12,6 +12,7 @@ from typing import Annotated, Literal, Optional, Union
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.dynamic_options import normalize_search
@@ -101,6 +102,11 @@ class SuperwallOrganizationAPIKeyCredential(BaseModel):
     def scopes(cls, value):
         read_scopes(value)
         return value
+
+
+# Superwall's own MCP server: agents get its tools through a person's Superwall sign-in.
+SuperwallMcpCredential = mcp_credential("superwall", "https://mcp.superwall.com/mcp", app="Superwall")
+SuperwallOrganizationCredential = Union[SuperwallOrganizationAPIKeyCredential, SuperwallMcpCredential]
 
 
 def credential(data):
@@ -219,7 +225,7 @@ Operation = Annotated[Union[CheckConnection, GetOrganization, ListProjects, GetP
     ListProducts, GetProduct, ListEntitlements, GetEntitlement, GetChartDefinitions, QueryChartData], Field(discriminator="operation")]
 
 
-class SuperwallNodeConfig(NodeConfig[Operation, SuperwallOrganizationAPIKeyCredential]):
+class SuperwallNodeConfig(NodeConfig[Operation, SuperwallOrganizationCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -518,6 +524,7 @@ async def query_chart(data, cfg, app):
 
 class SuperwallNode(WorkflowNode):
     integration_type = "automation-superwall"
+    credential_provider_labels = {"superwall": "Superwall Account"}
     connection_evidence = ConnectionEvidence(operation="check_connection", noun="Superwall project witness",
         label_keys=("name", "id"), identity_keys=(), proves="reachability")
     scope_registry = ScopeRegistry(provider="superwall", enforcement=Enforcement.STRICT,

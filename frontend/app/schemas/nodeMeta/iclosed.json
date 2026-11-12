@@ -6,7 +6,9 @@
   },
   "credentialTypes": {
     "ICLOSED API Key": "iclosed_api_key",
-    "IClosedAPIKeyCredential": "iclosed_api_key"
+    "IClosedAPIKeyCredential": "iclosed_api_key",
+    "IclosedMcpCredential": "iclosed_mcp",
+    "iClosed MCP": "iclosed_mcp"
   },
   "providerLabels": {
     "iclosed": "iClosed"

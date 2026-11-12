@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 API_BASE = "https://api.buildkite.com/v2"
@@ -34,6 +35,11 @@ class BuildkiteTokenCredential(BaseModel):
             "x-credential-url": "https://buildkite.com/user/api-access-tokens"
         }
     )
+
+
+# Buildkite's own MCP server: agents get its tools through a person's Buildkite sign-in.
+BuildkiteMcpCredential = mcp_credential("buildkite", "https://mcp.buildkite.com/mcp", app="Buildkite")
+BuildkiteCredential = Union[BuildkiteTokenCredential, BuildkiteMcpCredential]
 
 
 def op(name: str, category: str, *, creates: bool = False) -> dict[str, Any]:
@@ -303,7 +309,7 @@ BuildkiteConfig = Annotated[
 ]
 
 
-class BuildkiteNodeConfig(NodeConfig[BuildkiteConfig, BuildkiteTokenCredential]):
+class BuildkiteNodeConfig(NodeConfig[BuildkiteConfig, BuildkiteCredential]):
     pass
 
 
@@ -425,6 +431,8 @@ class BuildkiteNode(WorkflowNode):
     """Manage Buildkite organizations, pipelines, builds, and build output."""
 
     integration_type = "automation-buildkite"
+
+    credential_provider_labels = {"buildkite": "Buildkite Account"}
 
     edit_examples = [
         "List the latest builds for our release pipeline",

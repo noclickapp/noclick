@@ -12,6 +12,7 @@ from urllib.parse import quote, urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -305,6 +306,11 @@ class TinyfishGetResearchConfig(_Input):
     research_run_id: str = Field(..., description='Research run identifier')
 
 
+# TinyFish's own MCP server: agents get its tools through a person's TinyFish sign-in.
+TinyfishMcpCredential = mcp_credential("tinyfish", "https://agent.tinyfish.ai/mcp", app="TinyFish")
+TinyfishCredential = Union[TinyfishAPIKeyCredential, TinyfishMcpCredential]
+
+
 TinyfishConfig = Annotated[Union[
     TinyfishRunConfig,
     TinyfishStartRunConfig,
@@ -334,7 +340,7 @@ TinyfishConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class TinyfishFullConfig(NodeConfig[TinyfishConfig, TinyfishAPIKeyCredential]):
+class TinyfishFullConfig(NodeConfig[TinyfishConfig, TinyfishCredential]):
     pass
 
 
@@ -437,6 +443,7 @@ ROUTES = {'run': ('POST', 'https://agent.tinyfish.ai', '/v1/automation/run', {},
 
 class TinyfishNode(WorkflowNode):
     integration_type = "automation-tinyfish"
+    credential_provider_labels = {"tinyfish": "TinyFish Account"}
     connection_evidence = ConnectionEvidence(
         noun="Tinyfish runs", operation="list_runs", label_keys=("goal", "run_id"))
 

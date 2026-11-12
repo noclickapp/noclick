@@ -12,6 +12,7 @@ import json
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -239,6 +240,11 @@ class HypeAuditorGetMediaPlanMetricsConfig(_Input):
     planId: str = Field(..., min_length=1, max_length=255, description='Media plan unique identifier')
 
 
+# HypeAuditor's own MCP server: agents get its tools through a person's HypeAuditor sign-in.
+HypeauditorMcpCredential = mcp_credential("hypeauditor", "https://mcp.hypeauditor.com/mcp", app="HypeAuditor")
+HypeAuditorCredential = Union[HypeAuditorAPIToken, HypeauditorMcpCredential]
+
+
 HypeAuditorConfig = Annotated[Union[
     HypeAuditorGetLookalikesConfig,
     HypeAuditorListListenersConfig,
@@ -263,7 +269,7 @@ HypeAuditorConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class HypeAuditorFullConfig(NodeConfig[HypeAuditorConfig, HypeAuditorAPIToken]):
+class HypeAuditorFullConfig(NodeConfig[HypeAuditorConfig, HypeAuditorCredential]):
     pass
 
 
@@ -294,6 +300,7 @@ ROUTES = {
 
 class HypeAuditorNode(WorkflowNode):
     integration_type = "automation-hypeauditor"
+    credential_provider_labels = {"hypeauditor": "HypeAuditor Account"}
     connection_evidence = ConnectionEvidence(noun="media plans", operation="list_media_plans")
 
     @classmethod

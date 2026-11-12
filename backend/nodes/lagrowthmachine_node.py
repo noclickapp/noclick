@@ -8,6 +8,7 @@ from typing import Annotated, Literal, Optional, Union
 from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -186,6 +187,11 @@ class ReplyEmail(Operation):
     text: Text = Field(..., title="Plain text body")
 
 
+# La Growth Machine's own MCP server: agents get its tools through a person's La Growth Machine sign-in.
+LagrowthmachineMcpCredential = mcp_credential("lagrowthmachine", "https://mcp.lagrowthmachine.com/mcp", app="La Growth Machine")
+LagrowthmachineCredential = Union[LagrowthmachineAPIKeyCredential, LagrowthmachineMcpCredential]
+
+
 LagrowthmachineConfig = Annotated[Union[
     GetMe, ListWorkspaces, ListMembers, ListIdentities, GetCredits,
     ListAudiences, CreateAudience, GetAudience, ListAudienceLeads,
@@ -195,7 +201,7 @@ LagrowthmachineConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class LagrowthmachineFullConfig(NodeConfig[LagrowthmachineConfig, LagrowthmachineAPIKeyCredential]):
+class LagrowthmachineFullConfig(NodeConfig[LagrowthmachineConfig, LagrowthmachineCredential]):
     pass
 
 
@@ -227,6 +233,7 @@ ROUTES = {
 
 class LagrowthmachineNode(WorkflowNode):
     integration_type = "automation-lagrowthmachine"
+    credential_provider_labels = {"lagrowthmachine": "La Growth Machine Account"}
     connection_evidence = ConnectionEvidence(noun="audiences", operation="list_audiences", identity_operation="get_me")
 
     @classmethod

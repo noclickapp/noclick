@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -74,6 +75,11 @@ class _Request(_Input):
             if parts.scheme not in {"http", "https"} or parts.hostname not in {"google.com", "www.google.com"} or parts.path not in {"/goto", "/url"}:
                 raise ValueError("Use a Google /goto or /url redirect link")
         return self
+
+
+# Cloro's own MCP server: agents get its tools through a person's Cloro sign-in.
+CloroMcpCredential = mcp_credential("cloro", "https://mcp.cloro.dev/mcp", app="Cloro")
+CloroCredential = Union[CloroAPIKeyCredential, CloroMcpCredential]
 
 
 def re_google_host(host):
@@ -301,7 +307,7 @@ class GetStates(_Input):
 CloroOperation = Annotated[Union[MonitorChatgpt, MonitorGemini, MonitorGoogle, GetGoogleProduct, ResolveGoogleGoto, MonitorGoogleNews, MonitorPerplexity, MonitorAiMode, MonitorBingAiMode, GetCountries, CreateAsyncTask, CreateBatchAsyncTasks, GetTaskStatus, GetAsyncStatus, ClearAsyncQueue, GetCredits, GetStates], Field(discriminator="operation")]
 
 
-class CloroConfig(NodeConfig[CloroOperation, CloroAPIKeyCredential]):
+class CloroConfig(NodeConfig[CloroOperation, CloroCredential]):
     pass
 
 
@@ -320,6 +326,7 @@ def _redact(value, secret):
 
 class CloroNode(WorkflowNode):
     integration_type = "automation-cloro"
+    credential_provider_labels = {"cloro": "Cloro Account"}
     connection_evidence = ConnectionEvidence(operation="get_credits", noun="Cloro account credit balance")
 
     @classmethod

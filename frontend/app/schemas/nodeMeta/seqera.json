@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Seqera API Token": "seqera_api_token",
-    "SeqeraAPITokenCredential": "seqera_api_token"
+    "Seqera MCP": "seqera_mcp",
+    "SeqeraAPITokenCredential": "seqera_api_token",
+    "SeqeraMcpCredential": "seqera_mcp"
   },
   "providerLabels": {
-    "seqera": "Seqera API Token"
+    "seqera": "Seqera Account"
   },
   "autoSelectCredential": true
 }

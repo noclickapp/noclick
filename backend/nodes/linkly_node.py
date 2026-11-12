@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -794,6 +795,11 @@ class LinklyListWorkspacesConfig(_Input):
     )
 
 
+# Linkly's own MCP server: agents get its tools through a person's Linkly sign-in.
+LinklyMcpCredential = mcp_credential("linkly", "https://mcp.linklyhq.com", app="Linkly")
+LinklyCredential = Union[LinklyAPIKeyCredential, LinklyMcpCredential]
+
+
 LinklyConfig = Annotated[
     Union[
         LinklyListConversionsConfig,
@@ -1063,12 +1069,13 @@ NULLABLE_LINK_FIELDS = {
 }
 
 
-class LinklyFullConfig(NodeConfig[LinklyConfig, LinklyAPIKeyCredential]):
+class LinklyFullConfig(NodeConfig[LinklyConfig, LinklyCredential]):
     pass
 
 
 class LinklyNode(WorkflowNode):
     integration_type = "automation-linkly"
+    credential_provider_labels = {"linkly": "Linkly Account"}
     connection_evidence = ConnectionEvidence(
         operation="list_workspaces", noun="workspaces"
     )

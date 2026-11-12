@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Leexi API Key": "leexi_api_key",
-    "LeexiCredential": "leexi_api_key"
+    "Leexi MCP": "leexi_mcp",
+    "LeexiCredential": "leexi_api_key",
+    "LeexiMcpCredential": "leexi_mcp"
   },
   "providerLabels": {
-    "leexi": "Leexi API Key"
+    "leexi": "Leexi Account"
   },
   "autoSelectCredential": true
 }

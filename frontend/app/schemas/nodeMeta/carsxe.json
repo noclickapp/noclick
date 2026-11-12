@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "CarsXE API Key": "carsxe_api_key",
-    "CarsxeApiKeyCredential": "carsxe_api_key"
+    "CarsXE MCP": "carsxe_mcp",
+    "CarsxeApiKeyCredential": "carsxe_api_key",
+    "CarsxeMcpCredential": "carsxe_mcp"
   },
   "providerLabels": {
-    "carsxe": "CarsXE API Key"
+    "carsxe": "CarsXE Account"
   },
   "autoSelectCredential": true
 }

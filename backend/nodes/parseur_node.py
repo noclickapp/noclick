@@ -8,6 +8,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -197,15 +198,21 @@ class DeleteCustomDownloadConfig(Operation):
     download_id: int = Field(..., ge=1)
 
 
+# Parseur's own MCP server: agents get its tools through a person's Parseur sign-in.
+ParseurMcpCredential = mcp_credential("parseur", "https://api.parseur.com/mcp", app="Parseur")
+ParseurCredential = Union[ParseurAPIKeyCredential, ParseurMcpCredential]
+
+
 ParseurConfig = Annotated[Union[ListMailboxesConfig, GetMailboxConfig, CreateMailboxConfig, UpdateMailboxConfig, DeleteMailboxConfig, CopyMailboxConfig, GetMailboxSchemaConfig, ListDocumentsConfig, GetDocumentConfig, DeleteDocumentConfig, GetDocumentLogsConfig, ReprocessDocumentConfig, SkipDocumentConfig, CopyDocumentConfig, UploadEmailConfig, ListTemplatesConfig, GetTemplateConfig, DeleteTemplateConfig, CopyTemplateConfig, ListCustomDownloadsConfig, CreateCustomDownloadConfig, UpdateCustomDownloadConfig, DeleteCustomDownloadConfig], Field(discriminator="operation")]
 
-class ParseurFullConfig(NodeConfig[ParseurConfig, ParseurAPIKeyCredential]):
+class ParseurFullConfig(NodeConfig[ParseurConfig, ParseurCredential]):
     pass
 
 ROUTES = {'list_mailboxes': ('GET', '/parser', []), 'get_mailbox': ('GET', '/parser/{mailbox_id}', []), 'create_mailbox': ('POST', '/parser', ['name', 'email_prefix', 'process_attachments', 'ai_instructions']), 'update_mailbox': ('PUT', '/parser/{mailbox_id}', ['name', 'email_prefix', 'process_attachments', 'ai_instructions']), 'delete_mailbox': ('DELETE', '/parser/{mailbox_id}', []), 'copy_mailbox': ('POST', '/parser/{mailbox_id}/copy', []), 'get_mailbox_schema': ('GET', '/parser/{mailbox_id}/schema', []), 'list_documents': ('GET', '/parser/{mailbox_id}/document_set', []), 'get_document': ('GET', '/document/{document_id}', []), 'delete_document': ('DELETE', '/document/{document_id}', []), 'get_document_logs': ('GET', '/document/{document_id}/log_set', []), 'reprocess_document': ('POST', '/document/{document_id}/process', []), 'skip_document': ('POST', '/document/{document_id}/skip', []), 'copy_document': ('POST', '/document/{document_id}/copy/{target_mailbox_id}', []), 'upload_email': ('POST', '/email', ['subject', 'sender', 'recipient', 'body_plain', 'body_html']), 'list_templates': ('GET', '/parser/{mailbox_id}/template_set', []), 'get_template': ('GET', '/template/{template_id}', []), 'delete_template': ('DELETE', '/template/{template_id}', []), 'copy_template': ('POST', '/template/{template_id}/copy/{target_mailbox_id}', []), 'list_custom_downloads': ('GET', '/parser/{mailbox_id}/export_config', []), 'create_custom_download': ('POST', '/parser/{mailbox_id}/export_config', ['name', 'type', 'items', 'parser_field_id']), 'update_custom_download': ('PATCH', '/parser/{mailbox_id}/export_config/{download_id}', ['name', 'type', 'items', 'parser_field_id']), 'delete_custom_download': ('DELETE', '/parser/{mailbox_id}/export_config/{download_id}', [])}
 
 class ParseurNode(WorkflowNode):
     integration_type = "automation-parseur"
+    credential_provider_labels = {"parseur": "Parseur Account"}
     connection_evidence = ConnectionEvidence(operation="list_mailboxes", noun="mailboxes")
 
     @classmethod

@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -625,6 +626,11 @@ class SearchApiKnowledgeGraphConfig(_Input):
     page: int = Field(1, ge=1)
 
 
+# SearchApi's own MCP server: agents get its tools through a person's SearchApi sign-in.
+SearchApiMcpCredential = mcp_credential("search_api", "https://www.searchapi.io/mcp", app="SearchApi")
+SearchApiCredential = Union[SearchApiAPIKeyCredential, SearchApiMcpCredential]
+
+
 SearchApiConfig = Annotated[
     Union[
         SearchApiCheckConfig,
@@ -643,12 +649,13 @@ SearchApiConfig = Annotated[
 ]
 
 
-class SearchApiFullConfig(NodeConfig[SearchApiConfig, SearchApiAPIKeyCredential]):
+class SearchApiFullConfig(NodeConfig[SearchApiConfig, SearchApiCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
 class SearchApiNode(WorkflowNode):
     integration_type = "automation-search-api"
+    credential_provider_labels = {"search_api": "SearchApi Account"}
     connection_evidence = ConnectionEvidence(
         noun="SearchApi Google search",
         operation="check_connection",

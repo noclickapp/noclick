@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -227,6 +228,11 @@ class UserbackDeleteWorkflowConfig(_Input):
     id: ID = Field(..., description="Userback workflow ID.")
 
 
+# Userback's own MCP server: agents get its tools through a person's Userback sign-in.
+UserbackMcpCredential = mcp_credential("userback", "https://mcp.userback.io/v1/mcp/", app="Userback")
+UserbackCredential = Union[UserbackAPITokenCredential, UserbackMcpCredential]
+
+
 UserbackOperation = Annotated[Union[
     UserbackGetCommentConfig,
     UserbackUpdateCommentConfig,
@@ -253,7 +259,7 @@ UserbackOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class UserbackConfig(NodeConfig[UserbackOperation, UserbackAPITokenCredential]):
+class UserbackConfig(NodeConfig[UserbackOperation, UserbackCredential]):
     pass
 
 
@@ -295,6 +301,7 @@ def _redact(value, token):
 
 class UserbackNode(WorkflowNode):
     integration_type = "automation-userback"
+    credential_provider_labels = {"userback": "Userback Account"}
     connection_evidence = ConnectionEvidence(noun="projects", operation="list_projects", label_keys=("name", "id"))
     edit_examples = ["Create feedback from a support ticket", "Add a comment to feedback", "List projects", "Update feedback priority"]
 

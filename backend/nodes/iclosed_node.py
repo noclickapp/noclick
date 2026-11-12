@@ -13,6 +13,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, EmailStr, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -376,6 +377,11 @@ class IClosedListUsers(_Input):
     ids: str | None = Field(None, description='Optional comma-separated user IDs to include in results.')
 
 
+# iClosed's own MCP server: agents get its tools through a person's iClosed sign-in.
+IclosedMcpCredential = mcp_credential("iclosed", "https://mcp.iclosed.io/mcp", app="iClosed")
+IClosedCredential = Union[IClosedAPIKeyCredential, IclosedMcpCredential]
+
+
 IClosedOperation = Annotated[Union[
     IClosedListContacts,
     IClosedCreateContact,
@@ -404,7 +410,7 @@ IClosedOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class IClosedNodeConfig(NodeConfig[IClosedOperation, IClosedAPIKeyCredential]):
+class IClosedNodeConfig(NodeConfig[IClosedOperation, IClosedCredential]):
     pass
 
 

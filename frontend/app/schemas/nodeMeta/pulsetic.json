@@ -6,7 +6,9 @@
   },
   "credentialTypes": {
     "Pulsetic API Key": "pulsetic_api_key",
-    "PulseticAPIKeyCredential": "pulsetic_api_key"
+    "Pulsetic MCP": "pulsetic_mcp",
+    "PulseticAPIKeyCredential": "pulsetic_api_key",
+    "PulseticMcpCredential": "pulsetic_mcp"
   },
   "providerLabels": {
     "pulsetic": "Pulsetic Account"

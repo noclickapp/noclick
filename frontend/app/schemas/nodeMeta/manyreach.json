@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Manyreach API Key": "manyreach_api_key",
-    "ManyreachApiKey": "manyreach_api_key"
+    "Manyreach MCP": "manyreach_mcp",
+    "ManyreachApiKey": "manyreach_api_key",
+    "ManyreachMcpCredential": "manyreach_mcp"
   },
   "providerLabels": {
-    "manyreach": "Manyreach API Key"
+    "manyreach": "Manyreach Account"
   },
   "autoSelectCredential": true
 }

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Linkly API Key": "linkly_api_key",
-    "LinklyAPIKeyCredential": "linkly_api_key"
+    "Linkly MCP": "linkly_mcp",
+    "LinklyAPIKeyCredential": "linkly_api_key",
+    "LinklyMcpCredential": "linkly_mcp"
   },
   "providerLabels": {
-    "linkly": "Linkly API Key"
+    "linkly": "Linkly Account"
   },
   "autoSelectCredential": true
 }

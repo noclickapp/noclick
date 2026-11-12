@@ -1038,6 +1038,187 @@
       "x-credential-instructions": "Copy your API key from Instatus User settings \u2192 Developer settings. Paste the key without the Bearer prefix. The connection check reads your user profile; write access depends on your account permissions.",
       "x-credential-url": "https://dashboard.instatus.com/developer"
     },
+    "InstatusMcpCredential": {
+      "description": "Instatus connected through Instatus's MCP server: agents get its tools.",
+      "properties": {
+        "mcp_server_url": {
+          "title": "MCP server",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Token",
+          "ui:hidden": true
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:hidden": true
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At",
+          "ui:hidden": true
+        },
+        "token_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Type",
+          "ui:hidden": true
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope",
+          "ui:hidden": true
+        },
+        "token_endpoint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id",
+          "ui:hidden": true
+        },
+        "client_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Secret",
+          "ui:hidden": true
+        },
+        "token_endpoint_auth_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint Auth Method",
+          "ui:hidden": true
+        },
+        "resource_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resource Url",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Api Key",
+          "ui:hidden": true
+        },
+        "account": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account",
+          "ui:hidden": true
+        },
+        "credential_type": {
+          "const": "instatus_mcp",
+          "default": "instatus_mcp",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "mcp_server_url"
+      ],
+      "title": "Instatus MCP",
+      "type": "object",
+      "x-credential-type": "mcp",
+      "x-mcp-server": "https://mcp.instatus.com/mcp",
+      "x-mcp-transport": "shttp"
+    },
     "ListComponentsConfig": {
       "additionalProperties": false,
       "description": "Get all your status page components.",
@@ -1927,11 +2108,15 @@
           "$ref": "#/$defs/InstatusCredential"
         },
         {
+          "$ref": "#/$defs/InstatusMcpCredential"
+        },
+        {
           "type": "null"
         }
       ],
       "default": null,
-      "description": "Credentials for this node (optional if using environment variables)"
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
     }
   },
   "required": [

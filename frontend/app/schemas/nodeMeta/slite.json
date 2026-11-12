@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Slite API Key": "slite_api_key",
-    "SliteAPICredential": "slite_api_key"
+    "Slite MCP": "slite_mcp",
+    "SliteAPICredential": "slite_api_key",
+    "SliteMcpCredential": "slite_mcp"
   },
   "providerLabels": {
-    "slite": "Slite API Key"
+    "slite": "Slite Account"
   },
   "autoSelectCredential": true
 }

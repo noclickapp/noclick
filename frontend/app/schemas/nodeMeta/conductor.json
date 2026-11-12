@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Conductor API Key": "conductor_api_key",
-    "ConductorAPIKeyCredential": "conductor_api_key"
+    "Conductor MCP": "conductor_mcp",
+    "ConductorAPIKeyCredential": "conductor_api_key",
+    "ConductorMcpCredential": "conductor_mcp"
   },
   "providerLabels": {
-    "conductor": "Conductor API Key"
+    "conductor": "Conductor Account"
   },
   "autoSelectCredential": true
 }

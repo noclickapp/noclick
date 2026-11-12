@@ -6,6 +6,7 @@ No automatic retries: verification/discovery can consume credits and timeouts ma
 from typing import Annotated, Literal, Union, Optional
 from pydantic import BaseModel, ConfigDict, Field
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
@@ -162,10 +163,14 @@ class ClearoutGetLimits(_Input):
     operation: Literal["get_limits"] = Field("get_limits", json_schema_extra={"ui:hidden": True})
 
 
+# Clearout's own MCP server: agents get its tools through a person's Clearout sign-in.
+ClearoutMcpCredential = mcp_credential("clearout", "https://mcp.clearout.io/mcp", app="Clearout")
+
+
 ClearoutConfig = Annotated[Union[ClearoutVerifyEmail, ClearoutGetVerificationStatus, ClearoutRemoveVerificationList, ClearoutCancelVerification, ClearoutListVerifications, ClearoutVerifyCatchall, ClearoutVerifyDisposable, ClearoutVerifyBusiness, ClearoutVerifyFree, ClearoutVerifyRole, ClearoutVerifyGibberish, ClearoutGetAvailableCredits, ClearoutFindEmail, ClearoutGetFinderStatus, ClearoutGetBulkFinderStatus, ClearoutRemoveFinderList, ClearoutCancelFinder, ClearoutListFinderJobs, ClearoutFindCompanyDomains, ClearoutFindMx, ClearoutFindWhois, ClearoutValidateName, ClearoutGetPlans, ClearoutGetCredits, ClearoutGetLimits], Field(discriminator="operation")]
 
 
-class ClearoutFullConfig(NodeConfig[ClearoutConfig, ClearoutCredential]):
+class ClearoutFullConfig(NodeConfig[ClearoutConfig, Union[ClearoutCredential, ClearoutMcpCredential]]):
     pass
 
 
@@ -174,6 +179,7 @@ ROUTES = {'verify_email': ('POST', '/email_verify/instant'), 'get_verification_s
 
 class ClearoutNode(WorkflowNode):
     integration_type = "automation-clearout"
+    credential_provider_labels = {"clearout": "Clearout Account"}
     connection_evidence = ConnectionEvidence(operation="get_credits", noun="Clearout account credits")
 
     @classmethod

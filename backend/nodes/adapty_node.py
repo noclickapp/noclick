@@ -13,6 +13,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.credential_loader import load_credential
@@ -68,6 +69,11 @@ class AdaptyAPIKeyCredential(BaseModel):
         if re.search(r"[\x00-\x20\x7f]", value):
             raise ValueError("Use an app secret without internal whitespace.")
         return value
+
+
+# Adapty's own MCP server: agents get its tools through a person's Adapty sign-in.
+AdaptyMcpCredential = mcp_credential("adapty", "https://mcp.adapty.io/mcp", app="Adapty")
+AdaptyCredential = Union[AdaptyAPIKeyCredential, AdaptyMcpCredential]
 
 
 def _credential(data):
@@ -220,7 +226,7 @@ AdaptyConfig = Annotated[Union[AdaptyCheckConnectionConfig, AdaptyGetProfileConf
     AdaptyGrantAccessLevelConfig, AdaptyRevokeAccessLevelConfig], Field(discriminator="operation")]
 
 
-class AdaptyNodeConfig(NodeConfig[AdaptyConfig, AdaptyAPIKeyCredential]):
+class AdaptyNodeConfig(NodeConfig[AdaptyConfig, AdaptyCredential]):
     pass
 
 

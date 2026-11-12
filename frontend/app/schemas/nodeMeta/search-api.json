@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "SearchApi Key": "search_api_api_key",
-    "SearchApiAPIKeyCredential": "search_api_api_key"
+    "SearchApi MCP": "search_api_mcp",
+    "SearchApiAPIKeyCredential": "search_api_api_key",
+    "SearchApiMcpCredential": "search_api_mcp"
   },
   "providerLabels": {
-    "search_api": "SearchApi Key"
+    "search_api": "SearchApi Account"
   },
   "autoSelectCredential": true
 }

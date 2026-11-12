@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -239,6 +240,11 @@ class GTmetrixGetAccountStatusConfig(_Input):
     operation: Literal["get_account_status"] = Field("get_account_status", json_schema_extra={"ui:hidden": True})
 
 
+# GTmetrix's own MCP server: agents get its tools through a person's GTmetrix sign-in.
+GtmetrixMcpCredential = mcp_credential("gtmetrix", "https://gtmetrix.com/mcp", app="GTmetrix")
+GTmetrixCredential = Union[GTmetrixAPIKeyCredential, GtmetrixMcpCredential]
+
+
 GTmetrixConfig = Annotated[Union[
     GTmetrixStartTestConfig,
     GTmetrixListTestsConfig,
@@ -268,7 +274,7 @@ GTmetrixConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class GTmetrixFullConfig(NodeConfig[GTmetrixConfig, GTmetrixAPIKeyCredential]):
+class GTmetrixFullConfig(NodeConfig[GTmetrixConfig, GTmetrixCredential]):
     pass
 
 
@@ -285,6 +291,7 @@ def _redact(value, secret):
 
 class GTmetrixNode(WorkflowNode):
     integration_type = "automation-gtmetrix"
+    credential_provider_labels = {"gtmetrix": "GTmetrix Account"}
     connection_evidence = ConnectionEvidence(noun="GTmetrix pages", operation="list_pages", label_keys=("url", "id"))
 
     @classmethod

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Ezekia API Token": "ezekia_api_token",
-    "EzekiaAPITokenCredential": "ezekia_api_token"
+    "Ezekia MCP": "ezekia_mcp",
+    "EzekiaAPITokenCredential": "ezekia_api_token",
+    "EzekiaMcpCredential": "ezekia_mcp"
   },
   "providerLabels": {
-    "ezekia": "Ezekia API Token"
+    "ezekia": "Ezekia Account"
   },
   "autoSelectCredential": true
 }

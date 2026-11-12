@@ -18,6 +18,18 @@
    "hidden": false,
    "pinned": true,
    "borrowed": false
+  },
+  {
+   "type": "listennotes_mcp",
+   "title": "Listen Notes MCP",
+   "oauth_provider": null,
+   "method": "mcp",
+   "hidden": false,
+   "pinned": true,
+   "borrowed": false,
+   "linked_fields": [
+    "mcp_server_url"
+   ]
   }
  ],
  "operations": [

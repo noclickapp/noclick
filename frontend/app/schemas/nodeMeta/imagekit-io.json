@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "ImageKit.io MCP": "imagekit_io_mcp",
     "ImageKitAPIKeyCredential": "imagekit_io_api_key",
-    "Imagekit.io API Key": "imagekit_io_api_key"
+    "Imagekit.io API Key": "imagekit_io_api_key",
+    "ImagekitIoMcpCredential": "imagekit_io_mcp"
   },
   "providerLabels": {
-    "imagekit_io": "Imagekit.io API Key"
+    "imagekit_io": "ImageKit.io Account"
   },
   "autoSelectCredential": true
 }

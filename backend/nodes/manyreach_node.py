@@ -3,6 +3,7 @@ from typing import Annotated, Literal, Union
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -171,15 +172,21 @@ class CheckBlacklistedEmail(OperationBase):
     operation: Literal["check_blacklisted_email"] = Field("check_blacklisted_email", title='Check Blacklisted Email')
     email: str = Field(..., title='Email', description='Parameter: email')
 
+# Manyreach's own MCP server: agents get its tools through a person's Manyreach sign-in.
+ManyreachMcpCredential = mcp_credential("manyreach", "https://mcp.manyreach.com/mcp", app="Manyreach")
+ManyreachCredential = Union[ManyreachApiKey, ManyreachMcpCredential]
+
+
 Operation = Annotated[Union[GetAccount, GetCredits, ListCampaigns, CreateCampaign, GetCampaign, PauseCampaign, StartCampaign, GetCampaignStats, ListCampaignProspects, ListProspects, CreateProspect, GetProspect, UpdateProspect, DeleteProspect, ListProspectMessages, AddProspectTag, ListLists, CreateList, GetList, ListSenders, GetSender, ListTags, CreateTag, GetTag, CheckBlacklistedEmail], Field(discriminator="operation")]
 
-class ManyreachNodeConfig(NodeConfig[Operation, ManyreachApiKey]):
+class ManyreachNodeConfig(NodeConfig[Operation, ManyreachCredential]):
     pass
 
 ROUTES = {'get_account': ('GET', '/account', [], []), 'get_credits': ('GET', '/account/credits', [], []), 'list_campaigns': ('GET', '/campaigns', [('includeArchived', 'pageQuery.includeArchived'), ('status', 'pageQuery.status'), ('page', 'pageQuery.page'), ('limit', 'pageQuery.limit'), ('startingAfter', 'pageQuery.startingAfter')], []), 'create_campaign': ('POST', '/campaigns', [], ['name', 'description', 'subject', 'body', 'fromEmails', 'dailyLimit']), 'get_campaign': ('GET', '/campaigns/{id}', [], []), 'pause_campaign': ('POST', '/campaigns/{id}/pause', [], []), 'start_campaign': ('POST', '/campaigns/{id}/start', [], []), 'get_campaign_stats': ('GET', '/campaigns/{id}/stats', [('dateStart', 'dateStart'), ('dateEnd', 'dateEnd'), ('refresh', 'refresh')], []), 'list_campaign_prospects': ('GET', '/campaigns/{id}/prospects', [('sendingStatus', 'sendingStatus'), ('sendingActive', 'sendingActive'), ('page', 'page'), ('limit', 'limit'), ('startingAfter', 'startingAfter')], []), 'list_prospects': ('GET', '/prospects', [('email', 'email'), ('status', 'status'), ('tags', 'tags'), ('search', 'search'), ('validationStatus', 'validationStatus'), ('page', 'page'), ('limit', 'limit'), ('startingAfter', 'startingAfter')], []), 'create_prospect': ('POST', '/prospects', [], ['email', 'firstName', 'lastName', 'company', 'baseListId']), 'get_prospect': ('GET', '/prospects/{id}', [], []), 'update_prospect': ('PATCH', '/prospects/{id}', [], ['firstName', 'lastName', 'company', 'sendingStatus', 'sendingActive', 'notes']), 'delete_prospect': ('DELETE', '/prospects/{id}', [], []), 'list_prospect_messages': ('GET', '/prospects/{id}/messages', [('page', 'page'), ('limit', 'limit'), ('startingAfter', 'startingAfter')], []), 'add_prospect_tag': ('POST', '/prospects/{id}/tags', [], ['tagId']), 'list_lists': ('GET', '/lists', [('page', 'page'), ('limit', 'limit'), ('startingAfter', 'startingAfter')], []), 'create_list': ('POST', '/lists', [], ['title', 'description', 'folderId']), 'get_list': ('GET', '/lists/{id}', [], []), 'list_senders': ('GET', '/senders', [('folder', 'folder'), ('status', 'status'), ('warmup', 'warmup'), ('search', 'search'), ('page', 'page'), ('limit', 'limit'), ('startingAfter', 'startingAfter')], []), 'get_sender': ('GET', '/senders/{id}', [], []), 'list_tags': ('GET', '/tags', [('search', 'search'), ('tagType', 'tagType'), ('include', 'include'), ('page', 'page'), ('limit', 'limit'), ('startingAfter', 'startingAfter')], []), 'create_tag': ('POST', '/tags', [], ['title', 'description', 'tagType']), 'get_tag': ('GET', '/tags/{id}', [], []), 'check_blacklisted_email': ('GET', '/blacklist/emails/check', [('email', 'email')], [])}
 
 class ManyreachNode(WorkflowNode):
     integration_type = "automation-manyreach"
+    credential_provider_labels = {"manyreach": "Manyreach Account"}
     connection_evidence = ConnectionEvidence(noun="account", identity_operation="get_account", label_keys=("title", "id"))
 
     @classmethod

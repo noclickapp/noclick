@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Felt API Token": "felt_api_token",
-    "FeltAPITokenCredential": "felt_api_token"
+    "Felt MCP": "felt_mcp",
+    "FeltAPITokenCredential": "felt_api_token",
+    "FeltMcpCredential": "felt_mcp"
   },
   "providerLabels": {
-    "felt": "Felt API Token"
+    "felt": "Felt Account"
   },
   "autoSelectCredential": true
 }

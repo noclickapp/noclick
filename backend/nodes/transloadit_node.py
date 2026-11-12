@@ -5,6 +5,7 @@ from typing import Annotated, Literal, Union
 from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.scopes.transloadit import TRANSLOADIT_SCOPES
@@ -132,6 +133,11 @@ class DeleteTemplateCredential(_TemplateCredential):
     operation: Literal["delete_template_credential"] = "delete_template_credential"
 
 
+# Transloadit's own MCP server: agents get its tools through a person's Transloadit sign-in.
+TransloaditMcpCredential = mcp_credential("transloadit", "https://api2.transloadit.com/mcp", app="Transloadit")
+TransloaditCredential = Union[TransloaditTokenCredential, TransloaditMcpCredential]
+
+
 TransloaditConfig = Annotated[Union[
     ListAssemblies, GetAssembly, CreateAssembly, CancelAssembly, ReplayAssembly,
     ListAssemblyNotifications, ReplayAssemblyNotification, ListTemplates,
@@ -141,7 +147,7 @@ TransloaditConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class TransloaditFullConfig(NodeConfig[TransloaditConfig, TransloaditTokenCredential]):
+class TransloaditFullConfig(NodeConfig[TransloaditConfig, TransloaditCredential]):
     pass
 
 
@@ -179,6 +185,7 @@ def _redact(value, token, *, credential_metadata=False):
 
 class TransloaditNode(WorkflowNode):
     integration_type = "automation-transloadit"
+    credential_provider_labels = {"transloadit": "Transloadit Account"}
     scope_registry = TRANSLOADIT_SCOPES
     connection_evidence = ConnectionEvidence(operation="list_templates", noun="Templates")
 

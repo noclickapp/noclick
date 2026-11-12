@@ -41,6 +41,8 @@ const COMPOUND_BRANDS = [
   'OpusClip', 'OwnerRez', 'PartnerStack', 'VirusTotal',
   'AgentMail', 'AssemblyAI', 'DealMachine', 'FullEnrich', 'GetAccept', 'IPinfo', 'MailerSend',
   'PocketSmith', 'PropertyRadar', 'RingCentral', 'ThoughtSpot', 'TimeCamp', 'UptimeRobot', 'WorkOS', 'ZenRows',
+  '2Chat', 'CarsXE', 'DeployHQ', 'DocSpace', 'FacturaDirecta', 'GTmetrix', 'HypeAuditor', 'iClosed', 'ImageKit',
+  'LeadMagic', 'MailSlurp', 'PlanetScale', 'SearchApi', 'TinyFish', 'UniOne', 'VideoDB',
 ];
 
 // Split forms whose CANONICAL brand differs from the class name entirely —

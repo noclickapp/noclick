@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Conveyor API Key": "conveyor_api_key",
-    "ConveyorAPIKeyCredential": "conveyor_api_key"
+    "Conveyor MCP": "conveyor_mcp",
+    "ConveyorAPIKeyCredential": "conveyor_api_key",
+    "ConveyorMcpCredential": "conveyor_mcp"
   },
   "providerLabels": {
-    "conveyor": "Conveyor API Key"
+    "conveyor": "Conveyor Account"
   },
   "autoSelectCredential": true
 }

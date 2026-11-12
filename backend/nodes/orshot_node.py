@@ -11,6 +11,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -307,6 +308,11 @@ class ListWorkspaceLogs(_Operation):
     )
 
 
+# Orshot's own MCP server: agents get its tools through a person's Orshot sign-in.
+OrshotMcpCredential = mcp_credential("orshot", "https://mcp.orshot.com/mcp", app="Orshot")
+OrshotCredential = Union[OrshotAPIKeyCredential, OrshotMcpCredential]
+
+
 OrshotOperation = Annotated[
     Union[
         RenderTemplate,
@@ -335,7 +341,7 @@ OrshotOperation = Annotated[
 ]
 
 
-class OrshotConfig(NodeConfig[OrshotOperation, OrshotAPIKeyCredential]):
+class OrshotConfig(NodeConfig[OrshotOperation, OrshotCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -503,6 +509,7 @@ def _redact(value, secret):
 
 class OrshotNode(WorkflowNode):
     integration_type = "automation-orshot"
+    credential_provider_labels = {"orshot": "Orshot Account"}
     connection_evidence = ConnectionEvidence(
         noun="templates",
         operation="list_templates",

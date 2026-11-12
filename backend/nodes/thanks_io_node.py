@@ -7,6 +7,7 @@ from typing import Annotated, Literal, Union
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -33,6 +34,11 @@ class ThanksIoApiKeyCredential(BaseModel):
 
 class Input(BaseModel):
     model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
+
+
+# thanks.io's own MCP server: agents get its tools through a person's thanks.io sign-in.
+ThanksIoMcpCredential = mcp_credential("thanks_io", "https://mcp.thanks.io/mcp", app="thanks.io")
+ThanksIoCredential = Union[ThanksIoApiKeyCredential, ThanksIoMcpCredential]
 
 
 Id = Annotated[int, Field(ge=1)]
@@ -244,7 +250,7 @@ ThanksIoConfig = Annotated[Union[ListMailingLists, CreateMailingList, GetMailing
     SendPostcard, EstimatePostcard, ListOrders, TrackOrder, ListOrderItems, CancelOrder], Field(discriminator="operation")]
 
 
-class ThanksIoNodeConfig(NodeConfig[ThanksIoConfig, ThanksIoApiKeyCredential]):
+class ThanksIoNodeConfig(NodeConfig[ThanksIoConfig, ThanksIoCredential]):
     pass
 
 
@@ -285,6 +291,7 @@ def _redact(value, token):
 
 class ThanksIoNode(WorkflowNode):
     integration_type = "automation-thanks-io"
+    credential_provider_labels = {"thanks_io": "thanks.io Account"}
     connection_evidence = ConnectionEvidence(noun="mailing lists", operation="list_mailing_lists", label_keys=("description", "id"))
 
     @classmethod

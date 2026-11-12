@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Nango API Key": "nango_api_key",
-    "NangoAPIKeyCredential": "nango_api_key"
+    "Nango MCP": "nango_mcp",
+    "NangoAPIKeyCredential": "nango_api_key",
+    "NangoMcpCredential": "nango_mcp"
   },
   "providerLabels": {
-    "nango": "Nango API Key"
+    "nango": "Nango Account"
   },
   "autoSelectCredential": true
 }

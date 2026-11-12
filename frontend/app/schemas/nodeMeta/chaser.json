@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Chaser API Key": "chaser_api_key",
-    "ChaserAPIKeyCredential": "chaser_api_key"
+    "Chaser MCP": "chaser_mcp",
+    "ChaserAPIKeyCredential": "chaser_api_key",
+    "ChaserMcpCredential": "chaser_mcp"
   },
   "providerLabels": {
-    "chaser": "Chaser API Key"
+    "chaser": "Chaser Account"
   },
   "autoSelectCredential": true
 }

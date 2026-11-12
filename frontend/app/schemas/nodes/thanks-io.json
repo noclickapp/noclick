@@ -1500,6 +1500,187 @@
       "x-credential-instructions": "In thanks.io, open Settings \u2192 API Access. Create and copy an API key, then paste it here to connect your account. NoClick sends it as a bearer token to api.thanks.io.",
       "x-credential-url": "https://dashboard.thanks.io/app/settings/api-access"
     },
+    "ThanksIoMcpCredential": {
+      "description": "thanks.io connected through thanks.io's MCP server: agents get its tools.",
+      "properties": {
+        "mcp_server_url": {
+          "title": "MCP server",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Token",
+          "ui:hidden": true
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:hidden": true
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At",
+          "ui:hidden": true
+        },
+        "token_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Type",
+          "ui:hidden": true
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope",
+          "ui:hidden": true
+        },
+        "token_endpoint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id",
+          "ui:hidden": true
+        },
+        "client_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Secret",
+          "ui:hidden": true
+        },
+        "token_endpoint_auth_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint Auth Method",
+          "ui:hidden": true
+        },
+        "resource_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resource Url",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Api Key",
+          "ui:hidden": true
+        },
+        "account": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account",
+          "ui:hidden": true
+        },
+        "credential_type": {
+          "const": "thanks_io_mcp",
+          "default": "thanks_io_mcp",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "mcp_server_url"
+      ],
+      "title": "thanks.io MCP",
+      "type": "object",
+      "x-credential-type": "mcp",
+      "x-mcp-server": "https://mcp.thanks.io/mcp",
+      "x-mcp-transport": "shttp"
+    },
     "TrackOrder": {
       "additionalProperties": false,
       "properties": {
@@ -2008,11 +2189,15 @@
           "$ref": "#/$defs/ThanksIoApiKeyCredential"
         },
         {
+          "$ref": "#/$defs/ThanksIoMcpCredential"
+        },
+        {
           "type": "null"
         }
       ],
       "default": null,
-      "description": "Credentials for this node (optional if using environment variables)"
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
     }
   },
   "required": [

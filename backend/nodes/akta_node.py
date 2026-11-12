@@ -8,6 +8,7 @@ from urllib.parse import quote
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -183,10 +184,15 @@ class AktaBuildFiltersConfig(_Input):
     query: str = Field(..., description="Natural language description of target companies (e.g. 'series a companies in mumbai working in climate tech').", min_length=1)
 
 
+# Akta's own MCP server: agents get its tools through a person's Akta sign-in.
+AktaMcpCredential = mcp_credential("akta", "https://mcp.akta.pro/mcp", app="Akta")
+AktaCredential = Union[AktaAPIKeyCredential, AktaMcpCredential]
+
+
 AktaConfig = Annotated[Union[AktaGetNewsConfig, AktaSearchCompaniesConfig, AktaEnrichCompanyConfig, AktaGetProductReviewsConfig, AktaGetEmployeeReviewsConfig, AktaSearchIndustriesConfig, AktaGetHeadcountTrendsConfig, AktaGetJobPostsConfig, AktaGetSocialPostsConfig, AktaGetWebsiteTrafficConfig, AktaCreateCompanyAdditionRequestConfig, AktaGetRequestStatusConfig, AktaGenerateCompanyListConfig, AktaBuildFiltersConfig], Field(discriminator="operation")]
 
 
-class AktaFullConfig(NodeConfig[AktaConfig, AktaAPIKeyCredential]):
+class AktaFullConfig(NodeConfig[AktaConfig, AktaCredential]):
     pass
 
 
@@ -195,6 +201,7 @@ ROUTES = {'get_news': ('GET', '/v1/news'), 'search_companies': ('GET', '/v1/comp
 
 class AktaNode(WorkflowNode):
     integration_type = "automation-akta"
+    credential_provider_labels = {"akta": "Akta Account"}
     connection_evidence = ConnectionEvidence(noun="Akta company search", operation="search_companies", operation_arguments={"query": "canva"}, proves="reachability")
 
     @classmethod

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "VideoDB API Key": "video_db_api_key",
-    "VideoDbAPIKeyCredential": "video_db_api_key"
+    "VideoDB MCP": "video_db_mcp",
+    "VideoDbAPIKeyCredential": "video_db_api_key",
+    "VideoDbMcpCredential": "video_db_mcp"
   },
   "providerLabels": {
-    "video_db": "VideoDB API Key"
+    "video_db": "VideoDB Account"
   },
   "autoSelectCredential": true
 }

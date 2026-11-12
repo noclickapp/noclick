@@ -13,6 +13,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -235,6 +236,11 @@ class KapsoGetPhoneNumberConfig(_Operation):
     fields: str | None = Field(None, description='Comma-separated list of fields to retrieve.\n\nAvailable fields: id, verified_name, display_phone_number, quality_rating, code_verification_status, is_official_business_account, name_status, new_name_status, platform_type, throughput, account_mode, certificate, messaging_limit_tier\n\nExample: `fields=id,verified_name,display_phone_number,quality_rating,throughput,messaging_limit_tier`\n')
 
 
+# Kapso's own MCP server: agents get its tools through a person's Kapso sign-in.
+KapsoMcpCredential = mcp_credential("kapso", "https://api.kapso.ai/mcp", app="Kapso")
+KapsoCredential = Union[KapsoAPIKeyCredential, KapsoMcpCredential]
+
+
 KapsoConfig = Annotated[Union[
     KapsoListMessagesConfig,
     KapsoSendTextConfig,
@@ -260,7 +266,7 @@ KapsoConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class KapsoFullConfig(NodeConfig[KapsoConfig, KapsoAPIKeyCredential]):
+class KapsoFullConfig(NodeConfig[KapsoConfig, KapsoCredential]):
     pass
 
 
@@ -314,6 +320,7 @@ QUERY_FIELDS = {
 
 class KapsoNode(WorkflowNode):
     integration_type = "automation-kapso"
+    credential_provider_labels = {"kapso": "Kapso Account"}
     connection_evidence = ConnectionEvidence(noun="phone numbers", operation="list_phone_numbers",
         label_keys=("verified_name", "display_phone_number", "id"))
 

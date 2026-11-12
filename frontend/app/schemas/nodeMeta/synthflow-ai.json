@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Synthflow AI API Key": "synthflow_ai_api_key",
-    "SynthflowAiAPIKeyCredential": "synthflow_ai_api_key"
+    "Synthflow AI MCP": "synthflow_ai_mcp",
+    "SynthflowAiAPIKeyCredential": "synthflow_ai_api_key",
+    "SynthflowAiMcpCredential": "synthflow_ai_mcp"
   },
   "providerLabels": {
-    "synthflow_ai": "Synthflow AI API Key"
+    "synthflow_ai": "Synthflow AI Account"
   },
   "autoSelectCredential": true
 }

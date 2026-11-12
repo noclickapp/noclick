@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Icypeas API Key": "icypeas_api_key",
-    "IcypeasAPIKeyCredential": "icypeas_api_key"
+    "Icypeas MCP": "icypeas_mcp",
+    "IcypeasAPIKeyCredential": "icypeas_api_key",
+    "IcypeasMcpCredential": "icypeas_mcp"
   },
   "providerLabels": {
-    "icypeas": "Icypeas API Key"
+    "icypeas": "Icypeas Account"
   },
   "autoSelectCredential": true
 }

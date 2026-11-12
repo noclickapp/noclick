@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Voluum Access Key": "voluum_access_key",
-    "VoluumAccessKeyCredential": "voluum_access_key"
+    "Voluum MCP": "voluum_mcp",
+    "VoluumAccessKeyCredential": "voluum_access_key",
+    "VoluumMcpCredential": "voluum_mcp"
   },
   "providerLabels": {
-    "voluum": "Voluum Access Key"
+    "voluum": "Voluum Account"
   },
   "autoSelectCredential": true
 }

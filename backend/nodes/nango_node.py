@@ -12,6 +12,7 @@ import httpx
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, StrictBool, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -189,6 +190,11 @@ class GetActionResultConfig(_Input):
     action_id: str = Field(..., min_length=1, max_length=255)
 
 
+# Nango's own MCP server: agents get its tools through a person's Nango sign-in.
+NangoMcpCredential = mcp_credential("nango", "https://mcp.nango.dev/mcp", app="Nango")
+NangoCredential = Union[NangoAPIKeyCredential, NangoMcpCredential]
+
+
 NangoConfig = Annotated[Union[ListIntegrationsConfig, GetIntegrationConfig,
     CreateIntegrationConfig, UpdateIntegrationConfig, DeleteIntegrationConfig,
     ListFunctionsConfig, ListConnectionsConfig, GetConnectionConfig,
@@ -198,7 +204,7 @@ NangoConfig = Annotated[Union[ListIntegrationsConfig, GetIntegrationConfig,
     GetActionResultConfig], Field(discriminator="operation")]
 
 
-class NangoFullConfig(NodeConfig[NangoConfig, NangoAPIKeyCredential]):
+class NangoFullConfig(NodeConfig[NangoConfig, NangoCredential]):
     pass
 
 
@@ -221,6 +227,7 @@ def _without_secrets(value, token):
 
 class NangoNode(WorkflowNode):
     integration_type = "automation-nango"
+    credential_provider_labels = {"nango": "Nango Account"}
     connection_evidence = ConnectionEvidence(noun="integrations", operation="list_integrations",
         label_keys=("display_name", "unique_key"))
 

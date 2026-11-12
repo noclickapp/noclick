@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -136,11 +137,16 @@ class FindFeedbackByState(_Project):
     state: str = Field(..., min_length=1, title="State", description="State value using the documented state eq filter; for example done.")
 
 
+# Usersnap's own MCP server: agents get its tools through a person's Usersnap sign-in.
+UsersnapMcpCredential = mcp_credential("usersnap", "https://mcp.usersnap.com/mcp", app="Usersnap")
+UsersnapCredential = Union[UsersnapTokenCredential, UsersnapMcpCredential]
+
+
 UsersnapOperation = Annotated[Union[ListProjects, GetProjectMetrics, ListProjectAssignees, SubmitFeedback,
     ListFeedback, CountFeedback, FilterFeedback, CountFilteredFeedback, FindFeedbackByEmail, FindFeedbackByState], Field(discriminator="operation")]
 
 
-class UsersnapConfig(NodeConfig[UsersnapOperation, UsersnapTokenCredential]):
+class UsersnapConfig(NodeConfig[UsersnapOperation, UsersnapCredential]):
     pass
 
 
@@ -162,6 +168,7 @@ OPERATIONS = {
 
 class UsersnapNode(WorkflowNode):
     integration_type = "automation-usersnap"
+    credential_provider_labels = {"usersnap": "Usersnap Account"}
     connection_evidence = ConnectionEvidence(operation="list_projects", noun="projects", label_keys=("name", "project_id"))
 
     @classmethod

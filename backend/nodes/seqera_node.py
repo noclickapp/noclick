@@ -11,6 +11,7 @@ from urllib.parse import quote
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -207,6 +208,11 @@ class SeqeraCreateLabelConfig(_Workspace):
     name: str = Field(..., min_length=1, max_length=255)
 
 
+# Seqera's own MCP server: agents get its tools through a person's Seqera sign-in.
+SeqeraMcpCredential = mcp_credential("seqera", "https://mcp.seqera.io/mcp", app="Seqera")
+SeqeraCredential = Union[SeqeraAPITokenCredential, SeqeraMcpCredential]
+
+
 SeqeraConfig = Annotated[Union[
     SeqeraGetUserConfig,
     SeqeraListOrganizationsConfig,
@@ -233,7 +239,7 @@ SeqeraConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class SeqeraFullConfig(NodeConfig[SeqeraConfig, SeqeraAPITokenCredential]):
+class SeqeraFullConfig(NodeConfig[SeqeraConfig, SeqeraCredential]):
     pass
 
 
@@ -263,6 +269,7 @@ ROUTES = {'get_user': ('GET', '/user-info', {}, None),
 
 class SeqeraNode(WorkflowNode):
     integration_type = "automation-seqera"
+    credential_provider_labels = {"seqera": "Seqera Account"}
     connection_evidence = ConnectionEvidence(identity_operation="get_user", noun="Seqera account")
 
     @classmethod

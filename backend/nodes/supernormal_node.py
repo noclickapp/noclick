@@ -13,6 +13,7 @@ from typing import Annotated, Any, Dict, Literal, Union
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import ConfigValidationError, NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.supernormal_authority import SupernormalAuthorityStore, CURRENT_ORGANIZATION
@@ -81,6 +82,11 @@ class SupernormalAPITokenCredential(BaseModel):
         if not isinstance(value, list) or not value or any(type(v) is not str or v not in READ_SCOPES for v in value) or len(set(value)) != len(value) or "user:read" not in value:
             raise ValueError("Supply distinct actual read scopes including user:read")
         return sorted(value)
+
+
+# Supernormal's own MCP server: agents get its tools through a person's Supernormal sign-in.
+SupernormalMcpCredential = mcp_credential("supernormal", "https://api.supernormal.com/mcp", app="Supernormal")
+SupernormalCredential = Union[SupernormalAPITokenCredential, SupernormalMcpCredential]
 
 
 def _credential(raw):
@@ -172,7 +178,7 @@ class SupernormalTranscriptConfig(_Visibility):
 SupernormalOperation = Annotated[Union[SupernormalUserConfig, SupernormalCalendarConfig, SupernormalRecordingsConfig, SupernormalRecordingConfig, SupernormalTranscriptConfig], Field(discriminator="operation")]
 
 
-class SupernormalNodeConfig(NodeConfig[SupernormalOperation, SupernormalAPITokenCredential]):
+class SupernormalNodeConfig(NodeConfig[SupernormalOperation, SupernormalCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 

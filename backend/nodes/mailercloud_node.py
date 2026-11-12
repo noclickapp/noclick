@@ -8,6 +8,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -211,6 +212,11 @@ class ListSenders(_Page):
     sort_order: Optional[Literal["asc", "desc"]] = None
 
 
+# Mailercloud's own MCP server: agents get its tools through a person's Mailercloud sign-in.
+MailercloudMcpCredential = mcp_credential("mailercloud", "https://mcp.mailercloud.com/mcp", app="Mailercloud")
+MailercloudCredential = Union[MailercloudAPIKeyCredential, MailercloudMcpCredential]
+
+
 MailercloudConfig = Annotated[Union[
     GetAccount,
     CreateContact,
@@ -236,7 +242,7 @@ MailercloudConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class MailercloudFullConfig(NodeConfig[MailercloudConfig, MailercloudAPIKeyCredential]):
+class MailercloudFullConfig(NodeConfig[MailercloudConfig, MailercloudCredential]):
     pass
 
 
@@ -267,6 +273,7 @@ ROUTES = {
 
 class MailercloudNode(WorkflowNode):
     integration_type = "automation-mailercloud"
+    credential_provider_labels = {"mailercloud": "Mailercloud Account"}
     connection_evidence = ConnectionEvidence(noun="Mailercloud account", identity_operation="get_account")
 
     @classmethod

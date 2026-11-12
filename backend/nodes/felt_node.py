@@ -12,6 +12,7 @@ import re
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -169,6 +170,11 @@ class FeltGetMapLayerGroupConfig(_Input):
     layer_group_id: ResourceID = Field(..., description="Paste the Felt layer group id.")
 
 
+# Felt's own MCP server: agents get its tools through a person's Felt sign-in.
+FeltMcpCredential = mcp_credential("felt", "https://felt.com/mcp", app="Felt")
+FeltCredential = Union[FeltAPITokenCredential, FeltMcpCredential]
+
+
 FeltConfig = Annotated[Union[
     FeltGetCurrentUserConfig,
     FeltListProjectsConfig,
@@ -193,7 +199,7 @@ FeltConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class FeltFullConfig(NodeConfig[FeltConfig, FeltAPITokenCredential]):
+class FeltFullConfig(NodeConfig[FeltConfig, FeltCredential]):
     pass
 
 
@@ -202,6 +208,7 @@ ROUTES = {'get_current_user': ('GET', '/api/v2/user'), 'list_projects': ('GET', 
 
 class FeltNode(WorkflowNode):
     integration_type = "automation-felt"
+    credential_provider_labels = {"felt": "Felt Account"}
     connection_evidence = ConnectionEvidence(noun="Felt account", identity_operation="get_current_user")
 
     @classmethod

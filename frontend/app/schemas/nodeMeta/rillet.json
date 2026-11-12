@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Rillet API Key": "rillet_api_key",
-    "RilletAPIKeyCredential": "rillet_api_key"
+    "Rillet MCP": "rillet_mcp",
+    "RilletAPIKeyCredential": "rillet_api_key",
+    "RilletMcpCredential": "rillet_mcp"
   },
   "providerLabels": {
-    "rillet": "Rillet API Key"
+    "rillet": "Rillet Account"
   },
   "autoSelectCredential": true
 }

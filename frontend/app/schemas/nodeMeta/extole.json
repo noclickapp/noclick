@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Extole Access Token": "extole_access_token",
-    "ExtoleAccessTokenCredential": "extole_access_token"
+    "Extole MCP": "extole_mcp",
+    "ExtoleAccessTokenCredential": "extole_access_token",
+    "ExtoleMcpCredential": "extole_mcp"
   },
   "providerLabels": {
-    "extole": "Extole Access Token"
+    "extole": "Extole Account"
   },
   "autoSelectCredential": true
 }

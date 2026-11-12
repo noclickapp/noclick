@@ -11,6 +11,7 @@ from typing import Annotated, Any, Dict, Literal, Optional, Union
 from urllib.parse import quote, quote_plus
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, ValidationResult, WorkflowNode, runtime_config_view
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
@@ -59,6 +60,11 @@ class DropcontactAccessTokenCredential(BaseModel):
         "x-credential-instructions": "Supply an existing issued Dropcontact API token. Exact X-Access-Token header on fixed https://api.dropcontact.com/v1/enrich/all; no Bearer, query token, SDK/MCP/OAuth, key issuance or environment fallback. Protected POST with exactly data:[{}] is the documented no-credit-consumption probe. It proves key reachability and reported credits, not account/principal identity, enrichment permissions, account age or a free plan. Enrichment can consume existing credits; no live enrichment or paid plan is authorized by source preparation. Current stricter company-context/unknown-field rules govern closed payloads.",
     })
     _native_token = field_validator("access_token")(_token)
+
+
+# Dropcontact's own MCP server: agents get its tools through a person's Dropcontact sign-in.
+DropcontactMcpCredential = mcp_credential("dropcontact", "https://mcp.dropcontact.com/mcp", app="Dropcontact")
+DropcontactCredential = Union[DropcontactAccessTokenCredential, DropcontactMcpCredential]
 
 
 def _op(name, label, category):
@@ -155,7 +161,7 @@ class DropcontactGetResultsConfig(DropcontactRequestScope):
 DropcontactConfig = Annotated[Union[DropcontactCheckConfig, DropcontactCreditsConfig, DropcontactEnrichContactConfig, DropcontactEnrichBatchConfig, DropcontactGetStatusConfig, DropcontactGetResultsConfig], Field(discriminator="operation")]
 
 
-class DropcontactNodeConfig(NodeConfig[DropcontactConfig, DropcontactAccessTokenCredential]):
+class DropcontactNodeConfig(NodeConfig[DropcontactConfig, DropcontactCredential]):
     pass
 
 

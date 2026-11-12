@@ -11,6 +11,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 MANAGEMENT_API = "https://api.baseten.co/v1"
@@ -37,6 +38,11 @@ class BasetenAPIKeyCredential(BaseModel):
 
 class _Operation(BaseModel):
     model_config = ConfigDict(extra="forbid")
+
+
+# Baseten's own MCP server: agents get its tools through a person's Baseten sign-in.
+BasetenMcpCredential = mcp_credential("baseten", "https://api.baseten.co/mcp", app="Baseten")
+BasetenCredential = Union[BasetenAPIKeyCredential, BasetenMcpCredential]
 
 
 def _op(name: str, label: str, category: str) -> Any:
@@ -171,7 +177,7 @@ BasetenOperationConfig = Annotated[
 ]
 
 
-class BasetenNodeConfig(NodeConfig[BasetenOperationConfig, BasetenAPIKeyCredential]):
+class BasetenNodeConfig(NodeConfig[BasetenOperationConfig, BasetenCredential]):
     model_config = ConfigDict(title="Baseten Node Configuration")
 
 
@@ -235,6 +241,7 @@ def _bounded_list(result: dict[str, Any], key: str, limit: int) -> dict[str, Any
 
 class BasetenNode(WorkflowNode):
     integration_type = "automation-baseten"
+    credential_provider_labels = {"baseten": "Baseten Account"}
 
     connection_evidence = ConnectionEvidence(
         identity_operation="get_current_user", noun="workspace",

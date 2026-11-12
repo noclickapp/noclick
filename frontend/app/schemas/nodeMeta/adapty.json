@@ -5,7 +5,9 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
-    "AdaptyAPIKeyCredential": "adapty_api_key"
+    "Adapty MCP": "adapty_mcp",
+    "AdaptyAPIKeyCredential": "adapty_api_key",
+    "AdaptyMcpCredential": "adapty_mcp"
   },
   "providerLabels": {
     "adapty": "Adapty Account"

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Quentn API Key": "quentn_api_key",
-    "QuentnAPIKeyCredential": "quentn_api_key"
+    "Quentn MCP": "quentn_mcp",
+    "QuentnAPIKeyCredential": "quentn_api_key",
+    "QuentnMcpCredential": "quentn_mcp"
   },
   "providerLabels": {
-    "quentn": "Quentn API Key"
+    "quentn": "Quentn Account"
   },
   "autoSelectCredential": true
 }

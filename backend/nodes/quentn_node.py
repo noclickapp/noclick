@@ -12,6 +12,7 @@ from urllib.parse import quote, urlsplit
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -235,6 +236,11 @@ class GetCustomField(_Input):
     field_id: int = Field(..., ge=1)
 
 
+# Quentn's own MCP server: agents get its tools through a person's Quentn sign-in.
+QuentnMcpCredential = mcp_credential("quentn", "https://mcp.quentn.com/mcp", app="Quentn")
+QuentnCredential = Union[QuentnAPIKeyCredential, QuentnMcpCredential]
+
+
 QuentnOperation = Annotated[Union[
     GetContact, GetContactByEmail, CreateContact, UpdateContact, DeleteContact,
     GetContactTags, AddContactTags, RemoveContactTags, ListContactComments,
@@ -244,7 +250,7 @@ QuentnOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class QuentnFullConfig(NodeConfig[QuentnOperation, QuentnAPIKeyCredential]):
+class QuentnFullConfig(NodeConfig[QuentnOperation, QuentnCredential]):
     pass
 
 
@@ -298,6 +304,7 @@ def request_parts(op):
 
 class QuentnNode(WorkflowNode):
     integration_type = "automation-quentn"
+    credential_provider_labels = {"quentn": "Quentn Account"}
     connection_evidence = ConnectionEvidence(operation="list_tags", noun="tags")
 
     @classmethod

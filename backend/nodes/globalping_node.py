@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -138,16 +139,22 @@ class GetLimits(_Input):
     operation: Literal["get_limits"] = "get_limits"
 
 
+# Globalping's own MCP server: agents get its tools through a person's Globalping sign-in.
+GlobalpingMcpCredential = mcp_credential("globalping", "https://mcp.globalping.dev/mcp", app="Globalping")
+GlobalpingCredential = Union[GlobalpingTokenCredential, GlobalpingMcpCredential]
+
+
 GlobalpingConfig = Annotated[Union[Ping, TcpPing, Traceroute, Mtr, Dns, DnsTrace, Http,
     GetMeasurement, ListProbes, GetLimits], Field(discriminator="operation")]
 
 
-class GlobalpingFullConfig(NodeConfig[GlobalpingConfig, GlobalpingTokenCredential]):
+class GlobalpingFullConfig(NodeConfig[GlobalpingConfig, GlobalpingCredential]):
     pass
 
 
 class GlobalpingNode(WorkflowNode):
     integration_type = "automation-globalping"
+    credential_provider_labels = {"globalping": "Globalping Account"}
     connection_evidence = ConnectionEvidence(operation="get_limits", noun="Globalping authenticated rate limits", proves="reachability")
 
     @classmethod

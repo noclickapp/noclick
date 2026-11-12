@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "PlanetScale MCP": "planetscale_mcp",
     "PlanetScale Service Token": "planetscale_service_token",
-    "PlanetScaleServiceToken": "planetscale_service_token"
+    "PlanetScaleServiceToken": "planetscale_service_token",
+    "PlanetscaleMcpCredential": "planetscale_mcp"
   },
   "providerLabels": {
-    "planetscale": "PlanetScale Service Token"
+    "planetscale": "PlanetScale Account"
   },
   "autoSelectCredential": true
 }

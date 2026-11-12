@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "MailSlurp API Key": "mailslurp_api_key",
-    "MailslurpAPIKeyCredential": "mailslurp_api_key"
+    "MailSlurp MCP": "mailslurp_mcp",
+    "MailslurpAPIKeyCredential": "mailslurp_api_key",
+    "MailslurpMcpCredential": "mailslurp_mcp"
   },
   "providerLabels": {
-    "mailslurp": "MailSlurp API Key"
+    "mailslurp": "MailSlurp Account"
   },
   "autoSelectCredential": true
 }

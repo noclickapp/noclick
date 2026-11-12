@@ -10,6 +10,7 @@ from typing import Annotated, Literal, Union
 from uuid import UUID
 from pydantic import AnyUrl, BaseModel, Json, ConfigDict, Field, StrictBool, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -31,6 +32,11 @@ class RilletAPIKeyCredential(BaseModel):
         if not value.isascii() or any(c.isspace() or ord(c) < 33 or ord(c) == 127 for c in value):
             raise ValueError("Paste the API key without spaces or the Bearer prefix")
         return value
+
+
+# Rillet's own MCP server: agents get its tools through a person's Rillet sign-in.
+RilletMcpCredential = mcp_credential("rillet", "https://api.rillet.com/mcp", app="Rillet")
+RilletCredential = Union[RilletAPIKeyCredential, RilletMcpCredential]
 
 
 _JSON_EDITOR = {"ui:widget": "code_editor", "x-code-language": "json"}
@@ -337,7 +343,7 @@ RilletConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class RilletFullConfig(NodeConfig[RilletConfig, RilletAPIKeyCredential]):
+class RilletFullConfig(NodeConfig[RilletConfig, RilletCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -374,6 +380,7 @@ QUERY_NAMES = {"updated_after": "updated.gt", "date_from": "date.gte", "date_to"
 
 class RilletNode(WorkflowNode):
     integration_type = "automation-rillet"
+    credential_provider_labels = {"rillet": "Rillet Account"}
     connection_evidence = ConnectionEvidence(noun="Rillet organization", identity_operation="get_organization", identity_keys=("trade_name",))
 
     @classmethod

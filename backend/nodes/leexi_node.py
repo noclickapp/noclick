@@ -7,6 +7,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -202,9 +203,13 @@ class LeexiUpdateUserConfig(LeexiInput):
     roles: Optional[list[str]] = Field(None, description='Role names. Defaults to `["member"]` on creation. Privileged roles (`super_admin`, `system_admin`, `billing_manager`) cannot be assigned through the API; grant them from Leexi > Settings > Users.')
     team_uuid: Optional[str] = Field(None, description='The uuid of the team the user belongs to.')
 
+# Leexi's own MCP server: agents get its tools through a person's Leexi sign-in.
+LeexiMcpCredential = mcp_credential("leexi", "https://api.leexi.ai/mcp", app="Leexi")
+
+
 LeexiOperation = Annotated[Union[LeexiListCallsConfig, LeexiCreateCallConfig, LeexiGetCallConfig, LeexiRequestPresignedUrlConfig, LeexiListCallNotesConfig, LeexiDeleteCallNoteConfig, LeexiGetCallNoteConfig, LeexiUpdateCallNoteConfig, LeexiListMeetingEventsConfig, LeexiDeleteMeetingEventConfig, LeexiGetMeetingEventConfig, LeexiLaunchMeetingAssistantConfig, LeexiListTeamsConfig, LeexiCreateTeamConfig, LeexiDeleteTeamConfig, LeexiGetTeamConfig, LeexiUpdateTeamConfig, LeexiListUsersConfig, LeexiCreateUserConfig, LeexiDeactivateUserConfig, LeexiGetUserConfig, LeexiUpdateUserConfig], Field(discriminator="operation")]
 
-class LeexiFullConfig(NodeConfig[LeexiOperation, LeexiCredential]):
+class LeexiFullConfig(NodeConfig[LeexiOperation, Union[LeexiCredential, LeexiMcpCredential]]):
     pass
 
 ROUTES = {'list_calls': ('GET',
@@ -290,6 +295,7 @@ ROUTES = {'list_calls': ('GET',
 
 class LeexiNode(WorkflowNode):
     integration_type = "automation-leexi"
+    credential_provider_labels = {"leexi": "Leexi Account"}
     connection_evidence = ConnectionEvidence(noun="teams", operation="list_teams", label_keys=("name", "uuid"))
 
     @classmethod

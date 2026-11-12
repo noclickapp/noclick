@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Parseur API Key": "parseur_api_key",
-    "ParseurAPIKeyCredential": "parseur_api_key"
+    "Parseur MCP": "parseur_mcp",
+    "ParseurAPIKeyCredential": "parseur_api_key",
+    "ParseurMcpCredential": "parseur_mcp"
   },
   "providerLabels": {
-    "parseur": "Parseur API Key"
+    "parseur": "Parseur Account"
   },
   "autoSelectCredential": true
 }

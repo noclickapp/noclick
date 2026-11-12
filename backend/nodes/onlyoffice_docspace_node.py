@@ -8,6 +8,7 @@ from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -42,6 +43,11 @@ class OnlyofficeDocspaceTokenCredential(BaseModel):
         if not value or any(c.isspace() for c in value):
             raise ValueError("Paste the token alone, without Bearer or whitespace")
         return value
+
+
+# ONLYOFFICE DocSpace's own MCP server: agents get its tools through a person's ONLYOFFICE DocSpace sign-in.
+OnlyofficeDocspaceMcpCredential = mcp_credential("onlyoffice_docspace", "https://mcp.onlyoffice.com/mcp", app="ONLYOFFICE DocSpace")
+OnlyofficeDocspaceCredential = Union[OnlyofficeDocspaceTokenCredential, OnlyofficeDocspaceMcpCredential]
 
 
 def operation(name, category):
@@ -182,7 +188,7 @@ class ListFolderAccessConfig(_Folder, _Page):
 DocspaceOperation = Annotated[Union[GetProfileConfig, ListUsersConfig, ListMyDocumentsConfig, ListRoomsConfig, GetRoomConfig, CreateRoomConfig, RenameRoomConfig, GetFolderConfig, ListFolderContentsConfig, CreateFolderConfig, RenameFolderConfig, GetFolderPathConfig, GetFileConfig, RenameFileConfig, ListFileVersionsConfig, ListFileHistoryConfig, CreateTextFileConfig, ListRoomAccessConfig, ListFileAccessConfig, ListFolderAccessConfig], Field(discriminator="operation")]
 
 
-class OnlyofficeDocspaceConfig(NodeConfig[DocspaceOperation, OnlyofficeDocspaceTokenCredential]):
+class OnlyofficeDocspaceConfig(NodeConfig[DocspaceOperation, OnlyofficeDocspaceCredential]):
     pass
 
 
@@ -212,6 +218,7 @@ ROUTES = {
 
 class OnlyofficeDocspaceNode(WorkflowNode):
     integration_type = "automation-onlyoffice-docspace"
+    credential_provider_labels = {"onlyoffice_docspace": "ONLYOFFICE DocSpace Account"}
     connection_evidence = ConnectionEvidence(noun="DocSpace rooms", operation="list_rooms", identity_operation="get_profile",
         identity_keys=("displayName", "email"))
 

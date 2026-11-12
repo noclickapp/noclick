@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Folk API Key": "folk_api_key",
-    "FolkAPIKeyCredential": "folk_api_key"
+    "Folk MCP": "folk_mcp",
+    "FolkAPIKeyCredential": "folk_api_key",
+    "FolkMcpCredential": "folk_mcp"
   },
   "providerLabels": {
-    "folk": "Folk API Key"
+    "folk": "Folk Account"
   },
   "autoSelectCredential": true
 }

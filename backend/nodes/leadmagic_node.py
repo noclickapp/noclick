@@ -11,6 +11,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, Json, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -216,6 +217,11 @@ class CreateClientConfig(_Input):
     custom_fields: Json[dict[str, Any]] | None = Field(None, json_schema_extra={"ui:widget": "code_editor", "x-code-language": "json"}, description='Arbitrary custom fields stored with the client.')
 
 
+# LeadMagic's own MCP server: agents get its tools through a person's LeadMagic sign-in.
+LeadmagicMcpCredential = mcp_credential("leadmagic", "https://mcp.leadmagic.io/mcp", app="LeadMagic")
+LeadmagicCredential = Union[LeadmagicAPIKeyCredential, LeadmagicMcpCredential]
+
+
 LeadmagicOperation = Annotated[Union[
     CheckCreditsConfig,
     ValidateEmailConfig,
@@ -240,7 +246,7 @@ LeadmagicOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class LeadmagicConfig(NodeConfig[LeadmagicOperation, LeadmagicAPIKeyCredential]):
+class LeadmagicConfig(NodeConfig[LeadmagicOperation, LeadmagicCredential]):
     pass
 
 
@@ -278,6 +284,7 @@ def _redact(value, secret):
 
 class LeadmagicNode(WorkflowNode):
     integration_type = "automation-leadmagic"
+    credential_provider_labels = {"leadmagic": "LeadMagic Account"}
     connection_evidence = ConnectionEvidence(operation="check_credits", noun="credit balance")
 
     @classmethod

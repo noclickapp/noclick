@@ -6,6 +6,7 @@ from typing import Annotated, Any, Literal, Union
 from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -207,6 +208,11 @@ class MixmaxListMeetingInvitesConfig(MixmaxInput):
     next: str | None = Field(None)
 
 
+# Mixmax's own MCP server: agents get its tools through a person's Mixmax sign-in.
+MixmaxMcpCredential = mcp_credential("mixmax", "https://mcp.mixmax.com/mcp", app="Mixmax")
+MixmaxCredential = Union[MixmaxAPITokenCredential, MixmaxMcpCredential]
+
+
 MixmaxConfig = Annotated[Union[
     MixmaxGetCurrentUserConfig,
     MixmaxListSequencesConfig,
@@ -233,7 +239,7 @@ MixmaxConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class MixmaxFullConfig(NodeConfig[MixmaxConfig, MixmaxAPITokenCredential]):
+class MixmaxFullConfig(NodeConfig[MixmaxConfig, MixmaxCredential]):
     pass
 
 
@@ -242,6 +248,7 @@ ROUTES = {'get_current_user': ('GET', '/v1/users/me'), 'list_sequences': ('GET',
 
 class MixmaxNode(WorkflowNode):
     integration_type = "automation-mixmax"
+    credential_provider_labels = {"mixmax": "Mixmax Account"}
     connection_evidence = ConnectionEvidence(noun="Mixmax account", identity_operation="get_current_user", identity_keys=("_id",))
 
     @classmethod

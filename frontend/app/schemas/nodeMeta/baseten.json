@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Baseten API Key": "baseten_api_key",
-    "BasetenAPIKeyCredential": "baseten_api_key"
+    "Baseten MCP": "baseten_mcp",
+    "BasetenAPIKeyCredential": "baseten_api_key",
+    "BasetenMcpCredential": "baseten_mcp"
   },
   "providerLabels": {
-    "baseten": "Baseten API Key"
+    "baseten": "Baseten Account"
   },
   "autoSelectCredential": true
 }

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Certifier API Token": "certifier_api_token",
+    "Certifier MCP": "certifier_mcp",
+    "CertifierMcpCredential": "certifier_mcp",
     "CertifierTokenCredential": "certifier_api_token"
   },
   "providerLabels": {
-    "certifier": "Certifier API Token"
+    "certifier": "Certifier Account"
   },
   "autoSelectCredential": true
 }

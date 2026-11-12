@@ -12,6 +12,7 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -197,10 +198,15 @@ class SearchGroups(_Operation):
     cursor: str | None = None
 
 
+# Slite's own MCP server: agents get its tools through a person's Slite sign-in.
+SliteMcpCredential = mcp_credential("slite", "https://api.slite.com/mcp", app="Slite")
+SliteCredential = Union[SliteAPICredential, SliteMcpCredential]
+
+
 SliteOperation = Annotated[Union[GetMe, ListNotes, GetNote, CreateNote, UpdateNote, DeleteNote, ListChildren, VerifyNote, FlagOutdated, SetArchived, SetOwner, SearchNotes, GetUser, SearchUsers, GetGroup, SearchGroups], Field(discriminator="operation")]
 
 
-class SliteConfig(NodeConfig[SliteOperation, SliteAPICredential]):
+class SliteConfig(NodeConfig[SliteOperation, SliteCredential]):
     pass
 
 
@@ -219,6 +225,7 @@ ROUTES = {
 
 class SliteNode(WorkflowNode):
     integration_type = "automation-slite"
+    credential_provider_labels = {"slite": "Slite Account"}
     connection_evidence = ConnectionEvidence(noun="Slite account", identity_operation="get_me")
 
     @classmethod

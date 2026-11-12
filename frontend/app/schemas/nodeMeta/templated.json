@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Templated API Key": "templated_api_key",
-    "TemplatedAPIKeyCredential": "templated_api_key"
+    "Templated MCP": "templated_mcp",
+    "TemplatedAPIKeyCredential": "templated_api_key",
+    "TemplatedMcpCredential": "templated_mcp"
   },
   "providerLabels": {
-    "templated": "Templated API Key"
+    "templated": "Templated Account"
   },
   "autoSelectCredential": true
 }

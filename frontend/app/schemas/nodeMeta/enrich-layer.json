@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Enrich Layer API Key": "enrich_layer_api_key",
-    "EnrichLayerAPIKeyCredential": "enrich_layer_api_key"
+    "Enrich Layer MCP": "enrich_layer_mcp",
+    "EnrichLayerAPIKeyCredential": "enrich_layer_api_key",
+    "EnrichLayerMcpCredential": "enrich_layer_mcp"
   },
   "providerLabels": {
-    "enrich_layer": "Enrich Layer API Key"
+    "enrich_layer": "Enrich Layer Account"
   },
   "autoSelectCredential": true
 }

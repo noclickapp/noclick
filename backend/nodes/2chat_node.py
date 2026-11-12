@@ -9,6 +9,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -242,7 +243,12 @@ TwoChatConfig = Annotated[Union[
     TwoChatRemoveConversationTagConfig
 ], Field(discriminator="operation")]
 
-class TwoChatNodeConfig(NodeConfig[TwoChatConfig, TwoChatAPIKeyCredential]):
+# 2Chat's own MCP server: agents get its tools through a person's 2Chat sign-in.
+TwoChatMcpCredential = mcp_credential("two_chat", "https://mcp.2chat.io/mcp", app="2Chat")
+TwoChatCredential = Union[TwoChatAPIKeyCredential, TwoChatMcpCredential]
+
+
+class TwoChatNodeConfig(NodeConfig[TwoChatConfig, TwoChatCredential]):
     model_config = ConfigDict(title="2Chat Node Configuration")
 
 ROUTES = {'get_account': ('GET', '/open/info', []), 'create_contact': ('POST', '/open/contacts', []), 'delete_contact': ('DELETE', '/open/contacts/{contact_uuid}', []), 'get_contact': ('GET', '/open/contacts/{contact_uuid}', []), 'update_contact': ('PUT', '/open/contacts/{contact_uuid}', []), 'list_contacts': ('GET', '/open/contacts', ['results_per_page', 'page_number', 'channel_uuid']), 'search_contacts': ('GET', '/open/contacts/search', ['query', 'results_per_page', 'page_number', 'channel_uuid']), 'list_webhooks': ('GET', '/open/webhooks', []), 'list_numbers': ('GET', '/open/whatsapp/get-numbers', ['page_number', 'results_per_page', 'status']), 'get_number': ('GET', '/open/whatsapp/channel/{channel_uuid}', []), 'send_message': ('POST', '/open/whatsapp/send-message', []), 'get_messages': ('GET', '/open/whatsapp/messages/{connected_number}/{to_number}', ['page_number']), 'get_message': ('GET', '/open/whatsapp/message/{session_key}/{message_uuid}', []), 'list_conversations': ('GET', '/open/whatsapp/conversations/{channel_uuid}', ['page_number', 'phone_number']), 'list_groups': ('GET', '/open/whatsapp/groups/{connected_number}', []), 'get_group': ('GET', '/open/whatsapp/group/{whatsapp_group_uuid}', []), 'send_sms': ('POST', '/open/sms/send', []), 'list_users': ('GET', '/open/users', []), 'list_tags': ('GET', '/open/tags', ['page', 'page_size']), 'create_tag': ('POST', '/open/tags', []), 'update_tag': ('PUT', '/open/tags/{tag_uuid}', []), 'delete_tag': ('DELETE', '/open/tags/{tag_uuid}', []), 'get_conversation_tags': ('GET', '/open/tags/sessions/{session_key}', []), 'add_conversation_tag': ('POST', '/open/tags/{tag_uuid}/sessions', []), 'remove_conversation_tag': ('DELETE', '/open/tags/{tag_uuid}/sessions/{session_key}', [])}
@@ -259,6 +265,7 @@ def _redact(value, key):
 
 class TwoChatNode(WorkflowNode):
     integration_type = "automation-2chat"
+    credential_provider_labels = {"2chat": "2Chat Account"}
     connection_evidence = ConnectionEvidence(noun="2Chat account", identity_operation="get_account")
 
     @classmethod

@@ -10,6 +10,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -173,9 +174,14 @@ class UpdateGroupConfig(_Input):
     designIds: list[str] | None = Field(None, description='Replaces the ordered list of design template IDs associated with the credential template.', min_length=1)
     learningEventUrl: str | None = Field(None, description="The learning event's URL that is shown in the digital wallet", min_length=1, max_length=8192)
 
+# Certifier's own MCP server: agents get its tools through a person's Certifier sign-in.
+CertifierMcpCredential = mcp_credential("certifier", "https://api.certifier.io/v1/mcp", app="Certifier")
+CertifierCredential = Union[CertifierTokenCredential, CertifierMcpCredential]
+
+
 CertifierOperation = Annotated[Union[CreateCredentialConfig, ListCredentialsConfig, CreateIssueSendCredentialConfig, DeleteCredentialConfig, GetCredentialConfig, UpdateCredentialConfig, GetCredentialDesignsConfig, IssueCredentialConfig, SearchCredentialsConfig, SendCredentialConfig, CreateCredentialInteractionConfig, ListCredentialInteractionsConfig, GetDesignConfig, ListDesignsConfig, CreateGroupConfig, ListGroupsConfig, DeleteGroupConfig, GetGroupConfig, UpdateGroupConfig], Field(discriminator="operation")]
 
-class CertifierConfig(NodeConfig[CertifierOperation, CertifierTokenCredential]):
+class CertifierConfig(NodeConfig[CertifierOperation, CertifierCredential]):
     pass
 
 ROUTES = {'create_credential': ('POST', '/v1/credentials', ('groupId', 'recipient', 'issueDate', 'expiryDate', 'customAttributes'), True), 'list_credentials': ('GET', '/v1/credentials', ('cursor', 'limit'), False), 'create_issue_send_credential': ('POST', '/v1/credentials/create-issue-send', ('groupId', 'recipient', 'issueDate', 'expiryDate', 'customAttributes'), True), 'delete_credential': ('DELETE', '/v1/credentials/{id}', (), False), 'get_credential': ('GET', '/v1/credentials/{id}', (), False), 'update_credential': ('PATCH', '/v1/credentials/{id}', ('recipient', 'issueDate', 'expiryDate', 'customAttributes'), True), 'get_credential_designs': ('GET', '/v1/credentials/{id}/designs', (), False), 'issue_credential': ('POST', '/v1/credentials/{id}/issue', (), False), 'search_credentials': ('POST', '/v1/credentials/search', ('filter', 'sort', 'cursor', 'limit'), True), 'send_credential': ('POST', '/v1/credentials/{id}/send', ('deliveryMethod',), True), 'create_credential_interaction': ('POST', '/v1/credential-interactions', ('credentialId', 'eventType', 'triggeredBy', 'triggeredAt'), True), 'list_credential_interactions': ('GET', '/v1/credential-interactions', ('credentialId', 'cursor', 'limit'), False), 'get_design': ('GET', '/v1/designs/{id}', (), False), 'list_designs': ('GET', '/v1/designs', ('cursor', 'limit'), False), 'create_group': ('POST', '/v1/groups', ('name', 'designIds', 'learningEventUrl'), True), 'list_groups': ('GET', '/v1/groups', ('cursor', 'limit'), False), 'delete_group': ('DELETE', '/v1/groups/{id}', (), False), 'get_group': ('GET', '/v1/groups/{id}', (), False), 'update_group': ('PATCH', '/v1/groups/{id}', ('name', 'designIds', 'learningEventUrl'), True)}
@@ -183,6 +189,7 @@ ROUTES = {'create_credential': ('POST', '/v1/credentials', ('groupId', 'recipien
 
 class CertifierNode(WorkflowNode):
     integration_type = "automation-certifier"
+    credential_provider_labels = {"certifier": "Certifier Account"}
     connection_evidence = ConnectionEvidence(noun="credential templates", operation="list_groups")
 
     @classmethod

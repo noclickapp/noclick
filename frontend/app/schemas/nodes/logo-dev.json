@@ -574,6 +574,187 @@
       "x-credential-instructions": "Copy your secret API key (sk_) from the Logo.dev dashboard. Use a secret key, not the publishable CDN key or transaction beta key. NoClick checks your account plan and credit balance with a free account read. Paid plans and owner/admin access are required for some webhook operations; flagging requires Pro or above.",
       "x-credential-url": "https://www.logo.dev/dashboard"
     },
+    "LogoDevMcpCredential": {
+      "description": "Logo.dev connected through Logo.dev's MCP server: agents get its tools.",
+      "properties": {
+        "mcp_server_url": {
+          "title": "MCP server",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Token",
+          "ui:hidden": true
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:hidden": true
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At",
+          "ui:hidden": true
+        },
+        "token_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Type",
+          "ui:hidden": true
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope",
+          "ui:hidden": true
+        },
+        "token_endpoint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id",
+          "ui:hidden": true
+        },
+        "client_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Secret",
+          "ui:hidden": true
+        },
+        "token_endpoint_auth_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint Auth Method",
+          "ui:hidden": true
+        },
+        "resource_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resource Url",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Api Key",
+          "ui:hidden": true
+        },
+        "account": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account",
+          "ui:hidden": true
+        },
+        "credential_type": {
+          "const": "logo_dev_mcp",
+          "default": "logo_dev_mcp",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "mcp_server_url"
+      ],
+      "title": "Logo.dev MCP",
+      "type": "object",
+      "x-credential-type": "mcp",
+      "x-mcp-server": "https://mcp.logo.dev/mcp",
+      "x-mcp-transport": "shttp"
+    },
     "RotateWebhookSecret": {
       "additionalProperties": false,
       "properties": {
@@ -857,11 +1038,15 @@
           "$ref": "#/$defs/LogoDevCredential"
         },
         {
+          "$ref": "#/$defs/LogoDevMcpCredential"
+        },
+        {
           "type": "null"
         }
       ],
       "default": null,
-      "description": "Credentials for this node (optional if using environment variables)"
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
     }
   },
   "required": [

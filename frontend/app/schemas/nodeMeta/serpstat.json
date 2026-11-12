@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Serpstat API Token": "serpstat_api_token",
-    "SerpstatApiTokenCredential": "serpstat_api_token"
+    "Serpstat MCP": "serpstat_mcp",
+    "SerpstatApiTokenCredential": "serpstat_api_token",
+    "SerpstatMcpCredential": "serpstat_mcp"
   },
   "providerLabels": {
-    "serpstat": "Serpstat API Token"
+    "serpstat": "Serpstat Account"
   },
   "autoSelectCredential": true
 }

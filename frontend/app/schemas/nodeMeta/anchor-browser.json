@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Anchor Browser API Key": "anchor_browser_api_key",
-    "AnchorBrowserAPIKeyCredential": "anchor_browser_api_key"
+    "Anchor Browser MCP": "anchor_browser_mcp",
+    "AnchorBrowserAPIKeyCredential": "anchor_browser_api_key",
+    "AnchorBrowserMcpCredential": "anchor_browser_mcp"
   },
   "providerLabels": {
-    "anchor_browser": "Anchor Browser API Key"
+    "anchor_browser": "Anchor Browser Account"
   },
   "autoSelectCredential": true
 }

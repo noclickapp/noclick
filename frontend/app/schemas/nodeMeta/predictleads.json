@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "PredictLeads API Key and Token": "predictleads_api_key_token",
-    "PredictLeadsAPIKeyTokenCredential": "predictleads_api_key_token"
+    "PredictLeads MCP": "predictleads_mcp",
+    "PredictLeadsAPIKeyTokenCredential": "predictleads_api_key_token",
+    "PredictleadsMcpCredential": "predictleads_mcp"
   },
   "providerLabels": {
-    "predictleads": "PredictLeads API Key and Token"
+    "predictleads": "PredictLeads Account"
   },
   "autoSelectCredential": true
 }

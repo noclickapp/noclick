@@ -10,6 +10,7 @@ from urllib.parse import parse_qs, urlsplit
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -233,10 +234,15 @@ class GetCredits(_Input):
     operation: Literal["get_credits"] = Field("get_credits", json_schema_extra={"ui:hidden": True})
 
 
+# Folk's own MCP server: agents get its tools through a person's Folk sign-in.
+FolkMcpCredential = mcp_credential("folk", "https://mcp.folk.app/mcp", app="Folk")
+FolkCredential = Union[FolkAPIKeyCredential, FolkMcpCredential]
+
+
 FolkConfig = Annotated[Union[ListPeople, GetPerson, CreatePerson, UpdatePerson, DeletePerson, ListCompanies, GetCompany, CreateCompany, UpdateCompany, DeleteCompany, ListGroups, CreateGroup, UpdateGroup, ListUsers, GetCurrentUser, GetUser, ListNotes, CreateNote, GetNote, UpdateNote, DeleteNote, ListReminders, GetReminder, GetCredits], Field(discriminator="operation")]
 
 
-class FolkFullConfig(NodeConfig[FolkConfig, FolkAPIKeyCredential]):
+class FolkFullConfig(NodeConfig[FolkConfig, FolkCredential]):
     pass
 
 
@@ -270,6 +276,7 @@ ROUTES = {
 
 class FolkNode(WorkflowNode):
     integration_type = "automation-folk"
+    credential_provider_labels = {"folk": "Folk Account"}
     connection_evidence = ConnectionEvidence(noun="Folk user", identity_operation="get_current_user", identity_keys=("fullName", "email", "id"))
 
     @classmethod

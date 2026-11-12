@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Buildkite API Token": "buildkite_token",
+    "Buildkite MCP": "buildkite_mcp",
+    "BuildkiteMcpCredential": "buildkite_mcp",
     "BuildkiteTokenCredential": "buildkite_token"
   },
   "providerLabels": {
-    "buildkite": "Buildkite API Token"
+    "buildkite": "Buildkite Account"
   },
   "autoSelectCredential": true
 }

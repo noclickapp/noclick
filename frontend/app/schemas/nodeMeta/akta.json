@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Akta API Key": "akta_api_key",
-    "AktaAPIKeyCredential": "akta_api_key"
+    "Akta MCP": "akta_mcp",
+    "AktaAPIKeyCredential": "akta_api_key",
+    "AktaMcpCredential": "akta_mcp"
   },
   "providerLabels": {
-    "akta": "Akta API Key"
+    "akta": "Akta Account"
   },
   "autoSelectCredential": true
 }

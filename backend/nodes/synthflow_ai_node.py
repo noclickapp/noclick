@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -184,13 +185,18 @@ class GetPhoneNumber(_Input):
     workspace: str = Field(..., min_length=1, title="Workspace ID")
 
 
+# Synthflow AI's own MCP server: agents get its tools through a person's Synthflow AI sign-in.
+SynthflowAiMcpCredential = mcp_credential("synthflow_ai", "https://mcp.synthflow.ai/mcp", app="Synthflow AI")
+SynthflowAiCredential = Union[SynthflowAiAPIKeyCredential, SynthflowAiMcpCredential]
+
+
 SynthflowAiConfig = Annotated[Union[ListAgents, GetAgent, ListCalls, GetCall, MakeCall,
     ListContacts, GetContact, CreateContact, UpdateContact, DeleteContact,
     ListKnowledgeBases, GetKnowledgeBase, CreateKnowledgeBase, UpdateKnowledgeBase, DeleteKnowledgeBase,
     ListActions, GetAction, DeleteAction, ListPhoneNumbers, GetPhoneNumber], Field(discriminator="operation")]
 
 
-class SynthflowAiFullConfig(NodeConfig[SynthflowAiConfig, SynthflowAiAPIKeyCredential]):
+class SynthflowAiFullConfig(NodeConfig[SynthflowAiConfig, SynthflowAiCredential]):
     pass
 
 
@@ -222,6 +228,7 @@ BASES = {"global": "https://api.synthflow.ai/v2", "us": "https://api.us.synthflo
 
 class SynthflowAiNode(WorkflowNode):
     integration_type = "automation-synthflow-ai"
+    credential_provider_labels = {"synthflow_ai": "Synthflow AI Account"}
     connection_evidence = ConnectionEvidence(noun="agents", operation="list_agents")
 
     @classmethod

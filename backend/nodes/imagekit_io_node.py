@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -213,6 +214,11 @@ class ImageKitListCustomMetadataFieldsConfig(_Input):
     operation: Literal["list_custom_metadata_fields"] = Field("list_custom_metadata_fields", json_schema_extra={"ui:hidden": True})
 
 
+# ImageKit.io's own MCP server: agents get its tools through a person's ImageKit.io sign-in.
+ImagekitIoMcpCredential = mcp_credential("imagekit_io", "https://imagekit.io/mcp/dam", app="ImageKit.io")
+ImageKitCredential = Union[ImageKitAPIKeyCredential, ImagekitIoMcpCredential]
+
+
 ImageKitOperation = Annotated[Union[
     ImageKitListFilesConfig,
     ImageKitUploadFileConfig,
@@ -239,7 +245,7 @@ ImageKitOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ImageKitFullConfig(NodeConfig[ImageKitOperation, ImageKitAPIKeyCredential]):
+class ImageKitFullConfig(NodeConfig[ImageKitOperation, ImageKitCredential]):
     pass
 
 
@@ -427,6 +433,7 @@ ROUTES = {'list_files': {'method': 'GET',
 
 class ImageKitNode(WorkflowNode):
     integration_type = "automation-imagekit-io"
+    credential_provider_labels = {"imagekit_io": "ImageKit.io Account"}
     connection_evidence = ConnectionEvidence(noun="media assets", operation="list_files")
 
     @classmethod

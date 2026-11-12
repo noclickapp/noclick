@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "DeployHQ API Key": "deployhq_api_key",
-    "DeployHQAPIKeyCredential": "deployhq_api_key"
+    "DeployHQ MCP": "deployhq_mcp",
+    "DeployHQAPIKeyCredential": "deployhq_api_key",
+    "DeployhqMcpCredential": "deployhq_mcp"
   },
   "providerLabels": {
-    "deployhq": "DeployHQ API Key"
+    "deployhq": "DeployHQ Account"
   },
   "autoSelectCredential": true
 }

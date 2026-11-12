@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -57,6 +58,11 @@ class _Input(BaseModel):
             if not isinstance(value, (dict, list)):
                 raise ValueError("Enter a JSON object or array")
         return value
+
+
+# UniOne's own MCP server: agents get its tools through a person's UniOne sign-in.
+UnioneMcpCredential = mcp_credential("unione", "https://mcp.unione.io/mcp", app="UniOne")
+UnioneCredential = Union[UnioneAPIKeyCredential, UnioneMcpCredential]
 
 
 Email = Annotated[str, Field(min_length=3, max_length=320, pattern=r"^[^\s@]+@[^\s@]+\.[^\s@]+$")]
@@ -273,7 +279,7 @@ UnioneConfig = Annotated[Union[SendEmail, SetTemplate, GetTemplate, ListTemplate
     DeleteTag, Ping, GetAccountInfo], Field(discriminator="operation")]
 
 
-class UnioneFullConfig(NodeConfig[UnioneConfig, UnioneAPIKeyCredential]):
+class UnioneFullConfig(NodeConfig[UnioneConfig, UnioneCredential]):
     pass
 
 
@@ -325,6 +331,7 @@ def _redact(value, key):
 
 class UnioneNode(WorkflowNode):
     integration_type = "automation-unione"
+    credential_provider_labels = {"unione": "UniOne Account"}
     connection_evidence = ConnectionEvidence(noun="UniOne account", identity_operation="get_account_info",
         identity_keys=("email", "project_name", "user_id"))
 

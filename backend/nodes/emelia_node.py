@@ -11,6 +11,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -187,6 +188,11 @@ class ListEmailProviders(Operation):
     operation: Literal["list_email_providers"] = Field("list_email_providers", title="List Email Providers")
 
 
+# Emelia's own MCP server: agents get its tools through a person's Emelia sign-in.
+EmeliaMcpCredential = mcp_credential("emelia", "https://mcp.emelia.io/mcp", app="Emelia")
+EmeliaCredential = Union[EmeliaAPIKeyCredential, EmeliaMcpCredential]
+
+
 EmeliaConfig = Annotated[Union[
     ListCampaigns,
     GetCampaign,
@@ -216,7 +222,7 @@ EmeliaConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class EmeliaNodeConfig(NodeConfig[EmeliaConfig, EmeliaAPIKeyCredential]):
+class EmeliaNodeConfig(NodeConfig[EmeliaConfig, EmeliaCredential]):
     pass
 
 
@@ -262,6 +268,7 @@ def _redact(value, token):
 
 class EmeliaNode(WorkflowNode):
     integration_type = "automation-emelia"
+    credential_provider_labels = {"emelia": "Emelia Account"}
     connection_evidence = ConnectionEvidence(noun="campaigns", operation="list_campaigns", label_keys=("name", "_id"))
     edit_examples = ["Add a prospect to an Emelia list", "Pause this campaign", "Find and verify a prospect's email"]
 

@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client, SSRFError
@@ -187,13 +188,18 @@ class SetClipboard(_BrowserSession):
     text: str = Field(..., title="Text")
 
 
+# Anchor Browser's own MCP server: agents get its tools through a person's Anchor Browser sign-in.
+AnchorBrowserMcpCredential = mcp_credential("anchor_browser", "https://api.anchorbrowser.io/v1/mcp", app="Anchor Browser")
+AnchorBrowserCredential = Union[AnchorBrowserAPIKeyCredential, AnchorBrowserMcpCredential]
+
+
 Operation = Annotated[Union[ListSessions, StartSession, GetSession, EndSession, ListSessionPages,
     ListSessionDownloads, ListSessionRecordings, ListProfiles, GetProfile, CreateProfile, DeleteProfile,
     PerformWebTask, GetWebTaskStatus, ExecuteCode, Navigate, TypeText, KeyboardShortcut, Click, Scroll,
     GetClipboard, SetClipboard], Field(discriminator="operation")]
 
 
-class AnchorBrowserNodeConfig(NodeConfig[Operation, AnchorBrowserAPIKeyCredential]):
+class AnchorBrowserNodeConfig(NodeConfig[Operation, AnchorBrowserCredential]):
     pass
 
 
@@ -248,6 +254,7 @@ def _redact(value, key):
 
 class AnchorBrowserNode(WorkflowNode):
     integration_type = "automation-anchor-browser"
+    credential_provider_labels = {"anchor_browser": "Anchor Browser Account"}
     connection_evidence = ConnectionEvidence(noun="browser sessions", operation="list_sessions")
 
     @classmethod

@@ -12,6 +12,7 @@ from urllib.parse import quote
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -295,6 +296,10 @@ class GetTemplateConfig(InstatusInput):
     page_id: str = Field(..., min_length=1, max_length=256)
     template_id: str = Field(..., min_length=1, max_length=256)
 
+# Instatus's own MCP server: agents get its tools through a person's Instatus sign-in.
+InstatusMcpCredential = mcp_credential("instatus", "https://mcp.instatus.com/mcp", app="Instatus")
+
+
 InstatusOperation = Annotated[Union[
     GetProfileConfig,
     ListPagesConfig,
@@ -322,7 +327,7 @@ InstatusOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class InstatusNodeConfig(NodeConfig[InstatusOperation, InstatusCredential]):
+class InstatusNodeConfig(NodeConfig[InstatusOperation, Union[InstatusCredential, InstatusMcpCredential]]):
     pass
 
 
@@ -458,6 +463,7 @@ def _redact(value, secret):
 
 class InstatusNode(WorkflowNode):
     integration_type = "automation-instatus"
+    credential_provider_labels = {"instatus": "Instatus Account"}
     connection_evidence = ConnectionEvidence(
         noun="Instatus account", identity_operation="get_profile",
         identity_keys=("name", "email", "id"))

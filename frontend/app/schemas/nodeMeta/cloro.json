@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Cloro API Key": "cloro_api_key",
-    "CloroAPIKeyCredential": "cloro_api_key"
+    "Cloro MCP": "cloro_mcp",
+    "CloroAPIKeyCredential": "cloro_api_key",
+    "CloroMcpCredential": "cloro_mcp"
   },
   "providerLabels": {
-    "cloro": "Cloro API Key"
+    "cloro": "Cloro Account"
   },
   "autoSelectCredential": true
 }

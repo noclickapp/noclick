@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Supermemory API Key": "supermemory_api_key",
-    "SupermemoryAPIKeyCredential": "supermemory_api_key"
+    "Supermemory MCP": "supermemory_mcp",
+    "SupermemoryAPIKeyCredential": "supermemory_api_key",
+    "SupermemoryMcpCredential": "supermemory_mcp"
   },
   "providerLabels": {
-    "supermemory": "Supermemory API Key"
+    "supermemory": "Supermemory Account"
   },
   "autoSelectCredential": true
 }

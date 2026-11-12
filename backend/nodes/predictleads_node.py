@@ -15,6 +15,7 @@ from types import SimpleNamespace
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.dynamic_options import normalize_search
@@ -95,6 +96,11 @@ class PredictLeadsAPIKeyTokenCredential(BaseModel):
     def companies(cls, value):
         granted_companies(value)
         return value
+
+
+# PredictLeads's own MCP server: agents get its tools through a person's PredictLeads sign-in.
+PredictleadsMcpCredential = mcp_credential("predictleads", "https://mcp.predictleads.com/", app="PredictLeads")
+PredictLeadsTokenCredential = Union[PredictLeadsAPIKeyTokenCredential, PredictleadsMcpCredential]
 
 
 def credential(data):
@@ -190,7 +196,7 @@ class ListTechnologyDetections(SeenDates):
 Operation = Annotated[Union[CheckConnection, GetCompany, ListJobOpenings, ListNewsEvents, ListTechnologyDetections], Field(discriminator="operation")]
 
 
-class PredictLeadsNodeConfig(NodeConfig[Operation, PredictLeadsAPIKeyTokenCredential]):
+class PredictLeadsNodeConfig(NodeConfig[Operation, PredictLeadsTokenCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -541,6 +547,7 @@ async def list_signals(data, cfg):
 
 class PredictLeadsNode(WorkflowNode):
     integration_type = "automation-predictleads"
+    credential_provider_labels = {"predictleads": "PredictLeads Account"}
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="check_connection", noun="PredictLeads subscription",
         label_keys=("id",), identity_keys=(), proves="reachability")

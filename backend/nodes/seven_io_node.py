@@ -9,6 +9,7 @@ from typing import Annotated, Literal, Union
 from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
@@ -167,10 +168,14 @@ class GetAnalyticsByDate(AnalyticsFields):
     operation: Literal["get_analytics_by_date"] = Field("get_analytics_by_date", title="Get Analytics By Date", json_schema_extra={"ui:hidden": True})
 
 
+# seven.io's own MCP server: agents get its tools through a person's seven.io sign-in.
+SevenIoMcpCredential = mcp_credential("seven_io", "https://mcp.seven.io/mcp", app="seven.io")
+
+
 Operation = Annotated[Union[GetBalance, ListContacts, GetContact, CreateContact, UpdateContact, DeleteContact, ListGroups, GetGroup, CreateGroup, UpdateGroup, DeleteGroup, SendSms, GetSmsStatus, ListOutboundMessages, ListInboundMessages, LookupFormat, LookupHlr, GetAnalyticsByDate], Field(discriminator="operation")]
 
 
-class SevenIoConfig(NodeConfig[Operation, SevenIoCredential]):
+class SevenIoConfig(NodeConfig[Operation, Union[SevenIoCredential, SevenIoMcpCredential]]):
     pass
 
 
@@ -179,6 +184,7 @@ ROUTES = {'get_balance': ('GET', '/balance'), 'list_contacts': ('GET', '/contact
 
 class SevenIoNode(WorkflowNode):
     integration_type = "automation-seven-io"
+    credential_provider_labels = {"seven_io": "seven.io Account"}
     connection_evidence = ConnectionEvidence(noun="contacts", operation="list_contacts")
 
     @classmethod

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Orshot API Key": "orshot_api_key",
-    "OrshotAPIKeyCredential": "orshot_api_key"
+    "Orshot MCP": "orshot_mcp",
+    "OrshotAPIKeyCredential": "orshot_api_key",
+    "OrshotMcpCredential": "orshot_mcp"
   },
   "providerLabels": {
-    "orshot": "Orshot API Key"
+    "orshot": "Orshot Account"
   },
   "autoSelectCredential": true
 }

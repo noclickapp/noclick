@@ -13,6 +13,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, Json, StrictBool, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -189,7 +190,12 @@ ConveyorConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ConveyorFullConfig(NodeConfig[ConveyorConfig, ConveyorAPIKeyCredential]):
+# Conveyor's own MCP server: agents get its tools through a person's Conveyor sign-in.
+ConveyorMcpCredential = mcp_credential("conveyor", "https://mcp.conveyor.com/mcp", app="Conveyor")
+ConveyorCredential = Union[ConveyorAPIKeyCredential, ConveyorMcpCredential]
+
+
+class ConveyorFullConfig(NodeConfig[ConveyorConfig, ConveyorCredential]):
     pass
 
 
@@ -335,6 +341,7 @@ LIST_KEYS = {
 
 class ConveyorNode(WorkflowNode):
     integration_type = "automation-conveyor"
+    credential_provider_labels = {"conveyor": "Conveyor Account"}
     connection_evidence = ConnectionEvidence(noun="folders", operation="list_folders")
 
     @classmethod

@@ -5,7 +5,9 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
-    "DropcontactAccessTokenCredential": "dropcontact_access_token"
+    "Dropcontact MCP": "dropcontact_mcp",
+    "DropcontactAccessTokenCredential": "dropcontact_access_token",
+    "DropcontactMcpCredential": "dropcontact_mcp"
   },
   "providerLabels": {
     "dropcontact": "Dropcontact Account"

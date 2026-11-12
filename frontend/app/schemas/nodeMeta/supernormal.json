@@ -6,7 +6,9 @@
   },
   "credentialTypes": {
     "Supernormal API Token": "supernormal_api_key",
-    "SupernormalAPITokenCredential": "supernormal_api_key"
+    "Supernormal MCP": "supernormal_mcp",
+    "SupernormalAPITokenCredential": "supernormal_api_key",
+    "SupernormalMcpCredential": "supernormal_mcp"
   },
   "providerLabels": {
     "supernormal": "Supernormal Account"

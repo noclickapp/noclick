@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Transloadit Bearer Token": "transloadit_token",
+    "Transloadit MCP": "transloadit_mcp",
+    "TransloaditMcpCredential": "transloadit_mcp",
     "TransloaditTokenCredential": "transloadit_token"
   },
   "providerLabels": {
-    "transloadit": "Transloadit Bearer Token"
+    "transloadit": "Transloadit Account"
   },
   "autoSelectCredential": true
 }

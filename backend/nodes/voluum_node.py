@@ -24,6 +24,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 
@@ -114,6 +115,11 @@ class VoluumAccessKeyCredential(BaseModel):
         if not isinstance(value, str) or not 8 <= len(value) <= 8192 or any(c.isspace() or ord(c) < 32 for c in value):
             raise ValueError("Voluum access key is invalid")
         return value
+
+
+# Voluum's own MCP server: agents get its tools through a person's Voluum sign-in.
+VoluumMcpCredential = mcp_credential("voluum", "https://mcp.voluum.com/mcp", app="Voluum")
+VoluumCredential = Union[VoluumAccessKeyCredential, VoluumMcpCredential]
 
 
 def _credential(data):
@@ -323,7 +329,7 @@ VoluumConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class VoluumNodeConfig(NodeConfig[VoluumConfig, VoluumAccessKeyCredential]):
+class VoluumNodeConfig(NodeConfig[VoluumConfig, VoluumCredential]):
     pass
 
 
@@ -494,6 +500,7 @@ class _API:
 
 class VoluumNode(WorkflowNode):
     integration_type = TYPE
+    credential_provider_labels = {"voluum": "Voluum Account"}
     scope_registry = SCOPES
     # Token-bound workspaces are account-specific data, not invented user identity.
     connection_evidence = ConnectionEvidence(noun="workspaces", operation="list_workspaces", proves="account")

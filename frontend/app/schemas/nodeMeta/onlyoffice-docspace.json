@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "ONLYOFFICE DocSpace MCP": "onlyoffice_docspace_mcp",
     "ONLYOFFICE DocSpace Token": "onlyoffice_docspace_token",
+    "OnlyofficeDocspaceMcpCredential": "onlyoffice_docspace_mcp",
     "OnlyofficeDocspaceTokenCredential": "onlyoffice_docspace_token"
   },
   "providerLabels": {
-    "onlyoffice_docspace": "ONLYOFFICE DocSpace Token"
+    "onlyoffice_docspace": "ONLYOFFICE DocSpace Account"
   },
   "autoSelectCredential": true
 }

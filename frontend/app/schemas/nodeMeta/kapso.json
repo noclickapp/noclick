@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Kapso API Key": "kapso_api_key",
-    "KapsoAPIKeyCredential": "kapso_api_key"
+    "Kapso MCP": "kapso_mcp",
+    "KapsoAPIKeyCredential": "kapso_api_key",
+    "KapsoMcpCredential": "kapso_mcp"
   },
   "providerLabels": {
-    "kapso": "Kapso API Key"
+    "kapso": "Kapso Account"
   },
   "autoSelectCredential": true
 }

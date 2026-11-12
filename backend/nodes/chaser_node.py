@@ -12,6 +12,7 @@ from urllib.parse import quote
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -276,6 +277,11 @@ class ChaserResumeInvoiceChasingConfig(_Input):
     operation: Literal["resume_invoice_chasing"] = Field("resume_invoice_chasing", json_schema_extra={"ui:hidden": True})
     invoice_id: str = Field(..., min_length=1, description="Chaser internal ID or ext_ prefixed external ID.")
 
+# Chaser's own MCP server: agents get its tools through a person's Chaser sign-in.
+ChaserMcpCredential = mcp_credential("chaser", "https://api.trychaser.com/mcp", app="Chaser")
+ChaserCredential = Union[ChaserAPIKeyCredential, ChaserMcpCredential]
+
+
 ChaserConfig = Annotated[Union[
     ChaserGetOrganisationConfig,
     ChaserListCustomersConfig,
@@ -302,7 +308,7 @@ ChaserConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ChaserFullConfig(NodeConfig[ChaserConfig, ChaserAPIKeyCredential]):
+class ChaserFullConfig(NodeConfig[ChaserConfig, ChaserCredential]):
     pass
 
 
@@ -487,6 +493,7 @@ OPERATIONS = {'get_organisation': {'method': 'GET',
 
 class ChaserNode(WorkflowNode):
     integration_type = "automation-chaser"
+    credential_provider_labels = {"chaser": "Chaser Account"}
     connection_evidence = ConnectionEvidence(operation="list_customers", noun="customers", identity_operation="get_organisation")
 
     @classmethod

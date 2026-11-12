@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Mailercloud API Key": "mailercloud_api_key",
-    "MailercloudAPIKeyCredential": "mailercloud_api_key"
+    "Mailercloud MCP": "mailercloud_mcp",
+    "MailercloudAPIKeyCredential": "mailercloud_api_key",
+    "MailercloudMcpCredential": "mailercloud_mcp"
   },
   "providerLabels": {
-    "mailercloud": "Mailercloud API Key"
+    "mailercloud": "Mailercloud Account"
   },
   "autoSelectCredential": true
 }

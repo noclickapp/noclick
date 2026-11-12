@@ -9,6 +9,7 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -74,6 +75,11 @@ class DomainSuggestions(_Input):
 
 class Technology(_Domain):
     operation: Literal["technology"] = Field("technology", title="Get Domain Technologies")
+
+
+# Tomba's own MCP server: agents get its tools through a person's Tomba sign-in.
+TombaMcpCredential = mcp_credential("tomba", "https://mcp.tomba.io/mcp", app="Tomba")
+TombaCredential = Union[TombaApiKeyCredential, TombaMcpCredential]
 
 
 def _picker(field):
@@ -165,7 +171,7 @@ TombaConfig = Annotated[Union[DomainSearch, EmailFinder, EmailVerifier, DomainSu
     CreateLeadList, UpdateLeadList, DeleteLeadList], Field(discriminator="operation")]
 
 
-class TombaFullConfig(NodeConfig[TombaConfig, TombaApiKeyCredential]):
+class TombaFullConfig(NodeConfig[TombaConfig, TombaCredential]):
     pass
 
 
@@ -216,6 +222,7 @@ async def _request(credential, method, path, *, params=None, body=None):
 
 class TombaNode(WorkflowNode):
     integration_type = "automation-tomba"
+    credential_provider_labels = {"tomba": "Tomba Account"}
     connection_evidence = ConnectionEvidence(operation="list_leads", noun="Tomba leads")
 
     @classmethod

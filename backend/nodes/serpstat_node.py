@@ -17,6 +17,7 @@ from uuid import uuid4
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, ValidationResult, WorkflowNode, runtime_config_view
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 NODE_TYPE = "automation-serpstat"
@@ -42,6 +43,11 @@ class SerpstatApiTokenCredential(BaseModel):
         "x-credential-instructions": "Supply an existing personal Serpstat API token. Current v4 requires query parameter token; native transport logs are protected. No environment fallback, token generation, OAuth or sandbox. Current API access starts at Team; actual credits, delays and API plugin access come from the protected account limits read. SEO/result calls can consume live credits even for empty responses; connection uses documented non-credit getStats. Account proof does not prove rank/audit access or a free entitlement.",
     })
     _token = field_validator("api_token")(_secret_value)
+
+
+# Serpstat's own MCP server: agents get its tools through a person's Serpstat sign-in.
+SerpstatMcpCredential = mcp_credential("serpstat", "https://mcp.serpstat.com/mcp", app="Serpstat")
+SerpstatCredential = Union[SerpstatApiTokenCredential, SerpstatMcpCredential]
 
 
 def _op(name, label, category):
@@ -258,7 +264,7 @@ class SerpstatAuditCategoriesConfig(SerpstatAuditScope):
 
 SerpstatConfig = Annotated[Union[SerpstatCheckConfig, SerpstatCreditsConfig, SerpstatProjectsConfig, SerpstatDomainOverviewConfig, SerpstatDomainHistoryConfig, SerpstatDomainKeywordsConfig, SerpstatCompetitorsConfig, SerpstatKeywordMetricsConfig, SerpstatRelatedConfig, SerpstatTrendsConfig, SerpstatTopConfig, SerpstatBacklinkSummaryConfig, SerpstatRefDomainsConfig, SerpstatRankProjectsConfig, SerpstatRankRegionsConfig, SerpstatRankStatusConfig, SerpstatRankKeywordsConfig, SerpstatAuditReportsConfig, SerpstatAuditStatusConfig, SerpstatAuditCategoriesConfig], Field(discriminator="operation")]
 
-class SerpstatNodeConfig(NodeConfig[SerpstatConfig, SerpstatApiTokenCredential]):
+class SerpstatNodeConfig(NodeConfig[SerpstatConfig, SerpstatCredential]):
     pass
 
 class SerpstatAPIError(ValueError):
@@ -514,6 +520,7 @@ async def _audit_membership(data, context, project, report):
 
 class SerpstatNode(WorkflowNode):
     integration_type = "automation-serpstat"
+    credential_provider_labels = {"serpstat": "Serpstat Account"}
     connection_evidence = ConnectionEvidence(identity_operation="test_connection", noun="Serpstat account", proves="account", identity_keys=("account_id",), label_keys=("account_id",))
     edit_examples = ["Read domain keyword rankings in the selected search database", "Compare related keyword metrics", "Read an existing scoped audit report without starting an audit"]
 
