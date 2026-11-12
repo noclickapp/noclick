@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Sanity MCP": "sanity_mcp",
     "Sanity Robot Token": "sanity_robot_token",
+    "SanityMcpCredential": "sanity_mcp",
     "SanityRobotTokenCredential": "sanity_robot_token"
   },
   "providerLabels": {
-    "sanity": "Sanity Robot Token"
+    "sanity": "Sanity Account"
   },
   "autoSelectCredential": true
 }

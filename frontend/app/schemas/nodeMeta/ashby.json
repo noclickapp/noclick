@@ -5,7 +5,9 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
-    "AshbyApiKeyCredential": "ashby_api_key"
+    "Ashby MCP": "ashby_mcp",
+    "AshbyApiKeyCredential": "ashby_api_key",
+    "AshbyMcpCredential": "ashby_mcp"
   },
   "providerLabels": {
     "ashby": "Ashby Account"

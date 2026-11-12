@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Recraft API Token": "recraft_api_token",
-    "RecraftAPITokenCredential": "recraft_api_token"
+    "Recraft MCP": "recraft_mcp",
+    "RecraftAPITokenCredential": "recraft_api_token",
+    "RecraftMcpCredential": "recraft_mcp"
   },
   "providerLabels": {
-    "recraft": "Recraft API Token"
+    "recraft": "Recraft Account"
   },
   "autoSelectCredential": true
 }

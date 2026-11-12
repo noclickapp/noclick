@@ -5,7 +5,9 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
-    "QuoAPIKeyCredential": "quo_api_key"
+    "Quo MCP": "quo_mcp",
+    "QuoAPIKeyCredential": "quo_api_key",
+    "QuoMcpCredential": "quo_mcp"
   },
   "providerLabels": {
     "quo": "Quo Account"

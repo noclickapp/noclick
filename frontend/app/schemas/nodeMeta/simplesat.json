@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Simplesat API Key": "simplesat_api_key",
-    "SimplesatAPIKey": "simplesat_api_key"
+    "Simplesat MCP": "simplesat_mcp",
+    "SimplesatAPIKey": "simplesat_api_key",
+    "SimplesatMcpCredential": "simplesat_mcp"
   },
   "providerLabels": {
-    "simplesat": "Simplesat API Key"
+    "simplesat": "Simplesat Account"
   },
   "autoSelectCredential": true
 }

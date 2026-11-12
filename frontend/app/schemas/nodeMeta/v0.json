@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "V0 API Key": "v0_api_key",
-    "V0APIKeyCredential": "v0_api_key"
+    "V0APIKeyCredential": "v0_api_key",
+    "V0McpCredential": "v0_mcp",
+    "v0 MCP": "v0_mcp"
   },
   "providerLabels": {
-    "v0": "V0 API Key"
+    "v0": "v0 Account"
   },
   "autoSelectCredential": true
 }

@@ -6,7 +6,9 @@
   },
   "credentialTypes": {
     "Kajabi Access Token": "kajabi_access_token",
-    "KajabiAccessTokenCredential": "kajabi_access_token"
+    "Kajabi MCP": "kajabi_mcp",
+    "KajabiAccessTokenCredential": "kajabi_access_token",
+    "KajabiMcpCredential": "kajabi_mcp"
   },
   "providerLabels": {
     "kajabi": "Kajabi Account"

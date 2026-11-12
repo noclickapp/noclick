@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -47,6 +48,11 @@ class _Input(BaseModel):
 class _List(_Input):
     limit: int = Field(100, ge=1, le=100, title="Results Per Page")
     page: int = Field(1, ge=1, title="Page Number", description="Read one page. Increment to fetch subsequent pages; provider pagination is returned unchanged.")
+
+
+# Statsig's own MCP server: agents get its tools through a person's Statsig sign-in.
+StatsigMcpCredential = mcp_credential("statsig", "https://api.statsig.com/v3/mcp", app="Statsig")
+StatsigCredential = Union[StatsigAPIKeyCredential, StatsigMcpCredential]
 
 
 def _picker(field):
@@ -227,7 +233,7 @@ class DeleteTag(_Tag):
 Operation = Annotated[Union[GetProject, ListGates, GetGate, CreateGate, UpdateGate, DeleteGate, EnableGate, DisableGate, GetGateRules, ListDynamicConfigs, GetDynamicConfig, CreateDynamicConfig, UpdateDynamicConfig, DeleteDynamicConfig, ListExperiments, GetExperiment, ListSegments, GetSegment, ListTags, GetTag, CreateTag, UpdateTag, DeleteTag], Field(discriminator="operation")]
 
 
-class StatsigNodeConfig(NodeConfig[Operation, StatsigAPIKeyCredential]):
+class StatsigNodeConfig(NodeConfig[Operation, StatsigCredential]):
     pass
 
 
@@ -262,6 +268,7 @@ PICKERS = {"gate_id": "gates", "config_id": "dynamic_configs", "experiment_id": 
 
 class StatsigNode(WorkflowNode):
     integration_type = "automation-statsig"
+    credential_provider_labels = {"statsig": "Statsig Account"}
     connection_evidence = ConnectionEvidence(noun="Statsig gates", field="gate_id", identity_operation="get_project")
 
     @classmethod

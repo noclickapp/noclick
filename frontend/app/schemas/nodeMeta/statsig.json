@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Statsig Console API Key": "statsig_api_key",
-    "StatsigAPIKeyCredential": "statsig_api_key"
+    "Statsig MCP": "statsig_mcp",
+    "StatsigAPIKeyCredential": "statsig_api_key",
+    "StatsigMcpCredential": "statsig_mcp"
   },
   "providerLabels": {
-    "statsig": "Statsig Console API Key"
+    "statsig": "Statsig Account"
   },
   "autoSelectCredential": true
 }

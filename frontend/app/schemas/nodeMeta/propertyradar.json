@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "PropertyRadar API Token": "propertyradar_api_token",
-    "PropertyRadarTokenCredential": "propertyradar_api_token"
+    "PropertyRadar MCP": "propertyradar_mcp",
+    "PropertyRadarTokenCredential": "propertyradar_api_token",
+    "PropertyradarMcpCredential": "propertyradar_mcp"
   },
   "providerLabels": {
-    "propertyradar": "PropertyRadar API Token"
+    "propertyradar": "PropertyRadar Account"
   },
   "autoSelectCredential": true
 }

@@ -6,12 +6,13 @@ and https://docs.attentive.com/openapi/attentive-api-bundled.yaml.
 """
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Union
 from urllib.parse import quote
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.attentive_operations import AttentiveConfig, REQUESTS
@@ -41,7 +42,12 @@ class AttentiveAPIKeyCredential(BaseModel):
         return value
 
 
-class AttentiveFullConfig(NodeConfig[AttentiveConfig, AttentiveAPIKeyCredential]):
+# Attentive's own MCP server: agents get its tools through a person's Attentive sign-in.
+AttentiveMcpCredential = mcp_credential("attentive", "https://attentive-ui-mcp.attentivemobile.com/mcp?readOnly=false", app="Attentive")
+AttentiveCredential = Union[AttentiveAPIKeyCredential, AttentiveMcpCredential]
+
+
+class AttentiveFullConfig(NodeConfig[AttentiveConfig, AttentiveCredential]):
     pass
 
 
@@ -57,6 +63,7 @@ def _redact(value, secret):
 
 class AttentiveNode(WorkflowNode):
     integration_type = "automation-attentive"
+    credential_provider_labels = {"attentive": "Attentive Account"}
     scope_registry = ATTENTIVE_SCOPES
     connection_evidence = ConnectionEvidence(
         noun="Attentive account", identity_operation="get_me",

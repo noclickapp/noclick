@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Bright Data API Key": "brightdata_api_key",
-    "BrightdataAPIKeyCredential": "brightdata_api_key"
+    "Bright Data MCP": "brightdata_mcp",
+    "BrightdataAPIKeyCredential": "brightdata_api_key",
+    "BrightdataMcpCredential": "brightdata_mcp"
   },
   "providerLabels": {
-    "brightdata": "Bright Data API Key"
+    "brightdata": "Bright Data Account"
   },
   "autoSelectCredential": true
 }

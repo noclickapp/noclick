@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.typefully_operations import (
@@ -146,6 +147,11 @@ class ResolveLinkedInOrganization(_SocialSet):
     organization_url: str = Field(..., description="Public LinkedIn company or school URL, e.g. https://www.linkedin.com/company/typefullycom")
 
 
+# Typefully's own MCP server: agents get its tools through a person's Typefully sign-in.
+TypefullyMcpCredential = mcp_credential("typefully", "https://mcp.typefully.com/mcp", app="Typefully")
+TypefullyCredential = Union[TypefullyAPIKeyCredential, TypefullyMcpCredential]
+
+
 TypefullyConfig = Annotated[Union[
     GetCurrentUser, ListSocialSets, GetSocialSet, ListDrafts, CreateDraft, GetDraft,
     UpdateDraft, DeleteDraft, CreateMediaUpload, GetMediaStatus, UpdateMedia,
@@ -154,7 +160,7 @@ TypefullyConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class TypefullyFullConfig(NodeConfig[TypefullyConfig, TypefullyAPIKeyCredential]):
+class TypefullyFullConfig(NodeConfig[TypefullyConfig, TypefullyCredential]):
     pass
 
 
@@ -183,6 +189,7 @@ ROUTES = {
 
 class TypefullyNode(WorkflowNode):
     integration_type = "automation-typefully"
+    credential_provider_labels = {"typefully": "Typefully Account"}
     connection_evidence = ConnectionEvidence(noun="Typefully account", identity_operation="get_current_user")
 
     @classmethod

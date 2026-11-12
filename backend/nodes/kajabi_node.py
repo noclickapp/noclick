@@ -13,6 +13,7 @@ import time
 import httpx
 from pydantic import BaseModel, ConfigDict, Field
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 API = "https://api.kajabi.com"
@@ -41,6 +42,11 @@ class KajabiAccessTokenCredential(BaseModel):
             "ui:help": "Paste the access_token value without the Bearer prefix. Replace it when it expires.",
         },
     )
+
+
+# Kajabi's own MCP server: agents get its tools through a person's Kajabi sign-in.
+KajabiMcpCredential = mcp_credential("kajabi", "https://mcp.kajabi.com/mcp", app="Kajabi")
+KajabiCredential = Union[KajabiAccessTokenCredential, KajabiMcpCredential]
 
 
 def operation_field(name: str, title: str, category: str, description: str):
@@ -333,7 +339,7 @@ KajabiConfig = Annotated[
 ]
 
 
-class KajabiNodeConfig(NodeConfig[KajabiConfig, KajabiAccessTokenCredential]):
+class KajabiNodeConfig(NodeConfig[KajabiConfig, KajabiCredential]):
     pass
 
 

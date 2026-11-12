@@ -29,11 +29,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Vibe MCP": "vibe_mcp",
     "Vibe OAuth": "vibe_oauth",
+    "VibeMcpCredential": "vibe_mcp",
     "VibeOAuthCredential": "vibe_oauth"
   },
   "providerLabels": {
-    "vibe": "Vibe OAuth"
+    "vibe": "Vibe Account"
   },
   "autoSelectCredential": true
 }

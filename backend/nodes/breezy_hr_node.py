@@ -13,6 +13,7 @@ from typing import Annotated, Literal, Union
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode, runtime_config_view
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -224,10 +225,15 @@ class BreezyPostCandidateNote(_Candidate):
     body: str = Field(..., min_length=1, max_length=100000, description="Internal team note; not sent to the candidate")
 
 
+# Breezy HR's own MCP server: agents get its tools through a person's Breezy HR sign-in.
+BreezyHrMcpCredential = mcp_credential("breezy_hr", "https://mcp.breezy.hr/mcp", app="Breezy HR")
+BreezyHRCredential = Union[BreezyHRTokenCredential, BreezyHrMcpCredential]
+
+
 Operation = Annotated[Union[BreezyGetUser, BreezyListCompanies, BreezyGetCompany, BreezyListDepartments, BreezyListPipelines, BreezyGetPipeline, BreezyListPositions, BreezyGetPosition, BreezyCreatePosition, BreezyUpdatePosition, BreezySetPositionState, BreezyGetPositionTeam, BreezySearchCandidates, BreezyListCandidates, BreezyAddCandidate, BreezyGetCandidate, BreezyUpdateCandidate, BreezySetCandidateStage, BreezyGetCandidateStream, BreezyPostCandidateNote], Field(discriminator="operation")]
 
 
-class BreezyHRConfig(NodeConfig[Operation, BreezyHRTokenCredential]):
+class BreezyHRConfig(NodeConfig[Operation, BreezyHRCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -321,6 +327,7 @@ def _redact(value, token):
 
 class BreezyHRNode(WorkflowNode):
     integration_type = "automation-breezy-hr"
+    credential_provider_labels = {"breezy_hr": "Breezy HR Account"}
     connection_evidence = ConnectionEvidence(noun="companies", operation="list_companies", identity_operation="get_user", label_keys=("name", "friendly_id", "_id"))
 
     @classmethod

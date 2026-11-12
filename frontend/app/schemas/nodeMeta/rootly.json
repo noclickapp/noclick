@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Rootly API Key": "rootly_api_key",
-    "RootlyAPIKeyCredential": "rootly_api_key"
+    "Rootly MCP": "rootly_mcp",
+    "RootlyAPIKeyCredential": "rootly_api_key",
+    "RootlyMcpCredential": "rootly_mcp"
   },
   "providerLabels": {
-    "rootly": "Rootly API Key"
+    "rootly": "Rootly Account"
   },
   "autoSelectCredential": true
 }

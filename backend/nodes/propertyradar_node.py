@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
@@ -188,6 +189,11 @@ class DeleteWebhook(_Input):
     webhook_id: int = Field(..., gt=0)
 
 
+# PropertyRadar's own MCP server: agents get its tools through a person's PropertyRadar sign-in.
+PropertyradarMcpCredential = mcp_credential("propertyradar", "https://mcp.propertyradar.com/", app="PropertyRadar")
+PropertyRadarCredential = Union[PropertyRadarTokenCredential, PropertyradarMcpCredential]
+
+
 PropertyRadarOperation = Annotated[Union[
     ListLists, CreateList, GetList, UpdateList, DeleteList, ListItems, AddItems,
     RemoveItem, SearchProperties, GetProperty, GetOwners, GetTransactions,
@@ -196,7 +202,7 @@ PropertyRadarOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class PropertyRadarConfig(NodeConfig[PropertyRadarOperation, PropertyRadarTokenCredential]):
+class PropertyRadarConfig(NodeConfig[PropertyRadarOperation, PropertyRadarCredential]):
     pass
 
 
@@ -243,6 +249,7 @@ def _redact(value, token):
 
 class PropertyRadarNode(WorkflowNode):
     integration_type = "automation-propertyradar"
+    credential_provider_labels = {"propertyradar": "PropertyRadar Account"}
     connection_evidence = ConnectionEvidence(operation="list_lists", noun="PropertyRadar lists", label_keys=("ListName", "ListID"))
 
     @classmethod

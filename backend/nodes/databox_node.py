@@ -14,6 +14,7 @@ from uuid import UUID
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import SSRFError, guarded_async_client
@@ -308,6 +309,11 @@ class DataboxGetMetricData(_AccountConfig):
     dimension_ids: list[str] | None = None
 
 
+# Databox's own MCP server: agents get its tools through a person's Databox sign-in.
+DataboxMcpCredential = mcp_credential("databox", "https://mcp.databox.com/mcp", app="Databox")
+DataboxCredential = Union[DataboxAPIKey, DataboxMcpCredential]
+
+
 DataboxConfig = Annotated[
     Union[
         DataboxGetProfile,
@@ -337,7 +343,7 @@ DataboxConfig = Annotated[
 ]
 
 
-class DataboxFullConfig(NodeConfig[DataboxConfig, DataboxAPIKey]):
+class DataboxFullConfig(NodeConfig[DataboxConfig, DataboxCredential]):
     pass
 
 
@@ -393,6 +399,7 @@ WIRE_NAMES = {
 
 class DataboxNode(WorkflowNode):
     integration_type = "automation-databox"
+    credential_provider_labels = {"databox": "Databox Account"}
     connection_evidence = ConnectionEvidence(
         noun="Databox profile", identity_operation="get_profile"
     )

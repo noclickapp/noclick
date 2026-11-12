@@ -12,6 +12,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -225,6 +226,11 @@ class ListUnsubscribesConfig(_Input):
     """List Unsubscribes. Returns the provider default page and pagination metadata; no automatic pagination."""
     operation: Literal["list_unsubscribes"] = Field("list_unsubscribes", json_schema_extra={"ui:hidden": True})
 
+# Mobile Text Alerts's own MCP server: agents get its tools through a person's Mobile Text Alerts sign-in.
+MobileTextAlertsMcpCredential = mcp_credential("mobile_text_alerts", "https://mcp.mobile-text-alerts.com/mcp", app="Mobile Text Alerts")
+MobileTextAlertsCredential = Union[MobileTextAlertsAPIKeyCredential, MobileTextAlertsMcpCredential]
+
+
 MobileTextAlertsConfig = Annotated[Union[
     ListSubscribersConfig,
     GetSubscriberConfig,
@@ -254,7 +260,7 @@ MobileTextAlertsConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class MobileTextAlertsFullConfig(NodeConfig[MobileTextAlertsConfig, MobileTextAlertsAPIKeyCredential]):
+class MobileTextAlertsFullConfig(NodeConfig[MobileTextAlertsConfig, MobileTextAlertsCredential]):
     pass
 
 
@@ -297,6 +303,7 @@ def _redact(value, secret):
 
 class MobileTextAlertsNode(WorkflowNode):
     integration_type = "automation-mobile-text-alerts"
+    credential_provider_labels = {"mobile_text_alerts": "Mobile Text Alerts Account"}
     connection_evidence = ConnectionEvidence(operation="list_groups", noun="groups", label_keys=("displayName", "name"))
 
     @classmethod

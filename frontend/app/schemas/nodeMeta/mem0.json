@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Mem0 API Key": "mem0_api_key",
-    "Mem0APIKeyCredential": "mem0_api_key"
+    "Mem0 MCP": "mem0_mcp",
+    "Mem0APIKeyCredential": "mem0_api_key",
+    "Mem0McpCredential": "mem0_mcp"
   },
   "providerLabels": {
-    "mem0": "Mem0 API Key"
+    "mem0": "Mem0 Account"
   },
   "autoSelectCredential": true
 }

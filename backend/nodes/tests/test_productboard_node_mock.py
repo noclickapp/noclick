@@ -103,7 +103,10 @@ def test_catalog_schema_and_registration_contract():
     credentials = schema["properties"]["credentials"].get("oneOf") or schema[
         "properties"
     ]["credentials"].get("anyOf")
-    assert len([item for item in credentials if "$ref" in item]) == 2
+    # its OAuth app and API token, then its vendor's MCP server, last (nodes/core/vendor_mcp.py)
+    assert [item["$ref"] for item in credentials if "$ref" in item] == [
+        "#/$defs/ProductboardOAuthCredential", "#/$defs/ProductboardApiTokenCredential", "#/$defs/ProductboardMcpCredential"
+    ]
     frontend = json.loads(
         (Path(__file__).resolve().parents[3] / "frontend/app/schemas/nodes/productboard.json").read_text()
     )

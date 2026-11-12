@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import SSRFError, guarded_async_client
 
@@ -225,6 +226,11 @@ class AddProspectTag(Prospect):
     tag_id: Id
 
 
+# DealMachine's own MCP server: agents get its tools through a person's DealMachine sign-in.
+DealmachineMcpCredential = mcp_credential("dealmachine", "https://mcp.dealmachine.com", app="DealMachine")
+DealMachineCredential = Union[DealMachineAPIKeyCredential, DealmachineMcpCredential]
+
+
 DealMachineConfig = Annotated[Union[
     GetAccount, SearchProperties, GetProperty, ListProspects, AddProspects, GetProspect,
     UpdateProspect, ArchiveProspect, ListProspectNotes, AddProspectNote, ListLists,
@@ -233,7 +239,7 @@ DealMachineConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class DealMachineFullConfig(NodeConfig[DealMachineConfig, DealMachineAPIKeyCredential]):
+class DealMachineFullConfig(NodeConfig[DealMachineConfig, DealMachineCredential]):
     pass
 
 
@@ -270,6 +276,7 @@ ROUTES = {
 
 class DealMachineNode(WorkflowNode):
     integration_type = "automation-dealmachine"
+    credential_provider_labels = {"dealmachine": "DealMachine Account"}
     connection_evidence = ConnectionEvidence(noun="DealMachine workspace", identity_operation="get_account")
 
     @classmethod

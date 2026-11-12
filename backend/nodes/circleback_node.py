@@ -8,6 +8,7 @@ from urllib.parse import quote, urljoin, urlsplit, parse_qs
 import httpx
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -264,10 +265,15 @@ class CirclebackUpdateTagConfig(_Input):
     description: Union[Annotated[str, Field(max_length=1000)], None] = Field(None, description='A description of the tag.')
 
 
+# Circleback's own MCP server: agents get its tools through a person's Circleback sign-in.
+CirclebackMcpCredential = mcp_credential("circleback", "https://circleback.ai/api/mcp", app="Circleback")
+CirclebackCredential = Union[CirclebackAPIKeyCredential, CirclebackMcpCredential]
+
+
 CirclebackConfig = Annotated[Union[CirclebackDeleteActionItemConfig, CirclebackUpdateActionItemConfig, CirclebackListActionItemsConfig, CirclebackCreateActionItemConfig, CirclebackListCalendarEventsConfig, CirclebackUpdateMeetingForCalendarEventConfig, CirclebackListCompaniesConfig, CirclebackGetCompanyConfig, CirclebackListFoldersConfig, CirclebackGetFolderConfig, CirclebackDeleteMeetingConfig, CirclebackGetMeetingConfig, CirclebackUpdateMeetingConfig, CirclebackShareMeetingConfig, CirclebackGetMeetingTranscriptConfig, CirclebackListMeetingsConfig, CirclebackImportMeetingConfig, CirclebackGetAccountConfig, CirclebackListPeopleConfig, CirclebackGetPersonConfig, CirclebackSearchMeetingsConfig, CirclebackListTagsConfig, CirclebackCreateTagConfig, CirclebackDeleteTagConfig, CirclebackUpdateTagConfig], Field(discriminator="operation")]
 
 
-class CirclebackFullConfig(NodeConfig[CirclebackConfig, CirclebackAPIKeyCredential]):
+class CirclebackFullConfig(NodeConfig[CirclebackConfig, CirclebackCredential]):
     pass
 
 
@@ -340,6 +346,7 @@ def _redact(value, secret):
 
 class CirclebackNode(WorkflowNode):
     integration_type = "automation-circleback"
+    credential_provider_labels = {"circleback": "Circleback Account"}
     connection_evidence = ConnectionEvidence(noun="Circleback account", identity_operation="get_account", label_keys=("email",))
 
     @classmethod

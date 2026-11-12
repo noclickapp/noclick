@@ -12,6 +12,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 import httpx
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -300,10 +301,15 @@ class GetRunTaskHistory(_Run):
     task_id: TaskID
 
 
+# ZenRows's own MCP server: agents get its tools through a person's ZenRows sign-in.
+ZenrowsMcpCredential = mcp_credential("zenrows", "https://mcp.zenrows.com/mcp", app="ZenRows")
+ZenrowsCredential = Union[ZenrowsAPIKeyCredential, ZenrowsMcpCredential]
+
+
 ZenrowsConfig = Annotated[Union[SubmitJob, ListJobs, GetJob, DeleteJob, AddTasks, CloseJob, StopJob, CancelJob, PauseJob, ResumeJob, RerunJob, UpdateJobSchedule, UpdateScheduleState, GetJobWebhook, PutJobWebhook, DeleteJobWebhook, ListJobRuns, GetJobRun, DeleteJobRun, ListLatestRunResults, ListRunResults, GetLatestRunTaskHistory, GetRunTaskHistory], Field(discriminator="operation")]
 
 
-class ZenrowsFullConfig(NodeConfig[ZenrowsConfig, ZenrowsAPIKeyCredential]):
+class ZenrowsFullConfig(NodeConfig[ZenrowsConfig, ZenrowsCredential]):
     pass
 
 
@@ -347,6 +353,7 @@ def _redact(value, secret):
 
 class ZenrowsNode(WorkflowNode):
     integration_type = "automation-zenrows"
+    credential_provider_labels = {"zenrows": "ZenRows Account"}
     connection_evidence = ConnectionEvidence(noun="scraping jobs", operation="list_jobs", label_keys=("name", "external_id", "job_id"))
 
     @classmethod

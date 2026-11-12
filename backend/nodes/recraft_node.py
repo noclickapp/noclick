@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -64,6 +65,11 @@ class UserControls(_Input):
 class TextLayoutItem(_Input):
     text: str
     bbox: list[list[float]] = Field(..., min_length=4, max_length=4)
+
+
+# Recraft's own MCP server: agents get its tools through a person's Recraft sign-in.
+RecraftMcpCredential = mcp_credential("recraft", "https://mcp.recraft.ai/mcp", app="Recraft")
+RecraftCredential = Union[RecraftAPITokenCredential, RecraftMcpCredential]
 
 
 def _image_url(value):
@@ -287,7 +293,7 @@ RecraftConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class RecraftFullConfig(NodeConfig[RecraftConfig, RecraftAPITokenCredential]):
+class RecraftFullConfig(NodeConfig[RecraftConfig, RecraftCredential]):
     pass
 
 
@@ -378,6 +384,7 @@ def _guard_credential(data):
 
 class RecraftNode(WorkflowNode):
     integration_type = "automation-recraft"
+    credential_provider_labels = {"recraft": "Recraft Account"}
     connection_evidence = ConnectionEvidence(
         noun="Recraft account", identity_operation="get_current_user",
         identity_keys=("name", "email", "id"),

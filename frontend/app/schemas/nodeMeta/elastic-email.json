@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Elastic Email API Key": "elastic_email_api_key",
-    "ElasticEmailAPIKeyCredential": "elastic_email_api_key"
+    "Elastic Email MCP": "elastic_email_mcp",
+    "ElasticEmailAPIKeyCredential": "elastic_email_api_key",
+    "ElasticEmailMcpCredential": "elastic_email_mcp"
   },
   "providerLabels": {
-    "elastic_email": "Elastic Email API Key"
+    "elastic_email": "Elastic Email Account"
   },
   "autoSelectCredential": true
 }

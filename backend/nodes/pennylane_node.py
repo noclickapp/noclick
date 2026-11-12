@@ -10,6 +10,7 @@ from typing import Annotated, Literal, Union
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.scopes.pennylane import PENNYLANE_SCOPES
@@ -298,9 +299,14 @@ class PennylaneUpdateSupplierInvoicePaymentStatusConfig(_Input):
     supplier_invoice_id: int = Field(..., description='Supplier invoice identifier')
     payment_status: Literal['paid', 'to_be_paid'] = Field(..., description='Payment status')
 
+# Pennylane's own MCP server: agents get its tools through a person's Pennylane sign-in.
+PennylaneMcpCredential = mcp_credential("pennylane", "https://mcp.pennylane.com/mcp", app="Pennylane")
+PennylaneCredential = Union[PennylaneAPIToken, PennylaneMcpCredential]
+
+
 PennylaneOperation = Annotated[Union[PennylaneGetMeConfig, PennylaneListCustomersConfig, PennylaneGetCustomerConfig, PennylaneListSuppliersConfig, PennylaneGetSupplierConfig, PennylaneListProductsConfig, PennylaneGetProductConfig, PennylaneListCustomerInvoicesConfig, PennylaneGetCustomerInvoiceConfig, PennylaneListSupplierInvoicesConfig, PennylaneGetSupplierInvoiceConfig, PennylaneListTransactionsConfig, PennylaneGetTransactionConfig, PennylaneListBankAccountsConfig, PennylaneCreateCompanyCustomerConfig, PennylaneUpdateCompanyCustomerConfig, PennylaneCreateIndividualCustomerConfig, PennylaneUpdateIndividualCustomerConfig, PennylaneCreateSupplierConfig, PennylaneUpdateSupplierConfig, PennylaneCreateProductConfig, PennylaneUpdateProductConfig, PennylaneCreateCustomerInvoiceConfig, PennylaneMarkCustomerInvoicePaidConfig, PennylaneUpdateSupplierInvoicePaymentStatusConfig], Field(discriminator="operation")]
 
-class PennylaneFullConfig(NodeConfig[PennylaneOperation, PennylaneAPIToken]):
+class PennylaneFullConfig(NodeConfig[PennylaneOperation, PennylaneCredential]):
     pass
 
 # method, fixed path, path parameters, query parameters, JSON body
@@ -320,6 +326,7 @@ def _redact(value, token):
 
 class PennylaneNode(WorkflowNode):
     integration_type = "automation-pennylane"
+    credential_provider_labels = {"pennylane": "Pennylane Account"}
     scope_registry = PENNYLANE_SCOPES
     connection_evidence = ConnectionEvidence(noun="Pennylane company", identity_operation="get_me")
 

@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -223,6 +224,11 @@ class GetBudgetSummary(UserInput):
         return self
 
 
+# PocketSmith's own MCP server: agents get its tools through a person's PocketSmith sign-in.
+PocketsmithMcpCredential = mcp_credential("pocketsmith", "https://mcp.pocketsmith.com/mcp", app="PocketSmith")
+PocketSmithCredential = Union[PocketSmithDeveloperKeyCredential, PocketsmithMcpCredential]
+
+
 PocketSmithOperation = Annotated[Union[GetMe, GetUser, ListAccounts, GetAccount,
     ListTransactionAccounts, GetTransactionAccount, UpdateTransactionAccount,
     ListTransactions, ListTransactionAccountTransactions, GetTransaction,
@@ -231,7 +237,7 @@ PocketSmithOperation = Annotated[Union[GetMe, GetUser, ListAccounts, GetAccount,
     ListSavedSearches, GetBudgetSummary], Field(discriminator="operation")]
 
 
-class PocketSmithConfig(NodeConfig[PocketSmithOperation, PocketSmithDeveloperKeyCredential]):
+class PocketSmithConfig(NodeConfig[PocketSmithOperation, PocketSmithCredential]):
     pass
 
 
@@ -289,6 +295,7 @@ def _next_page(response, page):
 
 class PocketSmithNode(WorkflowNode):
     integration_type = "automation-pocketsmith"
+    credential_provider_labels = {"pocketsmith": "PocketSmith Account"}
     connection_evidence = ConnectionEvidence(noun="PocketSmith account", identity_operation="get_me", identity_keys=("name", "login", "email", "id"))
 
     @classmethod

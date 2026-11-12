@@ -25,7 +25,9 @@
   "credentialTypes": {
     "Kit API Key": "kit_api_key",
     "Kit Account": "kit_oauth",
+    "Kit MCP": "kit_mcp",
     "KitAPIKeyCredential": "kit_api_key",
+    "KitMcpCredential": "kit_mcp",
     "KitOAuthCredential": "kit_oauth"
   },
   "providerLabels": {

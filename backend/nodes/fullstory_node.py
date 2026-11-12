@@ -12,6 +12,7 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -197,12 +198,17 @@ class ListEventImports(JobID, Page, WithSchema):
     operation: Literal["list_event_imports"] = "list_event_imports"
 
 
+# Fullstory's own MCP server: agents get its tools through a person's Fullstory sign-in.
+FullstoryMcpCredential = mcp_credential("fullstory", "https://api.fullstory.com/mcp/fullstory", app="Fullstory")
+FullstoryCredential = Union[FullstoryAPIKeyCredential, FullstoryMcpCredential]
+
+
 FullstoryConfig = Annotated[Union[ListUsers, GetUser, CreateUser, UpdateUser, DeleteUser,
     DeleteUserByUID, ImportUsers, GetUserImport, ListUserImportErrors, ListUserImports,
     CreateEvent, ImportEvents, GetEventImport, ListEventImportErrors, ListEventImports], Field(discriminator="operation")]
 
 
-class FullstoryFullConfig(NodeConfig[FullstoryConfig, FullstoryAPIKeyCredential]):
+class FullstoryFullConfig(NodeConfig[FullstoryConfig, FullstoryCredential]):
     pass
 
 
@@ -228,6 +234,7 @@ ROUTES = {
 
 class FullstoryNode(WorkflowNode):
     integration_type = "automation-fullstory"
+    credential_provider_labels = {"fullstory": "Fullstory Account"}
     connection_evidence = ConnectionEvidence(noun="Fullstory users", operation="list_users")
 
     @classmethod

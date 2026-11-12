@@ -13,6 +13,7 @@ from uuid import UUID
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.scopes.vibe import VIBE_SCOPES
@@ -343,6 +344,11 @@ class VibeGetReportConfig(_Input):
     report_id: UUID = Field(...)
 
 
+# Vibe's own MCP server: agents get its tools through a person's Vibe sign-in.
+VibeMcpCredential = mcp_credential("vibe", "https://api.vibe.co/mcp", app="Vibe")
+VibeCredential = Union[VibeOAuthCredential, VibeMcpCredential]
+
+
 for _model in (VibeTargeting, VibeGeoTargeting, VibeAudienceTargeting, VibeDayparting):
     _model.model_rebuild()
 
@@ -376,7 +382,7 @@ VibeOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class VibeFullConfig(NodeConfig[VibeOperation, VibeOAuthCredential]):
+class VibeFullConfig(NodeConfig[VibeOperation, VibeCredential]):
     pass
 
 
@@ -530,6 +536,7 @@ def _redact(value, secrets):
 
 class VibeNode(WorkflowNode):
     integration_type = "automation-vibe"
+    credential_provider_labels = {"vibe": "Vibe Account"}
     scope_registry = VIBE_SCOPES
     connection_evidence = ConnectionEvidence(noun="Vibe accounts", operation="list_accounts", label_keys=("name", "id"))
 

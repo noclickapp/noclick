@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "DealMachine API Key": "dealmachine_api_key",
-    "DealMachineAPIKeyCredential": "dealmachine_api_key"
+    "DealMachine MCP": "dealmachine_mcp",
+    "DealMachineAPIKeyCredential": "dealmachine_api_key",
+    "DealmachineMcpCredential": "dealmachine_mcp"
   },
   "providerLabels": {
-    "dealmachine": "DealMachine API Key"
+    "dealmachine": "DealMachine Account"
   },
   "autoSelectCredential": true
 }

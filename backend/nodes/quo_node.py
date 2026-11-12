@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, Json
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 QUO_API_BASE = "https://api.quo.com/v1"
@@ -452,6 +453,11 @@ class QuoListUsersConfig(QuoPagination):
     max_results: int = Field(10, ge=1, le=50, title="Page Size")
 
 
+# Quo's own MCP server: agents get its tools through a person's Quo sign-in.
+QuoMcpCredential = mcp_credential("quo", "https://mcp.quo.com/mcp", app="Quo")
+QuoCredential = Union[QuoAPIKeyCredential, QuoMcpCredential]
+
+
 QuoConfig = Annotated[
     Union[
         QuoSendMessageConfig,
@@ -478,7 +484,7 @@ QuoConfig = Annotated[
 ]
 
 
-class QuoNodeConfig(NodeConfig[QuoConfig, QuoAPIKeyCredential]):
+class QuoNodeConfig(NodeConfig[QuoConfig, QuoCredential]):
     pass
 
 

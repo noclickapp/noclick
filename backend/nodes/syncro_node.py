@@ -13,6 +13,7 @@ import httpx
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import SSRFError, guarded_async_client
@@ -254,6 +255,11 @@ class SyncroGetRMMAlert(_Input):
     alert_id: ID = Field(..., title="RMM alert ID")
 
 
+# Syncro's own MCP server: agents get its tools through a person's Syncro sign-in.
+SyncroMcpCredential = mcp_credential("syncro", "https://mcp.services.syncromsp.com/mcp/stream", app="Syncro")
+SyncroCredential = Union[SyncroAPITokenCredential, SyncroMcpCredential]
+
+
 SyncroConfig = Annotated[Union[
     SyncroGetCurrentUser, SyncroListCustomers, SyncroGetCustomer, SyncroCreateCustomer,
     SyncroUpdateCustomer, SyncroListContacts, SyncroGetContact, SyncroCreateContact,
@@ -264,7 +270,7 @@ SyncroConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class SyncroNodeConfig(NodeConfig[SyncroConfig, SyncroAPITokenCredential]):
+class SyncroNodeConfig(NodeConfig[SyncroConfig, SyncroCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -313,6 +319,7 @@ def _record(value):
 
 class SyncroNode(WorkflowNode):
     integration_type = "automation-syncro"
+    credential_provider_labels = {"syncro": "Syncro Account"}
     connection_evidence = ConnectionEvidence(noun="Syncro account", identity_operation="get_current_user",
         identity_keys=("user_name", "user_email", "subdomain"))
 

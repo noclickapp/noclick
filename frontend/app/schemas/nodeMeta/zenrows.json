@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "ZenRows MCP": "zenrows_mcp",
     "Zenrows API Key": "zenrows_api_key",
-    "ZenrowsAPIKeyCredential": "zenrows_api_key"
+    "ZenrowsAPIKeyCredential": "zenrows_api_key",
+    "ZenrowsMcpCredential": "zenrows_mcp"
   },
   "providerLabels": {
-    "zenrows": "Zenrows API Key"
+    "zenrows": "ZenRows Account"
   },
   "autoSelectCredential": true
 }

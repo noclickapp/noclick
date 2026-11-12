@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Rocketlane API Key": "rocketlane_api_key",
-    "RocketlaneAPIKeyCredential": "rocketlane_api_key"
+    "Rocketlane MCP": "rocketlane_mcp",
+    "RocketlaneAPIKeyCredential": "rocketlane_api_key",
+    "RocketlaneMcpCredential": "rocketlane_mcp"
   },
   "providerLabels": {
-    "rocketlane": "Rocketlane API Key"
+    "rocketlane": "Rocketlane Account"
   },
   "autoSelectCredential": true
 }

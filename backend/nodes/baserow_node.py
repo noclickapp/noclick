@@ -16,6 +16,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, Json
 from typing_extensions import TypedDict
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
@@ -42,6 +43,11 @@ class BaserowDatabaseTokenCredential(BaseModel):
             "x-credential-url": "https://baserow.io/user-docs/personal-api-tokens"
         }
     )
+
+
+# Baserow's own MCP server: agents get its tools through a person's Baserow sign-in.
+BaserowMcpCredential = mcp_credential("baserow", "https://api.baserow.io/mcp", app="Baserow")
+BaserowCredential = Union[BaserowDatabaseTokenCredential, BaserowMcpCredential]
 
 
 def _op(value: str, category: str, title: str, keywords: List[str]) -> Any:
@@ -247,7 +253,7 @@ BaserowOperation = Annotated[
 ]
 
 
-class BaserowNodeConfig(NodeConfig[BaserowOperation, BaserowDatabaseTokenCredential]):
+class BaserowNodeConfig(NodeConfig[BaserowOperation, BaserowCredential]):
     pass
 
 
@@ -255,6 +261,8 @@ class BaserowNode(WorkflowNode):
     """Read and write Baserow tables with a scoped database token."""
 
     integration_type = "automation-baserow"
+
+    credential_provider_labels = {"baserow": "Baserow Account"}
 
     edit_examples = [
         "List the rows in my Baserow Customers table where Status is Active",

@@ -14,6 +14,7 @@ from urllib.parse import quote, urlsplit
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
@@ -212,6 +213,11 @@ class BrightdataGetDeliveryStatusConfig(_Input):
     delivery_id: str = Field(..., min_length=1)
 
 
+# Bright Data's own MCP server: agents get its tools through a person's Bright Data sign-in.
+BrightdataMcpCredential = mcp_credential("brightdata", "https://mcp.brightdata.com/mcp", app="Bright Data")
+BrightdataCredential = Union[BrightdataAPIKeyCredential, BrightdataMcpCredential]
+
+
 BrightdataOperation = Annotated[Union[
     BrightdataSearchSerpConfig,
     BrightdataGetSerpResponseConfig,
@@ -236,7 +242,7 @@ BrightdataOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class BrightdataNodeConfig(NodeConfig[BrightdataOperation, BrightdataAPIKeyCredential]):
+class BrightdataNodeConfig(NodeConfig[BrightdataOperation, BrightdataCredential]):
     pass
 
 
@@ -266,6 +272,7 @@ ROUTES = {
 
 class BrightdataNode(WorkflowNode):
     integration_type = "automation-brightdata"
+    credential_provider_labels = {"brightdata": "Bright Data Account"}
     connection_evidence = ConnectionEvidence(operation="list_scrapers", noun="scrapers", label_keys=("name", "id"))
 
     @classmethod

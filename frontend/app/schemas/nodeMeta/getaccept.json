@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "GetAccept Access Token": "getaccept_access_token",
-    "GetAcceptAccessToken": "getaccept_access_token"
+    "GetAccept MCP": "getaccept_mcp",
+    "GetAcceptAccessToken": "getaccept_access_token",
+    "GetacceptMcpCredential": "getaccept_mcp"
   },
   "providerLabels": {
-    "getaccept": "GetAccept Access Token"
+    "getaccept": "GetAccept Account"
   },
   "autoSelectCredential": true
 }

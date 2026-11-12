@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 
@@ -47,6 +48,11 @@ class SanityRobotTokenCredential(BaseModel):
     model_config = ConfigDict(title="Sanity Robot Token", json_schema_extra={
         "x-credential-url": "https://www.sanity.io/manage",
     })
+
+
+# Sanity's own MCP server: agents get its tools through a person's Sanity sign-in.
+SanityMcpCredential = mcp_credential("sanity", "https://mcp.sanity.io", app="Sanity")
+SanityCredential = Union[SanityRobotTokenCredential, SanityMcpCredential]
 
 
 def _field(annotation: Any, default: Any, title: str, **kwargs: Any) -> tuple[Any, Any]:
@@ -122,7 +128,7 @@ _CONFIGS = [
 SanityConfig = Annotated[Union[tuple(_CONFIGS)], Discriminator("operation")]
 
 
-class SanityNodeConfig(NodeConfig[SanityConfig, SanityRobotTokenCredential]):
+class SanityNodeConfig(NodeConfig[SanityConfig, SanityCredential]):
     pass
 
 
@@ -166,6 +172,8 @@ class SanityNode(WorkflowNode):
     """Query, edit, and manage Sanity Content Lake data."""
 
     integration_type = "automation-sanity"
+
+    credential_provider_labels = {"sanity": "Sanity Account"}
 
     edit_examples = [
         'Query published articles with GROQ and return their titles',

@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StrictBool, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -210,6 +211,11 @@ class ListUsers(_Page):
     operation: Literal["list_users"] = "list_users"
 
 
+# Process Street's own MCP server: agents get its tools through a person's Process Street sign-in.
+ProcessStreetMcpCredential = mcp_credential("process_street", "https://mcp.process.st/", app="Process Street")
+ProcessStreetCredential = Union[ProcessStreetAPIKey, ProcessStreetMcpCredential]
+
+
 ProcessStreetOperation = Annotated[Union[
     ListWorkflows, GetWorkflow, ListWorkflowTasks, ListWorkflowRuns,
     CreateWorkflowRun, GetWorkflowRun, UpdateWorkflowRun, DeleteWorkflowRun,
@@ -219,7 +225,7 @@ ProcessStreetOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ProcessStreetConfig(NodeConfig[ProcessStreetOperation, ProcessStreetAPIKey]):
+class ProcessStreetConfig(NodeConfig[ProcessStreetOperation, ProcessStreetCredential]):
     pass
 
 
@@ -297,6 +303,7 @@ def _next_cursor(payload, path, params):
 
 class ProcessStreetNode(WorkflowNode):
     integration_type = "automation-process-street"
+    credential_provider_labels = {"process_street": "Process Street Account"}
     connection_evidence = ConnectionEvidence(noun="workflows", operation="list_workflows")
 
     @classmethod

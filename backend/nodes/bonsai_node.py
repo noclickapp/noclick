@@ -1,10 +1,11 @@
 """Bonsai account records through the provider's public v1 API."""
-from typing import Literal
+from typing import Literal, Union
 from urllib.parse import quote
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.bonsai_operations import BonsaiOperation, ROUTES
@@ -30,12 +31,18 @@ class BonsaiAPIKeyCredential(BaseModel):
         return value
 
 
-class BonsaiFullConfig(NodeConfig[BonsaiOperation, BonsaiAPIKeyCredential]):
+# Bonsai's own MCP server: agents get its tools through a person's Bonsai sign-in.
+BonsaiMcpCredential = mcp_credential("bonsai", "https://mcp.hellobonsai.com/mcp", app="Bonsai")
+BonsaiCredential = Union[BonsaiAPIKeyCredential, BonsaiMcpCredential]
+
+
+class BonsaiFullConfig(NodeConfig[BonsaiOperation, BonsaiCredential]):
     pass
 
 
 class BonsaiNode(WorkflowNode):
     integration_type = "automation-bonsai"
+    credential_provider_labels = {"bonsai": "Bonsai Account"}
     connection_evidence = ConnectionEvidence(noun="companies", operation="list_companies", label_keys=("name", "id"))
 
     @classmethod

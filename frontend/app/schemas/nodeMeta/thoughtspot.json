@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "ThoughtSpot": "thoughtspot_access_token",
-    "ThoughtSpotAccessTokenCredential": "thoughtspot_access_token"
+    "ThoughtSpot MCP": "thoughtspot_mcp",
+    "ThoughtSpotAccessTokenCredential": "thoughtspot_access_token",
+    "ThoughtspotMcpCredential": "thoughtspot_mcp"
   },
   "providerLabels": {
-    "thoughtspot": "ThoughtSpot"
+    "thoughtspot": "ThoughtSpot Account"
   },
   "autoSelectCredential": true
 }

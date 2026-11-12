@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -249,6 +250,10 @@ class BlockNumbers(Input):
     phoneNumbers: list[str] = Field(..., min_length=1, title="Phone numbers to block")
 
 
+# EZ Texting's own MCP server: agents get its tools through a person's EZ Texting sign-in.
+EzTextingMcpCredential = mcp_credential("ez_texting", "https://mcp.eztexting.com/mcp", app="EZ Texting")
+
+
 EZTextingOperation = Annotated[Union[
     ListContacts,
     GetContact,
@@ -277,7 +282,7 @@ EZTextingOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class EZTextingConfig(NodeConfig[EZTextingOperation, EZTextingCredential]):
+class EZTextingConfig(NodeConfig[EZTextingOperation, Union[EZTextingCredential, EzTextingMcpCredential]]):
     pass
 
 
@@ -336,6 +341,7 @@ def _redact(value, credential):
 
 class EZTextingNode(WorkflowNode):
     integration_type = "automation-ez-texting"
+    credential_provider_labels = {"ez_texting": "EZ Texting Account"}
     connection_evidence = ConnectionEvidence(noun="contacts", operation="list_contacts",
         label_keys=("firstName", "lastName", "phoneNumber", "email"))
 

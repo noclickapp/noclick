@@ -11,6 +11,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.oauth_scopes import Enforcement, ScopeRegistry, ScopeRequirement
@@ -231,10 +232,15 @@ class TestAuthentication(_Input):
     operation: Literal["test_authentication"] = "test_authentication"
 
 
+# GetAccept's own MCP server: agents get its tools through a person's GetAccept sign-in.
+GetacceptMcpCredential = mcp_credential("getaccept", "https://mcp.getaccept.com/mcp", app="GetAccept")
+GetAcceptCredential = Union[GetAcceptAccessToken, GetacceptMcpCredential]
+
+
 GetAcceptOperation = Annotated[Union[ListDocuments, GetDocument, GetDocumentByExternalId, CreateDocument, UpdateDocument, SendDocument, SendReminder, CreateComment, ListContacts, CreateContact, DeleteContact, ListTemplates, ListFolders, GetUser, GetDocumentStatus, ListRecipients, ListComments, ListEvents, ListUsers, ListAttachments, TestAuthentication], Field(discriminator="operation")]
 
 
-class GetAcceptConfig(NodeConfig[GetAcceptOperation, GetAcceptAccessToken]):
+class GetAcceptConfig(NodeConfig[GetAcceptOperation, GetAcceptCredential]):
     pass
 
 
@@ -297,6 +303,7 @@ async def request(credential, op):
 
 class GetAcceptNode(WorkflowNode):
     integration_type = "automation-getaccept"
+    credential_provider_labels = {"getaccept": "GetAccept Account"}
     scope_registry = ScopeRegistry(provider="getaccept", enforcement=Enforcement.STRICT,
         requirements={op: ScopeRequirement(scopes=(), credential_types=(FAMILY,)) for op in ROUTES})
     connection_evidence = ConnectionEvidence(noun="GetAccept documents", operation="list_documents",

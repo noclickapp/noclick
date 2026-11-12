@@ -27,8 +27,10 @@
   },
   "credentialTypes": {
     "Todoist API Token": "todoist_api_token",
+    "Todoist MCP": "todoist_mcp",
     "Todoist OAuth": "todoist_oauth",
     "TodoistAPITokenCredential": "todoist_api_token",
+    "TodoistMcpCredential": "todoist_mcp",
     "TodoistOAuthCredential": "todoist_oauth"
   },
   "providerLabels": {

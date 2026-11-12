@@ -16,6 +16,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
@@ -48,6 +49,11 @@ class InsightlyApiKeyCredential(BaseModel):
         "x-credential-url": "https://support.insight.ly/en-US/Knowledge/article/9549/Find_your_API_key_and_url/",
         "x-credential-instructions": "In Insightly, open User Settings and copy the API key and the pod shown in the API URL.",
     })
+
+
+# Insightly's own MCP server: agents get its tools through a person's Insightly sign-in.
+InsightlyMcpCredential = mcp_credential("insightly", "https://mcp.insightly.com/", app="Insightly")
+InsightlyCredential = Union[InsightlyApiKeyCredential, InsightlyMcpCredential]
 
 
 # These are the core CRM and post-sale objects, plus account-owned selectors.
@@ -149,7 +155,7 @@ _register("delete", "note", "/Notes/{record_id}")
 InsightlyConfig = Annotated[Union[tuple(_CONFIG_MODELS)], Discriminator("operation")]
 
 
-class InsightlyNodeConfig(NodeConfig[InsightlyConfig, InsightlyApiKeyCredential]):
+class InsightlyNodeConfig(NodeConfig[InsightlyConfig, InsightlyCredential]):
     pass
 
 
@@ -169,6 +175,8 @@ class InsightlyNode(WorkflowNode):
     """Insightly CRM: contacts, leads, organisations, opportunities and projects."""
 
     integration_type = "automation-insightly"
+
+    credential_provider_labels = {"insightly": "Insightly Account"}
 
     edit_examples = [
         "Create an Insightly contact from a form submission",

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "AgentMail API Key": "agent_mail_api_key",
-    "AgentMailAPIKeyCredential": "agent_mail_api_key"
+    "AgentMail MCP": "agent_mail_mcp",
+    "AgentMailAPIKeyCredential": "agent_mail_api_key",
+    "AgentMailMcpCredential": "agent_mail_mcp"
   },
   "providerLabels": {
-    "agent_mail": "AgentMail API Key"
+    "agent_mail": "AgentMail Account"
   },
   "autoSelectCredential": true
 }

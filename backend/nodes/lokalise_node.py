@@ -11,6 +11,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -226,6 +227,11 @@ class ListTeams(_Page):
     operation: Literal["list_teams"] = "list_teams"
 
 
+# Lokalise's own MCP server: agents get its tools through a person's Lokalise sign-in.
+LokaliseMcpCredential = mcp_credential("lokalise", "https://mcp.lokalise.com/mcp/project-management", app="Lokalise")
+LokaliseCredential = Union[LokaliseAPITokenCredential, LokaliseMcpCredential]
+
+
 LokaliseConfig = Annotated[Union[
     ListProjects, GetProject, CreateProject, UpdateProject,
     ListKeys, CreateKeys, GetKey, UpdateKey, DeleteKey,
@@ -234,7 +240,7 @@ LokaliseConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class LokaliseNodeConfig(NodeConfig[LokaliseConfig, LokaliseAPITokenCredential]):
+class LokaliseNodeConfig(NodeConfig[LokaliseConfig, LokaliseCredential]):
     pass
 
 
@@ -280,6 +286,7 @@ def _check_credential_family(config_data):
 
 class LokaliseNode(WorkflowNode):
     integration_type = "automation-lokalise"
+    credential_provider_labels = {"lokalise": "Lokalise Account"}
     connection_evidence = ConnectionEvidence(noun="projects", operation="list_projects", label_keys=("name", "project_id"))
 
     @classmethod

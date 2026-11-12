@@ -11,6 +11,7 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -223,6 +224,11 @@ class GetConnection(_Input):
     connection_id: ResourceId
 
 
+# WorkOS's own MCP server: agents get its tools through a person's WorkOS sign-in.
+WorkosMcpCredential = mcp_credential("workos", "https://mcp.workos.com/mcp", app="WorkOS")
+WorkOSCredential = Union[WorkOSAPIKeyCredential, WorkosMcpCredential]
+
+
 WorkOSConfig = Annotated[Union[
     ListOrganizations,
     GetOrganization,
@@ -250,7 +256,7 @@ WorkOSConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class WorkOSFullConfig(NodeConfig[WorkOSConfig, WorkOSAPIKeyCredential]):
+class WorkOSFullConfig(NodeConfig[WorkOSConfig, WorkOSCredential]):
     pass
 
 
@@ -281,6 +287,7 @@ ROUTES = {'list_organizations': ('GET', '/organizations', None),
 
 class WorkOSNode(WorkflowNode):
     integration_type = "automation-workos"
+    credential_provider_labels = {"workos": "WorkOS Account"}
     connection_evidence = ConnectionEvidence(
         noun="organizations", operation="list_organizations", label_keys=("name", "id"))
     edit_examples = ["Create a customer organization", "List directory users", "Add a user to an organization"]

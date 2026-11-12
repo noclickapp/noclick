@@ -11,6 +11,7 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -220,13 +221,18 @@ class DeleteWebhook(HookInput):
     operation: Literal["delete_webhook"] = "delete_webhook"
 
 
+# v0's own MCP server: agents get its tools through a person's v0 sign-in.
+V0McpCredential = mcp_credential("v0", "https://v0.app/api/mcp", app="v0")
+V0Credential = Union[V0APIKeyCredential, V0McpCredential]
+
+
 Operation = Annotated[Union[CreateChat, ListChats, GetChat, UpdateChat, DeleteChat,
     ListMessages, SendMessage, GetMessage, StopMessage, GetPreview, GetFiles,
     UpdateFiles, DuplicateChat, DeployChat, GetUsageSummary, ListWebhooks,
     CreateWebhook, GetWebhook, UpdateWebhook, DeleteWebhook], Field(discriminator="operation")]
 
 
-class V0Config(NodeConfig[Operation, V0APIKeyCredential]):
+class V0Config(NodeConfig[Operation, V0Credential]):
     pass
 
 
@@ -261,6 +267,7 @@ BODY_OPERATIONS = {"create_chat", "update_chat", "send_message", "update_files",
 
 class V0Node(WorkflowNode):
     integration_type = "automation-v0"
+    credential_provider_labels = {"v0": "v0 Account"}
     connection_evidence = ConnectionEvidence(operation="list_chats", noun="V0 chats")
 
     @classmethod

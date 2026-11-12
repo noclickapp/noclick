@@ -18,6 +18,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.productboard_operations import PRODUCTBOARD_OPERATIONS
 from nodes.scopes.productboard import PRODUCTBOARD_SCOPES
@@ -69,8 +70,10 @@ class ProductboardApiTokenCredential(BaseModel):
     )
 
 
+# Productboard's own MCP server: agents get its tools through a person's Productboard sign-in.
+ProductboardMcpCredential = mcp_credential("productboard", "https://mcp.productboard.com", app="Productboard")
 ProductboardCredential = Union[
-    ProductboardOAuthCredential, ProductboardApiTokenCredential
+    ProductboardOAuthCredential, ProductboardApiTokenCredential, ProductboardMcpCredential
 ]
 
 

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "AssemblyAI API Key": "assemblyai_api_key",
-    "AssemblyAIAPIKeyCredential": "assemblyai_api_key"
+    "AssemblyAI MCP": "assemblyai_mcp",
+    "AssemblyAIAPIKeyCredential": "assemblyai_api_key",
+    "AssemblyaiMcpCredential": "assemblyai_mcp"
   },
   "providerLabels": {
-    "assemblyai": "AssemblyAI API Key"
+    "assemblyai": "AssemblyAI Account"
   },
   "autoSelectCredential": true
 }

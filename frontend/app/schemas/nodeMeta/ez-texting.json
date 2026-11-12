@@ -6,7 +6,9 @@
   },
   "credentialTypes": {
     "EZ Texting Account": "ez_texting_basic",
-    "EZTextingCredential": "ez_texting_basic"
+    "EZ Texting MCP": "ez_texting_mcp",
+    "EZTextingCredential": "ez_texting_basic",
+    "EzTextingMcpCredential": "ez_texting_mcp"
   },
   "providerLabels": {
     "ez_texting": "EZ Texting Account"

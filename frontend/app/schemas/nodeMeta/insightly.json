@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Insightly API Key": "insightly_api_key",
-    "InsightlyApiKeyCredential": "insightly_api_key"
+    "Insightly MCP": "insightly_mcp",
+    "InsightlyApiKeyCredential": "insightly_api_key",
+    "InsightlyMcpCredential": "insightly_mcp"
   },
   "providerLabels": {
-    "insightly": "Insightly API Key"
+    "insightly": "Insightly Account"
   },
   "autoSelectCredential": true
 }

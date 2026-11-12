@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Zeeg API Token": "zeeg_api_token",
-    "ZeegAPITokenCredential": "zeeg_api_token"
+    "Zeeg MCP": "zeeg_mcp",
+    "ZeegAPITokenCredential": "zeeg_api_token",
+    "ZeegMcpCredential": "zeeg_mcp"
   },
   "providerLabels": {
-    "zeeg": "Zeeg API Token"
+    "zeeg": "Zeeg Account"
   },
   "autoSelectCredential": true
 }

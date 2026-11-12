@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "FullEnrich MCP": "fullenrich_mcp",
     "Fullenrich API Key": "fullenrich_api_key",
-    "FullenrichAPIKeyCredential": "fullenrich_api_key"
+    "FullenrichAPIKeyCredential": "fullenrich_api_key",
+    "FullenrichMcpCredential": "fullenrich_mcp"
   },
   "providerLabels": {
-    "fullenrich": "Fullenrich API Key"
+    "fullenrich": "FullEnrich Account"
   },
   "autoSelectCredential": true
 }

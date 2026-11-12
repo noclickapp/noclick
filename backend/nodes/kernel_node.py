@@ -12,6 +12,7 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -201,6 +202,11 @@ class GetInvocation(_Input):
     invocation_id: str = Field(..., min_length=1)
 
 
+# Kernel's own MCP server: agents get its tools through a person's Kernel sign-in.
+KernelMcpCredential = mcp_credential("kernel", "https://mcp.onkernel.com/mcp", app="Kernel")
+KernelCredential = Union[KernelApiKeyCredential, KernelMcpCredential]
+
+
 KernelOperation = Annotated[Union[
     GetAuthContext, ListBrowsers, GetBrowser, CreateBrowser, UpdateBrowser, DeleteBrowser,
     ExecutePlaywright, ListProfiles, GetProfile, CreateProfile, RenameProfile, DeleteProfile,
@@ -208,7 +214,7 @@ KernelOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class KernelNodeConfig(NodeConfig[KernelOperation, KernelApiKeyCredential]):
+class KernelNodeConfig(NodeConfig[KernelOperation, KernelCredential]):
     model_config = ConfigDict(title="Kernel Node Configuration")
 
 
@@ -238,6 +244,7 @@ ROUTES = {
 
 class KernelNode(WorkflowNode):
     integration_type = "automation-kernel"
+    credential_provider_labels = {"kernel": "Kernel Account"}
     connection_evidence = ConnectionEvidence(
         noun="browser profiles", operation="list_profiles", identity_operation="get_auth_context",
         identity_keys=("name",),

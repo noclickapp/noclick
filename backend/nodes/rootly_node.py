@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -68,6 +69,11 @@ class RootlyListIncidents(_Page):
 class RootlyGetIncident(_Input):
     operation: Literal["get_incident"] = "get_incident"
     incident_id: str
+
+
+# Rootly's own MCP server: agents get its tools through a person's Rootly sign-in.
+RootlyMcpCredential = mcp_credential("rootly", "https://mcp.rootly.com/mcp", app="Rootly")
+RootlyCredential = Union[RootlyAPIKeyCredential, RootlyMcpCredential]
 
 
 IncidentStatus = Literal["in_triage", "started", "detected", "acknowledged", "mitigated", "resolved", "closed", "cancelled", "scheduled", "in_progress", "completed"]
@@ -216,7 +222,7 @@ RootlyOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class RootlyNodeConfig(NodeConfig[RootlyOperation, RootlyAPIKeyCredential]):
+class RootlyNodeConfig(NodeConfig[RootlyOperation, RootlyCredential]):
     model_config = ConfigDict(title="Rootly Node Configuration", hide_input_in_errors=True)
 
 
@@ -275,6 +281,7 @@ def _config_view(data):
 
 class RootlyNode(WorkflowNode):
     integration_type = "automation-rootly"
+    credential_provider_labels = {"rootly": "Rootly Account"}
     connection_evidence = ConnectionEvidence(noun="incidents", operation="list_incidents", label_keys=("title", "id"))
 
     @classmethod

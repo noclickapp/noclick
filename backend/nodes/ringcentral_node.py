@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, Discriminator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.scopes.ringcentral import RINGCENTRAL_SCOPES
 
@@ -200,6 +201,11 @@ class RingCentralListFaxCoverPagesConfig(BaseModel):
     per_page: int = Field(100, ge=1, le=1000, title="Page Size")
 
 
+# RingCentral's own MCP server: agents get its tools through a person's RingCentral sign-in.
+RingcentralMcpCredential = mcp_credential("ringcentral", "https://mcp.labs.ringcentral.com/ringex/v1.1.0/team-chat", app="RingCentral")
+RingCentralCredential = Union[RingCentralAccessTokenCredential, RingcentralMcpCredential]
+
+
 RingCentralConfig = Annotated[Union[
     RingCentralGetExtensionConfig,
     RingCentralListPhoneNumbersConfig,
@@ -224,7 +230,7 @@ RingCentralConfig = Annotated[Union[
 ], Discriminator("operation")]
 
 
-class RingCentralNodeConfig(NodeConfig[RingCentralConfig, RingCentralAccessTokenCredential]):
+class RingCentralNodeConfig(NodeConfig[RingCentralConfig, RingCentralCredential]):
     pass
 
 

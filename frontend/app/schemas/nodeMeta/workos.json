@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "WorkOS MCP": "workos_mcp",
     "WorkOSAPIKeyCredential": "workos_api_key",
-    "Workos API Key": "workos_api_key"
+    "Workos API Key": "workos_api_key",
+    "WorkosMcpCredential": "workos_mcp"
   },
   "providerLabels": {
-    "workos": "Workos API Key"
+    "workos": "WorkOS Account"
   },
   "autoSelectCredential": true
 }

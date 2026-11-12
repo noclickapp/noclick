@@ -10,6 +10,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import SSRFError, guarded_async_client
@@ -257,10 +258,15 @@ class DeleteTimeEntry(_Input):
     time_entry_id: Identifier
 
 
+# Rocketlane's own MCP server: agents get its tools through a person's Rocketlane sign-in.
+RocketlaneMcpCredential = mcp_credential("rocketlane", "https://rocket-mcp.rl-platforms.rocketlane.com/mcp", app="Rocketlane")
+RocketlaneCredential = Union[RocketlaneAPIKeyCredential, RocketlaneMcpCredential]
+
+
 RocketlaneConfig = Annotated[Union[ListProjects, GetProject, CreateProject, UpdateProject, ListTasks, GetTask, CreateTask, UpdateTask, ListCompanies, GetCompany, CreateCompany, UpdateCompany, ListPhases, GetPhase, CreatePhase, UpdatePhase, ListUsers, GetUser, ListTimeEntries, GetTimeEntry, CreateTimeEntry, DeleteTimeEntry], Field(discriminator="operation")]
 
 
-class RocketlaneFullConfig(NodeConfig[RocketlaneConfig, RocketlaneAPIKeyCredential]):
+class RocketlaneFullConfig(NodeConfig[RocketlaneConfig, RocketlaneCredential]):
     pass
 
 
@@ -308,6 +314,7 @@ def _redact(value, secret):
 
 class RocketlaneNode(WorkflowNode):
     integration_type = "automation-rocketlane"
+    credential_provider_labels = {"rocketlane": "Rocketlane Account"}
     connection_evidence = ConnectionEvidence(field="project_id", operation="list_projects", noun="projects")
 
     @classmethod

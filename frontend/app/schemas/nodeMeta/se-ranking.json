@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "SE Ranking API Token": "se_ranking_api_token",
-    "SERankingApiTokenCredential": "se_ranking_api_token"
+    "SE Ranking MCP": "se_ranking_mcp",
+    "SERankingApiTokenCredential": "se_ranking_api_token",
+    "SeRankingMcpCredential": "se_ranking_mcp"
   },
   "providerLabels": {
-    "se_ranking": "SE Ranking API Token"
+    "se_ranking": "SE Ranking Account"
   },
   "autoSelectCredential": true
 }

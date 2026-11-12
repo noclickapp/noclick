@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Pennylane API Token": "pennylane_api_token",
-    "PennylaneAPIToken": "pennylane_api_token"
+    "Pennylane MCP": "pennylane_mcp",
+    "PennylaneAPIToken": "pennylane_api_token",
+    "PennylaneMcpCredential": "pennylane_mcp"
   },
   "providerLabels": {
-    "pennylane": "Pennylane API Token"
+    "pennylane": "Pennylane Account"
   },
   "autoSelectCredential": true
 }

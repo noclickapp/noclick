@@ -13,6 +13,7 @@ from typing import Annotated, Literal, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 from utils.ssrf import guarded_async_client
@@ -53,6 +54,11 @@ class BitriseAPITokenCredential(BaseModel):
         if not isinstance(value, str) or not value or re.search(r"[\x00-\x20\x7f]|://", value):
             raise ValueError("Supply the existing raw API token without whitespace, a prefix or URL.")
         return value
+
+
+# Bitrise's own MCP server: agents get its tools through a person's Bitrise sign-in.
+BitriseMcpCredential = mcp_credential("bitrise", "https://mcp.bitrise.io/", app="Bitrise")
+BitriseCredential = Union[BitriseAPITokenCredential, BitriseMcpCredential]
 
 
 def _credential(data):
@@ -122,7 +128,7 @@ BitriseConfig = Annotated[Union[BitriseCheckConfig, BitriseAppsConfig, BitriseGe
     BitriseBranchesConfig, BitriseBuildsConfig, BitriseGetBuildConfig], Field(discriminator="operation")]
 
 
-class BitriseNodeConfig(NodeConfig[BitriseConfig, BitriseAPITokenCredential]):
+class BitriseNodeConfig(NodeConfig[BitriseConfig, BitriseCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 

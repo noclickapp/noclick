@@ -13,6 +13,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -293,15 +294,21 @@ class ListQuestionsConfig(_Input):
     page_size: int | None = Field(None, ge=1, le=250)
     page: int | None = Field(None, ge=1)
 
+# Simplesat's own MCP server: agents get its tools through a person's Simplesat sign-in.
+SimplesatMcpCredential = mcp_credential("simplesat", "https://api.simplesat.io/mcp/", app="Simplesat")
+SimplesatCredential = Union[SimplesatAPIKey, SimplesatMcpCredential]
+
+
 SimplesatConfig = Annotated[Union[GetAnswerConfig, UpdateAnswerConfig, SearchAnswersConfig, UpdateCustomerConfig, GetCustomerConfig, CreateOrUpdateCustomerConfig, ListCustomersConfig, GetTeamMemberConfig, CreateOrUpdateTeamMemberConfig, GetResponseConfig, SearchResponsesConfig, CreateOrUpdateResponseConfig, UpdateResponseConfig, ListSurveysConfig, SendSurveyByEmailConfig, ListQuestionsConfig], Field(discriminator="operation")]
 
-class SimplesatFullConfig(NodeConfig[SimplesatConfig, SimplesatAPIKey]):
+class SimplesatFullConfig(NodeConfig[SimplesatConfig, SimplesatCredential]):
     pass
 
 ROUTES = {'get_answer': ('GET', '/api/v1/answers/{answer_id}', [], ['answer_id'], []), 'update_answer': ('PUT', '/api/v1/answers/{answer_id}', [], ['answer_id'], ['choice', 'choices', 'comment', 'follow_up_answer', 'follow_up_answer_choice', 'follow_up_answer_choices']), 'search_answers': ('POST', '/api/v1/answers/search', ['page', 'page_size'], [], ['start_date', 'end_date', 'filters']), 'update_customer': ('PUT', '/api/v1/customers/{customer_id}', [], ['customer_id'], ['external_id', 'name', 'company', 'language', 'tags', 'custom_attributes']), 'get_customer': ('GET', '/api/v1/customers/{customer_id}', [], ['customer_id'], []), 'create_or_update_customer': ('POST', '/api/v1/customers', [], [], ['external_id', 'email', 'name', 'company', 'language', 'tags', 'custom_attributes']), 'list_customers': ('GET', '/api/v1/customers', ['page', 'page_size', 'created_after', 'created_before', 'modified_after', 'modified_before', 'subscribed'], [], []), 'get_team_member': ('GET', '/api/v1/team-members/{team_member_id}', [], ['team_member_id'], []), 'create_or_update_team_member': ('POST', '/api/v1/team-members', [], [], ['external_id', 'name', 'email', 'custom_attributes']), 'get_response': ('GET', '/api/v1/responses/{response_id}', [], ['response_id'], []), 'search_responses': ('POST', '/api/v1/responses/search', ['page_size', 'page'], [], ['start_date', 'created_start_date', 'end_date', 'created_end_date', 'modified_start_date', 'modified_end_date', 'filters']), 'create_or_update_response': ('POST', '/api/v1/responses/create-or-update', [], [], ['survey_id', 'language', 'created', 'tags', 'answers', 'team_members', 'ticket', 'customer']), 'update_response': ('PUT', '/api/v1/responses/{response_id}/update', [], ['response_id'], ['survey_id', 'language', 'created', 'tags', 'answers', 'team_members', 'ticket', 'customer']), 'list_surveys': ('GET', '/api/v1/surveys', ['name', 'page_size', 'page'], [], []), 'send_survey_by_email': ('POST', '/api/v1/surveys/{survey_token}/email', [], ['survey_token'], ['customer', 'team_member', 'ticket']), 'list_questions': ('GET', '/api/v1/questions', ['survey_id', 'metric', 'page_size', 'page'], [], [])}
 
 class SimplesatNode(WorkflowNode):
     integration_type = "automation-simplesat"
+    credential_provider_labels = {"simplesat": "Simplesat Account"}
     connection_evidence = ConnectionEvidence(noun="customers", operation="list_customers")
 
     @classmethod

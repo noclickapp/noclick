@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Lokalise API Token": "lokalise_api_token",
-    "LokaliseAPITokenCredential": "lokalise_api_token"
+    "Lokalise MCP": "lokalise_mcp",
+    "LokaliseAPITokenCredential": "lokalise_api_token",
+    "LokaliseMcpCredential": "lokalise_mcp"
   },
   "providerLabels": {
-    "lokalise": "Lokalise API Token"
+    "lokalise": "Lokalise Account"
   },
   "autoSelectCredential": true
 }

@@ -13,6 +13,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -188,6 +189,11 @@ class MailerSendAddUnsubscribeRecipientsConfig(Suppress):
     operation: Literal["add_unsubscribe_recipients"] = Field("add_unsubscribe_recipients", json_schema_extra={"ui:hidden": True})
 
 
+# MailerSend's own MCP server: agents get its tools through a person's MailerSend sign-in.
+MailersendMcpCredential = mcp_credential("mailersend", "https://mcp.mailersend.com/mcp", app="MailerSend")
+MailerSendCredential = Union[MailerSendAPITokenCredential, MailersendMcpCredential]
+
+
 MailerSendConfig = Annotated[Union[
     MailerSendSendEmailConfig,
     MailerSendSendBulkEmailConfig,
@@ -212,7 +218,7 @@ MailerSendConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class MailerSendFullConfig(NodeConfig[MailerSendConfig, MailerSendAPITokenCredential]):
+class MailerSendFullConfig(NodeConfig[MailerSendConfig, MailerSendCredential]):
     pass
 
 
@@ -221,6 +227,7 @@ ROUTES = {'send_email': ('POST', '/email'), 'send_bulk_email': ('POST', '/bulk-e
 
 class MailerSendNode(WorkflowNode):
     integration_type = "automation-mailersend"
+    credential_provider_labels = {"mailersend": "MailerSend Account"}
     connection_evidence = ConnectionEvidence(operation="list_domains", noun="sending domains", label_keys=("name", "id"))
 
     @classmethod

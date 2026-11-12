@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Chili Piper API Key": "chili_piper_api_key",
-    "ChiliPiperAPIKey": "chili_piper_api_key"
+    "Chili Piper MCP": "chili_piper_mcp",
+    "ChiliPiperAPIKey": "chili_piper_api_key",
+    "ChiliPiperMcpCredential": "chili_piper_mcp"
   },
   "providerLabels": {
-    "chili_piper": "Chili Piper API Key"
+    "chili_piper": "Chili Piper Account"
   },
   "autoSelectCredential": true
 }

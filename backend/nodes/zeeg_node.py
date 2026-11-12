@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -306,6 +307,11 @@ class UpdateSchedulingPage(SchedulingPageInput):
         return self
 
 
+# Zeeg's own MCP server: agents get its tools through a person's Zeeg sign-in.
+ZeegMcpCredential = mcp_credential("zeeg", "https://api.zeeg.me/mcp", app="Zeeg")
+ZeegCredential = Union[ZeegAPITokenCredential, ZeegMcpCredential]
+
+
 ZeegConfig = Annotated[Union[CheckConnection, ListEvents, GetEvent, CancelEvent, RescheduleEvent,
     CancelInvitee, MarkNoShow, UndoNoShow, ListSchedulingPages, GetSchedulingPage,
     DuplicateSchedulingPage, ToggleSchedulingPage, GetQuestions, GetAvailability, CreateBooking,
@@ -313,7 +319,7 @@ ZeegConfig = Annotated[Union[CheckConnection, ListEvents, GetEvent, CancelEvent,
     CreateSchedulingPage, UpdateSchedulingPage], Field(discriminator="operation")]
 
 
-class ZeegFullConfig(NodeConfig[ZeegConfig, ZeegAPITokenCredential]):
+class ZeegFullConfig(NodeConfig[ZeegConfig, ZeegCredential]):
     pass
 
 
@@ -348,6 +354,7 @@ ROUTES = {
 
 class ZeegNode(WorkflowNode):
     integration_type = "automation-zeeg"
+    credential_provider_labels = {"zeeg": "Zeeg Account"}
     connection_evidence = ConnectionEvidence(noun="Zeeg account", identity_operation="check_connection")
 
     @classmethod

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "UptimeRobot API Key": "uptimerobot_api_key",
-    "UptimeRobotApiKeyCredential": "uptimerobot_api_key"
+    "UptimeRobot MCP": "uptimerobot_mcp",
+    "UptimeRobotApiKeyCredential": "uptimerobot_api_key",
+    "UptimerobotMcpCredential": "uptimerobot_mcp"
   },
   "providerLabels": {
-    "uptimerobot": "UptimeRobot API Key"
+    "uptimerobot": "UptimeRobot Account"
   },
   "autoSelectCredential": true
 }

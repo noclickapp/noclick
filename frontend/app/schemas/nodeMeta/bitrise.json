@@ -5,7 +5,9 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
-    "BitriseAPITokenCredential": "bitrise_api_token"
+    "Bitrise MCP": "bitrise_mcp",
+    "BitriseAPITokenCredential": "bitrise_api_token",
+    "BitriseMcpCredential": "bitrise_mcp"
   },
   "providerLabels": {
     "bitrise": "Bitrise Account"

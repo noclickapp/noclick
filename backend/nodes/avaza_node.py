@@ -15,6 +15,7 @@ from typing import Annotated, Any, Dict, Literal, Optional, TypedDict, Union
 from urllib.parse import quote, quote_plus
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, ValidationResult, WorkflowNode, runtime_config_view
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
@@ -70,6 +71,11 @@ class AvazaAccessTokenCredential(BaseModel):
         "x-credential-instructions": "Supply an existing Personal Access Token or issued OAuth2 access token. Both use Authorization: Bearer on fixed api.avaza.com. Required read scopes depend on the operations: read_account, read_contacts, read_projects and read_timesheets. PATs run under their creating user's roles and selected scopes. Protected /api/Account returns the actual AccountID; it does not identify the user or prove every permission/plan. No token creation/exchange/refresh, password, environment fallback or JWT identity decoding.",
     })
     _native_token = field_validator("access_token")(_token)
+
+
+# Avaza's own MCP server: agents get its tools through a person's Avaza sign-in.
+AvazaMcpCredential = mcp_credential("avaza", "https://mcp.avaza.com/mcp", app="Avaza")
+AvazaCredential = Union[AvazaAccessTokenCredential, AvazaMcpCredential]
 
 
 def _op(name, label, category):
@@ -187,7 +193,7 @@ class AvazaTimesheetConfig(AvazaProjectScope):
 AvazaConfig = Annotated[Union[AvazaCheckConfig, AvazaAccountConfig, AvazaCompaniesConfig, AvazaCompanyConfig, AvazaProjectsConfig, AvazaProjectConfig, AvazaTeamConfig, AvazaTasksConfig, AvazaTaskConfig, AvazaTimesheetsConfig, AvazaTimesheetConfig], Field(discriminator="operation")]
 
 
-class AvazaNodeConfig(NodeConfig[AvazaConfig, AvazaAccessTokenCredential]):
+class AvazaNodeConfig(NodeConfig[AvazaConfig, AvazaCredential]):
     pass
 
 
@@ -566,6 +572,7 @@ async def _page(data, context, cfg, *, picker_search=""):
 
 class AvazaNode(WorkflowNode):
     integration_type = "automation-avaza"
+    credential_provider_labels = {"avaza": "Avaza Account"}
     workflow_credential_refresh=True
     connection_evidence=ConnectionEvidence(operation="test_connection", noun="Avaza account", proves="account", label_keys=("AccountID",))
     edit_examples=["List project metadata under a selected account and company", "Read selected project task status without descriptions or assignees", "List time entry metadata over one bounded date interval"]

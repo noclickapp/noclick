@@ -4,6 +4,7 @@ from typing import Annotated, Literal, Union
 from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -58,6 +59,11 @@ class CompanyFilters(Input):
     technologies: list[FilterValue] | None = None
     year_founded_start: int | None = None
     year_founded_end: int | None = None
+
+# Wiza's own MCP server: agents get its tools through a person's Wiza sign-in.
+WizaMcpCredential = mcp_credential("wiza", "https://mcp.wiza.co/mcp", app="Wiza")
+WizaCredential = Union[WizaAPIKeyCredential, WizaMcpCredential]
+
 
 def _json(value, model):
     try:
@@ -195,7 +201,7 @@ Operation = Annotated[Union[GetCredits, GetList, GetListContacts, GetIndividualR
     ContinueProspectSearch, SearchCompanies, SearchLocations, SearchTechnologies,
     EnrichCompany], Field(discriminator="operation")]
 
-class WizaConfig(NodeConfig[Operation, WizaAPIKeyCredential]):
+class WizaConfig(NodeConfig[Operation, WizaCredential]):
     pass
 
 ROUTES = {
@@ -252,6 +258,7 @@ def request_parts(op):
 
 class WizaNode(WorkflowNode):
     integration_type = "automation-wiza"
+    credential_provider_labels = {"wiza": "Wiza Account"}
     connection_evidence = ConnectionEvidence(operation="get_credits", noun="Wiza credit balance")
     @classmethod
     def get_config_model(cls):

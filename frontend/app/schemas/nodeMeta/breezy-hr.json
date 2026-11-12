@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Breezy HR API Token": "breezy_hr_api_token",
-    "BreezyHRTokenCredential": "breezy_hr_api_token"
+    "Breezy HR MCP": "breezy_hr_mcp",
+    "BreezyHRTokenCredential": "breezy_hr_api_token",
+    "BreezyHrMcpCredential": "breezy_hr_mcp"
   },
   "providerLabels": {
-    "breezy_hr": "Breezy HR API Token"
+    "breezy_hr": "Breezy HR Account"
   },
   "autoSelectCredential": true
 }

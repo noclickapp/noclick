@@ -9,6 +9,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client, SSRFError
@@ -232,6 +233,11 @@ class SearchRedditConfig(_Input):
     after: str | None = Field(None, description='Used to paginate to next page', min_length=1)
 
 
+# Scrapecreators's own MCP server: agents get its tools through a person's Scrapecreators sign-in.
+ScrapecreatorsMcpCredential = mcp_credential("scrapecreators", "https://api.scrapecreators.com/mcp", app="Scrapecreators")
+ScrapecreatorsCredential = Union[ScrapecreatorsAPIKeyCredential, ScrapecreatorsMcpCredential]
+
+
 ScrapecreatorsConfig = Annotated[Union[
     GetCreditBalanceConfig,
     GetRequestHistoryConfig,
@@ -260,7 +266,7 @@ ScrapecreatorsConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ScrapecreatorsFullConfig(NodeConfig[ScrapecreatorsConfig, ScrapecreatorsAPIKeyCredential]):
+class ScrapecreatorsFullConfig(NodeConfig[ScrapecreatorsConfig, ScrapecreatorsCredential]):
     pass
 
 
@@ -292,6 +298,7 @@ ROUTES = {'get_credit_balance': '/v1/account/credit-balance',
 
 class ScrapecreatorsNode(WorkflowNode):
     integration_type = "automation-scrapecreators"
+    credential_provider_labels = {"scrapecreators": "Scrapecreators Account"}
     connection_evidence = ConnectionEvidence(
         noun="API credit balance", operation="get_credit_balance",
     )

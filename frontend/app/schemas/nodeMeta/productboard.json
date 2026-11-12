@@ -39,8 +39,10 @@
   },
   "credentialTypes": {
     "Productboard API Token": "productboard_api_token",
+    "Productboard MCP": "productboard_mcp",
     "Productboard OAuth": "productboard_oauth",
     "ProductboardApiTokenCredential": "productboard_api_token",
+    "ProductboardMcpCredential": "productboard_mcp",
     "ProductboardOAuthCredential": "productboard_oauth"
   },
   "providerLabels": {

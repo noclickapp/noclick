@@ -16,6 +16,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.scopes.kit import KIT_SCOPES
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
@@ -180,7 +181,9 @@ class KitAPIKeyCredential(BaseModel):
     model_config = ConfigDict(json_schema_extra={"title": "Kit API Key", "x-credential-url": "https://app.kit.com/account_settings/developer_settings"})
 
 
-KitCredential = Union[KitOAuthCredential, KitAPIKeyCredential]
+# Kit's own MCP server: agents get its tools through a person's Kit sign-in.
+KitMcpCredential = mcp_credential("kit", "https://app.kit.com/mcp", app="Kit")
+KitCredential = Union[KitOAuthCredential, KitAPIKeyCredential, KitMcpCredential]
 
 
 def _make_config(name: str, operation: Operation) -> type[BaseModel]:

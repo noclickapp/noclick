@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 
@@ -200,6 +201,11 @@ class TavilyGetOrgUsageConfig(BaseModel):
     depth: Optional[str] = Field(None, title="Depth", json_schema_extra=_choice(["basic", "advanced", "fast", "ultra-fast", "mini", "pro", "auto"]))
 
 
+# Tavily's own MCP server: agents get its tools through a person's Tavily sign-in.
+TavilyMcpCredential = mcp_credential("tavily", "https://mcp.tavily.com/mcp", app="Tavily")
+TavilyCredential = Union[TavilyApiKeyCredential, TavilyMcpCredential]
+
+
 TavilyConfig = Annotated[
     Union[
         TavilySearchConfig,
@@ -217,7 +223,7 @@ TavilyConfig = Annotated[
 ]
 
 
-class TavilyNodeConfig(NodeConfig[TavilyConfig, TavilyApiKeyCredential]):
+class TavilyNodeConfig(NodeConfig[TavilyConfig, TavilyCredential]):
     pass
 
 

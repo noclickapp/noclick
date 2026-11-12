@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Paperform API Token": "paperform_api_token",
-    "PaperformApiTokenCredential": "paperform_api_token"
+    "Paperform MCP": "paperform_mcp",
+    "PaperformApiTokenCredential": "paperform_api_token",
+    "PaperformMcpCredential": "paperform_mcp"
   },
   "providerLabels": {
-    "paperform": "Paperform API Token"
+    "paperform": "Paperform Account"
   },
   "autoSelectCredential": true
 }

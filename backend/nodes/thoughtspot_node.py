@@ -17,6 +17,7 @@ from typing import Annotated, Any, Literal, Union
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator, model_serializer, model_validator
 from nodes.core.base import WorkflowNode, NodeConfig, runtime_config_view
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import normalize_https_origin, guarded_async_client
 
@@ -393,6 +394,11 @@ class ThoughtSpotAccessTokenCredential(BaseModel):
         return {**handler(self), "credential_type": FAMILY}
 
 
+# ThoughtSpot's own MCP server: agents get its tools through a person's ThoughtSpot sign-in.
+ThoughtspotMcpCredential = mcp_credential("thoughtspot", "https://agent.thoughtspot.app/mcp?api-version=latest", app="ThoughtSpot")
+ThoughtSpotCredential = Union[ThoughtSpotAccessTokenCredential, ThoughtspotMcpCredential]
+
+
 def shape_credential(data):
     if not isinstance(data, dict) or data.get("credential_type", FAMILY) != FAMILY:
         raise ValueError("Connect a ThoughtSpot access-token credential.")
@@ -572,7 +578,7 @@ ThoughtSpotConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ThoughtSpotFullConfig(NodeConfig[ThoughtSpotConfig, ThoughtSpotAccessTokenCredential]):
+class ThoughtSpotFullConfig(NodeConfig[ThoughtSpotConfig, ThoughtSpotCredential]):
     pass
 
 
@@ -592,6 +598,7 @@ async def _profile(credential, token):
 
 class ThoughtSpotNode(WorkflowNode):
     integration_type = "automation-thoughtspot"
+    credential_provider_labels = {"thoughtspot": "ThoughtSpot Account"}
     agent_tool_provider = True
     connection_evidence = ConnectionEvidence(identity_operation="get_current_user", noun="ThoughtSpot user")
 

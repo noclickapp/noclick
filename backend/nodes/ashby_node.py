@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 
@@ -27,6 +28,11 @@ class AshbyApiKeyCredential(BaseModel):
 
     class Config:
         json_schema_extra = {"x-credential-url": "https://app.ashbyhq.com/admin/api/credentials"}
+
+
+# Ashby's own MCP server: agents get its tools through a person's Ashby sign-in.
+AshbyMcpCredential = mcp_credential("ashby", "https://mcp.ashbyhq.com/mcp/v1", app="Ashby")
+AshbyCredential = Union[AshbyApiKeyCredential, AshbyMcpCredential]
 
 
 # Field types: s = text, i = integer, b = checkbox, j = JSON object/array.
@@ -105,7 +111,7 @@ CONFIG_MODELS = {
 AshbyConfig = Annotated[Union[tuple(CONFIG_MODELS.values())], Discriminator("operation")]
 
 
-class AshbyNodeConfig(NodeConfig[AshbyConfig, AshbyApiKeyCredential]):
+class AshbyNodeConfig(NodeConfig[AshbyConfig, AshbyCredential]):
     model_config = ConfigDict(json_schema_extra={"x-agent-tool-provider": True})
 
 

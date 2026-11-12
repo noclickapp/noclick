@@ -14,6 +14,7 @@ from uuid import UUID
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -441,6 +442,11 @@ class FourthwallListTiersConfig(_Input):
     )
 
 
+# Fourthwall's own MCP server: agents get its tools through a person's Fourthwall sign-in.
+FourthwallMcpCredential = mcp_credential("fourthwall", "https://mcp.fourthwall.com", app="Fourthwall")
+FourthwallCredential = Union[FourthwallAPICredential, FourthwallMcpCredential]
+
+
 FourthwallConfig = Annotated[
     Union[
         FourthwallGetCurrentShopConfig,
@@ -473,7 +479,7 @@ FourthwallConfig = Annotated[
 ]
 
 
-class FourthwallFullConfig(NodeConfig[FourthwallConfig, FourthwallAPICredential]):
+class FourthwallFullConfig(NodeConfig[FourthwallConfig, FourthwallCredential]):
     pass
 
 
@@ -692,6 +698,7 @@ ROUTES = {
 
 class FourthwallNode(WorkflowNode):
     integration_type = "automation-fourthwall"
+    credential_provider_labels = {"fourthwall": "Fourthwall Account"}
     connection_evidence = ConnectionEvidence(
         noun="shop", identity_operation="get_current_shop"
     )

@@ -37,6 +37,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator, model_validato
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.cron_trigger_node import (
     ScheduleConfig,
@@ -86,7 +87,9 @@ class ArcadsApiKeyCredential(BaseModel):
     )
 
 
-ArcadsCredential = ArcadsApiKeyCredential
+# Arcads's own MCP server: agents get its tools through a person's Arcads sign-in.
+ArcadsMcpCredential = mcp_credential("arcads", "https://mcp.arcads.ai/", app="Arcads")
+ArcadsCredential = Union[ArcadsApiKeyCredential, ArcadsMcpCredential]
 
 
 # ============================================================================
@@ -1101,6 +1104,8 @@ class ArcadsNode(WorkflowNode):
     """Arcads AI UGC video / AI-actor ad generation automation node."""
 
     integration_type = "automation-arcads"
+
+    credential_provider_labels = {"arcads": "Arcads Account"}
     connection_evidence = ConnectionEvidence(operation="list_products", noun="products")
 
     edit_examples = [

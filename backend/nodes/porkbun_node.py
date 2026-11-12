@@ -16,6 +16,7 @@ from opentelemetry.instrumentation.utils import suppress_http_instrumentation
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StrictBool, StrictInt, StrictStr, model_serializer
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from repositories.credentials import credential_access_predicate
 from utils.credentials import (resolve_credential_with_owner_fallback, get_workflow_owner_id,
@@ -74,6 +75,10 @@ class PorkbunCredential(BaseModel):
         return {**handler(self), "credential_type": TYPE}
 
 
+# Porkbun's own MCP server: agents get its tools through a person's Porkbun sign-in.
+PorkbunMcpCredential = mcp_credential("porkbun", "https://mcp.porkbun.com/mcp", app="Porkbun")
+
+
 def credential(raw):
     if not isinstance(raw, dict) or raw.get("credential_type") != TYPE:
         raise ValueError("Porkbun requires its original supplied API key pair")
@@ -129,7 +134,7 @@ OPERATIONS = (ListDomains, GetDomain, ListDNSRecords, GetDNSRecord)
 PorkbunConfig = Annotated[Union[ListDomains, GetDomain, ListDNSRecords, GetDNSRecord], Field(discriminator="operation")]
 
 
-class PorkbunNodeConfig(NodeConfig[PorkbunConfig, PorkbunCredential]):
+class PorkbunNodeConfig(NodeConfig[PorkbunConfig, Union[PorkbunCredential, PorkbunMcpCredential]]):
     model_config = ConfigDict(extra="ignore", hide_input_in_errors=True)
     node_type: Literal["automation-porkbun"] = "automation-porkbun"
 

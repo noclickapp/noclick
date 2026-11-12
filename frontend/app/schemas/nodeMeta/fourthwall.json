@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Fourthwall API User": "fourthwall_api",
-    "FourthwallAPICredential": "fourthwall_api"
+    "Fourthwall MCP": "fourthwall_mcp",
+    "FourthwallAPICredential": "fourthwall_api",
+    "FourthwallMcpCredential": "fourthwall_mcp"
   },
   "providerLabels": {
-    "fourthwall": "Fourthwall API User"
+    "fourthwall": "Fourthwall Account"
   },
   "autoSelectCredential": true
 }

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Attentive API Key": "attentive_api_key",
-    "AttentiveAPIKeyCredential": "attentive_api_key"
+    "Attentive MCP": "attentive_mcp",
+    "AttentiveAPIKeyCredential": "attentive_api_key",
+    "AttentiveMcpCredential": "attentive_mcp"
   },
   "providerLabels": {
-    "attentive": "Attentive API Key"
+    "attentive": "Attentive Account"
   },
   "autoSelectCredential": true
 }

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Kernel API Key": "kernel_api_key",
-    "KernelApiKeyCredential": "kernel_api_key"
+    "Kernel MCP": "kernel_mcp",
+    "KernelApiKeyCredential": "kernel_api_key",
+    "KernelMcpCredential": "kernel_mcp"
   },
   "providerLabels": {
-    "kernel": "Kernel API Key"
+    "kernel": "Kernel Account"
   },
   "autoSelectCredential": true
 }

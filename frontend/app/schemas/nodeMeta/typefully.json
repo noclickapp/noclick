@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Typefully API Key": "typefully_api_key",
-    "TypefullyAPIKeyCredential": "typefully_api_key"
+    "Typefully MCP": "typefully_mcp",
+    "TypefullyAPIKeyCredential": "typefully_api_key",
+    "TypefullyMcpCredential": "typefully_mcp"
   },
   "providerLabels": {
-    "typefully": "Typefully API Key"
+    "typefully": "Typefully Account"
   },
   "autoSelectCredential": true
 }

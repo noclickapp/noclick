@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Everhour API Key": "everhour_api_key",
-    "EverhourAPIKeyCredential": "everhour_api_key"
+    "Everhour MCP": "everhour_mcp",
+    "EverhourAPIKeyCredential": "everhour_api_key",
+    "EverhourMcpCredential": "everhour_mcp"
   },
   "providerLabels": {
-    "everhour": "Everhour API Key"
+    "everhour": "Everhour Account"
   },
   "autoSelectCredential": true
 }

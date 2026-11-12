@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -198,6 +199,11 @@ class BatchDeleteMemories(_Input):
         return value
 
 
+# Mem0's own MCP server: agents get its tools through a person's Mem0 sign-in.
+Mem0McpCredential = mcp_credential("mem0", "https://mcp.mem0.ai/mcp", app="Mem0")
+Mem0Credential = Union[Mem0APIKeyCredential, Mem0McpCredential]
+
+
 def _batch(value, *, update):
     rows = _json(value, list)
     if not 1 <= len(rows) <= 1000:
@@ -294,7 +300,7 @@ Mem0Operation = Annotated[Union[AddMemories, ListMemories, SearchMemories, GetMe
     GetEvent, GetStatistics, CheckConnection, SubmitFeedback], Field(discriminator="operation")]
 
 
-class Mem0Config(NodeConfig[Mem0Operation, Mem0APIKeyCredential]):
+class Mem0Config(NodeConfig[Mem0Operation, Mem0Credential]):
     pass
 
 
@@ -325,6 +331,7 @@ ROUTES = {
 
 class Mem0Node(WorkflowNode):
     integration_type = "automation-mem0"
+    credential_provider_labels = {"mem0": "Mem0 Account"}
     connection_evidence = ConnectionEvidence(noun="Mem0 entities", operation="list_entities",
         identity_operation="check_connection", identity_keys=("user_email", "project_id", "org_id"))
 

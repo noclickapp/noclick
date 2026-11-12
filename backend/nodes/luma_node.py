@@ -31,6 +31,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator, AfterValidator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 
@@ -106,7 +107,9 @@ class LumaApiKeyCredential(BaseModel):
     )
 
 
-LumaCredential = LumaApiKeyCredential
+# Luma's own MCP server: agents get its tools through a person's Luma sign-in.
+LumaMcpCredential = mcp_credential("luma", "https://mcp.luma.com", app="Luma")
+LumaCredential = Union[LumaApiKeyCredential, LumaMcpCredential]
 
 
 # ============================================================================
@@ -1276,6 +1279,8 @@ class LumaNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """Luma (lu.ma) event-management automation node."""
 
     integration_type = "automation-luma"
+
+    credential_provider_labels = {"luma": "Luma Account"}
     connection_evidence = ConnectionEvidence(
         identity_operation="get_self", noun="account", identity_keys=("name", "email"),
     )

@@ -5,7 +5,9 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
-    "TavilyApiKeyCredential": "tavily_api_key"
+    "Tavily MCP": "tavily_mcp",
+    "TavilyApiKeyCredential": "tavily_api_key",
+    "TavilyMcpCredential": "tavily_mcp"
   },
   "providerLabels": {
     "tavily": "Tavily Account"

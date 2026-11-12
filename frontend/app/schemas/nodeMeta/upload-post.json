@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Upload Post API Key": "upload_post_api_key",
-    "UploadPostAPIKeyCredential": "upload_post_api_key"
+    "Upload Post MCP": "upload_post_mcp",
+    "UploadPostAPIKeyCredential": "upload_post_api_key",
+    "UploadPostMcpCredential": "upload_post_mcp"
   },
   "providerLabels": {
-    "upload_post": "Upload Post API Key"
+    "upload_post": "Upload Post Account"
   },
   "autoSelectCredential": true
 }

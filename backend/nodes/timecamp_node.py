@@ -8,6 +8,7 @@ from typing import Annotated, Literal, Union
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -38,6 +39,11 @@ class TimecampAPITokenCredential(BaseModel):
 
 class _Input(BaseModel):
     model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
+
+
+# TimeCamp's own MCP server: agents get its tools through a person's TimeCamp sign-in.
+TimecampMcpCredential = mcp_credential("timecamp", "https://mcp.timecamp.com/mcp", app="TimeCamp")
+TimecampCredential = Union[TimecampAPITokenCredential, TimecampMcpCredential]
 
 
 PositiveID = Annotated[int, Field(ge=1)]
@@ -218,7 +224,7 @@ TimecampConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class TimecampFullConfig(NodeConfig[TimecampConfig, TimecampAPITokenCredential]):
+class TimecampFullConfig(NodeConfig[TimecampConfig, TimecampCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -260,6 +266,7 @@ def _redact(value, token):
 
 class TimecampNode(WorkflowNode):
     integration_type = "automation-timecamp"
+    credential_provider_labels = {"timecamp": "TimeCamp Account"}
     connection_evidence = ConnectionEvidence(noun="TimeCamp account", identity_operation="get_me")
 
     @classmethod

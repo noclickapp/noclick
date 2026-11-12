@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Paddle API Key": "paddle_api_key",
-    "PaddleApiKeyCredential": "paddle_api_key"
+    "Paddle MCP": "paddle_mcp",
+    "PaddleApiKeyCredential": "paddle_api_key",
+    "PaddleMcpCredential": "paddle_mcp"
   },
   "providerLabels": {
-    "paddle": "Paddle API Key"
+    "paddle": "Paddle Account"
   },
   "autoSelectCredential": true
 }

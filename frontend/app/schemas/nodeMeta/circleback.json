@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Circleback API Key": "circleback_api_key",
-    "CirclebackAPIKeyCredential": "circleback_api_key"
+    "Circleback MCP": "circleback_mcp",
+    "CirclebackAPIKeyCredential": "circleback_api_key",
+    "CirclebackMcpCredential": "circleback_mcp"
   },
   "providerLabels": {
-    "circleback": "Circleback API Key"
+    "circleback": "Circleback Account"
   },
   "autoSelectCredential": true
 }

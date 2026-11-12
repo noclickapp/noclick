@@ -10,6 +10,7 @@ from typing import Annotated, Literal, Union
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -96,6 +97,11 @@ class _LoggedTimeFields(_Input):
     notes: str | None = Field(None, description='notes')
     private: bool = Field(None, description='private')
     minutes: int = Field(None, description='minutes')
+
+
+# Streamtime's own MCP server: agents get its tools through a person's Streamtime sign-in.
+StreamtimeMcpCredential = mcp_credential("streamtime", "https://mcp.streamtime.net/", app="Streamtime")
+StreamtimeCredential = Union[StreamtimeTokenCredential, StreamtimeMcpCredential]
 
 
 SearchView = Literal['jobs', 'job_milestones', 'job_phases', 'job_items', 'job_item_quote_line_items', 'job_item_invoice_line_items', 'job_item_users', 'job_item_roles', 'job_item_sub_items', 'time', 'expenses', 'purchase_order_line_items', 'logged_expense_quote_line_items', 'logged_expense_invoice_line_items', 'quotes', 'quote_line_items', 'quote_line_item_invoice_line_items', 'invoices', 'invoice_line_items', 'job_groups', 'job_group_periods', 'companies', 'contacts', 'users']
@@ -279,7 +285,7 @@ StreamtimeOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class StreamtimeFullConfig(NodeConfig[StreamtimeOperation, StreamtimeTokenCredential]):
+class StreamtimeFullConfig(NodeConfig[StreamtimeOperation, StreamtimeCredential]):
     pass
 
 
@@ -314,6 +320,7 @@ ROUTES = {
 
 class StreamtimeNode(WorkflowNode):
     integration_type = "automation-streamtime"
+    credential_provider_labels = {"streamtime": "Streamtime Account"}
     connection_evidence = ConnectionEvidence(
         noun="Streamtime users", operation="list_users", identity_operation="get_organisation",
         label_keys=("name", "firstName", "email", "id"),

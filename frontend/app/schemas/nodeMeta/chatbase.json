@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Chatbase API Key": "chatbase_api_key",
-    "ChatbaseAPIKeyCredential": "chatbase_api_key"
+    "Chatbase MCP": "chatbase_mcp",
+    "ChatbaseAPIKeyCredential": "chatbase_api_key",
+    "ChatbaseMcpCredential": "chatbase_mcp"
   },
   "providerLabels": {
-    "chatbase": "Chatbase API Key"
+    "chatbase": "Chatbase Account"
   },
   "autoSelectCredential": true
 }

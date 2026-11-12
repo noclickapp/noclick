@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Supadata API Key": "supadata_api_key",
-    "SupadataAPIKeyCredential": "supadata_api_key"
+    "Supadata MCP": "supadata_mcp",
+    "SupadataAPIKeyCredential": "supadata_api_key",
+    "SupadataMcpCredential": "supadata_mcp"
   },
   "providerLabels": {
-    "supadata": "Supadata API Key"
+    "supadata": "Supadata Account"
   },
   "autoSelectCredential": true
 }

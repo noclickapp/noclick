@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -241,6 +242,11 @@ class DeleteWebhook(_Input):
     webhook_id: str = Field(..., title="Webhook ID", min_length=1, max_length=512)
 
 
+# Paperform's own MCP server: agents get its tools through a person's Paperform sign-in.
+PaperformMcpCredential = mcp_credential("paperform", "https://api.paperform.app/mcp", app="Paperform")
+PaperformCredential = Union[PaperformApiTokenCredential, PaperformMcpCredential]
+
+
 Operation = Annotated[Union[ListForms, GetForm, UpdateForm, ListFields, GetField,
     ListSubmissions, GetSubmission, DeleteSubmission, ListPartialSubmissions, GetPartialSubmission,
     ListProducts, GetProduct, CreateProduct, UpdateProduct, DeleteProduct, UpdateProductQuantity,
@@ -248,7 +254,7 @@ Operation = Annotated[Union[ListForms, GetForm, UpdateForm, ListFields, GetField
     ListWebhooks, CreateWebhook, DeleteWebhook], Field(discriminator="operation")]
 
 
-class PaperformNodeConfig(NodeConfig[Operation, PaperformApiTokenCredential]):
+class PaperformNodeConfig(NodeConfig[Operation, PaperformCredential]):
     pass
 
 
@@ -296,6 +302,7 @@ def _redact(value, token):
 
 class PaperformNode(WorkflowNode):
     integration_type = "automation-paperform"
+    credential_provider_labels = {"paperform": "Paperform Account"}
     connection_evidence = ConnectionEvidence(noun="forms", operation="list_forms", label_keys=("title", "slug", "id"))
 
     @classmethod

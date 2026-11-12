@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Textmagic API Key": "textmagic_api_key",
-    "TextmagicAPIKeyCredential": "textmagic_api_key"
+    "Textmagic MCP": "textmagic_mcp",
+    "TextmagicAPIKeyCredential": "textmagic_api_key",
+    "TextmagicMcpCredential": "textmagic_mcp"
   },
   "providerLabels": {
-    "textmagic": "Textmagic API Key"
+    "textmagic": "Textmagic Account"
   },
   "autoSelectCredential": true
 }

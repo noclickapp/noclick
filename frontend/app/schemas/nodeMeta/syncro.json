@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Syncro API Token": "syncro_api_token",
-    "SyncroAPITokenCredential": "syncro_api_token"
+    "Syncro MCP": "syncro_mcp",
+    "SyncroAPITokenCredential": "syncro_api_token",
+    "SyncroMcpCredential": "syncro_mcp"
   },
   "providerLabels": {
-    "syncro": "Syncro API Token"
+    "syncro": "Syncro Account"
   },
   "autoSelectCredential": true
 }

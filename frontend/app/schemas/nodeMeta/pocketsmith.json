@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "PocketSmith Developer Key": "pocketsmith_developer_key",
-    "PocketSmithDeveloperKeyCredential": "pocketsmith_developer_key"
+    "PocketSmith MCP": "pocketsmith_mcp",
+    "PocketSmithDeveloperKeyCredential": "pocketsmith_developer_key",
+    "PocketsmithMcpCredential": "pocketsmith_mcp"
   },
   "providerLabels": {
-    "pocketsmith": "PocketSmith Developer Key"
+    "pocketsmith": "PocketSmith Account"
   },
   "autoSelectCredential": true
 }

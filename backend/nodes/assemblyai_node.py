@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 
@@ -26,6 +27,11 @@ class AssemblyAIAPIKeyCredential(BaseModel):
         "x-credential-url": "https://www.assemblyai.com/dashboard/api-keys",
         "x-credential-instructions": "Create a project API key in the AssemblyAI dashboard and paste it here.",
     })
+
+
+# AssemblyAI's own MCP server: agents get its tools through a person's AssemblyAI sign-in.
+AssemblyaiMcpCredential = mcp_credential("assemblyai", "https://mcp.assemblyai.com/mcp", app="AssemblyAI")
+AssemblyAICredential = Union[AssemblyAIAPIKeyCredential, AssemblyaiMcpCredential]
 
 
 def operation_field(name: str, category: str, label: str):
@@ -170,7 +176,7 @@ AssemblyAIConfig = Annotated[Union[
 ], Discriminator("operation")]
 
 
-class AssemblyAINodeConfig(NodeConfig[AssemblyAIConfig, AssemblyAIAPIKeyCredential]):
+class AssemblyAINodeConfig(NodeConfig[AssemblyAIConfig, AssemblyAICredential]):
     pass
 
 
@@ -178,6 +184,8 @@ class AssemblyAINode(WorkflowNode):
     """Pre-recorded transcription, upload, retrieval, search and deletion."""
 
     integration_type = "automation-assemblyai"
+
+    credential_provider_labels = {"assemblyai": "AssemblyAI Account"}
 
     edit_examples = [
         "Transcribe this interview and identify each speaker",

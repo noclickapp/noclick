@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -295,6 +296,11 @@ class UploadPostRetryPostConfig(_Input):
     job_id: str | None = Field(None, description='The scheduled job ID. Alternative to request_id.')
 
 
+# Upload Post's own MCP server: agents get its tools through a person's Upload Post sign-in.
+UploadPostMcpCredential = mcp_credential("upload_post", "https://mcp.upload-post.com/mcp", app="Upload Post")
+UploadPostCredential = Union[UploadPostAPIKeyCredential, UploadPostMcpCredential]
+
+
 UploadPostConfig = Annotated[Union[
     UploadPostUploadVideoConfig,
     UploadPostUploadTextConfig,
@@ -324,7 +330,7 @@ UploadPostConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class UploadPostFullConfig(NodeConfig[UploadPostConfig, UploadPostAPIKeyCredential]):
+class UploadPostFullConfig(NodeConfig[UploadPostConfig, UploadPostCredential]):
     pass
 
 
@@ -513,6 +519,7 @@ OPERATIONS = {'upload_video': {'method': 'POST',
 
 class UploadPostNode(WorkflowNode):
     integration_type = "automation-upload-post"
+    credential_provider_labels = {"upload_post": "Upload Post Account"}
     connection_evidence = ConnectionEvidence(noun="Upload Post account", identity_operation="get_current_user")
 
     @classmethod

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "MailerSend API Token": "mailersend_api_token",
-    "MailerSendAPITokenCredential": "mailersend_api_token"
+    "MailerSend MCP": "mailersend_mcp",
+    "MailerSendAPITokenCredential": "mailersend_api_token",
+    "MailersendMcpCredential": "mailersend_mcp"
   },
   "providerLabels": {
-    "mailersend": "MailerSend API Token"
+    "mailersend": "MailerSend Account"
   },
   "autoSelectCredential": true
 }

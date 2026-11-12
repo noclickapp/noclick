@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Mobile Text Alerts API Key": "mobile_text_alerts_api_key",
-    "MobileTextAlertsAPIKeyCredential": "mobile_text_alerts_api_key"
+    "Mobile Text Alerts MCP": "mobile_text_alerts_mcp",
+    "MobileTextAlertsAPIKeyCredential": "mobile_text_alerts_api_key",
+    "MobileTextAlertsMcpCredential": "mobile_text_alerts_mcp"
   },
   "providerLabels": {
-    "mobile_text_alerts": "Mobile Text Alerts API Key"
+    "mobile_text_alerts": "Mobile Text Alerts Account"
   },
   "autoSelectCredential": true
 }

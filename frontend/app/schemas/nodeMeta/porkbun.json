@@ -5,7 +5,9 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
-    "PorkbunCredential": "porkbun_api_key"
+    "Porkbun MCP": "porkbun_mcp",
+    "PorkbunCredential": "porkbun_api_key",
+    "PorkbunMcpCredential": "porkbun_mcp"
   },
   "providerLabels": {
     "porkbun": "Porkbun Account"

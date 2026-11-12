@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -49,6 +50,11 @@ class VerifyKey(Input):
 class GetCredits(Input):
     """Read the current spendable credit balance."""
     operation: Literal["get_credits"] = "get_credits"
+
+
+# FullEnrich's own MCP server: agents get its tools through a person's FullEnrich sign-in.
+FullenrichMcpCredential = mcp_credential("fullenrich", "https://mcp.fullenrich.com/mcp", app="FullEnrich")
+FullenrichCredential = Union[FullenrichAPIKeyCredential, FullenrichMcpCredential]
 
 
 EnrichField = Literal["contact.work_emails", "contact.personal_emails", "contact.phones"]
@@ -241,7 +247,7 @@ FullenrichOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class FullenrichConfig(NodeConfig[FullenrichOperation, FullenrichAPIKeyCredential]):
+class FullenrichConfig(NodeConfig[FullenrichOperation, FullenrichCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -266,6 +272,7 @@ OPERATIONS = {
 
 class FullenrichNode(WorkflowNode):
     integration_type = "automation-fullenrich"
+    credential_provider_labels = {"fullenrich": "FullEnrich Account"}
     connection_evidence = ConnectionEvidence(
         noun="workspace", identity_operation="verify_api_key", identity_keys=("workspace_id",))
 

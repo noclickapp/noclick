@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Baserow Database Token": "baserow_database_token",
-    "BaserowDatabaseTokenCredential": "baserow_database_token"
+    "Baserow MCP": "baserow_mcp",
+    "BaserowDatabaseTokenCredential": "baserow_database_token",
+    "BaserowMcpCredential": "baserow_mcp"
   },
   "providerLabels": {
-    "baserow": "Baserow Database Token"
+    "baserow": "Baserow Account"
   },
   "autoSelectCredential": true
 }

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Fullstory API Key": "fullstory_api_key",
-    "FullstoryAPIKeyCredential": "fullstory_api_key"
+    "Fullstory MCP": "fullstory_mcp",
+    "FullstoryAPIKeyCredential": "fullstory_api_key",
+    "FullstoryMcpCredential": "fullstory_mcp"
   },
   "providerLabels": {
-    "fullstory": "Fullstory API Key"
+    "fullstory": "Fullstory Account"
   },
   "autoSelectCredential": true
 }

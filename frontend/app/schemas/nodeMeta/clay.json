@@ -5,7 +5,9 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
-    "ClayApiKeyCredential": "clay_api_key"
+    "Clay MCP": "clay_mcp",
+    "ClayApiKeyCredential": "clay_api_key",
+    "ClayMcpCredential": "clay_mcp"
   },
   "providerLabels": {
     "clay": "Clay Account"

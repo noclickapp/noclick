@@ -9,6 +9,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -198,12 +199,17 @@ class SendDraft(DraftOperation, LabelChanges):
     operation: Literal["send_draft"] = Field("send_draft", json_schema_extra={"ui:hidden": True})
 
 
+# AgentMail's own MCP server: agents get its tools through a person's AgentMail sign-in.
+AgentMailMcpCredential = mcp_credential("agent_mail", "https://mcp.agentmail.to/mcp", app="AgentMail")
+AgentMailCredential = Union[AgentMailAPIKeyCredential, AgentMailMcpCredential]
+
+
 AgentMailConfig = Annotated[Union[
     GetIdentity, ListInboxes, CreateInbox, GetInbox, UpdateInbox, DeleteInbox, ListThreads, GetThread, UpdateThread, DeleteThread, ListMessages, GetMessage, UpdateMessage, DeleteMessage, SendMessage, ReplyToMessage, ReplyAllMessage, ForwardMessage, ListDrafts, CreateDraft, GetDraft, UpdateDraft, DeleteDraft, SendDraft
 ], Field(discriminator="operation")]
 
 
-class AgentMailFullConfig(NodeConfig[AgentMailConfig, AgentMailAPIKeyCredential]):
+class AgentMailFullConfig(NodeConfig[AgentMailConfig, AgentMailCredential]):
     pass
 
 
@@ -237,6 +243,7 @@ ROUTES = {
 
 class AgentMailNode(WorkflowNode):
     integration_type = "automation-agent-mail"
+    credential_provider_labels = {"agent_mail": "AgentMail Account"}
     connection_evidence = ConnectionEvidence(
         noun="AgentMail account", identity_operation="get_identity",
         identity_keys=("organization_id", "scope_id"),

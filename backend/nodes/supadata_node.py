@@ -8,6 +8,7 @@ from typing import Annotated, Any, Literal, Union
 from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -195,9 +196,14 @@ class GetAccountConfig(SupadataInput):
     """Retrieve organization details, plan information, and credit usage."""
     operation: Literal["get_account"] = Field("get_account", json_schema_extra={"ui:hidden": True})
 
+# Supadata's own MCP server: agents get its tools through a person's Supadata sign-in.
+SupadataMcpCredential = mcp_credential("supadata", "https://api.supadata.ai/mcp", app="Supadata")
+SupadataCredential = Union[SupadataAPIKeyCredential, SupadataMcpCredential]
+
+
 SupadataConfig = Annotated[Union[GetYoutubeVideoConfig, GetYoutubePlaylistConfig, ListYoutubePlaylistVideosConfig, GetYoutubeChannelConfig, ListYoutubeChannelVideosConfig, GetYoutubeTranscriptConfig, TranslateYoutubeTranscriptConfig, CreateTranscriptBatchConfig, CreateVideoBatchConfig, GetYoutubeBatchConfig, SearchYoutubeConfig, ScrapeWebConfig, MapWebConfig, CreateWebCrawlConfig, GetWebCrawlConfig, GetTranscriptConfig, GetTranscriptJobConfig, GetMetadataConfig, CreateExtractConfig, GetExtractJobConfig, GetAccountConfig], Field(discriminator="operation")]
 
-class SupadataFullConfig(NodeConfig[SupadataConfig, SupadataAPIKeyCredential]):
+class SupadataFullConfig(NodeConfig[SupadataConfig, SupadataCredential]):
     pass
 
 ROUTES = {'get_youtube_video': ('GET', '/youtube/video'), 'get_youtube_playlist': ('GET', '/youtube/playlist'), 'list_youtube_playlist_videos': ('GET', '/youtube/playlist/videos'), 'get_youtube_channel': ('GET', '/youtube/channel'), 'list_youtube_channel_videos': ('GET', '/youtube/channel/videos'), 'get_youtube_transcript': ('GET', '/youtube/transcript'), 'translate_youtube_transcript': ('GET', '/youtube/transcript/translate'), 'create_transcript_batch': ('POST', '/youtube/transcript/batch'), 'create_video_batch': ('POST', '/youtube/video/batch'), 'get_youtube_batch': ('GET', '/youtube/batch/{jobId}'), 'search_youtube': ('GET', '/youtube/search'), 'scrape_web': ('GET', '/web/scrape'), 'map_web': ('GET', '/web/map'), 'create_web_crawl': ('POST', '/web/crawl'), 'get_web_crawl': ('GET', '/web/crawl/{jobId}'), 'get_transcript': ('GET', '/transcript'), 'get_transcript_job': ('GET', '/transcript/{jobId}'), 'get_metadata': ('GET', '/metadata'), 'create_extract': ('POST', '/extract'), 'get_extract_job': ('GET', '/extract/{jobId}'), 'get_account': ('GET', '/me')}
@@ -205,6 +211,7 @@ ROUTES = {'get_youtube_video': ('GET', '/youtube/video'), 'get_youtube_playlist'
 
 class SupadataNode(WorkflowNode):
     integration_type = "automation-supadata"
+    credential_provider_labels = {"supadata": "Supadata Account"}
     connection_evidence = ConnectionEvidence(noun="Supadata account", operation="get_account")
 
     @classmethod

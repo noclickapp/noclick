@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Avaza Access Token": "avaza_access_token",
-    "AvazaAccessTokenCredential": "avaza_access_token"
+    "Avaza MCP": "avaza_mcp",
+    "AvazaAccessTokenCredential": "avaza_access_token",
+    "AvazaMcpCredential": "avaza_mcp"
   },
   "providerLabels": {
-    "avaza": "Avaza Access Token"
+    "avaza": "Avaza Account"
   },
   "autoSelectCredential": true
 }

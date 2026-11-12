@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Databox API Key": "databox_api_key",
-    "DataboxAPIKey": "databox_api_key"
+    "Databox MCP": "databox_mcp",
+    "DataboxAPIKey": "databox_api_key",
+    "DataboxMcpCredential": "databox_mcp"
   },
   "providerLabels": {
-    "databox": "Databox API Key"
+    "databox": "Databox Account"
   },
   "autoSelectCredential": true
 }

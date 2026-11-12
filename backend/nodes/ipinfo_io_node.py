@@ -13,6 +13,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode, runtime_config_view
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -34,6 +35,11 @@ class IpinfoIoTokenCredential(BaseModel):
         if not value.isascii() or any(c.isspace() or ord(c) < 33 or ord(c) == 127 for c in value):
             raise ValueError("Paste the API token without an authorization header")
         return value
+
+
+# IPinfo's own MCP server: agents get its tools through a person's IPinfo sign-in.
+IpinfoIoMcpCredential = mcp_credential("ipinfo_io", "https://mcp.ipinfo.io/", app="IPinfo")
+IpinfoIoCredential = Union[IpinfoIoTokenCredential, IpinfoIoMcpCredential]
 
 
 def ip_value(value):
@@ -199,7 +205,7 @@ IpinfoIoOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class IpinfoIoConfig(NodeConfig[IpinfoIoOperation, IpinfoIoTokenCredential]):
+class IpinfoIoConfig(NodeConfig[IpinfoIoOperation, IpinfoIoCredential]):
     pass
 
 
@@ -218,6 +224,7 @@ def redact(value, token):
 
 class IpinfoIoNode(WorkflowNode):
     integration_type = "automation-ipinfo-io"
+    credential_provider_labels = {"ipinfo_io": "IPinfo Account"}
     connection_evidence = ConnectionEvidence(operation="get_token_info", noun="token limits", proves="reachability")
 
     @classmethod

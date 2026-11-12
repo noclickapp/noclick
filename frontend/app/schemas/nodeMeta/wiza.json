@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Wiza API Key": "wiza_api_key",
-    "WizaAPIKeyCredential": "wiza_api_key"
+    "Wiza MCP": "wiza_mcp",
+    "WizaAPIKeyCredential": "wiza_api_key",
+    "WizaMcpCredential": "wiza_mcp"
   },
   "providerLabels": {
-    "wiza": "Wiza API Key"
+    "wiza": "Wiza Account"
   },
   "autoSelectCredential": true
 }

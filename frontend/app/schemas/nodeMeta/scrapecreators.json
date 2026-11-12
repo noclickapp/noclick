@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Scrapecreators API Key": "scrapecreators_api_key",
-    "ScrapecreatorsAPIKeyCredential": "scrapecreators_api_key"
+    "Scrapecreators MCP": "scrapecreators_mcp",
+    "ScrapecreatorsAPIKeyCredential": "scrapecreators_api_key",
+    "ScrapecreatorsMcpCredential": "scrapecreators_mcp"
   },
   "providerLabels": {
-    "scrapecreators": "Scrapecreators API Key"
+    "scrapecreators": "Scrapecreators Account"
   },
   "autoSelectCredential": true
 }

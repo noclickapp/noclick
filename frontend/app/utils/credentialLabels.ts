@@ -39,6 +39,8 @@ const COMPOUND_BRANDS = [
   'LaunchDarkly', 'GoHighLevel', 'ElevenLabs',
   'ClickFunnels', 'DataForSEO', 'GoCardless', 'JumpCloud', 'OneSignal', 'OpenAlex',
   'OpusClip', 'OwnerRez', 'PartnerStack', 'VirusTotal',
+  'AgentMail', 'AssemblyAI', 'DealMachine', 'FullEnrich', 'GetAccept', 'IPinfo', 'MailerSend',
+  'PocketSmith', 'PropertyRadar', 'RingCentral', 'ThoughtSpot', 'TimeCamp', 'UptimeRobot', 'WorkOS', 'ZenRows',
 ];
 
 // Split forms whose CANONICAL brand differs from the class name entirely —

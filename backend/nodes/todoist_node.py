@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.scopes.todoist import TODOIST_SCOPES
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
@@ -144,7 +145,9 @@ class TodoistAPITokenCredential(BaseModel):
     })
 
 
-TodoistCredential = Union[TodoistOAuthCredential, TodoistAPITokenCredential]
+# Todoist's own MCP server: agents get its tools through a person's Todoist sign-in.
+TodoistMcpCredential = mcp_credential("todoist", "https://ai.todoist.net/mcp", app="Todoist")
+TodoistCredential = Union[TodoistOAuthCredential, TodoistAPITokenCredential, TodoistMcpCredential]
 
 TITLES = {
     "content": "Content", "description": "Description", "name": "Name", "text": "Quick Add Text",

@@ -12,6 +12,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client, SSRFError
@@ -218,6 +219,11 @@ class ListTicketMessages(_Ticket, _Page):
     order: Literal["asc", "desc"] = "asc"
 
 
+# Chatbase's own MCP server: agents get its tools through a person's Chatbase sign-in.
+ChatbaseMcpCredential = mcp_credential("chatbase", "https://mcp.chatbase.co/api/mcp", app="Chatbase")
+ChatbaseCredential = Union[ChatbaseAPIKeyCredential, ChatbaseMcpCredential]
+
+
 Operation = Annotated[Union[ListAgents, CreateAgent, GetAgent, UpdateAgent, DeleteAgent, Chat,
     ListConversations, SearchConversations, GetConversation, UpdateConversation, DeleteConversation,
     ListConversationMessages, ListUserConversations, GetSourcesSummary, ListSources, CreateTextSource,
@@ -225,7 +231,7 @@ Operation = Annotated[Union[ListAgents, CreateAgent, GetAgent, UpdateAgent, Dele
     UpdateTicket, ListTicketMessages], Field(discriminator="operation")]
 
 
-class ChatbaseConfig(NodeConfig[Operation, ChatbaseAPIKeyCredential]):
+class ChatbaseConfig(NodeConfig[Operation, ChatbaseCredential]):
     pass
 
 
@@ -271,6 +277,7 @@ def _redact(value, key):
 
 class ChatbaseNode(WorkflowNode):
     integration_type = "automation-chatbase"
+    credential_provider_labels = {"chatbase": "Chatbase Account"}
     connection_evidence = ConnectionEvidence(field="agent_id", noun="Chatbase agents")
 
     @classmethod

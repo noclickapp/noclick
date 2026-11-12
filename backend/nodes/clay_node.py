@@ -12,6 +12,7 @@ from urllib.parse import quote
 
 import httpx
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from pydantic import BaseModel, ConfigDict, Discriminator, Field
 
@@ -128,6 +129,11 @@ class ClayQueryTablesConfig(BaseModel):
     limit: int = Field(50, ge=1, le=100, title="Page Size")
 
 
+# Clay's own MCP server: agents get its tools through a person's Clay sign-in.
+ClayMcpCredential = mcp_credential("clay", "https://api.clay.com/v3/mcp", app="Clay")
+ClayCredential = Union[ClayApiKeyCredential, ClayMcpCredential]
+
+
 ClayConfig = Annotated[
     Union[
         ClayGetMeConfig,
@@ -142,7 +148,7 @@ ClayConfig = Annotated[
 ]
 
 
-class ClayNodeConfig(NodeConfig[ClayConfig, ClayApiKeyCredential]):
+class ClayNodeConfig(NodeConfig[ClayConfig, ClayCredential]):
     pass
 
 

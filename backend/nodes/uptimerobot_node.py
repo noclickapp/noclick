@@ -17,6 +17,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 
@@ -1886,6 +1887,11 @@ class UptimeRobotApiKeyCredential(BaseModel):
     )
 
 
+# UptimeRobot's own MCP server: agents get its tools through a person's UptimeRobot sign-in.
+UptimerobotMcpCredential = mcp_credential("uptimerobot", "https://mcp.uptimerobot.com/mcp", app="UptimeRobot")
+UptimeRobotCredential = Union[UptimeRobotApiKeyCredential, UptimerobotMcpCredential]
+
+
 def _field_type(kind: str):
     return {"number": float, "integer": int, "boolean": bool}.get(kind, str)
 
@@ -1966,7 +1972,7 @@ _CONFIG_MODELS = [_build_operation_model(name, spec) for name, spec in OPERATION
 UptimeRobotConfig = Annotated[Union[tuple(_CONFIG_MODELS)], Discriminator("operation")]
 
 
-class UptimeRobotNodeConfig(NodeConfig[UptimeRobotConfig, UptimeRobotApiKeyCredential]):
+class UptimeRobotNodeConfig(NodeConfig[UptimeRobotConfig, UptimeRobotCredential]):
     pass
 
 
@@ -2073,6 +2079,8 @@ class UptimeRobotNode(WorkflowNode):
     """UptimeRobot monitor and incident automation."""
 
     integration_type = "automation-uptimerobot"
+
+    credential_provider_labels = {"uptimerobot": "UptimeRobot Account"}
 
     connection_evidence = ConnectionEvidence(
         operation="list_monitors",

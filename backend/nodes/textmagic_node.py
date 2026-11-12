@@ -9,6 +9,7 @@ from typing import Annotated, Literal, Union
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -207,6 +208,11 @@ class DeleteTemplate(_ID):
     operation: Literal["delete_template"] = Field("delete_template", title="Delete Template", json_schema_extra={"ui:hidden": True})
 
 
+# Textmagic's own MCP server: agents get its tools through a person's Textmagic sign-in.
+TextmagicMcpCredential = mcp_credential("textmagic", "https://mcp.textmagic.com", app="Textmagic")
+TextmagicCredential = Union[TextmagicAPIKeyCredential, TextmagicMcpCredential]
+
+
 TextmagicOperation = Annotated[Union[
     GetAccount,
     SendMessage,
@@ -236,7 +242,7 @@ TextmagicOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class TextmagicFullConfig(NodeConfig[TextmagicOperation, TextmagicAPIKeyCredential]):
+class TextmagicFullConfig(NodeConfig[TextmagicOperation, TextmagicCredential]):
     pass
 
 
@@ -277,6 +283,7 @@ WIRE_NAMES = {
 
 class TextmagicNode(WorkflowNode):
     integration_type = "automation-textmagic"
+    credential_provider_labels = {"textmagic": "Textmagic Account"}
     connection_evidence = ConnectionEvidence(noun="Textmagic account", identity_operation="get_account", identity_keys=("username", "email"))
 
     @classmethod

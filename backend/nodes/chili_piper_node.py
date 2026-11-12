@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -104,6 +105,11 @@ class FindUsers(_Page):
 
 class ListTeams(_Page):
     operation: Literal["list_teams"] = Field("list_teams", title="List Teams", json_schema_extra={"ui:hidden": True})
+
+
+# Chili Piper's own MCP server: agents get its tools through a person's Chili Piper sign-in.
+ChiliPiperMcpCredential = mcp_credential("chili_piper", "https://fire.chilipiper.com/api/fire-edge/v1/org/mcp", app="Chili Piper")
+ChiliPiperCredential = Union[ChiliPiperAPIKey, ChiliPiperMcpCredential]
 
 
 def _instant(value):
@@ -226,7 +232,7 @@ ChiliPiperOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ChiliPiperConfig(NodeConfig[ChiliPiperOperation, ChiliPiperAPIKey]):
+class ChiliPiperConfig(NodeConfig[ChiliPiperOperation, ChiliPiperCredential]):
     pass
 
 
@@ -277,6 +283,7 @@ def _redact(value, key):
 
 class ChiliPiperNode(WorkflowNode):
     integration_type = "automation-chili-piper"
+    credential_provider_labels = {"chili_piper": "Chili Piper Account"}
     connection_evidence = ConnectionEvidence(
         noun="workspaces", operation="list_workspaces", identity_operation="get_tenant",
         identity_keys=("subdomain", "tenantId"),

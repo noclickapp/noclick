@@ -20,6 +20,7 @@ from opentelemetry.trace import SpanKind, StatusCode
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, TypeAdapter, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode, runtime_config_view
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import normalize_search
 from utils.outbound_trace_privacy import OutboundTraceProvider
@@ -113,6 +114,11 @@ class SERankingApiTokenCredential(BaseModel):
         if len(set(value)) != len(value):
             raise ValueError("SE Ranking project IDs must be distinct")
         return value
+
+
+# SE Ranking's own MCP server: agents get its tools through a person's SE Ranking sign-in.
+SeRankingMcpCredential = mcp_credential("se_ranking", "https://api.seranking.com/mcp", app="SE Ranking")
+SERankingCredential = Union[SERankingApiTokenCredential, SeRankingMcpCredential]
 
 
 def _credential(raw):
@@ -231,7 +237,7 @@ Operations = Annotated[Union[GetProfile, ListProjects, GetProject, ListSearchEng
     DeleteKeywordGroup, ListCompetitors, ListAudits, GetAuditStatus], Field(discriminator="operation")]
 
 
-class SERankingNodeConfig(NodeConfig[Operations, SERankingApiTokenCredential]):
+class SERankingNodeConfig(NodeConfig[Operations, SERankingCredential]):
     pass
 
 
@@ -499,6 +505,7 @@ class _Client:
 
 class SERankingNode(WorkflowNode):
     integration_type = "automation-se-ranking"
+    credential_provider_labels = {"se_ranking": "SE Ranking Account"}
     connection_evidence = ConnectionEvidence(noun="SE Ranking account", operation="get_profile", identity_operation="get_profile", identity_keys=("email",), proves="account")
 
     @classmethod

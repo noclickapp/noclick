@@ -16,6 +16,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 
@@ -3354,6 +3355,11 @@ class PaddleApiKeyCredential(BaseModel):
     )
 
 
+# Paddle's own MCP server: agents get its tools through a person's Paddle sign-in.
+PaddleMcpCredential = mcp_credential("paddle", "https://mcp.paddle.com/mcp", app="Paddle")
+PaddleCredential = Union[PaddleApiKeyCredential, PaddleMcpCredential]
+
+
 def _field_name(prefix: str, raw: str) -> str:
     return prefix + "_" + re.sub(r"[^a-zA-Z0-9]+", "_", raw).strip("_").lower()
 
@@ -3441,7 +3447,7 @@ PaddleConfig = Annotated[
 ]
 
 
-class PaddleNodeConfig(NodeConfig[PaddleConfig, PaddleApiKeyCredential]):
+class PaddleNodeConfig(NodeConfig[PaddleConfig, PaddleCredential]):
     model_config = ConfigDict(json_schema_extra={"x-agent-tool-provider": True})
 
 
@@ -3466,6 +3472,8 @@ class PaddleNode(WorkflowNode):
     """Run 99 documented Paddle Billing actions with a sandbox or live key."""
 
     integration_type = "automation-paddle"
+
+    credential_provider_labels = {"paddle": "Paddle Account"}
 
     connection_evidence = ConnectionEvidence(
         operation="list_event_types", noun="event types", label_keys=("name", "description")

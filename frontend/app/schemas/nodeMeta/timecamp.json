@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "TimeCamp MCP": "timecamp_mcp",
     "Timecamp API Token": "timecamp_api_token",
-    "TimecampAPITokenCredential": "timecamp_api_token"
+    "TimecampAPITokenCredential": "timecamp_api_token",
+    "TimecampMcpCredential": "timecamp_mcp"
   },
   "providerLabels": {
-    "timecamp": "Timecamp API Token"
+    "timecamp": "TimeCamp Account"
   },
   "autoSelectCredential": true
 }

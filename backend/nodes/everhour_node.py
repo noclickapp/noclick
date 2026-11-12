@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -39,6 +40,11 @@ class EverhourAPIKeyCredential(BaseModel):
 
 class _Input(BaseModel):
     model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
+
+
+# Everhour's own MCP server: agents get its tools through a person's Everhour sign-in.
+EverhourMcpCredential = mcp_credential("everhour", "https://api.everhour.com/mcp", app="Everhour")
+EverhourCredential = Union[EverhourAPIKeyCredential, EverhourMcpCredential]
 
 
 ResourceID = Annotated[str, Field(min_length=1, max_length=200, pattern=r"^[A-Za-z0-9][A-Za-z0-9_:.-]*$")]
@@ -285,7 +291,7 @@ EverhourConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class EverhourFullConfig(NodeConfig[EverhourConfig, EverhourAPIKeyCredential]):
+class EverhourFullConfig(NodeConfig[EverhourConfig, EverhourCredential]):
     pass
 
 
@@ -332,6 +338,7 @@ def _safe_output(value, secret):
 
 class EverhourNode(WorkflowNode):
     integration_type = "automation-everhour"
+    credential_provider_labels = {"everhour": "Everhour Account"}
     connection_evidence = ConnectionEvidence(noun="Everhour account", identity_operation="get_current_user")
 
     @classmethod

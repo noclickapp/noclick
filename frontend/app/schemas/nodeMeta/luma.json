@@ -9,10 +9,12 @@
   },
   "credentialTypes": {
     "Luma API Key": "luma_api_key",
-    "LumaApiKeyCredential": "luma_api_key"
+    "Luma MCP": "luma_mcp",
+    "LumaApiKeyCredential": "luma_api_key",
+    "LumaMcpCredential": "luma_mcp"
   },
   "providerLabels": {
-    "luma": "Luma API Key"
+    "luma": "Luma Account"
   },
   "autoSelectCredential": true
 }

@@ -9,7 +9,9 @@
   },
   "credentialTypes": {
     "Arcads Account": "arcads_api_key",
-    "ArcadsApiKeyCredential": "arcads_api_key"
+    "Arcads MCP": "arcads_mcp",
+    "ArcadsApiKeyCredential": "arcads_api_key",
+    "ArcadsMcpCredential": "arcads_mcp"
   },
   "providerLabels": {
     "arcads": "Arcads Account"

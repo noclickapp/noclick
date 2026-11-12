@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Streamtime API Token": "streamtime_api_token",
+    "Streamtime MCP": "streamtime_mcp",
+    "StreamtimeMcpCredential": "streamtime_mcp",
     "StreamtimeTokenCredential": "streamtime_api_token"
   },
   "providerLabels": {
-    "streamtime": "Streamtime API Token"
+    "streamtime": "Streamtime Account"
   },
   "autoSelectCredential": true
 }
