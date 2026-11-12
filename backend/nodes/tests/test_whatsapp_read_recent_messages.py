@@ -148,7 +148,7 @@ async def test_each_chat_reads_oldest_first_one_line_per_message_with_media_as_a
     assert group["messages"] == [
         f"{_clock(_at(3))} Maria: Chapter five by Friday?",  # whitespace folded; yesterday's message left out
         f"{_clock(_at(2))} You: Yes",
-        f"{_clock(_at(1))} 15550004444: [voice note]",  # no push name: the sender's number
+        f"{_clock(_at(1))} 12025550104: [voice note]",  # no push name: the sender's number
     ]
     assert direct["messages"] == [f"{_clock(_at(2))} Ana: Lunch?", f"{_clock(_at(1.9))} Ana: [image] the menu"]
     assert "more" not in group
