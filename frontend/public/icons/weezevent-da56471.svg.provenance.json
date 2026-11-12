@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/weezevent-da56471.svg",
-  "source": "https://docapi.weezevent.com/images/weezticket-logo-dark.svg (official info.x-logo.url from https://docapi.weezevent.com/weezticket.json)",
-  "license": "Weezevent brand mark used nominatively to identify the service; trademark rights remain with Weezevent.",
-  "sha256": "9895aa20016d34cf2daa534584482342f3705a19d2caa4114fe4a26a0f7b83ab"
+  "source": "https://weezevent.com/en-gb/",
+  "source_page": "https://weezevent.com/en-gb/ (inline <svg class=\"logo-light\"> in the site header, the WE/EZ monogram; the header CSS paints it `.header__logo svg path{fill:#0032fa}` in https://weezevent.com/css/styles-v1792593695.css)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "596ba4e676cc68fd3e2bb96e63f320538268773738959e16071a5c256c25def0",
+  "edits": [
+    "painted the unfilled path #0032fa, the colour the site's own header CSS gives it (recolor #000000=#0032fa)",
+    "clean; removed the page's class/aria-hidden attributes",
+    "cropped the viewBox to the mark, pad 0.02"
+  ],
+  "checked_against": "https://weezevent.com/favicon/apple-touch-icon.png (the same blue #0032FA WE/EZ monogram); api hosts api.weezevent.com / docapi.weezevent.com",
+  "source_sha256": "27455107f31198628aa625bd08b4d2d31fa33da127a5fa854b90a20d6be732de"
 }
