@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/liveagent.svg",
   "source": "https://images.liveagent.com/images/logo.svg",
-  "license": "Proprietary LiveAgent trademark; official publisher asset used to identify the integration.",
-  "sha256": "f0a17ee136459c98d1b9c553ec0070289b2a45f9711ac343e8c6d81d22132204"
+  "source_page": "https://www.liveagent.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "edf6c8ef629b9fcdbf64c3c2f784abd14d2a4073863b3cdd65dbb22b00e2e8dc",
+  "edits": [
+    "kept only the orange @ speech-bubble symbol (element 0), dropped the 'Live' and 'Agent' wordmark paths (elements 1-2; the dark 'Agent' was what vanished on dark)",
+    "cropped the viewBox to the symbol with --pad 0.02",
+    "svgtool clean"
+  ],
+  "checked_against": "LiveAgent's Google Play icon (LiveAgent by Quality Unit, developer site liveagent.com) is this same orange @ bubble on white; the App Store icon is the same bubble reversed in white on an orange tile. Source file is byte-identical to the PR's current file.",
+  "source_sha256": "f0a17ee136459c98d1b9c553ec0070289b2a45f9711ac343e8c6d81d22132204"
 }
