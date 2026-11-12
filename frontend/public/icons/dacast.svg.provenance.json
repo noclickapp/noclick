@@ -1,15 +1,14 @@
 {
-  "actual_canvas_visual_check": false,
-  "bytes": 1957,
-  "discovery_url": "https://docs.dacast.com/docs/getting-started",
-  "height": 80,
-  "mime_type": "image/svg+xml",
-  "modified": false,
-  "purpose": "Exact original official public Dacast documentation icon, without redraw or external images; actual canvas check is pending.",
-  "sha256": "970fe8a57da22e838ee90e68edb0a9b05d3d521ff2f343b4345199ae3a3e1c02",
-  "source_url": "https://files.readme.io/ae1d528-Primary_icon.svg",
-  "width": 76,
   "path": "frontend/public/icons/dacast.svg",
   "source": "https://files.readme.io/ae1d528-Primary_icon.svg",
-  "license": "Dacast trademark; official documentation asset"
+  "source_page": "https://docs.dacast.com/docs/getting-started (Dacast's own readme.io docs site icon)",
+  "source_kind": "company docs",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "a653984516f328b48f5acf17c5956004fe005a75625ecbcacaeaa3884bff9d7e",
+  "edits": [
+    "added a viewBox with svgtool crop --pad 0.02 (the source had only width/height); nothing else changed"
+  ],
+  "checked_against": "https://prod-images.dacast.com/wp-content/uploads/2019/07/cropped-favicon-192x192.png (dacast.com favicon) and https://www.dacast.com/wp-content/themes/flatsome-child/assets/img/dacast-logo.svg (header logo): same two-blue chevron D; the source sha256 equals the PR's current file",
+  "source_sha256": "970fe8a57da22e838ee90e68edb0a9b05d3d521ff2f343b4345199ae3a3e1c02"
 }
