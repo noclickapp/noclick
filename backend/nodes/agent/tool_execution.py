@@ -337,31 +337,19 @@ async def execute_tool(
 
 
 async def _execute_mcp_tool(node, tool_name, arguments, tool_info) -> Dict[str, Any]:
-    """Execute an MCP tool by calling the external MCP server."""
+    """Execute an MCP tool by calling the external MCP server, signed in as the agent's runner: the tool carries a
+    reference to its server's sign-in (``nodes.agent.mcp_auth``), resolved here for each call."""
     from coder.openai_agent.mcp import call_tool as mcp_call_tool
+    from nodes.agent.mcp_auth import SIGNED_IN, server_for
 
-    mcp_config = tool_info.get("mcp_server_config")
-    if not mcp_config:
+    if not (tool_info.get("mcp_server_config") or tool_info.get(SIGNED_IN)):
         return {
             "success": False,
             "error": f"Tool '{tool_name}' has no MCP server configuration",
         }
 
     original_name = tool_info.get("original_tool_name", tool_name)
-
-    # The helper expects a single auth-source view. mcp_server_config can
-    # carry either an api_key OR (auth_type='oauth' + access_token); pass
-    # both fields through and let _build_headers decide precedence.
-    server_config = {
-        "url": mcp_config["url"],
-        "transport_type": mcp_config.get("transport_type", "shttp"),
-        "api_key": mcp_config.get("api_key"),
-        "access_token": mcp_config.get("access_token")
-            if mcp_config.get("auth_type") == "oauth" else None,
-        "custom_headers": mcp_config.get("custom_headers"),
-    }
-
-    result = await mcp_call_tool(server_config, original_name, arguments)
+    result = await mcp_call_tool(await server_for(node, tool_info), original_name, arguments)
     if result.get("success"):
         logger.info(
             f"[ToolExec] MCP tool '{original_name}' returned: {str(result.get('result'))[:500]}..."

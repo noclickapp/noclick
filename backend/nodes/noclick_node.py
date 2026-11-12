@@ -152,23 +152,12 @@ class NoClickNode(WorkflowNode):
             base = f"http://localhost:{port}"
         return f"{base}/mcp"
 
-    def _issue_token(self) -> str:
-        """Issue a short-lived MCP JWT for the current user."""
-        from mcp_adapter.auth.tokens import issue_mcp_token
-
-        return issue_mcp_token(
-            user_id=self.user_id,
-            client_id="noclick-workflow-node",
-            scopes=["mcp:tools"],
-            expiry_hours=1,
-        )
-
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
         Discover NoClick MCP tools and return standard MCP tool definitions.
 
-        Issues a JWT bearer token so all agent types can authenticate with
-        the NoClick MCP server over HTTP.
+        Every agent type reaches the NoClick MCP server over HTTP with a JWT
+        bearer token minted for its runner when it calls.
         """
         from mcp_server import get_mcp_server
 
@@ -208,16 +197,14 @@ class NoClickNode(WorkflowNode):
 
         logger.info(f"[NoClickNode] Scope: {scope}, workflow_id: {self.workflow_id}")
 
-        # Issue a short-lived JWT and build MCP server config
-        server_url = self._get_mcp_server_url()
-        access_token = self._issue_token()
+        # The tools carry a signed reference, not a token: this output is saved and read back. Each call (and a
+        # coding harness's config) mints a short-lived one for its runner (nodes.agent.mcp_auth).
+        from nodes.agent import mcp_auth
 
-        mcp_server_config = {
-            "url": server_url,
-            "transport_type": "shttp",
-            "access_token": access_token,
-            "auth_type": "oauth",
-        }
+        server_url = self._get_mcp_server_url()
+        mcp_server_config = mcp_auth.reference(
+            workflow_id=self.workflow_id, step_id=self.node_id, url=server_url, transport_type="shttp", noclick=True,
+        )
 
         try:
             fastmcp_tools = await server.mcp.get_tools()

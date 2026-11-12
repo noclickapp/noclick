@@ -197,125 +197,27 @@ class MCPServerNode(WorkflowNode):
         return MCPServerNodeConfig
 
 
-    async def _ensure_fresh_oauth_token(self, credentials: MCPServerCredentials) -> Optional[str]:
-        """Return a non-stale MCP OAuth access token, refreshing + persisting it.
-
-        MCP servers use rotating OAuth 2.1, so a stored access token expires
-        (and is then frozen into every emitted tool definition). The
-        ``MCPServerCredentials`` model only carries ``access_token`` — the
-        rotation material (refresh_token / token_endpoint / client_id /
-        resource_url) is stripped on validation — so re-load the full stored
-        credential by ``oauth_credential_id`` and route through the shared
-        refresh choke point (per-credential lock + DB re-read + persist).
-        Returns the stored token unchanged when there is nothing to refresh
-        against (no oauth_credential_id, or the credential lacks rotation data).
-        """
-        if not credentials.oauth_credential_id:
-            return credentials.access_token
-
-        from types import SimpleNamespace
-
-        from nodes.core.oauth_refresh import ensure_fresh_oauth_token
-        from nodes.oauth import mcp_oauth
-        from utils.credential_loader import load_credential
-
-        cred = await load_credential(None, self.user_id, credentials.oauth_credential_id)
-        if not (cred and cred.get("refresh_token") and cred.get("token_endpoint") and cred.get("client_id")):
-            return credentials.access_token
-
-        async def _refresh(refresh_token: str):
-            tokens = await mcp_oauth.refresh_access_token(
-                refresh_token,
-                token_endpoint=cred["token_endpoint"],
-                client_id=cred["client_id"],
-                resource_url=cred.get("resource_url"),
-            )
-            # The shared helper compares/stores expires_at as an ISO string;
-            # MCPOAuthTokens.expires_at is a datetime, so normalize it.
-            return SimpleNamespace(
-                access_token=tokens.access_token,
-                refresh_token=tokens.refresh_token,
-                expires_at=tokens.expires_at.isoformat() if tokens.expires_at else None,
-                scope=tokens.scope,
-                token_type=tokens.token_type,
-            )
-
-        return await ensure_fresh_oauth_token(
-            credential_id=credentials.oauth_credential_id,
-            user_id=self.user_id,
-            credential=cred,
-            refresh=_refresh,
-            provider="mcp",
-        )
-
     async def _discover_tools(self, config: MCPServerConfig, credentials: Optional[MCPServerCredentials]) -> List[Dict[str, Any]]:
-        """
-        Connect to MCP server and discover available tools.
+        """Connect to the MCP server and return its tools' definitions.
 
-        Args:
-            config: Server configuration
-            credentials: Optional authentication credentials (API key or OAuth)
-
-        Returns:
-            List of tool definitions from the server
+        Each tool's ``mcp_server_config`` is a signed reference to how the server signs in, never the token, key or
+        headers: the definitions are this step's output, saved and read back by people and models. Discovery signs
+        in through the same reference an agent's calls resolve (``nodes.agent.mcp_auth``), an OAuth token refreshed
+        first through the refresh choke point.
         """
         from coder.openai_agent.mcp import discover_tools as mcp_discover_tools
+        from nodes.agent import mcp_auth
 
-        # Collapse credential variants into the flat dict shape the helper
-        # expects. The helper builds headers from these and owns the
-        # connection lifecycle — no monkey-patching, no per-client cleanup.
-        api_key: Optional[str] = None
-        access_token: Optional[str] = None
-        custom_headers: Optional[Dict[str, str]] = None
-
-        if credentials:
-            auth_type = credentials.auth_type or 'none'
-            logger.info(
-                f"[MCPServerNode] Credentials present - auth_type={auth_type}, "
-                f"has_access_token={bool(credentials.access_token)}, "
-                f"has_api_key={bool(credentials.api_key)}"
-            )
-            if auth_type == 'oauth' and credentials.access_token:
-                # Refresh before use so neither discovery nor the per-tool
-                # config (frozen into every emitted tool def) ships a stale token.
-                access_token = await self._ensure_fresh_oauth_token(credentials)
-                custom_headers = credentials.custom_headers
-            elif auth_type == 'api_key':
-                api_key = credentials.api_key
-                custom_headers = credentials.custom_headers
-            elif auth_type != 'none':
-                # Legacy fallback for credentials missing auth_type.
-                api_key = credentials.api_key
-                custom_headers = credentials.custom_headers
-
-        helper_server_config = {
-            'url': config.server_url,
-            'transport_type': config.transport_type,
-            'api_key': api_key,
-            'access_token': access_token,
-            'custom_headers': custom_headers,
-        }
-
-        raw_tools = await mcp_discover_tools(helper_server_config)
-
-        # Build the per-tool execution config once — it's identical for
-        # every tool from this server, and tool_execution.py reads it
-        # back through the same dict shape.
-        per_tool_exec_config: Dict[str, Any] = {
-            'url': config.server_url,
-            'transport_type': config.transport_type,
-        }
-        if credentials:
-            auth_type = credentials.auth_type or 'none'
-            if auth_type == 'oauth' and credentials.access_token:
-                per_tool_exec_config['auth_type'] = 'oauth'
-                # Reuse the freshened token resolved above, not the stale stored one.
-                per_tool_exec_config['access_token'] = access_token or credentials.access_token
-                if credentials.custom_headers:
-                    per_tool_exec_config['custom_headers'] = credentials.custom_headers
-            else:
-                per_tool_exec_config['api_key'] = credentials.api_key
-                per_tool_exec_config['custom_headers'] = credentials.custom_headers
+        reference = mcp_auth.reference(
+            workflow_id=self.workflow_id, step_id=self.node_id, url=config.server_url,
+            transport_type=config.transport_type, credential_id=(self.node_data or {}).get('credential_id'),
+            step=credentials,
+        )
+        logger.info(f"[MCPServerNode] Signing in to {config.server_url}: {reference.get('auth') or 'none'}")
+        raw_tools = await mcp_discover_tools(await mcp_auth.server_config(
+            reference, workflow_id=self.workflow_id, step_id=self.node_id, user_id=self.user_id,
+            organization_id=self.organization_id, step=credentials,
+        ))
 
         tools: List[Dict[str, Any]] = []
         for raw in raw_tools:
@@ -349,7 +251,7 @@ class MCPServerNode(WorkflowNode):
                 'original_tool_name': tool_name,
                 'tool_description': raw.get('description') or f"MCP tool: {tool_name}",
                 'parameters': parameters,
-                'mcp_server_config': per_tool_exec_config,
+                'mcp_server_config': reference,
             })
 
             logger.info(f"[MCPServerNode] Discovered tool: {prefixed_name}")

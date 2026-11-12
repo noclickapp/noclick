@@ -85,6 +85,7 @@ async def resolve_operation_credential(
     pool=None,
     organization_id: Optional[str] = None,
     workflow_id: Optional[str] = None,
+    where: str = "this tool's provider node",
 ) -> Dict[str, Any]:
     """
     Resolve and decrypt a credential for a standalone operation run.
@@ -106,8 +107,7 @@ async def resolve_operation_credential(
     if not credential_data:
         # The model can't act on a bare UUID: give it the cause to relay.
         raise ValueError(await unresolved_credential_error(
-            pool, credential_id, user_id=user_id, workflow_id=workflow_id,
-            where="this tool's provider node",
+            pool, credential_id, user_id=user_id, workflow_id=workflow_id, where=where,
         ))
     return credential_data
 
