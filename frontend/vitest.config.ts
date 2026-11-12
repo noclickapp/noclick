@@ -13,6 +13,7 @@ import { defineConfig } from 'vitest/config';
 import { availableParallelism } from 'os';
 import { readdirSync, readFileSync } from 'fs';
 import { join, relative, resolve } from 'path';
+import { jsonGlobs } from './tests/support/jsonGlobs';
 
 const EXCLUDE = ['node_modules', 'build', '.react-router', 'tests/nc', 'tests/integration'];
 
@@ -43,6 +44,7 @@ collect(__dirname);
 const workers = availableParallelism() <= 2 ? 2 : undefined;
 
 export default defineConfig({
+  plugins: [jsonGlobs()],
   test: {
     environment: 'node',
     include: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
