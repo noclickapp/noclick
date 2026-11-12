@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/quickfile.svg",
+  "source": "https://cdn.quickfile.co.uk/images/home/quickfile-logo.svg",
+  "source_page": "https://support.quickfile.co.uk/ (header <img src=\"https://cdn.quickfile.co.uk/images/home/quickfile-logo.svg\" alt=\"QuickFile\">); the white twin quickfile-logo-w.svg is the header logo on https://www.quickfile.co.uk/",
+  "source_kind": "company docs",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "247349144e0424df55aab11b66734d3b3f35ae726269dc766cabe4bbf2baf3e2",
+  "edits": [
+    "kept only the two circling arrows (elements 8 and 9), dropped the 'QUICKFILE' letters (elements 0-7)",
+    "cropped the viewBox to the arrows (pad 0.02)",
+    "clean"
+  ],
+  "checked_against": "https://www.quickfile.co.uk/apple-touch-icon.png (the PR's source): the same two arrows forming a Q, white on a #4C7FFF rounded square; api hosts api-beta.quickfile.co.uk / support.quickfile.co.uk match",
+  "source_sha256": "1c8fc40debeecb54ab66f23c50223bb1b52cc594b1f3ff8c55ed5b1b4f8d922e"
+}
