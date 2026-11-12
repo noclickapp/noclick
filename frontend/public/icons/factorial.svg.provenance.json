@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/factorial.svg",
+  "source": "https://factorialhr.com/ (inline <svg viewBox=\"0 0 56 56\"><title>Factorial</title> in the page header, the compact logo; the site now answers at https://factorial.com/)",
+  "source_page": "https://factorialhr.com/ header (div 'factorialLogo:hidden', class 'fill-current text-radical-100')",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "4226e22f376785757bd098e002e59547d955ebc6ef21f758f149a440ce672ca4",
+  "edits": [
+    "the three paths are painted by CSS (fill-current, text-radical-100 = --color-radical-100: #ff355e in the site's own stylesheet); recoloured their default black to #FF355E",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "clean (dropped the <title>)"
+  ],
+  "checked_against": "https://factorial.com/next-favicons/android-chrome-512x512.png and the PR's current apple-touch-icon.png (same ring-and-person mark in radical red #FF355E); Factorial's PR kit (https://www.datocms-assets.com/58969/1770106623-factorial-pr-kit-english.zip, Jan 2026) has the same mark as Factorial_Logo_RadicalRed.png and an EPS, no SVG",
+  "source_sha256": "d09b21153d9852fc43cd629195b3420f7ebc6b8980757fe3954d7cf7ce126a89"
+}
