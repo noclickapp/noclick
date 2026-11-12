@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/cling.svg",
+  "source": "https://developer.cling.se/hero-logo.svg",
+  "source_page": "https://developer.cling.se/ (the docs home's hero image; the same site's nav logo is /logo.png, the PR's current file)",
+  "source_kind": "company docs",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "f69d9c7bcec99a9017e4e3f2e96bd0b3f613550d6040a7513d76ef1057088bc5",
+  "edits": [
+    "kept the two leaf halves (elements 0,2); dropped their exact duplicates (elements 1,3)",
+    "cropped the viewBox to the leaf (pad 0.02)",
+    "cleaned",
+    "recoloured the leaf's #eaeaea (the hero's on-dark grey) to #0095ff, Cling's brand blue (--vp-c-brand-1 in developer.cling.se's CSS; the docs' logo.png is #0195ff)"
+  ],
+  "checked_against": "https://developer.cling.se/logo.png (the PR's current file): the recoloured leaf matches it in shape and colour; app.cling.se's apple-touch-icon is the same leaf in white on a blue tile and its safari-pinned-tab.svg the same leaf in black; node calls api.cling.se",
+  "source_sha256": "4784595a3e278cc4b4e2e0fff3be4d3a9798dbe08ef811d680b5ff4b73b10e7e"
+}

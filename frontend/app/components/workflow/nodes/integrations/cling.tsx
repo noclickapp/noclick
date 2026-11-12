@@ -8,12 +8,12 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const ClingIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/cling.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <img ref={ref} src="/icons/cling.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
     ),
 );
 ClingIcon.displayName = 'ClingIcon';
 
-// Exact publisher asset; provenance is recorded beside the PNG.
+// Exact publisher asset; provenance is recorded beside the SVG.
 export const ClingNode: NodeDefinition = {
     type: 'automation-cling',
     label: 'Cling',
