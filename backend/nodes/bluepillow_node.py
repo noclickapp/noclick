@@ -50,13 +50,11 @@ class _Config(BaseModel):
 
 class GetHealth(_Config):
     """Read public service health and per-booking-site status; does not test a key."""
-    model_config = ConfigDict(json_schema_extra={"x-credentials-optional": True})
     operation: Literal["get_health"] = "get_health"
 
 
 class IssueAnonymousKey(_Config):
     """Issue a persistent anonymous key. Reuse existing keys; issuance is IP-capped."""
-    model_config = ConfigDict(json_schema_extra={"x-credentials-optional": True})
     operation: Literal["issue_anonymous_key"] = "issue_anonymous_key"
     label: str | None = Field(None, max_length=64)
     agent: str | None = Field(None, max_length=64)
@@ -75,7 +73,6 @@ class _Property(_Config):
 
 class GetPropertyPreview(_Property):
     """Read a public static preview without pricing or availability."""
-    model_config = ConfigDict(json_schema_extra={"x-credentials-optional": True})
     operation: Literal["get_property_preview"] = "get_property_preview"
     src: str | None = Field(None, max_length=32, description="Optional provenance tag.")
 

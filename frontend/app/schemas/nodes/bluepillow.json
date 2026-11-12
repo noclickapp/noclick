@@ -118,8 +118,7 @@
         }
       },
       "title": "GetHealth",
-      "type": "object",
-      "x-credentials-optional": true
+      "type": "object"
     },
     "GetProperty": {
       "additionalProperties": false,
@@ -233,8 +232,7 @@
         "property_id"
       ],
       "title": "GetPropertyPreview",
-      "type": "object",
-      "x-credentials-optional": true
+      "type": "object"
     },
     "InitiateBooking": {
       "additionalProperties": false,
@@ -367,8 +365,7 @@
         }
       },
       "title": "IssueAnonymousKey",
-      "type": "object",
-      "x-credentials-optional": true
+      "type": "object"
     },
     "RecommendByHotel": {
       "additionalProperties": false,
