@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/mightycall.svg",
-  "source": "https://www.mightycall.com/wp-content/themes/mightycall2021/img/logo.svg",
-  "license": "MightyCall brand mark used nominatively to identify the connected service; trademark rights remain with MightyCall.",
-  "sha256": "5da3e342136bd9eb171387b8eee0e10a73e13c1b9c83313bea9b0a8ecc526e60"
+  "source": "https://www.mightycall.com/wp-content/themes/newmightycall/img/front-page/logo.svg",
+  "source_page": "https://www.mightycall.com/ (the Organization 'logo' ImageObject in the page's schema.org JSON-LD)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "19283e407be9395d67be62e8523279f3e0f6d897afba7bc8a9542675b1ef5f2a",
+  "edits": [
+    "removed the invisible fill:none 899x897 rect (element 1)",
+    "svgtool clean",
+    "cropped the viewBox to the lion (pad 0.02)"
+  ],
+  "checked_against": "App Store 'MightyCall Classic' by CallCurrent, Inc. (downloads/mightycall/r5-1/app.png): the same blue striped lion; the newer 'MightyCall Call Center' app draws the same lion in lime on navy; api.mightycall.com / panel.mightycall.com are MightyCall's",
+  "source_sha256": "f6dd724b1e9c3f47ca1ce25c47eeb3e78145143e673c240704f6290a90e25d31"
 }

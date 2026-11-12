@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const MightyCallIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <img src="/icons/mightycall.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain', backgroundColor: '#333', padding: 6, borderRadius: 8 }} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const MightyCallNode: NodeDefinition = {
