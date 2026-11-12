@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/dex.svg",
+  "source": "https://getdex.com/assets/dex-isotype-DUQ8xn2D.js (the site's 'dex-isotype' module, which exports the isotype as an SVG data URI; decoded as text, never run)",
+  "source_page": "https://getdex.com/ (modulepreload of /assets/dex-isotype-DUQ8xn2D.js; the same two paths are the mark of the header logo, a data-URI <img alt=\"Dex\">)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "39060ec0aa5e319ad8f90bdaa68020dda00ebaecdd29d66af2d993fa4314b5c0",
+  "edits": [
+    "none to the drawing (the isotype is already the bare #4C79FF D mark)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "clean"
+  ],
+  "checked_against": "https://getdex.com/favicon.png (sha256 575c9138\u2026, byte-identical to the PR's current file): same solid #4C79FF chevron-D; also derives from the header logo's own D paths (downloads/dex/src1/header-logo.svg); api hosts api.prod.getdex.com / getdex.com match",
+  "source_sha256": "2e8d64efda77bcd0e2a5e7be19dd4663501e7701c4254cc0255fb11e5559d2e0"
+}

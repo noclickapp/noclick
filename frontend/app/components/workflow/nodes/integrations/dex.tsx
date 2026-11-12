@@ -12,14 +12,13 @@ const DexIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/dex.png"
+        src="/icons/dex.svg"
         alt=""
         aria-hidden="true"
         className={className}
         style={
             {
                 ...style,
-                '--brand-invert': 0,
                 objectFit: 'contain',
             } as CSSProperties
         }
