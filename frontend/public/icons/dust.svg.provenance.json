@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/dust.svg",
+  "source": "https://raw.githubusercontent.com/dust-tt/docs/main/branding/favicon.svg",
+  "source_page": "https://github.com/dust-tt/docs/blob/main/branding/favicon.svg (Dust's own docs repo, the favicon of docs.dust.tt)",
+  "source_kind": "company GitHub/npm",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "5ef617dccaff397de0b83df12864ade06faabbc1e6dc289ee69884c1fa6ddfd8",
+  "edits": [
+    "clean (serialisation only)",
+    "cropped the viewBox to the mark with 2% pad (the source's 0 0 502 502 viewBox clipped 1 unit of its own 503-unit drawing)"
+  ],
+  "checked_against": "https://dust.tt/static/favicon.png (the PR's current icon) and https://dust.tt/static/AppIcon.png (512px app icon): the same square D-U-S-T shape mark, same colours; the AppIcon's orange is #FE9C1A as in this file; also identical geometry to DustLogoSquare in @dust-tt/sparkle 0.7.7",
+  "source_sha256": "5916725f8fbf78880ee5f21dfeaec8cb34aca28eba968745c508b5ec314d00f5"
+}
