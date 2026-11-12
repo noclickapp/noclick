@@ -1,0 +1,19 @@
+{
+  "path": "frontend/public/icons/browseai-dark.svg",
+  "source": "https://drive.usercontent.google.com/download?id=1aeLwHc1wUGcfCLE7hkCUJi2uRRuHDJWO&export=download (1.2 Primary Logo_Darkmode.svg)",
+  "source_page": "https://www.browse.ai/media-kit (Logo download -> Google Drive folder 1kWvAW-tdtat09QtHIMxnCpoKeq83mhfO -> SVG folder 1CT3V9P3qsumACbEDZcNG01PXqWheUAAJ)",
+  "source_kind": "brand kit",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "c6c236c66bca533359a1667a4afa94b77da912f4c2b3a9ed8fcdf56f39f89953",
+  "edits": [
+    "kept only the robot-face mark (elements 0-7); dropped the 'Browse AI' wordmark paths (elements 8-15)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned",
+    "the brand kit's own dark-mode logo (white ring): kept only the robot-face mark (elements 0-7), dropped the wordmark (8-15)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "checked_against": "https://cdn.prod.website-files.com/628be7c04ab34bfc699e4acb/68b9c656f48bca83e2a16839_webclip.png (browse.ai apple-touch-icon, saved downloads/browseai/ref2/): same black-ring robot face; the header logo 1.1 Primary Logo_Default.png matches the SVG lockup",
+  "source_sha256": "6e2bbe379cf85406fe6679b8d51d49d60d188112f7e5a193ecd166b8d6fd104a"
+}
