@@ -3,6 +3,10 @@
   "type": "automation-office-365",
   "nodeMeta": {
     "agentToolProvider": true,
+    "triggerOperations": [
+      "on_new_message",
+      "on_outlook_change"
+    ],
     "borrowedCredentialTypes": [
       "microsoft_outlook_oauth"
     ]
