@@ -9,15 +9,18 @@ a provide link over HTTP (``/api/credential-request/{token}/mcp/*``).
 then the authorization server's RFC 8414 metadata, ``nodes.oauth.mcp_oauth``),
 gets NoClick's client there in the spec's order (the app NoClick registered
 with the vendor when the declaration names one; else a Dynamic Client
-Registration made once and kept for everyone, ``repositories.mcp_clients``;
-else NoClick's Client ID Metadata Document), and answers the authorization URL
+Registration made once and kept for everyone, ``repositories.mcp_clients``,
+with a sealed secret where the server takes only confidential clients; else,
+or when it refuses the registration, NoClick's Client ID Metadata Document),
+and answers the authorization URL
 (PKCE S256, RFC 8707 resource, the scopes the resource names) with a sealed
 ``flow``: the verifier and everything ``finish`` needs, which only this backend
 can open and which names who started it.
 
-A server that answers with no OAuth metadata but still refuses an anonymous
-client asks for a bearer key (``kind="key"``); one that needs nothing is
-``kind="none"``.
+A server whose resource metadata names an authorization server signs the person
+in there, even when it also answers an anonymous client. One that answers with
+no OAuth metadata but still refuses an anonymous client asks for a bearer key
+(``kind="key"``); one that needs nothing is ``kind="none"``.
 
 ``finish`` exchanges the code (or takes the key), then proves the account the
 way every connect does here: the server must list its tools for that token
@@ -43,6 +46,12 @@ CLIENT_METADATA_PATH = "/mcp/client.json"
 #: How long a started connect can be finished.
 FLOW_TTL_S = 15 * 60
 CLIENT_NAME = "NoClick"
+#: Headers a browser sends opening the authorization page: some pages show their
+#: sign-in only to a request that takes HTML, and refuse any other with a 401.
+_BROWSER_ACCEPT = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+}
 
 Kind = Literal["oauth", "key", "none"]
 
@@ -140,12 +149,21 @@ def _client_store(pool=None):
     return McpClientRepo(pool or get_native_pool())
 
 
+def _client_auth(methods: Optional[list]) -> str:
+    """How a registration asks to authenticate at the token endpoint: as a public
+    client (``none``), as MCP clients are, unless the server lists its methods
+    without it; then with the secret it issues, in the body, else as HTTP Basic."""
+    if not methods or "none" in methods:
+        return "none"
+    return next((m for m in ("client_secret_post", "client_secret_basic") if m in methods), "none")
+
+
 async def _client_for(server, discovery, redirect_uri: str, scope: str, pool) -> Dict[str, Optional[str]]:
     """NoClick's client at this authorization server for this redirect URI, in the
     MCP spec's order: the app NoClick registered with the vendor, when the
     declaration names one; else a registration made once and kept for everyone
-    (DCR); else NoClick's metadata document (CIMD), on a public origin only, since
-    the server fetches it."""
+    (DCR); else, or when the server refuses the registration, NoClick's metadata
+    document (CIMD), on a public origin only, since the server fetches it."""
     from nodes.oauth.mcp_oauth import register_dynamic_client
     from utils.encryption import get_encryption
     from utils.hosted_defaults import frontend_url
@@ -159,33 +177,44 @@ async def _client_for(server, discovery, redirect_uri: str, scope: str, pool) ->
                 f"NoClick has none set up ({server.client_env}_CLIENT_ID)."
             )
         return {"client_id": registered[0], "client": "registered", "issuer": issuer}
+    document = None
+    if discovery.client_id_metadata_document_supported and urlsplit(redirect_uri).scheme == "https":
+        document = {"client_id": metadata_document_url(redirect_uri), "client": "metadata_document", "issuer": issuer}
     repo = _client_store(pool)
     known = await repo.get(issuer, redirect_uri)
     if known is None and not discovery.registration_endpoint:
-        if discovery.client_id_metadata_document_supported and urlsplit(redirect_uri).scheme == "https":
-            return {"client_id": metadata_document_url(redirect_uri), "client": "metadata_document", "issuer": issuer}
+        if document:
+            return document
         raise McpConnectError(f"{server.app}'s MCP server lets only clients it approved sign in, and NoClick isn't one of them yet.")
     if known is None:
+        asked = _client_auth(discovery.token_endpoint_auth_methods_supported)
         try:
             registration = await register_dynamic_client(
                 discovery.registration_endpoint, CLIENT_NAME, [redirect_uri], client_uri=frontend_url(), scope=scope or None,
+                token_endpoint_auth_method=asked,
             )
         except ValueError as e:
+            if document:
+                logger.info("[mcp_connect] %s refused a registration (%s); NoClick's metadata document is the client", issuer, e)
+                return document
             raise McpConnectError(f"The MCP server wouldn't register NoClick as a client: {e}") from None
         client_id = registration.get("client_id")
         if not client_id:
             raise McpConnectError("The MCP server registered NoClick without a client id.")
         secret = registration.get("client_secret")
+        if asked != "none" and not secret:
+            raise McpConnectError("The MCP server registered NoClick as a client with a secret, but sent none.")
+        auth = registration.get("token_endpoint_auth_method") or asked
         kept = {k: v for k, v in registration.items() if k not in ("client_secret", "registration_access_token")}
-        known = await repo.keep(
-            issuer, redirect_uri, client_id, get_encryption().encrypt_credential({"secret": secret}) if secret else None,
-            kept,
-        )
+        sealed = get_encryption().encrypt_credential({"secret": secret, "auth_method": auth}) if secret else None
+        known = await repo.keep(issuer, redirect_uri, client_id, sealed, kept)
         logger.info("[mcp_connect] registered a client at %s for %s", issuer, redirect_uri)
-    secret = None
+    secret = auth = None
     if known.get("client_secret_sealed"):
-        secret = get_encryption().decrypt_credential(known["client_secret_sealed"]).get("secret")
-    return {"client_id": known["client_id"], "client_secret": secret, "client": "registration", "issuer": issuer}
+        opened = get_encryption().decrypt_credential(known["client_secret_sealed"])
+        secret, auth = opened.get("secret"), opened.get("auth_method")
+    return {"client_id": known["client_id"], "client_secret": secret, "client_auth": auth, "client": "registration",
+            "issuer": issuer}
 
 
 async def start(credential_type: str, *, redirect_uri: str, principal: str, pool=None) -> Started:
@@ -205,7 +234,7 @@ async def start(credential_type: str, *, redirect_uri: str, principal: str, pool
             raise McpConnectError(f"Couldn't reach {server.app}'s MCP server: {discovery.error}")
         return Started(kind="none", flow=_seal({**base, "kind": "none"}))
     if not discovery.authorization_endpoint or not discovery.token_endpoint:
-        if discovery.authorization_server:
+        if discovery.authorization_server or discovery.resource_metadata_url:
             raise McpConnectError(f"{server.app}'s MCP server names a sign-in NoClick can't read: {discovery.error}")
         # It refuses anonymous clients but publishes no OAuth: it takes a bearer key.
         return Started(kind="key", flow=_seal({**base, "kind": "key"}))
@@ -234,8 +263,8 @@ async def start(credential_type: str, *, redirect_uri: str, principal: str, pool
     await _preflight(authorization_url, server.app)
     flow = _seal({
         **base, "kind": "oauth", "state": state, "verifier": verifier, "redirect_uri": redirect_uri,
-        "client_id": client["client_id"], "client_secret": client.get("client_secret"), "client": client["client"],
-        "issuer": client["issuer"],
+        "client_id": client["client_id"], "client_secret": client.get("client_secret"),
+        "client_auth": client.get("client_auth"), "client": client["client"], "issuer": client["issuer"],
         "token_endpoint": discovery.token_endpoint, "resource_url": discovery.resource_url,
     })
     return Started(
@@ -247,7 +276,8 @@ async def start(credential_type: str, *, redirect_uri: str, principal: str, pool
 
 
 async def _preflight(authorization_url: str, app: str) -> None:
-    """Ask the authorization page what the popup would get. An authorization
+    """Ask the authorization page what the popup would get, as a browser asks
+    (Syncro answers anything that doesn't take HTML with a 401). An authorization
     server shows a refused client or redirect URI as its own error page rather
     than sending the person back, so a 400 or 401 here is said in NoClick, in
     the server's words. Anything else goes on: a sign-in page, a redirect, or a
@@ -260,7 +290,7 @@ async def _preflight(authorization_url: str, app: str) -> None:
 
     try:
         async with guarded_async_client(timeout=15.0, follow_redirects=False) as client:
-            response = await client.get(authorization_url)
+            response = await client.get(authorization_url, headers=_BROWSER_ACCEPT)
     except httpx.HTTPError as e:
         logger.info("[mcp_connect] %s's authorization page could not be checked: %r", app, e)
         return
@@ -304,7 +334,7 @@ async def finish(
             tokens = await exchange_code_for_tokens(
                 code=code, code_verifier=started["verifier"], token_endpoint=started["token_endpoint"],
                 client_id=started["client_id"], redirect_uri=started["redirect_uri"],
-                resource_url=started.get("resource_url"), client_secret=secret,
+                resource_url=started.get("resource_url"), client_secret=secret, auth_method=started.get("client_auth"),
             )
         except ValueError as e:
             if "invalid_client" in str(e) and started.get("client") == "registration":
@@ -320,6 +350,7 @@ async def finish(
             "token_endpoint": started["token_endpoint"],
             "client_id": started["client_id"],
             "client_secret": started.get("client_secret"),
+            "token_endpoint_auth_method": started.get("client_auth"),
             "resource_url": started.get("resource_url"),
             "account": account,
         })

@@ -29,12 +29,16 @@ class MemoryClients:
     """The client store's contract (repositories/mcp_clients.py, proven on Postgres elsewhere), in memory."""
 
     rows: dict = {}
+    #: The registration answers kept beside them (a column ``get`` doesn't read).
+    registrations: dict = {}
 
     async def get(self, issuer, redirect_uri):
         return self.rows.get((issuer, redirect_uri))
 
     async def keep(self, issuer, redirect_uri, client_id, sealed, registration):
-        self.rows.setdefault((issuer, redirect_uri), {"client_id": client_id, "client_secret_sealed": sealed})
+        if (issuer, redirect_uri) not in self.rows:
+            self.rows[(issuer, redirect_uri)] = {"client_id": client_id, "client_secret_sealed": sealed}
+            self.registrations[(issuer, redirect_uri)] = registration
         return self.rows[(issuer, redirect_uri)]
 
     async def forget(self, issuer, redirect_uri, client_id):
@@ -46,7 +50,7 @@ class MemoryClients:
 def loopback(monkeypatch):
     monkeypatch.setenv("OUTBOUND_ALLOW_PRIVATE_IPS", "true")
     monkeypatch.setenv("FRONTEND_URL", "http://localhost:5173")
-    MemoryClients.rows = {}
+    MemoryClients.rows, MemoryClients.registrations = {}, {}
     monkeypatch.setattr(mcp_connect, "_client_store", lambda pool=None: MemoryClients())
 
 
@@ -248,6 +252,70 @@ async def test_discovery_reads_a_server_on_the_earlier_spec():
     assert found.resource_url == fake.mcp_url
 
 
+async def test_a_server_that_answers_anonymously_but_names_a_sign_in_signs_the_person_in(monkeypatch):
+    """Shopify, Exa and every Google Workspace server answer initialize without a token yet publish where a
+    person signs in: what they serve anonymously is nobody's account, so the connect is a sign-in, never "none"."""
+    async with serve(FakeMcpAuthServer(anonymous=True)) as fake:
+        monkeypatch.setattr(CanvaMcpCredential, "mcp_server", vendor_mcp.McpServer(url=fake.mcp_url, app="Canva"))
+        started = await mcp_connect.start("canva_mcp", redirect_uri=CALLBACK, principal="user:ana")
+        assert started.kind == "oauth"
+        back = await sign_in(started.authorization_url)
+        connected = await mcp_connect.finish(started.flow, principal="user:ana", code=back["code"], state=back["state"])
+    assert connected.credential_data["access_token"] in fake.access_tokens
+    assert connected.metadata["verified_as"] == ACCOUNT
+
+
+async def test_a_server_that_answers_anonymously_and_names_no_sign_in_needs_nothing(monkeypatch):
+    async with serve(FakeMcpAuthServer(anonymous=True, legacy=True)) as fake:
+        monkeypatch.setattr(CanvaMcpCredential, "mcp_server", vendor_mcp.McpServer(url=fake.mcp_url, app="Canva"))
+        started = await mcp_connect.start("canva_mcp", redirect_uri=CALLBACK, principal="user:ana")
+    assert started.kind == "none" and started.authorization_url is None
+
+
+@pytest.mark.parametrize("header, url", [
+    ('Bearer resource_metadata="https://a.example/prm", scope="x"', "https://a.example/prm"),
+    ("Bearer resource_metadata=https://a.example/prm", "https://a.example/prm"),
+    ("Bearer error=invalid_token, Resource_Metadata=https://a.example/prm, scope=x", "https://a.example/prm"),
+    ('Bearer realm="resource_metadata=https://evil.example"', None),
+])
+async def test_the_challenge_names_its_metadata_quoted_or_not(header, url):
+    from nodes.oauth.mcp_oauth import _parse_challenge_param
+
+    assert _parse_challenge_param(header, "resource_metadata") == url
+
+
+async def test_a_challenge_naming_its_metadata_unquoted_is_read():
+    """Finnhub: ``resource_metadata=<url>`` unquoted, and a server-info JSON (no authorization server) at the
+    path-specific well-known URL."""
+    from nodes.oauth.mcp_oauth import discover_oauth_requirements
+
+    fake = FakeMcpAuthServer(prm_path="/.well-known/oauth-protected-resource", challenge_quoted=False, info_document=True)
+    async with serve(fake):
+        found = await discover_oauth_requirements(fake.mcp_url)
+    assert found.error is None and found.authorization_endpoint == f"{fake.base}/authorize"
+
+
+async def test_metadata_the_challenge_names_but_doesnt_serve_is_read_where_the_spec_puts_it():
+    """ME-QR names its path-specific metadata URL, which 404s, and serves the document at the root one."""
+    from nodes.oauth.mcp_oauth import discover_oauth_requirements
+
+    fake = FakeMcpAuthServer(prm_path="/.well-known/oauth-protected-resource",
+                             challenge_names="/.well-known/oauth-protected-resource/mcp")
+    async with serve(fake):
+        found = await discover_oauth_requirements(fake.mcp_url)
+    assert found.error is None and found.token_endpoint == f"{fake.base}/token"
+
+
+async def test_a_server_naming_metadata_nobody_serves_is_never_asked_for_a_key(monkeypatch):
+    """Trackdesk names metadata it serves nowhere (Rippling's sits behind a bot wall): it signs people in
+    somewhere NoClick can't read, so the connect says that, rather than asking for a key it never takes."""
+    fake = FakeMcpAuthServer(prm_path=None, challenge_names="/.well-known/oauth-protected-resource/mcp")
+    async with serve(fake):
+        monkeypatch.setattr(CanvaMcpCredential, "mcp_server", vendor_mcp.McpServer(url=fake.mcp_url, app="Canva"))
+        with pytest.raises(mcp_connect.McpConnectError, match="names a sign-in NoClick can't read: .*404"):
+            await mcp_connect.start("canva_mcp", redirect_uri=CALLBACK, principal="user:ana")
+
+
 # ---------------------------------------------------------------- the connect
 
 
@@ -362,6 +430,65 @@ async def test_a_server_with_metadata_documents_only_takes_noclicks_document(mon
         # A dev server's loopback origin can't be fetched: no document is offered from there.
         with pytest.raises(mcp_connect.McpConnectError, match="only clients it approved"):
             await mcp_connect.start("canva_mcp", redirect_uri=CALLBACK, principal="user:ana")
+
+
+async def test_a_server_refusing_registration_takes_noclicks_document_when_it_can(monkeypatch):
+    """Kadoa refuses a registration with an https redirect and asks for a metadata document instead."""
+    callback = "https://app.example/api/auth/mcp/callback"
+    document = "https://app.example/mcp/client.json"
+    monkeypatch.setenv("FRONTEND_URL", "https://app.example")
+    refusal = "https redirect_uri requires a client ID metadata document; use the document URL as client_id"
+    fake = FakeMcpAuthServer(refuse_registration=refusal,
+                             documents={document: {"client_id": document, "redirect_uris": [callback]}})
+    async with serve(fake):
+        monkeypatch.setattr(CanvaMcpCredential, "mcp_server", vendor_mcp.McpServer(url=fake.mcp_url, app="Canva"))
+        started = await mcp_connect.start("canva_mcp", redirect_uri=callback, principal="user:ana")
+        assert parse_qs(urlsplit(started.authorization_url).query)["client_id"] == [document]
+        assert MemoryClients.rows == {}  # nothing kept: the document is the client
+        # Where no document can be offered, the server's refusal is said in its words.
+        with pytest.raises(mcp_connect.McpConnectError, match="wouldn't register NoClick as a client: .*https redirect_uri requires"):
+            await mcp_connect.start("canva_mcp", redirect_uri=CALLBACK, principal="user:ana")
+
+
+@pytest.mark.parametrize("method", ["client_secret_post", "client_secret_basic"])
+async def test_a_server_that_takes_only_confidential_clients_gets_one_with_its_secret_sealed(monkeypatch, method):
+    """Gong lists no ``none`` among its token endpoint's authentications and refuses a public client: NoClick
+    registers with a secret, keeps it sealed, and authenticates with it as registered, at the exchange and at
+    every refresh."""
+    from utils.encryption import get_encryption
+
+    async with serve(FakeMcpAuthServer(client_auth_methods=[method])) as fake:
+        monkeypatch.setattr(CanvaMcpCredential, "mcp_server", vendor_mcp.McpServer(url=fake.mcp_url, app="Canva"))
+        started = await mcp_connect.start("canva_mcp", redirect_uri=CALLBACK, principal="user:ana")
+        registered = fake.registrations["client-1"]
+        assert registered["token_endpoint_auth_method"] == method and registered["client_secret"]
+        kept = next(iter(MemoryClients.rows.values()))
+        assert registered["client_secret"] not in json.dumps([kept, *MemoryClients.registrations.values()])
+        assert get_encryption().decrypt_credential(kept["client_secret_sealed"])["secret"] == registered["client_secret"]
+
+        back = await sign_in(started.authorization_url)
+        connected = await mcp_connect.finish(started.flow, principal="user:ana", code=back["code"], state=back["state"])
+        assert connected.evidence.reachable is True
+        data = connected.credential_data
+        assert (data["client_secret"], data["token_endpoint_auth_method"]) == (registered["client_secret"], method)
+
+        stale = {**data, "credential_type": "canva_mcp", "expires_at": "2020-01-01T00:00:00+00:00"}
+        fresh = await vendor_mcp.fresh_credential(stale, credential_id=None, user_id=None)
+        assert fake.refreshes == 1 and fresh["access_token"] != data["access_token"]
+        # A second person signs in through the same kept client.
+        again = await mcp_connect.start("canva_mcp", redirect_uri=CALLBACK, principal="user:bo")
+        back = await sign_in(again.authorization_url)
+        await mcp_connect.finish(again.flow, principal="user:bo", code=back["code"], state=back["state"])
+    assert len(fake.registrations) == 1
+
+
+async def test_an_authorization_page_that_signs_a_browser_in_isnt_taken_for_a_refusal(monkeypatch):
+    """Syncro answers a request that doesn't take HTML with a 401 and sends a browser to its sign-in: the
+    check asks as the popup will."""
+    async with serve(FakeMcpAuthServer(sign_in_page=True)) as fake:
+        monkeypatch.setattr(CanvaMcpCredential, "mcp_server", vendor_mcp.McpServer(url=fake.mcp_url, app="Canva"))
+        started = await mcp_connect.start("canva_mcp", redirect_uri=CALLBACK, principal="user:ana")
+    assert started.kind == "oauth"
 
 
 async def test_a_refused_token_is_definitive_evidence(vendor):

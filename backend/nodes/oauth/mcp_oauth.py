@@ -9,15 +9,17 @@ to them.
 import logging
 import hashlib
 import base64
+import re
 import secrets
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Tuple
 from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
+from urllib.parse import quote, urlparse
 
 import httpx
 from opentelemetry import trace
 from pydantic import BaseModel, Field
-from utils.ssrf import guarded_async_client
+from utils.ssrf import SSRFError, guarded_async_client
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +61,10 @@ class OAuthDiscoveryResult:
     issuer: Optional[str] = None
     # The server takes a Client ID Metadata Document's URL as a client_id.
     client_id_metadata_document_supported: bool = False
+    # How its token endpoint takes a client's credentials (RFC 8414), as listed.
+    token_endpoint_auth_methods_supported: Optional[List[str]] = None
+    # The protected resource metadata its 401 named, read or not.
+    resource_metadata_url: Optional[str] = None
 
 
 class MCPOAuthTokens(BaseModel):
@@ -109,9 +115,13 @@ async def discover_oauth_requirements(server_url: str) -> OAuthDiscoveryResult:
 
     Implements RFC 9728 discovery:
     1. Make unauthenticated request to MCP server
-    2. If 401, parse WWW-Authenticate header for metadata URL
-    3. Fetch Protected Resource Metadata
-    4. Fetch Authorization Server Metadata
+    2. Read the Protected Resource Metadata its 401 names (WWW-Authenticate
+       ``resource_metadata``), else at the well-known URLs
+    3. Fetch Authorization Server Metadata (RFC 8414)
+
+    A server that answers an anonymous client still requires OAuth when its
+    resource metadata names an authorization server: what it serves without a
+    token is nobody's account.
 
     Args:
         server_url: URL of the MCP server endpoint
@@ -135,47 +145,26 @@ async def discover_oauth_requirements(server_url: str) -> OAuthDiscoveryResult:
                     json=_INITIALIZE,
                     headers={"Accept": "application/json, text/event-stream"},
                 )
+            challenged = response.status_code == 401
 
-            # If not 401, no OAuth required
-            if response.status_code != 401:
+            # Step 2: Protected Resource Metadata
+            www_auth = response.headers.get("WWW-Authenticate", "") if challenged else ""
+            named = _parse_resource_metadata_url(www_auth, server_url)
+            challenge_scope = _parse_challenge_param(www_auth, "scope")
+            resource_metadata, unread = await _fetch_resource_metadata(client, named, server_url)
+
+            if resource_metadata is None and not challenged:
                 logger.info(
                     f"[MCP OAuth] No OAuth required (status={response.status_code})"
                 )
                 return OAuthDiscoveryResult(requires_oauth=False)
-
-            # Step 2: Parse WWW-Authenticate header
-            www_auth = response.headers.get("WWW-Authenticate", "")
-            resource_metadata_url = _parse_resource_metadata_url(www_auth, server_url)
-            challenge_scope = _parse_challenge_param(www_auth, "scope")
-
-            if not resource_metadata_url:
-                logger.info(
-                    f"[MCP OAuth] No resource_metadata in WWW-Authenticate, trying well-known"
+            if resource_metadata is None and named:
+                return OAuthDiscoveryResult(
+                    requires_oauth=True, resource_metadata_url=named, error=unread
                 )
-                # Try well-known fallback
-                resource_metadata_url = await _try_wellknown_discovery(
-                    client, server_url
-                )
-
-            if resource_metadata_url:
-                # Step 3: Fetch Protected Resource Metadata
-                logger.info(
-                    f"[MCP OAuth] Fetching resource metadata from {resource_metadata_url}"
-                )
-                resource_response = await client.get(resource_metadata_url)
-
-                if resource_response.status_code != 200:
-                    return OAuthDiscoveryResult(
-                        requires_oauth=True,
-                        error=f"Failed to fetch resource metadata: {resource_response.status_code}",
-                    )
-
-                resource_metadata = resource_response.json()
-            else:
+            if resource_metadata is None:
                 # The 2025-03-26 revision of the spec has no resource metadata: the
                 # MCP server's own origin is its authorization server.
-                from urllib.parse import urlparse
-
                 parsed = urlparse(server_url)
                 origin = f"{parsed.scheme}://{parsed.netloc}"
                 if await _fetch_auth_server_metadata(client, origin) is None:
@@ -188,30 +177,24 @@ async def discover_oauth_requirements(server_url: str) -> OAuthDiscoveryResult:
                     )
                 resource_metadata = {"authorization_servers": [origin]}
 
-            authorization_servers = resource_metadata.get("authorization_servers", [])
-
-            if not authorization_servers:
-                return OAuthDiscoveryResult(
-                    requires_oauth=True,
-                    error="No authorization_servers in resource metadata",
-                )
-
             # Use first authorization server
-            auth_server = authorization_servers[0]
+            auth_server = resource_metadata["authorization_servers"][0]
 
-            # Step 4: Fetch Authorization Server Metadata
+            # Step 3: Fetch Authorization Server Metadata
             auth_metadata = await _fetch_auth_server_metadata(client, auth_server)
 
             if not auth_metadata:
                 return OAuthDiscoveryResult(
                     requires_oauth=True,
                     authorization_server=auth_server,
+                    resource_metadata_url=named,
                     error="Failed to fetch authorization server metadata",
                 )
 
             # Extract provider name from auth server URL
             provider_name = _extract_provider_name(auth_server)
             resource_scopes = challenge_scope.split() if challenge_scope else resource_metadata.get("scopes_supported")
+            auth_methods = auth_metadata.get("token_endpoint_auth_methods_supported")
 
             return OAuthDiscoveryResult(
                 requires_oauth=True,
@@ -232,6 +215,8 @@ async def discover_oauth_requirements(server_url: str) -> OAuthDiscoveryResult:
                 client_id_metadata_document_supported=auth_metadata.get(
                     "client_id_metadata_document_supported"
                 ) is True,
+                token_endpoint_auth_methods_supported=auth_methods if isinstance(auth_methods, list) else None,
+                resource_metadata_url=named,
             )
 
         except httpx.TimeoutException:
@@ -263,49 +248,55 @@ def _parse_resource_metadata_url(
 
 
 def _parse_challenge_param(www_authenticate: str, name: str) -> Optional[str]:
-    """One quoted parameter of a WWW-Authenticate challenge (``scope="a b"``)."""
-    import re
+    """One parameter of a WWW-Authenticate challenge, quoted (``scope="a b"``) or a
+    bare token (``resource_metadata=https://…``); names match in any case (RFC 9110)."""
+    match = re.search(
+        rf'(?:^|[\s,]){name}=(?:"([^"]*)"|([^\s,"]+))', www_authenticate or "", re.IGNORECASE
+    )
+    return (match.group(1) if match.group(1) is not None else match.group(2)) if match else None
 
-    match = re.search(rf'(?:^|[\s,]){name}="([^"]*)"', www_authenticate or "")
-    return match.group(1) if match else None
 
-
-async def _try_wellknown_discovery(
-    client: httpx.AsyncClient, server_url: str
-) -> Optional[str]:
+async def _fetch_resource_metadata(
+    client: httpx.AsyncClient, named: Optional[str], server_url: str
+) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
     """
-    Try well-known URI discovery as fallback per RFC 9728.
+    The Protected Resource Metadata (RFC 9728) that names an authorization
+    server, and why none was read when it wasn't.
 
-    Tries:
+    Tries the URL the server's challenge named, then the well-known URIs:
     1. /.well-known/oauth-protected-resource/{path}
     2. /.well-known/oauth-protected-resource
+    Some servers name a URL they don't serve, and some answer the path-specific
+    one with a document of their own, so each must hold ``authorization_servers``.
     """
-    from urllib.parse import urlparse, urljoin
-
     parsed = urlparse(server_url)
     base_url = f"{parsed.scheme}://{parsed.netloc}"
     path = parsed.path.strip("/")
-
-    # Try path-specific first
+    urls = [named] if named else []
     if path:
-        wellknown_url = f"{base_url}/.well-known/oauth-protected-resource/{path}"
+        urls.append(f"{base_url}/.well-known/oauth-protected-resource/{path}")
+    urls.append(f"{base_url}/.well-known/oauth-protected-resource")
+
+    unread = None
+    for url in dict.fromkeys(urls):
         try:
-            response = await client.get(wellknown_url)
-            if response.status_code == 200:
-                return wellknown_url
-        except Exception:
-            pass
-
-    # Try root
-    wellknown_url = f"{base_url}/.well-known/oauth-protected-resource"
-    try:
-        response = await client.get(wellknown_url)
-        if response.status_code == 200:
-            return wellknown_url
-    except Exception:
-        pass
-
-    return None
+            response = await client.get(url)
+        except (httpx.HTTPError, SSRFError) as e:
+            logger.debug(f"[MCP OAuth] Failed to fetch {url}: {e}")
+            unread = unread or f"Failed to fetch resource metadata: {e!r}"
+            continue
+        if response.status_code != 200:
+            unread = unread or f"Failed to fetch resource metadata: {response.status_code}"
+            continue
+        try:
+            metadata = response.json()
+        except ValueError:
+            metadata = None
+        servers = metadata.get("authorization_servers") if isinstance(metadata, dict) else None
+        if isinstance(servers, list) and servers and isinstance(servers[0], str):
+            return metadata, None
+        unread = unread or "No authorization_servers in resource metadata"
+    return None, unread
 
 
 async def _fetch_auth_server_metadata(
@@ -318,8 +309,6 @@ async def _fetch_auth_server_metadata(
     1. /.well-known/oauth-authorization-server
     2. /.well-known/openid-configuration
     """
-    from urllib.parse import urlparse
-
     parsed = urlparse(auth_server)
     base_url = f"{parsed.scheme}://{parsed.netloc}"
     path = parsed.path.strip("/")
@@ -357,8 +346,6 @@ async def _fetch_auth_server_metadata(
 
 def _extract_provider_name(auth_server: str) -> str:
     """Extract a friendly provider name from the auth server URL."""
-    from urllib.parse import urlparse
-
     parsed = urlparse(auth_server)
     host = parsed.netloc.lower()
 
@@ -399,6 +386,23 @@ def _extract_provider_name(auth_server: str) -> str:
 # ============================================================================
 
 
+def _authenticate_client(
+    data: Dict[str, str], client_secret: Optional[str], auth_method: Optional[str]
+) -> Dict[str, str]:
+    """The token request's headers, with a confidential client's secret where it
+    registered to send it: HTTP Basic for ``client_secret_basic`` (RFC 6749
+    §2.3.1, which then leaves ``client_id`` out of ``data``), else in ``data``."""
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    if not client_secret:
+        return headers
+    if auth_method == "client_secret_basic":
+        pair = f"{quote(data.pop('client_id'), safe='')}:{quote(client_secret, safe='')}"
+        headers["Authorization"] = "Basic " + base64.b64encode(pair.encode()).decode()
+    else:
+        data["client_secret"] = client_secret
+    return headers
+
+
 async def exchange_code_for_tokens(
     code: str,
     code_verifier: str,
@@ -407,6 +411,7 @@ async def exchange_code_for_tokens(
     redirect_uri: str,
     resource_url: Optional[str] = None,
     client_secret: Optional[str] = None,
+    auth_method: Optional[str] = None,
 ) -> MCPOAuthTokens:
     """
     Exchange authorization code for OAuth tokens.
@@ -435,16 +440,10 @@ async def exchange_code_for_tokens(
     # Add resource indicator if provided (RFC 8707)
     if resource_url:
         data["resource"] = resource_url
-    # A registration that issued a secret authenticates with it (client_secret_post).
-    if client_secret:
-        data["client_secret"] = client_secret
+    headers = _authenticate_client(data, client_secret, auth_method)
 
     async with guarded_async_client(timeout=30.0) as client:
-        response = await client.post(
-            token_endpoint,
-            data=data,
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
-        )
+        response = await client.post(token_endpoint, data=data, headers=headers)
 
         if response.status_code != 200:
             error_data = (
@@ -486,6 +485,7 @@ async def refresh_access_token(
     client_id: str,
     resource_url: Optional[str] = None,
     client_secret: Optional[str] = None,
+    auth_method: Optional[str] = None,
 ) -> MCPOAuthTokens:
     """
     Refresh an expired access token.
@@ -509,15 +509,10 @@ async def refresh_access_token(
 
     if resource_url:
         data["resource"] = resource_url
-    if client_secret:
-        data["client_secret"] = client_secret
+    headers = _authenticate_client(data, client_secret, auth_method)
 
     async with guarded_async_client(timeout=30.0) as client:
-        response = await client.post(
-            token_endpoint,
-            data=data,
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
-        )
+        response = await client.post(token_endpoint, data=data, headers=headers)
 
         if response.status_code != 200:
             error_data = (
@@ -594,6 +589,7 @@ async def register_dynamic_client(
     redirect_uris: List[str],
     client_uri: Optional[str] = None,
     scope: Optional[str] = None,
+    token_endpoint_auth_method: str = "none",
 ) -> Dict[str, Any]:
     """
     Register a dynamic OAuth client.
@@ -603,6 +599,8 @@ async def register_dynamic_client(
         client_name: Name for the client
         redirect_uris: List of redirect URIs
         client_uri: Optional client website URL
+        token_endpoint_auth_method: ``none`` for a public client, else how a
+            confidential one sends the secret the server issues it
 
     Returns:
         Registration response with client_id
@@ -614,7 +612,7 @@ async def register_dynamic_client(
         "redirect_uris": redirect_uris,
         "grant_types": ["authorization_code", "refresh_token"],
         "response_types": ["code"],
-        "token_endpoint_auth_method": "none",
+        "token_endpoint_auth_method": token_endpoint_auth_method,
     }
 
     if client_uri:

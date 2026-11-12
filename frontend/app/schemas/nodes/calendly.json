@@ -1714,6 +1714,19 @@
           "title": "Client Secret",
           "ui:hidden": true
         },
+        "token_endpoint_auth_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint Auth Method",
+          "ui:hidden": true
+        },
         "resource_url": {
           "anyOf": [
             {

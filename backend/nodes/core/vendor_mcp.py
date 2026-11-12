@@ -99,6 +99,8 @@ class McpCredential(BaseModel):
     token_endpoint: Optional[str] = Field(None, json_schema_extra=_HIDDEN)
     client_id: Optional[str] = Field(None, json_schema_extra=_HIDDEN)
     client_secret: Optional[str] = Field(None, json_schema_extra=_HIDDEN)
+    #: How the token endpoint takes the secret (``client_secret_basic``); unset, it rides the body.
+    token_endpoint_auth_method: Optional[str] = Field(None, json_schema_extra=_HIDDEN)
     resource_url: Optional[str] = Field(None, json_schema_extra=_HIDDEN)
     #: A server that asks for a bearer key rather than a sign-in.
     api_key: Optional[str] = Field(None, json_schema_extra=_HIDDEN)
@@ -272,6 +274,7 @@ async def fresh_credential(
             client_id=credential["client_id"],
             resource_url=credential.get("resource_url"),
             client_secret=secret,
+            auth_method=credential.get("token_endpoint_auth_method"),
         )
         return SimpleNamespace(
             access_token=tokens.access_token,

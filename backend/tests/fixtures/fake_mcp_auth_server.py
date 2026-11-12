@@ -15,6 +15,19 @@ URI."); ``key`` makes it a server that takes a bearer key and publishes no OAuth
 own origin is its authorization server); ``dcr=False`` with ``registrations``
 preset is a server that admits only clients registered with the vendor (a
 secret each); ``documents`` makes it a CIMD server.
+
+Shapes live vendor servers take: ``anonymous`` answers a
+client with no token (Shopify, Exa) while its metadata still names where a
+person signs in; ``prm_path`` is where the resource metadata is served (None:
+nowhere, as Trackdesk) and ``challenge_names`` the one the 401 names (ME-QR
+names a path it doesn't serve), ``challenge_quoted=False`` names it unquoted
+and ``info_document`` serves a server-info JSON at the path-specific well-known
+URL (both Finnhub); ``client_auth_methods`` are the token endpoint
+authentications it lists, a registration asking for another refused (Gong
+takes only clients with a secret); ``refuse_registration`` refuses every
+registration in those words (Kadoa, which wants a metadata document instead);
+``sign_in_page`` shows a non-browser a 401 at authorize, where a browser is
+sent on (Syncro).
 """
 
 from __future__ import annotations
@@ -29,7 +42,7 @@ import socket
 import time
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set
-from urllib.parse import urlencode, urlsplit
+from urllib.parse import unquote, urlencode, urlsplit
 
 import uvicorn
 from starlette.applications import Starlette
@@ -40,6 +53,7 @@ from starlette.routing import Mount, Route
 from mcp.server.fastmcp import Context, FastMCP
 
 ACCOUNT = "ana@example.com"
+WELL_KNOWN_PRM = "/.well-known/oauth-protected-resource"
 
 
 def _unsigned_id_token(email: str) -> str:
@@ -58,6 +72,14 @@ class FakeMcpAuthServer:
     dcr: bool = True
     #: Client ID Metadata Documents it can "fetch", by URL (as the app would serve them).
     documents: Optional[Dict[str, Dict]] = None
+    anonymous: bool = False
+    prm_path: Optional[str] = WELL_KNOWN_PRM + "/mcp"
+    challenge_names: Optional[str] = None
+    challenge_quoted: bool = True
+    info_document: bool = False
+    client_auth_methods: List[str] = field(default_factory=lambda: ["none", "client_secret_post"])
+    refuse_registration: Optional[str] = None
+    sign_in_page: bool = False
     registrations: Dict[str, Dict] = field(default_factory=dict)
     codes: Dict[str, Dict] = field(default_factory=dict)
     access_tokens: Dict[str, float] = field(default_factory=dict)
@@ -73,8 +95,10 @@ class FakeMcpAuthServer:
 
     def _challenge(self) -> Response:
         header = 'Bearer realm="OAuth", error="invalid_token"'
-        if not self.key and not self.legacy:
-            header += f', resource_metadata="{self.base}/.well-known/oauth-protected-resource/mcp"'
+        named = self.challenge_names or self.prm_path
+        if not self.key and not self.legacy and named:
+            url = f"{self.base}{named}"
+            header += f', resource_metadata="{url}"' if self.challenge_quoted else f", resource_metadata={url}"
         return JSONResponse({"error": "invalid_token"}, status_code=401, headers={"WWW-Authenticate": header})
 
     def token_ok(self, authorization: str) -> bool:
@@ -85,7 +109,9 @@ class FakeMcpAuthServer:
         return expires is not None and expires > time.time()
 
     async def resource_metadata(self, request: Request) -> Response:
-        if self.key or self.legacy:
+        if self.key or self.legacy or request.url.path != self.prm_path:
+            if self.info_document and request.url.path == WELL_KNOWN_PRM + "/mcp":
+                return JSONResponse({"mcp": "/mcp", "name": "fake-vendor", "resource": WELL_KNOWN_PRM})
             return Response(status_code=404)
         return JSONResponse({"resource": self.mcp_url, "authorization_servers": [self.base],
                              "scopes_supported": ["designs:read", "designs:write"]})
@@ -99,7 +125,7 @@ class FakeMcpAuthServer:
             "token_endpoint": f"{self.base}/token",
             "response_types_supported": ["code"],
             "grant_types_supported": ["authorization_code", "refresh_token"],
-            "token_endpoint_auth_methods_supported": ["none", "client_secret_post"],
+            "token_endpoint_auth_methods_supported": self.client_auth_methods,
             "code_challenge_methods_supported": ["S256"],
         }
         if self.dcr:
@@ -110,12 +136,21 @@ class FakeMcpAuthServer:
 
     async def register(self, request: Request) -> Response:
         body = await request.json()
+        method = body.get("token_endpoint_auth_method", "client_secret_basic")
+        if self.refuse_registration or method not in self.client_auth_methods:
+            refusal = self.refuse_registration or "token_endpoint_auth_method is unsupported"
+            return JSONResponse({"error": "invalid_client_metadata", "error_description": refusal}, status_code=400)
         client_id = f"client-{len(self.registrations) + 1}"
-        self.registrations[client_id] = body
-        return JSONResponse({**body, "client_id": client_id}, status_code=201)
+        issued = {**body, "client_id": client_id}
+        if method != "none":
+            issued["client_secret"] = secrets.token_urlsafe(16)
+        self.registrations[client_id] = issued
+        return JSONResponse(issued, status_code=201)
 
     async def authorize(self, request: Request) -> Response:
         q = request.query_params
+        if self.sign_in_page and "text/html" not in request.headers.get("accept", ""):
+            return PlainTextResponse("You need to sign in or sign up before continuing.", status_code=401)
         client = self.registrations.get(q.get("client_id", "")) or (self.documents or {}).get(q.get("client_id", ""))
         redirect = q.get("redirect_uri", "")
         if client is None:
@@ -138,29 +173,40 @@ class FakeMcpAuthServer:
         return {"access_token": access, "refresh_token": refresh, "token_type": "Bearer",
                 "expires_in": self.access_ttl, "scope": scope, "id_token": _unsigned_id_token(ACCOUNT)}
 
-    def _client_authenticated(self, client_id: str, form: Dict) -> bool:
-        """A client issued a secret proves it (client_secret_post); a public one has none."""
-        secret = (self.registrations.get(client_id) or {}).get("client_secret")
-        return not secret or form.get("client_secret") == secret
+    def _client_of(self, request: Request, form: Dict) -> Optional[str]:
+        """The client a token request is from, None when it fails to prove itself: a client issued a
+        secret sends it the way it registered (in the body, or as HTTP Basic); a public one sends none."""
+        basic = request.headers.get("authorization", "")
+        if basic.startswith("Basic "):
+            client_id, _, secret = (unquote(part) for part in base64.b64decode(basic[6:]).decode().partition(":"))
+            given, method = secret, "client_secret_basic"
+        else:
+            client_id, given, method = form.get("client_id", ""), form.get("client_secret"), "client_secret_post"
+        registered = self.registrations.get(client_id) or {}
+        if not registered.get("client_secret"):
+            return client_id
+        expected = registered.get("token_endpoint_auth_method") or "client_secret_post"
+        return client_id if method == expected and given == registered["client_secret"] else None
 
     async def token(self, request: Request) -> Response:
         form = dict(await request.form())
+        client_id = self._client_of(request, form)
         if form.get("grant_type") == "authorization_code":
             grant = self.codes.pop(form.get("code", ""), None)
-            if grant is not None and not self._client_authenticated(grant["client_id"], form):
+            if grant is not None and client_id is None:
                 return JSONResponse({"error": "invalid_client"}, status_code=401)
             verifier = form.get("code_verifier", "")
             challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
-            if (grant is None or grant["client_id"] != form.get("client_id") or grant["redirect_uri"] != form.get("redirect_uri")
+            if (grant is None or grant["client_id"] != client_id or grant["redirect_uri"] != form.get("redirect_uri")
                     or grant["challenge"] != challenge or form.get("resource") != self.mcp_url):
                 return JSONResponse({"error": "invalid_grant", "error_description": "The code is not valid."}, status_code=400)
             return JSONResponse(self._issue(grant["scope"], grant["client_id"]))
         if form.get("grant_type") == "refresh_token":
-            client_id = self.refresh_tokens.pop(form.get("refresh_token", ""), None)  # single use: rotated
-            if client_id is None or client_id != form.get("client_id") or not self._client_authenticated(client_id, form):
+            granted_to = self.refresh_tokens.pop(form.get("refresh_token", ""), None)  # single use: rotated
+            if granted_to is None or granted_to != client_id:
                 return JSONResponse({"error": "invalid_grant", "error_description": "Refresh token revoked."}, status_code=400)
             self.refreshes += 1
-            return JSONResponse(self._issue("", client_id))
+            return JSONResponse(self._issue("", granted_to))
         return JSONResponse({"error": "unsupported_grant_type"}, status_code=400)
 
     # --------------------------------------------------------------- MCP
@@ -184,14 +230,16 @@ class FakeMcpAuthServer:
         async def guarded(scope, receive, send):
             if scope["type"] == "http":
                 headers = {k.decode().lower(): v.decode() for k, v in scope.get("headers", [])}
-                if not self.token_ok(headers.get("authorization", "")):
+                authorization = headers.get("authorization", "")
+                if not (self.anonymous and not authorization) and not self.token_ok(authorization):
                     await self._challenge()(scope, receive, send)
                     return
             await mcp_app(scope, receive, send)
 
         return Starlette(
             routes=[
-                Route("/.well-known/oauth-protected-resource/mcp", self.resource_metadata),
+                Route(WELL_KNOWN_PRM, self.resource_metadata),
+                Route(WELL_KNOWN_PRM + "/mcp", self.resource_metadata),
                 Route("/.well-known/oauth-authorization-server", self.server_metadata),
                 Route("/register", self.register, methods=["POST"]),
                 Route("/authorize", self.authorize),
