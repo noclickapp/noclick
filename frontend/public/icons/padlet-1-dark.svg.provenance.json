@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/padlet-1-dark.svg",
+  "source": "https://padlet.net/favicon.svg",
+  "source_page": "https://padlet.com/ (<link rel=\"icon\" type=\"image/svg+xml\" href=\"https://padlet.net/favicon.svg\">)",
+  "source_kind": "company site (SVG favicon)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "267f8ea4e7e047a84d3c30fe57f2b7323d4bff57df4f541c9cbcda5db07fde64",
+  "edits": [
+    "removed the invisible full-canvas rect (element 0, #1b1b1b at opacity 0)",
+    "cropped the viewBox to the crane (pad 0.02)",
+    "clean",
+    "#000000 \u2192 #FFFFFF on the crane's outline/seam path (element 1 of the light file), the only part that vanished on the dark tile"
+  ],
+  "checked_against": "https://padlet.com/android-chrome-192x192.png (the PR's current icon): the same multicolour origami crane with a black outline; api hosts padlet.com / api.padlet.dev match",
+  "source_sha256": "338364903644472be8bdbd5dcf754fe0e70d5e597652852cbd10be85a4b1826a"
+}
