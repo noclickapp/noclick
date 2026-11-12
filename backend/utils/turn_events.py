@@ -31,7 +31,10 @@ delivered as that command alone, with none of what a message carries composed in
 and kept on its persisted message as ``command``. ``TURN_PERMISSION_MODE_KEY`` is the conversation's permission
 mode for a coding harness (``approval-required``, ``auto-accept-edits``, ``auto``, ``full-access``), delivered with
 its message: a person answers what the harness asks. ``TURN_EFFORT_KEY`` and ``TURN_SPEED_KEY`` are how hard and how
-fast the turn's model works (the conversation's, else its agent's)."""
+fast the turn's model works (the conversation's, else its agent's). ``TURN_STEER_KEY`` marks a delivery that joins a
+turn under way: its persisted message keeps the ``steer`` (the operation that carried it), which says who wrote it.
+``TURN_SUBAGENT_KEY`` is the harness's subagent a person's message was written for (``{id, title}``: the call that runs
+it), kept on its persisted message as ``subagent``."""
 
 from __future__ import annotations
 
@@ -57,6 +60,8 @@ TURN_COMMAND_KEY = "_turnCommand"
 TURN_PERMISSION_MODE_KEY = "_turnPermissionMode"
 TURN_EFFORT_KEY = "_turnEffort"
 TURN_SPEED_KEY = "_turnSpeed"
+TURN_STEER_KEY = "_turnSteer"
+TURN_SUBAGENT_KEY = "_turnSubagent"
 # What a person reads when a turn fails: the error's own words stay in the log and the turn's record.
 TURN_FAILED_LINE = "Sorry, I hit a problem on my side. Please try that again in a moment."
 
@@ -139,6 +144,17 @@ def turn_trigger_of(node_config: Any) -> Optional[Dict[str, Any]]:
     """What started a turn no person sent, when a platform said."""
     value = node_config.get(TURN_TRIGGER_KEY) if isinstance(node_config, dict) else None
     return value if isinstance(value, dict) and value else None
+
+
+def turn_steer_of(node_config: Any) -> Optional[str]:
+    """The operation a delivery joins its turn under way as, when a platform made it a steer."""
+    return _text(node_config, TURN_STEER_KEY)
+
+
+def turn_subagent_of(node_config: Any) -> Optional[Dict[str, str]]:
+    """The harness's subagent the turn's message was written for (``{id, title}``), when a platform said."""
+    value = node_config.get(TURN_SUBAGENT_KEY) if isinstance(node_config, dict) else None
+    return value if isinstance(value, dict) and isinstance(value.get("id"), str) else None
 
 
 def publish(conversation_id: Optional[str], event: Dict[str, Any]) -> None:
