@@ -348,6 +348,9 @@ async def _initialize_database_once(container):
         await conn.close()
 
 
+RESET_LOCK_TIMEOUT = "30s"
+
+
 async def reset_database_data(container) -> None:
     """Restore the shared test container to its migration-only baseline.
 
@@ -369,6 +372,10 @@ async def reset_database_data(container) -> None:
     )
 
     try:
+        # The reset needs every table to itself. A connection an earlier module
+        # left open inside a transaction holds locks it never gives back, and
+        # without a limit the reset waits on it for ever.
+        await conn.execute(f"SET lock_timeout = '{RESET_LOCK_TIMEOUT}'")
         # Workflow database tests materialize arbitrary tables in this schema.
         # Dropping the schema clears both those tables and their owned sequences.
         await conn.execute("DROP SCHEMA IF EXISTS user_tables CASCADE")
@@ -409,6 +416,15 @@ async def reset_database_data(container) -> None:
             "00000000-0000-0000-0000-000000000001",
             "test@example.com",
         )
+    except asyncpg.exceptions.LockNotAvailableError:
+        others = "WHERE datname = current_database() AND pid <> pg_backend_pid()"
+        holders = await conn.fetch(f"SELECT pid, state, left(query, 200) AS query FROM pg_stat_activity {others}")
+        # Ended, so the modules after this one start from a database they can reset.
+        await conn.execute(f"SELECT pg_terminate_backend(pid) FROM pg_stat_activity {others}")
+        raise RuntimeError(
+            "An earlier test module left connections open on the test database, holding locks "
+            f"this module's reset needs: {[dict(holder) for holder in holders]}"
+        ) from None
     finally:
         await conn.close()
 

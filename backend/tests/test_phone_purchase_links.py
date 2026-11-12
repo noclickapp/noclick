@@ -13,6 +13,7 @@ from billing.markup import CREDITS_PER_DOLLAR
 from billing.usage_tracker import usage_tracker
 from repositories.credentials import CredentialsRepo
 from utils import capabilities, phone_purchase as purchase, phone_purchase_routes as routes
+from utils.async_helpers import drain_spawned_tasks
 from utils.phone_numbers import PhonePurchaseRejected
 from wss.handlers import phone_number_handler as handler
 
@@ -80,6 +81,10 @@ async def phone_db(postgres_db, postgres_container, monkeypatch):
     try:
         yield pool, service, row.token, numbers
     finally:
+        # A purchase hands its link result to a spawned task on this pool. Left
+        # running, it opened connections as the pool closed that outlived the
+        # module, into the next module's reset of the shared database.
+        await drain_spawned_tasks()
         await pool.execute("DELETE FROM credential_requests WHERE requester_id=$1::uuid", USER)
         await pool.execute("DELETE FROM credentials WHERE owner_id=$1::uuid AND credential_type='phone_number'", USER)
         capabilities._providers.clear()
