@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/kubernetes.svg",
   "source": "https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.svg",
-  "license": "Apache-2.0",
-  "sha256": "a8f6c3b81e588eb0eee4b5ae707ad11b16d0c5ce132719871e559eed0e61e6bf"
+  "source_page": "https://github.com/kubernetes/kubernetes/tree/master/logo",
+  "source_kind": "company GitHub/npm",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "597faa68c1603b373a7679feede73661f86b39f7fe6ffe5605aff5505cee9fd2",
+  "edits": [
+    "added a viewBox with svgtool crop --pad 0.02 (the file had only width/height); nothing else changed"
+  ],
+  "checked_against": "The source is byte-identical (sha256) to the PR's current file and to the logo in the kubernetes/kubernetes repo; the blue heptagon with the white helm wheel is the current Kubernetes logo on kubernetes.io.",
+  "source_sha256": "a8f6c3b81e588eb0eee4b5ae707ad11b16d0c5ce132719871e559eed0e61e6bf"
 }
