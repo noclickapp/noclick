@@ -3,6 +3,10 @@
   "type": "automation-microsoft-onenote",
   "nodeMeta": {
     "agentToolProvider": true,
+    "triggerOperations": [
+      "on_new_page",
+      "on_new_or_updated_page"
+    ],
     "borrowedCredentialTypes": [
       "microsoft_oauth"
     ]
