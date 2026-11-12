@@ -13,19 +13,32 @@ const ResourceGuruIcon = ({
     className?: string;
     style?: CSSProperties;
 }) => (
-    <img
-        src="/icons/resource-guru.png"
-        alt=""
-        aria-hidden="true"
-        className={className}
-        style={
-            {
-                ...style,
-                objectFit: 'contain',
-                '--brand-invert': 0,
-            } as CSSProperties
-        }
-    />
+    <>
+        <img
+            src="/icons/resource-guru.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} dark:hidden`}
+            style={
+                {
+                    ...style,
+                    objectFit: 'contain',
+                } as CSSProperties
+            }
+        />
+        <img
+            src="/icons/resource-guru-dark.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} hidden dark:block`}
+            style={
+                {
+                    ...style,
+                    objectFit: 'contain',
+                } as CSSProperties
+            }
+        />
+    </>
 );
 export const ResourceGuruNode: NodeDefinition = {
     type: 'automation-resource-guru',

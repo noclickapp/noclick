@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/resource-guru-dark.svg",
+  "source": "https://resourceguruapp.com/ (inline footer <svg viewBox=\"0 0 185 166\"> inside .css-r12t86, the symbol alone)",
+  "source_page": "https://resourceguruapp.com/ (footer symbol; the header lockup <svg viewBox=\"0 0 923 166\"> uses the same symbol as its path.graphic)",
+  "source_kind": "company site (inline footer <svg>)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "574e630cfd8b912f82ccc03c0f5ea19108fb3d3954e12e0d4a2a7ed7e562dc91",
+  "edits": [
+    "light: set the symbol's fill (unpainted in the file; the site paints it with CSS) to #40264D, the colour resourceguruapp.com paints the logo on light pages (/features, /about-us: .graphic{fill:#40264d})",
+    "cropped the viewBox to the symbol with --pad 0.02",
+    "cleaned",
+    "dark: set the same fill to #00FF87, the colour the site paints the symbol on dark (home header .graphic{fill:#00ff87}, footer svg path{fill:#00ff87}) and the symbol colour of its favicon / apple-touch-icon"
+  ],
+  "checked_against": "https://resourceguruapp.com/cms-files/icons/apple-touch-icon.png (mint symbol on the #40264d purple tile); the node calls api.resourceguruapp.com",
+  "source_sha256": "5a1a6e257fe788d1d34ab78ad1de9fdee4c2bd01cdc3c6a2f3e10c1b1f496030"
+}
