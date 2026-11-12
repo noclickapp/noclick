@@ -6,12 +6,12 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const ZyteApiIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/zyte-api.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <img ref={ref} src="/icons/zyte-api.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
     ),
 );
 ZyteApiIcon.displayName = 'ZyteApiIcon';
 
-// Exact publisher asset; provenance is recorded beside the PNG.
+// Exact publisher asset; provenance is recorded beside the SVG.
 export const ZyteApiNode: NodeDefinition = {
     type: 'automation-zyte-api',
     label: 'Zyte API',

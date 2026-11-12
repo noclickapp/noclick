@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/zyte-api.svg",
+  "source": "https://raw.githubusercontent.com/zytedata/zyte-design-system/main/packages/web/src/assets/mark.svg",
+  "source_page": "https://github.com/zytedata/zyte-design-system (Zyte's GitHub org 'Zyte (formerly Scrapinghub)', blog https://www.zyte.com; the same file is apps/dashboard/public/mark.svg, sha256 identical; beside logo.primary/reversed/mono.svg wordmarks)",
+  "source_kind": "company GitHub/npm",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "d8afc040d1a37b958134d7ba2bf98b960faa76c089538cd4ffc5e5fe04215322",
+  "edits": [
+    "clean",
+    "cropped the viewBox to the mark, pad 0.02 (gradients, the masked blur shadow and its filter kept as published)"
+  ],
+  "checked_against": "https://www.zyte.com/apple-touch-icon.png?v=2 (the same red/pink/purple ribbon Z, identical shape and gradient) and the PR's https://www.zyte.com/favicon-32x32.png?v=2; api hosts api.zyte.com / app.zyte.com / docs.zyte.com",
+  "source_sha256": "361fae8d1bc4b3c4047247056d513ee9cfd01bd335e110c2e413c68e22a2c02c"
+}
