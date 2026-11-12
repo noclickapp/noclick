@@ -1,5 +1,5 @@
 // The connect dialog's words come from the schema alone; these pin the rules that make a developer docstring read as
-// something a person can act on (the whole catalog is pinned by credentialCopyAudit.test.ts).
+// something a person can act on.
 import { describe, expect, it } from 'vitest';
 import { credentialRequirements, methodFromRequirement } from '~/components/credential/credentialMethods';
 import { asNamed, copyMethodOf, fieldHelp, fieldLabel, methodCopy, sentenceCase, stepsFromDescription, withArticle, withoutAppName } from '~/utils/credentialCopy';

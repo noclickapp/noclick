@@ -3,7 +3,6 @@
 // get the value (the schema's x-credential-instructions, else the steps in its description) and where (the
 // x-credential-url's host, never the raw URL). A schema description is written for developers ("OAuth 2.0 credential
 // for Notion. Tokens are obtained via OAuth flow…"), so it is never shown as is: only its instructions survive.
-// Every credential in the node schemas is pinned in tests/utils/__snapshots__/credential-copy.snap.txt.
 import type { ProvideCredentialMethod } from '~/components/credential/CredentialMethodConnect';
 import { kindFromBackendMethod, type CredentialMethodKind } from '~/lib/credentialMethodKind';
 import { fixWordCasing } from '~/utils/credentialLabels';
