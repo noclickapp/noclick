@@ -29,7 +29,7 @@ import { hasUnconnectedCredentials } from './NodeCredentials';
 import { useAgentCredentialsRequired } from '~/hooks/useAgentCredentialsRequired';
 import { CopyLinkButton } from '~/components/ui/CopyLinkButton';
 import { buildNodeDeepLink } from '~/utils/workflowNavigation';
-import { booleanSelectValue, getRequireOneOfGroups, getSchemaInfo, isBooleanSchema, isFieldApplicable } from '~/utils/schemaFieldExtractor';
+import { booleanSelectValue, getRequireOneOfGroups, getSchemaInfo, isBooleanSchema, isFieldApplicable, isListSchema } from '~/utils/schemaFieldExtractor';
 import { evaluateRequireOneOf } from '~/utils/workflowNodeValidation';
 import { evaluateShowIf, validateConfigForm, type ConfigFormValidation } from '~/utils/nodeConfigFormValidation';
 import { NodeSettings } from './NodeSettings';
