@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Ignition API Key": "ignition_api_key",
-    "IgnitionAPIKeyCredential": "ignition_api_key"
+    "Ignition MCP": "ignition_mcp",
+    "IgnitionAPIKeyCredential": "ignition_api_key",
+    "IgnitionMcpCredential": "ignition_mcp"
   },
   "providerLabels": {
-    "ignition": "Ignition API Key"
+    "ignition": "Ignition Account"
   },
   "autoSelectCredential": true
 }

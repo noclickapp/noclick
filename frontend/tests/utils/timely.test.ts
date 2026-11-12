@@ -6,7 +6,7 @@ import schema from '~/schemas/nodes/timely.json';
 describe('Timely credential and operations', () => {
   beforeAll(() => loadNodeSchemas(['automation-timely']));
   it('offers a pasted bearer token with workspace context', () => {
-    expect(getNodeCredentialInfo('automation-timely')?.acceptedTypes).toEqual(['timely_token']);
+    expect(getNodeCredentialInfo('automation-timely')?.acceptedTypes).toEqual(['timely_token', 'timely_mcp']); // and its vendor's MCP server, last (backend nodes/core/vendor_mcp.py)
     expect(methodFromRequirement(requirementsFromSchema(schema)[0]).method_kind).toBe('api_key');
   });
   it('exposes the contracted reads and writes', () => {

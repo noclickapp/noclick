@@ -37,6 +37,8 @@ const COMPOUND_BRANDS = [
   'QuickBooks', 'OAuth', 'WordPress', 'AppSheet', 'ClickHouse', 'BigQuery',
   'SendGrid', 'MongoDB', 'NocoDB', 'OneDrive', 'OneLake', 'PageSpeed', 'PhantomBuster',
   'LaunchDarkly', 'GoHighLevel', 'ElevenLabs',
+  'ClickFunnels', 'DataForSEO', 'GoCardless', 'JumpCloud', 'OneSignal', 'OpenAlex',
+  'OpusClip', 'OwnerRez', 'PartnerStack', 'VirusTotal',
 ];
 
 // Split forms whose CANONICAL brand differs from the class name entirely —

@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Hubstaff MCP": "hubstaff_mcp",
     "Hubstaff Organization Access Token": "hubstaff_organization_token",
+    "HubstaffMcpCredential": "hubstaff_mcp",
     "HubstaffOrganizationTokenCredential": "hubstaff_organization_token"
   },
   "providerLabels": {
-    "hubstaff": "Hubstaff Organization Access Token"
+    "hubstaff": "Hubstaff Account"
   },
   "autoSelectCredential": true
 }

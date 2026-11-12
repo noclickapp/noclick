@@ -12,6 +12,7 @@ import httpx
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -229,6 +230,11 @@ class MemMemItConfig(_Input):
     timestamp: AwareDatetime | None = Field(None, description='When this information was encountered or created (ISO 8601 datetime string). Defaults to the current date and time.\n\nExample:\n• "2025-04-01T14:30:45Z"\n• "2023-12-15T09:45:30+01:00"\n\nMaximum of ~10k characters.')
 
 
+# Mem's own MCP server: agents get its tools through a person's Mem sign-in.
+MemMcpCredential = mcp_credential("mem", "https://mcp.mem.ai/mcp", app="Mem")
+MemCredential = Union[MemAPIKeyCredential, MemMcpCredential]
+
+
 MemOperation = Annotated[Union[
     MemListNotesConfig,
     MemCreateNoteConfig,
@@ -253,7 +259,7 @@ MemOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class MemNodeConfig(NodeConfig[MemOperation, MemAPIKeyCredential]):
+class MemNodeConfig(NodeConfig[MemOperation, MemCredential]):
     pass
 
 
@@ -348,6 +354,7 @@ def _redact(value, token):
 
 class MemNode(WorkflowNode):
     integration_type = "automation-mem"
+    credential_provider_labels = {"mem": "Mem Account"}
     connection_evidence = ConnectionEvidence(noun="collections", operation="list_collections")
     edit_examples = ["Save meeting notes to Mem", "Search my Mem notes", "Organize notes into a collection"]
 

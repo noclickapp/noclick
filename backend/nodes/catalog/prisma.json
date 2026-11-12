@@ -19,6 +19,18 @@
    "hidden": false,
    "pinned": true,
    "borrowed": false
+  },
+  {
+   "type": "prisma_mcp",
+   "title": "Prisma MCP",
+   "oauth_provider": null,
+   "method": "mcp",
+   "hidden": false,
+   "pinned": true,
+   "borrowed": false,
+   "linked_fields": [
+    "mcp_server_url"
+   ]
   }
  ],
  "operations": [

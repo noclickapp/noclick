@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -50,6 +51,11 @@ class _Payload(_Input):
             if getattr(self, name) is None:
                 raise ValueError(f"Omit {name} instead of sending null")
         return self
+
+
+# Ignition's own MCP server: agents get its tools through a person's Ignition sign-in.
+IgnitionMcpCredential = mcp_credential("ignition", "https://mcp.ignitionapp.com/mcp", app="Ignition")
+IgnitionCredential = Union[IgnitionAPIKeyCredential, IgnitionMcpCredential]
 
 
 Slug = Annotated[str, Field(min_length=1, max_length=200, pattern=r"^[A-Za-z0-9_-]+$")]
@@ -313,7 +319,7 @@ IgnitionOperation = Annotated[Union[GetPractice, ListClients, GetClient, CreateC
     SendProposal, ListInvoices, GetInvoice, ListPayments], Field(discriminator="operation")]
 
 
-class IgnitionConfig(NodeConfig[IgnitionOperation, IgnitionAPIKeyCredential]):
+class IgnitionConfig(NodeConfig[IgnitionOperation, IgnitionCredential]):
     pass
 
 
@@ -355,6 +361,7 @@ def _resource(value, kind):
 
 class IgnitionNode(WorkflowNode):
     integration_type = "automation-ignition"
+    credential_provider_labels = {"ignition": "Ignition Account"}
     connection_evidence = ConnectionEvidence(noun="Ignition practice", identity_operation="get_practice")
 
     @classmethod

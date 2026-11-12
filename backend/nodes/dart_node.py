@@ -13,6 +13,7 @@ from urllib.parse import parse_qs, urlsplit
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -199,12 +200,17 @@ class GetView(_Input):
     view_id: DartID
 
 
+# Dart's own MCP server: agents get its tools through a person's Dart sign-in.
+DartMcpCredential = mcp_credential("dart", "https://mcp.dartai.com/mcp", app="Dart")
+DartCredential = Union[DartAPITokenCredential, DartMcpCredential]
+
+
 DartConfig = Annotated[Union[GetMe, GetConfig, ListTasks, GetTask, CreateTask, UpdateTask,
     DeleteTask, MoveTask, ListDocs, GetDoc, CreateDoc, UpdateDoc, DeleteDoc,
     ListComments, AddComment, GetDartboard, GetFolder, GetView], Field(discriminator="operation")]
 
 
-class DartFullConfig(NodeConfig[DartConfig, DartAPITokenCredential]):
+class DartFullConfig(NodeConfig[DartConfig, DartCredential]):
     pass
 
 
@@ -224,6 +230,7 @@ ROUTES = {
 
 class DartNode(WorkflowNode):
     integration_type = "automation-dart"
+    credential_provider_labels = {"dart": "Dart Account"}
     connection_evidence = ConnectionEvidence(noun="tasks", operation="list_tasks", identity_operation="get_me")
 
     @classmethod

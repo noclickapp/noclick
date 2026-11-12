@@ -17,6 +17,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 
@@ -7440,6 +7441,11 @@ class NgrokAPIKeyCredential(BaseModel):
     })
 
 
+# ngrok's own MCP server: agents get its tools through a person's ngrok sign-in.
+NgrokMcpCredential = mcp_credential("ngrok", "https://mcp.ngrok.com/mcp", app="ngrok")
+NgrokCredential = Union[NgrokAPIKeyCredential, NgrokMcpCredential]
+
+
 _TYPES: Dict[str, Any] = {
     "string": str,
     "integer": int,
@@ -7547,7 +7553,7 @@ for _model in _POLL_MODELS:
 NgrokConfig = Annotated[Union[tuple(_OPERATION_MODELS + _POLL_MODELS)], Discriminator("operation")]
 
 
-class NgrokNodeConfig(NodeConfig[NgrokConfig, NgrokAPIKeyCredential]):
+class NgrokNodeConfig(NodeConfig[NgrokConfig, NgrokCredential]):
     """One ngrok operation and its API key."""
 
 
@@ -7605,6 +7611,7 @@ class NgrokNode(ScheduledPollTriggerMixin, WorkflowNode):
     """Provision and inspect ngrok endpoints, domains, tunnels and account resources."""
 
     integration_type = "automation-ngrok"
+    credential_provider_labels = {"ngrok": "ngrok Account"}
 
     connection_evidence = ConnectionEvidence(
         operation="list_endpoints",

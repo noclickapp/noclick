@@ -11,6 +11,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -128,13 +129,18 @@ class DeleteRequest(_Request):
     operation: Literal["delete_request"] = "delete_request"
 
 
+# Higgsfield's own MCP server: agents get its tools through a person's Higgsfield sign-in.
+HiggsfieldMcpCredential = mcp_credential("higgsfield", "https://mcp.higgsfield.ai/mcp", app="Higgsfield")
+HiggsfieldCredential = Union[HiggsfieldAPIKeyCredential, HiggsfieldMcpCredential]
+
+
 HiggsfieldConfig = Annotated[Union[GenerateSoulImage, GenerateKlingProImageVideo,
     GenerateKlingProTextVideo, GenerateKlingStandardImageVideo,
     GenerateHailuoImageVideo, GenerateHailuoTextVideo, GetRequestStatus,
     GetRequestOutputs, CancelRequest, DeleteRequest], Field(discriminator="operation")]
 
 
-class HiggsfieldFullConfig(NodeConfig[HiggsfieldConfig, HiggsfieldAPIKeyCredential]):
+class HiggsfieldFullConfig(NodeConfig[HiggsfieldConfig, HiggsfieldCredential]):
     pass
 
 
@@ -167,6 +173,7 @@ def _redact(value, credential):
 
 class HiggsfieldNode(WorkflowNode):
     integration_type = "automation-higgsfield"
+    credential_provider_labels = {"higgsfield": "Higgsfield Account"}
     connection_evidence = ConnectionEvidence(field="request_id", noun="Higgsfield requests")
 
     @classmethod

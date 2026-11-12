@@ -14,6 +14,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -343,10 +344,15 @@ class RecordAction(_Input):
     created_at: int | None = Field(None, title='Created At', description='The created_at date of the action in epoch (ms).')
 
 
+# PartnerStack's own MCP server: agents get its tools through a person's PartnerStack sign-in.
+PartnerstackMcpCredential = mcp_credential("partnerstack", "https://mcp.partnerstack.com/mcp", app="PartnerStack")
+PartnerStackCredential = Union[PartnerStackAPIKeys, PartnerstackMcpCredential]
+
+
 Operation = Annotated[Union[ListCustomers, GetCustomer, CreateCustomer, UpdateCustomer, DeleteCustomer, ListLeads, GetLead, CreateLead, UpdateLead, ArchiveLead, ListDeals, GetDeal, CreateDeal, UpdateDeal, ArchiveDeal, ListPartnerships, GetPartnership, CreatePartnership, UpdatePartnership, ListGroups, ListTransactions, CreateTransaction, DeleteTransaction, ListActions, RecordAction], Field(discriminator="operation")]
 
 
-class PartnerStackConfig(NodeConfig[Operation, PartnerStackAPIKeys]):
+class PartnerStackConfig(NodeConfig[Operation, PartnerStackCredential]):
     pass
 
 
@@ -381,6 +387,7 @@ ROUTES = {
 
 class PartnerStackNode(WorkflowNode):
     integration_type = "automation-partnerstack"
+    credential_provider_labels = {"partnerstack": "PartnerStack Account"}
     connection_evidence = ConnectionEvidence(operation="list_groups", noun="partner groups", label_keys=("name", "slug", "key"))
 
     @classmethod

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Razorpay API Key": "razorpay_api_key",
-    "RazorpayAPIKeyCredential": "razorpay_api_key"
+    "Razorpay MCP": "razorpay_mcp",
+    "RazorpayAPIKeyCredential": "razorpay_api_key",
+    "RazorpayMcpCredential": "razorpay_mcp"
   },
   "providerLabels": {
-    "razorpay": "Razorpay API Key"
+    "razorpay": "Razorpay Account"
   },
   "autoSelectCredential": true
 }

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Ticket Tailor API Key": "ticket_tailor",
-    "TicketTailorCredential": "ticket_tailor"
+    "Ticket Tailor MCP": "ticket_tailor_mcp",
+    "TicketTailorCredential": "ticket_tailor",
+    "TicketTailorMcpCredential": "ticket_tailor_mcp"
   },
   "providerLabels": {
-    "ticket_tailor": "Ticket Tailor API Key"
+    "ticket_tailor": "Ticket Tailor Account"
   },
   "autoSelectCredential": true
 }

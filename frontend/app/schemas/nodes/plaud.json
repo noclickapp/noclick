@@ -522,6 +522,187 @@
       "type": "object",
       "x-requires-webhook": true
     },
+    "PlaudMcpCredential": {
+      "description": "Plaud connected through Plaud's MCP server: agents get its tools.",
+      "properties": {
+        "mcp_server_url": {
+          "title": "MCP server",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Token",
+          "ui:hidden": true
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:hidden": true
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At",
+          "ui:hidden": true
+        },
+        "token_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Type",
+          "ui:hidden": true
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope",
+          "ui:hidden": true
+        },
+        "token_endpoint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id",
+          "ui:hidden": true
+        },
+        "client_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Secret",
+          "ui:hidden": true
+        },
+        "token_endpoint_auth_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint Auth Method",
+          "ui:hidden": true
+        },
+        "resource_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resource Url",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Api Key",
+          "ui:hidden": true
+        },
+        "account": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account",
+          "ui:hidden": true
+        },
+        "credential_type": {
+          "const": "plaud_mcp",
+          "default": "plaud_mcp",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "mcp_server_url"
+      ],
+      "title": "Plaud MCP",
+      "type": "object",
+      "x-credential-type": "mcp",
+      "x-mcp-server": "https://mcp.plaud.ai/mcp",
+      "x-mcp-transport": "shttp"
+    },
     "PlaudUserCredential": {
       "properties": {
         "access_token": {
@@ -611,10 +792,10 @@
         "interval": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -627,10 +808,10 @@
         "hour": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -643,10 +824,10 @@
         "minute": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -659,10 +840,10 @@
         "dayOfWeek": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -675,10 +856,10 @@
         "dayOfMonth": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -740,10 +921,10 @@
         "monthDayStart": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -756,10 +937,10 @@
         "monthDayEnd": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -772,10 +953,10 @@
         "monthStart": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -788,10 +969,10 @@
         "monthEnd": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -932,6 +1113,9 @@
         },
         {
           "$ref": "#/$defs/PlaudUserCredential"
+        },
+        {
+          "$ref": "#/$defs/PlaudMcpCredential"
         },
         {
           "type": "null"

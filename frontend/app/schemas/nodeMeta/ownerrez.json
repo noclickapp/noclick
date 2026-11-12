@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "OwnerRez MCP": "ownerrez_mcp",
     "OwnerRez Personal Access Token": "ownerrez_personal_token",
-    "OwnerRezPersonalTokenCredential": "ownerrez_personal_token"
+    "OwnerRezPersonalTokenCredential": "ownerrez_personal_token",
+    "OwnerrezMcpCredential": "ownerrez_mcp"
   },
   "providerLabels": {
-    "ownerrez": "OwnerRez Personal Access Token"
+    "ownerrez": "OwnerRez Account"
   },
   "autoSelectCredential": true
 }

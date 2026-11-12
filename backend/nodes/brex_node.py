@@ -26,6 +26,7 @@ from pydantic import (
 )
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.scopes.brex import BREX_SCOPES
@@ -52,6 +53,11 @@ class BrexAPITokenCredential(BaseModel):
             "x-credential-instructions": "In Brex Developer settings, create a token with companies.readonly for the connection check. Enable expenses.card, cards, accounts.cash.readonly, accounts.card.readonly, transactions.card.readonly, transactions.cash.readonly, transfers, transfers.readonly and vendors.readonly for the operations you use. Copy the token when it is created; Brex only shows it once.",
         }
     )
+
+
+# Brex's own MCP server: agents get its tools through a person's Brex sign-in.
+BrexMcpCredential = mcp_credential("brex", "https://api.brex.com/mcp", app="Brex")
+BrexCredential = Union[BrexAPITokenCredential, BrexMcpCredential]
 
 
 def _operation(name: str, category: str):
@@ -398,7 +404,7 @@ BrexConfig = Annotated[
 ]
 
 
-class BrexNodeConfig(NodeConfig[BrexConfig, BrexAPITokenCredential]):
+class BrexNodeConfig(NodeConfig[BrexConfig, BrexCredential]):
     pass
 
 
@@ -434,6 +440,7 @@ def _split(value: Optional[str]):
 class BrexNode(ExternalWebhookTriggerMixin, WorkflowNode):
     webhook_replace_stale_endpoint = True
     integration_type = "automation-brex"
+    credential_provider_labels = {"brex": "Brex Account"}
     scope_registry = BREX_SCOPES
     connection_evidence = ConnectionEvidence(
         identity_operation="get_company", noun="company", identity_keys=("legal_name",)

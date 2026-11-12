@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Prisma MCP": "prisma_mcp",
     "Prisma Service Token": "prisma_service_token",
+    "PrismaMcpCredential": "prisma_mcp",
     "PrismaServiceTokenCredential": "prisma_service_token"
   },
   "providerLabels": {
-    "prisma": "Prisma Service Token"
+    "prisma": "Prisma Account"
   },
   "autoSelectCredential": true
 }

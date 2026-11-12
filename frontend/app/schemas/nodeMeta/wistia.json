@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Wistia API Token": "wistia_api_token",
-    "WistiaAPITokenCredential": "wistia_api_token"
+    "Wistia MCP": "wistia_mcp",
+    "WistiaAPITokenCredential": "wistia_api_token",
+    "WistiaMcpCredential": "wistia_mcp"
   },
   "providerLabels": {
-    "wistia": "Wistia API Token"
+    "wistia": "Wistia Account"
   },
   "autoSelectCredential": true
 }

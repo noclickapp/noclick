@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Qwilr Account Token": "qwilr_api_token",
-    "QwilrAPITokenCredential": "qwilr_api_token"
+    "Qwilr MCP": "qwilr_mcp",
+    "QwilrAPITokenCredential": "qwilr_api_token",
+    "QwilrMcpCredential": "qwilr_mcp"
   },
   "providerLabels": {
-    "qwilr": "Qwilr Account Token"
+    "qwilr": "Qwilr Account"
   },
   "autoSelectCredential": true
 }

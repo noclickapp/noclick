@@ -20,6 +20,18 @@
    "hidden": false,
    "pinned": true,
    "borrowed": false
+  },
+  {
+   "type": "givebutter_mcp",
+   "title": "Givebutter MCP",
+   "oauth_provider": null,
+   "method": "mcp",
+   "hidden": false,
+   "pinned": true,
+   "borrowed": false,
+   "linked_fields": [
+    "mcp_server_url"
+   ]
   }
  ],
  "operations": [

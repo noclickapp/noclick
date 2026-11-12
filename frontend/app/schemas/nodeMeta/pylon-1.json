@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Pylon API Token": "pylon_1_api_token",
+    "Pylon MCP": "pylon_1_mcp",
+    "Pylon1McpCredential": "pylon_1_mcp",
     "PylonAPITokenCredential": "pylon_1_api_token"
   },
   "providerLabels": {
-    "pylon_1": "Pylon API Token"
+    "pylon_1": "Pylon Account"
   },
   "autoSelectCredential": true
 }

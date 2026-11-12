@@ -16,6 +16,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -227,10 +228,16 @@ class ListIssueStatuses(Input):
     operation: Literal["list_issue_statuses"] = Field("list_issue_statuses", json_schema_extra={"ui:hidden": True})
 
 
+# Pylon's own MCP server: agents get its tools through a person's Pylon sign-in.
+# Pylon's US workspaces; EU workspaces sign in at mcp.eu.usepylon.com.
+Pylon1McpCredential = mcp_credential("pylon_1", "https://mcp.usepylon.com", app="Pylon")
+PylonCredential = Union[PylonAPITokenCredential, Pylon1McpCredential]
+
+
 PylonConfig = Annotated[Union[GetMe, ListIssues, GetIssue, CreateIssue, UpdateIssue, ListIssueMessages, CreateIssueNote, ReplyIssue, ListAccounts, GetAccount, CreateAccount, UpdateAccount, ListContacts, GetContact, CreateContact, UpdateContact, ListTags, GetTag, CreateTag, ListUsers, GetUser, ListTeams, ListIssueStatuses], Field(discriminator="operation")]
 
 
-class PylonFullConfig(NodeConfig[PylonConfig, PylonAPITokenCredential]):
+class PylonFullConfig(NodeConfig[PylonConfig, PylonCredential]):
     pass
 
 
@@ -264,6 +271,7 @@ ROUTES = {
 
 class PylonNode(WorkflowNode):
     integration_type = "automation-pylon-1"
+    credential_provider_labels = {"pylon_1": "Pylon Account"}
     connection_evidence = ConnectionEvidence(noun="Pylon organization", identity_operation="get_me")
 
     @classmethod

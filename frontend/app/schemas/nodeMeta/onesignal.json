@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "OneSignal API Key": "onesignal_api_key",
-    "OneSignalCredential": "onesignal_api_key"
+    "OneSignal MCP": "onesignal_mcp",
+    "OneSignalCredential": "onesignal_api_key",
+    "OnesignalMcpCredential": "onesignal_mcp"
   },
   "providerLabels": {
-    "onesignal": "OneSignal API Key"
+    "onesignal": "OneSignal Account"
   },
   "autoSelectCredential": true
 }

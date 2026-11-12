@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import SSRFError, guarded_async_client
@@ -197,6 +198,11 @@ class ListPaymentLinks(_Input):
     operation: Literal["list_payment_links"] = "list_payment_links"
 
 
+# Razorpay's own MCP server: agents get its tools through a person's Razorpay sign-in.
+RazorpayMcpCredential = mcp_credential("razorpay", "https://mcp.razorpay.com/mcp", app="Razorpay")
+RazorpayCredential = Union[RazorpayAPIKeyCredential, RazorpayMcpCredential]
+
+
 RazorpayConfig = Annotated[Union[
     ListCustomers, CreateCustomer, ListOrders, CreateOrder, ListPayments, ListRefunds,
     ListInvoices, CreateItem, ListItems, CreatePlan, ListPlans, CreateSubscription,
@@ -204,7 +210,7 @@ RazorpayConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class RazorpayFullConfig(NodeConfig[RazorpayConfig, RazorpayAPIKeyCredential]):
+class RazorpayFullConfig(NodeConfig[RazorpayConfig, RazorpayCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -257,6 +263,7 @@ def _guard_credential(config_data):
 
 class RazorpayNode(WorkflowNode):
     integration_type = "automation-razorpay"
+    credential_provider_labels = {"razorpay": "Razorpay Account"}
     connection_evidence = ConnectionEvidence(noun="customers", operation="list_customers", label_keys=("name", "email", "id"))
 
     @classmethod

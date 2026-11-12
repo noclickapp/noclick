@@ -17,6 +17,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.binary_output import BinaryOutput
 from nodes.netlify_operations import CATALOG
@@ -64,7 +65,9 @@ class NetlifyPersonalAccessTokenCredential(BaseModel):
     })
 
 
-NetlifyCredential = Union[NetlifyOAuthCredential, NetlifyPersonalAccessTokenCredential]
+# Netlify's own MCP server: agents get its tools through a person's Netlify sign-in.
+NetlifyMcpCredential = mcp_credential("netlify", "https://mcp.netlify.com/mcp", app="Netlify")
+NetlifyCredential = Union[NetlifyOAuthCredential, NetlifyPersonalAccessTokenCredential, NetlifyMcpCredential]
 
 
 def _path_field(raw: str) -> str:

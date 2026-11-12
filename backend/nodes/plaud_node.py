@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
@@ -53,7 +54,9 @@ class PlaudUserCredential(_Credential):
     device_sn: str = Field(..., min_length=1, max_length=128, title="Device serial number", description="A device SN for the read-only connection check (881 = Note Pro, 882 = NotePin S).", pattern=r"^(881|882)[0-9]+$")
 
 
-Credential = Union[PlaudWorkspaceCredential, PlaudUserCredential]
+# Plaud's own MCP server: agents get its tools through a person's Plaud sign-in.
+PlaudMcpCredential = mcp_credential("plaud", "https://mcp.plaud.ai/mcp", app="Plaud")
+Credential = Union[PlaudWorkspaceCredential, PlaudUserCredential, PlaudMcpCredential]
 
 
 class _Input(BaseModel):

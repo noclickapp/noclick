@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 API_BASE = "https://api.tally.so"
@@ -32,6 +33,11 @@ class TallyApiKeyCredential(BaseModel):
         title="Tally API Key",
         json_schema_extra={"x-credential-url": "https://tally.so/settings/api-keys"}
     )
+
+
+# Tally's own MCP server: agents get its tools through a person's Tally sign-in.
+TallyMcpCredential = mcp_credential("tally", "https://api.tally.so/mcp", app="Tally")
+TallyCredential = Union[TallyApiKeyCredential, TallyMcpCredential]
 
 
 def _op(name: str, category: str, title: str):
@@ -441,7 +447,7 @@ TallyConfig = Annotated[
 ]
 
 
-class TallyNodeConfig(NodeConfig[TallyConfig, TallyApiKeyCredential]):
+class TallyNodeConfig(NodeConfig[TallyConfig, TallyCredential]):
     model_config = ConfigDict(json_schema_extra={"x-agent-tool-provider": True})
 
 
@@ -598,6 +604,7 @@ def _request_details(config: TallyConfig) -> tuple[str, str, dict[str, Any], Any
 
 class TallyNode(WorkflowNode):
     integration_type = "automation-tally"
+    credential_provider_labels = {"tally": "Tally Account"}
 
     connection_evidence = ConnectionEvidence(
         operation="list_forms", noun="forms", identity_operation="get_current_user"

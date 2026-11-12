@@ -12,6 +12,7 @@ from typing import Annotated, Literal, Union
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -211,6 +212,11 @@ class HubstaffCreateTimeEntry(_Input):
         return value
 
 
+# Hubstaff's own MCP server: agents get its tools through a person's Hubstaff sign-in.
+HubstaffMcpCredential = mcp_credential("hubstaff", "https://mcp.hubstaff.com", app="Hubstaff")
+HubstaffCredential = Union[HubstaffOrganizationTokenCredential, HubstaffMcpCredential]
+
+
 HubstaffConfig = Annotated[Union[
     HubstaffListOrganizations,
     HubstaffGetOrganization,
@@ -235,7 +241,7 @@ HubstaffConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class HubstaffFullConfig(NodeConfig[HubstaffConfig, HubstaffOrganizationTokenCredential]):
+class HubstaffFullConfig(NodeConfig[HubstaffConfig, HubstaffCredential]):
     pass
 
 
@@ -265,6 +271,7 @@ ROUTES = {
 
 class HubstaffNode(WorkflowNode):
     integration_type = "automation-hubstaff"
+    credential_provider_labels = {"hubstaff": "Hubstaff Account"}
     connection_evidence = ConnectionEvidence(noun="organizations", operation="list_organizations")
 
     @classmethod

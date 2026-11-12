@@ -17,17 +17,17 @@ beforeEach(() => { vi.clearAllMocks(); });
 afterEach(() => { cleanup(); removeCredentialsFromCache(['synthetic-qwilr-own', 'synthetic-qwilr-other']); invalidateCredentialsCache(); });
 it('retains the account-token family, native metadata and deliberate write control', () => {
     const schema: any = NODE_SCHEMAS['automation-qwilr'];
-    expect(requirementsFromSchema(schema).map(a => a.credential_type)).toEqual(['qwilr_api_token']);
+    expect(requirementsFromSchema(schema).map(a => a.credential_type)).toEqual(['qwilr_api_token', 'qwilr_mcp']); // and its vendor's MCP server, last (backend nodes/core/vendor_mcp.py)
     expect(CREDENTIAL_TYPE_MAP.QwilrAPITokenCredential).toBe('qwilr_api_token');
-    expect(getNodeCredentialInfo('automation-qwilr')?.acceptedTypes).toEqual(['qwilr_api_token']);
-    expect(getNodeCredentialInfo('automation-qwilr')?.label).toBe('Qwilr Account Token');
+    expect(getNodeCredentialInfo('automation-qwilr')?.acceptedTypes).toEqual(['qwilr_api_token', 'qwilr_mcp']);
+    expect(getNodeCredentialInfo('automation-qwilr')?.label).toBe('Qwilr Account'); // one name for its token and its MCP sign-in
     const write: any = Object.values(schema.$defs).find((d: any) => d.properties?.operation?.const === 'create_draft_from_blocks');
     expect(write.properties.saved_block_id['x-resource-type']).toBe('qwilr_saved_block');
     expect(write.properties.acknowledge_live_account_effects).toMatchObject({ type: 'boolean' });
     expect(write.properties.acknowledge_live_account_effects.const).toBeUndefined();
     expect(schema.$defs.QwilrAPITokenCredential.properties.api_token['ui:sensitive']).toBe(true);
     expect(schema.$defs.QwilrAPITokenCredential['x-oauth-provider']).toBeUndefined();
-    expect(requirementsFromSchema(schema).map(req => methodFromRequirement(req).method_kind)).toEqual(['api_key']);
+    expect(requirementsFromSchema(schema).map(req => methodFromRequirement(req).method_kind)).toEqual(['api_key', 'mcp']);
     expect(filterConfigForExecution('automation-qwilr', { operation: 'get_page', page_id: '6ee0f841f3cc8900090d82dc', metadata: { stale: 'value' } })).toEqual({ operation: 'get_page', page_id: '6ee0f841f3cc8900090d82dc' });
 });
 it('renders the exact checked-in vendor vector used by the node definition', () => {

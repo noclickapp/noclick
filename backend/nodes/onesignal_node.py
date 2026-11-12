@@ -10,6 +10,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.onesignal_operations import OPERATIONS
 
@@ -33,6 +34,10 @@ class OneSignalCredential(BaseModel):
         "x-credential-url": "https://dashboard.onesignal.com/",
         "x-credential-instructions": "Find your App ID and App API Key under Settings → Keys & IDs. Organization actions additionally require the Organization API Key from Organizations → Keys & IDs. OneSignal's REST API uses API keys rather than an end-user OAuth authorization flow.",
     })
+
+
+# OneSignal's own MCP server: agents get its tools through a person's OneSignal sign-in.
+OnesignalMcpCredential = mcp_credential("onesignal", "https://api.onesignal.com/mcp/oauth", app="OneSignal")
 
 
 def _field_name(name: str, prefix: str) -> str:
@@ -100,7 +105,7 @@ globals().update({model.__name__: model for model in CONFIG_MODELS.values()})
 OneSignalConfig = Annotated[Union[tuple(CONFIG_MODELS.values())], Discriminator("operation")]
 
 
-class OneSignalNodeConfig(NodeConfig[OneSignalConfig, OneSignalCredential]):
+class OneSignalNodeConfig(NodeConfig[OneSignalConfig, Union[OneSignalCredential, OnesignalMcpCredential]]):
     model_config = ConfigDict(json_schema_extra={"x-agent-tool-provider": True})
 
 
@@ -116,6 +121,7 @@ def _json_object(raw: str, label: str) -> dict[str, Any]:
 
 class OneSignalNode(WorkflowNode):
     integration_type = "automation-onesignal"
+    credential_provider_labels = {"onesignal": "OneSignal Account"}
     connection_evidence = ConnectionEvidence(identity_operation="test_connection", noun="OneSignal app")
     edit_examples = [
         "Send a push notification through OneSignal",

@@ -20,7 +20,7 @@ describe('Whop connect method', () => {
   });
   it('offers the production account API key with a password field and setup link', () => {
     const methods = requirementsFromSchema(schema).map(methodFromRequirement);
-    expect(methods).toHaveLength(1);
+    expect(methods.map(m => m.credential_type)).toEqual(['whop_api_key', 'whop_mcp']); // and its vendor's MCP server, last (backend nodes/core/vendor_mcp.py)
     expect(methods[0]).toMatchObject({ credential_type: 'whop_api_key', method_kind: 'api_key', is_oauth: false });
     const credential = schema.$defs.WhopAPIKeyCredential;
     expect(credential.title).toBe('Whop API Key');

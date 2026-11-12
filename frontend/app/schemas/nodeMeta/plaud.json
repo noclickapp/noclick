@@ -9,7 +9,9 @@
   },
   "credentialTypes": {
     "Plaud Embedded User Token": "plaud_user_token",
+    "Plaud MCP": "plaud_mcp",
     "Plaud Workspace Token": "plaud_workspace_token",
+    "PlaudMcpCredential": "plaud_mcp",
     "PlaudUserCredential": "plaud_user_token",
     "PlaudWorkspaceCredential": "plaud_workspace_token"
   },

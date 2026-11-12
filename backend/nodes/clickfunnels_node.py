@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import https_origin
 
@@ -50,6 +51,11 @@ class ClickFunnelsAPIKeyCredential(BaseModel):
         if not re.fullmatch(r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?", slug) or slug in {"accounts", "agents", "developers", "www", "support"}:
             raise ValueError("Paste the workspace subdomain, not the accounts or developer portal host.")
         return slug
+
+
+# ClickFunnels's own MCP server: agents get its tools through a person's ClickFunnels sign-in.
+ClickfunnelsMcpCredential = mcp_credential("clickfunnels", "https://agents.myclickfunnels.com/mcp", app="ClickFunnels")
+ClickFunnelsCredential = Union[ClickFunnelsAPIKeyCredential, ClickfunnelsMcpCredential]
 
 
 Identifier = Annotated[str, Field(min_length=1, pattern=r"^[A-Za-z0-9_-]+$")]
@@ -348,7 +354,7 @@ ClickFunnelsConfig = Annotated[
 ]
 
 
-class ClickFunnelsNodeConfig(NodeConfig[ClickFunnelsConfig, ClickFunnelsAPIKeyCredential]):
+class ClickFunnelsNodeConfig(NodeConfig[ClickFunnelsConfig, ClickFunnelsCredential]):
     model_config = ConfigDict(json_schema_extra={"x-agent-tool-provider": True})
 
 
@@ -379,6 +385,7 @@ OPERATIONS = {
 
 class ClickFunnelsNode(WorkflowNode):
     integration_type = "automation-clickfunnels"
+    credential_provider_labels = {"clickfunnels": "ClickFunnels Account"}
     connection_evidence = ConnectionEvidence(field="team_id", noun="teams")
     edit_examples = ["Create a ClickFunnels lead", "Tag a ClickFunnels contact",
                      "Sync external purchases to ClickFunnels", "Enroll a customer in a course"]

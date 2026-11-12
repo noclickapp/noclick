@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Timely Access Token": "timely_token",
+    "Timely MCP": "timely_mcp",
+    "TimelyMcpCredential": "timely_mcp",
     "TimelyTokenCredential": "timely_token"
   },
   "providerLabels": {
-    "timely": "Timely Access Token"
+    "timely": "Timely Account"
   },
   "autoSelectCredential": true
 }

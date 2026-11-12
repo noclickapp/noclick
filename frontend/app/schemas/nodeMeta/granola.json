@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Granola API Key": "granola_api_key",
-    "GranolaApiKeyCredential": "granola_api_key"
+    "Granola MCP": "granola_mcp",
+    "GranolaApiKeyCredential": "granola_api_key",
+    "GranolaMcpCredential": "granola_mcp"
   },
   "providerLabels": {
-    "granola": "Granola API Key"
+    "granola": "Granola Account"
   },
   "autoSelectCredential": true
 }

@@ -18,6 +18,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 
@@ -33,6 +34,11 @@ class NeonApiKeyCredential(BaseModel):
     })
     api_key: str = Field(..., title="Neon API key", json_schema_extra={"ui:widget": "password"},
                          description="Personal, organization, or project-scoped API key")
+
+
+# Neon's own MCP server: agents get its tools through a person's Neon sign-in.
+NeonMcpCredential = mcp_credential("neon", "https://mcp.neon.tech/mcp", app="Neon")
+NeonCredential = Union[NeonApiKeyCredential, NeonMcpCredential]
 
 
 # action -> (method, path, category, label, body_requirement, required_query, query_names)
@@ -284,7 +290,7 @@ for _action, (_method, _path, _category, _label, _body_required, _required_query
 NeonOperation = Annotated[Union[tuple(_operation_models)], Discriminator("operation")]
 
 
-class NeonNodeConfig(NodeConfig[NeonOperation, NeonApiKeyCredential]):
+class NeonNodeConfig(NodeConfig[NeonOperation, NeonCredential]):
     pass
 
 
@@ -292,6 +298,7 @@ class NeonNode(WorkflowNode):
     """Manage Neon projects, branches, databases, computes and related APIs."""
 
     integration_type = "automation-neon"
+    credential_provider_labels = {"neon": "Neon Account"}
 
     connection_evidence = ConnectionEvidence(
         field="project_id", identity_operation="get_current_user_info", noun="projects",

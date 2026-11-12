@@ -8,6 +8,7 @@ from typing import Annotated, Literal, Optional, Union
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, Json, create_model, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.freee_operations import FREEE_OPERATIONS
@@ -39,6 +40,11 @@ class FreeeOAuthCredential(BaseModel):
 
 class _Input(BaseModel):
     model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
+
+
+# Freee's own MCP server: agents get its tools through a person's Freee sign-in.
+FreeeMcpCredential = mcp_credential("freee", "https://mcp.freee.co.jp/mcp", app="Freee")
+FreeeCredential = Union[FreeeOAuthCredential, FreeeMcpCredential]
 
 
 def _annotation(schema, name):
@@ -100,12 +106,13 @@ _MODELS = tuple(_operation_model(name, spec) for name, spec in FREEE_OPERATIONS.
 FreeeConfig = Annotated[Union[_MODELS], Field(discriminator="operation")]
 
 
-class FreeeFullConfig(NodeConfig[FreeeConfig, FreeeOAuthCredential]):
+class FreeeFullConfig(NodeConfig[FreeeConfig, FreeeCredential]):
     pass
 
 
 class FreeeNode(WorkflowNode):
     integration_type = "automation-freee"
+    credential_provider_labels = {"freee": "Freee Account"}
     scope_registry = FREEE_SCOPES
     connection_evidence = ConnectionEvidence(operation="list_companies", noun="companies", identity_operation="get_current_user")
 

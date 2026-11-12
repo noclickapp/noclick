@@ -58,8 +58,10 @@
   },
   "credentialTypes": {
     "Gorgias API Key": "gorgias_api_key",
+    "Gorgias MCP": "gorgias_mcp",
     "Gorgias OAuth": "gorgias_oauth",
     "GorgiasApiKeyCredential": "gorgias_api_key",
+    "GorgiasMcpCredential": "gorgias_mcp",
     "GorgiasOAuthCredential": "gorgias_oauth"
   },
   "providerLabels": {

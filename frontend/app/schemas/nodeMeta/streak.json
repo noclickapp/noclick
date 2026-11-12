@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Streak API Key": "streak_api_key",
-    "StreakAPIKeyCredential": "streak_api_key"
+    "Streak MCP": "streak_mcp",
+    "StreakAPIKeyCredential": "streak_api_key",
+    "StreakMcpCredential": "streak_mcp"
   },
   "providerLabels": {
-    "streak": "Streak API Key"
+    "streak": "Streak Account"
   },
   "autoSelectCredential": true
 }

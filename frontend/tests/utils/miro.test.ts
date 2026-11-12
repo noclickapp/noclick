@@ -8,7 +8,7 @@ await loadNodeSchemas(['automation-miro']);
 describe('Miro OAuth connection', () => {
     it('uses the declared provider for its OAuth credential', () => {
         const methods = credentialRequirements('automation-miro').map(methodFromRequirement);
-        expect(methods).toHaveLength(1);
+        expect(methods.map(m => m.credential_type)).toEqual(['miro_oauth', 'miro_mcp']); // and its vendor's MCP server, last (backend nodes/core/vendor_mcp.py)
         expect(methods[0]).toMatchObject({
             credential_type: 'miro_oauth', method_kind: 'oauth', is_oauth: true,
             oauth_provider: 'miro', oauth_scopes: ['boards:read', 'boards:write'],

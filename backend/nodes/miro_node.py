@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.miro_operations import OPERATIONS as BOARD_API_OPERATIONS, BoardOperation
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.oauth.miro_oauth import get_token_context
@@ -222,6 +223,11 @@ class RemoveTag(BaseModel):
     tag_id: str = Field(..., title="Tag ID")
 
 
+# Miro's own MCP server: agents get its tools through a person's Miro sign-in.
+MiroMcpCredential = mcp_credential("miro", "https://mcp.miro.com", app="Miro")
+MiroCredential = Union[MiroOAuthCredential, MiroMcpCredential]
+
+
 REQUIRED_QUERY_FIELDS: dict[str, dict[str, type]] = {
     "api_copy_board": {"copy_from": str},
     "api_getitemsbygroupid": {"group_item_id": str},
@@ -268,7 +274,7 @@ MiroConfig = Annotated[Union[tuple([
 ])], Discriminator("operation")]
 
 
-class MiroNodeConfig(NodeConfig[MiroConfig, MiroOAuthCredential]):
+class MiroNodeConfig(NodeConfig[MiroConfig, MiroCredential]):
     pass
 
 
@@ -276,6 +282,7 @@ class MiroNode(WorkflowNode):
     """Run Miro board and item operations with the connected user's OAuth token."""
 
     integration_type = "automation-miro"
+    credential_provider_labels = {"miro": "Miro Account"}
 
     connection_evidence = ConnectionEvidence(operation="list_boards", noun="boards", identity_operation="get_token_context")
     scope_registry = MIRO_SCOPES

@@ -142,7 +142,8 @@ def test_actual_catalog_native_schema_secret_fields_and_brand_evidence():
     from nodes.agent.node_op_tools import node_supports_op_tools
     assert registry.NODE_REGISTRY[NODE] is native.MetricoolNode
     assert {op.name for op in get_operations_for_node_type(NODE)} == OPS
-    assert node_accepted_credential_types(NODE) == {"metricool_api_key"} and node_supports_op_tools(NODE)
+    # Its API key, and its MCP server (nodes/core/vendor_mcp.py).
+    assert node_accepted_credential_types(NODE) == {"metricool_api_key", "metricool_mcp"} and node_supports_op_tools(NODE)
     assert native.MetricoolNode.get_config_schema()["$defs"]["MetricoolAPIKeyCredential"]["required"] == ["api_token", "user_id", "blog_id"]
     assert native.MetricoolNode.connection_evidence.identity_operation is None
     assert "synthetic" not in repr(native.MetricoolAPIKeyCredential(api_token="synthetic", user_id="23", blog_id="7"))

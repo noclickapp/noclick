@@ -15,6 +15,7 @@ describe('OpenAlex integration', () => {
         expect(operations).toContain('autocomplete');
         expect(credentialRequirements('automation-openalex').map(methodFromRequirement)).toEqual([
             expect.objectContaining({ method_kind: 'api_key', is_oauth: false }),
+            expect.objectContaining({ credential_type: 'openalex_mcp', method_kind: 'mcp' }), // and its vendor's MCP server, last (backend nodes/core/vendor_mcp.py)
         ]);
         expect(getNodeCredentialInfo('automation-openalex')?.acceptedTypes).toContain('openalex_api_key');
     });

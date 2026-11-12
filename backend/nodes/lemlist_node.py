@@ -19,6 +19,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
@@ -6184,6 +6185,11 @@ class LemlistApiKeyCredential(BaseModel):
     })
 
 
+# Lemlist's own MCP server: agents get its tools through a person's Lemlist sign-in.
+LemlistMcpCredential = mcp_credential("lemlist", "https://app.lemlist.com/mcp", app="Lemlist")
+LemlistCredential = Union[LemlistApiKeyCredential, LemlistMcpCredential]
+
+
 def _field_type(kind: str) -> type:
     if kind == "boolean":
         return bool
@@ -6248,7 +6254,7 @@ _OPERATION_MODELS = [_operation_model(spec) for spec in OPERATIONS.values()]
 LemlistConfig = Annotated[Union[tuple(_OPERATION_MODELS)], Discriminator("operation")]
 
 
-class LemlistNodeConfig(NodeConfig[LemlistConfig, LemlistApiKeyCredential]):
+class LemlistNodeConfig(NodeConfig[LemlistConfig, LemlistCredential]):
     pass
 
 
@@ -6309,6 +6315,7 @@ class LemlistNode(WorkflowNode):
     """All documented Lemlist API operations using the account API key."""
 
     integration_type = "automation-lemlist"
+    credential_provider_labels = {"lemlist": "Lemlist Account"}
 
     edit_examples = [
         "Add a new lead to a Lemlist outreach campaign",

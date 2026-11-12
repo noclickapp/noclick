@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -200,13 +201,18 @@ class CreateCaptions(Media):
     language: str | None = Field(None, pattern=r"^[a-z]{3}$", description="ISO-639-2 three-letter language code.")
 
 
+# Wistia's own MCP server: agents get its tools through a person's Wistia sign-in.
+WistiaMcpCredential = mcp_credential("wistia", "https://api.wistia.com/mcp/api", app="Wistia")
+WistiaCredential = Union[WistiaAPITokenCredential, WistiaMcpCredential]
+
+
 WistiaConfig = Annotated[Union[GetAccount, GetToken, ListMedia, GetMedia, UpdateMedia,
     DeleteMedia, CopyMedia, GetMediaStats, ImportMedia, GetJob, ListFolders,
     GetFolder, CreateFolder, UpdateFolder, DeleteFolder, ListTags, CreateTag,
     DeleteTag, ListCaptions, CreateCaptions], Field(discriminator="operation")]
 
 
-class WistiaFullConfig(NodeConfig[WistiaConfig, WistiaAPITokenCredential]):
+class WistiaFullConfig(NodeConfig[WistiaConfig, WistiaCredential]):
     pass
 
 
@@ -248,6 +254,7 @@ def _redact(value, token):
 
 class WistiaNode(WorkflowNode):
     integration_type = "automation-wistia"
+    credential_provider_labels = {"wistia": "Wistia Account"}
     connection_evidence = ConnectionEvidence(noun="Wistia media", operation="list_media", identity_operation="get_account")
 
     @classmethod

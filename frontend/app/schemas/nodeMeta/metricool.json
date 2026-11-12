@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Metricool API Token": "metricool_api_key",
-    "MetricoolAPIKeyCredential": "metricool_api_key"
+    "Metricool MCP": "metricool_mcp",
+    "MetricoolAPIKeyCredential": "metricool_api_key",
+    "MetricoolMcpCredential": "metricool_mcp"
   },
   "providerLabels": {
-    "metricool": "Metricool API Token"
+    "metricool": "Metricool Account"
   },
   "autoSelectCredential": true
 }

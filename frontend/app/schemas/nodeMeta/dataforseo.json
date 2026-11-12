@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "DataForSEO API Login": "dataforseo_basic",
-    "DataForSEOAPICredential": "dataforseo_basic"
+    "DataForSEO MCP": "dataforseo_mcp",
+    "DataForSEOAPICredential": "dataforseo_basic",
+    "DataforseoMcpCredential": "dataforseo_mcp"
   },
   "providerLabels": {
-    "dataforseo": "DataForSEO API Login"
+    "dataforseo": "DataForSEO Account"
   },
   "autoSelectCredential": true
 }

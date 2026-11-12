@@ -9,10 +9,12 @@
   },
   "credentialTypes": {
     "Whop API Key": "whop_api_key",
-    "WhopAPIKeyCredential": "whop_api_key"
+    "Whop MCP": "whop_mcp",
+    "WhopAPIKeyCredential": "whop_api_key",
+    "WhopMcpCredential": "whop_mcp"
   },
   "providerLabels": {
-    "whop": "Whop API Key"
+    "whop": "Whop Account"
   },
   "autoSelectCredential": true
 }

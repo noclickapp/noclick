@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "JumpCloud MCP": "jumpcloud_mcp",
     "Jumpcloud API Key": "jumpcloud_api_key",
-    "JumpcloudAPIKeyCredential": "jumpcloud_api_key"
+    "JumpcloudAPIKeyCredential": "jumpcloud_api_key",
+    "JumpcloudMcpCredential": "jumpcloud_mcp"
   },
   "providerLabels": {
-    "jumpcloud": "Jumpcloud API Key"
+    "jumpcloud": "JumpCloud Account"
   },
   "autoSelectCredential": true
 }

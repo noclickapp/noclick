@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Dart API Token": "dart_api_token",
-    "DartAPITokenCredential": "dart_api_token"
+    "Dart MCP": "dart_mcp",
+    "DartAPITokenCredential": "dart_api_token",
+    "DartMcpCredential": "dart_mcp"
   },
   "providerLabels": {
-    "dart": "Dart API Token"
+    "dart": "Dart Account"
   },
   "autoSelectCredential": true
 }

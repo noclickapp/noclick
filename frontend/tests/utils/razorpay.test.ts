@@ -12,7 +12,7 @@ const schema = JSON.parse(readFileSync(join(__dirname, '../../app/schemas/nodes/
 describe('Razorpay integration metadata', () => {
     beforeAll(() => loadNodeSchemas(['automation-razorpay']));
     it('discovers a manual API-key pair with clear labels and password widgets', () => {
-        expect(getNodeCredentialInfo('automation-razorpay')?.acceptedTypes).toEqual(['razorpay_api_key']);
+        expect(getNodeCredentialInfo('automation-razorpay')?.acceptedTypes).toEqual(['razorpay_api_key', 'razorpay_mcp']); // and its vendor's MCP server, last (backend nodes/core/vendor_mcp.py)
         expect(getCredentialTypeFromSchemaTitle('RazorpayAPIKeyCredential')).toBe('razorpay_api_key');
         expect(getCredentialTypeFromSchemaTitle('Razorpay API Key')).toBe('razorpay_api_key');
         const method = methodFromRequirement(requirementsFromSchema(schema)[0]);

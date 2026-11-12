@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -172,6 +173,11 @@ class GetInquiryTemplate(_Input):
     inquiry_template_id: str = Field(..., pattern=r"^itmpl_[A-Za-z0-9]+$", max_length=256, title="Inquiry Template ID")
 
 
+# Persona's own MCP server: agents get its tools through a person's Persona sign-in.
+PersonaMcpCredential = mcp_credential("persona", "https://withpersona.com/mcp", app="Persona")
+PersonaCredential = Union[PersonaAPIKeyCredential, PersonaMcpCredential]
+
+
 Operation = Annotated[Union[
     ListInquiries, GetInquiry, CreateInquiry, UpdateInquiry, ApproveInquiry,
     DeclineInquiry, ReviewInquiry, ExpireInquiry, SetInquiryTags,
@@ -181,7 +187,7 @@ Operation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class PersonaNodeConfig(NodeConfig[Operation, PersonaAPIKeyCredential]):
+class PersonaNodeConfig(NodeConfig[Operation, PersonaCredential]):
     pass
 
 
@@ -252,6 +258,7 @@ def request_parts(config):
 
 class PersonaNode(WorkflowNode):
     integration_type = "automation-persona"
+    credential_provider_labels = {"persona": "Persona Account"}
     connection_evidence = ConnectionEvidence(operation="list_inquiries", noun="Persona inquiries")
 
     @classmethod

@@ -11,6 +11,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
@@ -158,9 +159,14 @@ class HiveOnProjectChangedConfig(PollTriggerConfigBase, _Workspace):
                            "x-display-name": "On New or Updated Project"})
 
 
+# Hive's own MCP server: agents get its tools through a person's Hive sign-in.
+HiveMcpCredential = mcp_credential("hive", "https://hive-mind.hive.com/mcp", app="Hive")
+HiveCredential = Union[HiveAPIKeyCredential, HiveMcpCredential]
+
+
 HiveConfig = Annotated[Union[HiveOnActionChangedConfig, HiveOnProjectChangedConfig, HiveListWorkspacesConfig, HiveListProjectsConfig, HiveListWorkspaceProjectsConfig, HiveGetProjectConfig, HiveDeleteProjectConfig, HiveListActionsConfig, HiveSearchActionsConfig, HiveGetActionConfig, HiveCreateActionConfig, HiveUpdateActionConfig, HiveDeleteActionConfig, HiveListCommentsConfig, HiveCreateCommentConfig, HiveListSubactionsConfig, HiveListActionHistoryConfig, HiveListLabelsConfig, HiveCreateLabelConfig, HiveListMembersConfig], Field(discriminator="operation")]
 
-class HiveFullConfig(NodeConfig[HiveConfig, HiveAPIKeyCredential]):
+class HiveFullConfig(NodeConfig[HiveConfig, HiveCredential]):
     pass
 
 ROUTES = {'list_workspaces': ('GET', '/workspaces', 'page'),
@@ -184,6 +190,7 @@ ROUTES = {'list_workspaces': ('GET', '/workspaces', 'page'),
 
 class HiveNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-hive"
+    credential_provider_labels = {"hive": "Hive Account"}
     connection_evidence = ConnectionEvidence(noun="Hive workspaces", operation="list_workspaces")
 
     @classmethod

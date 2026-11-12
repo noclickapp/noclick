@@ -9,6 +9,7 @@ from typing import Annotated, Literal, Union
 import httpx
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -235,6 +236,11 @@ class OwnerRezRemoveTag(_Input):
     tag_id: Id
 
 
+# OwnerRez's own MCP server: agents get its tools through a person's OwnerRez sign-in.
+OwnerrezMcpCredential = mcp_credential("ownerrez", "https://api.ownerrez.com/mcp", app="OwnerRez")
+OwnerRezCredential = Union[OwnerRezPersonalTokenCredential, OwnerrezMcpCredential]
+
+
 OwnerRezConfig = Annotated[Union[
     OwnerRezGetCurrentUser, OwnerRezListBookings, OwnerRezGetBooking, OwnerRezCreateBooking,
     OwnerRezUpdateBooking, OwnerRezListGuests, OwnerRezGetGuest, OwnerRezCreateGuest,
@@ -244,7 +250,7 @@ OwnerRezConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class OwnerRezFullConfig(NodeConfig[OwnerRezConfig, OwnerRezPersonalTokenCredential]):
+class OwnerRezFullConfig(NodeConfig[OwnerRezConfig, OwnerRezCredential]):
     pass
 
 
@@ -274,6 +280,7 @@ ROUTES = {
 
 class OwnerRezNode(WorkflowNode):
     integration_type = "automation-ownerrez"
+    credential_provider_labels = {"ownerrez": "OwnerRez Account"}
     connection_evidence = ConnectionEvidence(noun="OwnerRez account", identity_operation="get_current_user", identity_keys=("email_address", "company_name", "id"))
 
     @classmethod

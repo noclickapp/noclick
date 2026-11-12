@@ -13,6 +13,7 @@ import httpx
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
@@ -38,6 +39,11 @@ class GivebutterAPIKeyCredential(BaseModel):
         if not value.isascii() or any(c.isspace() or ord(c) < 33 or ord(c) == 127 for c in value):
             raise ValueError("Paste the API key without spaces or the Bearer prefix")
         return value
+
+
+# Givebutter's own MCP server: agents get its tools through a person's Givebutter sign-in.
+GivebutterMcpCredential = mcp_credential("givebutter", "https://mcp.givebutter.com/mcp", app="Givebutter")
+GivebutterCredential = Union[GivebutterAPIKeyCredential, GivebutterMcpCredential]
 
 
 ID = Annotated[int, Field(gt=0)]
@@ -250,7 +256,7 @@ GivebutterOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class GivebutterConfig(NodeConfig[GivebutterOperation, GivebutterAPIKeyCredential]):
+class GivebutterConfig(NodeConfig[GivebutterOperation, GivebutterCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -282,6 +288,7 @@ ROUTES = {
 
 class GivebutterNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-givebutter"
+    credential_provider_labels = {"givebutter": "Givebutter Account"}
     webhook_replace_stale_endpoint = True
     connection_evidence = ConnectionEvidence(noun="campaigns", operation="list_campaigns", label_keys=("title", "id"))
 

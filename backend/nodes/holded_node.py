@@ -11,6 +11,7 @@ import hmac
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.credential_fields import clean_secret
@@ -565,6 +566,11 @@ class HoldedDeleteTaskConfig(_Input):
     operation: Literal['delete_task'] = Field('delete_task', json_schema_extra={"ui:hidden": True})
     taskId: str = Field(..., pattern='^[a-f0-9]{24}$', min_length=1, description='Task ID')
 
+# Holded's own MCP server: agents get its tools through a person's Holded sign-in.
+HoldedMcpCredential = mcp_credential("holded", "https://mcp.holded.com/mcp", app="Holded")
+HoldedCredential = Union[HoldedAPIKey, HoldedMcpCredential]
+
+
 HOLDED_WEBHOOK_EVENTS = (
     "invoice.create", "invoice.update", "invoice.approve", "invoice.delete",
     "contact.create", "contact.update", "contact.delete",
@@ -587,7 +593,7 @@ class HoldedOnEventConfig(WebhookTriggerConfigBase):
 
 HoldedOperation = Annotated[Union[HoldedOnEventConfig, HoldedListContactsConfig, HoldedCreateContactConfig, HoldedGetContactConfig, HoldedUpdateContactConfig, HoldedDeleteContactConfig, HoldedListInvoicesConfig, HoldedCreateInvoiceConfig, HoldedGetInvoiceConfig, HoldedUpdateInvoiceConfig, HoldedDeleteInvoiceConfig, HoldedListProductsConfig, HoldedCreateProductConfig, HoldedGetProductConfig, HoldedUpdateProductConfig, HoldedDeleteProductConfig, HoldedListProjectsConfig, HoldedCreateProjectConfig, HoldedGetProjectConfig, HoldedUpdateProjectConfig, HoldedDeleteProjectConfig, HoldedListTasksConfig, HoldedCreateTaskConfig, HoldedGetTaskConfig, HoldedUpdateTaskConfig, HoldedDeleteTaskConfig], Field(discriminator="operation")]
 
-class HoldedFullConfig(NodeConfig[HoldedOperation, HoldedAPIKey]):
+class HoldedFullConfig(NodeConfig[HoldedOperation, HoldedCredential]):
     pass
 
 ROUTES = {'list_contacts': ('GET', '/api/v2/contacts', [], ['phone', 'mobile', 'email', 'custom_id', 'code', 'cursor', 'limit']), 'create_contact': ('POST', '/api/v2/contacts', [], []), 'get_contact': ('GET', '/api/v2/contacts/{contactId}', ['contactId'], []), 'update_contact': ('PUT', '/api/v2/contacts/{contactId}', ['contactId'], []), 'delete_contact': ('DELETE', '/api/v2/contacts/{contactId}', ['contactId'], []), 'list_invoices': ('GET', '/api/v2/invoices', [], ['limit', 'cursor', 'contact_id', 'status', 'start_date', 'end_date', 'due_date_start', 'due_date_end', 'sort', 'approval_status', 'accounting_account_num']), 'create_invoice': ('POST', '/api/v2/invoices', [], []), 'get_invoice': ('GET', '/api/v2/invoices/{invoiceId}', ['invoiceId'], []), 'update_invoice': ('PUT', '/api/v2/invoices/{invoiceId}', ['invoiceId'], []), 'delete_invoice': ('DELETE', '/api/v2/invoices/{invoiceId}', ['invoiceId'], []), 'list_products': ('GET', '/api/v2/products', [], ['name', 'cursor', 'limit']), 'create_product': ('POST', '/api/v2/products', [], []), 'get_product': ('GET', '/api/v2/products/{productId}', ['productId'], []), 'update_product': ('PUT', '/api/v2/products/{productId}', ['productId'], []), 'delete_product': ('DELETE', '/api/v2/products/{productId}', ['productId'], []), 'list_projects': ('GET', '/api/v2/projects', [], ['cursor', 'limit', 'status']), 'create_project': ('POST', '/api/v2/projects', [], []), 'get_project': ('GET', '/api/v2/projects/{projectId}', ['projectId'], []), 'update_project': ('PUT', '/api/v2/projects/{projectId}', ['projectId'], []), 'delete_project': ('DELETE', '/api/v2/projects/{projectId}', ['projectId'], []), 'list_tasks': ('GET', '/api/v2/tasks', [], ['cursor', 'limit', 'status']), 'create_task': ('POST', '/api/v2/tasks', [], []), 'get_task': ('GET', '/api/v2/tasks/{taskId}', ['taskId'], []), 'update_task': ('PUT', '/api/v2/tasks/{taskId}', ['taskId'], []), 'delete_task': ('DELETE', '/api/v2/tasks/{taskId}', ['taskId'], [])}
@@ -600,6 +606,7 @@ def _redact(value, token):
 
 class HoldedNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-holded"
+    credential_provider_labels = {"holded": "Holded Account"}
     connection_evidence = ConnectionEvidence(noun="contacts", operation="list_contacts")
 
     @classmethod

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "BFL API Key": "bfl_api_key",
-    "BflAPIKeyCredential": "bfl_api_key"
+    "BFL MCP": "bfl_mcp",
+    "BflAPIKeyCredential": "bfl_api_key",
+    "BflMcpCredential": "bfl_mcp"
   },
   "providerLabels": {
-    "bfl": "BFL API Key"
+    "bfl": "BFL Account"
   },
   "autoSelectCredential": true
 }

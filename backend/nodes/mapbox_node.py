@@ -4,6 +4,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -121,17 +122,23 @@ class ReverseGeocode(Input):
     language: str | None = None
 
 
+# Mapbox's own MCP server: agents get its tools through a person's Mapbox sign-in.
+MapboxMcpCredential = mcp_credential("mapbox", "https://mcp.mapbox.com/mcp", app="Mapbox")
+MapboxCredential = Union[MapboxAccessToken, MapboxMcpCredential]
+
+
 MapboxConfig = Annotated[Union[CheckConnection, ListStyles, GetStyle, CreateStyle, UpdateStyle,
     DeleteStyle, GetStyleDraft, UpdateStyleDraft, DeleteStyleDraft, GetSprite, DeleteSpriteImage,
     ForwardGeocode, ReverseGeocode], Field(discriminator="operation")]
 
 
-class MapboxFullConfig(NodeConfig[MapboxConfig, MapboxAccessToken]):
+class MapboxFullConfig(NodeConfig[MapboxConfig, MapboxCredential]):
     pass
 
 
 class MapboxNode(WorkflowNode):
     integration_type = "automation-mapbox"
+    credential_provider_labels = {"mapbox": "Mapbox Account"}
     connection_evidence = ConnectionEvidence(noun="Mapbox account", identity_operation="check_connection")
 
     @classmethod

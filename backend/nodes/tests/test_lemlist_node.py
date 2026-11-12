@@ -89,8 +89,9 @@ def test_catalog_has_one_operation_per_documented_method_and_path():
     assert len({(spec["method"], spec["path"]) for spec in OPERATIONS.values()}) == 176
     assert {"create_campaign", "create_lead_in_campaign", "get_team"} <= OPERATIONS.keys()
     schema = LemlistNodeConfig.model_json_schema()
-    assert len(schema["$defs"]) == 177
+    assert len(schema["$defs"]) == 178  # 176 operations, its API key and its MCP server
     assert schema["$defs"]["LemlistApiKeyCredential"]["properties"]["api_key"]["minLength"] == 1
+    assert schema["$defs"]["LemlistMcpCredential"]["x-mcp-server"] == "https://app.lemlist.com/mcp"
 
 
 @pytest.mark.asyncio

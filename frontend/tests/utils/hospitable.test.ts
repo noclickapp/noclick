@@ -8,7 +8,7 @@ describe('Hospitable integration', () => {
     it('offers a manual token connection in bookings', () => {
         const schema = NODE_SCHEMAS['automation-hospitable'];
         expect(HospitableNode.category).toBe('bookings');
-        expect(getNodeCredentialInfo('automation-hospitable')?.acceptedTypes).toEqual(['hospitable_api_token']);
+        expect(getNodeCredentialInfo('automation-hospitable')?.acceptedTypes).toEqual(['hospitable_api_token', 'hospitable_mcp']); // and its vendor's MCP server, last (backend nodes/core/vendor_mcp.py)
         expect(methodFromRequirement(requirementsFromSchema(schema)[0]).method_kind).toBe('api_key');
         expect(schema.$defs.HospitableTokenCredential.title).toBe('Hospitable Personal Access Token');
         expect(schema.$defs.HospitableTokenCredential.properties.api_token['ui:widget']).toBe('password');

@@ -13,6 +13,7 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, Json, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -270,6 +271,11 @@ class OpusClipGetTranscriptConfig(_Input):
     projectId: str = Field(..., description='Project ID.', title='Project id', min_length=1, examples=['P2120900kDmP'])
 
 
+# OpusClip's own MCP server: agents get its tools through a person's OpusClip sign-in.
+OpusclipMcpCredential = mcp_credential("opusclip", "https://mcp.opus.pro/mcp", app="OpusClip")
+OpusClipCredential = Union[OpusClipAPIKeyCredential, OpusclipMcpCredential]
+
+
 OpusClipConfig = Annotated[Union[
     OpusClipListBrandTemplatesConfig,
     OpusClipCreateClipProjectConfig,
@@ -296,7 +302,7 @@ OpusClipConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class OpusClipFullConfig(NodeConfig[OpusClipConfig, OpusClipAPIKeyCredential]):
+class OpusClipFullConfig(NodeConfig[OpusClipConfig, OpusClipCredential]):
     pass
 
 
@@ -408,6 +414,7 @@ OPERATIONS = {'list_brand_templates': ('GET', '/api/brand-templates', {}, {'q': 
 
 class OpusClipNode(WorkflowNode):
     integration_type = "automation-opusclip"
+    credential_provider_labels = {"opusclip": "OpusClip Account"}
     connection_evidence = ConnectionEvidence(
         noun="connected social accounts", operation="list_social_accounts",
         label_keys=("extUserName", "postAccountId"),

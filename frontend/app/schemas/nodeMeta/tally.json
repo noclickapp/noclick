@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Tally API Key": "tally_api_key",
-    "TallyApiKeyCredential": "tally_api_key"
+    "Tally MCP": "tally_mcp",
+    "TallyApiKeyCredential": "tally_api_key",
+    "TallyMcpCredential": "tally_mcp"
   },
   "providerLabels": {
-    "tally": "Tally API Key"
+    "tally": "Tally Account"
   },
   "autoSelectCredential": true
 }

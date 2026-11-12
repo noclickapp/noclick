@@ -21,6 +21,7 @@ import httpx
 from cryptography.fernet import Fernet, InvalidToken
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr, field_validator, model_validator
 from nodes.core.base import ConfigValidationError, NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import SSRFError, guarded_async_client
 
@@ -112,6 +113,12 @@ class DataForSEOAPICredential(BaseModel):
         if not value.isascii() or re.search(r"[\x00-\x20\x7f]", value) or (info.field_name == "api_login" and ":" in value):
             raise ValueError("Supply the issued ASCII API login/password pair.")
         return value
+
+
+# DataForSEO's own MCP server: agents get its tools through a person's DataForSEO sign-in.
+# DataForSEO's current server; it calls the earlier /mcp unsupported.
+DataforseoMcpCredential = mcp_credential("dataforseo", "https://mcp.dataforseo.com/v3/mcp", app="DataForSEO")
+DataForSEOCredential = Union[DataForSEOAPICredential, DataforseoMcpCredential]
 
 
 def credential(value):
@@ -325,7 +332,7 @@ Operations = Annotated[Union[DataForSEOAccount, DataForSEOSerpLocations, DataFor
     DataForSEOBacklinksSummary, DataForSEOBacklinks], Field(discriminator="operation")]
 
 
-class DataForSEOConfiguration(NodeConfig[Operations, DataForSEOAPICredential]):
+class DataForSEOConfiguration(NodeConfig[Operations, DataForSEOCredential]):
     pass
 
 
@@ -520,6 +527,7 @@ def page_local(rows, cfg, creds):
 
 class DataForSEONode(WorkflowNode):
     integration_type = "automation-dataforseo"
+    credential_provider_labels = {"dataforseo": "DataForSEO Account"}
     agent_tool_provider = True
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(noun="account", identity_operation="get_account_metadata",

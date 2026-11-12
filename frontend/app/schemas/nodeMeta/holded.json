@@ -9,10 +9,12 @@
   },
   "credentialTypes": {
     "Holded API Key": "holded_api_key",
-    "HoldedAPIKey": "holded_api_key"
+    "Holded MCP": "holded_mcp",
+    "HoldedAPIKey": "holded_api_key",
+    "HoldedMcpCredential": "holded_mcp"
   },
   "providerLabels": {
-    "holded": "Holded API Key"
+    "holded": "Holded Account"
   },
   "autoSelectCredential": true
 }

@@ -14,6 +14,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.agent_events import prune_empty
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
@@ -222,6 +223,11 @@ class WhopDeactivatePromoCodeConfig(_Input):
     id: str = Field(..., min_length=1, max_length=200, title="Resource ID")
 
 
+# Whop's own MCP server: agents get its tools through a person's Whop sign-in.
+WhopMcpCredential = mcp_credential("whop", "https://mcp.whop.com/mcp", app="Whop")
+WhopCredential = Union[WhopAPIKeyCredential, WhopMcpCredential]
+
+
 WHOP_WEBHOOK_EVENTS = (
     "payment.succeeded", "payment.failed", "payment.requires_action",
     "membership.activated", "membership.updated", "membership.trial_ending_soon",
@@ -251,7 +257,7 @@ class WhopOnEventConfig(WebhookTriggerConfigBase):
 
 WhopConfig = Annotated[Union[WhopOnEventConfig, WhopGetAccountConfig, WhopListProductsConfig, WhopGetProductConfig, WhopListMembershipsConfig, WhopGetMembershipConfig, WhopListPaymentsConfig, WhopGetPaymentConfig, WhopListRefundsConfig, WhopGetRefundConfig, WhopListPromoCodesConfig, WhopGetPromoCodeConfig, WhopCreateProductConfig, WhopUpdateProductConfig, WhopDeleteProductConfig, WhopPublishProductConfig, WhopUnpublishProductConfig, WhopUpdateMembershipConfig, WhopCancelMembershipConfig, WhopRefundPaymentConfig, WhopCreatePromoCodeConfig, WhopActivatePromoCodeConfig, WhopDeactivatePromoCodeConfig], Field(discriminator="operation")]
 
-class WhopFullConfig(NodeConfig[WhopConfig, WhopAPIKeyCredential]):
+class WhopFullConfig(NodeConfig[WhopConfig, WhopCredential]):
     pass
 
 
@@ -260,6 +266,7 @@ ROUTES = {'get_account': ('GET', '/accounts/me'), 'list_products': ('GET', '/pro
 
 class WhopNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-whop"
+    credential_provider_labels = {"whop": "Whop Account"}
     connection_evidence = ConnectionEvidence(noun="Whop account", identity_operation="get_account")
 
     @classmethod

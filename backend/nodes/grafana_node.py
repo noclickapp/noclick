@@ -16,6 +16,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import allow_private_hosts, guarded_async_client, normalize_https_origin
 
@@ -1082,6 +1083,11 @@ class GrafanaCredential(BaseModel):
     )
 
 
+# Grafana's own MCP server: agents get its tools through a person's Grafana sign-in.
+# Grafana Cloud stacks only.
+GrafanaMcpCredential = mcp_credential("grafana", "https://mcp.grafana.com/mcp", app="Grafana")
+
+
 def _origin(raw: str) -> str:
     """Require an exact HTTPS origin, except loopback HTTP in local development."""
     if allow_private_hosts():
@@ -1175,7 +1181,7 @@ _MODELS = tuple(_build_operation_model(operation) for operation in OPERATIONS)
 GrafanaConfig = Annotated[Union[_MODELS], Discriminator("operation")]
 
 
-class GrafanaNodeConfig(NodeConfig[GrafanaConfig, GrafanaCredential]):
+class GrafanaNodeConfig(NodeConfig[GrafanaConfig, Union[GrafanaCredential, GrafanaMcpCredential]]):
     """Grafana operation and service-account credential."""
 
 
@@ -1183,6 +1189,7 @@ class GrafanaNode(WorkflowNode):
     """Manage dashboards, folders, data sources, annotations and alerting."""
 
     integration_type = "automation-grafana"
+    credential_provider_labels = {"grafana": "Grafana Account"}
 
     connection_evidence = ConnectionEvidence(operation="list_folders", noun="folders")
     edit_examples = [

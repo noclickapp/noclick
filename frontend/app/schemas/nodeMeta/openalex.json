@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "OpenAlex API Key": "openalex_api_key",
-    "OpenAlexAPIKeyCredential": "openalex_api_key"
+    "OpenAlex MCP": "openalex_mcp",
+    "OpenAlexAPIKeyCredential": "openalex_api_key",
+    "OpenalexMcpCredential": "openalex_mcp"
   },
   "providerLabels": {
-    "openalex": "OpenAlex API Key"
+    "openalex": "OpenAlex Account"
   },
   "autoSelectCredential": true
 }

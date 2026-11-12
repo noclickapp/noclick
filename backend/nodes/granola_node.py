@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 class GranolaApiKeyCredential(BaseModel):
@@ -23,7 +24,9 @@ class GranolaApiKeyCredential(BaseModel):
         "x-credential-instructions": "Create a personal or workspace API key in Granola Settings → Connectors → API keys. Personal keys require Business or Enterprise; workspace keys require Enterprise. Key scopes determine accessible notes and administrative operations."
     })
 
-GranolaCredential = GranolaApiKeyCredential
+# Granola's own MCP server: agents get its tools through a person's Granola sign-in.
+GranolaMcpCredential = mcp_credential("granola", "https://mcp.granola.ai/mcp", app="Granola")
+GranolaCredential = Union[GranolaApiKeyCredential, GranolaMcpCredential]
 
 
 class GranolaLegalHoldCustodianInput(BaseModel):
@@ -252,6 +255,7 @@ def _request_parts(config: BaseModel):
 class GranolaNode(WorkflowNode):
     """Granola workflow operations from the official REST API."""
     integration_type = "automation-granola"
+    credential_provider_labels = {"granola": "Granola Account"}
     connection_evidence = ConnectionEvidence(operation="list_notes", noun="meeting notes")
     edit_examples = ['List notes', 'Get note', 'Get transcript']
 

@@ -9,10 +9,12 @@
   },
   "credentialTypes": {
     "Givebutter API Key": "givebutter_api_key",
-    "GivebutterAPIKeyCredential": "givebutter_api_key"
+    "Givebutter MCP": "givebutter_mcp",
+    "GivebutterAPIKeyCredential": "givebutter_api_key",
+    "GivebutterMcpCredential": "givebutter_mcp"
   },
   "providerLabels": {
-    "givebutter": "Givebutter API Key"
+    "givebutter": "Givebutter Account"
   },
   "autoSelectCredential": true
 }

@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.binary_output import BinaryOutput
 from nodes.scopes.gorgias import GORGIAS_SCOPES
@@ -62,7 +63,10 @@ class GorgiasApiKeyCredential(BaseModel):
     })
 
 
-GorgiasCredential = Union[GorgiasOAuthCredential, GorgiasApiKeyCredential]
+# Gorgias's own MCP server: agents get its tools through a person's Gorgias sign-in.
+# It answers without a token too; its resource metadata names Gorgias's sign-in.
+GorgiasMcpCredential = mcp_credential("gorgias", "https://mcp.gorgias.com/mcp", app="Gorgias")
+GorgiasCredential = Union[GorgiasOAuthCredential, GorgiasApiKeyCredential, GorgiasMcpCredential]
 
 
 def _field_name(prefix: str, raw: str) -> str:

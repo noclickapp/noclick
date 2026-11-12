@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Grafana MCP": "grafana_mcp",
     "Grafana Service Account Token": "grafana_service_account_token",
-    "GrafanaCredential": "grafana_service_account_token"
+    "GrafanaCredential": "grafana_service_account_token",
+    "GrafanaMcpCredential": "grafana_mcp"
   },
   "providerLabels": {
-    "grafana": "Grafana Service Account Token"
+    "grafana": "Grafana Account"
   },
   "autoSelectCredential": true
 }

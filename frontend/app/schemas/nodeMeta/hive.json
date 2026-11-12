@@ -10,10 +10,12 @@
   },
   "credentialTypes": {
     "Hive API Key": "hive_api_key",
-    "HiveAPIKeyCredential": "hive_api_key"
+    "Hive MCP": "hive_mcp",
+    "HiveAPIKeyCredential": "hive_api_key",
+    "HiveMcpCredential": "hive_mcp"
   },
   "providerLabels": {
-    "hive": "Hive API Key"
+    "hive": "Hive Account"
   },
   "autoSelectCredential": true
 }

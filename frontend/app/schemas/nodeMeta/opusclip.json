@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "OpusClip API Key": "opusclip_api_key",
-    "OpusClipAPIKeyCredential": "opusclip_api_key"
+    "OpusClip MCP": "opusclip_mcp",
+    "OpusClipAPIKeyCredential": "opusclip_api_key",
+    "OpusclipMcpCredential": "opusclip_mcp"
   },
   "providerLabels": {
-    "opusclip": "OpusClip API Key"
+    "opusclip": "OpusClip Account"
   },
   "autoSelectCredential": true
 }

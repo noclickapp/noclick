@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Mercury API Token": "mercury_api_token",
-    "MercuryAPITokenCredential": "mercury_api_token"
+    "Mercury MCP": "mercury_mcp",
+    "MercuryAPITokenCredential": "mercury_api_token",
+    "MercuryMcpCredential": "mercury_mcp"
   },
   "providerLabels": {
-    "mercury": "Mercury API Token"
+    "mercury": "Mercury Account"
   },
   "autoSelectCredential": true
 }

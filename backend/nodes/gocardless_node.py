@@ -10,6 +10,7 @@ from datetime import date
 import re
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -32,6 +33,11 @@ class GoCardlessTokenCredential(BaseModel):
         if any(c.isspace() for c in value):
             raise ValueError("Paste the token without a Bearer prefix or whitespace")
         return value
+
+
+# GoCardless's own MCP server: agents get its tools through a person's GoCardless sign-in.
+GocardlessMcpCredential = mcp_credential("gocardless", "https://mcp.gocardless.com", app="GoCardless")
+GoCardlessCredential = Union[GoCardlessTokenCredential, GocardlessMcpCredential]
 
 
 ResourceID = Annotated[str, Field(min_length=1, max_length=128, pattern=r"^[A-Za-z0-9_-]+$")]
@@ -276,7 +282,7 @@ GoCardlessConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class GoCardlessFullConfig(NodeConfig[GoCardlessConfig, GoCardlessTokenCredential]):
+class GoCardlessFullConfig(NodeConfig[GoCardlessConfig, GoCardlessCredential]):
     pass
 
 
@@ -313,6 +319,7 @@ OPERATIONS = {'list_creditors': ('GET', '/creditors', 'creditors'),
 
 class GoCardlessNode(WorkflowNode):
     integration_type = "automation-gocardless"
+    credential_provider_labels = {"gocardless": "GoCardless Account"}
     connection_evidence = ConnectionEvidence(operation="list_creditors", noun="GoCardless creditor accounts")
 
     @classmethod

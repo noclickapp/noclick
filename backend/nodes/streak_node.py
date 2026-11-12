@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -528,6 +529,11 @@ class DeleteComment(_Input):
     )
 
 
+# Streak's own MCP server: agents get its tools through a person's Streak sign-in.
+StreakMcpCredential = mcp_credential("streak", "https://api.streak.com/mcp", app="Streak")
+StreakCredential = Union[StreakAPIKeyCredential, StreakMcpCredential]
+
+
 Operation = Annotated[
     Union[
         ListTeams,
@@ -555,7 +561,7 @@ Operation = Annotated[
 ]
 
 
-class StreakConfig(NodeConfig[Operation, StreakAPIKeyCredential]):
+class StreakConfig(NodeConfig[Operation, StreakCredential]):
     pass
 
 
@@ -585,6 +591,7 @@ ROUTES = {
 
 class StreakNode(WorkflowNode):
     integration_type = "automation-streak"
+    credential_provider_labels = {"streak": "Streak Account"}
     connection_evidence = ConnectionEvidence(
         operation="list_teams", noun="Streak teams"
     )

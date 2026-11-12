@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Mem API Key": "mem_api_key",
-    "MemAPIKeyCredential": "mem_api_key"
+    "Mem MCP": "mem_mcp",
+    "MemAPIKeyCredential": "mem_api_key",
+    "MemMcpCredential": "mem_mcp"
   },
   "providerLabels": {
-    "mem": "Mem API Key"
+    "mem": "Mem Account"
   },
   "autoSelectCredential": true
 }

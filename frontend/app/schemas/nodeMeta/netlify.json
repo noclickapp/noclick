@@ -18,8 +18,10 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Netlify MCP": "netlify_mcp",
     "Netlify OAuth": "netlify_oauth",
     "Netlify Personal Access Token": "netlify_pat",
+    "NetlifyMcpCredential": "netlify_mcp",
     "NetlifyOAuthCredential": "netlify_oauth",
     "NetlifyPersonalAccessTokenCredential": "netlify_pat"
   },

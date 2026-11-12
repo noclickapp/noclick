@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Fly API Token": "fly_api_token",
+    "Fly.io MCP": "fly_mcp",
+    "FlyMcpCredential": "fly_mcp",
     "FlyTokenCredential": "fly_api_token"
   },
   "providerLabels": {
-    "fly": "Fly API Token"
+    "fly": "Fly.io Account"
   },
   "autoSelectCredential": true
 }

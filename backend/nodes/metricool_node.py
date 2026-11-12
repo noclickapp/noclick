@@ -16,6 +16,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -177,13 +178,18 @@ class MetricoolDeleteDraft(_Post):
     operation: Literal["delete_draft"] = Field("delete_draft", json_schema_extra=_op("delete_draft", "Delete Unpublished Draft", "Drafts"))
 
 
+# Metricool's own MCP server: agents get its tools through a person's Metricool sign-in.
+MetricoolMcpCredential = mcp_credential("metricool", "https://ai.metricool.com/mcp", app="Metricool")
+MetricoolCredential = Union[MetricoolAPIKeyCredential, MetricoolMcpCredential]
+
+
 MetricoolOperation = Annotated[Union[MetricoolListBrands, MetricoolGetDefaultBrand, MetricoolGetSocialTimeline,
     MetricoolListInstagramPosts, MetricoolListFacebookPosts, MetricoolListLinkedinPosts, MetricoolListSchedulerPosts,
     MetricoolGetSchedulerPost, MetricoolGetSchedulerCounters, MetricoolListLibraryStates,
     MetricoolCreateDraft, MetricoolUpdateDraft, MetricoolDeleteDraft], Field(discriminator="operation")]
 
 
-class MetricoolNodeConfig(NodeConfig[MetricoolOperation, MetricoolAPIKeyCredential]):
+class MetricoolNodeConfig(NodeConfig[MetricoolOperation, MetricoolCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -379,6 +385,7 @@ def _timeline(row, metric):
 
 class MetricoolNode(WorkflowNode):
     integration_type = "automation-metricool"
+    credential_provider_labels = {"metricool": "Metricool Account"}
     connection_evidence = ConnectionEvidence(noun="brands", operation="list_brands", label_keys=("label", "title", "id"), proves="account")
 
     @classmethod

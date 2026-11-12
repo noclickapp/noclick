@@ -12,6 +12,7 @@ import re
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import SSRFError, guarded_async_client
@@ -228,6 +229,11 @@ class ZeffyDeleteContactConfig(_Input):
     contact_id: str = Field(..., min_length=1)
 
 
+# Zeffy's own MCP server: agents get its tools through a person's Zeffy sign-in.
+ZeffyMcpCredential = mcp_credential("zeffy", "https://api.zeffy.com/mcp", app="Zeffy")
+ZeffyCredential = Union[ZeffyAPIKeyCredential, ZeffyMcpCredential]
+
+
 ZeffyConfig = Annotated[Union[
     ZeffyListPaymentsConfig, ZeffyGetPaymentConfig, ZeffyCreatePaymentConfig, ZeffyDeletePaymentConfig,
     ZeffyListContactsConfig, ZeffyGetContactConfig, ZeffyCreateContactConfig, ZeffyUpsertContactConfig,
@@ -236,7 +242,7 @@ ZeffyConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ZeffyFullConfig(NodeConfig[ZeffyConfig, ZeffyAPIKeyCredential]):
+class ZeffyFullConfig(NodeConfig[ZeffyConfig, ZeffyCredential]):
     pass
 
 
@@ -271,6 +277,7 @@ def _redact(value, secret):
 
 class ZeffyNode(WorkflowNode):
     integration_type = "automation-zeffy"
+    credential_provider_labels = {"zeffy": "Zeffy Account"}
     connection_evidence = ConnectionEvidence(noun="campaigns", operation="list_campaigns", label_keys=("title", "id"))
 
     @classmethod

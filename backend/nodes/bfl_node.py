@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -715,6 +716,11 @@ class BflGenerateKontextProConfig(_Input):
     )
 
 
+# BFL's own MCP server: agents get its tools through a person's BFL sign-in.
+BflMcpCredential = mcp_credential("bfl", "https://mcp.bfl.ai", app="BFL")
+BflCredential = Union[BflAPIKeyCredential, BflMcpCredential]
+
+
 BflConfig = Annotated[
     Union[
         BflGetCreditsConfig,
@@ -740,7 +746,7 @@ BflConfig = Annotated[
 ]
 
 
-class BflFullConfig(NodeConfig[BflConfig, BflAPIKeyCredential]):
+class BflFullConfig(NodeConfig[BflConfig, BflCredential]):
     pass
 
 
@@ -845,6 +851,7 @@ def _redact(value, secret):
 
 class BflNode(WorkflowNode):
     integration_type = "automation-bfl"
+    credential_provider_labels = {"bfl": "BFL Account"}
     connection_evidence = ConnectionEvidence(
         noun="BFL credit balance", operation="get_credits", proves="reachability"
     )

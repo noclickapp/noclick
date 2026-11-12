@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Kiwify Access Token": "kiwify_access_token",
+    "Kiwify MCP": "kiwify_mcp",
+    "KiwifyMcpCredential": "kiwify_mcp",
     "KiwifyTokenCredential": "kiwify_access_token"
   },
   "providerLabels": {
-    "kiwify": "Kiwify Access Token"
+    "kiwify": "Kiwify Account"
   },
   "autoSelectCredential": true
 }

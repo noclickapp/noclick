@@ -15,6 +15,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -41,6 +42,11 @@ class HospitableTokenCredential(_Model):
         if not value or any(c.isspace() or ord(c) < 33 or ord(c) == 127 for c in value):
             raise ValueError("Paste the token without the Bearer prefix or whitespace")
         return value
+
+
+# Hospitable's own MCP server: agents get its tools through a person's Hospitable sign-in.
+HospitableMcpCredential = mcp_credential("hospitable", "https://mcp.hospitable.com/mcp", app="Hospitable")
+HospitableCredential = Union[HospitableTokenCredential, HospitableMcpCredential]
 
 
 Identifier = Annotated[str, Field(min_length=1, max_length=200, pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]*$")]
@@ -273,7 +279,7 @@ HospitableConfig = Annotated[Union[GetUserConfig, ListPropertiesConfig, GetPrope
     RespondReviewConfig], Field(discriminator="operation")]
 
 
-class HospitableFullConfig(NodeConfig[HospitableConfig, HospitableTokenCredential]):
+class HospitableFullConfig(NodeConfig[HospitableConfig, HospitableCredential]):
     pass
 
 
@@ -317,6 +323,7 @@ def _redact(value, secret):
 
 class HospitableNode(WorkflowNode):
     integration_type = "automation-hospitable"
+    credential_provider_labels = {"hospitable": "Hospitable Account"}
     connection_evidence = ConnectionEvidence(noun="Hospitable account", identity_operation="get_user")
 
     @classmethod

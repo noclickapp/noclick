@@ -3,12 +3,13 @@ from __future__ import annotations
 
 import json
 import re
-from typing import Literal
+from typing import Literal, Union
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.mercury_operations import Operation, ROUTES
 from utils.ssrf import guarded_async_client
@@ -43,7 +44,12 @@ class MercuryAPITokenCredential(BaseModel):
         return value
 
 
-class MercuryNodeConfig(NodeConfig[Operation, MercuryAPITokenCredential]):
+# Mercury's own MCP server: agents get its tools through a person's Mercury sign-in.
+MercuryMcpCredential = mcp_credential("mercury", "https://mcp.mercury.com/mcp", app="Mercury")
+MercuryCredential = Union[MercuryAPITokenCredential, MercuryMcpCredential]
+
+
+class MercuryNodeConfig(NodeConfig[Operation, MercuryCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -59,6 +65,7 @@ def _redact(value, token):
 
 class MercuryNode(WorkflowNode):
     integration_type = "automation-mercury"
+    credential_provider_labels = {"mercury": "Mercury Account"}
     connection_evidence = ConnectionEvidence(
         noun="bank accounts", operation="list_accounts",
         label_keys=("nickname", "name", "id"),

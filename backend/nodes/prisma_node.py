@@ -11,6 +11,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
@@ -329,6 +330,11 @@ class ListPostgresRegions(_Operation):
     )
 
 
+# Prisma's own MCP server: agents get its tools through a person's Prisma sign-in.
+PrismaMcpCredential = mcp_credential("prisma", "https://mcp.prisma.io/mcp", app="Prisma")
+PrismaCredential = Union[PrismaServiceTokenCredential, PrismaMcpCredential]
+
+
 Operation = Annotated[
     Union[
         GetCurrentPrincipal,
@@ -357,7 +363,7 @@ Operation = Annotated[
 ]
 
 
-class PrismaNodeConfig(NodeConfig[Operation, PrismaServiceTokenCredential]):
+class PrismaNodeConfig(NodeConfig[Operation, PrismaCredential]):
     pass
 
 
@@ -421,6 +427,7 @@ WIRE_NAMES = {
 
 class PrismaNode(WorkflowNode):
     integration_type = "automation-prisma"
+    credential_provider_labels = {"prisma": "Prisma Account"}
     connection_evidence = ConnectionEvidence(
         noun="Prisma projects", operation="list_projects"
     )

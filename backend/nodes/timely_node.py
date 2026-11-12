@@ -4,6 +4,7 @@ from datetime import date
 import httpx
 from pydantic import BaseModel, ConfigDict, Field
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.scopes.timely import TIMELY_SCOPES
 from utils.ssrf import guarded_async_client
@@ -137,15 +138,21 @@ class TimelyListUsersConfig(_Config):
     """List users."""
     operation: Literal["list_users"] = "list_users"
 
+# Timely's own MCP server: agents get its tools through a person's Timely sign-in.
+TimelyMcpCredential = mcp_credential("timely", "https://api.timelyapp.com/mcp", app="Timely")
+TimelyCredential = Union[TimelyTokenCredential, TimelyMcpCredential]
+
+
 TimelyConfig = Annotated[Union[TimelyListClientsConfig, TimelyGetClientConfig, TimelyCreateClientConfig, TimelyUpdateClientConfig, TimelyListProjectsConfig, TimelyGetProjectConfig, TimelyCreateProjectConfig, TimelyUpdateProjectConfig, TimelyDeleteProjectConfig, TimelyListTimeEntriesConfig, TimelyGetTimeEntryConfig, TimelyCreateTimeEntryConfig, TimelyUpdateTimeEntryConfig, TimelyDeleteTimeEntryConfig, TimelyStartTimerConfig, TimelyStopTimerConfig, TimelyGetCurrentUserConfig, TimelyListUsersConfig], Field(discriminator="operation")]
 
-class TimelyFullConfig(NodeConfig[TimelyConfig, TimelyTokenCredential]):
+class TimelyFullConfig(NodeConfig[TimelyConfig, TimelyCredential]):
     pass
 
 ROUTES = {'list_clients': ('GET', 'clients', 'client'), 'get_client': ('GET', 'clients/{id}', 'client'), 'create_client': ('POST', 'clients', 'client'), 'update_client': ('PUT', 'clients/{id}', 'client'), 'list_projects': ('GET', 'projects', 'project'), 'get_project': ('GET', 'projects/{id}', 'project'), 'create_project': ('POST', 'projects', 'project'), 'update_project': ('PUT', 'projects/{id}', 'project'), 'delete_project': ('DELETE', 'projects/{id}', 'project'), 'list_time_entries': ('GET', 'hours', 'time_entry'), 'get_time_entry': ('GET', 'hours/{id}', 'time_entry'), 'create_time_entry': ('POST', 'hours', 'time_entry'), 'update_time_entry': ('PUT', 'hours/{id}', 'time_entry'), 'delete_time_entry': ('DELETE', 'hours/{id}', 'time_entry'), 'start_timer': ('PUT', 'hours/{id}/start', 'time_entry'), 'stop_timer': ('PUT', 'hours/{id}/stop', 'time_entry'), 'get_current_user': ('GET', 'users/current', 'user'), 'list_users': ('GET', 'users', 'user')}
 
 class TimelyNode(WorkflowNode):
     integration_type = "automation-timely"
+    credential_provider_labels = {"timely": "Timely Account"}
     scope_registry = TIMELY_SCOPES
     connection_evidence = ConnectionEvidence(noun="Timely user", identity_operation="get_current_user")
 

@@ -21,11 +21,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Miro MCP": "miro_mcp",
     "Miro OAuth": "miro_oauth",
+    "MiroMcpCredential": "miro_mcp",
     "MiroOAuthCredential": "miro_oauth"
   },
   "providerLabels": {
-    "miro": "Miro OAuth"
+    "miro": "Miro Account"
   },
   "autoSelectCredential": true
 }

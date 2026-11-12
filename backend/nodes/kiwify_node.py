@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.kiwify_operations import KIWIFY_OPERATIONS
@@ -257,6 +258,11 @@ class KiwifyGetScheduledInstallmentConfig(KiwifyInput):
     scheduled_installment_id: str = Field(..., min_length=1)
 
 
+# Kiwify's own MCP server: agents get its tools through a person's Kiwify sign-in.
+KiwifyMcpCredential = mcp_credential("kiwify", "https://mcp.kiwify.com/mcp", app="Kiwify")
+KiwifyCredential = Union[KiwifyTokenCredential, KiwifyMcpCredential]
+
+
 KiwifyConfig = Annotated[Union[
     KiwifyGetAccountDetailsConfig,
     KiwifyListProductsConfig,
@@ -283,7 +289,7 @@ KiwifyConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class KiwifyNodeConfig(NodeConfig[KiwifyConfig, KiwifyTokenCredential]):
+class KiwifyNodeConfig(NodeConfig[KiwifyConfig, KiwifyCredential]):
     """Kiwify operation and pasted account credential."""
 
 
@@ -301,6 +307,7 @@ def _redact(value, secrets):
 
 class KiwifyNode(WorkflowNode):
     integration_type = "automation-kiwify"
+    credential_provider_labels = {"kiwify": "Kiwify Account"}
     scope_registry = KIWIFY_SCOPES
     connection_evidence = ConnectionEvidence(
         noun="Kiwify account", identity_operation="get_account_details",

@@ -10,10 +10,12 @@
   },
   "credentialTypes": {
     "Postman API Key": "postman_api_key",
-    "PostmanApiKeyCredential": "postman_api_key"
+    "Postman MCP": "postman_mcp",
+    "PostmanApiKeyCredential": "postman_api_key",
+    "PostmanMcpCredential": "postman_mcp"
   },
   "providerLabels": {
-    "postman": "Postman API Key"
+    "postman": "Postman Account"
   },
   "autoSelectCredential": true
 }

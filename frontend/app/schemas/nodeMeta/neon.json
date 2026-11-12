@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Neon API Key": "neon_api_key",
-    "NeonApiKeyCredential": "neon_api_key"
+    "Neon MCP": "neon_mcp",
+    "NeonApiKeyCredential": "neon_api_key",
+    "NeonMcpCredential": "neon_mcp"
   },
   "providerLabels": {
-    "neon": "Neon API Key"
+    "neon": "Neon Account"
   },
   "autoSelectCredential": true
 }

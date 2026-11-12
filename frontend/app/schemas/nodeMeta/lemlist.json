@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Lemlist API Key": "lemlist_api_key",
-    "LemlistApiKeyCredential": "lemlist_api_key"
+    "Lemlist MCP": "lemlist_mcp",
+    "LemlistApiKeyCredential": "lemlist_api_key",
+    "LemlistMcpCredential": "lemlist_mcp"
   },
   "providerLabels": {
-    "lemlist": "Lemlist API Key"
+    "lemlist": "Lemlist Account"
   },
   "autoSelectCredential": true
 }

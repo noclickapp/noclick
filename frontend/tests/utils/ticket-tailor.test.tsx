@@ -15,7 +15,7 @@ describe('Ticket Tailor self-registering integration', () => {
         expect(TicketTailorNode.type).toBe(type);
         expect(NODE_SCHEMAS[type]).toBe(schema);
         expect(CREDENTIAL_TYPE_MAP.TicketTailorCredential).toBe('ticket_tailor');
-        expect(getNodeCredentialInfo(type)?.acceptedTypes).toEqual(['ticket_tailor']);
+        expect(getNodeCredentialInfo(type)?.acceptedTypes).toEqual(['ticket_tailor', 'ticket_tailor_mcp']); // and its vendor's MCP server, last (backend nodes/core/vendor_mcp.py)
         expect(humanizeCredentialLabel(schema.$defs.TicketTailorCredential.title)).toBe('Ticket Tailor API Key');
         expect(methodFromRequirement(requirementsFromSchema(schema)[0]).method_kind).toBe('api_key');
         expect(schema.$defs.TicketTailorCredential.properties.api_key['ui:widget']).toBe('password');

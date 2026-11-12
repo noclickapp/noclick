@@ -11,10 +11,12 @@
   },
   "credentialTypes": {
     "NgrokAPIKeyCredential": "ngrok_api_key",
-    "ngrok API Key": "ngrok_api_key"
+    "NgrokMcpCredential": "ngrok_mcp",
+    "ngrok API Key": "ngrok_api_key",
+    "ngrok MCP": "ngrok_mcp"
   },
   "providerLabels": {
-    "ngrok": "ngrok API Key"
+    "ngrok": "ngrok Account"
   },
   "autoSelectCredential": true
 }

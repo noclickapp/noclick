@@ -17,13 +17,13 @@ describe('DataForSEO native wiring', () => {
   it('keeps API Basic credentials separate from console passwords and OAuth', () => {
     const def = schema.$defs.DataForSEOAPICredential;
     expect(def.title).toBe('DataForSEO API Login');
-    expect(humanizeCredentialLabel(def.title)).toBe('Data For SEO API Login');
+    expect(humanizeCredentialLabel(def.title)).toBe('DataForSEO API Login');
     expect(getCredentialTypeFromSchemaTitle(def.title)).toBe('dataforseo_basic');
     expect(getCredentialTypeFromSchemaTitle('DataForSEOAPICredential')).toBe('dataforseo_basic');
     expect(def.required).toEqual(expect.arrayContaining(['api_login', 'api_password']));
     expect(def.properties.api_password['ui:widget']).toBe('password');
     expect(def).not.toHaveProperty('x-oauth-provider');
-    expect(requirementsFromSchema(schema).map(req => methodFromRequirement(req).method_kind)).toEqual(['api_key']);
+    expect(requirementsFromSchema(schema).map(req => methodFromRequirement(req).method_kind)).toEqual(['api_key', 'mcp']); // and its MCP server, last
     expect(getNodeCredentialInfo('automation-dataforseo')?.acceptedTypes).toContain('dataforseo_basic');
     expect(AVAILABLE_NODES.some(node => node.type === DataForSEONode.type)).toBe(true);
   });

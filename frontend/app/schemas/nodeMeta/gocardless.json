@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "GoCardless Access Token": "gocardless_access_token",
-    "GoCardlessTokenCredential": "gocardless_access_token"
+    "GoCardless MCP": "gocardless_mcp",
+    "GoCardlessTokenCredential": "gocardless_access_token",
+    "GocardlessMcpCredential": "gocardless_mcp"
   },
   "providerLabels": {
-    "gocardless": "GoCardless Access Token"
+    "gocardless": "GoCardless Account"
   },
   "autoSelectCredential": true
 }

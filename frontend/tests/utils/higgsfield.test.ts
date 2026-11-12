@@ -6,9 +6,9 @@ import { credentialRequirements, methodFromRequirement } from '~/components/cred
 beforeAll(() => loadNodeSchemas(['automation-higgsfield']));
 
 it('offers a pasted Higgsfield API key and ten generation and lifecycle actions', () => {
-    expect(getNodeCredentialInfo('automation-higgsfield')?.acceptedTypes).toEqual(['higgsfield_api_key']);
+    expect(getNodeCredentialInfo('automation-higgsfield')?.acceptedTypes).toEqual(['higgsfield_api_key', 'higgsfield_mcp']); // and its vendor's MCP server, last (backend nodes/core/vendor_mcp.py)
     expect(getCredentialTypeFromSchemaTitle('Higgsfield API Key')).toBe('higgsfield_api_key');
-    expect(credentialRequirements('automation-higgsfield').map(methodFromRequirement).map(method => method.method_kind)).toEqual(['api_key']);
+    expect(credentialRequirements('automation-higgsfield').map(methodFromRequirement).map(method => method.method_kind)).toEqual(['api_key', 'mcp']);
     const operations = getAgentToolOperations('automation-higgsfield').map(op => op.operation);
     expect(operations).toHaveLength(10);
     expect(operations).toContain('generate_soul_image');

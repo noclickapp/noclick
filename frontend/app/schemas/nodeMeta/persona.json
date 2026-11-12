@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Persona API Key": "persona_api_key",
-    "PersonaAPIKeyCredential": "persona_api_key"
+    "Persona MCP": "persona_mcp",
+    "PersonaAPIKeyCredential": "persona_api_key",
+    "PersonaMcpCredential": "persona_mcp"
   },
   "providerLabels": {
-    "persona": "Persona API Key"
+    "persona": "Persona Account"
   },
   "autoSelectCredential": true
 }

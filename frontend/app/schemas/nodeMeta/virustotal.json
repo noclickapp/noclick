@@ -10,10 +10,12 @@
   },
   "credentialTypes": {
     "VirusTotal API Key": "virustotal_api_key",
-    "VirusTotalAPIKeyCredential": "virustotal_api_key"
+    "VirusTotal MCP": "virustotal_mcp",
+    "VirusTotalAPIKeyCredential": "virustotal_api_key",
+    "VirustotalMcpCredential": "virustotal_mcp"
   },
   "providerLabels": {
-    "virustotal": "VirusTotal API Key"
+    "virustotal": "VirusTotal Account"
   },
   "autoSelectCredential": true
 }

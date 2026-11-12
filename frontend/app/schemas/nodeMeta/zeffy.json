@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Zeffy API Key": "zeffy_api_key",
-    "ZeffyAPIKeyCredential": "zeffy_api_key"
+    "Zeffy MCP": "zeffy_mcp",
+    "ZeffyAPIKeyCredential": "zeffy_api_key",
+    "ZeffyMcpCredential": "zeffy_mcp"
   },
   "providerLabels": {
-    "zeffy": "Zeffy API Key"
+    "zeffy": "Zeffy Account"
   },
   "autoSelectCredential": true
 }

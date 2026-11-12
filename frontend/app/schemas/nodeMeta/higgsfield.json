@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Higgsfield API Key": "higgsfield_api_key",
-    "HiggsfieldAPIKeyCredential": "higgsfield_api_key"
+    "Higgsfield MCP": "higgsfield_mcp",
+    "HiggsfieldAPIKeyCredential": "higgsfield_api_key",
+    "HiggsfieldMcpCredential": "higgsfield_mcp"
   },
   "providerLabels": {
-    "higgsfield": "Higgsfield API Key"
+    "higgsfield": "Higgsfield Account"
   },
   "autoSelectCredential": true
 }

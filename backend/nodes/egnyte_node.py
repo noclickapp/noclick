@@ -17,6 +17,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
@@ -246,13 +247,18 @@ class OnFileUploaded(WebhookTriggerConfigBase):
         return ",".join(paths)
 
 
+# Egnyte's own MCP server: agents get its tools through a person's Egnyte sign-in.
+EgnyteMcpCredential = mcp_credential("egnyte", "https://mcp-server.egnyte.com/mcp", app="Egnyte")
+EgnyteCredential = Union[EgnyteOAuthCredential, EgnyteMcpCredential]
+
+
 EgnyteOperation = Annotated[Union[GetUserInfo, GetFileOrFolder, CreateFolder, MoveItem,
     CopyItem, LockFile, UnlockFile, DeleteItem, DownloadFile, SearchFiles, ListLinks,
     CreateLink, GetLink, DeleteLink, AddComment, ListComments, GetComment, DeleteComment,
     GetEventsCursor, ListEvents, OnFileUploaded], Field(discriminator="operation")]
 
 
-class EgnyteConfig(NodeConfig[EgnyteOperation, EgnyteOAuthCredential]):
+class EgnyteConfig(NodeConfig[EgnyteOperation, EgnyteCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -267,6 +273,7 @@ def _route(template, values):
 class EgnyteNode(ExternalWebhookTriggerMixin, WorkflowNode):
     webhook_replace_stale_endpoint = True
     integration_type = "automation-egnyte"
+    credential_provider_labels = {"egnyte": "Egnyte Account"}
     scope_registry = EGNYTE_SCOPES
     connection_evidence = ConnectionEvidence(noun="Egnyte account", identity_operation="get_user_info", identity_keys=("username",))
 

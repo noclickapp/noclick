@@ -9,6 +9,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -111,9 +112,15 @@ class UpdateNumberOrder(_Resource):
     operation: Literal["update_number_order"] = Field("update_number_order", title="Update Number Order", json_schema_extra={"ui:hidden": True})
     customer_reference: str = Field(..., min_length=1, max_length=255)
 
+# Telnyx's own MCP server: agents get its tools through a person's Telnyx sign-in.
+# It answers without a token too; its resource metadata names Telnyx's sign-in.
+TelnyxMcpCredential = mcp_credential("telnyx", "https://api.telnyx.com/v2/mcp", app="Telnyx")
+TelnyxCredential = Union[TelnyxAPIKeyCredential, TelnyxMcpCredential]
+
+
 Operation = Annotated[Union[SendMessage, GetMessage, CancelMessage, ListMessagingProfiles, GetMessagingProfile, CreateMessagingProfile, UpdateMessagingProfile, DeleteMessagingProfile, ListPhoneNumbers, GetPhoneNumber, UpdatePhoneNumber, GetPhoneNumberMessaging, UpdatePhoneNumberMessaging, GetBalance, ListNumberOrders, GetNumberOrder, UpdateNumberOrder], Field(discriminator="operation")]
 
-class TelnyxNodeConfig(NodeConfig[Operation, TelnyxAPIKeyCredential]):
+class TelnyxNodeConfig(NodeConfig[Operation, TelnyxCredential]):
     pass
 
 ROUTES = {'send_message': ('POST',
@@ -152,6 +159,7 @@ def _sanitize(value, token):
 
 class TelnyxNode(WorkflowNode):
     integration_type = "automation-telnyx"
+    credential_provider_labels = {"telnyx": "Telnyx Account"}
     connection_evidence = ConnectionEvidence(noun="phone numbers", operation="list_phone_numbers", label_keys=("phone_number", "id"))
 
     @classmethod

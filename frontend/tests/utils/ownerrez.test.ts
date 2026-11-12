@@ -6,7 +6,7 @@ import schema from '~/schemas/nodes/ownerrez.json';
 describe('OwnerRez connection and operations', () => {
     beforeAll(() => loadNodeSchemas(['automation-ownerrez']));
     it('offers a personal token with a default credential type', () => {
-        expect(getNodeCredentialInfo('automation-ownerrez')?.acceptedTypes).toEqual(['ownerrez_personal_token']);
+        expect(getNodeCredentialInfo('automation-ownerrez')?.acceptedTypes).toEqual(['ownerrez_personal_token', 'ownerrez_mcp']); // and its vendor's MCP server, last (backend nodes/core/vendor_mcp.py)
         expect(methodFromRequirement(requirementsFromSchema(schema)[0])).toMatchObject({method_kind: 'api_key', is_oauth: false});
         expect(schema.$defs.OwnerRezPersonalTokenCredential.properties.credential_type.default).toBe('ownerrez_personal_token');
     });

@@ -21,6 +21,7 @@ from pydantic import (
 )
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.crunchbase_operations import (
@@ -522,6 +523,11 @@ class Autocomplete(_Input):
     limit: int = Field(10, ge=1, le=25, strict=True)
 
 
+# Crunchbase's own MCP server: agents get its tools through a person's Crunchbase sign-in.
+CrunchbaseMcpCredential = mcp_credential("crunchbase", "https://mcp.crunchbase.com", app="Crunchbase")
+CrunchbaseCredential = Union[CrunchbaseAPIKeyCredential, CrunchbaseMcpCredential]
+
+
 ROUTES = {
     "get_organization": ("GET", "organizations"),
     "search_organizations": ("POST", "organizations"),
@@ -574,7 +580,7 @@ CrunchbaseConfig = Annotated[
 ]
 
 
-class CrunchbaseFullConfig(NodeConfig[CrunchbaseConfig, CrunchbaseAPIKeyCredential]):
+class CrunchbaseFullConfig(NodeConfig[CrunchbaseConfig, CrunchbaseCredential]):
     @model_validator(mode="before")
     @classmethod
     def credential_family(cls, value):
@@ -597,6 +603,7 @@ def _redact(value, secret):
 
 class CrunchbaseNode(WorkflowNode):
     integration_type = "automation-crunchbase"
+    credential_provider_labels = {"crunchbase": "Crunchbase Account"}
     connection_evidence = ConnectionEvidence(
         noun="Crunchbase organization data",
         operation="get_organization",

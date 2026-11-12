@@ -11,6 +11,7 @@ from urllib.parse import quote
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -173,10 +174,16 @@ class ManageSystemGroupMembership(_Input):
     op: Literal["add", "remove"] = Field(..., title="Membership action")
 
 
+# JumpCloud's own MCP server: agents get its tools through a person's JumpCloud sign-in.
+# JumpCloud's US instance; its EU and India instances run their own servers.
+JumpcloudMcpCredential = mcp_credential("jumpcloud", "https://mcp.jumpcloud.com/v1", app="JumpCloud")
+JumpcloudCredential = Union[JumpcloudAPIKeyCredential, JumpcloudMcpCredential]
+
+
 Operation = Annotated[Union[ListOrganizations, ListUsers, GetUser, CreateUser, UpdateUser, DeleteUser, ListSystems, GetSystem, UpdateSystem, DeleteSystem, ListUserGroups, GetUserGroup, CreateUserGroup, DeleteUserGroup, ListUserGroupMembers, ManageUserGroupMembership, ListSystemGroups, GetSystemGroup, CreateSystemGroup, DeleteSystemGroup, ListSystemGroupMembers, ManageSystemGroupMembership], Field(discriminator="operation")]
 
 
-class JumpcloudConfig(NodeConfig[Operation, JumpcloudAPIKeyCredential]):
+class JumpcloudConfig(NodeConfig[Operation, JumpcloudCredential]):
     pass
 
 
@@ -206,6 +213,7 @@ ROUTES = {'list_organizations': ('GET', '/api/organizations'),
 
 class JumpcloudNode(WorkflowNode):
     integration_type = "automation-jumpcloud"
+    credential_provider_labels = {"jumpcloud": "JumpCloud Account"}
     connection_evidence = ConnectionEvidence(operation="list_organizations", noun="organizations", label_keys=("displayName", "name", "_id", "id"))
 
     @classmethod

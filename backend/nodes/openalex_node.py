@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -196,6 +197,11 @@ class OpenAlexGetRateLimitConfig(_Input):
     """Check this API key's current usage and remaining budget."""
     operation: Literal["get_rate_limit"] = Field("get_rate_limit", json_schema_extra={"ui:hidden": True})
 
+# OpenAlex's own MCP server: agents get its tools through a person's OpenAlex sign-in.
+OpenalexMcpCredential = mcp_credential("openalex", "https://mcp.openalex.org/mcp", app="OpenAlex")
+OpenAlexCredential = Union[OpenAlexAPIKeyCredential, OpenalexMcpCredential]
+
+
 OpenAlexOperation = Annotated[Union[
     OpenAlexListWorksConfig,
     OpenAlexGetWorkConfig,
@@ -224,7 +230,7 @@ OpenAlexOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class OpenAlexNodeConfig(NodeConfig[OpenAlexOperation, OpenAlexAPIKeyCredential]):
+class OpenAlexNodeConfig(NodeConfig[OpenAlexOperation, OpenAlexCredential]):
     pass
 
 
@@ -267,6 +273,7 @@ def _redact(value, key):
 
 class OpenAlexNode(WorkflowNode):
     integration_type = "automation-openalex"
+    credential_provider_labels = {"openalex": "OpenAlex Account"}
     connection_evidence = ConnectionEvidence(
         operation="get_rate_limit", noun="API usage budget", proves="reachability")
     edit_examples = ["Find open access papers about machine learning", "Look up an author by ORCID", "Group works by publication year"]

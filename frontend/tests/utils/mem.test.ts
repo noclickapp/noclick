@@ -10,9 +10,9 @@ it('offers a Mem API key and discovers the native operations', () => {
     expect(MemNode.type).toBe('automation-mem');
     expect(MemNode.label).toBe('Mem');
     expect(CREDENTIAL_TYPE_MAP['Mem API Key']).toBe('mem_api_key');
-    expect(getNodeCredentialInfo('automation-mem')?.acceptedTypes).toEqual(['mem_api_key']);
+    expect(getNodeCredentialInfo('automation-mem')?.acceptedTypes).toEqual(['mem_api_key', 'mem_mcp']); // and its vendor's MCP server, last (backend nodes/core/vendor_mcp.py)
     const methods = credentialRequirements('automation-mem').map(methodFromRequirement);
-    expect(methods).toHaveLength(1);
+    expect(methods.map(m => m.method_kind)).toEqual(['api_key', 'mcp']);
     expect(methods[0].method_kind).toBe('api_key');
     expect(methods[0].is_oauth).toBe(false);
     expect(methods[0].credential_fields.map(field => field.name)).toEqual(['api_key']);

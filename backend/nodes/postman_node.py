@@ -9,6 +9,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
@@ -235,6 +236,12 @@ class PostmanApiKeyCredential(BaseModel):
     })
 
 
+# Postman's own MCP server: agents get its tools through a person's Postman sign-in.
+# /mcp is Postman's full tool set (/minimal its default); its EU server takes an API key only.
+PostmanMcpCredential = mcp_credential("postman", "https://mcp.postman.com/mcp", app="Postman")
+PostmanCredential = Union[PostmanApiKeyCredential, PostmanMcpCredential]
+
+
 def _path_title(name: str) -> str:
     title = re.sub(r"([a-z0-9])([A-Z])", r"\1 \2", name.replace("-", " ")).title()
     return title.replace(" Id", " ID").replace("Api", "API")
@@ -310,12 +317,13 @@ PostmanConfig = Annotated[Union[tuple(CONFIG_MODELS.values()) + (
 )], Discriminator("operation")]
 
 
-class PostmanNodeConfig(NodeConfig[PostmanConfig, PostmanApiKeyCredential]):
+class PostmanNodeConfig(NodeConfig[PostmanConfig, PostmanCredential]):
     model_config = ConfigDict(json_schema_extra={"x-agent-tool-provider": True})
 
 
 class PostmanNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-postman"
+    credential_provider_labels = {"postman": "Postman Account"}
     connection_evidence = ConnectionEvidence(operation="get_authenticated_user", noun="user")
     edit_examples = [
         "List my Postman workspaces",

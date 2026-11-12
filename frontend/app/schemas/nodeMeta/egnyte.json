@@ -35,11 +35,13 @@
     ]
   },
   "credentialTypes": {
+    "Egnyte MCP": "egnyte_mcp",
     "Egnyte OAuth": "egnyte_oauth",
+    "EgnyteMcpCredential": "egnyte_mcp",
     "EgnyteOAuthCredential": "egnyte_oauth"
   },
   "providerLabels": {
-    "egnyte": "Egnyte OAuth"
+    "egnyte": "Egnyte Account"
   },
   "autoSelectCredential": true
 }

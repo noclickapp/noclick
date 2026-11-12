@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -60,6 +61,11 @@ class _Volume(_App):
 class _Page(_App):
     limit: int = Field(100, ge=1, le=1000, description="Page size; the provider may return an empty page with a next cursor.")
     cursor: str | None = Field(None, max_length=4096, description="Pass next_cursor from the previous result within 30 minutes.")
+
+
+# Fly.io's own MCP server: agents get its tools through a person's Fly.io sign-in.
+FlyMcpCredential = mcp_credential("fly", "https://mcp.fly.io", app="Fly.io")
+FlyCredential = Union[FlyTokenCredential, FlyMcpCredential]
 
 
 Signal = Literal["SIGHUP", "SIGINT", "SIGQUIT", "SIGKILL", "SIGUSR1", "SIGUSR2", "SIGTERM"]
@@ -231,7 +237,7 @@ FlyConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class FlyFullConfig(NodeConfig[FlyConfig, FlyTokenCredential]):
+class FlyFullConfig(NodeConfig[FlyConfig, FlyCredential]):
     pass
 
 
@@ -274,6 +280,7 @@ def _redact(value, token):
 
 class FlyNode(WorkflowNode):
     integration_type = "automation-fly"
+    credential_provider_labels = {"fly": "Fly.io Account"}
     connection_evidence = ConnectionEvidence(noun="Fly token", operation="get_current_token", label_keys=("org_slug", "organization", "user", "token_id"))
 
     @classmethod

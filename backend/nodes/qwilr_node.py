@@ -10,6 +10,7 @@ from typing import Annotated, Literal, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, TypeAdapter, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.dynamic_options import normalize_search, filter_options_by_search
@@ -43,6 +44,11 @@ class QwilrAPITokenCredential(BaseModel):
     credential_type: Literal["qwilr_api_token"] = Field(FAMILY, json_schema_extra={"ui:hidden": True})
     api_token: str = Field(..., title="Qwilr Account Access Token", json_schema_extra={"ui:widget": "password", "ui:sensitive": True})
     _token = field_validator("api_token", mode="before")(token)
+
+
+# Qwilr's own MCP server: agents get its tools through a person's Qwilr sign-in.
+QwilrMcpCredential = mcp_credential("qwilr", "https://mcp.qwilr.com", app="Qwilr")
+QwilrCredential = Union[QwilrAPITokenCredential, QwilrMcpCredential]
 
 
 def credential(data):
@@ -205,7 +211,7 @@ QwilrOperation = Annotated[Union[ListPages, GetPage, GetAcceptanceSummary, ListS
 OPS = ("list_pages", "get_page", "get_acceptance_summary", "list_saved_blocks", "list_users", "create_draft_from_template", "create_draft_from_blocks", "replace_draft_blocks", "update_draft_expiry")
 
 
-class QwilrNodeConfig(NodeConfig[QwilrOperation, QwilrAPITokenCredential]):
+class QwilrNodeConfig(NodeConfig[QwilrOperation, QwilrCredential]):
     pass
 
 
@@ -437,6 +443,7 @@ async def records(data, args):
 
 class QwilrNode(WorkflowNode):
     integration_type = "automation-qwilr"
+    credential_provider_labels = {"qwilr": "Qwilr Account"}
     scope_registry = ScopeRegistry(provider="qwilr", enforcement=Enforcement.STRICT, requirements={op: ScopeRequirement(scopes=(), credential_types=(FAMILY,)) for op in OPS})
     connection_evidence = ConnectionEvidence(noun="Qwilr pages", operation="list_pages", label_keys=("name", "id"))
     edit_examples = ["List proposal page statuses", "Create an unpublished proposal draft from an existing template", "Create or replace a draft from saved blocks", "Read acceptance counts without signer details"]

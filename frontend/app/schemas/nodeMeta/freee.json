@@ -23,11 +23,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Freee MCP": "freee_mcp",
     "Freee OAuth": "freee_oauth",
+    "FreeeMcpCredential": "freee_mcp",
     "FreeeOAuthCredential": "freee_oauth"
   },
   "providerLabels": {
-    "freee": "Freee OAuth"
+    "freee": "Freee Account"
   },
   "autoSelectCredential": true
 }

@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "PartnerStack MCP": "partnerstack_mcp",
     "PartnerStackAPIKeys": "partnerstack_api_keys",
-    "Partnerstack API Keys": "partnerstack_api_keys"
+    "Partnerstack API Keys": "partnerstack_api_keys",
+    "PartnerstackMcpCredential": "partnerstack_mcp"
   },
   "providerLabels": {
-    "partnerstack": "Partnerstack API Keys"
+    "partnerstack": "PartnerStack Account"
   },
   "autoSelectCredential": true
 }

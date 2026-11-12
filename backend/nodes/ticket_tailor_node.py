@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator, model_serializer, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
@@ -44,6 +45,11 @@ class TicketTailorCredential(BaseModel):
     @model_serializer(mode="wrap")
     def connect_type(self, handler):
         return {**handler(self), "credential_type": TYPE}
+
+
+# Ticket Tailor's own MCP server: agents get its tools through a person's Ticket Tailor sign-in.
+# Its sign-in page asks the person for a Ticket Tailor API key.
+TicketTailorMcpCredential = mcp_credential("ticket_tailor", "https://mcp.tickettailor.ai/mcp", app="Ticket Tailor")
 
 
 def _credential(raw):
@@ -168,7 +174,7 @@ class UpdateDraftOccurrence(GetSeriesEvent):
 
 class TicketTailorNodeConfig(NodeConfig):
     model_config = ConfigDict(hide_input_in_errors=True)
-    credentials: Optional[TicketTailorCredential] = None
+    credentials: Optional[Union[TicketTailorCredential, TicketTailorMcpCredential]] = None
     config: Annotated[Union[CheckConnection, GetOverview, ListEvents, GetEvent, ListSeries, GetSeries, ListSeriesEvents, GetSeriesEvent, ListTickets, GetTicket, ListOrders, GetOrder, UpdateDraftSeries, UpdateDraftOccurrence], Field(discriminator="operation")]
 
 
@@ -320,6 +326,7 @@ def _page(raw, kind, path, args, *, event_id=None, series_id=None):
 
 class TicketTailorNode(WorkflowNode):
     integration_type = "automation-ticket-tailor"
+    credential_provider_labels = {"ticket_tailor": "Ticket Tailor Account"}
     connection_evidence = ConnectionEvidence(identity_operation="check_connection", identity_keys=("box_office_name",), noun="Ticket Tailor box office", proves="account")
 
     @classmethod

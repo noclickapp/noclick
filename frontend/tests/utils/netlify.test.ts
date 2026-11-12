@@ -9,6 +9,6 @@ describe('Netlify integration', () => {
         expect(requirementsFromSchema(schema).map(req => {
             const method = methodFromRequirement(req);
             return [req.credential_type, method.method_kind];
-        })).toEqual([['netlify_oauth', 'oauth'], ['netlify_pat', 'api_key']]);
+        })).toEqual([['netlify_oauth', 'oauth'], ['netlify_pat', 'api_key'], ['netlify_mcp', 'mcp']]); // and its vendor's MCP server, last (backend nodes/core/vendor_mcp.py)
     });
 });

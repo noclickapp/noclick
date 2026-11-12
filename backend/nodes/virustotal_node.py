@@ -8,6 +8,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin, _scope_of_op_config
 from nodes.core.credential_fields import clean_secret
@@ -170,12 +171,18 @@ class OnNewLivehuntMatch(PollTriggerConfigBase):
         "Optional Livehunt ruleset ID. Leave empty to watch all your Livehunt rulesets.")
 
 
+# VirusTotal's own MCP server: agents get its tools through a person's VirusTotal sign-in.
+# Signs in to a VirusTotal AI account, apart from any VirusTotal API plan.
+VirustotalMcpCredential = mcp_credential("virustotal", "https://ai.virustotal.com/mcp", app="VirusTotal")
+VirusTotalCredential = Union[VirusTotalAPIKeyCredential, VirustotalMcpCredential]
+
+
 Operation = Annotated[Union[
     GetAccount, GetFile, GetURL, GetDomain, GetIP, GetAnalysis, ScanURL, RescanFile, RescanURL, GetFileBehaviorSummary, ListFileComments, ListFileVotes, ListURLComments, ListURLVotes, ListDomainComments, ListDomainVotes, ListIPComments, ListIPVotes, OnNewIOCNotification, OnNewLivehuntMatch
 ], Field(discriminator="operation")]
 
 
-class VirusTotalConfig(NodeConfig[Operation, VirusTotalAPIKeyCredential]):
+class VirusTotalConfig(NodeConfig[Operation, VirusTotalCredential]):
     pass
 
 
@@ -221,6 +228,7 @@ def _redact(value, token):
 
 class VirusTotalNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-virustotal"
+    credential_provider_labels = {"virustotal": "VirusTotal Account"}
     connection_evidence = ConnectionEvidence(noun="VirusTotal account", identity_operation="get_account",
         identity_keys=("name", "id"))
 
