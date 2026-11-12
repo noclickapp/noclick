@@ -16,6 +16,7 @@ import { useLoaderData, useNavigate, Link } from 'react-router';
 import { createPublicLoaderData, csrfFailureResponse } from '~/lib/csrf.server';
 import { authenticate } from '~/lib/auth.server';
 import { buildSeoMeta } from '~/lib/seo';
+import { previewImage, TOGETHER_ART } from '~/lib/linkPreviews';
 import { PENDING_INVITE_KEY } from '~/lib/inviteLink';
 import { InviteLandingView } from '~/components/invite/InviteLandingView';
 import { useAnalytics } from '~/lib/analytics';
@@ -29,15 +30,14 @@ interface InvitePreview {
     owner_avatar_url: string | null;
 }
 
-export const meta: MetaFunction = ({ data }) => {
-    const typedData = data as JsonPayloadOf<typeof loader> | undefined;
-    const owner = typedData?.preview?.owner_name || 'Someone';
-    return buildSeoMeta({
-        title: 'Join a workflow - NoClick',
-        description: `${owner} invited you to build a workflow together on NoClick.`,
+// Who sent the invite stays on the page: a link's preview is fetched and kept by the app it's sent through.
+export const meta: MetaFunction = () =>
+    buildSeoMeta({
+        title: 'Build an automation together - NoClick',
+        description: 'You’re invited to build an automation together on NoClick.',
+        image: previewImage(TOGETHER_ART.key),
         indexable: false,
     });
-};
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
     const token = params.token;

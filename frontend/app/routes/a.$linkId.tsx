@@ -19,6 +19,7 @@ import {
 } from '~/components/agent-share/PublicAgentChatView';
 import type { ToolLogo } from '~/components/agent-share/ToolLogosRow';
 import { buildSeoMeta } from '~/lib/seo';
+import { BRAND_CHAT_ART, CHAT_ART, previewImage } from '~/lib/linkPreviews';
 import { LogoMark } from '~/components/shared/LogoMark';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
 
@@ -40,6 +41,8 @@ export const meta: MetaFunction = ({ data }) => {
     return buildSeoMeta({
         title: brand ? `${label} — ${brand}` : `${label} — NoClick Agent`,
         description: brand ? `Chat with ${label}.` : `Chat with ${label}, an AI agent built on NoClick.`,
+        // A brand's page is its own, so its picture leaves NoClick's mark off.
+        image: previewImage((brand ? BRAND_CHAT_ART : CHAT_ART).key),
         indexable: false,
     });
 };

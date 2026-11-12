@@ -12,8 +12,8 @@ import { buildSeoMeta } from '~/lib/seo';
 
 export const meta: MetaFunction = ({ data, params }) => {
     const typedData = data as JsonPayloadOf<typeof loader> | undefined;
-    const workflowName = typedData?.workflow?.name || 'Shared Workflow';
-    const description = typedData?.workflow?.description || 'View this shared workflow on NoClick.';
+    const workflowName = typedData?.workflow?.name || 'A shared automation';
+    const description = typedData?.workflow?.description || 'View this shared automation on NoClick.';
     const workflowId = params.workflowId;
 
     return buildSeoMeta({

@@ -1,7 +1,8 @@
 // @vitest-environment happy-dom
 // A builder bridge link (/b/{linkId}) says what it asks: its preview in a chat (the route's meta, from a loader that
-// reads the link on the server) and the page's heading name the accounts to connect or the questions to answer, the
-// page reads right to the person NoClick asked and to anyone they sent it on to, and a closed link says so.
+// reads the link on the server) and the page's heading name the accounts to connect or the questions to answer, its
+// picture shows which, the page reads right to the person NoClick asked and to anyone they sent it on to, and a closed
+// link says so.
 import { afterEach, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { BuilderBridge, type BridgeInput, type BridgePayload, type BridgeTransport } from '~/components/bridge/BuilderBridge';
@@ -32,7 +33,11 @@ it('names the accounts a link asks to connect, and says why when the ask does', 
         heading: 'Connect your Google Business Profile',
         description: 'So the agent can read reviews and reply.',
         accountsOnly: true,
+        image: '/previews/v1/connect.jpg',
     });
+    // An account with a picture of its own wears it.
+    expect(bridgeAsk(link(account('slack_oauth'))).image).toBe('/previews/v1/connect-slack.jpg');
+    expect(bridgeAsk(link(account('slack_oauth'), account('whatsapp_qr'))).image).toBe('/previews/v1/connect.jpg');
     expect(bridgeAsk(link(account('google_business_profile_oauth'), account('gmail_oauth'))).title).toBe('Connect Google Business Profile and Gmail');
 });
 
@@ -52,12 +57,14 @@ it('counts the questions otherwise, for the workflow they finish', () => {
         heading: 'Answer 2 questions for “Reviews agent”',
         description: 'NoClick needs this to finish “Reviews agent”.',
         accountsOnly: false,
+        image: '/previews/v1/question.jpg',
     });
     expect(bridgeAsk(link(account('gmail_oauth'), question('tone'))).heading).toBe('Connect your Gmail and answer a question');
 });
 
 it('says a closed link is no longer open', () => {
     expect(bridgeAsk(null).title).toBe('This link is no longer open');
+    expect(bridgeAsk(null).image).toBe('/previews/v1/closed.jpg');
 });
 
 it('unfurls an open link to what it asks, a closed one as closed, and an unreadable one plainly', async () => {
@@ -70,13 +77,16 @@ it('unfurls an open link to what it asks, a closed one as closed, and an unreada
     const open = await load();
     expect(og(open)['og:title']).toBe('Connect Google Business Profile');
     expect(og(open)['og:description']).toBe('So the agent can read reviews and reply.');
-    expect(Object.keys(open).sort()).toEqual(['description', 'title']);
+    expect(og(open)['og:image']).toBe('https://www.noclick.com/previews/v1/connect.jpg');
+    expect(Object.keys(open).sort()).toEqual(['description', 'image', 'title']);
 
     respond(404, { detail: 'This link is invalid, answered, or expired' });
     expect((await load()).title).toBe('This link is no longer open');
 
     respond(502);
-    expect((await load()).title).toBe('NoClick needs something from you');
+    const unread = await load();
+    expect(unread.title).toBe('NoClick needs something from you');
+    expect(og(unread)['og:image']).toBe('https://www.noclick.com/previews/v1/question.jpg');
     // A capability URL: never kept in a shared cache.
     expect(BridgeRoute.headers()['Cache-Control']).toBe('no-store');
 });

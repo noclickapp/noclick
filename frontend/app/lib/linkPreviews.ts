@@ -104,5 +104,42 @@ export function connectPreview(name: string | null): LinkPreview {
     return { title: name ? `Connect your ${name} account` : 'Connect an account', description: CONNECT_LINE, image: connectImage(name) };
 }
 
+const art = (key: string, glyph: PreviewGlyph, title: string, more: string, signed?: boolean): PreviewArt => ({
+    key,
+    marks: [{ glyph }],
+    title,
+    more,
+    signed,
+});
+
+/** A builder question's link (/b/) that asks questions, and one no longer open. */
+export const QUESTION_ART = art('question', 'question', 'Answer a question', 'from NoClick');
+export const CLOSED_ART = art('closed', 'check', 'This link is', 'no longer open');
+
+/** A shared agent's chat page (/a/), NoClick's or, unsigned, a brand's. */
+export const CHAT_ART = art('chat', 'chat', 'Chat with', 'an agent');
+export const BRAND_CHAT_ART = art('chat-unsigned', 'chat', 'Chat with', 'an agent', false);
+
+/** A shared test run (/r/). */
+export const RUN_ART = art('run', 'play', 'A test run,', 'step by step');
+
+/** An invite to build an automation with someone (/i/), and one to join their workspace. */
+export const TOGETHER_ART = art('together', 'space', 'Build it together', 'on NoClick');
+export const WORKSPACE_ART = art('workspace', 'space', 'Join a workspace', 'on NoClick');
+
+/** An app asking to connect to a NoClick account (MCP sign-in). */
+export const CONNECT_APP_ART = art('connect-app', 'plug', 'Connect an app', 'to NoClick');
+
 /** Every picture the shipped pages use, for the lab that draws them. */
-export const SHARED_ARTS: readonly PreviewArt[] = [CONNECT_ANY, ...Object.keys(CONNECT_ACCOUNTS).map(connectArt)];
+export const SHARED_ARTS: readonly PreviewArt[] = [
+    CONNECT_ANY,
+    ...Object.keys(CONNECT_ACCOUNTS).map(connectArt),
+    QUESTION_ART,
+    CLOSED_ART,
+    CHAT_ART,
+    BRAND_CHAT_ART,
+    RUN_ART,
+    TOGETHER_ART,
+    WORKSPACE_ART,
+    CONNECT_APP_ART,
+];

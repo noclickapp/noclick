@@ -1,7 +1,8 @@
-// What a bridge link asks, in words: the page's heading and the title and description its link unfurls to, from the
-// questions the page shows its holder (GET /api/builder-bridge/{id}) and nothing more. One source, so the page, its
-// preview in a chat and the landing's drawing of that preview read the same.
+// What a bridge link asks, in words: the page's heading and the title, description and picture its link unfurls to,
+// from the questions the page shows its holder (GET /api/builder-bridge/{id}) and nothing more. One source, so the
+// page, its preview in a chat and the landing's drawing of that preview read the same.
 import { fixWordCasing } from '~/utils/credentialLabels';
+import { CLOSED_ART, QUESTION_ART, connectImage, previewImage } from '~/lib/linkPreviews';
 import type { BridgePayload } from './BuilderBridge';
 
 // How a credential type says it signs in, after its app's name ("_login", "_personal_api_key", "_service_account"):
@@ -39,6 +40,8 @@ export interface BridgeAsk {
   description: string;
   /** Only accounts to connect, no questions to answer. */
   accountsOnly: boolean;
+  /** Its preview's picture: the account it connects, or that it asks questions, or that it's closed. */
+  image: string;
 }
 
 /** What a link asks, or (`null`: answered, expired, or never a link) that it no longer asks anything. */
@@ -49,6 +52,7 @@ export function bridgeAsk(payload: Pick<BridgePayload, 'workflow_name' | 'inputs
       heading: 'This link is no longer open',
       description: 'It was answered or has expired. If something still needs you, NoClick will send a new one.',
       accountsOnly: false,
+      image: previewImage(CLOSED_ART.key),
     };
   }
   const accounts = [...new Set(payload.inputs.filter((i) => i.type === 'credential').map((i) => credentialLabel(i.credential_type)))];
@@ -66,5 +70,6 @@ export function bridgeAsk(payload: Pick<BridgePayload, 'workflow_name' | 'inputs
     heading: sentence([connect('your '), answer]) + forWorkflow,
     description: reason || `NoClick needs this to finish “${payload.workflow_name}”.`,
     accountsOnly: !questions,
+    image: questions ? previewImage(QUESTION_ART.key) : connectImage(accounts.length === 1 ? accounts[0] : null),
   };
 }

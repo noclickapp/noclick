@@ -15,6 +15,7 @@ import { RunReadout, type Mark } from '~/components/design/rehearsal/variants';
 import type { Scenario } from '~/components/design/rehearsal/fixture';
 import type { ReplayRow, ReplayState } from '~/components/design/rehearsal/useReplay';
 import { buildSeoMeta } from '~/lib/seo';
+import { previewImage, RUN_ART } from '~/lib/linkPreviews';
 import { LogoMark } from '~/components/shared/LogoMark';
 
 interface PublicRunSnapshot {
@@ -33,10 +34,11 @@ interface PublicRunSnapshot {
 
 export const meta: MetaFunction = ({ data }) => {
     const typedData = data as JsonPayloadOf<typeof loader> | undefined;
-    const name = typedData?.payload?.workflow_name || 'Agent workflow';
+    const name = typedData?.payload?.workflow_name || 'An agent';
     return buildSeoMeta({
-        title: `${name} — simulated run`,
-        description: `Watch ${name} handle a staged event on NoClick — a simulated run, step by step.`,
+        title: `${name} — a test run`,
+        description: `Watch ${name} handle a staged event on NoClick, step by step. Nothing in it happened for real.`,
+        image: previewImage(RUN_ART.key),
         indexable: false,
     });
 };
