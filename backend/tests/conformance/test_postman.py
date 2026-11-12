@@ -787,3 +787,214 @@ async def test_runner_distinguishes_published_errors_from_parser_crashes(
     (tmp_path / "manifest.json").write_text(json.dumps({"postman-errors": {"format": "postman"}}))
     result = verdict(report, tmp_path, False)
     assert result["state"] == ("postman-checked" if passes else "not-ready")
+
+
+HOST_BINDING = {
+    "value": "https://api.example.com/v1",
+    "source": "https://docs.example.com/reference",
+}
+
+
+@pytest.mark.parametrize(
+    "variables",
+    [
+        [],
+        [{"key": "base", "value": ""}],
+        [{"key": "base", "value": None}],
+        [{"key": "base", "value": "ignored", "disabled": True}],
+    ],
+)
+def test_undefined_host_binding_preserves_request_contract(collection, variables):
+    collection["variable"] = variables
+    original = copy.deepcopy(collection)
+    c = PostmanContract(collection, host_bindings={"base": HOST_BINDING})
+    req = request(url="https://api.example.com/v1/items/1?limit=1")
+    c.validate_request(req)
+    op = c.match(req)[2]
+    assert op["host_bindings"] == [{"variable": "base", **HOST_BINDING}]
+    assert c.response(req, op).content == b'{ "ok": true }'
+    assert collection == original
+    for url in [
+        "https://api.example.com/items/1",
+        "https://api.example.com/v1/extra/items/1",
+        "https://wrong.example.com/v1/items/1",
+    ]:
+        with pytest.raises(ValueError, match="No spec operation"):
+            c.match(request(url=url))
+    with pytest.raises(ValueError, match="Undocumented Postman body"):
+        c.validate_request(request(url=str(req.url), json={"unknown": 1}))
+
+
+@pytest.mark.parametrize("scope", ["collection", "folder", "item", "url"])
+def test_defined_host_is_untouched_and_binding_refused(collection, scope):
+    PostmanContract(collection).validate_request(request())
+    if scope != "collection":
+        rows = collection.pop("variable")
+        item = collection["item"][0]
+        if scope == "folder":
+            collection["item"] = [{"variable": rows, "item": [item]}]
+        elif scope == "url":
+            item["request"]["url"]["variable"] = rows
+        else:
+            item["variable"] = rows
+    with pytest.raises(ValueError, match="refuses defined variable"):
+        PostmanContract(collection, host_bindings={"base": HOST_BINDING})
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        "https://apis.guru/example.com",
+        "https://provider.readme.io/reference",
+        "https://docs.example.com.evil.com/reference",
+        "https://example-com.com/reference",
+        "https://postman.com/reference",
+        "https://getpostman.com/documenter",
+        "https://provider.github.io/docs",
+        "https://provider.gitbook.io/docs",
+        "https://provider.stoplight.io/docs",
+        "https://app.swaggerhub.com/reference",
+    ],
+)
+def test_host_binding_refuses_foreign_docs(collection, source):
+    collection["variable"] = []
+    with pytest.raises(ValueError, match="provider's own domain"):
+        PostmanContract(
+            collection, host_bindings={"base": {**HOST_BINDING, "source": source}}
+        )
+
+
+def test_host_binding_uses_public_suffixes_and_rejects_shared_docs(collection):
+    collection["variable"] = []
+    binding = {
+        "value": "https://api.example.co.uk",
+        "source": "https://docs.example.co.uk/reference",
+    }
+    PostmanContract(collection, host_bindings={"base": binding})
+    for value, source in [
+        ("https://api.example.co.uk", "https://docs.other.co.uk"),
+        ("https://api.example.github.io", "https://example.github.io/docs"),
+        ("https://api.example.readme.io", "https://example.readme.io/docs"),
+    ]:
+        with pytest.raises(ValueError, match="provider's own domain"):
+            PostmanContract(
+                collection, host_bindings={"base": {"value": value, "source": source}}
+            )
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "http://api.example.com",
+        "//api.example.com",
+        "/v1",
+        "https://user:secret@api.example.com",
+        "https://api.example.com?v=1",
+        "https://api.example.com#fragment",
+        "https://{{host}}",
+        "https://api.example.com:bad",
+    ],
+)
+def test_host_binding_requires_absolute_https(collection, value):
+    collection["variable"] = []
+    with pytest.raises(ValueError):
+        PostmanContract(
+            collection, host_bindings={"base": {**HOST_BINDING, "value": value}}
+        )
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "api-{{IdBusiness}}.example.com/items/:id",
+        {
+            "protocol": "https",
+            "host": ["api-{{IdBusiness}}", "example", "com"],
+            "path": ["items", ":id"],
+        },
+    ],
+)
+def test_embedded_host_binding_preserves_literals(collection, url):
+    collection["variable"] = []
+    collection["item"][0]["request"]["url"] = url
+    binding = {**HOST_BINDING, "value": "https://api-123.example.com"}
+    c = PostmanContract(collection, host_bindings={"IdBusiness": binding})
+    assert c.match(request(url="https://api-123.example.com/items/1"))[2][
+        "host_bindings"
+    ] == [{"variable": "IdBusiness", **binding}]
+    for value in ["https://other.example.com", "https://api-123.example.com/extra"]:
+        with pytest.raises(ValueError, match="literal host|beyond the base"):
+            PostmanContract(
+                collection, host_bindings={"IdBusiness": {**binding, "value": value}}
+            )
+
+
+def test_binding_cannot_resolve_a_path_variable(collection):
+    with pytest.raises(ValueError, match="not an undefined request host"):
+        PostmanContract(collection, host_bindings={"id": HOST_BINDING})
+
+
+async def test_bound_report_and_verdict_keep_the_postman_bar(
+    collection, tmp_path, monkeypatch
+):
+    from nodes.core.registry import NODE_REGISTRY
+    from tests.conformance import verdict as v
+
+    class Inputs(BaseModel):
+        operation: Literal["create"]
+
+    class Config(BaseModel):
+        config: Inputs
+        credentials: dict
+
+    class Node:
+        scope_registry = None
+        get_config_model = staticmethod(lambda: Config)
+
+        def __init__(self, **kwargs):
+            pass
+
+        async def execute(self, data):
+            async with httpx.AsyncClient() as client:
+                await client.send(
+                    request(url="https://api.example.com/v1/items/1?limit=1")
+                )
+            return {"ok": True}
+
+    collection["variable"] = []
+    entry = pin(tmp_path, monkeypatch, collection)
+    entry["host_bindings"] = {"base": HOST_BINDING}
+    (tmp_path / "manifest.json").write_text(json.dumps({"test": {"specs": [entry]}}))
+    monkeypatch.setitem(NODE_REGISTRY, "test-host-binding", Node)
+    monkeypatch.setitem(harness.PROVIDERS, "test", ("test-host-binding", {}))
+    pages = {
+        HOST_BINDING["source"]: "<pre>https://api.<span>example.com</span>/v1</pre>"
+    }
+    monkeypatch.setattr(v, "page", lambda url: pages[url])
+    report = await harness.run_provider("test")
+    bindings = [{"spec_index": 0, "variable": "base", **HOST_BINDING}]
+    assert report["host_bindings"] == bindings
+    assert report["passed"] == 2
+    assert all(
+        op["requests"][0]["host_bindings"] == [{"variable": "base", **HOST_BINDING}]
+        for op in report["operations"]
+    )
+    result = v.verdict(report, tmp_path)
+    assert result["host_bindings"] == bindings
+    assert result["state"] == "postman-checked" and result["ready"] is False
+    assert not result["blocking"]
+    pages[HOST_BINDING["source"]] = "Unrelated docs"
+    blocked = v.verdict(report, tmp_path)
+    assert blocked["state"] == "not-ready"
+    assert any("source page does not show bound URL" in b for b in blocked["blocking"])
+    assert v.verdict(report, tmp_path, False)["state"] == "postman-checked"
+    collection["item"][0]["response"] = []
+    raw = json.dumps(collection).encode()
+    (tmp_path / "collection.json").write_bytes(raw)
+    entry["sha256"] = hashlib.sha256(raw).hexdigest()
+    (tmp_path / "manifest.json").write_text(json.dumps({"test": entry}))
+    report = await harness.run_provider("test")
+    result = v.verdict(report, tmp_path, False)
+    assert result["state"] == "not-ready"
+    assert report["fixture_errors"] == 1
+    assert any("no published example response" in b for b in result["blocking"])

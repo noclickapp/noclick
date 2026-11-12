@@ -2305,6 +2305,11 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
             }}
             if any(r.trigger is not None for r in results) else {}
         ),
+        **({"host_bindings": [
+            {"spec_index": index, "variable": variable, **binding}
+            for index, pin in enumerate(pins) if pin.get("format") == "postman"
+            for variable, binding in pin.get("host_bindings", {}).items()
+        ]} if any(pin.get("format") == "postman" and pin.get("host_bindings") for pin in pins) else {}),
         "operations": [dict(asdict(r), passed=r.passed) for r in results],
     }
 
