@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/apache.svg",
+  "source": "https://airflow.apache.org/ (inline <svg> header logo, the first <svg> on the page)",
+  "source_page": "https://airflow.apache.org/",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "16ce67bfb99ceaea8af035e550700e65d5dc4b2b91c55a404a6a0ee23fe23258",
+  "edits": [
+    "kept the pinwheel (elements 0-8: eight blades and the centre dot), dropped the 'Apache Airflow' wordmark (elements 9-11)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "clean"
+  ],
+  "checked_against": "https://airflow.apache.org/favicons/android-192x192.png (the current PR file, Airflow's own favicon): same pinwheel and colours, silhouette IoU 0.984. Integration is the Airflow REST API (airflow.apache.org).",
+  "source_sha256": "a2cc93f3110e93af04ac0b1349656882f1ab41b2a3315f0cc79122c70d10ae1e"
+}
