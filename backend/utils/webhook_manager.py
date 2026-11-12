@@ -2009,10 +2009,7 @@ class WebhookManager:
         credential, so a live registration keeps working through provider
         blips and credential detaches.
         """
-        from nodes.core.webhook_subscriptions import (
-            get_node_subscriptions,
-            subscription_rows_match,
-        )
+        from nodes.core.webhook_subscriptions import get_node_subscriptions
         from utils.credential_loader import credential_usable
         from utils.credentials import extract_credential_ids
         from utils.workflow_readiness import WorkflowNotReadyError, require_activation_ready
@@ -2032,7 +2029,7 @@ class WebhookManager:
             # or operation changed away).
             decision = Decision("deregister" if rows else "noop",
                                 "step_removed" if node is None else "nothing_desired", held=bool(rows))
-        elif node_class.subscription_matches_config(rows, node_config) and subscription_rows_match(
+        elif node_class.rows_are_registration(
             rows,
             event_types=desired_events,
             credential_id=credential_id,
