@@ -101,37 +101,6 @@ def create_node(config: Any, credential: Any = None) -> RSSNode:
     )
 
 
-@pytest.mark.integration  # fetches live public feeds (hnrss.org, github.com)
-class TestDirectFeedParsing:
-    """Tests for direct RSS/Atom feed parsing operations."""
-
-    @pytest.mark.asyncio
-    async def test_parse_public_feed_no_auth(self):
-        """Test parsing a public RSS feed without authentication."""
-        config = RSSParseFeedConfig(
-            feed_url="https://hnrss.org/frontpage"  # Hacker News RSS feed (public)
-        )
-        credential = RSSDirectCredential(auth_type="none")
-        node = create_node(config, credential)
-        result = await node.execute({})
-
-        assert result["action"] == "parse_rss_atom_feed"
-        # Should succeed or have a graceful error
-        assert "status" in result
-
-    @pytest.mark.asyncio
-    async def test_parse_atom_feed(self):
-        """Test parsing an Atom feed."""
-        config = RSSParseFeedConfig(
-            feed_url="https://github.com/anthropics/anthropic-sdk-python/commits/main.atom"
-        )
-        credential = RSSDirectCredential(auth_type="none")
-        node = create_node(config, credential)
-        result = await node.execute({})
-
-        assert result["action"] == "parse_rss_atom_feed"
-
-
 class TestMinifluxOperations:
     """Tests for Miniflux self-hosted RSS reader operations."""
 

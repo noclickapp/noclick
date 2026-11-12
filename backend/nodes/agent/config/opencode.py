@@ -21,8 +21,8 @@ class OpenCodeConfig(BaseAgentFields):
     )
     opencode_model: str = Field(
         # Must be a model OpenCode runs today (opencode_model_refusal); Zen
-        # rotates its free tier, and nodes/tests/test_opencode_default_model_live.py
-        # fails daily once this one goes: change default_model in _cli_models.json.
+        # rotates its free tier, and once this one goes every new OpenCode agent
+        # fails: change default_model in _cli_models.json.
         default=harness_default_model("opencode"),
         title="OpenCode Model",
         json_schema_extra={

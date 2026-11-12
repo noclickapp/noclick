@@ -2,8 +2,7 @@
 Live check of the Slack Web API node against Slack itself, with no credential:
 an invalid token must come back as Slack's own auth error.
 
-The operations against a real workspace live in test_slack_node_integration.py
-(SLACK_TEST_BOT_TOKEN); the mocked ones in test_slack_node_mock.py.
+The operations themselves are mocked in test_slack_node_mock.py.
 """
 
 import pytest

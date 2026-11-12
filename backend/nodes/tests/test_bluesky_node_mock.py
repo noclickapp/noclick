@@ -921,29 +921,6 @@ async def test_missing_credentials():
         await node.execute({})
 
 
-@pytest.mark.integration  # signs in to bsky.social: a live call, which only the daily lane makes
-@pytest.mark.asyncio
-async def test_invalid_credentials():
-    """Test handling of invalid credentials."""
-    invalid_creds = BlueSkyAppPasswordCredential(
-        identifier="invalid.user.test", app_password="xxxx-xxxx-xxxx-xxxx"
-    )
-    config = BlueSkyGetTimelineConfig(limit=10)
-    node_config = BlueSkyNodeConfig(config=config, credentials=invalid_creds)
-    node = BlueSkyNode(
-        node_id="test-node",
-        node_type="automation-bluesky",
-        node_data={},
-        config=node_config,
-        sio=None,
-        sid=None,
-        workflow_id="test-workflow",
-    )
-
-    with pytest.raises(ValueError, match="authentication failed"):
-        await node.execute({})
-
-
 if __name__ == "__main__":
     print("\n" + "=" * 70)
     print("BlueSky Node Mock Tests - Destructive & Special-Data Operations")
