@@ -21,7 +21,6 @@ const ClubOSIcon = ({
         style={
             {
                 ...style,
-                '--brand-invert': 0,
                 objectFit: 'contain',
             } as CSSProperties
         }
