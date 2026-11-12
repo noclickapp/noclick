@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/lytho-dark.svg",
+  "source": "https://www.lytho.com/wp-content/uploads/2026/10/lytho-symbol.svg",
+  "source_page": "https://www.lytho.com/ (footer symbol, img alt 'Lytho Symbol', class footer-logo--symbol)",
+  "source_kind": "company site (footer logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "db2e51b9e640e9e5028430ce7471a125ae51d0237b7a39df30d6df57c0d90f26",
+  "edits": [
+    "svgtool clean",
+    "cropped the viewBox with --pad 0.02 (the symbol already fills its 52x52 box)",
+    "light mode: #D3C3EF -> #8E2FCA (the published symbol is Lytho's pale --color-lavender, made for its dark footer, and vanishes on the light tile; #8E2FCA is --color-electric-purple, the colour of Lytho's own light-header logo lytho-logo-electric-purple-1.svg)",
+    "none: the dark file is the published symbol in its own lavender #D3C3EF (cleaned and cropped), as Lytho shows it on its dark footer"
+  ],
+  "checked_against": "lytho.com's current favicon (wp-content/uploads/2026/10/cropped-favicon-lytho-192x192.png, uploaded 2026-10-30): the same two-loop symbol in pale lavender on a plum tile. Same company: Lytho DAM, openapi.lytho.io / help.lytho.com.",
+  "source_sha256": "67a194b30bb32bdf1b169f0436b35aec75f28d429832e033732f5dbccc0b67a1"
+}
