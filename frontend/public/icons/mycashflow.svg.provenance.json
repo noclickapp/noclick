@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/mycashflow.svg",
+  "source": "https://cdn.prod.website-files.com/63808dee210a1d9df905ab47/63808dee210a1da7b805ad84_mycashflow_logo-black_2021.svg",
+  "source_page": "https://www.mycashflow.com/ (header logo <img>; the same file is on https://www.mycashflow.fi/)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-12",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "9de167016ee6c5c05688b091613ede448a82bf3a70c030ff9f4f3ac4406b7f50",
+  "edits": [
+    "kept the rounded-square tile (element 9, #092012) and the white cart (element 10); dropped the 'MyCashflow' wordmark (elements 0-8)",
+    "svgtool clean",
+    "cropped the viewBox to the tile (no pad: the tile is the brand's own app-icon tile, as its favicon shows)"
+  ],
+  "checked_against": "https://cdn.prod.website-files.com/63808dee210a1d9df905ab47/63808dee210a1df8f805aeb4_Favicon_V1-256.png (the site's apple-touch-icon: the same white cart on the same dark-green rounded tile) and the site's current 32px favicon; support.mycashflow.com is the integration's host",
+  "source_sha256": "c8d30cbc1363fadcf1a57725886581adea6aa77b99cad0253035519ede8276be"
+}
