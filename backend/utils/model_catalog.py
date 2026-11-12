@@ -19,7 +19,8 @@ import asyncio
 import logging
 import re
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from decimal import Decimal
+from typing import Any, Dict, List, Optional, Tuple
 
 from .openrouter_models import (
     get_openrouter_catalog,
@@ -134,6 +135,17 @@ def _openrouter_is_free(pricing: Any) -> bool:
         )
     except (TypeError, ValueError):
         return False
+
+
+def openrouter_token_prices(api_model: Dict[str, Any]) -> Optional[Tuple[Decimal, Decimal]]:
+    """What an OpenRouter catalog row charges a prompt token and a completion token, as its ``pricing`` states them
+    (a router that prices each call as the model it picks states -1); None where it states none. The credential
+    proxy holds a call on NoClick's key at these, and a switch onto a costly model there is judged by them."""
+    pricing = api_model.get("pricing") or {}
+    try:
+        return Decimal(str(pricing["prompt"])), Decimal(str(pricing["completion"]))
+    except (KeyError, TypeError, ArithmeticError):
+        return None
 
 
 def _openrouter_name(api_model: Dict[str, Any]) -> Optional[str]:

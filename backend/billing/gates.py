@@ -13,7 +13,10 @@ funds the account added (``funds_usd``: its monthly top-up left and its
 balance), never the plan's included usage (which its charge may still draw
 first), and needs at least ``PURCHASE_FLOOR_USD`` of them on any plan: it
 should come from an account that has shown it can pay. The floor is the
-product's ``min_credits``, under the purchase's own price.
+product's ``min_credits``, under the purchase's own price. The same floor
+stands before an agent is switched onto a costly model on NoClick's own key
+(``costly_models``: output over ``COSTLY_OUTPUT_USD_PER_MILLION`` a million
+tokens, ``costly_output``); the account's own key or plan is never judged.
 
 A refusal says what would lift it (``GateDenied.offer``): the paid plans that
 include the product, or the dollars of funds that would cover the shortfall
@@ -49,12 +52,18 @@ class Product:
     rollout: Optional[str] = None      # a utils.feature_gates rollout key
     min_tier: Optional[str] = None     # "member" admits member, plus, pro and enterprise
     min_credits: float = 0.0           # a floor under any projected cost
-    purchase: bool = False             # paid for up front: only funds the account added count
+    purchase: bool = False             # paid for up front, or as one: only funds the account added count
+    # How a refusal judged on funds names what was asked for: "Buying <label>" unless said here.
+    use: Optional[str] = None
 
 
 # The least funds the account added must hold before it may make a purchase paid for up front.
 PURCHASE_FLOOR_USD = 5
 _PURCHASE_FLOOR = PURCHASE_FLOOR_USD * float(CREDITS_PER_DOLLAR)
+
+# A model NoClick's own key runs whose output costs more than this a million tokens is for an account that added
+# funds: switching an agent onto one needs the purchase floor of them ("costly_models").
+COSTLY_OUTPUT_USD_PER_MILLION = 2
 
 PRODUCTS: dict[str, Product] = {
     "image_generation": Product("Image generation"),
@@ -62,7 +71,16 @@ PRODUCTS: dict[str, Product] = {
     # Its rollout is enforced where its requests enter (phone_number_handler).
     "phone_numbers": Product("Phone numbers", min_credits=_PURCHASE_FLOOR, purchase=True),
     "domains": Product("Domains", min_credits=_PURCHASE_FLOOR, purchase=True),
+    "costly_models": Product(
+        "Costly models on NoClick's key", min_credits=_PURCHASE_FLOOR, purchase=True,
+        use=f"Switching to a model over ${COSTLY_OUTPUT_USD_PER_MILLION} per million output tokens on NoClick's key"),
 }
+
+
+def costly_output(usd_per_token: Decimal) -> bool:
+    """Whether a model whose output costs ``usd_per_token`` (its catalog's price; below zero, a router whose price is
+    the model it picks for each call) is past ``COSTLY_OUTPUT_USD_PER_MILLION``."""
+    return usd_per_token < 0 or usd_per_token * 1_000_000 > COSTLY_OUTPUT_USD_PER_MILLION
 
 
 async def funds_usd(conn, payer: str) -> Optional[Decimal]:
@@ -128,8 +146,8 @@ def _shortfall(product: Product, *, needed: float, remaining: float) -> str:
     floor = "at least " if needed <= product.min_credits else ""
     need, have = _dollars(needed, ROUND_CEILING), _dollars(remaining, ROUND_FLOOR)
     if product.purchase:
-        return (f"Buying {product.label.lower()} needs {floor}{need} of funds the account added (included usage "
-                f"doesn't count); it has {have}.")
+        return (f"{product.use or f'Buying {product.label.lower()}'} needs {floor}{need} of funds the account added "
+                f"(included usage doesn't count); it has {have}.")
     return f"The account needs {floor}{need} in its balance for {product.label.lower()}; it has {have}."
 
 
