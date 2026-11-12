@@ -169,6 +169,7 @@ class BkperNodeConfig(NodeConfig[BkperOperationConfig, BkperOAuthCredential]):
 
 class BkperNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = 'automation-bkper'
+    borrowed_credential_types = frozenset({'google_oauth'})
     connection_evidence = ConnectionEvidence(noun='books', operation='list_books', identity_operation='get_user')
     scope_registry = BKPER_SCOPES
     webhook_signing_secret_not_issued = True
