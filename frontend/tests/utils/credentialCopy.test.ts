@@ -116,7 +116,7 @@ describe('credential copy', () => {
     });
 
     it("keeps a local URL a step types, and takes the steps' link as the source when the schema names none", () => {
-        const [, script] = methodsOf('automation-reddit');
+        const script = methodsOf('automation-reddit').find((m) => m.kind !== 'oauth')!;
         const copy = methodCopy(script, 'Reddit');
         expect(copy.howTo).toContain('Set redirect uri to http://localhost:8080');
         expect(copy.source?.host).toBe('reddit.com');
