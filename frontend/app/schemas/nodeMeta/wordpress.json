@@ -5,9 +5,11 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "WordPress.com MCP": "wordpress_mcp",
     "WordPressApplicationPasswordCredential": "wordpress_application_password",
     "WordPressBasicAuthCredential": "wordpress_basic_auth",
-    "WordPressOAuthCredential": "wordpress_oauth"
+    "WordPressOAuthCredential": "wordpress_oauth",
+    "WordpressMcpCredential": "wordpress_mcp"
   },
   "providerLabels": {
     "wordpress": "WordPress Account"

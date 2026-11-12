@@ -30,6 +30,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.schedule_registration import CronScheduleTriggerMixin
 from nodes.core.poll_trigger import bounded_seen_ids
@@ -73,7 +74,9 @@ class DevinApiKeyCredential(BaseModel):
     )
 
 
-DevinCredential = DevinApiKeyCredential
+# Devin's own MCP server: agents get its tools through a person's Devin sign-in.
+DevinMcpCredential = mcp_credential("devin", "https://mcp.devin.ai/mcp", app="Devin")
+DevinCredential = Union[DevinApiKeyCredential, DevinMcpCredential]
 
 
 # ============================================================================

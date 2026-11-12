@@ -82,6 +82,7 @@ import httpx
 import base64
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import (
     filter_options_by_search,
@@ -128,6 +129,11 @@ class ElevenLabsAPIKeyCredential(BaseModel):
             "x-credential-instructions": "Navigate to Account → Profile + API Key → Generate API Key. Copy the generated key.",
         }
     )
+
+
+# ElevenLabs's own MCP server: agents get its tools through a person's ElevenLabs sign-in.
+ElevenlabsMcpCredential = mcp_credential("elevenlabs", "https://api.elevenlabs.io/v1/mcp", app="ElevenLabs")
+ElevenLabsCredential = Union[ElevenLabsAPIKeyCredential, ElevenlabsMcpCredential]
 
 
 # ============================================================================
@@ -1381,7 +1387,7 @@ ElevenLabsConfig = Annotated[
 # ============================================================================
 
 
-class ElevenLabsNodeConfig(NodeConfig[ElevenLabsConfig, ElevenLabsAPIKeyCredential]):
+class ElevenLabsNodeConfig(NodeConfig[ElevenLabsConfig, ElevenLabsCredential]):
     """Full configuration for ElevenLabs automation node"""
 
     pass

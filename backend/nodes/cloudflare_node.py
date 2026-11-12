@@ -19,6 +19,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from typing import Literal
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from utils.ssrf import guarded_async_client, normalize_provider_subdomain
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import WebhookTriggerConfigBase, ExternalWebhookTriggerMixin
@@ -321,8 +322,10 @@ class CloudflareOAuthCredential(BaseModel):
     )
 
 
+# Cloudflare's own MCP server: agents get its tools through a person's Cloudflare sign-in.
+CloudflareMcpCredential = mcp_credential("cloudflare", "https://mcp.cloudflare.com/mcp", app="Cloudflare")
 # OAuth first in the Union so the UI offers it as the primary option
-CloudflareCredential = Union[CloudflareOAuthCredential, CloudflareAPITokenCredential, CloudflareAPIKeyCredential]
+CloudflareCredential = Union[CloudflareOAuthCredential, CloudflareAPITokenCredential, CloudflareAPIKeyCredential, CloudflareMcpCredential]
 
 
 # ─── DNS Record Config Models ──────────────────────────────────────────────────

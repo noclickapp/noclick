@@ -368,11 +368,12 @@ async def test_trigger_passthrough_in_execute():
     assert result["data"] == payload
 
 
-def test_credential_union_has_three_types():
+def test_credential_union_has_its_ways_in():
     import typing
     from nodes.posthog_node import PostHogCredential
     types = {m.model_fields["credential_type"].default for m in typing.get_args(PostHogCredential)}
-    assert types == {"posthog_personal_api_key", "posthog_project_api_key", "posthog_oauth"}
+    # Its two keys and sign-in, and its MCP server (nodes/core/vendor_mcp.py).
+    assert types == {"posthog_personal_api_key", "posthog_project_api_key", "posthog_oauth", "posthog_mcp"}
 
 
 @pytest.mark.asyncio

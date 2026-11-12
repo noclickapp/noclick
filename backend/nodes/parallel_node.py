@@ -27,6 +27,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.scopes.parallel import PARALLEL_SCOPES
 
@@ -87,7 +88,10 @@ class ParallelOAuthCredential(BaseModel):
     })
 
 
-ParallelCredential = Union[ParallelApiKeyCredential, ParallelOAuthCredential]
+# Parallel's own MCP server: agents get its tools through a person's Parallel sign-in.
+# ?login asks for the sign-in; without it the server answers anonymously.
+ParallelMcpCredential = mcp_credential("parallel", "https://mcp.parallel.ai/mcp?login", app="Parallel")
+ParallelCredential = Union[ParallelApiKeyCredential, ParallelOAuthCredential, ParallelMcpCredential]
 
 
 # ============================================================================

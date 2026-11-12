@@ -27,6 +27,7 @@ import httpx
 
 from nodes.core.agent_events import bullet_lines
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.media_resolver import resolve_media_input
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
@@ -61,7 +62,9 @@ class LoopsAPIKeyCredential(BaseModel):
     )
 
 
-LoopsCredential = LoopsAPIKeyCredential
+# Loops's own MCP server: agents get its tools through a person's Loops sign-in.
+LoopsMcpCredential = mcp_credential("loops", "https://mcp.loops.so", app="Loops")
+LoopsCredential = Union[LoopsAPIKeyCredential, LoopsMcpCredential]
 
 
 # ============================================================================

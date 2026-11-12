@@ -30,6 +30,7 @@ import httpx
 
 from nodes.core.agent_events import bullet_lines, compact_json, prune_empty
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 
@@ -165,7 +166,10 @@ class ExaApiKeyCredential(BaseModel):
     )
 
 
-ExaCredential = ExaApiKeyCredential
+# Exa's own MCP server: agents get its tools through a person's Exa sign-in.
+# ?login asks for the sign-in; without it the server answers anonymously.
+ExaMcpCredential = mcp_credential("exa", "https://mcp.exa.ai/mcp?login", app="Exa")
+ExaCredential = Union[ExaApiKeyCredential, ExaMcpCredential]
 
 
 # ============================================================================

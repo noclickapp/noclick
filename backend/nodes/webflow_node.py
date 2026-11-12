@@ -39,6 +39,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator, create_model
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from nodes.scopes.webflow import WEBFLOW_SCOPES
@@ -187,7 +188,9 @@ class WebflowOAuthCredential(BaseModel):
     )
 
 
-WebflowCredential = Union[WebflowOAuthCredential, WebflowApiTokenCredential]
+# Webflow's own MCP server: agents get its tools through a person's Webflow sign-in.
+WebflowMcpCredential = mcp_credential("webflow", "https://mcp.webflow.com/mcp", app="Webflow")
+WebflowCredential = Union[WebflowOAuthCredential, WebflowApiTokenCredential, WebflowMcpCredential]
 
 
 def _extract_token(credential: Optional[Dict[str, Any]]) -> Optional[str]:

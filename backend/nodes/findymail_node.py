@@ -26,6 +26,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 
@@ -57,7 +58,9 @@ class FindymailApiKeyCredential(BaseModel):
     )
 
 
-FindymailCredential = FindymailApiKeyCredential
+# Findymail's own MCP server: agents get its tools through a person's Findymail sign-in.
+FindymailMcpCredential = mcp_credential("findymail", "https://mcp.findymail.com/mcp", app="Findymail")
+FindymailCredential = Union[FindymailApiKeyCredential, FindymailMcpCredential]
 
 
 # ============================================================================

@@ -123,10 +123,14 @@ class TestSlackFreshenCredential:
 
 def _node_has_rotating_oauth_credential(cls) -> bool:
     """True if any of the node's credential models has a ``refresh_token`` field
-    (i.e. a rotating OAuth credential whose access token expires)."""
+    (i.e. a rotating OAuth credential whose access token expires). A vendor MCP
+    sign-in doesn't count: its token never reaches the node's own API, and
+    vendor_mcp refreshes it wherever it's used (agent tools, evidence)."""
     import typing
 
     from pydantic import BaseModel as _BaseModel
+
+    from nodes.core.vendor_mcp import McpCredential
 
     config_model = cls.get_config_model()
     if config_model is None or not hasattr(config_model, "model_fields"):
@@ -139,6 +143,7 @@ def _node_has_rotating_oauth_credential(cls) -> bool:
         isinstance(m, type)
         and issubclass(m, _BaseModel)
         and "refresh_token" in m.model_fields
+        and not issubclass(m, McpCredential)
         for m in members
     )
 

@@ -16,6 +16,7 @@ import secrets
 import time
 from nodes.core.agent_events import bullet_lines
 from nodes.core.base import NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.base import WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
@@ -291,7 +292,9 @@ class HoneycombManagementKeyCredential(BaseModel):
     )
 
 
-HoneycombCredential = Union[HoneycombApiKeyCredential, HoneycombManagementKeyCredential]
+# Honeycomb's own MCP server: agents get its tools through a person's Honeycomb sign-in.
+HoneycombMcpCredential = mcp_credential("honeycomb", "https://mcp.honeycomb.io/mcp", app="Honeycomb")
+HoneycombCredential = Union[HoneycombApiKeyCredential, HoneycombManagementKeyCredential, HoneycombMcpCredential]
 
 
 # ==========================================================================

@@ -42,6 +42,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
@@ -106,7 +107,9 @@ class ExtendApiKeyCredential(BaseModel):
     )
 
 
-ExtendCredential = ExtendApiKeyCredential
+# Extend's own MCP server: agents get its tools through a person's Extend sign-in.
+ExtendMcpCredential = mcp_credential("extend", "https://mcp.extend.ai/mcp", app="Extend")
+ExtendCredential = Union[ExtendApiKeyCredential, ExtendMcpCredential]
 
 
 # ============================================================================

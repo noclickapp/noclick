@@ -25,6 +25,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.scopes.apollo import APOLLO_SCOPES
 
@@ -100,7 +101,9 @@ class ApolloOAuthCredential(BaseModel):
     })
 
 
-ApolloCredential = Union[ApolloAPIKeyCredential, ApolloOAuthCredential]
+# Apollo's own MCP server: agents get its tools through a person's Apollo sign-in.
+ApolloMcpCredential = mcp_credential("apollo", "https://mcp.apollo.io/mcp", app="Apollo")
+ApolloCredential = Union[ApolloAPIKeyCredential, ApolloOAuthCredential, ApolloMcpCredential]
 
 
 # ============================================================================

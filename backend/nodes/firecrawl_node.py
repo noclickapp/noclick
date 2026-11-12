@@ -32,6 +32,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 from utils.webhook_signatures import verify_hmac_sha256_hex
@@ -134,7 +135,10 @@ class FirecrawlAPIKeyCredential(BaseModel):
     )
 
 
-FirecrawlCredential = FirecrawlAPIKeyCredential
+# Firecrawl's own MCP server: agents get its tools through a person's Firecrawl sign-in.
+# /v2/mcp-oauth signs a person in; /v2/mcp takes an API key.
+FirecrawlMcpCredential = mcp_credential("firecrawl", "https://mcp.firecrawl.dev/v2/mcp-oauth", app="Firecrawl")
+FirecrawlCredential = Union[FirecrawlAPIKeyCredential, FirecrawlMcpCredential]
 
 
 # ============================================================================

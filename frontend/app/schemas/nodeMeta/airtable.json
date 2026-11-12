@@ -5,6 +5,8 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Airtable MCP": "airtable_mcp",
+    "AirtableMcpCredential": "airtable_mcp",
     "AirtableOAuthCredential": "airtable_oauth",
     "AirtablePATCredential": "airtable_pat"
   },

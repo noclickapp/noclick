@@ -33,6 +33,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from nodes.scopes.gitlab import GITLAB_SCOPES
@@ -219,10 +220,13 @@ class GitLabOAuthCredential(BaseModel):
     )
 
 
+# GitLab's own MCP server: agents get its tools through a person's GitLab sign-in.
+# GitLab.com only.
+GitlabMcpCredential = mcp_credential("gitlab", "https://gitlab.com/api/v4/mcp", app="GitLab")
 # OAuth first so it is the default choice when a user adds a credential, with the
 # Personal Access Token as the simplest always-working self-serve path (and the
 # only option for self-managed instances without a pre-registered OAuth app).
-GitLabCredential = Union[GitLabOAuthCredential, GitLabAccessTokenCredential]
+GitLabCredential = Union[GitLabOAuthCredential, GitLabAccessTokenCredential, GitlabMcpCredential]
 
 
 # ============================================================================

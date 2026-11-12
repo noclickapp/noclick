@@ -5,7 +5,9 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
-    "ElevenLabsAPIKeyCredential": "elevenlabs_api_key"
+    "ElevenLabs MCP": "elevenlabs_mcp",
+    "ElevenLabsAPIKeyCredential": "elevenlabs_api_key",
+    "ElevenlabsMcpCredential": "elevenlabs_mcp"
   },
   "providerLabels": {
     "elevenlabs": "Elevenlabs Account"

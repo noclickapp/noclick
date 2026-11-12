@@ -34,6 +34,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 logger = logging.getLogger(__name__)
@@ -72,7 +73,9 @@ class FalApiKeyCredential(BaseModel):
     )
 
 
-FalCredential = FalApiKeyCredential
+# fal's own MCP server: agents get its tools through a person's fal sign-in.
+FalMcpCredential = mcp_credential("fal", "https://mcp.fal.ai/mcp-relay", app="fal")
+FalCredential = Union[FalApiKeyCredential, FalMcpCredential]
 
 
 # ============================================================================

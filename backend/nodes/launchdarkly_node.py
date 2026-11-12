@@ -32,6 +32,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator, model_validato
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 
@@ -5090,7 +5091,9 @@ class LaunchDarklyTokenCredential(BaseModel):
     )
 
 
-LaunchDarklyCredential = LaunchDarklyTokenCredential
+# LaunchDarkly's own MCP server: agents get its tools through a person's LaunchDarkly sign-in.
+LaunchdarklyMcpCredential = mcp_credential("launchdarkly", "https://mcp.launchdarkly.com/mcp", app="LaunchDarkly")
+LaunchDarklyCredential = Union[LaunchDarklyTokenCredential, LaunchdarklyMcpCredential]
 
 
 # ============================================================================

@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import filter_options_by_search
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
@@ -300,8 +301,10 @@ class LinearPATCredential(BaseModel):
     )
 
 
+# Linear's own MCP server: agents get its tools through a person's Linear sign-in.
+LinearMcpCredential = mcp_credential("linear", "https://mcp.linear.app/mcp", app="Linear")
 # Union type - OAuth shown first in UI (best UX), PAT as alternative
-LinearCredential = Union[LinearOAuthCredential, LinearPATCredential]
+LinearCredential = Union[LinearOAuthCredential, LinearPATCredential, LinearMcpCredential]
 
 
 # ============================================================================

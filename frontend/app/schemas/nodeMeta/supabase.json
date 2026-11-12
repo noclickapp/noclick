@@ -5,7 +5,9 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Supabase MCP": "supabase_mcp",
     "SupabaseApiKeyCredential": "supabase_api_key",
+    "SupabaseMcpCredential": "supabase_mcp",
     "SupabaseOAuthCredential": "supabase_oauth"
   },
   "providerLabels": {

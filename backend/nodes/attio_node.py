@@ -27,6 +27,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator, model_validato
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from nodes.scopes.crm_records import ATTIO_SCOPES
@@ -204,8 +205,10 @@ class AttioAPIKeyCredential(BaseModel):
     )
 
 
+# Attio's own MCP server: agents get its tools through a person's Attio sign-in.
+AttioMcpCredential = mcp_credential("attio", "https://mcp.attio.com/mcp", app="Attio")
 # Union — OAuth shown first in UI (best UX), API key as the alternative.
-AttioCredential = Union[AttioOAuthCredential, AttioAPIKeyCredential]
+AttioCredential = Union[AttioOAuthCredential, AttioAPIKeyCredential, AttioMcpCredential]
 
 
 # ============================================================================

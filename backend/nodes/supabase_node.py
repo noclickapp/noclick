@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.oauth.supabase_oauth import is_token_expired, refresh_access_token
 from nodes.scopes.supabase import SUPABASE_SCOPES
@@ -121,8 +122,10 @@ class SupabaseOAuthCredential(BaseModel):
     )
 
 
-# Union type supporting both API key and OAuth credentials
-SupabaseCredential = Union[SupabaseOAuthCredential, SupabaseApiKeyCredential]
+# Supabase's own MCP server: agents get its tools through a person's Supabase sign-in.
+SupabaseMcpCredential = mcp_credential("supabase", "https://mcp.supabase.com/mcp", app="Supabase")
+# Union type: OAuth, API key and the MCP server
+SupabaseCredential = Union[SupabaseOAuthCredential, SupabaseApiKeyCredential, SupabaseMcpCredential]
 
 
 # ============================================================================

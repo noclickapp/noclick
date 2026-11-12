@@ -20,6 +20,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.oauth.airtable_oauth import is_token_expired, refresh_access_token
 from nodes.scopes.airtable import AIRTABLE_SCOPES
@@ -106,8 +107,10 @@ class AirtableOAuthCredential(BaseModel):
     )
 
 
-# Union type for credentials - supports both PAT and OAuth
-AirtableCredential = Union[AirtablePATCredential, AirtableOAuthCredential]
+# Airtable's own MCP server: agents get its tools through a person's Airtable sign-in.
+AirtableMcpCredential = mcp_credential("airtable", "https://mcp.airtable.com/mcp", app="Airtable")
+# Union type for credentials - PAT, OAuth and the MCP server
+AirtableCredential = Union[AirtablePATCredential, AirtableOAuthCredential, AirtableMcpCredential]
 
 
 # ============================================================================

@@ -43,6 +43,7 @@ import httpx
 
 from nodes.core.agent_events import bullet_lines
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
@@ -146,7 +147,9 @@ class SentryOAuthCredential(BaseModel):
     })
 
 
-SentryCredential = Union[SentryAuthTokenCredential, SentryOAuthCredential]
+# Sentry's own MCP server: agents get its tools through a person's Sentry sign-in.
+SentryMcpCredential = mcp_credential("sentry", "https://mcp.sentry.dev/mcp", app="Sentry")
+SentryCredential = Union[SentryAuthTokenCredential, SentryOAuthCredential, SentryMcpCredential]
 
 
 # ============================================================================

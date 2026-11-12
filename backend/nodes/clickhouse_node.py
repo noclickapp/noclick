@@ -30,6 +30,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.poll_trigger import bounded_seen_ids
 from nodes.cron_trigger_node import (
@@ -83,7 +84,10 @@ class ClickHouseApiKeyCredential(BaseModel):
     )
 
 
-ClickHouseCredential = ClickHouseApiKeyCredential
+# ClickHouse's own MCP server: agents get its tools through a person's ClickHouse sign-in.
+# ClickHouse Cloud only.
+ClickhouseMcpCredential = mcp_credential("clickhouse", "https://mcp.clickhouse.cloud/mcp", app="ClickHouse")
+ClickHouseCredential = Union[ClickHouseApiKeyCredential, ClickhouseMcpCredential]
 
 
 # ============================================================================

@@ -95,11 +95,57 @@ async def test_canva_declares_its_mcp_server_as_a_way_in():
     assert schema["$defs"]["CanvaOAuthCredential"]["x-credential-hidden"] is True
 
 
-@pytest.mark.parametrize("node_type, credential_type, url", [
-    ("automation-notion", "notion_mcp", "https://mcp.notion.com/mcp"),
-    ("automation-calendly", "calendly_mcp", "https://mcp.calendly.com"),
-])
-async def test_notion_and_calendly_declare_their_servers_beside_their_own_ways_in(node_type, credential_type, url):
+# Servers any client signs in to (DCR or CIMD), each checked live before it was declared:
+# (node type, credential type, server, how many of the node's own ways in come before it).
+SELF_REGISTERING = [
+    ("automation-airtable", "airtable_mcp", "https://mcp.airtable.com/mcp", 2),
+    ("automation-apify", "apify_mcp", "https://mcp.apify.com", 1),
+    ("automation-apollo", "apollo_mcp", "https://mcp.apollo.io/mcp", 2),
+    ("automation-attio", "attio_mcp", "https://mcp.attio.com/mcp", 2),
+    ("automation-beehiiv", "beehiiv_mcp", "https://mcp.beehiiv.com/mcp", 1),
+    ("automation-cal-com", "cal_com_mcp", "https://mcp.cal.com/mcp", 2),
+    ("automation-calendly", "calendly_mcp", "https://mcp.calendly.com", 2),
+    ("automation-clickhouse", "clickhouse_mcp", "https://mcp.clickhouse.cloud/mcp", 1),
+    ("automation-cloudflare", "cloudflare_mcp", "https://mcp.cloudflare.com/mcp", 3),
+    ("automation-devin", "devin_mcp", "https://mcp.devin.ai/mcp", 1),
+    ("automation-elevenlabs", "elevenlabs_mcp", "https://api.elevenlabs.io/v1/mcp", 1),
+    ("automation-exa", "exa_mcp", "https://mcp.exa.ai/mcp?login", 1),
+    ("automation-extend", "extend_mcp", "https://mcp.extend.ai/mcp", 1),
+    ("automation-fal", "fal_mcp", "https://mcp.fal.ai/mcp-relay", 1),
+    ("automation-fathom", "fathom_mcp", "https://api.fathom.ai/mcp", 3),
+    ("automation-fellow", "fellow_mcp", "https://fellow.app/mcp", 1),
+    ("automation-findymail", "findymail_mcp", "https://mcp.findymail.com/mcp", 1),
+    ("automation-firecrawl", "firecrawl_mcp", "https://mcp.firecrawl.dev/v2/mcp-oauth", 1),
+    ("automation-gitlab", "gitlab_mcp", "https://gitlab.com/api/v4/mcp", 2),
+    ("automation-honeycomb", "honeycomb_mcp", "https://mcp.honeycomb.io/mcp", 2),
+    ("automation-launchdarkly", "launchdarkly_mcp", "https://mcp.launchdarkly.com/mcp", 1),
+    ("automation-linear", "linear_mcp", "https://mcp.linear.app/mcp", 2),
+    ("automation-loops", "loops_mcp", "https://mcp.loops.so", 1),
+    ("automation-notion", "notion_mcp", "https://mcp.notion.com/mcp", 2),
+    ("automation-parallel", "parallel_mcp", "https://mcp.parallel.ai/mcp?login", 2),
+    ("automation-phantombuster", "phantombuster_mcp", "https://mcp.phantombuster.com", 1),
+    ("automation-posthog", "posthog_mcp", "https://mcp.posthog.com/mcp", 3),
+    ("automation-sentry", "sentry_mcp", "https://mcp.sentry.dev/mcp", 2),
+    ("automation-supabase", "supabase_mcp", "https://mcp.supabase.com/mcp", 2),
+    ("automation-tableau", "tableau_mcp", "https://mcp.tableau.com", 1),
+    ("automation-webflow", "webflow_mcp", "https://mcp.webflow.com/mcp", 2),
+    ("automation-wordpress", "wordpress_mcp", "https://public-api.wordpress.com/wpcom/v2/mcp/v1", 3),
+]
+
+
+def test_every_declared_server_is_pinned():
+    """A server joins as a declaration in its node's file and a row above, checked live first."""
+    from nodes.core.catalog import credential_holders, credential_types
+
+    declared = {(holders[0][0], t) for t in credential_types()
+                if (holders := credential_holders(t)) and holders[0][1]["method"] == vendor_mcp.MCP_METHOD}
+    assert declared == {(n, t) for n, t, _, _ in SELF_REGISTERING} | {("automation-canva", "canva_mcp")}
+
+
+@pytest.mark.parametrize("node_type, credential_type, url, own_ways_in", SELF_REGISTERING)
+async def test_a_declared_server_comes_after_the_integrations_own_ways_in(node_type, credential_type, url, own_ways_in):
+    from pydantic import TypeAdapter
+
     from nodes.core.credential_connect import credential_classes_for_node
     from nodes.core.registry import NODE_REGISTRY
 
@@ -107,7 +153,12 @@ async def test_notion_and_calendly_declare_their_servers_beside_their_own_ways_i
     declared = vendor_mcp.node_mcp_credential(node)
     assert declared is not None and declared.mcp_server.url == url and declared.mcp_server.client_env is None
     assert vendor_mcp.node_type_of(credential_type) == node_type
-    assert len(credential_classes_for_node(node)) == 3  # its sign-in and key stay
+    # Its own sign-in and keys stay, first; the MCP server is the last way in.
+    assert credential_classes_for_node(node)[own_ways_in:] == [declared]
+    # What its connect stores reads back through the node's own union as the MCP credential, which a step refuses.
+    union = node.get_config_model().model_fields["credentials"].annotation
+    stored = TypeAdapter(union).validate_python({"credential_type": credential_type, "mcp_server_url": url, "access_token": "t"})
+    assert type(stored) is declared and vendor_mcp.refusal_for_step(stored)
 
 
 _FRESH_LOOKUP = """

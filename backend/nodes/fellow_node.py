@@ -36,6 +36,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from utils.ssrf import normalize_provider_subdomain
@@ -88,7 +89,9 @@ class FellowAPIKeyCredential(BaseModel):
     )
 
 
-FellowCredential = FellowAPIKeyCredential
+# Fellow's own MCP server: agents get its tools through a person's Fellow sign-in.
+FellowMcpCredential = mcp_credential("fellow", "https://fellow.app/mcp", app="Fellow")
+FellowCredential = Union[FellowAPIKeyCredential, FellowMcpCredential]
 
 
 # ============================================================================

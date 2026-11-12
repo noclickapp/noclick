@@ -24,6 +24,7 @@ import base64
 from urllib.parse import urlsplit
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from utils.ssrf import guarded_async_client
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.oauth.wordpress_oauth import is_token_expired, refresh_access_token
@@ -154,12 +155,16 @@ class WordPressOAuthCredential(BaseModel):
     })
 
 
-# Union type for credentials - supports all three authentication methods
-# OAuth shown first (best UX), then Application Password, then Basic Auth
+# WordPress.com's own MCP server: agents get its tools through a person's WordPress.com sign-in.
+# WordPress.com and Jetpack sites only.
+WordpressMcpCredential = mcp_credential("wordpress", "https://public-api.wordpress.com/wpcom/v2/mcp/v1", app="WordPress.com")
+# Union type for credentials - every way in
+# OAuth shown first (best UX), then Application Password, then Basic Auth, then the MCP server
 WordPressCredential = Union[
     WordPressOAuthCredential,
     WordPressApplicationPasswordCredential,
     WordPressBasicAuthCredential,
+    WordpressMcpCredential,
 ]
 
 

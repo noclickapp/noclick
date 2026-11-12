@@ -121,7 +121,7 @@ def test_schema_shape():
     assert len(variants) == 88  # 85 typed + passthrough + 2 triggers
     cred_refs = [v for v in (props["credentials"].get("oneOf") or props["credentials"].get("anyOf") or [])
                  if v.get("$ref")]
-    assert len(cred_refs) == 2
+    assert len(cred_refs) == 3  # its API key, its management key, and its MCP server
 
 
 # ---------------------------------------------------------------------------

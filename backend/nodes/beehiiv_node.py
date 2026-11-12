@@ -28,6 +28,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 
@@ -174,7 +175,9 @@ class BeehiivApiKeyCredential(BaseModel):
     )
 
 
-BeehiivCredential = BeehiivApiKeyCredential
+# beehiiv's own MCP server: agents get its tools through a person's beehiiv sign-in.
+BeehiivMcpCredential = mcp_credential("beehiiv", "https://mcp.beehiiv.com/mcp", app="beehiiv")
+BeehiivCredential = Union[BeehiivApiKeyCredential, BeehiivMcpCredential]
 
 
 # ============================================================================

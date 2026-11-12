@@ -24,6 +24,7 @@ import httpx
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 
 logger = logging.getLogger(__name__)
@@ -61,8 +62,9 @@ class ApifyApiTokenCredential(BaseModel):
     )
 
 
-# Single credential type for Apify
-ApifyCredential = ApifyApiTokenCredential
+# Apify's own MCP server: agents get its tools through a person's Apify sign-in.
+ApifyMcpCredential = mcp_credential("apify", "https://mcp.apify.com", app="Apify")
+ApifyCredential = Union[ApifyApiTokenCredential, ApifyMcpCredential]
 
 
 # ============================================================================

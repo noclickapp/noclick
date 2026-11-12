@@ -28,6 +28,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator, create_model, 
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence, summarize_provider_text
 from nodes.core.credential_fields import https_origin, segment_after
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
@@ -7886,7 +7887,10 @@ class TableauPATCredential(BaseModel):
     )
 
 
-TableauCredential = TableauPATCredential
+# Tableau's own MCP server: agents get its tools through a person's Tableau sign-in.
+# Tableau Cloud only.
+TableauMcpCredential = mcp_credential("tableau", "https://mcp.tableau.com", app="Tableau")
+TableauCredential = Union[TableauPATCredential, TableauMcpCredential]
 
 
 # ============================================================================

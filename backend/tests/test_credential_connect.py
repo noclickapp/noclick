@@ -19,6 +19,7 @@ from nodes.core import connection_evidence as ce
 from nodes.core import credential_connect as cc
 from nodes.core.connection_evidence import ConnectionEvidence, EvidenceResult, EvidenceSample
 from nodes.core.credential_fields import clean_secret, https_origin, segment_after
+from nodes.core.vendor_mcp import McpCredential
 
 
 # ------------------------------------------------------------------ fields
@@ -361,8 +362,11 @@ async def test_a_vendor_key_is_probed_alike_under_its_harness_or_model_type(monk
 
 def test_the_linked_fields_are_declared_by_their_credential_classes():
     assert cc.linked_field_names() == {"connection_id", "number_sid", "guild_id", "team_id", "hub_id", "mcp_server_url"}
+    # Every vendor MCP way in (pinned one by one in test_vendor_mcp_connect.py) comes only from its connect flow.
+    mcp_ways_in = {t for t, (_, cls) in cc._class_index().items() if issubclass(cls, McpCredential)}
+    assert {"canva_mcp", "notion_mcp", "calendly_mcp", "linear_mcp"} <= mcp_ways_in
     assert {t for t in cc._class_index() if cc.linked_only(t)} == {
-        "whatsapp_qr", "phone_number", "discord_bot_install", "canva_mcp", "notion_mcp", "calendly_mcp"}
+        "whatsapp_qr", "phone_number", "discord_bot_install"} | mcp_ways_in
 
 
 @pytest.mark.parametrize("credential_type,blob,field", [

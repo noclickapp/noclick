@@ -29,6 +29,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from nodes.scopes.scheduling import CAL_COM_SCOPES
@@ -153,8 +154,10 @@ class CalComApiKeyCredential(BaseModel):
     )
 
 
+# Cal.com's own MCP server: agents get its tools through a person's Cal.com sign-in.
+CalComMcpCredential = mcp_credential("cal_com", "https://mcp.cal.com/mcp", app="Cal.com")
 # Union type - OAuth shown first in UI (best UX), API key as alternative.
-CalComCredential = Union[CalComOAuthCredential, CalComApiKeyCredential]
+CalComCredential = Union[CalComOAuthCredential, CalComApiKeyCredential, CalComMcpCredential]
 
 
 def _credential_bearer_token(credential: Any) -> Optional[str]:

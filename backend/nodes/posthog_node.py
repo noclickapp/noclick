@@ -39,6 +39,7 @@ import httpx
 
 from nodes.core.agent_events import bullet_lines, compact_json
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.dynamic_options import load_paginated_options
@@ -214,7 +215,9 @@ class PostHogOAuthCredential(BaseModel):
     )
 
 
-PostHogCredential = Union[PostHogPersonalApiKeyCredential, PostHogProjectApiKeyCredential, PostHogOAuthCredential]
+# PostHog's own MCP server: agents get its tools through a person's PostHog sign-in.
+PosthogMcpCredential = mcp_credential("posthog", "https://mcp.posthog.com/mcp", app="PostHog")
+PostHogCredential = Union[PostHogPersonalApiKeyCredential, PostHogProjectApiKeyCredential, PostHogOAuthCredential, PosthogMcpCredential]
 
 
 # ============================================================================

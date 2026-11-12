@@ -5,7 +5,9 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
-    "ApifyApiTokenCredential": "apify_api_token"
+    "Apify MCP": "apify_mcp",
+    "ApifyApiTokenCredential": "apify_api_token",
+    "ApifyMcpCredential": "apify_mcp"
   },
   "providerLabels": {
     "apify": "Apify Account"

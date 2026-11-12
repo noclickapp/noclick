@@ -28,6 +28,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from nodes.scopes.scheduling import FATHOM_SCOPES
@@ -127,10 +128,13 @@ class FathomOAuthCredential(BaseModel):
     )
 
 
+# Fathom's own MCP server: agents get its tools through a person's Fathom sign-in.
+FathomMcpCredential = mcp_credential("fathom", "https://api.fathom.ai/mcp", app="Fathom")
 FathomCredential = Union[
     FathomOAuthCredential,
     FathomBearerTokenCredential,
     FathomApiKeyCredential,
+    FathomMcpCredential,
 ]
 
 

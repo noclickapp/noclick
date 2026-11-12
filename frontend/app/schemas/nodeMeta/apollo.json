@@ -5,7 +5,9 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Apollo MCP": "apollo_mcp",
     "ApolloAPIKeyCredential": "apollo_api_key",
+    "ApolloMcpCredential": "apollo_mcp",
     "ApolloOAuthCredential": "apollo_oauth"
   },
   "providerLabels": {
