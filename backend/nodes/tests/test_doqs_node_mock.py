@@ -223,3 +223,15 @@ def test_input_validation(config):
 def test_credential_default_and_complete_operation_coverage():
     assert DoqsAPIKeyCredential(api_key=KEY).credential_type == "doqs_api_key"
     assert set(ENDPOINTS) == {"list_templates", "fill_template", "render_pdf", "list_submissions"}
+
+
+def test_doqs_generated_backend_catalog_matches_node_and_definition():
+    from scripts.generate_socket_types import catalog_entry
+    from scripts.node_definitions import every_definition_facts
+
+    path = Path(__file__).resolve().parents[1] / "catalog" / "doqs.json"
+    facts = json.loads(path.read_text())
+    expected = catalog_entry("automation-doqs", DoqsNode, every_definition_facts()["automation-doqs"])
+    assert facts == expected
+    assert {op["name"] for op in facts["operations"]} == set(ENDPOINTS)
+    assert [credential["type"] for credential in facts["credentials"]] == ["doqs_api_key"]
