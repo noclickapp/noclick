@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 // The WhatsApp node's credential panel through the real AppConnect and QR form. A reconnect restarts the failed
 // session at WAHooks, which logs the phone out, so opening a node whose number died must never start one: only the
-// Reconnect click does. A QR shows unasked only when the user has no number at all.
+// Reconnect click does. A QR shows unasked when the user has no number at all, or has asked to connect another.
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { loadNodeSchemas } from '~/utils/nodeSchemas';
@@ -62,19 +62,37 @@ describe('WhatsApp reconnect starts only on a click', () => {
         expect(await screen.findByAltText('WhatsApp QR Code')).toBeTruthy();
     });
 
-    it('a dead number that is not attached keeps the panel from minting a QR unasked', async () => {
+    it('a dead number that is not attached mints nothing until Connect another account, which adds a fresh one', async () => {
         state.credentials = [dead];
         render(<NodeCredentials nodeType="automation-whatsapp" onChange={vi.fn()} />);
-        fireEvent.click(await screen.findByRole('button', { name: 'Connect another account' }));
-        expect(await screen.findByRole('button', { name: 'Connect a different WhatsApp number' })).toBeTruthy();
+        const connect = await screen.findByRole('button', { name: 'Connect another account' });
         expect(qrStarts()).toEqual([]);
+
+        fireEvent.click(connect);
+        expect(await screen.findByAltText('WhatsApp QR Code')).toBeTruthy();
+        expect(qrStarts()).toEqual([{ event_name: 'whatsapp:qr:start' }]);
     });
 
     // A node needs a number, and one that works can be picked: a QR shown beside it invites a re-scan that rebinds it.
-    it('a node with a working number attached mints nothing, even with its connect panel open', async () => {
+    // Asking to connect another is asking for one.
+    it('a node with a working number attached mints nothing until Connect another account', async () => {
         state.credentials = [{ ...dead, id: 'wa-ok', connection_healthy: true, connection_hint: undefined }];
         render(<NodeCredentials nodeType="automation-whatsapp" credentialIds={{ whatsapp_qr: 'wa-ok' }} onChange={vi.fn()} />);
-        fireEvent.click(await screen.findByRole('button', { name: 'Connect another account' }));
+        const connect = await screen.findByRole('button', { name: 'Connect another account' });
+        expect(qrStarts()).toEqual([]);
+        expect(screen.queryByAltText('WhatsApp QR Code')).toBeNull();
+
+        fireEvent.click(connect);
+        expect(await screen.findByAltText('WhatsApp QR Code')).toBeTruthy();
+        expect(qrStarts()).toEqual([{ event_name: 'whatsapp:qr:start' }]);
+    });
+
+    // Picking among numbers already connected is no ask to add one: a revoked attached number beside a working one
+    // opens the connect panel, but the QR waits behind its button.
+    it('a node that can pick a working number keeps its QR behind a button', async () => {
+        const revoked = { ...dead, id: 'wa-revoked', connection_healthy: true, connection_hint: undefined, revoked_at: '2026-11-01T00:00:00Z' };
+        state.credentials = [revoked, { ...dead, id: 'wa-ok', connection_healthy: true, connection_hint: undefined }];
+        render(<NodeCredentials nodeType="automation-whatsapp" credentialIds={{ whatsapp_qr: 'wa-revoked' }} onChange={vi.fn()} />);
         expect(await screen.findByRole('button', { name: 'Connect a different WhatsApp number' })).toBeTruthy();
         expect(qrStarts()).toEqual([]);
         expect(screen.queryByAltText('WhatsApp QR Code')).toBeNull();
