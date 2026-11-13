@@ -4,8 +4,8 @@ The guided actions cover common link workflows. The official endpoint catalogue
 exposes advanced JSON actions without inventing a raw URL or HTTP method field.
 """
 
-import base64
 import json
+import mimetypes
 import re
 import time
 from typing import Annotated, Any, Literal, Optional, Union
@@ -16,6 +16,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.bitly_operations import OPERATIONS
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.scopes.bitly import BITLY_SCOPES
@@ -289,7 +290,11 @@ class BitlyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             return {"ok": True}, elapsed
         if "json" in response.headers.get("content-type", "") or response.content[:1] in (b"{", b"["):
             return response.json(), elapsed
-        return {"content_type": response.headers.get("content-type", "application/octet-stream"), "base64": base64.b64encode(response.content).decode()}, elapsed
+        content_type = response.headers.get("content-type", "application/octet-stream")
+        name = path.rstrip("/").rsplit("/", 1)[-1] or "download"
+        extension = mimetypes.guess_extension(content_type.split(";")[0].strip()) or ""
+        return {"content_type": content_type, "file": BinaryOutput(
+            data=response.content, content_type=content_type, filename=f"bitly-{name}{extension}")}, elapsed
 
     @staticmethod
     def _object(raw: Optional[str], label: str) -> dict[str, Any]:

@@ -15,6 +15,7 @@ from nodes.bitly_node import (
     ShortenLink, UpdateBitlink, GENERIC_CONFIGS,
 )
 from nodes.bitly_operations import OPERATIONS
+from nodes.core.binary_output import BinaryOutput
 from nodes.oauth import bitly_oauth
 from nodes.core.oauth_provider import OAuthProviderSpec
 
@@ -107,6 +108,19 @@ async def test_connection_options_and_api_error(monkeypatch):
     assert options == [{"value": "G1", "label": "NoClick"}]
     with pytest.raises(ValueError, match="Bitly API error 403: Account plan"):
         await node(GetUser()).execute({})
+
+
+@pytest.mark.asyncio
+async def test_binary_response_is_returned_as_a_file(monkeypatch):
+    def handler(request):
+        return httpx.Response(200, content=b"\x89PNG\r\n", headers={"content-type": "image/png"})
+    client = httpx.AsyncClient
+    monkeypatch.setattr(module.httpx, "AsyncClient", lambda **kw: client(transport=httpx.MockTransport(handler)))
+    data, _ = await BitlyNode._request("test-token", "GET", "/bitlinks/bit.ly/abc/qr")
+    assert data["content_type"] == "image/png"
+    assert isinstance(data["file"], BinaryOutput)
+    assert data["file"].data == b"\x89PNG\r\n"
+    assert data["file"].filename == "bitly-qr.png"
 
 
 @pytest.mark.parametrize("config,error", [
