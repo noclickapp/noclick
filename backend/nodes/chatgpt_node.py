@@ -244,6 +244,31 @@ class ChatGPTDeleteVectorStore(_Input):
     vector_store_id: str
 
 
+
+
+
+CHATGPT_WEBHOOK_EVENTS = (
+    "response.completed", "response.failed", "response.cancelled", "response.incomplete",
+    "batch.completed", "batch.failed", "batch.expired", "batch.cancelled",
+    "eval.run.succeeded", "eval.run.failed", "eval.run.canceled",
+    "fine_tuning.job.succeeded", "fine_tuning.job.failed", "fine_tuning.job.cancelled",
+)
+
+
+class ChatGPTOnEvent(WebhookTriggerConfigBase):
+    """Receive project API events; personal ChatGPT conversations are not exposed."""
+
+    operation: Literal["on_event"] = Field("on_event", title="On OpenAI Event", json_schema_extra={
+        "const": "on_event", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On OpenAI Event",
+    })
+    event_type: Literal[*CHATGPT_WEBHOOK_EVENTS] = Field(
+        "response.completed", title="Event Type",
+        description="An event in the connected OpenAI project. Response events require background responses. These events do not include personal ChatGPT conversations.")
+    webhook_url: Optional[str] = Field(None, title="Webhook URL", description="Registered with OpenAI automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
 ChatGPTOperation = Annotated[Union[
     ChatGPTCreateResponse,
     ChatGPTGetResponse,
@@ -269,33 +294,12 @@ ChatGPTOperation = Annotated[Union[
     ChatGPTCreateVectorStore,
     ChatGPTListVectorStores,
     ChatGPTGetVectorStore,
-    ChatGPTDeleteVectorStore
+    ChatGPTDeleteVectorStore,
+    ChatGPTOnEvent,
 ], Field(discriminator="operation")]
 
 
-CHATGPT_WEBHOOK_EVENTS = (
-    "response.completed", "response.failed", "response.cancelled", "response.incomplete",
-    "batch.completed", "batch.failed", "batch.expired", "batch.cancelled",
-    "eval.run.succeeded", "eval.run.failed", "eval.run.canceled",
-    "fine_tuning.job.succeeded", "fine_tuning.job.failed", "fine_tuning.job.cancelled",
-)
-
-
-class ChatGPTOnEvent(WebhookTriggerConfigBase):
-    """Receive project API events; personal ChatGPT conversations are not exposed."""
-
-    operation: Literal["on_event"] = Field("on_event", title="On OpenAI Event", json_schema_extra={
-        "const": "on_event", "ui:hidden": True, "x-category": "Triggers",
-        "x-is-trigger": True, "x-display-name": "On OpenAI Event",
-    })
-    event_type: Literal[*CHATGPT_WEBHOOK_EVENTS] = Field(
-        "response.completed", title="Event Type",
-        description="An event in the connected OpenAI project. Response events require background responses. These events do not include personal ChatGPT conversations.")
-    webhook_url: Optional[str] = Field(None, title="Webhook URL", description="Registered with OpenAI automatically.",
-        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
-
-
-class ChatGPTConfig(NodeConfig[Annotated[Union[ChatGPTOperation, ChatGPTOnEvent], Field(discriminator="operation")], ChatGPTAPIKeyCredential]):
+class ChatGPTConfig(NodeConfig[ChatGPTOperation, ChatGPTAPIKeyCredential]):
     pass
 
 
