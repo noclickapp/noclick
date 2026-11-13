@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/katana-mrp.svg",
-  "source": "https://files.readme.io/43dcb8b-katana.svg",
-  "license": "Katana trademark; used nominatively to identify the Katana integration",
-  "sha256": "8b520aac2cc87a5ebcd246bf8bf891e00b986d23766fa84bbc7c1c98b0b3a29d"
+  "source": "https://katanamrp.com/wp-content/uploads/2024/11/katana-hs-centered.svg",
+  "source_page": "https://katanamrp.com/wp-json/wp/v2/media?search=katana (Katana's own WordPress media library: its 'Katana + HubSpot' integration graphic, which draws Katana's kt app tile as vector)",
+  "date": "2026-11-13",
+  "license": "Katana (Katana Cloud Inventory / Katana MRP) trademark; used solely to identify the Katana (Katana Cloud Inventory / Katana MRP) integration",
+  "sha256": "e9d94022e590a636f6c640fbaaa53beb6f2774032dd87eb3df9f0296c2190494",
+  "source_sha256": "eba1527f74794ed01d4bae24c6ddcfe55b9654c96e02be237c610e4687420ec1",
+  "edits": [
+    "kept only Katana's tile: the #eeff38 rounded square (element 1) and the #092332 'k' and 't' (elements 2, 3); dropped the grey card background (0), HubSpot's white tile and sprocket (4, 5) and the '+' (6)",
+    "cropped the viewBox to the tile (no pad: the tile is the brand's own app icon)",
+    "clean"
+  ]
 }
