@@ -3,13 +3,15 @@
 // This module ensures only ONE client exists for the entire app lifecycle.
 
 import { createBrowserClient, serializeCookieHeader } from '@supabase/ssr';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 import { isLocalEdition } from '~/lib/edition';
 import { isLoopbackHostname } from '~/lib/loopback';
 import { worktreeAuthCookieName } from '~/lib/devHost';
 
-// Use ReturnType to infer the correct type from createBrowserClient
-type BrowserClient = ReturnType<typeof createBrowserClient>;
+// Named, not ReturnType<typeof createBrowserClient>: that function is overloaded,
+// and @supabase/ssr 0.12's overloads make ReturnType resolve to `any`.
+type BrowserClient = SupabaseClient;
 
 let browserClient: BrowserClient | null = null;
 let clientEnv: { SUPABASE_URL: string; SUPABASE_ANON_KEY: string } | null =
