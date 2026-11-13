@@ -255,3 +255,20 @@ def test_registration_fingerprint_declares_event_before_operation_selection():
         original = registration_fingerprint(cls, operation, 'fixture-credential', implicit)
         assert original == registration_fingerprint(cls, operation, 'fixture-credential', explicit)
         assert original != registration_fingerprint(cls, operation, 'fixture-credential', changed)
+
+
+def test_airwallex_generated_catalog_keeps_webhook_triggers_registerable():
+    from nodes.core import catalog
+    from nodes.core.registry import NODE_REGISTRY
+    from scripts.generate_socket_types import catalog_entry
+    from scripts.node_definitions import every_definition_facts
+    from utils.webhook_manager import WebhookManager
+
+    node_type = 'automation-airwallex'
+    facts = json.loads(catalog.catalog_path(node_type).read_text())
+    assert facts == catalog_entry(node_type, NODE_REGISTRY[node_type], every_definition_facts()[node_type])
+    assert facts['registers'] is True
+    assert {op['name'] for op in facts['operations'] if op['is_trigger']} == {
+        'on_deposit_event', 'on_transfer_event',
+    }
+    assert node_type in WebhookManager._registerable_types()
