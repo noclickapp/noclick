@@ -18,6 +18,13 @@
  ],
  "operations": [
   {
+   "name": "on_inventory_updated",
+   "display_name": "On Inventory Updated",
+   "category": "Triggers",
+   "description": "Receive the inventory webhook payload published in the v1.0 contract.",
+   "is_trigger": true
+  },
+  {
    "name": "list_customers",
    "display_name": null,
    "category": null,
@@ -175,7 +182,7 @@
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null,
  "summary": "",
  "retired": null
