@@ -436,6 +436,10 @@ def resolved_offline():
         yield
 
 
+# A dotted host name with an optional port and base path, as some specs give a server (`api.air.inc`).
+BARE_HOST = re.compile(r"[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+(?::[0-9]+)?(?:/\S*)?")
+
+
 def server_prefix(server, request):
     """The base path a request matches under one of the spec's servers, or None.
 
@@ -443,6 +447,10 @@ def server_prefix(server, request):
     each variable matches one host label run or path segment, limited to its `enum` where the spec lists one.
     """
     url = server["url"]
+    if BARE_HOST.fullmatch(url):
+        # A bare host name names that host over HTTPS; OpenAPI would read it as a path relative to the document,
+        # which no request to the provider could match.
+        url = "https://" + url
     variables = server.get("variables", {})
 
     def pattern(text, segment):
