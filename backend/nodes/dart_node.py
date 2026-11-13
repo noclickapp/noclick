@@ -209,6 +209,31 @@ DartMcpCredential = mcp_credential("dart", "https://mcp.dartai.com/mcp", app="Da
 DartCredential = Union[DartAPITokenCredential, DartMcpCredential]
 
 
+EVENTS = (
+    "task.created", "task.updated", "task.status_updated", "task.assignees_updated",
+    "task.deleted", "doc.created", "doc.updated", "doc.deleted", "comment.created",
+)
+
+
+class OnEvent(WebhookTriggerConfigBase):
+    """Start a workflow or agent when a selected Dart workspace event occurs."""
+    operation: Literal["on_event"] = Field("on_event", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+        "x-display-name": "On Dart Event"})
+    event_type: Literal[*EVENTS] = Field("task.created", title="Event")
+    webhook_secret: str = Field(..., min_length=1, title="Webhook secret",
+        description="Copy the workspace Webhook secret from Dart Settings > Webhooks. Used to verify Dart deliveries.",
+        json_schema_extra={"ui:widget": "password"})
+    webhook_url: str | None = Field(None, title="Webhook URL",
+        description="NoClick registers this URL with Dart automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+    @field_validator("webhook_secret", mode="before")
+    @classmethod
+    def secret(cls, value):
+        return clean_secret(value, field_name="Webhook secret")
+
+
 DartConfig = Annotated[Union[GetMe, GetConfig, ListTasks, GetTask, CreateTask, UpdateTask,
     DeleteTask, MoveTask, ListDocs, GetDoc, CreateDoc, UpdateDoc, DeleteDoc,
     ListComments, AddComment, GetDartboard, GetFolder, GetView, OnEvent], Field(discriminator="operation")]
@@ -235,6 +260,7 @@ ROUTES = {
 class DartNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-dart"
     credential_provider_labels = {"dart": "Dart Account"}
+    webhook_replace_stale_endpoint = True
     connection_evidence = ConnectionEvidence(noun="tasks", operation="list_tasks", identity_operation="get_me")
 
     @classmethod

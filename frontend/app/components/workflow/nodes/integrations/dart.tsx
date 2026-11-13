@@ -16,7 +16,7 @@ const DartIcon = ({
         alt=""
         aria-hidden="true"
         className={className}
-        style={{ ...style, objectFit: 'contain' }}
+        style={style}
     />
 );
 

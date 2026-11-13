@@ -158,13 +158,6 @@
    "category": null,
    "description": "Get a saved view by ID.",
    "is_trigger": false
-  },
-  {
-   "name": "on_event",
-   "display_name": "On Dart Event",
-   "category": "Triggers",
-   "description": "Start a workflow or agent when a selected Dart workspace event occurs.",
-   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
