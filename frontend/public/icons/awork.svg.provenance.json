@@ -1,13 +1,13 @@
 {
   "path": "frontend/public/icons/awork.svg",
   "source": "https://cdn.prod.website-files.com/6418f5bfe5bc0a3438109c1d/641ccf4e9454867f1de9006f_logo.svg",
-  "source_page": "https://www.awork.com/",
-  "date": "2026-11-11",
-  "license": "awork trademark; used to identify the awork integration",
-  "sha256": "35d4c35cf7cf7ce26103cc2f39b1322c24fecbb055be4b95aff0072ef4272987",
+  "source_page": "https://www.awork.com/ (header nav logo <img class=\"c-image cc-contain\">)",
+  "date": "2026-11-13",
+  "license": "awork trademark; used solely to identify the awork integration",
+  "sha256": "186ece6187a9163f3e847e159d80443917b0fd89d542be0c743c27c52e45f2b8",
+  "source_sha256": "a4deac669a9fc20cee66ce2dce120c9c21321d4dc627d12b988fc1689af5ec5f",
   "edits": [
-    "Cropped the original 0 0 128 36 viewBox to 0 0 29 36 and changed width to 29, exposing only the robot app mark; path data and evenodd eye counters remain byte-for-byte unchanged."
-  ],
-  "notes": "Official awork robot symbol, cropped from the company website header SVG. The compound source path is preserved intact; wordmark geometry lies outside the cropped viewBox. No background, generated geometry or colour filters added.",
-  "source_sha256": "a4deac669a9fc20cee66ce2dce120c9c21321d4dc627d12b988fc1689af5ec5f"
+    "the logo is one compound evenodd path (12 subpaths): kept the robot's subpaths (0 bow tie, 1 head with antenna, 7 face plate, 10 and 11 eyes) and dropped the 'awork' letters (subpaths 2-6, 8, 9) with svgtool subkeep, so no wordmark geometry is left in the file (the PR's current files only hid it outside a narrowed viewBox)",
+    "cropped the viewBox to the robot (svgtool crop --pad 0.02); svgtool clean; fill stays the brand navy #091A34"
+  ]
 }
