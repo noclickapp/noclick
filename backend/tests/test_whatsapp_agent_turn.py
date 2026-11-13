@@ -8,7 +8,7 @@ from nodes.core.run_op import run_node_operation
 from nodes.whatsapp_node import WhatsAppNode, _sent_message_id
 
 GROUP = "120000000000000001@g.us"
-ME = {"id": "12025550101@c.us", "lid": "12025550103@lid", "pushName": "Shop"}
+ME = {"id": "12025550101@c.us", "lid": "12025550102@lid", "pushName": "Shop"}
 
 
 def _event(chat_id, *, body="hello", participant="", message=None, reply_to=None, me=ME, message_id=None):
@@ -49,17 +49,17 @@ def test_no_id_note_when_the_delivery_carries_no_id():
 # ── Mentions ───────────────────────────────────────────────────────────────────
 
 def test_a_group_message_mentioning_the_linked_number_says_so():
-    event = _event(GROUP, participant="12025550107@c.us", message=_mention("12025550100@s.whatsapp.net"))
+    event = _event(GROUP, participant="12025550107@c.us", message=_mention("12025550101@s.whatsapp.net"))
     assert ", mentioning you:" in _text(event).split("\n", 1)[0]
 
 
 def test_a_mention_by_the_accounts_lid_counts():
-    event = _event(GROUP, participant="12025550107@c.us", message=_mention("12025550103@lid"))
+    event = _event(GROUP, participant="12025550107@c.us", message=_mention("12025550102@lid"))
     assert "mentioning you" in _text(event)
 
 
 def test_a_mention_inside_a_disappearing_message_wrapper_counts():
-    wrapped = {"ephemeralMessage": {"message": _mention("12025550100@s.whatsapp.net")}}
+    wrapped = {"ephemeralMessage": {"message": _mention("12025550101@s.whatsapp.net")}}
     assert "mentioning you" in _text(_event(GROUP, participant="12025550107@c.us", message=wrapped))
 
 
@@ -69,7 +69,7 @@ def test_someone_elses_mention_is_not_yours():
 
 
 def test_without_the_accounts_own_ids_nothing_is_called_a_mention():
-    event = _event(GROUP, participant="12025550107@c.us", message=_mention("12025550100@s.whatsapp.net"), me={})
+    event = _event(GROUP, participant="12025550107@c.us", message=_mention("12025550101@s.whatsapp.net"), me={})
     assert "mentioning you" not in _text(event)
 
 
