@@ -19,10 +19,14 @@ canonicalised to lowercase.
 The database has ~100 STRICT tables and only the Gateway can create it: a
 target store that does not exist yet is primed with a keyless
 ``openclaw agent`` run, which creates the schema and fails at model
-resolution before reaching any provider. A legacy ``sessions.json`` +
-``.jsonl`` layout is not adopted by this version. Validated against
-OpenClaw 2026.9.1 (write and resume) — see
-``tests/test_session_interchange_drift.py``.
+resolution before reaching any provider. Validated against OpenClaw
+2026.9.1 (write and resume) — see ``tests/test_session_interchange_drift.py``.
+
+A laptop on an older OpenClaw (2026.6) keeps each session as a file of the
+same entries, ``<home>/agents/main/sessions/<session id>.jsonl``, beside
+``sessions.json`` (session key → id); the reader reads that layout too, the
+active branch being the ``parentId`` chain back from its last entry. Only
+the database is written.
 """
 
 from __future__ import annotations
@@ -59,14 +63,21 @@ class OpenClawFormat(ThreadFormat):
 
     # ── locate ──────────────────────────────────────────────────────────────
 
+    @staticmethod
+    def sessions_dir(store: StoreRef) -> Path:
+        """Where an OpenClaw before the agent database keeps each session's entries, one file each."""
+        return store.home / "agents" / "main" / "sessions"
+
     def locate(self, store: StoreRef) -> str:
         db = self.db_path(store)
         if not db.is_file():
-            raise InterchangeError("source_empty", f"no openclaw agent database at {db}")
+            return self._locate_files(store, db)
         with sqlite.connect(db, readonly=True) as conn:
             wanted = (store.session_id or "").lower()
             if wanted and conn.execute("SELECT 1 FROM session_windows WHERE session_id = ?", (wanted,)).fetchone():
                 return db_ref(db, wanted)
+            if store.session_id and self._session_file(store, store.session_id):
+                return self._locate_files(store, db)
             row = conn.execute("SELECT current_session_id FROM session_nodes WHERE session_key = ?", (SESSION_KEY,)).fetchone()
             if row is None:
                 row = conn.execute("SELECT session_id FROM session_windows WHERE session_id != ? ORDER BY updated_at DESC LIMIT 1", (PRIME_SESSION,)).fetchone()
@@ -76,8 +87,33 @@ class OpenClawFormat(ThreadFormat):
 
     # ── read ────────────────────────────────────────────────────────────────
 
+    def _session_file(self, store: StoreRef, session_id: str) -> Optional[Path]:
+        return next((f for f in (self.sessions_dir(store) / f"{session_id}.jsonl",
+                                 self.sessions_dir(store) / f"{session_id.lower()}.jsonl") if f.is_file()), None)
+
+    def _locate_files(self, store: StoreRef, db: Path) -> str:
+        """A session in the older one-file-per-session layout: the one named, else the newest ``sessions.json``
+        lists."""
+        if store.session_id:
+            found = self._session_file(store, store.session_id)
+            if found is None:
+                raise InterchangeError("source_empty", f"openclaw session {store.session_id} not in {db} or {self.sessions_dir(store)}")
+            return db_ref(found, store.session_id)
+        try:
+            listed = json.loads((self.sessions_dir(store) / "sessions.json").read_text())
+        except (OSError, ValueError):
+            raise InterchangeError("source_empty", f"no openclaw agent database at {db}, nor sessions in {self.sessions_dir(store)}") from None
+        newest = max((v for v in listed.values() if isinstance(v, dict) and string(v.get("sessionId"))),
+                     key=lambda v: v.get("updatedAt") or 0, default=None)
+        found = newest and self._session_file(store, newest["sessionId"])
+        if not found:
+            raise InterchangeError("source_empty", f"no openclaw session in {self.sessions_dir(store)}")
+        return db_ref(found, newest["sessionId"])
+
     def read(self, ref: str) -> Thread:
         db, sid = split_db_ref(ref)
+        if db.suffix == ".jsonl":
+            return self._read_file(ref, db, sid)
         with sqlite.connect(db, readonly=True) as conn:
             window = conn.execute("SELECT model_provider, model, created_at FROM session_windows WHERE session_id = ?", (sid,)).fetchone()
             if window is None:
@@ -87,7 +123,45 @@ class OpenClawFormat(ThreadFormat):
             rows = conn.execute("SELECT seq, event_json FROM transcript_events WHERE session_id = ? ORDER BY seq", (sid,)).fetchall()
         # The active projection is the branch the Gateway continues; without
         # one (never indexed) every event counts.
-        chosen = set(active) if active else None
+        events, cwd, started = self._entries(rows, set(active) if active else None)
+        thread = Thread(
+            harness=self.harness, source=ref, session_id=sid, cwd=cwd, started_at=started, cli_version=None,
+            model=f"{window[0]}/{window[1]}" if window[0] and window[1] else window[1],
+            events=events, records=len(rows), sha256=None,
+        )
+        thread.dropped = count_drops(events)
+        return thread
+
+    def _read_file(self, ref: str, path: Path, sid: str) -> Thread:
+        """A session file of the older layout: its entries, the active branch the parentId chain from its last."""
+        entries: List[Tuple[int, Any]] = []
+        for seq, line in enumerate(path.read_text().splitlines()):
+            if line.strip():
+                entries.append((seq, line))
+        parsed = {}
+        for seq, raw in entries:
+            try:
+                entry = json.loads(raw)
+            except ValueError:
+                continue
+            if isinstance(entry, dict) and string(entry.get("id")):
+                parsed[entry["id"]] = (seq, entry)
+        chain: set = set()
+        leaf = next((e for _, e in sorted(parsed.values(), key=lambda x: x[0], reverse=True) if e.get("type") != "session"), None)
+        while leaf is not None and parsed[leaf["id"]][0] not in chain:
+            chain.add(parsed[leaf["id"]][0])
+            parent = string(leaf.get("parentId"))
+            leaf = parsed[parent][1] if parent in parsed else None
+        events, cwd, started = self._entries(entries, chain or None)
+        model = next(((f"{e['provider']}/{e['modelId']}" if string(e.get("provider")) else e.get("modelId"))
+                      for _, e in parsed.values() if e.get("type") == "model_change" and string(e.get("modelId"))), None)
+        thread = Thread(harness=self.harness, source=ref, session_id=sid, cwd=cwd, started_at=started, cli_version=None,
+                        model=model, events=events, records=len(entries), sha256=None)
+        thread.dropped = count_drops(events)
+        return thread
+
+    def _entries(self, rows: List[Tuple[int, Any]], chosen: Optional[set]) -> Tuple[List[Event], Optional[str], Optional[str]]:
+        """The thread's events from its entries (``seq``, JSON): ``chosen`` the active branch's seqs, else all."""
         events: List[Event] = []
         cwd: Optional[str] = None
         started: Optional[str] = None
@@ -116,13 +190,7 @@ class OpenClawFormat(ThreadFormat):
                 continue
             message = entry.get("message") if isinstance(entry.get("message"), dict) else {}
             events.extend(self._message_events(prov, message, ts))
-        thread = Thread(
-            harness=self.harness, source=ref, session_id=sid, cwd=cwd, started_at=started, cli_version=None,
-            model=f"{window[0]}/{window[1]}" if window[0] and window[1] else window[1],
-            events=events, records=len(rows), sha256=None,
-        )
-        thread.dropped = count_drops(events)
-        return thread
+        return events, cwd, started
 
     @staticmethod
     def _message_events(prov: Provenance, message: Dict[str, Any], ts: Optional[str]) -> List[Event]:

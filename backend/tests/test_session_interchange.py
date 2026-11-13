@@ -1352,7 +1352,54 @@ class TestHermesStore:
         assert ic.skeleton_of(ic.read_thread(ic.StoreRef("hermes_agent", home, Path(CWD), session_id="noclick"))).digest == ic.skeleton_of(before).digest
 
 
+def _openclaw_session_file(root: Path, cwd: str = CWD, session_id: str = "move-e2e-1") -> Path:
+    """An OpenClaw 2026.6 state dir: the session as a file of its entries (the shapes a real 2026.6 run wrote), with
+    a reply rewound and asked again, so the file holds an abandoned branch before the one it continues."""
+    state = root / "openclaw-2026-6"
+    sessions_dir = state / "agents" / "main" / "sessions"
+    sessions_dir.mkdir(parents=True)
+    usage = {"input": 1, "output": 1, "cacheRead": 0, "cacheWrite": 0, "totalTokens": 2,
+             "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0, "total": 0}}
+
+    def assistant(content, stop):
+        return {"role": "assistant", "content": content, "api": "openai-completions", "provider": "gw", "model": "m", "stopReason": stop, "usage": usage}
+
+    entries = [
+        {"type": "session", "version": 3, "id": session_id, "timestamp": "2026-11-13T07:47:03.069Z", "cwd": cwd},
+        {"type": "model_change", "id": "90bf4d16", "parentId": None, "timestamp": "2026-11-13T07:47:03.100Z", "provider": "gw", "modelId": "nvidia/nemotron"},
+        {"type": "thinking_level_change", "id": "36d01808", "parentId": "90bf4d16", "timestamp": "2026-11-13T07:47:03.101Z", "thinkingLevel": "off"},
+        {"type": "message", "id": "dbaa8995", "parentId": "36d01808", "timestamp": "2026-11-13T07:47:04.000Z",
+         "message": {"role": "user", "content": [{"type": "text", "text": "Which tests cover the auth callback?"}]}},
+        {"type": "message", "id": "2369577e", "parentId": "dbaa8995", "timestamp": "2026-11-13T07:47:05.000Z",
+         "message": assistant([{"type": "text", "text": "Let me search the test suite."},
+                               {"type": "toolCall", "id": "call_1", "name": "exec", "arguments": {"command": "rg -n auth_callback tests"}}], "toolUse")},
+        {"type": "message", "id": "38da22a1", "parentId": "2369577e", "timestamp": "2026-11-13T07:47:06.000Z",
+         "message": {"role": "toolResult", "toolCallId": "call_1", "toolName": "exec", "content": [{"type": "text", "text": "tests/test_auth.py:12:def test_auth_callback"}], "isError": False}},
+        {"type": "message", "id": "abandon1", "parentId": "38da22a1", "timestamp": "2026-11-13T07:47:07.000Z",
+         "message": assistant([{"type": "text", "text": "ABANDONED reply"}], "stop")},
+        {"type": "message", "id": "6f3aae5a", "parentId": "38da22a1", "timestamp": "2026-11-13T07:47:08.000Z",
+         "message": assistant([{"type": "text", "text": "One test covers it: tests/test_auth.py::test_auth_callback."}], "stop")},
+    ]
+    (sessions_dir / f"{session_id}.jsonl").write_text("".join(json.dumps(e) + "\n" for e in entries))
+    (sessions_dir / "sessions.json").write_text(json.dumps({f"agent:main:explicit:{session_id}": {"sessionId": session_id, "updatedAt": 1794556031845}}))
+    return state
+
+
 class TestOpenClawStore:
+    def test_reads_the_older_one_file_per_session_layout(self, tmp_path):
+        """OpenClaw 2026.6 keeps each session as a file of its entries, no agent database: a laptop on it moves
+        all the same (11-13), its active branch the chain back from the last entry."""
+        state = _openclaw_session_file(tmp_path)
+        thread = ic.read_thread(ic.StoreRef("openclaw", state, Path(CWD), session_id="move-e2e-1"))
+        sk = ic.skeleton_of(thread)
+        assert sk.roles == EXPECTED_ROLES and sk.tool_calls == 1 and sk.unpaired_tool_calls == 0
+        assert (thread.session_id, thread.cwd, thread.model) == ("move-e2e-1", CWD, "gw/nvidia/nemotron")
+        assert "ABANDONED reply" not in [e.text for e in thread.events] and thread.dropped["opaque:inactive_branch"] == 1
+        assert ic.read_thread(ic.StoreRef("openclaw", state, Path(CWD))).session_id == "move-e2e-1"  # newest listed
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.read_thread(ic.StoreRef("openclaw", state, Path(CWD), session_id="nope"))
+        assert e.value.reason == "source_empty"
+
     def test_reads_the_active_projection_under_noclicks_key(self, tmp_path):
         state = _openclaw_state(tmp_path)
         thread = ic.read_thread(ic.StoreRef("openclaw", state, Path(CWD), session_id="noclick-not-this-one"))  # falls through to the key
