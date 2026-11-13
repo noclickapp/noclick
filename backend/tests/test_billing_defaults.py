@@ -20,6 +20,7 @@ same session may have installed the hosted implementations.
 
 import ast
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -29,6 +30,20 @@ from tests.judged_nodes import files_narrowed, judged_files
 BACKEND = Path(__file__).parent.parent
 
 SKIP_ROOTS = ("tests", "scripts", "viteapp", "node_modules", "sandbox", "public", "__pycache__")
+
+
+# A line that imports billing, or anything with it (`import os, billing.markup`): a file without one is never parsed.
+_IMPORTS_BILLING = re.compile(r"^[ \t]*(?:from[ \t]+billing\b|import[ \t][^\n]*\bbilling\b)", re.MULTILINE)
+
+
+def _statements(tree: ast.AST):
+    """Every statement in ``tree``: an import is one, so this finds each without visiting every expression."""
+    stack = [tree]
+    while stack:
+        node = stack.pop()
+        yield node
+        for block in ("body", "orelse", "finalbody", "handlers", "cases"):
+            stack.extend(getattr(node, block, ()))
 
 
 def _imported_billing_symbols() -> dict:
@@ -42,13 +57,13 @@ def _imported_billing_symbols() -> dict:
         if rel.parts[0] == "billing":
             continue
         source = p.read_text()
-        if "billing" not in source:
+        if "billing" not in source or not _IMPORTS_BILLING.search(source):
             continue  # imports nothing from it, so no need to parse it
         try:
             tree = ast.parse(source)
         except SyntaxError:
             continue
-        for node in ast.walk(tree):
+        for node in _statements(tree):
             # level>0 = relative import (e.g. coder/openai_agent's `.billing`) — not ours
             if isinstance(node, ast.ImportFrom) and node.level == 0 and node.module \
                     and (node.module == "billing" or node.module.startswith("billing.")):

@@ -55,29 +55,41 @@ def _constructed_class(value: ast.expr, known: dict) -> str | None:
     return name if name in known else None
 
 
+def _scopes(tree: ast.AST) -> list[tuple[list, list]]:
+    """Each scope's (bindings, attribute accesses on a name), in one pass over the tree. A scope is the module or a
+    function, and sees everything nested in it (as ``ast.walk`` of it would)."""
+    scopes: list[tuple[list, list]] = []
+    stack: list[tuple[ast.AST, tuple]] = [(tree, ())]
+    while stack:
+        node, open_scopes = stack.pop()
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Module)):
+            scopes.append(([], []))
+            open_scopes = open_scopes + (scopes[-1],)
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    for bindings, _ in open_scopes:
+                        bindings.append((node, target.id))
+        elif isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name):
+            for _, accesses in open_scopes:
+                accesses.append(node)
+        stack.extend((child, open_scopes) for child in ast.iter_child_nodes(node))
+    return scopes
+
+
 def _scan(tree: ast.AST, path: str, known: dict) -> list[str]:
     """Attribute accesses on locals bound to a repository, in statement order."""
     problems: list[str] = []
 
-    for scope in ast.walk(tree):
-        if not isinstance(scope, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Module)):
-            continue
+    for assigned, accesses in _scopes(tree):
         # (line, name) -> class, so a later rebinding of the same name wins for
         # accesses below it. Handlers reuse `repo` for two repositories in one
         # function; whole-function maps report the other one's methods missing.
-        bindings: list[tuple[int, str, str | None]] = []
-        for node in ast.walk(scope):
-            if isinstance(node, ast.Assign):
-                cls = _constructed_class(node.value, known)
-                for target in node.targets:
-                    if isinstance(target, ast.Name):
-                        bindings.append((node.lineno, target.id, cls))
+        bindings = [(node.lineno, name, _constructed_class(node.value, known)) for node, name in assigned]
         if not any(cls for _, _, cls in bindings):
             continue
 
-        for node in ast.walk(scope):
-            if not (isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name)):
-                continue
+        for node in accesses:
             candidates = [
                 (line, cls) for line, name, cls in bindings
                 if name == node.value.id and line <= node.lineno
@@ -94,14 +106,16 @@ def test_every_called_repository_method_exists():
     known = _repository_members()
     assert "ConversationRepo" in known, "repository package did not parse"
 
+    # A local is bound to a repository by calling its class: a file that calls
+    # none binds none, so it needs no parse. Only names starting as a class does
+    # are read (every call's name was most of the test's time).
+    calls = re.compile(rf"\b([{''.join(sorted({name[0] for name in known}))}]\w*)[\s\\]*\(")
     problems: list[str] = []
     for path in judged_files(sorted(BACKEND.rglob("*.py"))):
         if any(p in {"__pycache__", ".venv", "tests"} for p in path.parts):
             continue
         source = path.read_text(errors="ignore")
-        # A local is bound to a repository by calling its class: a file that calls
-        # none binds none, so it needs no parse.
-        if known.keys().isdisjoint(re.findall(r"(\w+)[\s\\]*\(", source)):
+        if known.keys().isdisjoint(calls.findall(source)):
             continue
         try:
             tree = ast.parse(source)
