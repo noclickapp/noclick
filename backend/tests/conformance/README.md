@@ -65,6 +65,9 @@ A manifest entry:
   (`api_base_url`) can bind the variable instead; a request never supplies its
   own server. Matching still checks scheme, host, port and base path.
 - `auth_override`, `{"scheme": "basic"|"bearer"|"token", "source": "<docs URL>"}`,
+  or a documented placement `{"in": "header"|"query"|"cookie", "name": "<name>",
+  "prefix": "<literal prefix, optional>", "source": "<docs URL>"}` (Zoho's
+  `Authorization: Zoho-oauthtoken <token>`, Wix's bare key in `Authorization`),
   replaces the spec's security for placement checks only, where the spec
   declares none or the wrong one. The docs URL is required and recorded.
 - `credentials` (named credential objects) with `operation_credentials`

@@ -1664,16 +1664,29 @@ class Contract:
         self.doc = doc
         self.auth_override = auth_override
         if auth_override is not None:
+            # Either one of the HTTP schemes, or where the provider documents the credential goes: a header, query
+            # parameter or cookie, optionally after a literal prefix (Zoho's "Zoho-oauthtoken ", Wix's bare key).
+            placement = (
+                isinstance(auth_override, dict)
+                and "scheme" not in auth_override
+                and auth_override.get("in") in {"header", "query", "cookie"}
+                and isinstance(auth_override.get("name"), str)
+                and auth_override["name"].strip()
+                and isinstance(auth_override.get("prefix", ""), str)
+            )
             if (
                 not isinstance(auth_override, dict)
-                or str(auth_override.get("scheme", "")).lower()
-                not in {"basic", "bearer", "token"}
+                or not (
+                    placement
+                    or str(auth_override.get("scheme", "")).lower()
+                    in {"basic", "bearer", "token"}
+                )
                 or urlsplit(auth_override.get("source", "")).scheme
                 not in {"http", "https"}
                 or not urlsplit(auth_override["source"]).netloc
             ):
                 raise ValueError(
-                    "Auth override requires an HTTP scheme and documentation URL"
+                    "Auth override requires an HTTP scheme or a documented credential placement, and a documentation URL"
                 )
         # jsonschema silently accepts every value for an uninstalled optional
         # format validator. A minimal CI install must enforce the same boundary
@@ -1816,6 +1829,13 @@ class Contract:
             security = [{"override": []}]
             schemes = {
                 "override": {"type": "http", "scheme": self.auth_override["scheme"]}
+                if "scheme" in self.auth_override
+                else {
+                    "type": "apiKey",
+                    "in": self.auth_override["in"],
+                    "name": self.auth_override["name"],
+                    "_override_prefix": self.auth_override.get("prefix", ""),
+                }
             }
 
         def present(name):
@@ -1827,7 +1847,9 @@ class Contract:
                     "query": request.url.params,
                     "cookie": cookie_values(request),
                 }
-                return bool(locations[scheme["in"]].get(scheme["name"]))
+                value = locations[scheme["in"]].get(scheme["name"]) or ""
+                prefix = scheme.get("_override_prefix", "")
+                return value[: len(prefix)].lower() == prefix.lower() and bool(value[len(prefix) :].strip())
             auth = request.headers.get("authorization", "").split(" ", 1)
             if len(auth) != 2 or not auth[1].strip():
                 return False
