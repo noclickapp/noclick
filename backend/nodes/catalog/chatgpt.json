@@ -24,6 +24,181 @@
  ],
  "operations": [
   {
+   "name": "create_response",
+   "display_name": null,
+   "category": null,
+   "description": "Generate text or structured content with the Responses API.",
+   "is_trigger": false
+  },
+  {
+   "name": "get_response",
+   "display_name": null,
+   "category": null,
+   "description": "Get response using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "delete_response",
+   "display_name": null,
+   "category": null,
+   "description": "Delete response using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "cancel_response",
+   "display_name": null,
+   "category": null,
+   "description": "Cancel response using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "list_response_input_items",
+   "display_name": null,
+   "category": null,
+   "description": "List response input items using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "create_chat_completion",
+   "display_name": null,
+   "category": null,
+   "description": "Generate a chat completion from text messages; optionally store it for later reads.",
+   "is_trigger": false
+  },
+  {
+   "name": "search_vector_store",
+   "display_name": null,
+   "category": null,
+   "description": "Search a vector store for relevant text chunks.",
+   "is_trigger": false
+  },
+  {
+   "name": "get_chat_completion",
+   "display_name": null,
+   "category": null,
+   "description": "Get chat completion using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "delete_chat_completion",
+   "display_name": null,
+   "category": null,
+   "description": "Delete chat completion using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "list_chat_messages",
+   "display_name": null,
+   "category": null,
+   "description": "List chat messages using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "create_embedding",
+   "display_name": null,
+   "category": null,
+   "description": "Create numeric embedding vectors for text.",
+   "is_trigger": false
+  },
+  {
+   "name": "create_moderation",
+   "display_name": null,
+   "category": null,
+   "description": "Classify text against OpenAI safety categories.",
+   "is_trigger": false
+  },
+  {
+   "name": "list_models",
+   "display_name": null,
+   "category": null,
+   "description": "List models using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "get_model",
+   "display_name": null,
+   "category": null,
+   "description": "Get model using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "list_files",
+   "display_name": null,
+   "category": null,
+   "description": "List files using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "get_file",
+   "display_name": null,
+   "category": null,
+   "description": "Get file using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "delete_file",
+   "display_name": null,
+   "category": null,
+   "description": "Delete file using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "create_batch",
+   "display_name": null,
+   "category": null,
+   "description": "Start asynchronous processing of an existing uploaded batch input file.",
+   "is_trigger": false
+  },
+  {
+   "name": "list_batches",
+   "display_name": null,
+   "category": null,
+   "description": "List batches using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "get_batch",
+   "display_name": null,
+   "category": null,
+   "description": "Get batch using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "cancel_batch",
+   "display_name": null,
+   "category": null,
+   "description": "Cancel batch using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "create_vector_store",
+   "display_name": null,
+   "category": null,
+   "description": "Create a vector store, optionally from existing uploaded file IDs.",
+   "is_trigger": false
+  },
+  {
+   "name": "list_vector_stores",
+   "display_name": null,
+   "category": null,
+   "description": "List vector stores using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "get_vector_store",
+   "display_name": null,
+   "category": null,
+   "description": "Get vector store using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
+   "name": "delete_vector_store",
+   "display_name": null,
+   "category": null,
+   "description": "Delete vector store using the corresponding OpenAI endpoint.",
+   "is_trigger": false
+  },
+  {
    "name": "on_event",
    "display_name": "On OpenAI Event",
    "category": "Triggers",
