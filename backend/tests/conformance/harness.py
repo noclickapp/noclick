@@ -768,6 +768,29 @@ def load_specs(provider):
     return [load_spec(provider, spec) for spec in entry["specs"]]
 
 
+def bind_server_origin(server, server_url):
+    """The URL a server whose origin the spec leaves unknown takes from the catalog's documented `server_url`, or None.
+
+    Two shapes leave it unknown. A relative server (`/v1`) resolves, as OpenAPI says, against a host: the documented
+    API's origin, keeping its own path (so `server_url` https://api.example.test/v1 and `/v1` give that same URL).
+    An origin placeholder before a base path that the spec never defines (`{{API_URL}}/v2/public/`, Postman's syntax,
+    in VirtualBadge's spec; or `{base}/v1` with no default) stands for the whole documented `server_url`, its base path
+    kept after it. A whole-URL `{variable}` keeps its own binding rules below."""
+    url = server.get("url") if isinstance(server, dict) else None
+    if not server_url or not isinstance(url, str):
+        return None
+    if url.startswith("/") and not url.startswith("//"):
+        origin = urlsplit(server_url)
+        return f"{origin.scheme}://{origin.netloc}" + url.rstrip("/")
+    placeholder = re.fullmatch(r"\{\{([^{}]+)\}\}(/.*)?|\{([^{}]+)\}(/.*)", url)
+    if placeholder:
+        name = placeholder[1] or placeholder[3]
+        path = placeholder[2] or placeholder[4] or ""
+        if not (server.get("variables") or {}).get(name, {}).get("default"):
+            return server_url.rstrip("/") + path.rstrip("/")
+    return None
+
+
 def cookie_values(request):
     cookie = SimpleCookie()
     cookie.load(request.headers.get("cookie", ""))
@@ -1597,6 +1620,10 @@ class Contract:
             if "servers" in obj and not obj["servers"]:
                 obj["servers"] = [{"url": server_url or "/"}]
             for server in obj.get("servers", []):
+                bound = bind_server_origin(server, server_url)
+                if bound:
+                    server["url"] = bound
+                    continue
                 variable = re.fullmatch(r"\{([^}]+)\}", server["url"])
                 if variable:
                     name = variable[1]
