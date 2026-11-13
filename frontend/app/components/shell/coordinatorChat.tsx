@@ -5,7 +5,7 @@
 import { createContext, Suspense, useContext, type ComponentType, type ReactNode } from 'react';
 import type { AgentChatMessage } from '~/hooks/useAgentChat';
 import type { ChatUpload } from '~/hooks/useChatAttachments';
-import type { CoordinatorJobs, ThreadJobs } from '~/hooks/useCoordinatorJobs';
+import type { ThreadJobs } from '~/hooks/useCoordinatorJobs';
 import type { MemoryTransport } from '~/hooks/useCoordinatorMemories';
 import type { AgentChatAttachment, ChatReference } from '~/lib/agentChat';
 import type { ChatFile } from '~/hooks/useChatFiles';
@@ -46,23 +46,30 @@ export interface CoordinatorChat {
     /** What works beside the conversation and what needs the person, drawn by the platform that runs the agents
      *  (hosted: Work's Beside card and rail, with the account's asks on top). It draws nothing when nothing is going. */
     Beside?: ComponentType<ChatBesideProps>;
+    /** The platform's own drawing of the thread, in place of the messages' transcript (hosted: Work's rows over the
+     *  conversation it keeps live itself), with what the page reads of it: how many things it holds, what changes as it
+     *  moves (to follow the newest), and the automations being set up in it. `messages` is then empty. */
+    thread?: { Transcript: ComponentType<ChatTranscriptProps>; size: number; moved: unknown; setups: readonly string[] };
     /** The coordinator's own switchers, drawn by the platform that runs it: its model beside Send, the row under the
      *  box (the account its model runs on, where it runs, its budget), and, while it can't run what's picked, the
      *  Send that asks for an account instead (`ask`, which Enter opens too). */
     composerControls?: { model: ReactNode; footer: ReactNode; ask?: { button: ReactNode; open: () => void } | null };
 }
 
-/** What the Beside reads: the thread, the work its turns started as the thread follows it, how to start a reply in
+/** What the Beside reads from the page (the thread it reads from its platform's own chat): how to start a reply in
  *  the composer, the chat column's width, and where beside the chat it may open a column of its own (a laptop's: a
  *  helper's conversation), null until the page has laid it out. It floats over the column's top right and says how much
  *  of the column's right the thread and the composer give it (`onReserve`). */
 export interface ChatBesideProps {
-    messages: AgentChatMessage[];
-    jobs: CoordinatorJobs;
     draft: (text: string) => void;
     aside: HTMLElement | null;
     width: number;
     onReserve: (px: number) => void;
+}
+
+export interface ChatTranscriptProps {
+    /** How a reference chip names an account, in its app's logo. */
+    referenceDisplay?: (reference: ChatReference) => { label: string; mark: ReactNode } | undefined;
 }
 
 /** A workflow picked on a public page (an /agents page, /mcp), made and now set up from the chat. */

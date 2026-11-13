@@ -185,14 +185,17 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
     const arrival = useScaffoldArrival(conversationId, coordinator.arrive);
     const { arriving } = arrival;
     // Until its note is in the thread, the agent being set up holds the thread open.
-    const settingUp = !!arriving && !messages.some((m) => m.setup && m.setup.workflow_id === arriving.workflowId);
+    // A platform that draws the thread itself says what the page needs of it; else the messages do.
+    const platformThread = coordinator.thread;
+    const size = platformThread ? platformThread.size : messages.length;
+    const settingUp = !!arriving && !(platformThread ? platformThread.setups.includes(arriving.workflowId ?? '') : messages.some((m) => m.setup && m.setup.workflow_id === arriving.workflowId));
     const lastText = messages[messages.length - 1]?.text;
-    const view = settingUp || messages.length > 0 ? 'thread' : loaded ? 'start' : 'loading';
+    const view = settingUp || size > 0 ? 'thread' : loaded ? 'start' : 'loading';
     const empty = view === 'start';
     // Pinned to the newest message unless the reader scrolled up, including while a card that loads after its message
     // (a canvas, a list of numbers) grows the thread.
-    const scroller = useStickToBottom([messages.length, lastText?.length ?? 0, isStreaming]);
-    // The work the thread's turns started, followed once: its cards and the Beside read it.
+    const scroller = useStickToBottom(platformThread ? [platformThread.moved, isStreaming] : [messages.length, lastText?.length ?? 0, isStreaming]);
+    // The work the thread's turns started, followed once for its cards (a platform drawing the thread follows its own).
     const jobs = useTranscriptJobs(messages, coordinator.followJobs);
 
     const { readyAttachments, uploading, clearAttachments } = files;
@@ -342,7 +345,7 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
             className={empty && !inPhone ? 'px-0 pb-0 pt-0 sm:px-0' : undefined}
         />
     );
-    const beside = Beside && <Beside messages={messages} jobs={jobs} draft={draftAndFocus} aside={aside} width={width} onReserve={setReserve} />;
+    const beside = Beside && <Beside draft={draftAndFocus} aside={aside} width={width} onReserve={setReserve} />;
     const reserved = reserve ? { paddingRight: reserve } : undefined;
 
     const memories = (
@@ -423,9 +426,13 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
                 {beside}
                 <div ref={scroller.ref} onScroll={scroller.onScroll} className="min-h-0 flex-1 overflow-y-auto scrollbar-subtle" style={reserved}>
                     <div className={cn('mx-auto w-full max-w-3xl px-5 pb-10 sm:px-6', inPhone ? 'pt-4' : 'pt-14')}>
-                        <CoordinatorTranscript messages={messages} isStreaming={isStreaming} errorReason={errorReason} referenceDisplay={referenceDisplay} jobs={jobs} />
+                        {platformThread ? (
+                            <platformThread.Transcript referenceDisplay={referenceDisplay} />
+                        ) : (
+                            <CoordinatorTranscript messages={messages} isStreaming={isStreaming} errorReason={errorReason} referenceDisplay={referenceDisplay} jobs={jobs} />
+                        )}
                         {settingUp && (
-                            <div className={messages.length ? 'mt-6' : undefined}>
+                            <div className={size ? 'mt-6' : undefined}>
                                 <Status state="working">Setting up {arriving.name}</Status>
                             </div>
                         )}

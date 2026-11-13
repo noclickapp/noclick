@@ -53,7 +53,7 @@ function lostLine(lost: string | undefined): string {
     return lost ? `A ${lost} that couldn’t be read` : '';
 }
 
-function WhatsAppTurn({ msg }: { msg: AgentChatMessage }) {
+export function WhatsAppTurn({ msg }: { msg: AgentChatMessage }) {
     const { text, media, shared, lost } = readChannelText(msg.text);
     const time = msg.sentAt ? clockTime(msg.sentAt) : undefined;
     const voice = media.find((m) => m.kind === 'voice' || m.kind === 'audio');
@@ -70,7 +70,7 @@ function WhatsAppTurn({ msg }: { msg: AgentChatMessage }) {
     );
 }
 
-function IMessageTurn({ msg }: { msg: AgentChatMessage }) {
+export function IMessageTurn({ msg }: { msg: AgentChatMessage }) {
     const { text, media, lost } = readChannelText(msg.text);
     const photos = media.filter((m) => m.kind === 'image').map((m) => m.url);
     const files = media.filter((m) => m.kind !== 'image');
@@ -84,7 +84,7 @@ function IMessageTurn({ msg }: { msg: AgentChatMessage }) {
     );
 }
 
-function EmailTurn({ msg }: { msg: AgentChatMessage }) {
+export function EmailTurn({ msg }: { msg: AgentChatMessage }) {
     const { subject, body } = readEmailText(msg.text);
     const { text, media } = readChannelText(body);
     // Mail since its header was kept says who it was from and to; older mail has only the subject in its text.
@@ -118,7 +118,7 @@ function ReplyReceipt({ msg, live }: { msg: AgentChatMessage; live?: Coordinator
 
 const CALL_LINES_SHOWN = 8;
 
-function CallTurn({ call }: { call: CallGroup }) {
+export function CallTurn({ call }: { call: CallGroup }) {
     const [all, setAll] = useState(false);
     const first = call.turns[0];
     const last = call.turns[call.turns.length - 1];
