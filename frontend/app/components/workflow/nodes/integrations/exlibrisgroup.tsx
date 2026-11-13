@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const ExLibrisIcon = ({
     className,
@@ -11,22 +12,7 @@ const ExLibrisIcon = ({
     className?: string;
     style?: CSSProperties;
 }) => (
-    <>
-        <img
-            src="/icons/exlibrisgroup.svg"
-            alt=""
-            aria-hidden="true"
-            className={`${className ?? ''} dark:hidden`}
-            style={style}
-        />
-        <img
-            src="/icons/exlibrisgroup-dark.svg"
-            alt=""
-            aria-hidden="true"
-            className={`${className ?? ''} hidden dark:block`}
-            style={style}
-        />
-    </>
+    <ThemedBrandImg light="/icons/exlibrisgroup.svg" dark="/icons/exlibrisgroup-dark.svg" className={className} style={style} />
 );
 
 export const ExLibrisNode: NodeDefinition = {
