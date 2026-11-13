@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/messagebird.svg",
+  "source": "https://developers.messagebird.com/img/glyph.svg",
+  "source_page": "https://developers.messagebird.com/ (header <img class=\"logo\" src=\"/img/glyph.svg\" alt=\"Messagebird logo\">; the same site whose favicon.png the PR ships)",
+  "date": "2026-11-13",
+  "license": "MessageBird (now Bird) trademark; used solely to identify the MessageBird (now Bird) integration",
+  "sha256": "999e4e3356b074ab1d5309d855a46b4075710f15a451a70b6476117a4a1061b5",
+  "source_sha256": "b2b0ad195fb4c31aa1e4ddcbc087396137fc7c160ffdc49c852a1b79982ce8a7",
+  "edits": [
+    "cropped the viewBox to the bird (pad 0.02)",
+    "clean"
+  ]
+}
