@@ -16,9 +16,11 @@ someone waits on that hasn't said anything yet stops there too when its caller g
 its line in that one closing call (``owes_line``): left to say it by itself, a texted "Ok" turn made one more call,
 answered with nothing twice and ended with no reply (2026-10-28). Work handed to the person the turn is for instead
 (``ENDS_TURN`` = ``THEIRS``: a wake-up on something only they can finish, a sign-in or an approval) owes that line too
-when the turn's words all came before work it did since: a turn that opened on "I'll set it up", made an agent and its
-channel and waited on a WhatsApp sign-in ended there, never saying what was made or that a QR waited on them
-(2026-11-13). A result that stops the work where it stands
+when the turn's words all came before work it did since (a step's words come before its own calls: they say what it's
+about to do): a turn that opened on "I'll set it up", made an agent and its channel and waited on a WhatsApp sign-in
+ended there, never saying what was made or that a QR waited on them (2026-11-13). Only a caller's ``HANDED_ON`` wrap-up
+lets that closing call happen, and only ``THEIRS`` asks for it after words, so a turn nobody waits on, or one waiting
+on running work, says no more than before. A result that stops the work where it stands
 instead (``ENDS_TURN`` = ``STOPPED``: a platform's agent that may not wake itself again to finish it) stops the run
 the same way when its caller gives a ``STOPPED`` wrap-up, whose closing call, whatever the turn said before, says
 where the work stands (``stopped_work``): a woken site build refused its next wake-up ended saying nothing, and its
@@ -149,6 +151,14 @@ def says_something(response: Any) -> bool:
     return any(getattr(item, "type", None) == "message" and any(
         (getattr(part, "text", None) or "").strip() for part in getattr(item, "content", None) or [])
         for item in getattr(response, "output", None) or [])
+
+
+def changes_something(response: Any) -> bool:
+    """Whether a model response calls a tool that may change something: neither a read (``progress.only_reads``) nor
+    the turn's own notes and follow-ups (``progress.only_its_own``)."""
+    return any(getattr(item, "type", None) == "function_call" and not progress.only_its_own(item.name or "")
+               and not progress.only_reads(item.name or "", getattr(item, "arguments", None))
+               for item in getattr(response, "output", None) or [])
 
 
 @dataclass(frozen=True)
@@ -288,9 +298,7 @@ class TurnGuard(RunHooks):
         self.tripped: Optional[str] = None
         self.paused = False
         self.said = False
-        # The last model response had words, and the turn changed something since it last spoke (a call of a
-        # response without words that wasn't a read or the turn's own notes).
-        self._spoke = False
+        # The turn changed something after its last words (``changes_something``).
         self.unsaid_change = False
         self.handed_on = False
         self.owes_line = False
@@ -371,9 +379,10 @@ class TurnGuard(RunHooks):
         if self._inner is not None:
             await self._inner.on_llm_end(context, agent, response)
         self.model_calls += 1
-        self._spoke = says_something(response)
-        self.said = self.said or self._spoke
-        self.unsaid_change = self.unsaid_change and not self._spoke
+        spoke = says_something(response)
+        self.said = self.said or spoke
+        # A step's words come before its calls: one that changes something leaves its words behind that work.
+        self.unsaid_change = changes_something(response) or (self.unsaid_change and not spoke)
         self._check()
 
     async def on_tool_end(self, context, agent, tool, result) -> None:
@@ -396,17 +405,8 @@ class TurnGuard(RunHooks):
             self.owes_line = handing_on != SILENTLY and not spoken
             if self._stop is not None:
                 self._stop()
-        self._note_change(context, tool)
         # A long tool can run the clock out between model calls.
         self._check()
-
-    def _note_change(self, context, tool) -> None:
-        """A call of a response with no words that may have changed something (not a read, not the turn's own notes
-        or follow-ups) leaves the turn's words behind its work (``unsaid_change``) until it speaks again."""
-        name = getattr(context, "tool_name", None) or getattr(tool, "name", None) or ""
-        if not self._spoke and not progress.only_its_own(name) and \
-                not progress.only_reads(name, getattr(context, "tool_arguments", None)):
-            self.unsaid_change = True
 
     def unchanged(self, tool: str, arguments: str) -> Optional[str]:
         """Counts a call that only read (``progress.only_reads``), or starts the count again after one that may have
