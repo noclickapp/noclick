@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/audienceful.svg",
+  "source": "https://www.audienceful.com/ (inline <svg viewBox=\"0 0 25 24\" class=\"text-foreground\"> in the header nav's logo link, fill currentColor)",
+  "source_page": "https://www.audienceful.com/",
+  "date": "2026-11-13",
+  "license": "Audienceful trademark; used solely to identify the Audienceful integration",
+  "sha256": "d690130116ec06c92c3f2d1852180e5cfb5f031e2f38f395baacf9ad668725ea",
+  "source_sha256": "58a31535b46fb45596d7458bbabebe748bd20cf9e198fc30c8c9a5fd872167f6",
+  "edits": [
+    "fill currentColor -> #262626, the site's --foreground in light mode (www.audienceful.com/_next/static/css/*.css :root --foreground:#262626), which is how the header renders it",
+    "cropped the viewBox to the mark (svgtool crop --pad 0.02); svgtool clean"
+  ]
+}
