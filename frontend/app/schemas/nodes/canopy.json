@@ -106,8 +106,8 @@
         "client": {
           "discriminator": {
             "mapping": {
-              "False": "#/$defs/IndividualClient",
-              "True": "#/$defs/BusinessClient"
+              "false": "#/$defs/IndividualClient",
+              "true": "#/$defs/BusinessClient"
             },
             "propertyName": "is_business"
           },

@@ -149,7 +149,8 @@ _init_error: Optional[str] = None
 
 # Tuning matches the pre-refactor DB-thread pool 1:1 so this is a semantic
 # no-op for the underlying Postgres. Change these if traffic patterns shift.
-_POOL_MIN_SIZE = 1
+# Opened at start; idle connections then close down to none (asyncpg >= 0.32 keeps ``min_size`` open for good).
+_POOL_INIT_SIZE = 1
 _POOL_MAX_SIZE = 30
 _POOL_COMMAND_TIMEOUT = 30
 _POOL_ACQUIRE_TIMEOUT = 10
@@ -201,7 +202,8 @@ async def init_native_pool() -> None:
     connect_kwargs = get_asyncpg_connect_kwargs()
     _native_pool = await asyncpg.create_pool(
         url,
-        min_size=_POOL_MIN_SIZE,
+        init_size=_POOL_INIT_SIZE,
+        min_size=0,
         max_size=_POOL_MAX_SIZE,
         command_timeout=_POOL_COMMAND_TIMEOUT,
         timeout=_POOL_ACQUIRE_TIMEOUT,
