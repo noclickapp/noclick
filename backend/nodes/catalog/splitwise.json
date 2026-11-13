@@ -18,6 +18,20 @@
  ],
  "operations": [
   {
+   "name": "on_expense_changed",
+   "display_name": "On New or Updated Expense",
+   "category": "Triggers",
+   "description": "Watch new or updated expenses; existing expenses are baselined when armed.",
+   "is_trigger": true
+  },
+  {
+   "name": "on_new_activity",
+   "display_name": "On New Activity",
+   "category": "Triggers",
+   "description": "Watch recent account activity, including comments, payments and group changes.",
+   "is_trigger": true
+  },
+  {
    "name": "get_current_user",
    "display_name": null,
    "category": null,
@@ -182,7 +196,7 @@
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null,
  "summary": "",
  "retired": null
