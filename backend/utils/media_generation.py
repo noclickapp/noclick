@@ -22,7 +22,7 @@ import logging
 import os
 import time
 from decimal import Decimal
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import httpx
 
@@ -261,12 +261,14 @@ def _pixel_size(body: bytes) -> Tuple[Optional[int], Optional[int]]:
 async def generate_image(
     pool, *, user_id: str, organization_id: Optional[str], prompt: str,
     model: Optional[str] = None, aspect_ratio: Optional[str] = None, email: Optional[str] = None,
-    source: str = "coordinator",
+    source: str = "coordinator", references: Sequence[str] = (),
 ) -> Dict[str, Any]:
     """One image on the platform key through OpenRouter's image endpoint
     (``/api/v1/images``, where image-output models live), stored as account
     files and billed to the account (its org owner under Owner Pays).
-    ``source`` names the caller on the file and the usage event."""
+    ``source`` names the caller on the file and the usage event;
+    ``references`` are pictures (URLs) the image is made from: an edit of one,
+    or several combined."""
     from billing.gates import check_product
     from billing.usage_tracker import usage_tracker
 
@@ -277,6 +279,8 @@ async def generate_image(
     body: Dict[str, Any] = {"model": model, "prompt": prompt, "n": 1}
     if aspect_ratio:
         body["aspect_ratio"] = aspect_ratio
+    if references:
+        body["input_references"] = [{"type": "image_url", "image_url": {"url": url}} for url in references]
     async with httpx.AsyncClient(timeout=300.0) as client:
         resp = await client.post(f"{OPENROUTER_API}/images", headers=openrouter_headers(openrouter_key()), json=body)
     if resp.status_code >= 400:

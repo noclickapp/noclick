@@ -87,6 +87,16 @@ async def test_an_image_is_stored_as_an_account_file_and_billed(seams):
 
 
 @respx.mock
+async def test_an_edit_sends_its_pictures_as_references(seams):
+    call = respx.post("https://openrouter.ai/api/v1/images").mock(return_value=httpx.Response(200, json={
+        "data": [{"b64_json": "iVBORw0KGgpmYWtl", "media_type": "image/png"}], "usage": {"cost": 0.04}}))
+    await media.generate_image(None, user_id=USER, organization_id=None, prompt="make it night",
+                               references=["https://assets.example/street.jpg"])
+    sent = json.loads(call.calls.last.request.read())
+    assert sent["input_references"] == [{"type": "image_url", "image_url": {"url": "https://assets.example/street.jpg"}}]
+
+
+@respx.mock
 @pytest.mark.parametrize("found", [True, False])
 async def test_an_image_whose_answer_carries_no_cost_is_priced_from_openrouters_record(seams, monkeypatch, found):
     from utils.openrouter_cost import CostUnknown
