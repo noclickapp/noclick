@@ -1,0 +1,19 @@
+{
+  "path": "frontend/public/icons/bclaws-dark.svg",
+  "source": "https://www.bclaws.gov.bc.ca/media/img/gov_bc_logo.svg",
+  "source_page": "https://github.com/bcgov/bootstrap-theme/tree/main/src/images (Province of BC's official GitHub org; Apache-2.0)",
+  "source_kind": "company GitHub/npm",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "45899d01e9ce90f93ba9f17c113f298483de1fc42df85912badb23071512598b",
+  "edits": [
+    "removed the white sun-backing path (element 0): on a white tile it is invisible by design, and leaving it in makes 25% of the mark vanish on the light tile per the gate",
+    "cropped the viewBox (--pad 0.02)",
+    "svgtool clean",
+    "kept only the sun symbol (elements 1-4: white backing, gold rays, gold accent, blue waves); removed the BRITISH COLUMBIA wordmark (element 5), the gold rule (element 0) and an empty rect (element 6)",
+    "cropped the viewBox (--pad 0.02; same box as the light file)",
+    "svgtool clean"
+  ],
+  "checked_against": "https://www.bclaws.gov.bc.ca/favicon.ico (gold #FDB913 sun, navy #004B8D waves on white = the light file's exact palette) and the bclaws.gov.bc.ca header logo (reverse version, lighter #4C81AF waves and white sun on the dark header = the dark file)",
+  "source_sha256": "add666a4998a2ee0745d9196f445a0f426fe464ab35b703a15cad6732fdf0915"
+}
