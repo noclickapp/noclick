@@ -1,6 +1,17 @@
 {
   "path": "frontend/public/icons/cycat.svg",
-  "source": "https://www.cycat.org/images/logo/logo.svg",
-  "license": "CC-BY-SA (CyCAT.org website content); CyCAT.org brand mark, used for identification. https://www.cycat.org/",
-  "sha256": "27c45c3ec7233f2d8ed10bd7be33780c2a9a8220dd471e0732e4c082a4787095"
+  "source": "https://www.cycat.org/images/logo/cycat-logo.svg",
+  "source_page": "https://github.com/CyCAT-project/cycat-project-website/tree/dd9324ab5881a26ef95a06a7d34bc2f445b067bc/images/logo (served by www.cycat.org); same drawing in https://github.com/CyCAT-project/cycat-logo (README: 'cycat.org - logo')",
+  "source_kind": "company site",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "d06e3b7a5d3510ecd5b4dc806abd5f6fcba047e5af667befb3f75956d4f81cbe",
+  "edits": [
+    "removed the two <text> wordmark elements ('cycat.org', 'Universal Cybersecurity Resource Catalogue') by deletion only (work/gate3/agents/g3-01/bin/drop_text.py)",
+    "removed the 59%-opacity light-grey backdrop rect (element 0)",
+    "cropped the viewBox to the cat (--pad 0.02)",
+    "svgtool clean"
+  ],
+  "checked_against": "https://www.cycat.org/images/favicon.ico (the site's favicon: the same cat-on-books drawing) and the logo repo's cycat-logo.png",
+  "source_sha256": "276be7beab74059fc9d66e9622231b63c0f455e403f9bdef88f9307da35d8dc6"
 }

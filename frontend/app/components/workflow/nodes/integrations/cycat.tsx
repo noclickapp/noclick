@@ -4,9 +4,9 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const CycatIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/cycat.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <ThemedBrandImg light="/icons/cycat.svg" className={className} style={style} />
 );
 
 export const CycatNode: NodeDefinition = {
