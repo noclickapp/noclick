@@ -135,14 +135,23 @@ async def execute_tool(
 
     tool_info = tool_configs[tool_name]
     tool_type = tool_info.get("tool_type", "workflow")
-    from nodes.agent.platform_tools import PLATFORM_TOOL_TYPES
+    from nodes.agent.platform_tools import PLATFORM_TOOL_TYPES, ROUTED_TOOL_TYPE
 
-    if tool_type in PLATFORM_TOOL_TYPES:
+    if tool_type in PLATFORM_TOOL_TYPES and tool_type != ROUTED_TOOL_TYPE:
         # An integration's "" can be a real value; a platform tool's optional "" never is.
         arguments = without_blanks(arguments, (tool_info.get("_parameters") or {}).get("required") or ())
     if tool_info.get(BOUND_ARGUMENTS_KEY):
         # Before the guard, so it judges the final arguments.
         arguments = apply_bound(arguments, tool_info[BOUND_ARGUMENTS_KEY], tool_info.get("_parameters"))
+    routing_refusal = None
+    if tool_type == ROUTED_TOOL_TYPE:
+        # From here on it is the operation it names: rehearsed, judged, run and recorded as that one.
+        from nodes.agent.platform_tools import route_tool_call
+        from utils.database_pool import get_native_pool
+
+        tool_name, tool_info, arguments, routing_refusal = await route_tool_call(
+            get_native_pool(), tool_name, tool_info, arguments)
+        tool_type = tool_info.get("tool_type", tool_type)
     dispatch_arguments = arguments
     if tool_info.get("node_type") == "automation-shopify":
         from utils.tool_call_log import mark_protected_tool_arguments
@@ -189,7 +198,9 @@ async def execute_tool(
             # one choke point all tool types pass through, so a tool added later
             # is covered without anyone remembering to cover it.
             rehearsal_conversation = _conversation_id_for(node)
-            if tool_type not in REHEARSAL_PASSTHROUGH_TOOL_TYPES and await is_rehearsing(
+            if routing_refusal is not None:
+                result = routing_refusal
+            elif tool_type not in REHEARSAL_PASSTHROUGH_TOOL_TYPES and await is_rehearsing(
                 rehearsal_conversation
             ):
                 span.set_attribute("tool.rehearsed", True)

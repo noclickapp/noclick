@@ -35,12 +35,15 @@ RENDER_TOOL = "render"
 AGENTS_TOOL_TYPE = "agents"
 # The tool type of every tool a platform defines whole for a turn (``PLATFORM_TOOLS_KEY``).
 PLATFORM_TOOL_TYPE = "platform"
+# One whose call the platform routes to an operation it names (``TOOL_ROUTES``): judged, run and recorded as that
+# operation's tool would be.
+ROUTED_TOOL_TYPE = "routed"
 # Excluded from per-harness capability gates (e.g. codex's API-key model gate):
 # platform tools are ambient, not user-wired capability the run depends on.
 PLATFORM_TOOL_TYPES = {
     "submit_feedback", "prompt_builder", "builder_respond", "describe_workflow",
     "email_user", "message_coordinator", "request_connection", "wake_me", "tell_parent", AGENTS_TOOL_TYPE,
-    PLATFORM_TOOL_TYPE, RENDER_TOOL,
+    PLATFORM_TOOL_TYPE, ROUTED_TOOL_TYPE, RENDER_TOOL,
     MEMORY_READ_TOOL_TYPE, MEMORY_WRITE_TOOL_TYPE, SKILL_READ_TOOL_TYPE,
 }
 # The runtime config key a platform sets on an agent's turn to offer
@@ -56,7 +59,8 @@ TELL_PARENT_KEY = "_tellParent"
 AGENT_TOOLS_KEY = "_agentTools"
 # And tools a platform defines whole (a bucket's operations), each called through
 # PLATFORM_TOOLS with its spec: {"tools": [{name, description, parameters, spec,
-# bound_arguments?}]}, the parameters already without what bound_arguments fix.
+# bound_arguments?, routed?}]}, the parameters already without what bound_arguments
+# fix; a routed one's call goes through TOOL_ROUTES instead.
 PLATFORM_TOOLS_KEY = "_platformTools"
 
 def _described(name: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
@@ -317,7 +321,7 @@ def build_platform_tools(
         for tool in platform_tools.get("tools") or []:
             param, cfg = _platform_pair({"type": "function", "function": {
                 "name": tool["name"], "description": tool["description"], "parameters": tool["parameters"],
-            }}, PLATFORM_TOOL_TYPE)
+            }}, ROUTED_TOOL_TYPE if tool.get("routed") else PLATFORM_TOOL_TYPE)
             bound = {BOUND_ARGUMENTS_KEY: tool["bound_arguments"]} if tool.get("bound_arguments") else {}
             pairs.append((param, {**cfg, "spec": tool["spec"], **bound}))
     if enable_coordinator_messages:
@@ -1083,6 +1087,25 @@ async def platform_tool_impl(pool, spec: Optional[Dict[str, Any]], arguments: Di
     if provider is None or not spec:
         return {"success": False, "error": "This tool isn't available here."}
     return await provider(pool, spec=spec, arguments=arguments)
+
+
+async def route_tool_call(pool, tool_name: str, tool_info: Dict[str, Any], arguments: Dict[str, Any]
+                          ) -> Tuple[str, Dict[str, Any], Dict[str, Any], Optional[Dict[str, Any]]]:
+    """A routed tool's call as the operation it names: (its tool name, its tool config, its arguments, None), or the
+    call as made with the refusal it answers with. Every path a call takes asks this before judging or running it."""
+    from utils.capabilities import TOOL_ROUTES, capability
+
+    router = capability(TOOL_ROUTES)
+    if router is None or not tool_info.get("spec"):
+        return tool_name, tool_info, arguments, {"success": False, "error": "This tool isn't available here."}
+    try:
+        routed = await router(pool, spec=tool_info["spec"], arguments=arguments)
+    except Exception as e:
+        logger.exception(f"[PlatformTools] routing {tool_name} failed")
+        return tool_name, tool_info, arguments, {"success": False, "error": str(e) or type(e).__name__}
+    if routed.get("success") is False:
+        return tool_name, tool_info, arguments, routed
+    return routed["tool_name"], routed["tool_info"], routed["arguments"], None
 
 
 async def execute_platform_tool(node: Any, arguments: Dict[str, Any], tool_info: Dict[str, Any]) -> Dict[str, Any]:

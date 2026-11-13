@@ -322,6 +322,13 @@ ANSWER_PICTURES = "agent.answer_pictures"
 # names the tool for policy where the wire name doesn't.
 PLATFORM_TOOLS = "agent.platform_tools"
 
+# The operation a routed platform tool's call names (one tool reaching many
+# operations, nodes.agent.platform_tools.ROUTED_TOOL_TYPE): async (pool, *, spec,
+# arguments) -> {tool_name, tool_info, arguments} as a node_op or node_op_lookup
+# tool's call would be (judged, run and recorded as that tool), or a
+# {success: False, error} refusal. Without one, routed tools refuse every call.
+TOOL_ROUTES = "agent.tool_routes"
+
 # Let an agent keep named notes across its conversations (the memory__search,
 # memory__read, memory__save and memory__delete tools of nodes.agent.agent_memory):
 # async (pool, *, spec, arguments) -> result dict. ``spec`` is the agent's
