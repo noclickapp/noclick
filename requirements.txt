@@ -5,8 +5,8 @@ annotated-types==0.7.0
 fastapi==0.141.1
 starlette==1.6.0
 fastapi-cli==0.0.4
-openai==2.38.0
-openai-agents==0.17.3
+openai==2.54.0
+openai-agents==0.20.0
 pillow==13.0.0
 # An SVG a reply embeds, drawn as the PNG a phone's chat shows (utils/svg_image.py)
 resvg-py==0.4.0

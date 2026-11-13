@@ -115,8 +115,8 @@ class _StreamCostInterceptor:
     of the stream. We update the model's slot on every chunk that carries
     usage data so a provider that splits or repeats usage chunks can't drop
     the cost on the floor. The SDK's stream handler is duck-typed (does
-    ``async for chunk in stream``), so this proxy needs only ``__aiter__`` /
-    ``__anext__``. A model stuck streaming whitespace (``STUCK_WHITESPACE_CHARS``),
+    ``async for chunk in stream``, then ``aclose()``), so this proxy needs only
+    ``__aiter__`` / ``__anext__`` / ``aclose``. A model stuck streaming whitespace (``STUCK_WHITESPACE_CHARS``),
     or a stream silent ``CHUNK_GAP_S`` partway, has its stream closed there and
     ended, its usage chunk unread: billing then counts the call itself
     (``BillingHooks``' fallback). ``started`` reads the first chunk ahead.
@@ -179,6 +179,10 @@ class _StreamCostInterceptor:
             await self._close()
             raise StopAsyncIteration
         return chunk
+
+    async def aclose(self) -> None:
+        """The SDK closes the stream once a call ends, cancelled or not, so the provider stops generating."""
+        await self._close()
 
     async def _close(self) -> None:
         """The provider's stream closed, read no further."""

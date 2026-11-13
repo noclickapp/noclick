@@ -61,6 +61,23 @@ STOPPED_CALL = ("Stopped before it finished: the person stopped this turn (or it
                 "have run to the end and its result isn't known. Don't run it again unless they ask.")
 
 
+# The keys of a message the SDK reads as an easy input message; an assistant message with any other key (``status``)
+# is an output message to it, which it reads only with an ``id``.
+_EASY_MESSAGE_KEYS = frozenset({"content", "role", "type", "phase"})
+
+
+def readable(item: Any) -> Any:
+    """``item`` as the SDK reads it back: an assistant output message stored without its ``id`` (``add_items`` drops it)
+    gets the placeholder id the SDK gives LiteLLM's own replies. From openai-agents 0.19 the Chat Completions converter
+    refuses such a message ("Unhandled item type or structure"), which would fail every turn of every stored thread."""
+    if (isinstance(item, dict) and item.get("type") == "message" and item.get("role") == "assistant"
+            and "id" not in item and not set(item) <= _EASY_MESSAGE_KEYS):
+        from agents.models.fake_id import FAKE_RESPONSES_ID
+
+        return {**item, "id": FAKE_RESPONSES_ID}
+    return item
+
+
 def close_unanswered(items: List[dict]) -> List[dict]:
     """``items`` with a result after each tool call no result answers (``STOPPED_CALL``), right after the call."""
     answered = {it.get("call_id") for it in items if it.get("type") == "function_call_output"}
@@ -150,7 +167,7 @@ class PostgresSession:
         # execute_bash rows) otherwise kills EVERY subsequent turn on the
         # provider's context limit — the conversation heals instead of
         # staying bricked. Read-side only; the stored row is untouched.
-        items = close_unanswered([clip_history_item(it) for it in _extract_history(row["metadata"])])
+        items = close_unanswered([readable(clip_history_item(it)) for it in _extract_history(row["metadata"])])
         if limit is not None and limit < len(items):
             return coherent_tail(items, limit)
         return items

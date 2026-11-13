@@ -214,7 +214,8 @@ def _real_chunk(*, text=None, arguments=None, name=None, call_id=None, usage=Non
 
 class _Stream:
     """A provider stream: ``head`` chunks, then whitespace in a tool call's arguments for ``blank`` chunks (a model
-    stuck until its output cap), then a usage chunk; it records how much was read and whether it was closed."""
+    stuck until its output cap), then a usage chunk; it records how much was read, whether it was closed and how much
+    had been read when it was."""
 
     def __init__(self, head, blank=0):
         from openai.types.completion_usage import CompletionUsage
@@ -224,6 +225,7 @@ class _Stream:
                                                                total_tokens=65546))])
         self.read = 0
         self.closed = False
+        self.read_when_closed = None
 
     def __aiter__(self):
         return self
@@ -237,6 +239,8 @@ class _Stream:
 
     async def aclose(self):
         self.closed = True
+        if self.read_when_closed is None:
+            self.read_when_closed = self.read
 
 
 @pytest.mark.anyio
@@ -284,8 +288,8 @@ async def test_a_model_streaming_whitespace_has_its_call_ended_and_calls_again()
     assert cut.startswith(head) and not cut[len(head):].strip()
     # The chunk that reached the limit isn't passed on.
     assert litellm_model.STUCK_WHITESPACE_CHARS - 3 <= len(cut) - len(head) < litellm_model.STUCK_WHITESPACE_CHARS
-    # A stream that ends on its own is read to its end and never cut.
-    assert answer.read == 2 and not answer.closed
+    # A stream that ends on its own is read to its end and never cut: the SDK closes it only then.
+    assert answer.read == answer.read_when_closed == 2
 
 
 @pytest.mark.anyio
@@ -351,7 +355,7 @@ async def test_a_call_whose_first_chunk_never_comes_is_asked_again(monkeypatch):
     assert result.final_output == "I'm changing the label in the file you sent."
     assert model.await_count == 2
     assert stalled.closed
-    assert answer.read == 2 and not answer.closed
+    assert answer.read == answer.read_when_closed == 2
 
 
 @pytest.mark.anyio
@@ -389,3 +393,28 @@ async def test_a_stream_that_goes_silent_partway_ends_there(monkeypatch):
         got = [c async for c in wrapped]
     assert got == chunks
     assert silent.closed
+
+
+@pytest.mark.anyio
+async def test_a_turn_stopped_mid_reply_closes_the_providers_stream():
+    """A turn stopped while its model was still writing (the person's stop, a guard's ``cancel("immediate")``) left
+    the provider's stream to the garbage collector, so it could go on generating, and billing, a reply nobody would
+    read. The SDK closes the stream once a call ends, cancelled or not, through the wrapper's ``aclose``."""
+    from agents import Agent as SDKAgent
+    from agents import Runner
+    from agents.stream_events import RawResponsesStreamEvent
+
+    writing = _Silent([_real_chunk(text="Here is the first part of a long ")])
+    agent = SDKAgent(name="coordinator", instructions="Help.", model=CostCapturingLitellmModel(model="test/model"))
+    with patch("litellm.acompletion", new=AsyncMock(return_value=writing)):
+        result = Runner.run_streamed(agent, "write me a long story")
+        async for event in result.stream_events():
+            if isinstance(event, RawResponsesStreamEvent) and event.data.type == "response.output_text.delta":
+                result.cancel(mode="immediate")
+        for _ in range(10):
+            if writing.closed:
+                break
+            await asyncio.sleep(0)
+
+    assert result.final_output is None
+    assert writing.closed
