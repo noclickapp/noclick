@@ -203,6 +203,29 @@ OpenalexMcpCredential = mcp_credential("openalex", "https://mcp.openalex.org/mcp
 OpenAlexCredential = Union[OpenAlexAPIKeyCredential, OpenalexMcpCredential]
 
 
+class _WorkPoll(PollTriggerConfigBase):
+    """Watch the latest 100 matching works per tick; narrow busy feeds.
+
+    Requires OpenAlex Member+ or Partner. The first poll baselines silently.
+    """
+    search: str | None = Field(None, min_length=1, title="Search", description="Full-text search to narrow the watched works.")
+    filter: str | None = Field(None, min_length=1, title="Filter", description="OpenAlex field:value filters. Narrow the scope so fewer than 100 works arrive or change between polls.")
+
+
+class OpenAlexOnNewWorkConfig(_WorkPoll):
+    """Watch the latest 100 works by creation date; Member+ or Partner required. First poll baselines silently; narrow busy feeds with search/filter to avoid missing records outside the window."""
+    operation: Literal["on_new_work"] = Field("on_new_work", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "New Work",
+    })
+
+
+class OpenAlexOnUpdatedWorkConfig(_WorkPoll):
+    """Watch the latest 100 works by update timestamp; Member+ or Partner required. Fires once per ID/timestamp after baselining; narrow busy feeds to avoid missing records outside the window."""
+    operation: Literal["on_new_or_updated_work"] = Field("on_new_or_updated_work", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "New or Updated Work",
+    })
+
+
 OpenAlexOperation = Annotated[Union[
     OpenAlexOnNewWorkConfig,
     OpenAlexOnUpdatedWorkConfig,
