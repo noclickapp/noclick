@@ -62,12 +62,26 @@ _WRITES = [
 ]
 
 
+# A conversation's own notes, where the platform keeps them (``spec["notes"]``): written even where the memory is
+# read-only, since nothing else reads them.
+_NOTE = _param(
+    "note", "Rewrite your notes on this conversation: who you're talking with (name, language, what they do), what "
+            "they like and how they want answers, key facts they've shared, what you made or keep for them, and a "
+            "line per day on what you did. Only this conversation's turns see them, at the start of each turn, so "
+            "nothing in them reaches anyone else. Replaces the notes whole: keep what still holds, as bullets, up to "
+            "4,000 characters.",
+    {"content": {"type": "string", "description": "All of the notes, in Markdown."}}, ["content"])
+
+
 def memory_params(spec: Dict[str, Any]) -> List[Tuple[Dict[str, Any], str]]:
     """``(tool param, tool type)`` for a turn's spec: the reads always, the
-    writes unless the platform made this thread's memory read-only."""
+    writes unless the platform made this thread's memory read-only, and the
+    conversation's notes where the platform keeps them."""
     params = [(p, MEMORY_READ_TOOL_TYPE) for p in _READS]
     if spec.get("writes", True):
         params += [(p, MEMORY_WRITE_TOOL_TYPE) for p in _WRITES]
+    if spec.get("notes"):
+        params.append((_NOTE, MEMORY_WRITE_TOOL_TYPE))
     return params
 
 
