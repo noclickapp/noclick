@@ -172,12 +172,40 @@
    "category": "Users",
    "description": "List Account Users",
    "is_trigger": false
+  },
+  {
+   "name": "on_new_or_updated_event",
+   "display_name": "New or Updated Event",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_new_or_updated_attendee",
+   "display_name": "New or Updated Attendee",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_new_or_updated_contact",
+   "display_name": "New or Updated Contact",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_new_or_updated_session",
+   "display_name": "New or Updated Session",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null,
  "summary": "",
  "retired": null
