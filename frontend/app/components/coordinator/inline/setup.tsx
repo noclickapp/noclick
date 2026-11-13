@@ -64,6 +64,7 @@ export function ConnectAccountCard({
     requested,
     renderMethod,
     showQr = false,
+    onPlan,
 }: {
     mark: ReactNode;
     name: string;
@@ -75,6 +76,8 @@ export function ConnectAccountCard({
     renderMethod: (method: ProvideCredentialMethod) => ReactNode;
     /** Start with the QR code showing. */
     showQr?: boolean;
+    /** The plan sign-ins have a card of their own (the plan offer): switching to one goes back there. */
+    onPlan?: () => void;
 }) {
     const [chosen, setChosen] = useState(requested);
     const [qrShown, setQrShown] = useState(showQr);
@@ -96,7 +99,12 @@ export function ConnectAccountCard({
                             </button>
                         )}
                         {others.map((other) => (
-                            <button key={other.credential_type} type="button" className={PILL_QUIET} onClick={() => setChosen(other.credential_type)}>
+                            <button
+                                key={other.credential_type}
+                                type="button"
+                                className={PILL_QUIET}
+                                onClick={() => (onPlan && kindFromBackendMethod(other) === 'agent_oauth' ? onPlan() : setChosen(other.credential_type))}
+                            >
                                 {otherWay(other, name)}
                             </button>
                         ))}

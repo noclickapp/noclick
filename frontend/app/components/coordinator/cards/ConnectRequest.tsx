@@ -30,9 +30,11 @@ export interface ConnectRequestProps {
     onFulfilled: (credentialId?: string) => void;
     /** Read the request again: after a failed read, or when a save finds it gone, ended or out of tries. */
     onRetry: () => void;
+    /** Where its plan sign-ins are offered instead (`ConnectAccountCard`). */
+    onPlan?: () => void;
 }
 
-export default function ConnectRequest({ token, requested, name, mark, meta, onProvided, onFulfilled, onRetry }: ConnectRequestProps) {
+export default function ConnectRequest({ token, requested, name, mark, meta, onProvided, onFulfilled, onRetry, onPlan }: ConnectRequestProps) {
     const apiBase = apiBaseUrl();
     const request = useCredentialRequest(token, apiBase);
     const serviceName = getProviderConfigByCredentialType(requested)?.name ?? name;
@@ -50,6 +52,7 @@ export default function ConnectRequest({ token, requested, name, mark, meta, onP
             meta={meta}
             requested={requested}
             methods={request.status === 'ready' ? request.methods : undefined}
+            onPlan={onPlan}
             renderMethod={(method) =>
                 signsInOnlyInApp(method) ? (
                     <ConnectElsewhere name={name} place={CONNECTIONS.place} onOpen={CONNECTIONS.open} />

@@ -22,6 +22,7 @@ import { useCredentialList } from '~/hooks/useCachedCredentialList';
 import { useCredentialApprovalReview } from '~/hooks/useCredentialApprovalReview';
 import { useSocketEvent } from '~/hooks/useSocketEvent';
 import { useTextNoClick } from '~/hooks/useTextNoClick';
+import { agentCompanyOf } from '~/lib/agentCredentialModel';
 import { failed, obj, str, type CoordinatorToolCall } from '~/lib/coordinatorToolCalls';
 import { formatPhoneForDisplay } from '~/lib/phoneFormat';
 import { socketCall } from '~/lib/socketCall';
@@ -58,8 +59,23 @@ export function ConnectCard({ call }: { call: CoordinatorToolCall }) {
 }
 
 /** An account to connect, connected on the card over the request behind a provide link (`url`): the coordinator's
- *  own (connect_credential) or one a platform agent's connect link made. `requestId` hears it fulfilled elsewhere. */
-export function ConnectAccount({ type, url, requestId, message, startedAt }: { type: string; url: string; requestId?: string; message?: string; startedAt: number }) {
+ *  own (connect_credential) or one a platform agent's connect link made. `requestId` hears it fulfilled elsewhere;
+ *  `onPlan` is where its plan sign-ins are offered instead. */
+export function ConnectAccount({
+    type,
+    url,
+    requestId,
+    message,
+    startedAt,
+    onPlan,
+}: {
+    type: string;
+    url: string;
+    requestId?: string;
+    message?: string;
+    startedAt: number;
+    onPlan?: () => void;
+}) {
     const token = provideToken(url);
     const services = useCatalogServices();
     const { credentials, loaded } = useCredentialList();
@@ -85,7 +101,8 @@ export function ConnectAccount({ type, url, requestId, message, startedAt }: { t
     }, []);
     if (!token) return null;
     const service = services.find((s) => s.acceptedCredentialTypes.includes(type));
-    const label = service?.label ?? humanizeCredentialLabel(type.replace(/_(oauth|api_key|token)$/, '').replace(/_/g, ' '));
+    // A model's key or plan is named for its company ("Anthropic"), not its type ("agent anthropic").
+    const label = service?.label ?? agentCompanyOf(type)?.title ?? humanizeCredentialLabel(type.replace(/_(oauth|api_key|token)$/, '').replace(/_/g, ' '));
     const { Icon, iconColor } = getCredentialIcon(type);
     const mark = service ? (
         <NodeMark type={service.value} size="md" />
@@ -115,6 +132,7 @@ export function ConnectAccount({ type, url, requestId, message, startedAt }: { t
                 onProvided={provided}
                 onFulfilled={alreadyFulfilled}
                 onRetry={reread}
+                onPlan={onPlan}
             />
         </Suspense>
     );
