@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/clearblade.svg",
   "source": "https://cdn.prod.website-files.com/689c637cfeb6ab91065a42c7/689c71cffae37f71442750b6_Favicon.svg",
-  "license": "ClearBlade trademark; official website favicon used to identify the integration",
-  "sha256": "c0ddb76954b71af9fe9c5936bb3a9f4406453586d1ed2ca1a852ccf72b7899de"
+  "source_page": "https://www.clearblade.com/ (<link rel=\"shortcut icon\">; the PR's recorded source, re-downloaded, sha256 matches the current file)",
+  "source_kind": "company site (SVG favicon)",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "7b2bbd5180d6bf51e6387c1f4053de0f272e2d31329d4c8439d17b307344ae8c",
+  "edits": [
+    "removed the white rounded-square favicon tile (element 0, <rect rx=6 fill=white>)",
+    "cropped the viewBox to the three-bar mark (pad 0.02)",
+    "clean"
+  ],
+  "checked_against": "https://www.clearblade.com/ header logo (inline SVG, viewBox 0 0 187 50: the same three slanted bars drawn in currentColor with no tile, beside the wordmark) and the site's apple-touch-icon https://cdn.prod.website-files.com/689c637cfeb6ab91065a42c7/689c71d2cf6a84c201b68dda_Webclip.svg (same bars, #212121 on a white tile). api_hosts docs.clearblade.com / platform.clearblade.com match. Sheet: work/gate3/sheets/clearblade.png",
+  "source_sha256": "c0ddb76954b71af9fe9c5936bb3a9f4406453586d1ed2ca1a852ccf72b7899de"
 }
