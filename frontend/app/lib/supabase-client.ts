@@ -8,14 +8,11 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { isLocalEdition } from '~/lib/edition';
 import { isLoopbackHostname } from '~/lib/loopback';
 import { worktreeAuthCookieName } from '~/lib/devHost';
+import { heldBrowserClient, holdBrowserClient } from '~/lib/supabaseClientHolder';
 
 // Named, not ReturnType<typeof createBrowserClient>: that function is overloaded,
 // and @supabase/ssr 0.12's overloads make ReturnType resolve to `any`.
 type BrowserClient = SupabaseClient;
-
-let browserClient: BrowserClient | null = null;
-let clientEnv: { SUPABASE_URL: string; SUPABASE_ANON_KEY: string } | null =
-    null;
 
 /**
  * Per-worktree auth-cookie storage key for local development.
@@ -87,13 +84,11 @@ export function getSupabaseBrowserClient(env: {
     SUPABASE_ANON_KEY: string;
 }): BrowserClient {
     // If client exists and env matches, return existing client
-    if (browserClient && clientEnv?.SUPABASE_URL === env.SUPABASE_URL) {
-        return browserClient;
-    }
+    const held = heldBrowserClient(env.SUPABASE_URL);
+    if (held) return held;
 
     // Create new client (first time or env changed)
-    clientEnv = env;
-    browserClient = createBrowserClient(
+    const browserClient = createBrowserClient(
         env.SUPABASE_URL,
         env.SUPABASE_ANON_KEY,
         {
@@ -162,36 +157,6 @@ export function getSupabaseBrowserClient(env: {
         }
     );
 
+    holdBrowserClient(browserClient, env.SUPABASE_URL);
     return browserClient;
-}
-
-/**
- * Checks if a browser client has been initialized.
- * Useful for conditional logic that depends on client availability.
- */
-export function hasSupabaseBrowserClient(): boolean {
-    return browserClient !== null;
-}
-
-/**
- * Returns the singleton browser client if it has been initialized, else null.
- *
- * Use this from non-React modules (e.g. socket auth callbacks) that need to
- * call supabase.auth.getSession() without having access to the env loader
- * data. The hook in useSocketTokenRefresh initializes the singleton on mount,
- * and any code reaching for it via this getter will either get the live
- * client or null (in which case it should fall back to the existing
- * document.cookie path).
- */
-export function getExistingBrowserClient(): BrowserClient | null {
-    return browserClient;
-}
-
-/**
- * Clears the singleton client (for testing or explicit cleanup).
- * Normally you should NOT call this in production.
- */
-export function clearSupabaseBrowserClient(): void {
-    browserClient = null;
-    clientEnv = null;
 }

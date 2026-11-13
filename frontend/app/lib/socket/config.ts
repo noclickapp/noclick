@@ -5,7 +5,7 @@
 
 import type { SocketEnvironment } from '~/types/socket-events.generated';
 import { EventRouting } from '~/types/socket-events.generated';
-import { getExistingBrowserClient } from '~/lib/supabase-client';
+import { getExistingBrowserClient } from '~/lib/supabaseClientHolder';
 import { apiBaseUrl } from '~/lib/hostedDefaults';
 import { BASE_SOCKET_OPTIONS } from './base-options';
 import type { SocketConfigMap } from './types';

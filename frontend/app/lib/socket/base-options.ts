@@ -1,7 +1,7 @@
 // Shared Socket.IO client options, split out of config.ts so the anonymous
 // ShareSocket (public /a/{linkId} agent pages) can reuse them WITHOUT
-// importing config.ts — which statically pulls supabase-client (and with it
-// the whole auth stack) into whatever bundle imports it.
+// importing config.ts — which statically pulls the authenticated socket's
+// setup into whatever bundle imports it.
 
 export const BASE_SOCKET_OPTIONS = {
   path: '/socket.io/',

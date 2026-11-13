@@ -17,7 +17,7 @@ import {
   DEFAULT_EVENT_BUFFER_TTL_MS,
 } from './socket/config';
 import { ConnectionRegistry } from './socket/connection-registry';
-import { getExistingBrowserClient } from './supabase-client';
+import { getExistingBrowserClient } from './supabaseClientHolder';
 import { EventBuffer } from './socket/event-buffer';
 import type { SocketEnvironmentConfig, SocketConnectionState } from './socket/types';
 import { maybeChunk } from './socket/chunking';

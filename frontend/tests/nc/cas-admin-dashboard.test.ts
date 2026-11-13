@@ -5,7 +5,7 @@
 // internal user; a non-internal session would 403 here.
 // Run: nc_run_test({ file: "tests/nc/cas-admin-dashboard.test.ts" })
 import { nc } from '~/lib/nc';
-import { getExistingBrowserClient } from '~/lib/supabase-client';
+import { getExistingBrowserClient } from '~/lib/supabaseClientHolder';
 
 const API = (import.meta.env.VITE_API_URL as string) || '';
 

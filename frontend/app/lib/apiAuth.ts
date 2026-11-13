@@ -7,7 +7,7 @@
 // Bearer header avoids both; the backend prefers it and falls back to the
 // cookie for same-origin callers (`utils.auth.authenticate_http_request`).
 
-import { getExistingBrowserClient } from '~/lib/supabase-client';
+import { getExistingBrowserClient } from '~/lib/supabaseClientHolder';
 
 export async function backendAuthHeaders(): Promise<Record<string, string>> {
   const client = getExistingBrowserClient();

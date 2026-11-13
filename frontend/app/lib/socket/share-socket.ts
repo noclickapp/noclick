@@ -3,8 +3,8 @@
 // it authenticates with {share_link_id, visitor_id} instead of cookies (the
 // backend mints a restricted session limited to shared_agent:* events), keeps
 // its own request/response correlation, and never imports socket/config.ts or
-// socket-receiver (which drag supabase-client + the global handler map into
-// the public bundle).
+// socket-receiver (which drag the global handler map into the public
+// bundle).
 
 import { io, type Socket } from 'socket.io-client';
 import { BASE_SOCKET_OPTIONS } from './base-options';

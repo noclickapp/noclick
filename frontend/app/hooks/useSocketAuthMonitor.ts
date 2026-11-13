@@ -10,7 +10,7 @@ import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { useSocketConnection } from './useSocketConnection';
 import { socketReceiver } from '~/lib/socket-receiver';
-import { getExistingBrowserClient } from '~/lib/supabase-client';
+import { getExistingBrowserClient } from '~/lib/supabaseClientHolder';
 
 interface AuthMonitorConfig {
     enabled?: boolean;
