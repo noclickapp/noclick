@@ -828,6 +828,41 @@ class OperationResult:
         )
 
 
+ORDINARY_IDS = ("1", "a1b2c3", "65f8a2b4c9d7e1234567890b", "3fa85f64-5717-4562-b3fc-2c963f66afa6")
+
+
+def drop_placeholder_patterns(doc):
+    """A path parameter whose `pattern` accepts only its own placeholder (`^:webhookId$`, a Postman conversion
+    artefact in Bouncie's spec) describes the template, not the value: no real id could ever be sent. Such a pattern
+    is dropped; a pattern any ordinary id satisfies, or one the placeholder doesn't, is kept. Rewrites `doc`."""
+    def quietly(value):
+        try:
+            return resolve(doc, value)
+        except (IndexError, KeyError, TypeError, ValueError):
+            return None  # a reference the harness can't follow is left as written
+
+    for item in (doc.get("paths") or {}).values():
+        item = quietly(item)
+        if not isinstance(item, dict):
+            continue
+        operations = [op for op in (quietly(item[m]) for m in METHODS & item.keys()) if isinstance(op, dict)]
+        for parameter in [*item.get("parameters", []), *(p for op in operations for p in op.get("parameters", []))]:
+            parameter = quietly(parameter)
+            if not isinstance(parameter, dict) or parameter.get("in") != "path":
+                continue
+            schema = quietly(parameter.get("schema"))
+            if not isinstance(schema, dict) or not isinstance(schema.get("pattern"), str):
+                continue
+            try:
+                pattern = re.compile(schema["pattern"])
+            except re.error:
+                continue
+            name = parameter.get("name", "")
+            if (any(pattern.search(p) for p in (f":{name}", "{" + name + "}"))
+                    and not any(pattern.search(value) for value in ORDINARY_IDS)):
+                del schema["pattern"]
+
+
 def bracket_loads(explode, name, schema_type, location):
     """Stripe's published deepObject extension includes arrays and scalars.
 
@@ -1568,6 +1603,7 @@ class Contract:
                         server["url"] = value
         if not doc.get("servers"):
             doc["servers"] = [{"url": server_url or "/"}]
+        drop_placeholder_patterns(doc)
         # RFC 7235 auth schemes are case-insensitive. HttpProvider lowercases
         # the header scheme but compares it with the spec's spelling verbatim.
         for scheme in doc.get("components", {}).get("securitySchemes", {}).values():
