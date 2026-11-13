@@ -5,28 +5,13 @@ import {
     NodeDefinition,
     SvgIconComponent,
 } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const MotaWordIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <>
-        <img
-            {...props}
-            ref={ref}
-            src="/icons/motaword.svg"
-            alt=""
-            className={`dark:hidden ${className || ''}`}
-            style={style}
-        />
-        <img
-            {...props}
-            src="/icons/motaword-dark.svg"
-            alt=""
-            className={` hidden dark:block ${className || ''}`}
-            style={style}
-        />
-    </>
+    <ThemedBrandImg {...props} ref={ref} light="/icons/motaword.svg" dark="/icons/motaword-dark.svg" className={className} style={style} />
 ));
 MotaWordIcon.displayName = 'MotaWordIcon';
 
