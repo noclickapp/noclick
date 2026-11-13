@@ -192,6 +192,7 @@ async def test_every_credential_class_refuses_an_address_in_its_secret_fields():
 
 class _Node:
     connection_evidence = ConnectionEvidence(operation="list_things", noun="things")
+    retired = None
 
     @classmethod
     def get_config_model(cls):
