@@ -396,8 +396,9 @@ def linked_metadata(metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     return {k: v for k, v in (metadata or {}).items() if k in _linked_index()}
 
 
-def _linked_message(name: str) -> str:
-    cls = resolve_credential_class(_linked_index()[name])[1]
+def _linked_message(name: str, cls: Optional[Type[BaseModel]] = None) -> str:
+    """What refusing linked field ``name`` says: as ``cls`` declares it, else as the class the index names."""
+    cls = cls or resolve_credential_class(_linked_index()[name])[1]
     extra = cls.model_config.get("json_schema_extra")
     how = _LINKED_BY.get(extra.get("x-credential-type") if isinstance(extra, dict) else None, "connect it")
     return f"{_label(name, cls.model_fields[name])} is set by NoClick when you {how}; it can't be entered."

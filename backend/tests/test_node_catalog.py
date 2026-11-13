@@ -31,6 +31,10 @@ BACKEND = Path(__file__).resolve().parents[1]
 
 @pytest.fixture(scope="module")
 def classes():
+    return _judged_classes()
+
+
+def _judged_classes():
     """Every class, or, judging some types (tests/judged_nodes.py), those and every node holding a credential type
     they hold: each lookup below then answers for those types as the walk of all of them would."""
     judged = dict(judged_classes())
@@ -129,15 +133,38 @@ def test_resolved_credential_classes_are_the_class_walks(classes):
 def test_linked_fields_are_the_class_walks(classes):
     from nodes.core import credential_connect
 
-    linked = {}
+    linked, declared = {}, []
     for cls in classes.values():
         for credential_cls in credential_classes_for_node(cls):
             for name in getattr(credential_cls, "linked_fields", ()):
                 linked.setdefault(name, credential_cls)
+                declared.append((name, credential_cls))
     assert linked or narrowed()
     index = credential_connect._linked_index()
     resolved = {name: credential_connect.resolve_credential_class(t)[1] for name, t in index.items()}
-    assert _seen(resolved, linked, linked) == linked
+    if not narrowed():  # the first class in registry order to declare each field; a judged class may not be it
+        assert resolved == linked
+    # A field many classes declare (every vendor's MCP sign-in has mcp_server_url) is indexed under one of them:
+    # each declaring class's field is still refused, and the refusal reads as it would for that class.
+    for name, credential_cls in declared:
+        assert name in resolved and name in getattr(resolved[name], "linked_fields", ()), (name, credential_cls)
+        assert credential_connect._linked_message(name) == credential_connect._linked_message(name, credential_cls), (
+            name, credential_cls)
+
+
+def test_a_run_judging_one_vendors_mcp_sign_in_judges_its_own_linked_field(monkeypatch):
+    """Every vendor's MCP sign-in links mcp_server_url, which the index holds under the first in registry order:
+    a run judging another vendor (freee) checks freee's field against it, never against freee alone (each such
+    integration's pull request failed this way, 11-13)."""
+    from nodes.core import credential_connect
+    from tests import judged_nodes
+
+    assert credential_connect._linked_index()["mcp_server_url"] != "freee_mcp"
+    monkeypatch.setenv(judged_nodes.ENV, "automation-freee")
+    classes = _judged_classes()
+    assert any("mcp_server_url" in getattr(c, "linked_fields", ()) for cls in classes.values()
+               for c in credential_classes_for_node(cls))
+    test_linked_fields_are_the_class_walks(classes)
 
 
 def test_provide_link_lookups_are_the_schema_sweeps(classes, schemas):
