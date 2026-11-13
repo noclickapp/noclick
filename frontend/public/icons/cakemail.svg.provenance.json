@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/cakemail.svg",
-  "source": "https://cakemail.dev/en/logo-light.svg",
-  "license": "Cakemail trademark; official provider logo used for identification",
-  "sha256": "99e5c2a8471b48f656b571bb301a7f518c453a981e87d8d1afd3f280552cb0b9"
+  "source": "https://registry.npmjs.org/@cakemail-org/ui-components/-/ui-components-7.9.12.tgz (package/lib/dist/images/logos/cakemail-logo-color.svg)",
+  "source_page": "npm @cakemail-org/ui-components 7.9.12 (Cakemail's own UI kit: maintainers jonathan@cakemail.com and hdg@cakemail.com, repository ssh://git@repos.cakemail.com/com/ui-bootstrap.git, modified 2026-09-28)",
+  "date": "2026-11-13",
+  "license": "Cakemail trademark; used solely to identify the Cakemail integration",
+  "sha256": "be63584e1a1b4d8616bcb2864ba49f954163d4b1c4c53d87930bb87a19901292",
+  "source_sha256": "694a1c4db98055a680b687fe8fe509e67db29ea3cee98c726e2398c3737edb29",
+  "edits": [
+    "dropped the second, identical <use> of each of the six segment paths (elements 1,3,5,7,9,11: every segment was drawn twice at full opacity; rendering unchanged)",
+    "added a viewBox cropped to the mark (--pad 0.02); the file had only width/height",
+    "svgtool clean"
+  ]
 }
