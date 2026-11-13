@@ -2,14 +2,12 @@ import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 
 const CommonRoomIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <>
-            <img {...props} ref={ref} src="/icons/common-room.svg" alt="" className={`${className || ''} dark:hidden `} style={style} />
-            <img {...props} src="/icons/common-room-dark.svg" alt="" className={`${className || ''} hidden dark:block `} style={style} />
-        </>
+        <ThemedBrandImg {...props} ref={ref} light="/icons/common-room.svg" dark="/icons/common-room-dark.svg" className={className} style={style} />
     ),
 );
 CommonRoomIcon.displayName = 'CommonRoomIcon';
