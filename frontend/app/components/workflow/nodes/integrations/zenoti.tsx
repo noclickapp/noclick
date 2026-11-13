@@ -4,7 +4,7 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const ZenotiIcon = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
-    <img src="/icons/zenoti.png" alt="" aria-hidden="true" className={className} style={{ ...style, objectFit: 'contain' }} />
+    <img src="/icons/zenoti.svg" alt="" aria-hidden="true" className={className} style={{ ...style, objectFit: 'contain' }} />
 );
 const ZenotiNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={ZenotiIcon} iconColor="" />;
 export const ZenotiNode: NodeDefinition = {

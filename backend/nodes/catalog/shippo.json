@@ -513,41 +513,6 @@
    "category": "Addresses",
    "description": "Validates an existing address using an object ID",
    "is_trigger": false
-  },
-  {
-   "name": "on_tracking_updated",
-   "display_name": "On Tracking Updated",
-   "category": "Triggers",
-   "description": "",
-   "is_trigger": true
-  },
-  {
-   "name": "on_transaction_created",
-   "display_name": "On Shipping Label Created",
-   "category": "Triggers",
-   "description": "",
-   "is_trigger": true
-  },
-  {
-   "name": "on_transaction_updated",
-   "display_name": "On Shipping Label Updated",
-   "category": "Triggers",
-   "description": "",
-   "is_trigger": true
-  },
-  {
-   "name": "on_batch_created",
-   "display_name": "On Batch Created",
-   "category": "Triggers",
-   "description": "",
-   "is_trigger": true
-  },
-  {
-   "name": "on_batch_purchased",
-   "display_name": "On Batch Purchased",
-   "category": "Triggers",
-   "description": "",
-   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
