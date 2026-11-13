@@ -274,6 +274,11 @@ class PostmanContract:
             query = {r["key"] for r in enabled(url.get("query"))}
         else:
             raw = url.get("raw", "") if isinstance(url, dict) else url or ""
+            # A collection can carry the request line in its URL ("GET https://…", Dux-Soup's Read User Settings):
+            # the item's own method and a space before it are that method, never part of the URL.
+            method = str(req.get("method", "")).upper()
+            if method and raw[: len(method) + 1].upper() == method + " ":
+                raw = raw[len(method) :].lstrip()
             raw, _, q = raw.partition("?")
             query = {k for k, _ in parse_qsl(q, keep_blank_values=True)}
         # Only base/host variables are expanded. Path segments remain variables,
