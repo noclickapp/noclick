@@ -253,6 +253,17 @@ def _code() -> Code:
     return Code()
 
 
+@pytest.fixture(scope="module", autouse=True)
+def _parse_released_after_the_module():
+    """The parse holds every backend source and each tree read from it, about two million objects.
+    Kept past its module it stays in the worker for the rest of the run, where every later full
+    collection walks it and its memory takes the process past the 3 GB at which the workflow
+    runner collects after each node."""
+    yield
+    recorded.cache_clear()
+    _code.cache_clear()
+
+
 @functools.lru_cache(maxsize=2)
 def recorded(dynamic: frozenset = frozenset(DYNAMIC), hosted: bool = False) -> Dict[Value, List[str]]:
     """Every subtype the engine's writers (``hosted``: a deployment's, under ``cloud/``) can record, with where,

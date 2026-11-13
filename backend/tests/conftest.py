@@ -24,7 +24,7 @@ import os
 import sys
 from cryptography.fernet import Fernet
 
-pytest_plugins = ("tests.fixtures.postgres_fixtures",)
+pytest_plugins = ("tests.fixtures.postgres_fixtures", "tests.fixtures.frozen_heap")
 
 logger = logging.getLogger(__name__)
 
