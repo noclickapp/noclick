@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/walcu-crm-dark.svg",
+  "source": "https://crm.walcu.com/static/logo-dark.svg",
+  "source_page": "https://crm.walcu.com/ (the Walcu CRM app's login page: its unauthenticated bundle /dist/unauthenticated.7800650c.bundle.js references /static/logo-dark.svg)",
+  "source_kind": "company app/login page",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "c4e26a4c64f41943b1083b36ff79e3bb28972af10b1da9bade7129a646de3280",
+  "edits": [
+    "kept the 'W' (element 4), dropped 'ALCU' (elements 0-3) of the WALCU wordmark",
+    "cropped the viewBox to the W (pad 0.02)",
+    "clean",
+    "#042834 -> #FFFFFF on the W (the whole mark is navy and vanishes on the dark tile)"
+  ],
+  "checked_against": "https://www.walcu.com/wp-content/uploads/2020/12/W-de-Walcu-Logo-Mobile.png (the site's mobile header mark, #042834) and https://crm.walcu.com/static/1024.png (the CRM app's manifest/apple-touch icon, #002936): same W shape and navy colour. api_hosts api.crm.walcu.com match.",
+  "source_sha256": "13f0bcef45f537b812469ef952e5e143c4745a8b061feb3a581010bc1ef6f3e6"
+}
