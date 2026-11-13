@@ -140,7 +140,7 @@ for name, spec in OPERATIONS.items():
 
 class ServiceM8JobChangedConfig(WebhookTriggerConfigBase):
     """Receive object changes, including the job UUID and names of changed fields."""
-    model_config = ConfigDict(json_schema_extra={"x-requires-webhook": True, "x-is-trigger": True})
+    model_config = ConfigDict(json_schema_extra={"x-requires-webhook": True})
     operation: Literal["on_job_changed"] = Field("on_job_changed", title="Job Changed", json_schema_extra={
         "ui:hidden": True, "x-is-trigger": True, "x-display-name": "Job Changed", "x-category": "Triggers"})
     webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with ServiceM8 automatically.",

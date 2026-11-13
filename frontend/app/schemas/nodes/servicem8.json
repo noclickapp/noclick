@@ -882,7 +882,6 @@
       },
       "title": "ServiceM8JobChangedConfig",
       "type": "object",
-      "x-is-trigger": true,
       "x-requires-webhook": true
     },
     "ServiceM8ListClientsConfig": {
