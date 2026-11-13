@@ -54,7 +54,12 @@ tenacity==8.5.0
 posthog==7.19.2
 testcontainers==4.13.2
 fakeredis[lua]==2.33.0
-fastmcp==3.4.10
+# 3.4.11 requires certifi >= 2026.10.19, past the eMudhra CA compromise.
+fastmcp==3.4.11
+# The MCP SDK under fastmcp and openai-agents, pinned so an existing environment
+# takes 1.30.0's fixes too: client redirects stay on the endpoint's origin, tool
+# output-schema $refs resolve within the schema, idle sessions expire.
+mcp==1.30.0
 resend==2.19.0
 quickjs==1.19.4
 wahooks==0.11.0
