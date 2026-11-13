@@ -2,10 +2,10 @@ import { memo, type CSSProperties } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const CloverIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/clover-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+    <ThemedBrandImg light="/icons/clover.svg" className={className} style={style} />
 );
 const CloverNodeComponent = (props: NodeProps) => (
     <AutomationNode {...props} Icon={CloverIcon} iconColor="" />
