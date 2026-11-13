@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/meetgeekai.svg",
+  "source": "https://app.meetgeek.ai/web/media/logos/meetgeek/squared-logo.svg",
+  "source_page": "https://app.meetgeek.ai/ (MeetGeek's web app; its bundle names /web/media/logos/meetgeek/squared-logo.svg, logo-mark.svg, full-logo.svg, meetgeek_round_logo.svg)",
+  "source_kind": "company app/login page",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "bbcfaa3cb3ec15da73264cc221cf48da66a0f24c99033c1e254598fea10be7ce",
+  "edits": [
+    "svgtool clean only; the file is MeetGeek's own square app-icon tile (a #5521B5 rounded square with the white mark), kept as published"
+  ],
+  "checked_against": "meetgeek.ai favicon/webclip (https://cdn.prod.website-files.com/63af97f08f22087ab0e44f0a/63bcb98e8eab05a5e0004c20_MeetGeek%20Webclip.png) and the App Store icon (Smart AI Note Taker - MeetGeek, Aivision Products S.R.L.): same white hexagonal 'face' mark on a purple tile. The current meetgeek.ai header logo (inline SVG, color var(--color--purple-800) = #5521B5) uses exactly this file's purple.",
+  "source_sha256": "a4565fb716bb7691680f732b0c98eca6da51a11943077bc60c6c23c233cc0854"
+}
