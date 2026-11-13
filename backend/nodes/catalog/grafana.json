@@ -470,12 +470,19 @@
    "category": "Alerting",
    "description": "",
    "is_trigger": false
+  },
+  {
+   "name": "on_alert_notification",
+   "display_name": "On Alert Notification",
+   "category": "Triggers",
+   "description": "Receive Grafana's default grouped alert notification payload.",
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null,
  "summary": "Manage dashboards, folders, data sources, annotations and alerting.",
  "retired": null
