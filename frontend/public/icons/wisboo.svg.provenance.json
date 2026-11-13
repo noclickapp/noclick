@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/wisboo.svg",
+  "source": "https://cdn.prod.website-files.com/628727089d99546f679d8324/69e2807d0b9d8de3963e7630_824f34c255cae5f8f45620462a1b1897_Logo%20Wisboo.svg",
+  "source_page": "https://www.wisboo.com/ (footer logo <img id=\"Footer-Logo\"> on Wisboo's own Webflow site)",
+  "source_kind": "company site (footer logo)",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "999fec9b702ce6ad65b412080bcbbb10e49b01ab494aafa2ded01abdb78d9f2c",
+  "edits": [
+    "dropped the black 'WISBOO' wordmark path (element 3), kept the magenta owl tile (elements 0-2 with their clipPath)",
+    "clean",
+    "viewBox cropped to the tile, set to the tile's own 0 0 32 32 (crop gave 32.017 wide from an unclipped path edge)"
+  ],
+  "checked_against": "https://docs.wisboo.com/api/fern-docs/favicon.ico?v=9e876601bb81 (the Wisboo API docs' own favicon, 60px: the same white owl on the same #FF27AC rounded tile, same proportions). api_hosts api.wisboo.com / docs.wisboo.com.",
+  "source_sha256": "7d8280320a3249a3a161862b84f92f2e53ff86039260b4ad34a21d6f3ca96a8f"
+}
