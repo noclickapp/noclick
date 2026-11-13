@@ -176,7 +176,8 @@
     "yjs": "^13.6.23"
   },
   "devDependencies": {
-    "@modelcontextprotocol/ext-apps": "^1.0.1",
+    "@modelcontextprotocol/ext-apps": "^1.7.5",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "@playwright/test": "^1.60.0",
     "@react-router/dev": "7.18.2",
     "@tailwindcss/container-queries": "^0.1.1",
