@@ -14,7 +14,11 @@ result says ``SILENTLY`` (nobody waits on its words). Left running, such turns p
 again after each look and wrote one more line about work their person already knew was under way (2026-10-25). A turn
 someone waits on that hasn't said anything yet stops there too when its caller gives a ``HANDED_ON`` wrap-up, and says
 its line in that one closing call (``owes_line``): left to say it by itself, a texted "Ok" turn made one more call,
-answered with nothing twice and ended with no reply (2026-10-28). A result that stops the work where it stands
+answered with nothing twice and ended with no reply (2026-10-28). Work handed to the person the turn is for instead
+(``ENDS_TURN`` = ``THEIRS``: a wake-up on something only they can finish, a sign-in or an approval) owes that line too
+when the turn's words all came before work it did since: a turn that opened on "I'll set it up", made an agent and its
+channel and waited on a WhatsApp sign-in ended there, never saying what was made or that a QR waited on them
+(2026-11-13). A result that stops the work where it stands
 instead (``ENDS_TURN`` = ``STOPPED``: a platform's agent that may not wake itself again to finish it) stops the run
 the same way when its caller gives a ``STOPPED`` wrap-up, whose closing call, whatever the turn said before, says
 where the work stands (``stopped_work``): a woken site build refused its next wake-up ended saying nothing, and its
@@ -99,6 +103,9 @@ CARRIES_ON = "carries_on"
 
 ENDS_TURN = "ends_turn"
 SILENTLY = "silently"
+# Handed to the person the turn is for (what it waits on is theirs to do): words from before the work that led there
+# don't tell them so.
+THEIRS = "theirs"
 # How long past its time limit a call may hold a run before the run is cancelled where it stands.
 OVERDUE_S = 60.0
 # The most a turn's one wrap-up call may take; past it the turn ends on its stopped line alone.
@@ -111,7 +118,8 @@ _wall = time.time
 
 
 def ends_turn(output: Any) -> Any:
-    """What a tool's result says of handing the turn on: ``ENDS_TURN``'s value (true, or ``SILENTLY``), else None."""
+    """What a tool's result says of handing the turn on: ``ENDS_TURN``'s value (true, ``SILENTLY`` or ``THEIRS``),
+    else None."""
     if isinstance(output, str):
         if ENDS_TURN not in output:
             return None
@@ -252,7 +260,8 @@ class TurnGuard(RunHooks):
     With ``ends_unfunded``, a tool the credit gate turned down trips ``FUNDS``, and ``unfunded`` is the gate's words.
     With ``ends_stalled``, calls in a row that only read are noted, then trip ``STALLED`` (``unchanged``).
     With ``ends_unsaid``, a result handing the work of a turn someone waits on ends it before it has said anything,
-    and ``owes_line`` is that its closing call says it. With ``ends_stopped``, a result stopping the work (``STOPPED``)
+    or handing it to them (``THEIRS``) while its words all came before work it did since (``unsaid_change``), and
+    ``owes_line`` is that its closing call says it. With ``ends_stopped``, a result stopping the work (``STOPPED``)
     ends the turn, and ``stopped_work`` is that its closing call says where the work stands. ``so_far``: what the
     turn's earlier runs used (``TurnSoFar``), which this run's counts start from."""
 
@@ -279,6 +288,10 @@ class TurnGuard(RunHooks):
         self.tripped: Optional[str] = None
         self.paused = False
         self.said = False
+        # The last model response had words, and the turn changed something since it last spoke (a call of a
+        # response without words that wasn't a read or the turn's own notes).
+        self._spoke = False
+        self.unsaid_change = False
         self.handed_on = False
         self.owes_line = False
         self.stopped_work = False
@@ -358,7 +371,9 @@ class TurnGuard(RunHooks):
         if self._inner is not None:
             await self._inner.on_llm_end(context, agent, response)
         self.model_calls += 1
-        self.said = self.said or says_something(response)
+        self._spoke = says_something(response)
+        self.said = self.said or self._spoke
+        self.unsaid_change = self.unsaid_change and not self._spoke
         self._check()
 
     async def on_tool_end(self, context, agent, tool, result) -> None:
@@ -376,11 +391,22 @@ class TurnGuard(RunHooks):
         elif handing_on and not (self.tripped or self.handed_on or self.stopped_work) and (
                 handing_on == SILENTLY or self.said or self._ends_unsaid):
             self.handed_on = True
-            self.owes_line = handing_on != SILENTLY and not self.said
+            # Handed to them, words from before the work that led there don't tell them what's theirs to do.
+            spoken = self.said and not (handing_on == THEIRS and self.unsaid_change and self._ends_unsaid)
+            self.owes_line = handing_on != SILENTLY and not spoken
             if self._stop is not None:
                 self._stop()
+        self._note_change(context, tool)
         # A long tool can run the clock out between model calls.
         self._check()
+
+    def _note_change(self, context, tool) -> None:
+        """A call of a response with no words that may have changed something (not a read, not the turn's own notes
+        or follow-ups) leaves the turn's words behind its work (``unsaid_change``) until it speaks again."""
+        name = getattr(context, "tool_name", None) or getattr(tool, "name", None) or ""
+        if not self._spoke and not progress.only_its_own(name) and \
+                not progress.only_reads(name, getattr(context, "tool_arguments", None)):
+            self.unsaid_change = True
 
     def unchanged(self, tool: str, arguments: str) -> Optional[str]:
         """Counts a call that only read (``progress.only_reads``), or starts the count again after one that may have
