@@ -2123,6 +2123,13 @@ class WhatsAppNode(WorkflowNode):
             return None
         return frozenset({"whatsapp_access_token"})
 
+    @staticmethod
+    def _writer(p: Dict[str, Any]) -> str:
+        """Who wrote an inbound message, as WhatsApp names them: a group's participant, else the chat."""
+        data = p.get("_data") if isinstance(p.get("_data"), dict) else {}
+        key = data.get("key") if isinstance(data.get("key"), dict) else {}
+        return str(key.get("participant") or p.get("participant") or p.get("from") or "").strip()
+
     @classmethod
     async def _remember_sender_number(cls, payload: Dict[str, Any]) -> None:
         """Record the number a @lid writer's message names, so a scope written
@@ -2130,9 +2137,7 @@ class WhatsAppNode(WorkflowNode):
         p = payload.get("payload")
         if not isinstance(p, dict) or p.get("fromMe") or not p.get("senderPhone"):
             return
-        data = p.get("_data") if isinstance(p.get("_data"), dict) else {}
-        key = data.get("key") if isinstance(data.get("key"), dict) else {}
-        writer = str(key.get("participant") or p.get("participant") or p.get("from") or "").strip()
+        writer = cls._writer(p)
         number = chat_number(p["senderPhone"])
         if writer.endswith("@lid") and number:
             from utils import whatsapp_lids
@@ -2211,7 +2216,9 @@ class WhatsAppNode(WorkflowNode):
         two agents on different linked numbers would otherwise answer each
         other until credits run out (each reply is a genuine inbound message
         to the other, so ``fromMe`` can't see it). Exact match on the stanza
-        id fingerprinted at send (utils/self_echo.py)."""
+        id fingerprinted at send (utils/self_echo.py). Nor does one from
+        NoClick's own line that names it only by a @lid already known to be it
+        (``_from_noclick_lid``)."""
         event_payload = payload.get("payload")
         if (
             (config or {}).get("operation") != "receive_message"
@@ -2222,7 +2229,21 @@ class WhatsAppNode(WorkflowNode):
         stanza = _stanza_id(event_payload.get("_data"))
         if await is_self_post("whatsapp", stanza):
             return f"message {stanza} was sent by a NoClick WhatsApp node"
+        if await cls._from_noclick_lid(payload):
+            return "message from one of NoClick's own numbers, by its @lid"
         return None
+
+    @classmethod
+    async def _from_noclick_lid(cls, payload: Dict[str, Any]) -> bool:
+        """Whether a message names its writer only by a @lid that an earlier delivery on this connection said is one
+        of NoClick's numbers (``whatsapp_lids``). ``filter_trigger_payload`` judges a number, and a delivery without
+        ``senderPhone`` names none."""
+        from utils import whatsapp_lids
+
+        writer = cls._writer(payload["payload"])
+        if not writer.endswith("@lid"):
+            return False
+        return is_noclick_number((await whatsapp_lids.phones(payload.get("connectionId"), [writer])).get(writer))
 
     @classmethod
     def trigger_fire_budget_channel(
