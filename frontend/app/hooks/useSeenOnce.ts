@@ -35,9 +35,8 @@ export function useSeenOnceState(key: SeenOnceKey) {
             didUpdate = true;
             return { ...prev, seen_once: { ...(prev.seen_once ?? {}), [key]: true } };
         });
-        // Backend write outside the state updater (updaters must be pure), matching
-        // the existing markWelcomeSeen idiom. The provider's cache
-        // effect mirrors the new blob to localStorage automatically.
+        // Backend write outside the state updater (updaters must be pure). The
+        // provider's cache effect mirrors the new blob to localStorage automatically.
         setTimeout(() => {
             if (didUpdate) updateBackend({ seen_once: { [key]: true } });
         }, 0);

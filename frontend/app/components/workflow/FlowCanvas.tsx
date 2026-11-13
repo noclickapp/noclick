@@ -6,7 +6,7 @@
 //
 //   Extracted components (all under ./canvas/):
 //     CanvasTopBar         — top navbar: tab buttons + right-side action menu
-//     CanvasDialogs        — Share, Settings, MinBalance, Publish, Confetti, MobileErrorBanner
+//     CanvasDialogs        — Share, Settings, MinBalance, Publish, MobileErrorBanner
 //     CanvasOverlays       — HoverExecutionGlow, CanvasExternalLinkPill
 //     MobileCanvasChrome   — MobileRunPill, MobileResourcesPill, MobileErrorBanner
 //
@@ -14,7 +14,6 @@
 //     useCanvasViewport              — viewport restore + auto-fit + persist
 //     useClickToAddNode              — node "+" hint → picker → create-connected-node
 //     useNodeConfigValidation        — debounced per-node configValid computation
-//     useWelcomeFlow                 — first-time-user confetti + expansion gate
 //     useWorkflowExecutionTracking   — activeExecutions Map, logs, socket listeners
 //
 //   Extracted libs (pure functions under ~/lib/):
@@ -136,7 +135,6 @@ import {
 import { ErrorNodeNavigator } from './ErrorNodeNavigator';
 import { IncompleteNodeNavigator } from './IncompleteNodeNavigator';
 import { CanvasNavigatorPills } from './canvas/CanvasNavigatorPills';
-import { useWelcomeFlow } from '~/hooks/useWelcomeFlow';
 import { useCanvasViewport } from '~/hooks/useCanvasViewport';
 import { useClickToAddNode } from '~/hooks/useClickToAddNode';
 import { useNodeConfigValidation } from '~/hooks/useNodeConfigValidation';
@@ -580,16 +578,6 @@ const FlowCanvasInner = ({
     const canvasDivRef = useRef<HTMLDivElement | null>(null);
     const panActivationKeyCode = useCtrlPan(canvasDivRef);
 
-    // Check URL params for navigation context
-    const isNewWorkflow = searchParams.get('new') === 'true';
-
-    // Welcome experience for freshly-created workflows: confetti +
-    // ?new=true cleanup + FlowHelperView expansion gate
-    const { confettiTrigger, expansionBlocked } = useWelcomeFlow({
-        isNewWorkflow,
-        setSearchParamsRef,
-    });
-
     // Display metadata hook - manages viewport, selected node, FlowHelperView state, etc.
     const {
         displayMetadata,
@@ -598,7 +586,7 @@ const FlowCanvasInner = ({
         viewport,
         flowHelperHeight,
         isFlowHelperFullScreen,
-        isConfigViewExpanded: rawIsConfigViewExpanded,
+        isConfigViewExpanded,
         flowHelperActiveTab,
         flowHelperSearchQuery,
         setActiveTab,
@@ -621,12 +609,10 @@ const FlowCanvasInner = ({
         flowHelperHeight,
         // The persisted height lingers when the panel is closed; only offset/
         // zoom for it when the panel is actually open.
-        isPanelOpen: !expansionBlocked && rawIsConfigViewExpanded,
+        isPanelOpen: isConfigViewExpanded,
         setViewport,
     });
 
-    // Block FlowHelper for first-time users until welcome completes; returning users are unblocked immediately
-    const isConfigViewExpanded = !expansionBlocked && rawIsConfigViewExpanded;
 
     // Skip the FlowHelper slide-up only when opened via the "F" key (clicks keep
     // their animation). Set by the F toggle; cleared whenever the view closes so
@@ -8786,7 +8772,6 @@ const FlowCanvasInner = ({
                 settingsInitialSection={settingsInitialSection}
                 workflowSettings={workflowSettings}
                 onWorkflowSettingsChange={setWorkflowSettings}
-                confettiTrigger={confettiTrigger}
                 isMobile={isMobile}
                 mobileErrors={mobileErrors}
             />

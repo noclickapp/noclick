@@ -893,7 +893,6 @@ export function WorkflowBrowser({
             setSelectedWorkflow(workflowApp);
             setPendingWorkflowSelect(workflowApp.id);
             const newParams = buildWorkflowParams(workflowApp.id);
-            newParams.set('new', 'true');
             newParams.delete('action');
             navigate(`?${newParams.toString()}`);
         },
