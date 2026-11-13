@@ -1,14 +1,15 @@
 {
   "path": "frontend/public/icons/abysshub.svg",
   "source": "https://abysshub.com/",
-  "source_page": "https://abysshub.com/",
-  "date": "2026-11-11",
-  "license": "AbyssHub trademark; official website asset used to identify the integration",
-  "sha256": "2e644f9440d10d128e8f3df3fbc849cb828c8aa5a6414eb3aa2502053e0bd3fd",
+  "source_page": "https://abysshub.com/ (inline <svg class=\"abyss-icon abyss-icon-body\"> in the header logo, inside span.abyss-icon-contrast.dark-anchor); colours from the site's own stylesheet https://abysshub.com/_next/static/css/b0e2f460defd3871.css",
+  "date": "2026-11-13",
+  "license": "AbyssHub trademark; used solely to identify the AbyssHub integration",
+  "sha256": "ca7e5c9d859489d028d8d40716d7d6239c62b9f8673af045b5b32684c5c6fe6f",
+  "source_sha256": "0428805ae7a9d44d224182bcc6fc1d0a7b012914f5fa7a85138e55df448a2ef3",
   "edits": [
-    "Extracted the abyss-icon-body SVG from the official homepage header; path data is unchanged.",
-    "Removed CSS classes and transparent editor rectangle; fixed dimensions to the original viewBox.",
-    "Set the monochrome path fill to #000000 for light surfaces."
-  ],
-  "notes": "Current company app mark from the website header. No wordmark or added background. The SDK contains an older, different mark; the current website takes precedence."
+    "the site paints the mark by CSS class (fill-snow / fill-smoke); set those as fills with the site's own LIGHT-theme tokens (:root.light --color-snow-rgb 33 31 27 = #211F1B on the outline, teeth and fins, elements 1,3,4,5; --color-smoke-rgb 249 248 246 = #F9F8F6 on the body, element 2)",
+    "removed the transparent pointer-events rect (element 0)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "clean"
+  ]
 }
