@@ -171,12 +171,33 @@
    "category": null,
    "description": "Read age categories used for reservation person counts.",
    "is_trigger": false
+  },
+  {
+   "name": "on_updated_reservation",
+   "display_name": "New or Updated Reservation",
+   "category": "Triggers",
+   "description": "Watch new and updated reservations, including check-in, check-out and cancellation states.\n\n    Poll the last 24 hours, up to 2,000 records, baselining existing records when armed.\n    Only the latest version between polls is delivered.",
+   "is_trigger": true
+  },
+  {
+   "name": "on_updated_customer",
+   "display_name": "New or Updated Guest",
+   "category": "Triggers",
+   "description": "Watch new and updated guest profiles.\n\n    Poll the last 24 hours, up to 2,000 records, baselining existing records when armed.\n    Only the latest version between polls is delivered.",
+   "is_trigger": true
+  },
+  {
+   "name": "on_updated_resource",
+   "display_name": "New or Updated Room / Resource",
+   "category": "Triggers",
+   "description": "Watch new and updated rooms/resources, including housekeeping state changes.\n\n    Poll the last 24 hours, up to 2,000 records, baselining existing records when armed.\n    Only the latest version between polls is delivered.",
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null,
  "summary": "",
  "retired": null
