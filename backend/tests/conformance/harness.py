@@ -864,6 +864,37 @@ def bracket_loads(explode, name, schema_type, location):
     return lists(tree)
 
 
+EXPRESS_SEGMENT = re.compile(r"(?<=/):([A-Za-z_][A-Za-z0-9_]*)(?=/|$)")
+
+
+def path_parameter_names(doc, item, operation):
+    parameters = (resolve(doc, p) for p in [*item.get("parameters", []), *operation.get("parameters", [])])
+    return {p.get("name") for p in parameters if isinstance(p, dict) and p.get("in") == "path"}
+
+
+def express_path_templates(doc):
+    """A `/:name` segment every operation of its path declares as a path parameter is that parameter's template, as
+    Express-style exports write it (Eduzz: `/webhook/v1/subscription/:id`); OpenAPI reads it as literal text, so no
+    request could match. A colon segment no operation declares stays literal. Rewrites `doc` in place."""
+    paths = doc.get("paths") or {}
+    renamed = {}
+    for path, item in paths.items():
+        names = EXPRESS_SEGMENT.findall(path)
+        templated = EXPRESS_SEGMENT.sub(r"{\1}", path)
+        if not names or templated in paths:
+            continue
+        try:
+            item = resolve(doc, item)
+            operations = [resolve(doc, item[m]) for m in METHODS & item.keys()]
+            declared = all(set(names) <= path_parameter_names(doc, item, op) for op in operations)
+        except (AttributeError, IndexError, KeyError, TypeError, ValueError):
+            continue  # a reference the harness can't follow leaves the path as written
+        if operations and declared:
+            renamed[path] = templated
+    if renamed:
+        doc["paths"] = {renamed.get(path, path): item for path, item in paths.items()}
+
+
 def template_pattern(path):
     """Escape literal URL characters; retain captures for actual path values."""
     parts, names = [], []
@@ -1484,6 +1515,7 @@ class Contract:
         # OAS empty servers means relative URLs. A catalog can bind these to the
         # documented provider host without modifying the pinned document.
         doc = copy.deepcopy(doc)
+        express_path_templates(doc)
         if server_url:
             base = urlsplit(server_url)
             if (
