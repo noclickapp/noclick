@@ -5,10 +5,10 @@ import type { CSSProperties } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const DixaIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/dixa.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+    <ThemedBrandImg light="/icons/dixa.svg" dark="/icons/dixa-dark.svg" className={className} style={style} />
 );
 
 export const DixaNode: NodeDefinition = {
