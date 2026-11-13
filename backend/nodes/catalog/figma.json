@@ -200,12 +200,19 @@
    "category": "Webhooks",
    "description": "Remove a webhook subscription.",
    "is_trigger": false
+  },
+  {
+   "name": "on_event",
+   "display_name": "On Figma Event",
+   "category": "Triggers",
+   "description": "Start when a design changes, a comment arrives, or a library is published.\n\n    https://developers.figma.com/docs/rest-api/webhooks-events/",
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null,
  "summary": "",
  "retired": null
