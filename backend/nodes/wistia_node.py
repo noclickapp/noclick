@@ -202,6 +202,27 @@ class CreateCaptions(Media):
     language: str | None = Field(None, pattern=r"^[a-z]{3}$", description="ISO-639-2 three-letter language code.")
 
 
+class OnNewMedia(PollTriggerConfigBase):
+    """Watch new media; the first poll records existing media without firing.
+
+    Monitors up to 2,000 media per scope; choose a folder for larger libraries.
+    """
+    operation: Literal["on_new_media"] = Field("on_new_media", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Media",
+    })
+    folder_id: Identifier | None = Field(None, description="Optional folder hashed ID to monitor.")
+
+
+class OnUpdatedMedia(PollTriggerConfigBase):
+    """Watch new or updated media, including processing and metadata changes.
+
+    The first poll records existing versions without firing. Monitors up to
+    2,000 media per scope; choose a folder for larger libraries.
+    """
+    operation: Literal["on_updated_media"] = Field("on_updated_media", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New or Updated Media",
+    })
+    folder_id: Identifier | None = Field(None, description="Optional folder hashed ID to monitor.")
 # Wistia's own MCP server: agents get its tools through a person's Wistia sign-in.
 WistiaMcpCredential = mcp_credential("wistia", "https://api.wistia.com/mcp/api", app="Wistia")
 WistiaCredential = Union[WistiaAPITokenCredential, WistiaMcpCredential]
