@@ -121,8 +121,9 @@ class OpenCodeFormat(ThreadFormat):
             info = _json(data) or {}
             role = string(info.get("role")) or "?"
             ts = _iso(((info.get("time") or {}).get("created")))
-            if role == ASSISTANT:
-                model = model or string(info.get("modelID"))
+            if role == ASSISTANT and string(info.get("modelID")):  # as OpenCode names it (-m provider/model)
+                model = model or (f"{info['providerID']}/{info['modelID']}" if string(info.get("providerID"))
+                                  else info["modelID"])
             step_results: List[Event] = []
             for i, part in enumerate(by_message.get(message_id, [])):
                 prov = Provenance(index, f"message:{role}", i)

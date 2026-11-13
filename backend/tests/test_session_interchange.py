@@ -1060,7 +1060,7 @@ class TestOpenCodeStore:
         thread = ic.read_thread(ic.StoreRef("opencode", home, Path(CWD)))
         sk = ic.skeleton_of(thread)
         assert sk.roles == EXPECTED_ROLES and sk.tool_calls == 1 and sk.tool_results == 1 and sk.unpaired_tool_calls == 0
-        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == ("ses_01a09500000feTeSt0000000001", CWD, "1.18.35", "claude-sonnet-4-5")
+        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == ("ses_01a09500000feTeSt0000000001", CWD, "1.18.35", "anthropic/claude-sonnet-4-5")
         call = next(e for e in thread.events if e.kind == ic.ir.TOOL_CALL)
         assert (call.tool_name, call.tool_call_id, call.tool_input) == ("grep", "call_function_abc_1", {"pattern": "auth_callback", "path": "tests"})
         assert thread.dropped["thinking"] == 1 and thread.dropped["opaque:part_step-start"] == 2 and ic.classify_drops(dict(thread.dropped)) == {}
