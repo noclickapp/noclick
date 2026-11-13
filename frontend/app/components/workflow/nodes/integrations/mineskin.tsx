@@ -2,13 +2,11 @@ import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const MineSkinIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <>
-            <img ref={ref} {...props} src="/icons/mineskin.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} />
-            <img {...props} src="/icons/mineskin-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} />
-        </>
+        <ThemedBrandImg {...props} ref={ref} light="/icons/mineskin.svg" dark="/icons/mineskin-dark.svg" className={className} style={style} />
     ),
 );
 MineSkinIcon.displayName = 'MineSkinIcon';
