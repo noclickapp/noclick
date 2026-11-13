@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/custify.svg",
+  "source": "https://www.custify.com/ (inline <svg class=\"logo-svg-color\"> in the header's navbar-brand link)",
+  "source_page": "https://www.custify.com/",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "be49a2c9dd653d38d12abdb8218f06dedb48240f5bdcc86871b911b9de3029df",
+  "edits": [
+    "kept the mark (element 0 = #006CBB blue dot and arc, element 1 = #2A2B3C navy C); dropped the 'Custify' wordmark (element 2)",
+    "cropped the viewBox to the mark with svgtool crop --pad 0.02; svgtool clean"
+  ],
+  "checked_against": "https://www.custify.com/images/favicon/apple-icon-180x180.png (Custify's app icon: the same navy C with the blue dot and arc) and the PR's current file (https://docs.custify.com/images/logo.png, the same mark beside the wordmark).",
+  "source_sha256": "f63227de996aea03a6b222c799b3ccc414876809c841f567bac1dc17e3cc459f"
+}
