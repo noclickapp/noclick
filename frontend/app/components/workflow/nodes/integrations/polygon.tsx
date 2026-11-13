@@ -5,8 +5,7 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const PolygonIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/polygon.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <img src="/icons/polygon.svg" alt="" aria-hidden="true" className={className} style={style} />
 );
 
 export const PolygonNode: NodeDefinition = {
