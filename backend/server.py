@@ -101,7 +101,6 @@ from utils.otel import init_otel, shutdown_otel
 from utils.otel_health import start_health_emitter, stop_health_emitter
 from utils.otel_loop_monitor import init_loop_monitor
 from utils.lifecycle import (
-    background_work_enabled,
     run_shutdown_hooks,
     run_socket_auth_update_hooks,
     run_socket_connect_hooks,
@@ -246,7 +245,7 @@ async def app_lifespan(app: FastAPI):
     # Local edition: in-process cron ticker replaces the Cloudflare scheduler
     # (the /local-cron REST API is mounted at module level; the ticker fires due rows).
     from utils.edition import is_local_edition as _is_local
-    if _is_local() and background_work_enabled():
+    if _is_local():
         from utils.local_cron import start_local_cron
         start_local_cron()
         # Discord channel-message triggers need a live Gateway session; the
@@ -259,23 +258,20 @@ async def app_lifespan(app: FastAPI):
 
     await run_startup_hooks("ready")
 
-    workers = []
-    if background_work_enabled():
-        from coder.coordinator.tasks import task_worker
-        from coder.workflow.requests import request_worker
-        workers = [
-            asyncio.create_task(task_worker(), name="coordinator-agent-tasks"),
-            asyncio.create_task(request_worker(), name="builder-requests"),
-        ]
+    from coder.coordinator.tasks import task_worker
+    coordinator_worker = asyncio.create_task(task_worker(), name="coordinator-agent-tasks")
+    from coder.workflow.requests import request_worker
+    builder_worker = asyncio.create_task(request_worker(), name="builder-requests")
 
     try:
         yield
     finally:
         # Before anything drains, so no worker claims work it can't finish.
         await run_shutdown_hooks("stop")
-        for worker in workers:
-            worker.cancel()
-            await asyncio.gather(worker, return_exceptions=True)
+        coordinator_worker.cancel()
+        await asyncio.gather(coordinator_worker, return_exceptions=True)
+        builder_worker.cancel()
+        await asyncio.gather(builder_worker, return_exceptions=True)
 
     # Drain in-flight AI-builder runs cooperatively FIRST: a scale-down/redeploy
     # that doesn't exit within Modal's grace gets hard-killed and left a zombie

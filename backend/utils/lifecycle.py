@@ -22,11 +22,6 @@ them at fixed points:
 Socket hooks see each authenticated session as it is created or re-authed,
 for platform-side session state (analytics identity, admin impersonation).
 
-A startup hook registered with ``background=True`` starts work the process
-claims from the shared database (queues, sweeps, deliveries). It is skipped
-when ``NOCLICK_BACKGROUND_WORK=off``, so a process beside another deployment's
-database (a staging copy) answers its own requests and claims nothing.
-
 Nothing registers in a plain install, and every ``run_*`` is a no-op.
 """
 
@@ -35,7 +30,6 @@ from __future__ import annotations
 import asyncio
 import inspect
 import logging
-import os
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
@@ -45,7 +39,7 @@ SHUTDOWN_PHASES = ("stop", "drain", "final")
 
 Hook = Callable[..., Any]
 
-_startup: Dict[str, List[Tuple[str, Hook, bool]]] = {phase: [] for phase in STARTUP_PHASES}
+_startup: Dict[str, List[Tuple[str, Hook]]] = {phase: [] for phase in STARTUP_PHASES}
 _shutdown: Dict[str, List[Tuple[str, Hook, Optional[float]]]] = {phase: [] for phase in SHUTDOWN_PHASES}
 _socket_connect: List[Hook] = []
 _socket_auth_update: List[Hook] = []
@@ -55,22 +49,13 @@ def _named(fn: Hook, name: Optional[str]) -> str:
     return name or getattr(fn, "__name__", repr(fn))
 
 
-def background_work_enabled() -> bool:
-    """False when ``NOCLICK_BACKGROUND_WORK=off``: the process starts none of the
-    workers that claim shared work, its own lifespan's included."""
-    return os.environ.get("NOCLICK_BACKGROUND_WORK", "").strip().lower() != "off"
-
-
-def register_startup_hook(
-    fn: Hook, *, phase: str = "ready", name: Optional[str] = None, background: bool = False
-) -> None:
+def register_startup_hook(fn: Hook, *, phase: str = "ready", name: Optional[str] = None) -> None:
     """``fn`` runs (awaited if it returns an awaitable) at ``phase``. A hook
     that raises stops the boot — a platform that expected to start something
-    and could not must not come up looking healthy. ``background`` marks a
-    hook that starts claiming shared work (see ``background_work_enabled``)."""
+    and could not must not come up looking healthy."""
     if phase not in _startup:
         raise ValueError(f"unknown startup phase {phase!r}; one of {STARTUP_PHASES}")
-    _startup[phase].append((_named(fn, name), fn, background))
+    _startup[phase].append((_named(fn, name), fn))
 
 
 def register_shutdown_hook(
@@ -103,15 +88,10 @@ async def _call(fn: Hook, *args: Any) -> None:
 
 
 async def run_startup_hooks(phase: str) -> None:
-    ran = 0
-    for name, fn, background in _startup[phase]:
-        if background and not background_work_enabled():
-            logger.info(f"[lifecycle] background work is off: not starting {name}")
-            continue
+    for name, fn in _startup[phase]:
         await _call(fn)
-        ran += 1
-    if ran:
-        logger.info(f"[lifecycle] ran {ran} {phase} hook(s)")
+    if _startup[phase]:
+        logger.info(f"[lifecycle] ran {len(_startup[phase])} {phase} hook(s)")
 
 
 async def run_shutdown_hooks(phase: str) -> None:
@@ -137,7 +117,7 @@ async def run_socket_auth_update_hooks(sid: str, session: dict, data: dict, prox
 
 def registered_hook_names() -> Dict[str, List[str]]:
     """What is registered, by phase (tests and the boot log)."""
-    out: Dict[str, List[str]] = {f"startup:{p}": [n for n, _, _ in hooks] for p, hooks in _startup.items()}
+    out: Dict[str, List[str]] = {f"startup:{p}": [n for n, _ in hooks] for p, hooks in _startup.items()}
     out.update({f"shutdown:{p}": [n for n, _, _ in hooks] for p, hooks in _shutdown.items()})
     out["socket_connect"] = [_named(fn, None) for fn in _socket_connect]
     out["socket_auth_update"] = [_named(fn, None) for fn in _socket_auth_update]
