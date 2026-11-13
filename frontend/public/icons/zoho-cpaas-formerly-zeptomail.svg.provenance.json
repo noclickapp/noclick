@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/zoho-cpaas-formerly-zeptomail.svg",
   "source": "https://www.zohowebstatic.com/sites/zweb/images/productlogos/cpaas.svg",
-  "license": "Zoho trademark; used to identify the Zoho CPaaS integration",
-  "sha256": "3a49613f0fefc8b6a71047f49f599b1fd9e2572ef39b1cf52136cf2e9aafdeb4"
+  "source_page": "Zoho's product-logo folder on its own static host (www.zohowebstatic.com/sites/zweb/images/productlogos/, which also serves cpaas-dark.svg and zeptomail.svg); the PR's recorded source, sha256 equal to the PR's current file",
+  "source_kind": "company site",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "fd59e6a714a9a4831c2f306f79352f3d23d9cc6d3efec4548b4cdc448b6ff620",
+  "edits": [
+    "kept the mark (elements 0-2: the yellow #F9B21D, green #089949 and blue #226DB4 ribbons), dropped the black 'Zoho CPaaS' lettering (elements 3-11)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "clean"
+  ],
+  "checked_against": "the same lockup (the mark beside 'Zoho CPaaS') and https://www.zohowebstatic.com/sites/zweb/images/productlogos/cpaas-dark.svg (Zoho's own dark-theme lockup: the same three-ribbon mark in white).",
+  "source_sha256": "3a49613f0fefc8b6a71047f49f599b1fd9e2572ef39b1cf52136cf2e9aafdeb4"
 }
