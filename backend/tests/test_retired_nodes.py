@@ -17,6 +17,7 @@ from nodes.core.base import Retirement
 from nodes.core.credential_connect import resolve_credential_class
 from nodes.core.discovery import declare_nodes
 from nodes.core.registry import NODE_REGISTRY, NodeFactory, is_listed, retirement_of
+from tests.judged_nodes import judged_classes, narrowed
 from utils import credential_operations
 
 pytestmark = pytest.mark.every_integration
@@ -26,7 +27,7 @@ pytestmark = pytest.mark.every_integration
 # of a shard's workers.
 @functools.cache
 def _retired():
-    return sorted(t for t, cls in NODE_REGISTRY.items() if cls.retired)
+    return sorted(t for t, cls in judged_classes() if cls.retired)
 
 
 SCHEMAS = Path(__file__).resolve().parents[2] / "frontend" / "app" / "schemas"
@@ -38,7 +39,7 @@ def ensure_native_db_pool():
 
 
 def test_the_dead_services_are_retired_and_the_live_ones_listed():
-    assert {"automation-humanloop", "automation-starton", "automation-rkvst"} <= set(_retired())
+    assert all(retirement_of(t) for t in ("automation-humanloop", "automation-starton", "automation-rkvst"))
     # Freshteam is sunsetting (renewals stopped 2026-06-07) and ToneDen still answers.
     assert is_listed("automation-freshteam") and is_listed("automation-toneden")
     assert retirement_of("automation-humanloop").since == "2025-09-08"
@@ -55,7 +56,7 @@ def test_a_retirement_names_its_reason_and_an_iso_date():
 def test_the_generated_schema_publishes_each_retirement():
     discovered = declare_nodes(Path(humanloop_node.__file__).resolve().parent)
     slim = json.loads((SCHEMAS / "nodeMeta.json").read_text())["types"]
-    for node_type, cls in NODE_REGISTRY.items():
+    for node_type, cls in judged_classes():
         slug = node_type.removeprefix("automation-")
         path = SCHEMAS / "nodes" / f"{slug}.json"
         if not path.exists():  # no config model, so no schema (trigger-run, test-dummy)
@@ -70,6 +71,8 @@ def test_the_generated_schema_publishes_each_retirement():
 
 
 def test_no_backend_listing_offers_a_retired_type():
+    if narrowed() and not _retired():
+        pytest.skip("no judged type is retired")  # the listings import every integration to say nothing of these
     builder_types = set(re.findall(r"[a-z0-9]+(?:-[a-z0-9]+)+", _get_available_node_types()))
     assert "automation-serverless-function" in builder_types  # integrations are named only where demand is known
     assert not builder_types & set(_retired())

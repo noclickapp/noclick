@@ -27,7 +27,7 @@ import inspect
 import pytest
 
 from nodes.core.base import WorkflowNode
-from nodes.core.registry import NODE_REGISTRY
+from tests.judged_nodes import judged_classes
 from tests.utils.sweep import check_each
 
 pytestmark = pytest.mark.every_integration
@@ -44,7 +44,7 @@ CLASS_LEVEL_HOOKS = sorted(
 # of a shard's workers.
 @functools.cache
 def _registered():
-    return sorted(set(NODE_REGISTRY.values()), key=lambda c: c.__name__)
+    return sorted({cls for _, cls in judged_classes()}, key=lambda c: c.__name__)
 
 
 def test_base_declares_the_hooks_this_suite_guards():

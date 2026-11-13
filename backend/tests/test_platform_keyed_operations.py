@@ -15,7 +15,7 @@ import pytest
 from coder.workflow.operation_catalog import is_operation_credentials_optional
 from nodes.agent.node_op_tools import _iter_operation_defs, allowlist_requires_credentials
 from nodes.core.platform_billing import PLATFORM_KEY_MARKER, require_platform_key
-from nodes.core.registry import NODE_REGISTRY
+from tests.judged_nodes import judged_classes
 
 pytestmark = pytest.mark.every_integration
 
@@ -65,7 +65,7 @@ def test_self_hosted_requires_a_credential_until_the_instance_holds_the_key(self
 def test_every_credential_optional_operation_declares_who_pays():
     """Ratchet: a new platform-funded operation cannot ship unmarked."""
     unmarked = []
-    for node_type, node_class in NODE_REGISTRY.items():
+    for node_type, node_class in judged_classes():
         for entry in _iter_operation_defs(node_class):
             member = entry["member"]
             if member.get("x-credentials-optional") is not True:

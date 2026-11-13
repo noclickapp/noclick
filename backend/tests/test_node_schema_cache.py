@@ -15,6 +15,7 @@ and the copy-on-read that makes it safe.
 
 from nodes.core.base import _cached_base_schema_json
 from nodes.core.registry import NODE_REGISTRY
+from tests.judged_nodes import judged_classes
 
 
 def test_schema_is_built_once_per_class():
@@ -86,7 +87,7 @@ def test_every_registered_node_still_produces_a_schema():
     # Guards the cache builder against a node whose schema now raises (which
     # would silently degrade to {} for the whole registry).
     empty = [
-        key for key, cls in NODE_REGISTRY.items()
+        key for key, cls in judged_classes()
         if cls.get_config_model() and not cls.get_config_schema()
     ]
     assert not empty, f"nodes with a config model but no schema: {empty}"

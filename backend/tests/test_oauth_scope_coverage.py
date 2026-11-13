@@ -27,7 +27,7 @@ from pathlib import Path
 import pytest
 
 from nodes.core.oauth_scopes import Enforcement, ScopeRegistry
-from nodes.core.registry import NODE_REGISTRY
+from tests.judged_nodes import judged_classes, judged_types, narrowed
 from tests.utils.sweep import check_each
 
 pytestmark = pytest.mark.every_integration
@@ -48,7 +48,7 @@ _UNVERIFIED: frozenset[str] = frozenset()
 def _oauth_node_classes() -> dict[str, type]:
     """Registered node classes whose credential model requests OAuth scopes."""
     found = {}
-    for node_type, node_cls in NODE_REGISTRY.items():
+    for node_type, node_cls in judged_classes():
         try:
             schema = node_cls.get_config_schema()
         except Exception:  # pragma: no cover - a broken schema fails elsewhere
@@ -100,7 +100,7 @@ def _find_all_values(obj, key):
 def test_every_oauth_node_declares_scope_requirements():
     """A node requesting OAuth scopes must declare what its operations need."""
     oauth_nodes = _oauth_node_classes()
-    assert oauth_nodes, "expected to find OAuth nodes in NODE_REGISTRY"
+    assert oauth_nodes or narrowed(), "expected to find OAuth nodes in NODE_REGISTRY"
 
     missing = sorted(
         node_type
@@ -144,7 +144,7 @@ def test_unverified_allowlist_only_shrinks():
     oauth_nodes = _oauth_node_classes()
     stale = sorted(
         node_type
-        for node_type in _UNVERIFIED
+        for node_type in judged_types(sorted(_UNVERIFIED))
         if node_type not in oauth_nodes
         or oauth_nodes[node_type].scope_registry is not None
     )

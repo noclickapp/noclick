@@ -16,6 +16,7 @@ History this pins against:
 
 import re
 from pathlib import Path
+from tests.judged_nodes import judged_files
 
 BACKEND = Path(__file__).resolve().parent.parent
 
@@ -41,7 +42,7 @@ def _python_sources():
 
 def test_no_raw_credential_blob_updates():
     violations = []
-    for path in _python_sources():
+    for path in judged_files(_python_sources()):
         if path in ALLOWED:
             continue
         text = path.read_text(encoding="utf-8", errors="ignore")
@@ -64,7 +65,7 @@ def test_no_encrypted_data_column_references():
     """``encrypted_data`` is not a column on credentials — any SQL mentioning
     it is writing into the void (the Supabase handler bug)."""
     violations = []
-    for path in _python_sources():
+    for path in judged_files(_python_sources()):
         text = path.read_text(encoding="utf-8", errors="ignore")
         for match in re.finditer(r"SET\s+encrypted_data\s*=", text, re.IGNORECASE):
             line = text.count("\n", 0, match.start()) + 1

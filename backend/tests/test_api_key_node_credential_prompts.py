@@ -21,6 +21,7 @@ from coder.workflow.operation_catalog import (
     node_requires_credentials,
 )
 from nodes.core.registry import NODE_REGISTRY
+from tests.judged_nodes import judged_types
 
 pytestmark = pytest.mark.every_integration
 
@@ -59,7 +60,7 @@ def test_every_credentialed_node_emits_a_status_line():
     """No node may be silent: silence reads to the brain as "unremarkable",
     which is exactly how exa slipped through."""
     silent = [
-        nt for nt in NODE_REGISTRY
+        nt for nt in judged_types()
         if node_requires_credentials(nt, None, {})
         and credential_status_line(nt, None, {}, 'n1') is None
     ]

@@ -22,6 +22,7 @@ from nodes.core.credential_connect import credential_classes_for_node, credentia
 from nodes.core.registry import NODE_REGISTRY
 from scripts.generate_socket_types import catalog_entry
 from scripts.node_definitions import every_definition_facts
+from tests.judged_nodes import judged_classes, narrowed
 
 pytestmark = pytest.mark.every_integration
 
@@ -30,7 +31,20 @@ BACKEND = Path(__file__).resolve().parents[1]
 
 @pytest.fixture(scope="module")
 def classes():
-    return dict(NODE_REGISTRY.items())
+    """Every class, or, judging some types (tests/judged_nodes.py), those and every node holding a credential type
+    they hold: each lookup below then answers for those types as the walk of all of them would."""
+    judged = dict(judged_classes())
+    if narrowed():
+        for cls in list(judged.values()):
+            for credential_cls in credential_classes_for_node(cls):
+                for node_type, _ in catalog.credential_holders(credential_type_of(credential_cls)):
+                    judged.setdefault(node_type, NODE_REGISTRY[node_type])
+    return judged
+
+
+def _seen(actual: dict, expected: dict, keys) -> dict:
+    """``actual`` as a walk of the judged classes sees it: whole, or (judging some types) at ``keys``."""
+    return {key: actual.get(key) for key in keys} if narrowed() else actual
 
 
 def _owners_first(classes, entries):
@@ -69,7 +83,7 @@ def test_known_credential_types_are_every_schemas(schemas):
             field = definition.get("properties", {}).get("credential_type", {})
             if field.get("const") or field.get("default"):
                 expected.add(field.get("const") or field.get("default"))
-    assert known_credential_types() == expected
+    assert known_credential_types() >= expected if narrowed() else known_credential_types() == expected
 
 
 def test_connection_catalog_is_the_class_walks(classes):
@@ -93,8 +107,11 @@ def test_connection_catalog_is_the_class_walks(classes):
     methods = {}
     for _, kind, method in _owners_first(classes, candidates):
         methods.setdefault(kind, method)
-    assert connection_catalog() == (methods, providers)
-    assert list(connection_catalog()[1]) == list(providers)
+    kinds = {credential_type_of(c) for cls in classes.values() for c in credential_classes_for_node(cls)} - {None}
+    actual_methods, actual_providers = connection_catalog()
+    assert (_seen(actual_methods, methods, kinds), _seen(actual_providers, providers, classes)) == (
+        _seen(methods, methods, kinds), _seen(providers, providers, classes))
+    assert narrowed() or list(actual_providers) == list(providers)
 
 
 def test_resolved_credential_classes_are_the_class_walks(classes):
@@ -117,9 +134,10 @@ def test_linked_fields_are_the_class_walks(classes):
         for credential_cls in credential_classes_for_node(cls):
             for name in getattr(credential_cls, "linked_fields", ()):
                 linked.setdefault(name, credential_cls)
-    assert linked
+    assert linked or narrowed()
     index = credential_connect._linked_index()
-    assert {name: credential_connect.resolve_credential_class(t)[1] for name, t in index.items()} == linked
+    resolved = {name: credential_connect.resolve_credential_class(t)[1] for name, t in index.items()}
+    assert _seen(resolved, linked, linked) == linked
 
 
 def test_provide_link_lookups_are_the_schema_sweeps(classes, schemas):
@@ -150,7 +168,8 @@ def test_provide_link_lookups_are_the_schema_sweeps(classes, schemas):
             )
     for _, credential_type, provider in _owners_first(classes, oauth):
         providers.setdefault(credential_type, provider)
-    assert routes._oauth_providers_by_type() == providers
+    kinds = {kind for _, kind, *_ in definitions}
+    assert _seen(routes._oauth_providers_by_type(), providers, kinds) == _seen(providers, providers, kinds)
 
     for _, credential_type, title, definition in _owners_first(classes, definitions):
         if credential_type in methods:
@@ -163,7 +182,8 @@ def test_provide_link_lookups_are_the_schema_sweeps(classes, schemas):
     # A way in hidden wherever it's declared is answered by the ways in its node offers.
     for _, credential_type, group in _owners_first(classes, hidden_groups):
         siblings.setdefault(credential_type, group)
-    for credential_type in sorted(set(fields) | set(methods) | set(siblings) | set(catalog.credential_types())):
+    for credential_type in sorted(set(fields) | set(methods) | set(siblings) | (
+            set() if narrowed() else set(catalog.credential_types()))):
         assert routes._get_credential_fields(credential_type) == fields.get(credential_type, []), credential_type
         assert routes._get_credential_method(credential_type) == methods.get(credential_type), credential_type
         assert routes._get_sibling_methods(credential_type) == siblings.get(credential_type, []), credential_type
@@ -177,8 +197,12 @@ def test_the_rehearsal_fence_is_every_credentialed_node(schemas):
         if isinstance(c := (schema.get("properties", {}) or {}).get("credentials") or {}, dict)
         and (c.get("$ref") or c.get("anyOf"))
     } - {"agent"}
-    assert rehearsal_excluded_node_types() == frozenset(
-        credentialed | {"automation-send-email", "automation-http-request", "noclick", "automation-table"})
+    expected = credentialed | {"automation-send-email", "automation-http-request", "noclick", "automation-table"}
+    excluded = rehearsal_excluded_node_types()
+    if narrowed():
+        assert excluded & set(schemas) == expected & set(schemas)
+    else:
+        assert excluded == frozenset(expected)
 
 
 _LOOKUPS = """
@@ -227,12 +251,12 @@ def test_registration_lookups_are_the_class_walks(classes):
         if issubclass(c, (ExternalWebhookTriggerMixin, AppEventTriggerMixin, CronScheduleTriggerMixin))
         or getattr(c, "self_registering_triggers", None)
     )
-    assert WebhookManager._registerable_types() == registerable
+    assert [t for t in WebhookManager._registerable_types() if t in classes or not narrowed()] == registerable
     providers = {}
     for c in classes.values():
         if issubclass(c, AppEventTriggerMixin):
             providers.setdefault(c._app_provider, c)
-    assert providers
+    assert providers or narrowed()
     assert {p: _app_event_class_for_provider(p) for p in providers} == providers
     assert _app_event_class_for_provider("not-a-provider") is None
 
@@ -245,8 +269,12 @@ def test_the_builders_multi_output_list_is_the_class_walks(classes):
         handles = None if node_type.startswith("test-") else cls.get_output_handles()
         if handles:
             lines.append(f"- {node_type}: handles are " + ", ".join(f'"{h["id"]}" ({h["description"]})' for h in handles))
-    assert lines
-    assert _get_multi_output_nodes_info() == "\n".join(lines)
+    assert lines or narrowed()
+    listed = _get_multi_output_nodes_info()
+    if narrowed():
+        assert [line for line in listed.splitlines() if line.split(":")[0].removeprefix("- ") in classes] == lines
+    else:
+        assert listed == "\n".join(lines)
 
 
 def test_listings_and_the_node_search_read_what_the_classes_say(classes, monkeypatch):
@@ -270,18 +298,19 @@ def test_listings_and_the_node_search_read_what_the_classes_say(classes, monkeyp
     assert read == {t: (node_search._facts(t), node_search._operations(t)) for t in classes}
 
 
-def test_a_type_whose_file_predates_a_fact_is_read_from_its_class(classes, tmp_path, monkeypatch):
+def test_a_type_whose_file_predates_a_fact_is_read_from_its_class(tmp_path, monkeypatch):
     """An integration generated before a fact was added and merged after has a file without it: its class answers,
     never a missing key."""
     from nodes.core.registry import is_listed, retirement_of
 
-    assert set(catalog.class_facts("automation-humanloop", classes["automation-humanloop"])) == catalog.CLASS_FACTS
+    humanloop = NODE_REGISTRY["automation-humanloop"]
+    assert set(catalog.class_facts("automation-humanloop", humanloop)) == catalog.CLASS_FACTS
     written = json.loads(catalog.catalog_path("automation-humanloop").read_text())
     (tmp_path / "humanloop.json").write_text(json.dumps({k: v for k, v in written.items() if k != "retired"}))
     monkeypatch.setattr(catalog, "catalog_path", lambda node_type, real=catalog.catalog_path: real(node_type, tmp_path))
     catalog._read.cache_clear()
     try:
-        assert retirement_of("automation-humanloop") == classes["automation-humanloop"].retired
+        assert retirement_of("automation-humanloop") == humanloop.retired
         assert not is_listed("automation-humanloop")
     finally:
         catalog._read.cache_clear()

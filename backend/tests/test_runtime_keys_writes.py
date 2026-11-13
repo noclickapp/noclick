@@ -19,6 +19,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from tests.fixtures.real_db_fixture import real_database  # noqa: F401
+from tests.judged_nodes import files_narrowed, judged_files
 
 BACKEND = Path(__file__).resolve().parent.parent
 HELPERS = {"graph_without_runtime_keys", "nodes_without_runtime_keys", "config_without_runtime_keys"}
@@ -109,7 +110,7 @@ def _graph_writers(tree):
 
 def test_every_graph_write_strips_runtime_keys():
     writers, violations = set(), []
-    for rel, path in _sources():
+    for rel, path in judged_files(_sources(), lambda source: source[1]):
         text = path.read_text(encoding="utf-8", errors="ignore")
         if "workflow" not in text \
                 or not re.search(r"\b(?:workflows|workflow_checkpoints|workflow_versions|workflow\s*=)", text) \
@@ -124,9 +125,9 @@ def test_every_graph_write_strips_runtime_keys():
         "These write a stored graph without utils.runtime_keys: pass what they write through "
         "graph_without_runtime_keys (or config_without_runtime_keys for one node's config):\n  "
         + "\n  ".join(sorted(violations)))
-    assert set(EXEMPT) <= writers, f"stale exemptions: {sorted(set(EXEMPT) - writers)}"
+    assert files_narrowed() or set(EXEMPT) <= writers, f"stale exemptions: {sorted(set(EXEMPT) - writers)}"
     # The scan sees the writers it's meant to (a regex that matched nothing would pass vacuously).
-    assert {"repositories/workflow.py::update_workflow_dynamic", "repositories/workflow.py::merge_node_config",
+    assert files_narrowed() or {"repositories/workflow.py::update_workflow_dynamic", "repositories/workflow.py::merge_node_config",
             "repositories/share.py::insert_forked_workflow", "mcp_server.py::_save_workflow",
             "repositories/workflow.py::write_graph", "repositories/workflow_versions.py::insert",
             "repositories/workflow_versions.py::join"} <= writers

@@ -13,12 +13,25 @@ from nodes.core.credential_connect import (
     owners_first,
     resolve_credential_class,
 )
+from nodes.core.catalog import credential_holders
 from nodes.core.registry import NODE_REGISTRY
+from tests.judged_nodes import judged_classes, narrowed
+
+
+def _catalog_owners(credential_type):
+    """The nodes the catalog files say own ``credential_type``, without importing any integration."""
+    return [node_type for node_type, held in credential_holders(credential_type) if not held.get("borrowed")]
 
 pytestmark = pytest.mark.every_integration
 
 
 def test_every_credential_type_has_one_owner():
+    if narrowed():  # each judged type's credential types, against every catalog file
+        for node_type, node_cls in judged_classes():
+            for credential_type in {credential_type_of(cls) for cls in credential_classes_for_node(node_cls)} - {None}:
+                assert len(_catalog_owners(credential_type)) == 1, (
+                    f"{credential_type} ({node_type}) is owned by {_catalog_owners(credential_type)}")
+        return
     owners = credential_type_owners.__wrapped__()
     declared = {
         credential_type_of(cls)
@@ -28,12 +41,12 @@ def test_every_credential_type_has_one_owner():
 
 
 def test_borrowed_types_are_ones_the_node_accepts_and_another_owns():
-    owners = credential_type_owners()
-    for node_type, node_cls in NODE_REGISTRY.items():
+    owner_of = (lambda t: _catalog_owners(t)[0]) if narrowed() else credential_type_owners().__getitem__
+    for node_type, node_cls in judged_classes():
         accepted = {credential_type_of(cls) for cls in credential_classes_for_node(node_cls)}
         for credential_type in node_cls.borrowed_credential_types:
             assert credential_type in accepted, f"{node_type} borrows {credential_type} but doesn't accept it"
-            assert owners[credential_type] != node_type
+            assert owner_of(credential_type) != node_type
 
 
 def test_two_owners_of_one_type_is_an_error(monkeypatch):
@@ -55,7 +68,8 @@ def test_two_owners_of_one_type_is_an_error(monkeypatch):
     ('google_oauth', 'automation-google-classroom'),
 ])
 def test_the_owner_wins_whatever_the_registration_order(credential_type, owner):
-    borrowers = [t for t, c in NODE_REGISTRY.items() if credential_type in c.borrowed_credential_types]
+    holders = [t for t, _ in credential_holders(credential_type)] if narrowed() else NODE_REGISTRY
+    borrowers = [t for t in holders if credential_type in NODE_REGISTRY[t].borrowed_credential_types]
     assert borrowers
     candidates = [(t, credential_type) for t in [*borrowers, owner]]
     assert owners_first(candidates)[0] == (owner, credential_type)

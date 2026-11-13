@@ -19,6 +19,7 @@ from pathlib import Path
 import pytest
 
 from nodes.core.registry import NODE_REGISTRY
+from tests.judged_nodes import judged_types, narrowed
 from tests.utils.sweep import check_each
 
 # Read the GENERATED schema files rather than calling get_config_schema(): those
@@ -46,7 +47,7 @@ def _dynamic_fields(node_type):
 
 
 # Listing the types imports no integration: what's checked is each one's generated schema.
-ALL_NODES = sorted(NODE_REGISTRY)
+ALL_NODES = judged_types(sorted(NODE_REGISTRY))
 
 
 def _sole_option_autofill_never_lands_on_a_dependent_field(node_type):
@@ -130,7 +131,7 @@ def test_the_catalogue_actually_benefits():
         for _, _, dyn, _ in _dynamic_fields(node_type)
         if dyn.get("auto_select_sole_option")
     )
-    assert stamped > 1000, (
+    assert narrowed() or stamped > 1000, (
         f"only {stamped} fields carry sole-option autofill; the central stamping "
         f"pass has probably stopped matching."
     )

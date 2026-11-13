@@ -250,11 +250,11 @@ def test_gate_recognizes_every_app_event_trigger_op():
     """node_webhook_field_for is the candidate pre-filter for BOTH headless
     write paths (builder step 3d, MCP auto-provision) — an op it misses ships
     dead. Hybrid manual/managed nodes also carry a legacy webhook field."""
-    from nodes.core.registry import NODE_REGISTRY
     from nodes.core.webhook_subscriptions import AppEventTriggerMixin
+    from tests.judged_nodes import judged_classes, narrowed
 
     checked = 0
-    for node_type, node_class in NODE_REGISTRY.items():
+    for node_type, node_class in judged_classes():
         if not (isinstance(node_class, type)
                 and issubclass(node_class, AppEventTriggerMixin)):
             continue
@@ -264,7 +264,7 @@ def test_gate_recognizes_every_app_event_trigger_op():
                         if hasattr(node_class, "registration_field_for_config") else "subscription_status")
             assert WebhookManager.node_webhook_field_for(node_type, op) == \
                 expected, f"{node_type}:{op} invisible to provisioning"
-    assert checked > 0
+    assert narrowed() or checked > 0
 
 
 async def test_provision_node_webhook_registers_headlessly(world):
@@ -457,10 +457,10 @@ def test_every_trigger_operation_has_a_registration_strategy():
     operation the trigger predicate flags must resolve to a registration
     marker — or be explicitly declared registration-free above."""
     from nodes.agent.node_op_tools import _trigger_operations
-    from nodes.core.registry import NODE_REGISTRY
+    from tests.judged_nodes import judged_types
 
     missing = []
-    for node_type in sorted(NODE_REGISTRY):
+    for node_type in sorted(judged_types()):
         for op in sorted(_trigger_operations(node_type)):
             if (node_type, op) in REGISTRATION_FREE_TRIGGER_OPS:
                 continue

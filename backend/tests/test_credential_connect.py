@@ -20,6 +20,16 @@ from nodes.core import credential_connect as cc
 from nodes.core.connection_evidence import ConnectionEvidence, EvidenceResult, EvidenceSample
 from nodes.core.credential_fields import clean_secret, https_origin, segment_after
 from nodes.core.vendor_mcp import McpCredential
+from tests.judged_nodes import judged_classes, narrowed
+
+
+def _credential_classes() -> dict:
+    """Each credential type's (owner, class): every one, or (judging some node types) those the judged nodes hold,
+    resolved as a stored credential is, without importing every integration."""
+    if not narrowed():
+        return cc._class_index()
+    held = {cc.credential_type_of(c) for _, cls in judged_classes() for c in cc.credential_classes_for_node(cls)}
+    return {t: cc.resolve_credential_class(t) for t in sorted(held - {None})}
 
 pytestmark = pytest.mark.every_integration
 
@@ -149,7 +159,7 @@ def test_shape_refuses_a_key_holding_a_character_no_key_has():
 def _every_issued_key_is_ascii_and_every_password_may_hold_any_character(credential_type):
     from nodes.core.credential_fields import looks_like_key_field
 
-    _, cls = cc._class_index()[credential_type]
+    _, cls = _credential_classes()[credential_type]
     secrets = cc._secret_fields(cls)
     if not secrets:
         return  # no secret-shaped field: nothing to refuse
@@ -161,7 +171,7 @@ def _every_issued_key_is_ascii_and_every_password_may_hold_any_character(credent
 
 @pytest.mark.asyncio
 async def test_every_issued_key_is_ascii_and_every_password_may_hold_any_character():
-    await check_each(sorted(cc._class_index()), _every_issued_key_is_ascii_and_every_password_may_hold_any_character)
+    await check_each(sorted(_credential_classes()), _every_issued_key_is_ascii_and_every_password_may_hold_any_character)
 
 
 def test_unknown_types_pass_through_stripped():
@@ -172,7 +182,7 @@ def test_unknown_types_pass_through_stripped():
 def _every_credential_class_refuses_an_address_in_its_secret_fields(credential_type):
     """The generic layer, not per-node code, covers every manual credential:
     a URL pasted into any password/key/token/secret field is refused."""
-    _, cls = cc._class_index()[credential_type]
+    _, cls = _credential_classes()[credential_type]
     secrets = cc._secret_fields(cls)
     if not secrets:
         return  # no secret-shaped field: nothing to refuse
@@ -184,7 +194,7 @@ def _every_credential_class_refuses_an_address_in_its_secret_fields(credential_t
 
 @pytest.mark.asyncio
 async def test_every_credential_class_refuses_an_address_in_its_secret_fields():
-    await check_each(sorted(cc._class_index()), _every_credential_class_refuses_an_address_in_its_secret_fields)
+    await check_each(sorted(_credential_classes()), _every_credential_class_refuses_an_address_in_its_secret_fields)
 
 
 # ------------------------------------------------------------------- probe
@@ -366,10 +376,12 @@ async def test_a_vendor_key_is_probed_alike_under_its_harness_or_model_type(monk
 def test_the_linked_fields_are_declared_by_their_credential_classes():
     assert cc.linked_field_names() == {"connection_id", "number_sid", "guild_id", "team_id", "hub_id", "mcp_server_url"}
     # Every vendor MCP way in (pinned one by one in test_vendor_mcp_connect.py) comes only from its connect flow.
-    mcp_ways_in = {t for t, (_, cls) in cc._class_index().items() if issubclass(cls, McpCredential)}
-    assert {"canva_mcp", "notion_mcp", "calendly_mcp", "linear_mcp"} <= mcp_ways_in
-    assert {t for t in cc._class_index() if cc.linked_only(t)} == {
-        "whatsapp_qr", "phone_number", "discord_bot_install"} | mcp_ways_in
+    classes = _credential_classes()
+    mcp_ways_in = {t for t, (_, cls) in classes.items() if issubclass(cls, McpCredential)}
+    assert narrowed() or {"canva_mcp", "notion_mcp", "calendly_mcp", "linear_mcp"} <= mcp_ways_in
+    linked_only = {t for t in classes if cc.linked_only(t)}
+    expected = {"whatsapp_qr", "phone_number", "discord_bot_install"} | mcp_ways_in
+    assert linked_only <= expected if narrowed() else linked_only == expected
 
 
 @pytest.mark.parametrize("credential_type,blob,field", [

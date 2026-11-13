@@ -81,9 +81,10 @@ def test_a_mistyped_type_finds_what_it_meant():
 
 def test_every_registered_node_type_is_searchable_by_its_own_name():
     """An integration the catalog file doesn't list yet (added since it was generated) is found by its type."""
-    from nodes.core.registry import NODE_REGISTRY, is_listed
+    from nodes.core.registry import is_listed
+    from tests.judged_nodes import judged_types
 
-    missed = [t for t in NODE_REGISTRY if not t.startswith("test-") and is_listed(t)
+    missed = [t for t in judged_types() if not t.startswith("test-") and is_listed(t)
               and t not in {h.node_type for h in node_search.search(node_search.slug_of(t).replace("-", " "), limit=5)}]
     assert missed == []
 

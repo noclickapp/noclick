@@ -154,11 +154,11 @@ def test_rotating_oauth_nodes_freshen_on_load():
     or its dropdown / trigger-registration paths silently serve a stale token.
     Iterates the live registry so a newly-added OAuth node that forgets the
     override fails loudly at CI rather than silently in prod."""
-    from nodes.core.registry import NODE_REGISTRY
+    from tests.judged_nodes import judged_classes
 
     base_freshen = WorkflowNode.freshen_credential.__func__
     offenders = []
-    for key, cls in NODE_REGISTRY.items():
+    for key, cls in judged_classes():
         if not _node_has_rotating_oauth_credential(cls):
             continue
         # A correct override is a @classmethod (bound method with __func__ that

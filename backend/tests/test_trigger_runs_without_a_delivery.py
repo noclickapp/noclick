@@ -11,6 +11,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 from nodes.agent.node_op_tools import _iter_operation_defs, is_trigger
 from nodes.core.registry import NODE_REGISTRY
+from tests.judged_nodes import judged_classes
 from nodes.exa_node import ExaMonitorTriggerConfig, ExaNode, ExaNodeConfig
 from nodes.posthog_node import PostHogNode
 from nodes.webhook_trigger_node import WebhookTriggerNode
@@ -41,7 +42,7 @@ def _bare(node_cls, node_type, operation):
 # of a shard's workers.
 @functools.cache
 def _triggers():
-    return sorted(t for t, c in NODE_REGISTRY.items() if t.startswith("trigger-") or _iter_operation_defs(c, triggers=True))
+    return sorted(t for t, c in judged_classes() if t.startswith("trigger-") or _iter_operation_defs(c, triggers=True))
 
 
 async def _no_trigger_of_any_node_type_is_handed_the_runs_other_outputs(node_type, monkeypatch):

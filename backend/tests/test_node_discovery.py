@@ -10,6 +10,7 @@ import pytest
 from nodes.core import discovery
 from nodes.core.discovery import Declaration, declare_nodes, merge_node_entries
 from nodes.core.registry import DISCOVERED_NODE_ENTRIES, NODE_REGISTRY, _NODE_REGISTRY_ENTRIES, _NodeRegistry
+from tests.judged_nodes import judged_types
 
 pytestmark = pytest.mark.every_integration
 
@@ -178,16 +179,16 @@ def test_files_without_marker_are_never_parsed_or_imported(package, monkeypatch)
 
 def test_every_declared_integration_loads_under_its_type():
     """Lookups import an integration on first use, so its import errors surface here, not at startup."""
-    for node_type, entry in DISCOVERED_NODE_ENTRIES.items():
-        cls = NODE_REGISTRY[node_type]
+    for node_type in judged_types(DISCOVERED_NODE_ENTRIES):
+        entry, cls = DISCOVERED_NODE_ENTRIES[node_type], NODE_REGISTRY[node_type]
         assert vars(cls)['integration_type'] == node_type
         if isinstance(entry, Declaration):
             assert (cls.__module__, cls.__name__) == (entry.module, entry.class_name)
 
 
 def test_every_hand_registered_node_loads_from_its_module():
-    for node_type, (module, name) in _NODE_REGISTRY_ENTRIES.items():
-        cls = NODE_REGISTRY[node_type]
+    for node_type in judged_types(_NODE_REGISTRY_ENTRIES):
+        (module, name), cls = _NODE_REGISTRY_ENTRIES[node_type], NODE_REGISTRY[node_type]
         assert (cls.__module__, cls.__name__) == (module, name)
 
 

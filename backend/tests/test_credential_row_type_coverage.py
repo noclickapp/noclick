@@ -14,6 +14,7 @@ import pytest
 from coder.workflow.operation_catalog import node_accepted_credential_types
 from nodes.agent.config.providers import agent_credential_types
 from nodes.core.registry import NODE_REGISTRY
+from tests.judged_nodes import judged_classes
 
 from nodes.core.base import credential_type_literals
 
@@ -43,7 +44,7 @@ def _gaps(registry) -> list[str]:
 
 
 def test_every_node_credential_model_accepts_the_row_types_it_can_hold():
-    assert _gaps(NODE_REGISTRY) == []
+    assert _gaps(dict(judged_classes())) == []
 
 
 def test_the_guard_bites_on_a_single_literal_agent_model():

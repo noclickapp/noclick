@@ -6,6 +6,7 @@ Static resolution covers deferred imports that a boot check cannot exercise.
 import ast
 import functools
 from pathlib import Path
+from tests.judged_nodes import judged_files
 
 BACKEND = Path(__file__).resolve().parents[1]
 
@@ -99,7 +100,7 @@ def _imported_modules(tree: ast.AST):
 
 def test_no_imports_of_missing_first_party_modules():
     dangling = []
-    for path in _iter_python_files():
+    for path in judged_files(_iter_python_files()):
         try:
             tree = ast.parse(path.read_text(errors="ignore"), filename=str(path))
         except SyntaxError:

@@ -17,6 +17,7 @@ wrong one would be a false failure nobody could act on.
 import ast
 import pathlib
 import re
+from tests.judged_nodes import judged_files
 
 BACKEND = pathlib.Path(__file__).resolve().parents[1]
 REPO_DIR = BACKEND / "repositories"
@@ -94,7 +95,7 @@ def test_every_called_repository_method_exists():
     assert "ConversationRepo" in known, "repository package did not parse"
 
     problems: list[str] = []
-    for path in sorted(BACKEND.rglob("*.py")):
+    for path in judged_files(sorted(BACKEND.rglob("*.py"))):
         if any(p in {"__pycache__", ".venv", "tests"} for p in path.parts):
             continue
         source = path.read_text(errors="ignore")

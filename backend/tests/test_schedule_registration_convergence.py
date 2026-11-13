@@ -503,12 +503,12 @@ async def test_registration_fields_change_ignores_cosmetic_edits():
 def test_sweep_walks_schedule_family_types():
     """The nightly graph-driven sweep must include family members, so a
     registration that NEVER happened heals within a day."""
-    from nodes.core.registry import NODE_REGISTRY
     from nodes.core.schedule_registration import CronScheduleTriggerMixin
+    from tests.judged_nodes import judged_classes, narrowed
 
-    members = [t for t, c in NODE_REGISTRY.items()
+    members = [t for t, c in judged_classes()
                if isinstance(c, type) and issubclass(c, CronScheduleTriggerMixin)]
-    assert len(members) >= 16  # 10 poll-mixin + 5 bespoke + trigger-cron
+    assert narrowed() or len(members) >= 16  # 10 poll-mixin + 5 bespoke + trigger-cron
     assert set(members) <= set(WebhookManager._registerable_types())
 
 
@@ -526,16 +526,15 @@ def test_every_poll_trigger_op_is_a_family_member():
     import typing
 
     from nodes.core.poll_trigger import PollTriggerConfigBase
-    from nodes.core.registry import NODE_REGISTRY
     from nodes.core.schedule_registration import (
         CronScheduleTriggerMixin,
         operation_config_class,
     )
+    from tests.judged_nodes import judged_classes, narrowed
 
     checked = 0
     problems = []
-    for node_type in sorted(NODE_REGISTRY):
-        node_class = NODE_REGISTRY[node_type]
+    for node_type, node_class in sorted(judged_classes()):
         if not isinstance(node_class, type):
             continue
         model = node_class.get_config_model()
@@ -576,7 +575,7 @@ def test_every_poll_trigger_op_is_a_family_member():
                 node_class, "schedule_trigger_operations", ()
             ):
                 problems.append((node_type, op, "operation class unresolvable"))
-    assert checked >= 16, f"suspiciously few schedule trigger ops found: {checked}"
+    assert narrowed() or checked >= 16, f"suspiciously few schedule trigger ops found: {checked}"
     assert not problems, (
         "Schedule-trigger operations outside the registration family — they "
         f"ship dead from headless surfaces: {problems}"

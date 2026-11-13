@@ -24,6 +24,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from tests.judged_nodes import files_narrowed, judged_files
+
 BACKEND = Path(__file__).parent.parent
 
 SKIP_ROOTS = ("tests", "scripts", "viteapp", "node_modules", "sandbox", "public", "__pycache__")
@@ -33,7 +35,7 @@ def _imported_billing_symbols() -> dict:
     """module name ('billing', 'billing.markup', …) → set of imported names.
     '<module>' marks a plain `import billing.x` (module itself must resolve)."""
     symbols: dict = {}
-    for p in sorted(BACKEND.rglob("*.py")):
+    for p in judged_files(sorted(BACKEND.rglob("*.py"))):
         rel = p.relative_to(BACKEND)
         if any(part in SKIP_ROOTS for part in rel.parts):
             continue
@@ -121,6 +123,8 @@ def _run_probe(surface: dict) -> str:
 
 def test_every_billing_import_resolves_and_the_defaults_are_free():
     surface = _imported_billing_symbols()
+    if files_narrowed() and not surface:
+        return  # none of the judged files imports billing
     assert surface, "scan found no billing imports — scanner broken?"
     out = _run_probe(surface)
     assert out.startswith("OK:")

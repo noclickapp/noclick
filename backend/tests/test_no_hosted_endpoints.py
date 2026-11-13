@@ -11,6 +11,7 @@ import re
 from pathlib import Path
 
 import pytest
+from tests.judged_nodes import judged_files
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -77,7 +78,7 @@ def _iter_public_files():
 
 def test_managed_hostnames_only_in_reviewed_sdk_defaults():
     violations = []
-    for path in _iter_public_files():
+    for path in judged_files(_iter_public_files()):
         relative = path.relative_to(REPO_ROOT).as_posix()
         text = path.read_text(errors="ignore")
         if not MANAGED_DOMAIN_MENTION.search(text):

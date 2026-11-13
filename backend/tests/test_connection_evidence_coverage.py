@@ -33,6 +33,7 @@ import pytest
 
 from nodes.core.connection_evidence import ConnectionEvidence, EvidenceSample
 from nodes.core.registry import NODE_REGISTRY
+from tests.judged_nodes import judged_classes, judged_types
 from tests.utils.sweep import check_each
 
 pytestmark = pytest.mark.every_integration
@@ -110,7 +111,7 @@ def _credentialed_nodes() -> dict[str, type]:
 
     return {
         node_type: node_cls
-        for node_type, node_cls in NODE_REGISTRY.items()
+        for node_type, node_cls in judged_classes()
         if node_type not in _NO_PROVIDER and credential_classes_for_node(node_cls)
     }
 
@@ -189,7 +190,7 @@ def test_no_evidence_allowlist_only_shrinks():
 
     covered = sorted(
         n
-        for n in _NO_EVIDENCE_YET
+        for n in judged_types(sorted(_NO_EVIDENCE_YET & set(NODE_REGISTRY)))
         if getattr(NODE_REGISTRY.get(n), "connection_evidence", None) is not None
     )
     assert not covered, (
@@ -241,7 +242,7 @@ def _declared_evidence_points_at_something_real(node_type, node_cls):
 async def test_declared_evidence_points_at_something_real():
     await check_each(sorted(
         (t, c)
-        for t, c in NODE_REGISTRY.items()
+        for t, c in judged_classes()
         if getattr(c, "connection_evidence", None) is not None
     ), lambda case: _declared_evidence_points_at_something_real(case[0], case[1]), name=lambda case: case[0])
 
@@ -283,7 +284,7 @@ def _evidence_needs_nothing_but_the_credential(node_type, node_cls):
 async def test_evidence_needs_nothing_but_the_credential():
     await check_each(sorted(
         (t, c)
-        for t, c in NODE_REGISTRY.items()
+        for t, c in judged_classes()
         if getattr(c, "connection_evidence", None) is not None
     ), lambda case: _evidence_needs_nothing_but_the_credential(case[0], case[1]), name=lambda case: case[0])
 
@@ -332,14 +333,14 @@ def _evidence_is_not_a_static_catalogue(node_type, node_cls):
 async def test_evidence_is_not_a_static_catalogue():
     await check_each(sorted(
         (t, c)
-        for t, c in NODE_REGISTRY.items()
+        for t, c in judged_classes()
         if getattr(c, "connection_evidence", None) is not None
     ), lambda case: _evidence_is_not_a_static_catalogue(case[0], case[1]), name=lambda case: case[0])
 
 
 def test_proves_is_a_known_value():
     """A typo here would silently disable the generic-evidence guard."""
-    for node_type, node_cls in NODE_REGISTRY.items():
+    for node_type, node_cls in judged_classes():
         spec = getattr(node_cls, "connection_evidence", None)
         if spec is None:
             continue
@@ -370,7 +371,7 @@ def _evidence_operations_are_read_only(node_type, node_cls):
 async def test_evidence_operations_are_read_only():
     await check_each(sorted(
         (t, c)
-        for t, c in NODE_REGISTRY.items()
+        for t, c in judged_classes()
         if getattr(c, "connection_evidence", None) is not None
     ), lambda case: _evidence_operations_are_read_only(case[0], case[1]), name=lambda case: case[0])
 

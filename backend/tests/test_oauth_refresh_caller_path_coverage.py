@@ -29,6 +29,7 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 from typing import Iterable
+from tests.judged_nodes import judged_files
 
 BACKEND_ROOT = Path(__file__).resolve().parent.parent
 
@@ -145,7 +146,7 @@ def test_every_ensure_fresh_oauth_token_call_has_a_caller_path_source():
     an explicit ``caller_path=`` kwarg AND is not inside one of the trusted
     forwarding helpers."""
     all_violations: list[str] = []
-    for path in _iter_backend_py_files():
+    for path in judged_files(_iter_backend_py_files()):
         all_violations.extend(_find_violations(path))
 
     if all_violations:

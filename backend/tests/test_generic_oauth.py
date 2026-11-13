@@ -597,9 +597,19 @@ def test_oauth_credentials_belong_to_their_provider():
     """Every node's OAuth credential names the provider that declares its type. A fact of the code, so it's
     checked here rather than by every process that imports the registry."""
     from nodes.core.oauth_registry import oauth_providers, validate_oauth_credential_types
-    from nodes.core.registry import NODE_REGISTRY
+    from tests.judged_nodes import judged_classes, narrowed
 
-    validate_oauth_credential_types(oauth_providers(), NODE_REGISTRY.values())
+    providers = oauth_providers()
+    validate_oauth_credential_types(providers, [cls for _, cls in judged_classes()])
+    if narrowed():  # every other node, as its catalog file says what its class declares
+        from nodes.core.catalog import every_node_facts
+
+        by_type = {spec.credential_type: spec.provider for spec in providers.values()}
+        assert not [
+            f"{node_type}: {c['type']} belongs to {c['oauth_provider']}, not {by_type[c['type']]}"
+            for node_type, facts in every_node_facts().items() for c in facts.get("credentials", ())
+            if c.get("type") in by_type and c.get("oauth_provider") and c["oauth_provider"] != by_type[c["type"]]
+        ]
 
 
 @pytest.mark.parametrize(

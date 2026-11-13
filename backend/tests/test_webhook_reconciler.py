@@ -345,8 +345,8 @@ def test_every_trigger_node_declares_registration_relevant_fields():
     import inspect
     import re
 
-    from nodes.core.registry import NODE_REGISTRY
     from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
+    from tests.judged_nodes import judged_classes
 
     # Lifecycle/plumbing fields that never affect WHAT gets registered.
     IGNORE = {
@@ -359,7 +359,7 @@ def test_every_trigger_node_declares_registration_relevant_fields():
     HELPER_RE = re.compile(r"(?:cls\.)?(_[a-z_]+)\(\(?(?:config|cfg)")
 
     failures = []
-    for node_type, node_class in NODE_REGISTRY.items():
+    for node_type, node_class in judged_classes():
         if not (isinstance(node_class, type)
                 and issubclass(node_class, ExternalWebhookTriggerMixin)):
             continue
