@@ -12,14 +12,18 @@ const ROW = 78;
 const COUNT = 1200;
 const COLUMNS = 3;
 
-const offsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
+// The virtualizer reads the viewport's clientHeight and each row's offsetHeight.
+const sizes = ['offsetHeight', 'clientHeight'] as const;
+const originals = sizes.map((name) => Object.getOwnPropertyDescriptor(HTMLElement.prototype, name));
 beforeAll(() => {
-    Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
-        configurable: true,
-        get(this: HTMLElement) {
-            return this.dataset.page ? VIEWPORT : ROW;
-        },
-    });
+    for (const name of sizes) {
+        Object.defineProperty(HTMLElement.prototype, name, {
+            configurable: true,
+            get(this: HTMLElement) {
+                return this.dataset.page ? VIEWPORT : ROW;
+            },
+        });
+    }
     const computed = window.getComputedStyle.bind(window);
     vi.spyOn(window, 'getComputedStyle').mockImplementation((element, pseudo) => {
         const style = computed(element, pseudo);
@@ -30,7 +34,11 @@ beforeAll(() => {
     });
 });
 afterAll(() => {
-    if (offsetHeight) Object.defineProperty(HTMLElement.prototype, 'offsetHeight', offsetHeight);
+    sizes.forEach((name, i) => {
+        const original = originals[i];
+        if (original) Object.defineProperty(HTMLElement.prototype, name, original);
+        else delete (HTMLElement.prototype as Partial<Record<typeof name, number>>)[name];
+    });
     vi.restoreAllMocks();
 });
 afterEach(cleanup);

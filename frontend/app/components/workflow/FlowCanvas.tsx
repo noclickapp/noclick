@@ -495,6 +495,11 @@ function mergeConfigOverrides(
     return merged;
 }
 
+/** Where a canvas pointer event is on screen; a touch reports it on the touch that changed. */
+function clientPoint(event: MouseEvent | TouchEvent): { clientX: number; clientY: number } {
+    return 'changedTouches' in event ? event.changedTouches[0] : event;
+}
+
 /** A run narrowed to chosen entry points, with per-node one-shot config. */
 interface RunSelection {
     pathIds?: string[];
@@ -2464,12 +2469,10 @@ const FlowCanvasInner = ({
 
     // Handle drag start - update cursor position immediately
     const handleNodeDragStart = useCallback(
-        (event: React.MouseEvent) => {
+        (event: MouseEvent | TouchEvent) => {
             if (screenToFlowPosition) {
-                const position = screenToFlowPosition({
-                    x: event.clientX,
-                    y: event.clientY,
-                });
+                const { clientX, clientY } = clientPoint(event);
+                const position = screenToFlowPosition({ x: clientX, y: clientY });
                 updateLocalCursor(position);
             }
         },
@@ -2478,16 +2481,14 @@ const FlowCanvasInner = ({
 
     // Handle continuous drag - update cursor during node drag (with throttling)
     const handleNodeDrag = useCallback(
-        (event: React.MouseEvent) => {
+        (event: MouseEvent | TouchEvent) => {
             const now = Date.now();
             if (now - lastCursorUpdateRef.current < CURSOR_THROTTLE_MS) return;
             lastCursorUpdateRef.current = now;
 
             if (screenToFlowPosition) {
-                const position = screenToFlowPosition({
-                    x: event.clientX,
-                    y: event.clientY,
-                });
+                const { clientX, clientY } = clientPoint(event);
+                const position = screenToFlowPosition({ x: clientX, y: clientY });
                 updateLocalCursor(position);
             }
         },
@@ -2496,12 +2497,10 @@ const FlowCanvasInner = ({
 
     // Handle drag end - restore cursor position (onMouseMove may not fire until mouse actually moves)
     const handleNodeDragStop = useCallback(
-        (event: React.MouseEvent) => {
+        (event: MouseEvent | TouchEvent) => {
             if (screenToFlowPosition) {
-                const position = screenToFlowPosition({
-                    x: event.clientX,
-                    y: event.clientY,
-                });
+                const { clientX, clientY } = clientPoint(event);
+                const position = screenToFlowPosition({ x: clientX, y: clientY });
                 updateLocalCursor(position);
             }
         },
@@ -7005,8 +7004,7 @@ const FlowCanvasInner = ({
             const { fromNode, fromHandle } = connectionState;
             if (!fromNode || !fromHandle) return;
 
-            const { clientX, clientY } =
-                'changedTouches' in event ? event.changedTouches[0] : event;
+            const { clientX, clientY } = clientPoint(event);
             // mouseup targets the element under the pointer (z-order included);
             // touchend targets the drag ORIGIN, so hit-test the point instead.
             const el =

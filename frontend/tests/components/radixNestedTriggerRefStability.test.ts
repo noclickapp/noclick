@@ -44,13 +44,9 @@
 // variable between them is the component shape, so the pass/fail split proves the
 // fix rather than the assertion.
 //
-// RED -> GREEN EVIDENCE: BUGGY_SHAPE asserts churn IS present and CANONICAL_FIX
-// asserts churn is absent — same harness, same N re-renders, same idea of the
-// invariant, opposite shapes. Before the source fix, the live MoreMenu had the
-// BUGGY_SHAPE; CANONICAL_FIX is the shape the source now ships. So the suite both
-// documents the failing shape (BUGGY_SHAPE: detaches grow ~1/render) and locks in
-// the fixed one (CANONICAL_FIX: detaches <= 1). See the commented assertion in
-// CANONICAL_FIX for the exact RED it would have produced on the pre-fix shape.
+// Radix fixed the mechanism upstream in @radix-ui/react-dropdown-menu 2.1.19, so
+// both shapes now hold the Tooltip-anchored ref stable: NESTED_SHAPE guards the
+// upstream fix, CANONICAL_FIX the shape the source ships.
 import { it, expect, beforeAll } from 'vitest';
 import { render } from '@testing-library/react';
 import React from 'react';
@@ -168,20 +164,17 @@ const canonicalWrapperFix = (counter: ReturnType<typeof makeRefCounter>, tick: n
     ),
   );
 
-it('BUGGY_SHAPE: double-asChild (Tooltip>Dropdown>Button) churns the Tooltip-anchored ref every render — documents the canvas #185 driver (RED proof)', () => {
+it('NESTED_SHAPE: double-asChild (Tooltip>Dropdown>Button) keeps the Tooltip-anchored ref stable since dropdown-menu 2.1.19', () => {
   const counter = measure(buggyDoubleAsChild);
 
-  // On the unfixed nested shape the element carrying the Tooltip's Popper anchor is
-  // the dropdown-churned button, so React detaches + re-attaches it on EVERY clean
-  // re-render: detaches grow ~1 per re-render. This is exactly the per-commit
-  // detach that feeds the setAnchor -> render -> setAnchor loop tripping React #185
-  // on the live canvas. Asserting the churn IS present (a) reproduces the bug
-  // against the real primitives and (b) guarantees the CANONICAL_FIX assertion
-  // below is non-tautological: same harness, only the shape differs. If a future
-  // Radix release stops churning DropdownMenuTrigger's ref this FAILS loudly,
-  // signaling the regression guard should be re-derived.
+  // Up to @radix-ui/react-dropdown-menu 2.1.16 this shape detached and re-attached
+  // the Tooltip-anchored button on every clean re-render (9 detaches over these 8),
+  // the per-commit detach that drove the canvas #185 loop. 2.1.19 memoizes the
+  // trigger's composed ref ("Fixed infinite re-render loop in React 19 caused by
+  // unstable composed ref callback references"), so the same shape is now inert.
+  // A Radix release that brings the churn back fails here.
   expect(counter.attaches).toBeGreaterThanOrEqual(1);
-  expect(counter.detaches).toBeGreaterThan(1);
+  expect(counter.detaches).toBeLessThanOrEqual(1);
 });
 
 it('CANONICAL_FIX: wrapper-span between the nested triggers keeps the Tooltip-anchored ref stable across re-renders (no churn -> no #185)', () => {
@@ -194,9 +187,7 @@ it('CANONICAL_FIX: wrapper-span between the nested triggers keeps the Tooltip-an
   expect(counter.attaches).toBeGreaterThanOrEqual(1);
   expect(counter.detaches).toBeLessThanOrEqual(1);
 
-  // RED PROOF: swap `canonicalWrapperFix` for `buggyDoubleAsChild` above and this
-  // same assertion fails with `expected 9 to be less than or equal to 1` (verified
-  // live — the pre-fix MoreMenu shape detaches the Tooltip-anchored ref once per
-  // re-render). The BUGGY_SHAPE test pins that failing number as a live control.
-  // expect(measure(buggyDoubleAsChild).detaches).toBeLessThanOrEqual(1); // would throw
+  // On dropdown-menu <= 2.1.16 the nested shape above failed this same assertion
+  // with `expected 9 to be less than or equal to 1`; the wrapper kept it stable then
+  // and still does.
 });

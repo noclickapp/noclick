@@ -14,6 +14,8 @@ describe('CopyButton', () => {
         expect(button.className).toContain('rounded-full');
         expect(button.hasAttribute('title')).toBe(false);
         act(() => button.focus());
-        expect((await screen.findByRole('tooltip', { name: 'Copy' })).parentElement!.className).toContain(TOOLTIP_SURFACE);
+        // Radix's tooltip content is itself the role="tooltip" element (since 1.2.13 it no longer renders a
+        // hidden second copy for screen readers), so the app's surface is on the element that names it.
+        expect((await screen.findByRole('tooltip', { name: 'Copy' })).className).toContain(TOOLTIP_SURFACE);
     });
 });
