@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 // Opening an account (the command palette's credential, a resource's Manage) shows the account when it works; a broken
 // one, or a Reconnect, opens the Connect dialog on its way back in.
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { CredentialInfo } from '~/types/socket-events.generated';
 
@@ -64,6 +64,35 @@ describe('opening an existing account', () => {
         expect(navigateToAccount).not.toHaveBeenCalled();
         expect(await screen.findByText('Connect Stripe')).toBeTruthy();
         expect(await screen.findByText('Paste it here', {}, { timeout: 5000 })).toBeTruthy();
+    });
+});
+
+describe('the picker’s search', () => {
+    it('clears with its ✕, keeping focus in the box', async () => {
+        cache.rows = [];
+        render(<GlobalCreateCredentialDialog />);
+        await act(async () => openCreateCredential());
+        const box = screen.getByRole<HTMLInputElement>('searchbox', { name: 'Search apps' });
+        expect(screen.queryByRole('button', { name: 'Clear search' })).toBeNull();
+        fireEvent.change(box, { target: { value: 'zz' } });
+        expect(await screen.findByText('Nothing matches “zz”.')).toBeTruthy();
+        fireEvent.click(screen.getByRole('button', { name: 'Clear search' }));
+        expect(box.value).toBe('');
+        expect(document.activeElement).toBe(box);
+        expect((await screen.findAllByTestId('credential-service-row')).map((row) => row.textContent)).toEqual(['Stripe']);
+    });
+
+    it('clears on Escape first, and only an empty one closes the dialog', async () => {
+        cache.rows = [];
+        render(<GlobalCreateCredentialDialog />);
+        await act(async () => openCreateCredential());
+        const box = screen.getByRole<HTMLInputElement>('searchbox', { name: 'Search apps' });
+        fireEvent.change(box, { target: { value: 'str' } });
+        fireEvent.keyDown(box, { key: 'Escape' });
+        expect(box.value).toBe('');
+        expect(dialogOpen()).toBe(true);
+        fireEvent.keyDown(box, { key: 'Escape' });
+        await waitFor(() => expect(dialogOpen()).toBe(false));
     });
 });
 

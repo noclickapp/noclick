@@ -273,6 +273,14 @@ body {
     ::selection {
         background: hsl(var(--foreground) / 0.16);
     }
+    /* The browser's own search-box ✕ (WebKit's blue one) and glyph slots: a box clears with SearchClearButton. */
+    input[type='search']::-webkit-search-cancel-button,
+    input[type='search']::-webkit-search-decoration,
+    input[type='search']::-webkit-search-results-button,
+    input[type='search']::-webkit-search-results-decoration {
+        -webkit-appearance: none;
+        appearance: none;
+    }
 }
 
 /* The chat composer's move from the middle of the empty page to the foot of

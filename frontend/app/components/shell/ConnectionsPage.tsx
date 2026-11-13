@@ -4,13 +4,14 @@
 // opening onto proof it works, what depends on it and who shares it; and the
 // other direction, using NoClick itself from Claude, ChatGPT, Cursor and any
 // other MCP client.
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { useSearchParams } from 'react-router';
 import { AlertCircle, ArrowRight, Check, Search } from 'lucide-react';
 import { openCreateCredential } from '~/components/shared/popups/CreateCredentialDialog';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import type { WorkflowRef } from '~/components/dashboard/types';
 import { Skeleton } from '~/components/ui/skeleton';
+import { SearchClearButton } from '~/components/ui/SearchClearButton';
 import { MCP_CLIENT_GUIDES, NoClickMCPSetupModal } from '~/components/workflow/MCPConnectModal';
 import { useCredentialList } from '~/hooks/useCachedCredentialList';
 import { useDashboardOverview } from '~/hooks/useDashboardOverview';
@@ -260,6 +261,7 @@ export function ConnectionsPage() {
     const view = parseView(params.get('view'), !!orgContext.id);
     const accountId = params.get('account');
     const [query, setQuery] = useState('');
+    const searchRef = useRef<HTMLInputElement>(null);
     const { credentials, loaded } = useCredentialList();
     const accounts = useConnectedAccounts(credentials);
     const services = useCatalogServices();
@@ -320,6 +322,7 @@ export function ConnectionsPage() {
         setQuery(label);
         go({ view: own.some((a) => a.source === 'connected') ? 'connected' : own[0].source }, true);
     };
+    const searchLabel = view === 'all' ? 'Search apps' : 'Search accounts';
     const switchTo = (next: View) => {
         if (next !== view) setQuery('');
         go({ view: next });
@@ -348,12 +351,15 @@ export function ConnectionsPage() {
                 <label className="relative ml-auto w-full sm:w-64">
                     <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <input
+                        ref={searchRef}
                         type="search"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        placeholder={view === 'all' ? 'Search apps' : 'Search accounts'}
-                        className="h-9 w-full rounded-full border border-border bg-transparent pl-9 pr-3 text-[13.5px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 dark:border-foreground/[0.1]"
+                        placeholder={searchLabel}
+                        aria-label={searchLabel}
+                        className="h-9 w-full rounded-full border border-border bg-transparent pl-9 pr-9 text-[13.5px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 dark:border-foreground/[0.1]"
                     />
+                    <SearchClearButton value={query} onClear={() => setQuery('')} inputRef={searchRef} className="absolute right-1 top-1/2 -translate-y-1/2" />
                 </label>
             </div>
             {view === 'all' ? (

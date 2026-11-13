@@ -270,6 +270,21 @@ it('starts a changed filter from its own first page', async () => {
     expect(screen.getByText('Showing 50 of 85 charges')).toBeTruthy();
 });
 
+it('clears its search with the ✕, back to every charge, keeping focus in the box', async () => {
+    await open();
+    const search = screen.getByRole<HTMLInputElement>('searchbox', { name: 'Search charges' });
+    expect(screen.queryByRole('button', { name: 'Clear search' })).toBeNull();
+    fireEvent.change(search, { target: { value: 'sonnet' } });
+    const sonnet = rows.filter((r) => r.usage_subtype === SONNET);
+    await waitFor(() => expect(shown()).toEqual(amounts(sonnet.slice(0, 50))));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Clear search' }));
+    expect(search.value).toBe('');
+    expect(document.activeElement).toBe(search);
+    await waitFor(() => expect(shown()).toEqual(amounts(rows.slice(0, 50))));
+    expect(screen.queryByRole('button', { name: 'Clear search' })).toBeNull();
+});
+
 it('says when the next page didn’t load, and keeps what it shows', async () => {
     await open();
     socketCall.mockImplementation((event: string) => (event === 'usage:page' ? Promise.resolve(pageData(rows)) : Promise.reject(new Error('backend down'))));

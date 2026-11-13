@@ -51,9 +51,11 @@ export function ShellDialog({ open, onOpenChange, title, description, mark, mark
     const hold = (e: Event) => {
         if (!dismissible) e.preventDefault();
     };
-    // Radix hears Escape first (document, capture): an open combobox closes its own list instead.
+    // Radix hears Escape first (document, capture): an open combobox closes its own list instead, and a search box
+    // holding text is cleared by its own key handler.
     const escape = (e: KeyboardEvent) => {
-        if (!dismissible || (e.target instanceof Element && e.target.closest('[role="combobox"][aria-expanded="true"]'))) e.preventDefault();
+        const { target } = e;
+        if (!dismissible || (target instanceof Element && target.closest('[role="combobox"][aria-expanded="true"]')) || (target instanceof HTMLInputElement && target.type === 'search' && target.value)) e.preventDefault();
     };
     const body = (
         <>

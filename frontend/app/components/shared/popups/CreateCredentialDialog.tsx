@@ -10,6 +10,7 @@ import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState }
 import { Loader2, Plug, Search } from 'lucide-react';
 import { ShellDialog } from '~/components/shell/ShellDialog';
 import { BrandIcon } from '~/components/shared/BrandIcon';
+import { SearchClearButton } from '~/components/ui/SearchClearButton';
 import { connectDialogHeader, type ConnectResult, type ConnectStage } from '~/components/credential/connect/connectHeader';
 import { accountProblem } from '~/components/shell/connections/accounts';
 import { hasCustomCredentialForm } from '~/components/workflow/customCredentialForms';
@@ -128,7 +129,8 @@ export function CreateCredentialDialog({ isOpen, onOpenChange, onCreated, initia
             .map((x) => x.s);
     }, [services, search]);
 
-    // ↑/↓ move the highlight (wrapping at both ends), Enter picks the service, Esc closes. Only on the picker.
+    // ↑/↓ move the highlight (wrapping at both ends), Enter picks the service, Esc clears the search, then closes. Only
+    // on the picker.
     const { index: highlighted, setIndex: setHighlighted, handleKeyDown } = useListKeyboardNav({
         count: filtered.length,
         active: isOpen && !selected,
@@ -137,7 +139,7 @@ export function CreateCredentialDialog({ isOpen, onOpenChange, onCreated, initia
             const svc = filtered[i];
             if (svc) selectService(svc);
         },
-        onEscape: () => onOpenChange(false),
+        onEscape: () => (search ? setSearch('') : onOpenChange(false)),
     });
 
     useEffect(() => {
@@ -220,8 +222,9 @@ export function CreateCredentialDialog({ isOpen, onOpenChange, onCreated, initia
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             aria-label="Search apps"
-                            className="h-10 w-full rounded-xl border border-border bg-transparent pl-10 pr-3.5 text-[14px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 dark:border-foreground/[0.1]"
+                            className="h-10 w-full rounded-xl border border-border bg-transparent pl-10 pr-10 text-[14px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 dark:border-foreground/[0.1]"
                         />
+                        <SearchClearButton value={search} onClear={() => setSearch('')} inputRef={searchInputRef} className="absolute right-1.5 top-1/2 -translate-y-1/2" />
                     </label>
                     <div ref={listRef} className="-mx-2 mt-3 max-h-[52vh] overflow-y-auto px-2 scrollbar-subtle" role="listbox" aria-label="Apps">
                         {services.length === 0 ? (

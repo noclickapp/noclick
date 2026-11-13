@@ -12,6 +12,7 @@ import { askNoClick } from '~/lib/askNoClick';
 import { saveCsv } from '~/lib/tableCsv';
 import { BUTTON_GHOST, BUTTON_SECONDARY } from '~/components/shell/buttons';
 import { SidePanel } from '~/components/shell/SidePanel';
+import { SearchClearButton } from '~/components/ui/SearchClearButton';
 import { ROWS } from '~/components/dashboard/primitives';
 import { DashboardRunDialog } from '~/components/dashboard/DashboardRunDialog';
 import type { RunRow } from '~/components/dashboard/types';
@@ -76,6 +77,7 @@ export function ChargesTable({
 }) {
     const [service, setService] = useState<ServiceId | 'all'>('all');
     const [query, setQuery] = useState('');
+    const searchRef = useRef<HTMLInputElement>(null);
     const search = useDeferredValue(query);
     const [loaded, setLoaded] = useState<Loaded | null>(null);
     const [open, setOpen] = useState<LineItem | null>(null);
@@ -225,13 +227,15 @@ export function ChargesTable({
                 <label className="relative block shrink-0 @[640px]:w-56">
                     <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                     <input
+                        ref={searchRef}
                         type="search"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Search charges"
                         aria-label="Search charges"
-                        className="h-8 w-full rounded-full border border-border bg-transparent pl-8 pr-3 text-[13px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 dark:border-foreground/[0.1]"
+                        className="h-8 w-full rounded-full border border-border bg-transparent pl-8 pr-8 text-[13px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 dark:border-foreground/[0.1]"
                     />
+                    <SearchClearButton value={query} onClear={() => setQuery('')} inputRef={searchRef} className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2" />
                 </label>
             </div>
             {chips.length > 0 && (
