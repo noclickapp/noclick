@@ -4,11 +4,12 @@ import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 
 const TimeeroIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/timeero.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <ThemedBrandImg light="/icons/timeero.svg" className={className} style={style} {...props} ref={ref} />
     ),
 );
 TimeeroIcon.displayName = 'TimeeroIcon';
