@@ -230,6 +230,31 @@ class ZeffyDeleteContactConfig(_Input):
     contact_id: str = Field(..., min_length=1)
 
 
+class _ZeffyPollConfig(PollTriggerConfigBase):
+    model_config = ConfigDict(extra="forbid", json_schema_extra={"x-requires-webhook": True})
+    created_gte: int = Field(0, ge=0, description="Monitor resources created at or after this Unix timestamp. Arming records existing resources without firing. Narrow this date if the scope exceeds 10,000 resources.")
+
+
+class ZeffyOnNewPaymentConfig(_ZeffyPollConfig):
+    """Start when a new payment is recorded, regardless of status."""
+    operation: Literal["on_new_payment"] = Field("on_new_payment", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Payment", "ui:hidden": True})
+    campaign: str | None = Field(None, pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$", description="Optional campaign ID to monitor.")
+
+
+class ZeffyOnNewContactConfig(_ZeffyPollConfig):
+    """Start when a new donor contact is created."""
+    operation: Literal["on_new_contact"] = Field("on_new_contact", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Contact", "ui:hidden": True})
+
+
+class ZeffyOnNewOrUpdatedContactConfig(_ZeffyPollConfig):
+    """Start when a donor contact is created or its updated timestamp changes."""
+    operation: Literal["on_new_or_updated_contact"] = Field("on_new_or_updated_contact", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New or Updated Contact", "ui:hidden": True})
+
+
+POLL_RESOURCES = {"on_new_payment": "payments", "on_new_contact": "contacts", "on_new_or_updated_contact": "contacts"}
 # Zeffy's own MCP server: agents get its tools through a person's Zeffy sign-in.
 ZeffyMcpCredential = mcp_credential("zeffy", "https://api.zeffy.com/mcp", app="Zeffy")
 ZeffyCredential = Union[ZeffyAPIKeyCredential, ZeffyMcpCredential]
