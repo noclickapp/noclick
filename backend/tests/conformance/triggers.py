@@ -496,12 +496,15 @@ async def check_webhook(node_cls, node_type, model, raw, credential, events, sig
                                 node_data={"config": {**config, "_triggerPayload": payload}},
                                 config=model.model_validate({"config": raw, "credentials": credential}), sio=Mock())
                 output = await node.execute({})
-            problem = agent_event_problem(node_cls.resolve_agent_event(output))
+            agent_event = node_cls.resolve_agent_event(output)
+            problem = agent_event_problem(agent_event)
             if problem:
                 record["failures"].append(problem)
             record["failures"] += unknown_reads(reads)
             record["reads"] = reads.count
-            record["outcome"] = "delivered"
+            # A run that hands the agent nothing (a skipped run, an event for another trigger) never reached this
+            # trigger: only an event that produces an agent turn counts toward "at least one event reaches it".
+            record["outcome"] = "delivered" if agent_event is not None else "no agent event"
         except Exception as exc:
             record["failures"].append("run: " + harness.reason(exc))
             record["outcome"] = record["outcome"] or "errored"

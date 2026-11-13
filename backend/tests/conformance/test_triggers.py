@@ -115,6 +115,8 @@ def webhook_node(mutation=None):
         @classmethod
         def resolve_agent_event(cls, output):
             data = output["data"]
+            if mutation == "no_agent_event":
+                return None
             if mutation == "raises":
                 raise KeyError("customer")
             extra = f" for {data.get('customer')}" if mutation == "reads_unknown" else ""
@@ -133,6 +135,7 @@ def webhook_node(mutation=None):
     ("wrong_signature", "rejected it, signed as the docs describe"),
     ("raises", "run: "),
     ("filtered", "none of the 1 documented events reached this trigger"),
+    ("no_agent_event", "none of the 1 documented events reached this trigger (no agent event)"),
     ("no_events", "no webhook events to deliver"),
     ("bad_registration", "No spec operation for POST https://example.test/hookz"),
 ])
@@ -304,3 +307,20 @@ async def test_a_trigger_that_never_runs_is_still_reported_failed(monkeypatch):
     [op] = report["operations"]
     assert op["trigger"]["kind"] == "poll" and op["fixture_errors"]
     assert openapi_verdict(report, "/nonexistent", audit=False)["triggers"] == {"on_new_task": "failed"}
+
+
+async def test_only_events_that_give_the_agent_a_turn_count_as_delivered(monkeypatch):
+    refund = {"type": "refund.created", "data": {"id": "ref_1", "total": 5}}
+    events = {"order.created": {"body": ORDER, "source": SOURCE}, "refund.created": {"body": refund, "source": SOURCE}}
+    node = webhook_node()
+    original = node.resolve_agent_event.__func__
+
+    def only_orders(cls, output):
+        return original(cls, output) if output["type"] == "order.created" else None
+
+    node.resolve_agent_event = classmethod(only_orders)
+    install(monkeypatch, "shop", node, webhook_doc(events=False), {"webhook_signature": SIGNING}, events=events)
+    [op] = (await harness.run_provider("shop"))["operations"]
+    assert {e["event"]: e["outcome"] for e in op["trigger"]["events"]} == {
+        "order.created": "delivered", "refund.created": "no agent event"}
+    assert op["passed"]
