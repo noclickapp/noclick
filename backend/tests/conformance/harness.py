@@ -1240,6 +1240,21 @@ def response_body(payload, media, schema, source, headers):
     return {**result, "content": payload}
 
 
+def yaml_null_types(node):
+    """`type: [object, null]` written in YAML parses as [\"object\", None]: YAML's null where OpenAPI 3.1 means the
+    JSON type \"null\" (TCGdex's nullable object query parameters). Read it as \"null\". Rewrites in place."""
+    stack = [node]
+    while stack:
+        value = stack.pop()
+        if isinstance(value, dict):
+            types = value.get("type")
+            if isinstance(types, list) and None in types:
+                value["type"] = ["null" if t is None else t for t in types]
+            stack.extend(value.values())
+        elif isinstance(value, list):
+            stack.extend(value)
+
+
 def scalar_union_types(types):
     non_null = list(dict.fromkeys(t for t in types if t != "null"))
     if not non_null or not set(non_null) <= {"string", "integer", "number", "boolean"}:
@@ -1610,6 +1625,7 @@ class Contract:
             scheme = resolve(doc, scheme)
             if scheme.get("type") == "http":
                 scheme["scheme"] = scheme["scheme"].lower()
+        yaml_null_types(doc)
         self.doc = doc
         self.auth_override = auth_override
         if auth_override is not None:
