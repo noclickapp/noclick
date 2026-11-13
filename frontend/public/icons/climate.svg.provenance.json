@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/climate.svg",
+  "source": "https://cs-assets.bayer.com/is/content/bayer/FV_HRZ_RGB-4 (the original SVG behind the header image https://cs-assets.bayer.com/is/image/bayer/FV_HRZ_RGB-4?fmt=webp-alpha)",
+  "source_page": "https://climate.com/en-us.html header (<img class=\"fv-header-navigation__logo\">); www.fieldview.com and www.climate.com redirect there",
+  "date": "2026-11-13",
+  "license": "Climate FieldView (Climate LLC, Bayer) trademark; used solely to identify the Climate FieldView (Climate LLC, Bayer) integration",
+  "sha256": "49377942cf1c9fff05fda8fc2a8e0dc086a2d6af41850cb0779bd291748cdb5c",
+  "source_sha256": "dd22d38ffa36e60da9f0e08285ac711d0deb6b433d96a89a9a5f71cfb316af95",
+  "edits": [
+    "kept only the striped 'F' and its dash/plus/chevron trail (elements 6-21); dropped the IELDVIEW letters, the green leaf on the W and the TM (elements 0-5, 22-24)",
+    "cropped the viewBox to the mark (--pad 0.02)",
+    "svgtool clean"
+  ]
+}
