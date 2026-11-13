@@ -5,28 +5,13 @@ import {
     NodeDefinition,
     SvgIconComponent,
 } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const FormstepIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <>
-        <img
-            ref={ref}
-            src="/icons/formstep.svg"
-            alt=""
-            className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, objectFit: 'contain' }}
-            {...props}
-        />
-        <img
-            src="/icons/formstep-dark.svg"
-            alt=""
-            className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, objectFit: 'contain' }}
-            {...props}
-        />
-    </>
+    <ThemedBrandImg light="/icons/formstep.svg" dark="/icons/formstep-dark.svg" className={className} style={style} {...props} ref={ref} />
 ));
 FormstepIcon.displayName = 'FormstepIcon';
 
