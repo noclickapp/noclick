@@ -25,6 +25,21 @@ VALIDATED_HARNESS_VERSIONS = {
 }
 
 
+#: harness → a newer version whose store the reader was checked against, from a real run's rows: a laptop runs
+#: whatever it runs, and a move reads its session there. Writers stay on the pins above.
+READ_ALSO = {
+    "opencode": "2.2.5",
+}
+
+
+def test_newer_stores_read_are_declared_from_their_fixtures(tmp_path):
+    from tests.test_session_interchange import CWD, OPENCODE2_SID, _opencode2_home
+
+    home = _opencode2_home(tmp_path)
+    thread = ic.read_thread(ic.StoreRef("opencode", home, Path(CWD), session_id=OPENCODE2_SID))
+    assert {"opencode": thread.cli_version} == READ_ALSO, "re-capture the fixture from the version you declare"
+
+
 def test_every_format_is_validated_against_the_pinned_harness():
     pins = si.harness_pins()
     assert set(VALIDATED_HARNESS_VERSIONS) == set(ic.FORMATS), "declare a validated version for every format, and only for formats"

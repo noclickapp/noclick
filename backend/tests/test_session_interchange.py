@@ -917,6 +917,67 @@ def _opencode_home(root: Path, cwd: str = CWD) -> Path:
     return home
 
 
+# OpenCode 2.x's tables (2.2.5's DDL, the columns the reader reads and the ones
+# its NOT NULLs require), as a laptop running 2.x holds them.
+OPENCODE2_TABLES = """
+    CREATE TABLE session_v2 (id text PRIMARY KEY, project_id text NOT NULL, workspace_id text, parent_id text, slug text NOT NULL,
+        directory text NOT NULL, title text, version text NOT NULL, agent text, model text, time_created integer NOT NULL,
+        time_updated integer NOT NULL);
+    CREATE TABLE session_message (id text PRIMARY KEY, session_id text NOT NULL, type text NOT NULL, seq integer NOT NULL,
+        time_created integer NOT NULL, time_updated integer NOT NULL, data text NOT NULL);
+    CREATE UNIQUE INDEX session_message_session_seq_idx ON session_message (session_id, seq);
+    CREATE TABLE session_part (message_id text NOT NULL, session_id text NOT NULL, ordinal integer NOT NULL, type text NOT NULL,
+        call_id text, time_created integer NOT NULL, time_updated integer NOT NULL, data text NOT NULL, PRIMARY KEY (message_id, ordinal));
+"""
+OPENCODE2_SID = "ses_e2dd759f5ffe67ih2yWQXWfhwE"
+
+
+def _opencode2_home(root: Path, cwd: str = CWD, *, migrated: bool = False, parts_apart: bool = False) -> Path:
+    """A 2.2.5 opencode database, its rows as the CLI writes them (captured from
+    a real run): a user row; an assistant step whose parts are inline, text then
+    a shell call carrying its result as ``content`` and its exit in
+    ``metadata``; the ``idle`` row a finished turn leaves; then a reply step
+    with reasoning and text. ``migrated``: the 1.x tables beside them, holding an
+    older session, as a 1.x install upgraded keeps them. ``parts_apart``: the
+    reply's parts in ``session_part`` rather than inline."""
+    home = _opencode_home(root, cwd) if migrated else root / "xdg"
+    db = home / "opencode" / "opencode.db"
+    db.parent.mkdir(parents=True, exist_ok=True)
+    t = 1794527241779
+    model = {"id": "claude-sonnet-4-5", "providerID": "anthropic", "variant": "default"}
+    reply = [{"type": "reasoning", "text": "one test", "native": {"reasoningField": "reasoning_content"}, "time": {"created": t + 5000, "completed": t + 5100}},
+             {"type": "text", "text": "One test covers it: tests/test_auth.py::test_auth_callback."}]
+    rows = [
+        ("msg_1d228a6540019rq4jWk1fVBLIW", "user", 4, {"time": {"created": t + 100}, "text": "Which tests cover the auth callback?", "files": [], "agents": []}),
+        ("msg_1d228a6ba001EwRQmfCmTMZoEe", "assistant", 5, {
+            "time": {"created": t + 200, "streamed": t + 1800, "completed": t + 1900}, "agent": "build", "model": model,
+            "content": [{"type": "text", "text": "Let me search the test suite."},
+                        {"type": "tool", "id": "call_d0b1e7f093ec4df29f688910", "name": "shell", "executed": False,
+                         "state": {"status": "completed", "input": {"command": "rg -n auth_callback tests"},
+                                   "content": [{"type": "text", "text": "tests/test_auth.py:12:def test_auth_callback\n"}],
+                                   "metadata": {"status": "completed", "truncated": False, "exit": 0}},
+                         "time": {"created": t + 1500, "ran": t + 1600, "completed": t + 1700}}],
+            "snapshot": {"start": "212c4fd", "end": "212c4fd", "files": []}, "finish": "tool-calls", "rawFinish": "tool_calls", "cost": 0,
+            "tokens": {"input": 3562, "output": 73, "reasoning": 0, "cache": {"read": 1920, "write": 0}}}),
+        ("msg_1d228a71e001cVQhGFjU1g3QmR", "assistant", 20, {
+            "time": {"created": t + 4000, "streamed": t + 5200, "completed": t + 5300}, "agent": "build", "model": model,
+            **({} if parts_apart else {"content": reply}), "finish": "stop", "rawFinish": "stop", "cost": 0}),
+        ("msg_1d228a72a001xIdLeRoWnOtUsE", "idle", 27, {"time": {"created": t + 5400}, "outcome": "succeeded"}),
+    ]
+    with sqlite3.connect(db) as conn:
+        conn.executescript(OPENCODE2_TABLES)
+        conn.execute("INSERT INTO session_v2 VALUES (?, 'global', NULL, NULL, 'brave-otter', ?, 'Auth callback tests', '2.2.5', NULL, ?, ?, ?)",
+                     (OPENCODE2_SID, cwd, json.dumps({"id": "claude-sonnet-4-5", "providerID": "anthropic"}), t, t + 5400))
+        for mid, kind, seq, data in rows:
+            created = data["time"]["created"]
+            conn.execute("INSERT INTO session_message VALUES (?, ?, ?, ?, ?, ?, ?)", (mid, OPENCODE2_SID, kind, seq, created, created, json.dumps(data)))
+        if parts_apart:
+            for ordinal, part in enumerate(reply):
+                conn.execute("INSERT INTO session_part VALUES (?, ?, ?, ?, NULL, ?, ?, ?)",
+                             (rows[2][0], OPENCODE2_SID, ordinal, part["type"], t + 4100, t + 4100, json.dumps(part)))
+    return home
+
+
 def _hermes_home(root: Path, cwd: str = CWD) -> Path:
     """A schema-26 hermes state database with the fixed NoClick session:
     user text, an assistant tool-call row, the tool row, the reply."""
@@ -1011,6 +1072,44 @@ class TestOpenCodeStore:
         with pytest.raises(ic.InterchangeError) as e:
             ic.format_for("opencode").locate(ic.StoreRef("opencode", home, Path(CWD), pointer=pointer))
         assert e.value.reason == "source_empty"
+
+    @pytest.mark.parametrize("parts_apart", [False, True])
+    def test_reads_a_2x_session(self, tmp_path, parts_apart):
+        home = _opencode2_home(tmp_path, parts_apart=parts_apart)
+        thread = ic.read_thread(ic.StoreRef("opencode", home, Path(CWD), session_id=OPENCODE2_SID))
+        sk = ic.skeleton_of(thread)
+        assert sk.roles == EXPECTED_ROLES and sk.tool_calls == 1 and sk.tool_results == 1 and sk.unpaired_tool_calls == 0
+        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == (OPENCODE2_SID, CWD, "2.2.5", "anthropic/claude-sonnet-4-5")
+        call, result = [e for e in thread.events if e.kind in (ic.ir.TOOL_CALL, ic.ir.TOOL_RESULT)]
+        assert (call.tool_name, call.tool_call_id, call.tool_input) == ("shell", "call_d0b1e7f093ec4df29f688910", {"command": "rg -n auth_callback tests"})
+        assert (result.tool_call_id, result.text, result.is_error) == (call.tool_call_id, "tests/test_auth.py:12:def test_auth_callback\n", False)
+        assert ic.classify_drops(dict(thread.dropped)) == {} and thread.dropped["opaque:message_idle"] == 1
+        # the session found with no id, as the newest; and it moves on, as a 1.x thread does
+        assert ic.read_thread(ic.StoreRef("opencode", home, Path(CWD))).session_id == OPENCODE2_SID
+        moved = ic.translate(thread, ic.StoreRef("claude_code", tmp_path / "claude", Path(CWD)))
+        assert moved.fidelity.source.digest == moved.fidelity.target.digest
+
+    def test_a_2x_tool_error_is_its_message(self, tmp_path):
+        home = _opencode2_home(tmp_path)
+        db = home / "opencode" / "opencode.db"
+        with sqlite3.connect(db) as conn:
+            data = json.loads(conn.execute("SELECT data FROM session_message WHERE seq = 5").fetchone()[0])
+            data["content"][1]["state"] = {"status": "error", "input": {"path": "nope.md"}, "error": {"type": "tool.execution", "message": "File not found: nope.md"}}
+            conn.execute("UPDATE session_message SET data = ? WHERE seq = 5", (json.dumps(data),))
+        thread = ic.read_thread(ic.StoreRef("opencode", home, Path(CWD)))
+        result = next(e for e in thread.events if e.kind == ic.ir.TOOL_RESULT)
+        assert (result.text, result.is_error) == ("File not found: nope.md", True)
+
+    def test_a_migrated_database_holds_both_kinds(self, tmp_path):
+        """A 1.x install upgraded to 2.x: new sessions in the 2.x tables, older ones still in the 1.x tables."""
+        home = _opencode2_home(tmp_path, migrated=True)
+        assert ic.read_thread(ic.StoreRef("opencode", home, Path(CWD), session_id=OPENCODE2_SID)).cli_version == "2.2.5"
+        older = ic.read_thread(ic.StoreRef("opencode", home, Path(CWD), session_id="ses_01a09500000feTeSt0000000001"))
+        assert older.cli_version == "1.18.35" and ic.skeleton_of(older).roles == EXPECTED_ROLES
+        assert ic.read_thread(ic.StoreRef("opencode", home, Path(CWD))).session_id == OPENCODE2_SID  # the newest of both
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.read_thread(ic.StoreRef("opencode", home, Path(CWD), session_id="ses_nope"))
+        assert e.value.reason == "source_empty" and f"its newest: {OPENCODE2_SID} (Auth callback tests" in e.value.detail
 
     def test_bundle_is_the_importers_shape(self, tmp_path):
         thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))

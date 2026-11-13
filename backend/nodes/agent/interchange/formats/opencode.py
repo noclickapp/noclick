@@ -25,6 +25,16 @@ no ``opencode``. NoClick's runner resumes by the id in its pointer file
 (``.nc_session`` beside the database hosted, ``.noclick-opencode-session``
 in the local workdir). Validated against OpenCode 1.18.35 (import and
 resume) — see ``tests/test_session_interchange_drift.py``.
+
+OpenCode 2.x keeps a session in ``session_v2`` and one ``session_message``
+row per message (``type`` user/assistant/idle, ordered by ``seq``): a user
+row holds its ``text``, an assistant row one model step, its parts inline in
+``data.content`` (``text``, ``reasoning``, ``tool`` with ``name``, ``id``
+and ``state``: ``input``, the result as ``content`` text parts, ``error``),
+or, where the row has none, in ``session_part`` by ``ordinal``. A database a
+1.x install migrated keeps its older sessions in the 1.x tables beside them,
+so a session is looked for in both. Only the reader reads 2.x (a laptop's
+session moving to NoClick); the writer imports into the pinned 1.x.
 """
 
 from __future__ import annotations
@@ -72,11 +82,17 @@ class OpenCodeFormat(ThreadFormat):
             raise InterchangeError("source_empty", f"no opencode database at {db}")
         wanted = store.session_id or pointer_text(store.pointer)
         with sqlite.connect(db, readonly=True) as conn:
+            tables = _session_tables(conn)
+            if not tables:
+                raise InterchangeError("source_empty", f"no opencode session table in {db}")
             if wanted:
-                if conn.execute("SELECT 1 FROM session WHERE id = ?", (wanted,)).fetchone() is None:
-                    raise InterchangeError("source_empty", f"opencode session {wanted} not in {db}")
+                if not any(conn.execute(f"SELECT 1 FROM {t} WHERE id = ?", (wanted,)).fetchone() for t in tables):
+                    newest = ", ".join(f"{sid} ({title or 'untitled'}, {directory})" for sid, title, directory in
+                                       _newest(conn, tables, 3))
+                    raise InterchangeError("source_empty", f"opencode session {wanted} not in {db}"
+                                           + (f"; its newest: {newest}" if newest else ""))
                 return db_ref(db, wanted)
-            row = conn.execute("SELECT id FROM session ORDER BY time_updated DESC LIMIT 1").fetchone()
+            row = next(iter(_newest(conn, tables, 1)), None)
         if row is None:
             raise InterchangeError("source_empty", f"no opencode session in {db}")
         return db_ref(db, row[0])
@@ -86,6 +102,11 @@ class OpenCodeFormat(ThreadFormat):
     def read(self, ref: str) -> Thread:
         db, sid = split_db_ref(ref)
         with sqlite.connect(db, readonly=True) as conn:
+            if "session_v2" in _session_tables(conn):
+                found = conn.execute("SELECT directory, version, title, time_created, model FROM session_v2 WHERE id = ?",
+                                     (sid,)).fetchone()
+                if found is not None:
+                    return self._read_v2(conn, ref, sid, found)
             session = conn.execute("SELECT directory, version, title, time_created FROM session WHERE id = ?", (sid,)).fetchone()
             if session is None:
                 raise InterchangeError("source_unreadable", f"opencode session {sid} vanished from {db}")
@@ -143,6 +164,68 @@ class OpenCodeFormat(ThreadFormat):
         thread = Thread(
             harness=self.harness, source=ref, session_id=sid, cwd=session[0], started_at=_iso(session[3]),
             cli_version=session[1], model=model, events=events, records=len(messages) + len(parts), sha256=None,
+        )
+        thread.dropped = count_drops(events)
+        return thread
+
+    def _read_v2(self, conn: Any, ref: str, sid: str, session: Tuple[Any, ...]) -> Thread:
+        """A 2.x session: one ``session_message`` row per message, an
+        assistant row one model step, read as the 1.x reader reads a step."""
+        rows = conn.execute("SELECT id, type, data FROM session_message WHERE session_id = ? ORDER BY seq, id", (sid,)).fetchall()
+        kept_parts: Dict[str, List[Any]] = {}
+        if _has_table(conn, "session_part"):
+            for message_id, data in conn.execute(
+                    "SELECT message_id, data FROM session_part WHERE session_id = ? ORDER BY message_id, ordinal", (sid,)):
+                kept_parts.setdefault(message_id, []).append(_json(data))
+        events: List[Event] = []
+        for index, (message_id, kind, data) in enumerate(rows):
+            info = _json(data) or {}
+            ts = _iso((info.get("time") or {}).get("created"))
+            if kind == USER:
+                prov = Provenance(index, "message:user", 0)
+                if string(info.get("text")):
+                    events.append(Event(MESSAGE, prov, role=USER, text=info["text"], timestamp=ts))
+                for i, _ in enumerate(info.get("files") or []):
+                    events.append(Event(CONTEXT, Provenance(index, "message:user", i + 1), role=USER, timestamp=ts, reason="part_file"))
+                continue
+            if kind != ASSISTANT:
+                events.append(Event(OPAQUE, Provenance(index, f"message:{kind}", 0), timestamp=ts, reason=f"message_{kind}"))
+                continue
+            content = info.get("content")
+            parts = content if isinstance(content, list) else kept_parts.get(message_id, [])
+            step_results: List[Event] = []
+            for i, part in enumerate(parts):
+                prov = Provenance(index, "message:assistant", i)
+                if not isinstance(part, dict):
+                    events.append(Event(OPAQUE, prov, role=ASSISTANT, timestamp=ts, reason="part_not_object"))
+                    continue
+                ptype = string(part.get("type")) or "?"
+                if ptype == "text":
+                    events.extend(step_results)  # text after a call replies to its result
+                    step_results.clear()
+                    if string(part.get("text")):
+                        events.append(Event(MESSAGE, prov, role=ASSISTANT, text=part["text"], timestamp=ts))
+                elif ptype == "reasoning":
+                    events.append(Event(THINKING, prov, role=ASSISTANT, timestamp=ts))
+                elif ptype == "tool":
+                    state = part.get("state") if isinstance(part.get("state"), dict) else {}
+                    status = string(state.get("status")) or "?"
+                    if status not in ("completed", "error"):
+                        events.append(Event(OPAQUE, prov, role=ASSISTANT, timestamp=ts, reason=f"tool_{status}"))
+                        continue
+                    call_id = string(part.get("id")) or string(part.get("callID"))
+                    events.append(Event(TOOL_CALL, prov, role=ASSISTANT, timestamp=ts, tool_name=string(part.get("name")) or string(part.get("tool")),
+                                        tool_call_id=call_id, tool_input=state.get("input", {})))
+                    step_results.append(Event(TOOL_RESULT, prov, timestamp=ts, tool_call_id=call_id, text=_v2_result(state),
+                                              is_error=status == "error"))
+                elif ptype in ("file", "snapshot", "patch", "agent", "subtask", "compaction"):
+                    events.append(Event(CONTEXT, prov, role=ASSISTANT, timestamp=ts, reason=f"part_{ptype}"))
+                else:
+                    events.append(Event(OPAQUE, prov, role=ASSISTANT, timestamp=ts, reason=f"part_{ptype}"))
+            events.extend(step_results)
+        thread = Thread(
+            harness=self.harness, source=ref, session_id=sid, cwd=session[0], started_at=_iso(session[3]),
+            cli_version=session[1], model=_v2_model(session[4], rows), events=events, records=len(rows), sha256=None,
         )
         thread.dropped = count_drops(events)
         return thread
@@ -288,6 +371,46 @@ class OpenCodeFormat(ThreadFormat):
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────
+
+
+def _has_table(conn: Any, name: str) -> bool:
+    return conn.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?", (name,)).fetchone() is not None
+
+
+def _session_tables(conn: Any) -> List[str]:
+    """The session tables this database has: 2.x's, then 1.x's (a migrated 1.x install keeps both)."""
+    return [t for t in ("session_v2", "session") if _has_table(conn, t)]
+
+
+def _newest(conn: Any, tables: List[str], limit: int) -> List[Tuple[str, Optional[str], str]]:
+    """The newest sessions across ``tables``: id, title and directory."""
+    rows = [r for t in tables for r in conn.execute(
+        f"SELECT id, title, directory, time_updated FROM {t} ORDER BY time_updated DESC LIMIT ?", (limit,))]
+    return [r[:3] for r in sorted(rows, key=lambda r: r[3] or 0, reverse=True)[:limit]]
+
+
+def _v2_model(session_model: Any, rows: List[Any]) -> Optional[str]:
+    """``provider/model`` as OpenCode names it (``-m``): the session's, else its first reply's."""
+    candidates = [_json(session_model)] + [(_json(data) or {}).get("model") for _, kind, data in rows if kind == ASSISTANT]
+    found = next((m for m in candidates if isinstance(m, dict) and string(m.get("id"))), None)
+    if found is None:
+        return None
+    return f"{found['providerID']}/{found['id']}" if string(found.get("providerID")) else found["id"]
+
+
+def _v2_result(state: Dict[str, Any]) -> str:
+    """A 2.x tool's result: its ``content`` text parts, else its error's message."""
+    content = state.get("content")
+    if isinstance(content, list):
+        texts = [string(p.get("text")) for p in content if isinstance(p, dict) and string(p.get("text"))]
+        if texts:
+            return "\n".join(texts)
+    elif isinstance(content, str) and content:
+        return content
+    error = state.get("error")
+    if isinstance(error, dict):
+        return string(error.get("message")) or json.dumps(error, ensure_ascii=False)
+    return string(error) or string(state.get("output")) or ""
 
 
 def _part(ptype: str, session_id: str, message_id: str, at: int, **fields: Any) -> Dict[str, Any]:
