@@ -68,9 +68,9 @@ export default function ConnectAppStep({
                 }}
                 initialMethod={target?.credentialType}
                 qrReconnectId={qrReconnectId}
-                // Connect here adds an account, so its QR shows at once whatever is connected already (listed under it),
-                // as does a dead number's repair. A working one opened to reconnect keeps its button.
-                qrAutoStart={!target || !!qrReconnectId}
+                // Connect here adds an account, so its QR shows at once whatever is connected already (listed under it).
+                // Reconnecting one waits for a click: a dead number's restart logs its phone out.
+                qrAutoStart={!target}
                 onConnected={() => {
                     invalidateCredentialsCache();
                     onConnected();

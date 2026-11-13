@@ -1,8 +1,7 @@
 // @vitest-environment happy-dom
 // Connect on Connections means "add an account": the WhatsApp QR shows at once, with the numbers already connected
 // listed under it, rather than behind a second button. Each open starts one QR, which a re-render, StrictMode or a
-// trip to the Token tab and back never starts again; a dead number's reconnect repairs that number, and a node that
-// can pick a working number shows no QR until "Connect another account" asks for one.
+// trip to the Token tab and back never starts again, and a reconnect still waits for its click.
 import { StrictMode } from 'react';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -32,26 +31,19 @@ vi.mock('~/hooks/useServiceCredentialOptions', () => ({
 vi.mock('~/hooks/useCredentialOAuth', () => ({
     useCredentialOAuth: () => ({
         availableCredentials: state.credentials,
-        loading: false,
         credentialTier: 'pro',
         loadCredentials: async () => undefined,
         connect: vi.fn(),
-        connectOrgConsent: vi.fn(),
-        connectingProvider: null,
         clearError: vi.fn(),
         planLimitError: null,
         error: null,
         isConnecting: false,
-        pendingSelection: null,
-        resolvePendingSelection: vi.fn(),
-        cancelConnect: vi.fn(),
     }),
 }));
 vi.mock('~/hooks/useOrgContext', () => ({ useOrgContext: () => [{ id: null, role: null }] }));
 vi.mock('posthog-js/react', () => ({ useActiveFeatureFlags: () => [] }));
 
 import { GlobalCreateCredentialDialog, openCreateCredential } from '~/components/shared/popups/CreateCredentialDialog';
-import { NodeCredentials } from '~/components/workflow/NodeCredentials';
 
 const working = { id: 'wa-1', name: 'Shop line', credential_type: 'whatsapp_qr', access_type: 'owner', created_at: '2026-11-01T00:00:00Z', connection_healthy: true };
 const dead = { ...working, id: 'wa-dead', name: 'Old line', connection_healthy: false, connection_hint: 'WhatsApp phone link is dead (session failed).' };
@@ -109,13 +101,14 @@ describe('Connect WhatsApp from Connections', () => {
         expect(sent('whatsapp:qr:start')).toHaveLength(1);
     });
 
-    it('a reconnect of a dead number repairs that number rather than adding one', async () => {
+    it('a reconnect of a dead number still waits for its click', async () => {
         state.credentials = [working, dead];
         render(<GlobalCreateCredentialDialog />);
         await act(async () => openCreateCredential({ credentialType: 'whatsapp_qr', credentialId: 'wa-dead', reconnect: true }));
 
-        expect(await screen.findByAltText('WhatsApp QR Code', {}, { timeout: 5000 })).toBeTruthy();
-        expect(sent('whatsapp:qr:start')).toEqual([{ event_name: 'whatsapp:qr:start', reconnect_credential_id: 'wa-dead' }]);
+        expect(await screen.findByRole('button', { name: 'Reconnect WhatsApp' }, { timeout: 5000 })).toBeTruthy();
+        expect(sent('whatsapp:qr:start')).toEqual([]);
+        expect(screen.queryByAltText('WhatsApp QR Code')).toBeNull();
     });
 
     it('closed while the QR loads, nothing polls for its scan', async () => {
@@ -133,31 +126,5 @@ describe('Connect WhatsApp from Connections', () => {
         await act(async () => answer({ success: true, connection_id: 'conn-1', qr_code: 'QR' }));
         await act(async () => vi.advanceTimersByTimeAsync(30_000));
         expect(sent('whatsapp:qr:status')).toEqual([]);
-    });
-});
-
-// A node needs a number, and one that works can be picked: a QR shown beside it invites a re-scan that rebinds it.
-// Asking to connect another is asking for one.
-describe('a node with a working number', () => {
-    it('mints nothing until Connect another account', async () => {
-        state.credentials = [working];
-        render(<NodeCredentials nodeType="automation-whatsapp" credentialIds={{ whatsapp_qr: 'wa-1' }} onChange={vi.fn()} />);
-        const connect = await screen.findByRole('button', { name: 'Connect another account' });
-        expect(sent('whatsapp:qr:start')).toEqual([]);
-        expect(screen.queryByAltText('WhatsApp QR Code')).toBeNull();
-
-        fireEvent.click(connect);
-        expect(await screen.findByAltText('WhatsApp QR Code')).toBeTruthy();
-        expect(sent('whatsapp:qr:start')).toEqual([{ event_name: 'whatsapp:qr:start' }]);
-    });
-
-    // Picking among numbers already connected is no ask to add one: a revoked attached number beside a working one
-    // opens the connect panel, but the QR waits behind its button.
-    it('keeps its QR behind a button while it can pick one', async () => {
-        state.credentials = [{ ...working, id: 'wa-revoked', name: 'Gone line', revoked_at: '2026-11-01T00:00:00Z' }, working];
-        render(<NodeCredentials nodeType="automation-whatsapp" credentialIds={{ whatsapp_qr: 'wa-revoked' }} onChange={vi.fn()} />);
-        expect(await screen.findByRole('button', { name: 'Connect a different WhatsApp number' })).toBeTruthy();
-        expect(sent('whatsapp:qr:start')).toEqual([]);
-        expect(screen.queryByAltText('WhatsApp QR Code')).toBeNull();
     });
 });

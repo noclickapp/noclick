@@ -155,20 +155,3 @@ export function openOAuthPostPopup({ action, name, fields, width = 500, height =
     signIn.post(action, fields);
     return signIn.window;
 }
-
-/** A sign-in page whose address arrives after an await: the tab is opened now, inside the click, and pointed at it
- *  once it's known. Opened after the await, browsers count it as a pop-up nobody asked for and block it, so the
- *  provide page's "Sign in with Claude" opened nothing (2026-11-12). */
-export function openTabForLater(): { go: (url: string) => void; close: () => void } {
-    const tab = window.open('about:blank', '_blank');
-    if (tab) tab.opener = null;
-    return {
-        go: (url) => {
-            if (tab && !tab.closed) tab.location.href = url;
-            else window.open(url, '_blank', 'noopener,noreferrer');
-        },
-        close: () => {
-            if (tab && !tab.closed) tab.close();
-        },
-    };
-}

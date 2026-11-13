@@ -767,9 +767,9 @@ const NodeCredentialsForm = ({ nodeType, nodeData = {}, credentialIds = {}, onCh
         return 'ok';
     };
     const anyUnhealthy = requiredCredentials.some((req) => healthOf(credentialIds[req.credential_type]) !== 'ok');
-    // A spare QR beside a number that can be picked invites a re-scan that rebinds it to a new connection, so one shows
-    // unasked only when no usable number exists, to repair a dead one, or once "Connect another account" asks to add one.
-    const usableNumber = requiredCredentials
+    // A QR shows unasked for a first number, or once "Connect another account" asks to add one. Otherwise a spare one
+    // beside a number that can be picked invites a re-scan that rebinds it, and a dead one waits for its Reconnect click.
+    const anyNumber = requiredCredentials
         .filter((req) => isQRScanCredential(req.schema))
         .some((req) => availableCredentials.some((c) => c.credential_type === req.credential_type && !c.over_cap && !c.revoked_at));
     const connectOpen = connecting !== null || pickers.length === 0 || anyUnhealthy || !!qrRepair;
@@ -1086,7 +1086,7 @@ const NodeCredentialsForm = ({ nodeType, nodeData = {}, credentialIds = {}, onCh
                         ask={!compact}
                         initialMethod={typeof connecting === 'string' ? connecting : qrRepair?.credential_type}
                         qrReconnectId={qrRepair?.id}
-                        qrAutoStart={connecting !== null || !usableNumber || !!qrRepair}
+                        qrAutoStart={connecting !== null || !anyNumber}
                         onConnected={(credential, verification) => {
                             mintedCredentialIdsRef.current.add(credential.id);
                             handleCredentialSelect(credential.credential_type, credential.id, credential);
