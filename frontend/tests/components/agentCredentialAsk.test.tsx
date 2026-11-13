@@ -100,7 +100,7 @@ describe('the builder’s question for an agent’s account', () => {
         serve([credential('oc', 'agent_opencode', 'OpenCode key')]);
         render(<BuilderInputDrawer embedded inputs={[ask()]} onSubmit={vi.fn()} />);
         const heading = await screen.findByTestId('credential-ask-heading');
-        expect(heading.textContent).toContain('Connect Anthropic');
+        expect(heading.textContent).toContain('Connect Claude');
         expect(heading.textContent).toContain('The AI this agent thinks with, on your own account.');
         expect(screen.queryByText('Choose a Claude Code-compatible Anthropic credential?')).toBeNull();
         expect(continueButton().disabled).toBe(true);

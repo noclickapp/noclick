@@ -6,7 +6,7 @@ import { BrandAvatar, brandGlyph, type LoadBrandMarks } from '~/components/icons
 import { HARNESS_BRANDS } from '~/lib/harnessBrand';
 
 const OpenAI: LoadBrandMarks = () => import('@lobehub/icons/es/OpenAI');
-const Anthropic: LoadBrandMarks = () => import('@lobehub/icons/es/Anthropic');
+const Claude: LoadBrandMarks = () => import('@lobehub/icons/es/Claude');
 const Cohere: LoadBrandMarks = () => import('@lobehub/icons/es/Cohere');
 const Azure: LoadBrandMarks = () => import('@lobehub/icons/es/Azure');
 const Bedrock: LoadBrandMarks = () => import('@lobehub/icons/es/Bedrock');
@@ -186,8 +186,11 @@ export enum ModelProvider {
 
 // Comprehensive metadata for each provider including visual styling and functional information
 export interface ProviderMetadata {
-    /** Display name for the provider */
+    /** Display name for the provider: the name people know it by (Anthropic's is "Claude"). */
     title: string;
+
+    /** The other names search finds it by ("Anthropic" for Claude). */
+    aliases?: string[];
     
     /** Optional description of the provider's capabilities or focus */
     description?: string;
@@ -221,8 +224,9 @@ export interface ProviderMetadata {
 export const PROVIDER_METADATA: Record<ModelProvider, ProviderMetadata> = {
     // Major providers
     [ModelProvider.OPENAI]: {
-        title: 'OpenAI',
-        description: 'Creator of ChatGPT, GPT-4, and DALL-E',
+        title: 'ChatGPT',
+        aliases: ['OpenAI'],
+        description: 'OpenAI’s GPT models',
         icon: createIcon(OpenAI),
         primaryColor: '#000',
         textColor: '#ffffff',
@@ -231,10 +235,11 @@ export const PROVIDER_METADATA: Record<ModelProvider, ProviderMetadata> = {
         allowUsageBased: true
     },
     [ModelProvider.ANTHROPIC]: {
-        title: 'Anthropic',
-        description: 'Claude AI models focused on safety and helpfulness',
-        icon: createIcon(Anthropic),
-        primaryColor: '#d4943a',
+        title: 'Claude',
+        aliases: ['Anthropic'],
+        description: 'Anthropic’s Claude models',
+        icon: createIcon(Claude),
+        primaryColor: '#D97757',
         textColor: '#ffffff',
         providerURL: 'https://console.anthropic.com/settings/keys',
         requiredApiKeys: [['ANTHROPIC_API_KEY']],
@@ -674,8 +679,9 @@ export const PROVIDER_METADATA: Record<ModelProvider, ProviderMetadata> = {
     },
     [ModelProvider.CLAUDE_CODE]: {
         title: 'Claude Code',
+        aliases: ['Anthropic'],
         description: 'Anthropic coding agent with shell access and file editing',
-        icon: createIcon(Anthropic),
+        icon: createIcon(Claude),
         primaryColor: '#D97757',
         textColor: '#ffffff',
         providerURL: 'https://console.anthropic.com/settings/keys',
@@ -1126,6 +1132,12 @@ export const allowsUsageBasedBilling = (provider: ModelProvider): boolean => {
 
 export const getProviderTitle = (provider: ModelProvider): string => {
     return PROVIDER_METADATA[provider]?.title || provider;
+};
+
+/** Every name search finds a provider by: its title, then its aliases. */
+export const providerSearchTerms = (provider: ModelProvider): string[] => {
+    const metadata = PROVIDER_METADATA[provider];
+    return metadata ? [metadata.title, ...(metadata.aliases ?? [])] : [provider];
 };
 
 export const getProviderUrl = (provider: ModelProvider): string => {

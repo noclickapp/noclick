@@ -30,7 +30,7 @@ const credentials = vi.hoisted(() => ({
             credential_type: 'gmail_oauth',
             access_type: 'owner',
             created_at: '2026-10-01T00:00:00Z',
-            metadata: { email: 'sam@example.com' },
+            metadata: { email: 'sam@example.com' } as Record<string, unknown>,
         },
     ],
 }));
@@ -161,5 +161,25 @@ describe('the command palette', () => {
         openPalette();
         expect(sectionTitles()[0]).toBe('Recent');
         expect(rows()[0]).toBe('Skills · Resources');
+    });
+
+    it('finds an AI account by its company under either name: Claude as "anthropic", ChatGPT as "openai"', () => {
+        const before = credentials.rows;
+        const ai = (id: string, credential_type: string, name: string) => ({ id, name, credential_type, access_type: 'owner', created_at: '2026-11-14T00:00:00Z', metadata: {} });
+        credentials.rows = [...before, ai('k1', 'agent_anthropic', 'Work key'), ai('k2', 'agent_codex_oauth', 'Plan')];
+        try {
+            render(<CommandPalette />);
+            openPalette();
+            for (const q of ['claude', 'anthropic']) {
+                search(q);
+                expect(rows()[0]).toBe('Claude · Work key');
+            }
+            for (const q of ['chatgpt', 'openai']) {
+                search(q);
+                expect(rows()[0]).toBe('ChatGPT · Subscription');
+            }
+        } finally {
+            credentials.rows = before;
+        }
     });
 });

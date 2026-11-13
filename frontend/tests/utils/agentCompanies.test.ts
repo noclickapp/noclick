@@ -5,9 +5,9 @@ import { ModelProvider } from '~/types/provider';
 const company = (id: string) => agentCompanies().find((c) => c.id === id);
 
 describe('agentCompanies', () => {
-    it('folds a CLI harness into the company whose key and sign-in it takes', () => {
-        expect(company('anthropic')).toEqual({ id: 'anthropic', title: 'Anthropic', members: [ModelProvider.ANTHROPIC, ModelProvider.CLAUDE_CODE] });
-        expect(company('openai')).toEqual({ id: 'openai', title: 'OpenAI', members: [ModelProvider.OPENAI, ModelProvider.CODEX] });
+    it('folds a CLI harness into the company whose key and sign-in it takes, named as people know it and found by its own name', () => {
+        expect(company('anthropic')).toEqual({ id: 'anthropic', title: 'Claude', aliases: ['Anthropic'], members: [ModelProvider.ANTHROPIC, ModelProvider.CLAUDE_CODE] });
+        expect(company('openai')).toEqual({ id: 'openai', title: 'ChatGPT', aliases: ['OpenAI'], members: [ModelProvider.OPENAI, ModelProvider.CODEX] });
         expect(company('openrouter')?.members).toEqual([ModelProvider.OPENROUTER, ModelProvider.OPENCLAW, ModelProvider.HERMES_AGENT]);
     });
 
@@ -17,7 +17,7 @@ describe('agentCompanies', () => {
     });
 
     it('shows a product family as one company, named apart from the app it sits beside', () => {
-        expect(company('github')).toEqual({ id: 'github', title: 'GitHub Copilot', members: [ModelProvider.GITHUB_COPILOT, ModelProvider.GITHUB_MODELS] });
+        expect(company('github')).toEqual({ id: 'github', title: 'GitHub Copilot', aliases: [], members: [ModelProvider.GITHUB_COPILOT, ModelProvider.GITHUB_MODELS] });
     });
 
     it('lists every provider once, and no harness as a company of its own', () => {
@@ -29,7 +29,7 @@ describe('agentCompanies', () => {
 });
 
 describe('acceptedAgentCredentialTypes', () => {
-    it("accepts the key of every provider sharing the account: one Anthropic key runs Claude Code and Anthropic models", () => {
+    it("accepts the key of every provider sharing the account: one Anthropic key runs Claude Code and Claude models", () => {
         expect(acceptedAgentCredentialTypes(ModelProvider.CLAUDE_CODE)).toEqual(['agent_claude_code', 'agent_anthropic', 'agent_claude_code_oauth']);
         expect(acceptedAgentCredentialTypes(ModelProvider.CODEX)).toEqual(['agent_codex', 'agent_openai', 'agent_codex_oauth']);
     });

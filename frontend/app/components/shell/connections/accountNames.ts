@@ -4,7 +4,7 @@
 // not the name the connect form filled in on its own.
 import type { CredentialInfo } from '~/types/socket-events.generated';
 import { formatCredentialTypeLabel } from '~/utils/credentialTypes';
-import { AGENT_ENV_CREDENTIAL_TYPE, AGENT_SIGN_IN_NAMES, agentCompanies } from '~/lib/agentCredentialModel';
+import { AGENT_ENV_CREDENTIAL_TYPE, AGENT_SIGN_IN_NAMES, agentCompanies, subscriptionLine, type AgentCompany } from '~/lib/agentCredentialModel';
 import type { ModelProvider } from '~/types/provider';
 
 const text = (value: unknown): string | null => (typeof value === 'string' && value.trim() ? value.trim() : null);
@@ -19,16 +19,18 @@ function serverHost(credential: CredentialInfo): string | null {
     }
 }
 
-/** A key with no app of its own: "agent_claude_code_oauth" reads "Anthropic". */
+/** The company an agent's key or sign-in is with, the way Connections lists AI accounts. */
+function companyOf(type: string): AgentCompany | undefined {
+    const provider = type.replace(/^agent_/, '').replace(/_oauth$/, '') as ModelProvider;
+    return type.startsWith('agent_') ? agentCompanies().find((c) => c.members.includes(provider)) : undefined;
+}
+
+/** A key with no app of its own: "agent_claude_code_oauth" reads "Claude". */
 function kindName(credential: CredentialInfo): string {
     const type = credential.credential_type;
     if (type === AGENT_ENV_CREDENTIAL_TYPE) return 'Environment variables';
     if (type.startsWith('mcp_')) return text(credential.metadata?.provider_name) ?? serverHost(credential) ?? 'MCP server';
-    // An agent's key or sign-in is named by its company, the way Connections lists AI accounts.
-    const provider = type.replace(/^agent_/, '').replace(/_oauth$/, '') as ModelProvider;
-    const company = type.startsWith('agent_') ? agentCompanies().find((c) => c.members.includes(provider)) : undefined;
-    if (company) return company.title;
-    return formatCredentialTypeLabel(type.replace(/^agent_/, '').replace(/_(oauth|api_key|key|token|pat)$/, ''));
+    return companyOf(type)?.title ?? formatCredentialTypeLabel(type.replace(/^agent_/, '').replace(/_(oauth|api_key|key|token|pat)$/, ''));
 }
 
 /** The name the connect form fills in when you don't pick one: the key's class and the date, or the type itself. */
@@ -50,8 +52,7 @@ function accountLine(credential: CredentialInfo, app: string): string {
     const identity = (login !== 'unknown' ? login : null) ?? text(meta.email);
     if (identity) return identity;
     // A subscription sign-in is named by its plan, not the name its handler gave it ("Anthropic (Claude Code)").
-    const signIn = AGENT_SIGN_IN_NAMES[credential.credential_type];
-    if (signIn) return `${signIn.subscription} subscription`;
+    if (AGENT_SIGN_IN_NAMES[credential.credential_type]) return subscriptionLine([credential.credential_type], app);
     if (credential.credential_type === AGENT_ENV_CREDENTIAL_TYPE && Array.isArray(meta.var_names)) {
         const names = meta.var_names.filter((n): n is string => typeof n === 'string');
         if (!names.length) return 'No variables yet';
@@ -70,11 +71,14 @@ export function describeAccount(credential: CredentialInfo, app?: string): { app
     return { app: name, line: accountLine(credential, name) };
 }
 
+/** The other names search finds an account's app by: an AI account's company's ("Anthropic" for Claude). */
+export const accountAliases = (credential: CredentialInfo): string[] => companyOf(credential.credential_type)?.aliases ?? [];
+
 /** An AI account in its company's list, where the company goes without saying: what it is (the email, login or
  *  name it carries, else its plan or "API key") over what kind it is or when it was added. */
 export function companyAccountRow(credential: CredentialInfo, line: string): { title: string; meta: string } {
-    const signIn = AGENT_SIGN_IN_NAMES[credential.credential_type];
-    const kind = signIn ? `${signIn.subscription} subscription` : 'API key';
+    const type = credential.credential_type;
+    const kind = AGENT_SIGN_IN_NAMES[type] ? subscriptionLine([type], companyOf(type)?.title ?? '') : 'API key';
     const added = addedLabel(credential.created_at);
     return line !== added && line !== kind ? { title: line, meta: kind } : { title: kind, meta: added };
 }

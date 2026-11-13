@@ -24,7 +24,7 @@ import { filterAndSortModels, modelShortName, normalizeForSearch } from '~/lib/m
 import { bumpedIconScale } from '~/components/chat/ModelDropdown';
 import { APIKeyRequestDrawer } from '~/components/chat/drawer/APIKeyRequestDrawer';
 import { FAVORITE_MODELS } from '~/config/favoriteModels';
-import { getProviderMetadata, type ModelProvider } from '~/types/provider';
+import { getProviderMetadata, providerSearchTerms, type ModelProvider } from '~/types/provider';
 import type { ModelWithSource } from '~/hooks/useModels';
 import { useCachedValtioState } from '~/hooks/useCachedValtioState';
 import { useListKeyboardNav } from '~/hooks/useListKeyboardNav';
@@ -144,13 +144,12 @@ function ModelPickerContent({
 
     const availableProviders = useMemo(() => {
         const unique = Array.from(new Set((models || []).map((m) => m.provider)));
-        const filtered = unique.filter((provider) => {
-            const metadata = getProviderMetadata(provider);
-            if (!metadata) return false;
-            return normalizeForSearch(metadata.title).includes(
-                normalizeForSearch(providerSearchQuery),
-            );
-        });
+        const query = normalizeForSearch(providerSearchQuery);
+        const filtered = unique.filter(
+            (provider) =>
+                !!getProviderMetadata(provider) &&
+                providerSearchTerms(provider).some((term) => normalizeForSearch(term).includes(query)),
+        );
         // Pin harness providers to the top (in priority order); everything else
         // keeps its original relative order via the stable sort.
         const rank = (provider: ModelProvider) => {

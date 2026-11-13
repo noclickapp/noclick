@@ -15,7 +15,6 @@
 
 import { type ComponentType, type CSSProperties } from 'react';
 import { Bot, KeyRound, Sparkles } from 'lucide-react';
-import Anthropic from '@lobehub/icons/es/Anthropic';
 import MCP from '@lobehub/icons/es/MCP';
 import OpenAI from '@lobehub/icons/es/OpenAI';
 import OpenRouter from '~/components/icons/OpenRouterIcon';
@@ -40,7 +39,6 @@ type CredentialIconEntry = { Icon: IconCmp; iconColor: string };
 // Lobehub icons accept `className` and render as SVGs sized via `width`/`height`,
 // so Tailwind `w-N h-N` classes already do the right thing without a size prop.
 const OpenAIIcon: IconCmp = OpenAI as unknown as IconCmp;
-const AnthropicIcon: IconCmp = Anthropic as unknown as IconCmp;
 const MCPIcon: IconCmp = MCP as unknown as IconCmp;
 const OpenRouterIcon: IconCmp = OpenRouter as unknown as IconCmp;
 
@@ -67,8 +65,8 @@ const SPECIAL_CREDENTIAL_ICONS: Record<string, IconCmp> = {
     agent_openai: OpenAIIcon,
     agent_codex: OpenAIIcon,
     agent_codex_oauth: OpenAIIcon,
-    agent_anthropic: AnthropicIcon,
-    // Claude (the plan and Claude Code) wears Claude's own spark, the mark people know it by; Anthropic's A is its API key.
+    // Claude wears its own spark, the mark people know it by: its key, its plan and Claude Code alike.
+    agent_anthropic: SiClaude,
     agent_claude_code: SiClaude,
     agent_claude_code_oauth: SiClaude,
     agent_openrouter: OpenRouterIcon,
@@ -136,13 +134,13 @@ function buildCredentialIconMap(): Map<string, CredentialIconEntry> {
 }
 
 /** The special marks that wear their brand's colour (Claude's spark, as HarnessMark draws it). */
-const SPECIAL_ICON_COLORS: Record<string, string> = { agent_claude_code: '#D97757', agent_claude_code_oauth: '#D97757' };
+const SPECIAL_ICON_COLORS: Record<string, string> = { agent_anthropic: '#D97757', agent_claude_code: '#D97757', agent_claude_code_oauth: '#D97757' };
 
 export function getCredentialIcon(
     credentialType: string,
     metadata?: Record<string, unknown> | null,
 ): { Icon: IconCmp; iconColor: string; hasServiceIcon: boolean } {
-    // mcp / special (agent, OpenAI, Anthropic) marks are monochrome or
+    // mcp / special (agent, OpenAI) marks are monochrome or
     // hardcoded-fill and look right untinted, so iconColor is ''.
     if (credentialType === 'mcp_oauth' || credentialType === 'mcp_api_key') {
         const serverUrl = typeof metadata?.server_url === 'string' ? metadata.server_url : undefined;

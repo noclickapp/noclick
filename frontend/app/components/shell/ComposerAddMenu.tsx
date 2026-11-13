@@ -273,7 +273,7 @@ function AccountGlyph({ account }: { account: ConnectedAccount }) {
 
 function AccountsPicker({ accounts, loaded, onBack, onReference }: { accounts: ConnectedAccount[]; loaded: boolean; onBack: () => void; onReference: (reference: ChatReference) => void }) {
     const [query, setQuery] = useState('');
-    const rows = rank(accounts, query, (a) => [a.app, a.line, a.credential.name]).map(
+    const rows = rank(accounts, query, (a) => [a.app, ...(a.aliases ?? []), a.line, a.credential.name]).map(
         (account): PickerRow => ({
             key: account.credential.id,
             mark: <AccountGlyph account={account} />,

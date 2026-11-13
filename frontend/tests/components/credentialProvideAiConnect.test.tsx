@@ -74,9 +74,10 @@ afterEach(() => {
 
 const tabs = () => screen.getAllByRole('tab').map((tab) => tab.textContent);
 
-it('names an AI account by its company, never its credential type', () => {
-    expect(appNameForCredentialType('agent_anthropic')).toBe('Anthropic');
-    expect(appNameForCredentialType('agent_claude_code_oauth')).toBe('Anthropic');
+it('names an AI account by its company as people know it, never its credential type', () => {
+    expect(appNameForCredentialType('agent_anthropic')).toBe('Claude');
+    expect(appNameForCredentialType('agent_claude_code_oauth')).toBe('Claude');
+    expect(appNameForCredentialType('agent_openai')).toBe('ChatGPT');
     expect(appNameForCredentialType('agent_gemini')).toBe('Google Gemini');
 });
 

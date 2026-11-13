@@ -7,7 +7,7 @@ import type { ServiceCredentialOption } from '~/utils/credentialTypes';
 import { hasCustomCredentialForm } from '~/components/workflow/customCredentialForms';
 import { useServiceCredentialOptions } from '~/hooks/useServiceCredentialOptions';
 import { revokedReasonLabel } from '~/lib/credentialAccess';
-import { describeAccount } from './accountNames';
+import { accountAliases, describeAccount } from './accountNames';
 
 /** Which tab an account lives on: yours, your organization's, or shared with you. */
 export type AccountSource = 'connected' | 'organization' | 'shared';
@@ -20,6 +20,8 @@ export interface ConnectedAccount {
     app: string;
     /** The account itself: its email or login, its variables, else its name or when it was added. */
     line: string;
+    /** The other names search finds its app by ("Anthropic" for a Claude account). */
+    aliases?: string[];
     source: AccountSource;
     /** What keeps it from working, when something is known to. */
     problem?: string;
@@ -58,7 +60,14 @@ export function useConnectedAccounts(credentials: CredentialInfo[]): ConnectedAc
         return credentials
             .map((credential): ConnectedAccount => {
                 const service = byType.get(credential.credential_type);
-                return { credential, service, ...describeAccount(credential, service?.label), source: accountSource(credential), problem: accountProblem(credential) };
+                return {
+                    credential,
+                    service,
+                    ...describeAccount(credential, service?.label),
+                    aliases: accountAliases(credential),
+                    source: accountSource(credential),
+                    problem: accountProblem(credential),
+                };
             })
             .sort((a, b) => Number(!a.problem) - Number(!b.problem) || a.app.localeCompare(b.app) || a.line.localeCompare(b.line));
     }, [credentials, services]);

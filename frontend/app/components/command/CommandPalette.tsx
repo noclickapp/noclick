@@ -398,7 +398,7 @@ export function CommandPalette({ hiddenSettings }: { hiddenSettings?: readonly S
 
         // An account opens its page under Connections; the open edition keeps accounts in Settings, so there it opens
         // the account in the credential dialog. A phone number is a resource, with its own page.
-        const accountCmds: Cmd[] = accounts.map(({ credential, app, line, problem }) => {
+        const accountCmds: Cmd[] = accounts.map(({ credential, app, line, aliases, problem }) => {
             if (SHELL && credential.credential_type === 'phone_number') {
                 return {
                     id: `resource:numbers:${credential.id}`,
@@ -417,7 +417,7 @@ export function CommandPalette({ hiddenSettings }: { hiddenSettings?: readonly S
                 section: 'Credentials',
                 icon: Icon,
                 iconColor: iconColor || (hasServiceIcon ? 'text-foreground' : 'text-muted-foreground'),
-                keywords: `${line} ${credential.name}`,
+                keywords: [...(aliases ?? []), line, credential.name].join(' '),
                 meta: problem,
                 run: SHELL
                     ? () => navigateToAccount(credential.id)

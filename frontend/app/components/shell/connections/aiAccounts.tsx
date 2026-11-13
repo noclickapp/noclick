@@ -12,11 +12,11 @@ import { useInstanceCapabilities } from '~/hooks/useInstanceCapabilities';
 import { CLI_MODEL_PROVIDER } from '~/lib/agentChat';
 import {
     AGENT_OAUTH_PROVIDER_KEY,
-    AGENT_SIGN_IN_NAMES,
     acceptedAgentCredentialTypes,
     agentCompanies,
     getAgentCredentialType,
     isSignInOnlyAgentProvider,
+    subscriptionLine,
     type AgentCompany,
 } from '~/lib/agentCredentialModel';
 import { cn } from '~/lib/utils';
@@ -30,8 +30,8 @@ export interface AiCompany extends AgentCompany {
     keys: ModelProvider[];
     /** Every credential type that counts as one of its accounts. */
     credentialTypes: string[];
-    /** The subscription it signs in with, for its tile ("Claude subscription"); empty for a key-only company, whose
-     *  tile, like an app's, is just its name. */
+    /** The subscription it signs in with, for its tile ("Subscription" under Claude, "SuperGrok subscription" under
+     *  xAI); empty for a key-only company, whose tile, like an app's, is just its name. */
     line: string;
     /** What it gives your agents, for its page. */
     uses: string;
@@ -40,8 +40,7 @@ export interface AiCompany extends AgentCompany {
 const list = (parts: string[]) => new Intl.ListFormat('en', { type: 'conjunction' }).format(parts);
 
 function describe(company: AgentCompany, signIns: string[]): { line: string; uses: string } {
-    const subscriptions = signIns.map((type) => AGENT_SIGN_IN_NAMES[type]?.subscription).filter((name): name is string => !!name);
-    const line = subscriptions.length ? `${list(subscriptions)} subscription` : '';
+    const line = subscriptionLine(signIns, company.title);
     // A harness or a sign-in-only product (Copilot) is named as itself, the company's own model API by its models.
     const harnesses = new Set<string>(Object.values(CLI_MODEL_PROVIDER));
     const parts = company.members.map((member) => {
@@ -72,6 +71,9 @@ export function aiCompanies(agentSignIns: Record<string, string>): AiCompany[] {
         return [{ ...company, signIns, keys, credentialTypes, ...describe(company, signIns) }];
     });
 }
+
+/** What a company answers to in search: its names ("Claude", "Anthropic"), the products it covers, how it connects. */
+export const companySearchFields = (company: AiCompany): string[] => [company.title, ...company.aliases, ...company.members, company.uses, company.line];
 
 /** The AI companies this instance can connect. */
 export function useAiCompanies(): AiCompany[] {

@@ -10,7 +10,7 @@ import { AiProviderDialog } from './AiProviderDialog';
 // The key's save goes over the app's socket; it lands as the credential the app made.
 vi.mock('~/hooks/useAgentApiKey', async (original) => ({
     ...(await original<object>()),
-    createAgentKey: vi.fn(async () => ({ success: true, credential: { id: 'cred-key', name: 'Anthropic API key', credential_type: 'agent_anthropic' } })),
+    createAgentKey: vi.fn(async () => ({ success: true, credential: { id: 'cred-key', name: 'Claude API key', credential_type: 'agent_anthropic' } })),
 }));
 
 // The sign-in's own flow runs in another tab; this one lands as the real one does: created, then its id reported.
@@ -22,14 +22,15 @@ registerAgentOAuthComponent('agent_claude_code_oauth', function SignedIn({ crede
     return <>{renderStart?.(() => void start(), 'Opens Claude in a new tab.')}</>;
 });
 
-const ANTHROPIC = {
+const CLAUDE = {
     id: 'anthropic',
-    title: 'Anthropic',
+    title: 'Claude',
+    aliases: ['Anthropic'],
     members: ['anthropic'],
     keys: ['anthropic'],
     signIns: ['agent_claude_code_oauth'],
     credentialTypes: ['agent_anthropic', 'agent_claude_code_oauth'],
-    line: '',
+    line: 'Subscription',
     uses: 'Claude models for your agents.',
 } as unknown as AiCompany;
 
@@ -38,7 +39,7 @@ afterEach(cleanup);
 function show(props: Partial<Parameters<typeof AiProviderDialog>[0]> = {}) {
     const onConnected = vi.fn();
     const onOpenChange = vi.fn();
-    render(<AiProviderDialog company={ANTHROPIC} onOpenChange={onOpenChange} onConnected={onConnected} {...props} />);
+    render(<AiProviderDialog company={CLAUDE} onOpenChange={onOpenChange} onConnected={onConnected} {...props} />);
     return { onConnected, onOpenChange };
 }
 
@@ -55,7 +56,7 @@ describe('the AI company dialog', () => {
         await screen.findByTestId('connect-app');
         expect(screen.queryByRole('button', { name: 'Sign in with Claude' })).toBeNull();
         expect(screen.queryByRole('tablist')).toBeNull();
-        fireEvent.change(screen.getByLabelText(/Anthropic API key|API key/i), { target: { value: 'sk-ant-0123456789' } });
+        fireEvent.change(screen.getByLabelText(/API key/i), { target: { value: 'sk-ant-0123456789' } });
         fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
         await waitFor(() => expect(onConnected).toHaveBeenCalledWith('cred-key'));
         expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -67,17 +68,17 @@ describe('the AI company dialog', () => {
             only: 'agent_claude_code_oauth',
             title: 'Connect Claude',
             others: [
-                { key: 'anthropic', label: 'Anthropic key', credentialType: 'agent_anthropic', onPick: () => onPick('anthropic') },
+                { key: 'anthropic', label: 'Claude key', credentialType: 'agent_anthropic', onPick: () => onPick('anthropic') },
                 { key: 'openrouter', label: 'OpenRouter key', credentialType: 'agent_openrouter', onPick: () => onPick('openrouter') },
             ],
         });
         expect(await screen.findByRole('heading', { name: 'Connect Claude' })).toBeTruthy();
         expect(screen.getByRole('button', { name: 'Sign in with Claude' })).toBeTruthy();
-        expect(screen.queryByText('Anthropic API key')).toBeNull();
+        expect(screen.queryByText('Claude API key')).toBeNull();
         const pills = within(screen.getByRole('group', { name: 'Or run it on' }));
         expect(pills.getAllByRole('button')).toHaveLength(2);
-        expect(pills.getByRole('button', { name: 'Anthropic key' })).toBeTruthy();
-        // Each wears its mark (Anthropic's draws nothing in this test DOM; OpenRouter's does).
+        // Each wears its mark: the Claude key Claude's spark, as its plan does.
+        expect(pills.getByRole('button', { name: 'Claude key' }).querySelector('[aria-hidden] svg')).toBeTruthy();
         expect(pills.getByRole('button', { name: 'OpenRouter key' }).querySelector('[aria-hidden] svg')).toBeTruthy();
         fireEvent.click(pills.getByRole('button', { name: 'OpenRouter key' }));
         expect(onPick).toHaveBeenCalledWith('openrouter');

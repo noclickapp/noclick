@@ -5,7 +5,7 @@ import { cn } from '~/lib/utils';
 import { filterAndSortModels, normalizeForSearch } from '~/lib/modelFiltering';
 import { useDrawer } from '~/hooks/useDrawer';
 import { useAPIKeys } from '~/hooks/useAPIKeys';
-import { getProviderMetadata, ModelProvider } from '~/types/provider';
+import { getProviderMetadata, ModelProvider, providerSearchTerms } from '~/types/provider';
 import { Search, ChevronDown, Check, Star, List, Edit3, Trash2, Eye, ImagePlus, Brain, Wrench, Video, Filter, FilterX, ChevronUp, ChevronDown as ChevronDownIcon } from 'lucide-react';
 import { APIKeyRequestDrawer } from '~/components/chat/drawer/APIKeyRequestDrawer';
 import { FAVORITE_MODELS } from '~/config/favoriteModels';
@@ -151,11 +151,9 @@ export function ModelDropdown({
 
     // Filter providers based on search query
     const filteredProviders = availableProviders.filter(provider => {
-        const metadata = getProviderMetadata(provider);
-        if (!metadata) return false; // Skip providers without metadata
-        const normalizedTitle = normalizeForSearch(metadata.title);
+        if (!getProviderMetadata(provider)) return false; // Skip providers without metadata
         const normalizedQuery = normalizeForSearch(providerSearchQuery);
-        return normalizedTitle.includes(normalizedQuery);
+        return providerSearchTerms(provider).some((term) => normalizeForSearch(term).includes(normalizedQuery));
     });
     
     const filteredModels = filterAndSortModels(models || [], {

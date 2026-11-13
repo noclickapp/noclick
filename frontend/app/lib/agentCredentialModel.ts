@@ -288,6 +288,16 @@ export const AGENT_SIGN_IN_NAMES: Readonly<Record<string, { subscription: string
     agent_xai_oauth: { subscription: 'SuperGrok', signInWith: 'xAI' },
 };
 
+/** The subscriptions sign-ins of `types` use, as a line beside `company`'s name: each plan by its name where the
+ *  company's doesn't say it already ("xAI" · "SuperGrok subscription"), else just "Subscription" ("Claude" ·
+ *  "Subscription"); empty where none is a sign-in. */
+export function subscriptionLine(types: readonly string[], company: string): string {
+    const plans = types.map((type) => AGENT_SIGN_IN_NAMES[type]?.subscription).filter((plan): plan is string => !!plan);
+    if (!plans.length) return '';
+    const named = plans.filter((plan, i) => !company.includes(plan) && plans.indexOf(plan) === i);
+    return named.length ? `${new Intl.ListFormat('en', { type: 'conjunction' }).format(named)} subscription` : 'Subscription';
+}
+
 /** Every credential_type that satisfies `provider` for an agent: the direct
  *  `agent_<provider>` key, its vendor key alias and its OAuth alias
  *  (agent_codex_oauth etc.). The listing-side twin of
@@ -610,7 +620,10 @@ export function sameAccountAgentProviders(provider: ModelProvider | null): Model
 /** A company agents run on, one entry in Connections: the providers whose keys and sign-ins it issues, its own first. */
 export interface AgentCompany {
     id: string;
+    /** The name people know it by ("Claude", "ChatGPT"). */
     title: string;
+    /** The other names search finds it by ("Anthropic", "OpenAI"). */
+    aliases: string[];
     members: ModelProvider[];
 }
 
@@ -641,17 +654,16 @@ export function agentCompanies(): AgentCompany[] {
         const members = providers.filter((p) => group.includes(p));
         const family = familyOf(provider);
         const own = (family ? family.members.find((p) => members.includes(p)) : members.find((p) => !harnesses.has(p))) ?? members[0];
-        out.push({
-            id: family?.id ?? own,
-            title: family?.title ?? getProviderMetadata(own)!.title,
-            members: [own, ...members.filter((p) => p !== own)],
-        });
+        const ordered = [own, ...members.filter((p) => p !== own)];
+        const title = family?.title ?? getProviderMetadata(own)!.title;
+        const aliases = ordered.flatMap((p) => getProviderMetadata(p)?.aliases ?? []);
+        out.push({ id: family?.id ?? own, title, aliases: aliases.filter((a, i) => a !== title && aliases.indexOf(a) === i), members: ordered });
     }
     companies = out;
     return out;
 }
 
-/** The company an agent credential type is an account with (`agent_claude_code_oauth` → Anthropic), as Connections
+/** The company an agent credential type is an account with (`agent_claude_code_oauth` → Claude), as Connections
  *  lists it; undefined for any other type. */
 export function agentCompanyOf(credentialType: string): AgentCompany | undefined {
     if (!credentialType.startsWith('agent_')) return undefined;

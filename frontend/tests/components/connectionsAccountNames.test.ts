@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { companyAccountRow, describeAccount } from '~/components/shell/connections/accountNames';
+import { accountAliases, companyAccountRow, describeAccount } from '~/components/shell/connections/accountNames';
 import type { CredentialInfo } from '~/types/socket-events.generated';
 
 const credential = (over: Partial<CredentialInfo>): CredentialInfo => ({
@@ -31,12 +31,16 @@ describe('describeAccount', () => {
         expect(describeAccount(blind, 'GitHub').line).toBe('ada@example.com');
     });
 
-    it('names an agent account by its company, and a sign-in by its plan', () => {
+    it('names an agent account by its company as people know it, and a sign-in by its plan where the company does not say it', () => {
         const claude = credential({ credential_type: 'agent_claude_code_oauth', name: 'Anthropic (Claude Code)', metadata: { provider: 'claude_code' } });
-        expect(describeAccount(claude)).toEqual({ app: 'Anthropic', line: 'Claude subscription' });
-        expect(describeAccount(credential({ credential_type: 'agent_codex_oauth', name: 'ChatGPT (Codex)' }))).toEqual({ app: 'OpenAI', line: 'ChatGPT subscription' });
-        // A harness's key is its company's: Claude Code runs on an Anthropic key, OpenClaw on an OpenRouter one.
-        expect(describeAccount(credential({ credential_type: 'agent_claude_code', name: 'Mine' })).app).toBe('Anthropic');
+        // "Claude · Subscription", never "Claude · Claude subscription".
+        expect(describeAccount(claude)).toEqual({ app: 'Claude', line: 'Subscription' });
+        expect(describeAccount(credential({ credential_type: 'agent_codex_oauth', name: 'ChatGPT (Codex)' }))).toEqual({ app: 'ChatGPT', line: 'Subscription' });
+        expect(describeAccount(credential({ credential_type: 'agent_xai_oauth', name: 'xAI (SuperGrok)' }))).toEqual({ app: 'xAI', line: 'SuperGrok subscription' });
+        // The API key is Claude's too, as is a harness's: Claude Code runs on a Claude key, OpenClaw on an OpenRouter one.
+        expect(describeAccount(credential({ credential_type: 'agent_anthropic', name: 'Mine' })).app).toBe('Claude');
+        expect(describeAccount(credential({ credential_type: 'agent_openai', name: 'Mine' })).app).toBe('ChatGPT');
+        expect(describeAccount(credential({ credential_type: 'agent_claude_code', name: 'Mine' })).app).toBe('Claude');
         expect(describeAccount(credential({ credential_type: 'agent_openclaw', name: 'Mine' })).app).toBe('OpenRouter');
         // The provider's own casing, not a title-cased slug.
         expect(describeAccount(credential({ credential_type: 'agent_deepseek', name: 'Mine' })).app).toBe('DeepSeek');
@@ -68,6 +72,16 @@ describe('describeAccount', () => {
     });
 });
 
+describe('accountAliases', () => {
+    it("finds an AI account by its company's other name, and an app's by nothing more", () => {
+        expect(accountAliases(credential({ credential_type: 'agent_anthropic' }))).toEqual(['Anthropic']);
+        expect(accountAliases(credential({ credential_type: 'agent_claude_code_oauth' }))).toEqual(['Anthropic']);
+        expect(accountAliases(credential({ credential_type: 'agent_codex_oauth' }))).toEqual(['OpenAI']);
+        expect(accountAliases(credential({ credential_type: 'agent_openai' }))).toEqual(['OpenAI']);
+        expect(accountAliases(credential({ credential_type: 'google_gmail_oauth' }))).toEqual([]);
+    });
+});
+
 describe('companyAccountRow', () => {
     const row = (over: Partial<CredentialInfo>) => {
         const c = credential(over);
@@ -75,8 +89,9 @@ describe('companyAccountRow', () => {
     };
 
     it('titles a sign-in by its plan, or by the account it signed in as', () => {
-        expect(row({ credential_type: 'agent_claude_code_oauth', name: 'Anthropic (Claude Code)' })).toEqual({ title: 'Claude subscription', meta: 'Added Jun 15, 2026' });
-        expect(row({ credential_type: 'agent_codex_oauth', name: 'ChatGPT (Codex)', metadata: { email: 'ada@example.com' } })).toEqual({ title: 'ada@example.com', meta: 'ChatGPT subscription' });
+        expect(row({ credential_type: 'agent_claude_code_oauth', name: 'Anthropic (Claude Code)' })).toEqual({ title: 'Subscription', meta: 'Added Jun 15, 2026' });
+        expect(row({ credential_type: 'agent_codex_oauth', name: 'ChatGPT (Codex)', metadata: { email: 'ada@example.com' } })).toEqual({ title: 'ada@example.com', meta: 'Subscription' });
+        expect(row({ credential_type: 'agent_xai_oauth', name: 'xAI (SuperGrok)' })).toEqual({ title: 'SuperGrok subscription', meta: 'Added Jun 15, 2026' });
     });
 
     it('titles a key by the name you gave it, and a default-named one as "API key"', () => {

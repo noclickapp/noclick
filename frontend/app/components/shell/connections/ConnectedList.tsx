@@ -137,6 +137,7 @@ export function ConnectedList({
     }
     const shown = fuzzyFilter(accounts, query, (a) => [
         { text: a.app.toLowerCase(), weight: 1, fuzzy: true },
+        ...(a.aliases ?? []).map((alias) => ({ text: alias.toLowerCase(), weight: 1, fuzzy: true })),
         { text: a.line.toLowerCase(), weight: 0.9, fuzzy: true },
         { text: a.credential.name.toLowerCase(), weight: 0.8, fuzzy: true },
         { text: (a.credential.shared_by_name || a.credential.shared_by_email || '').toLowerCase(), weight: 0.5, fuzzy: false },

@@ -175,13 +175,13 @@ export const RUNTIME_CHOICES = [
         slug: 'claude-code',
         requiresOwnAccount: true,
         hasShell: true,
-        requirement: 'Your Anthropic account or API key',
+        requirement: 'Your Claude account or API key',
     },
     {
         slug: 'codex',
         requiresOwnAccount: true,
         hasShell: true,
-        requirement: 'Your ChatGPT account or OpenAI key',
+        requirement: 'Your ChatGPT account or API key',
     },
     {
         slug: 'opencode',

@@ -20,7 +20,7 @@ import { scoreFields } from '~/lib/fuzzyRank';
 import type { ServiceCredentialOption } from '~/utils/credentialTypes';
 import { cn } from '~/lib/utils';
 import { AccountPage } from './connections/AccountPage';
-import { AiMark, useAiCompanies, type AiCompany } from './connections/aiAccounts';
+import { AiMark, companySearchFields, useAiCompanies, type AiCompany } from './connections/aiAccounts';
 import { AiProviderDialog } from './connections/AiProviderDialog';
 import { ConnectedList } from './connections/ConnectedList';
 import { Tile, TileSkeletons, VirtualTileGrid } from './Tile';
@@ -152,9 +152,6 @@ function CatalogTile({
     );
 }
 
-/** What a company answers to in search: its name, the products it covers, how it connects. */
-const companyFields = (company: AiCompany) => [company.title, ...company.members, company.uses, company.line];
-
 type CatalogEntry = { key: string; title: string; fields: string[] } & ({ company: AiCompany } | { service: ServiceCredentialOption });
 
 /** Every app and AI company, one grid: the popular ones first, then alphabetical, and a search ranks them together.
@@ -174,7 +171,7 @@ function Catalog({
     const companies = useAiCompanies();
     const entries = useMemo<CatalogEntry[]>(
         () => [
-            ...companies.map((company) => ({ key: `ai:${company.id}`, title: company.title, fields: companyFields(company), company })),
+            ...companies.map((company) => ({ key: `ai:${company.id}`, title: company.title, fields: companySearchFields(company), company })),
             ...services
                 .filter((service) => service.listed)
                 .map((service) => ({ key: service.value, title: service.label, fields: [service.label, service.acceptedCredentialTypes.join(' ')], service })),
