@@ -55,7 +55,10 @@ const CARDS: Record<string, ToolCard> = {
 };
 
 function cardFor(call: CoordinatorToolCall, turn: readonly CoordinatorToolCall[]): ReactNode {
-    if (call.running || !call.result) return null;
+    if (call.running || !call.result) {
+        const Live = MATCHED_CARDS.find((m) => m.whileRunning && m.match(call, turn))?.Card;
+        return Live ? <Live call={call} turn={turn} /> : null;
+    }
     const links = refusalLinks(call);
     if (links.length) return <RefusalCard call={call} links={links} />;
     const approval = approvalOf(call);

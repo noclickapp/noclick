@@ -22,10 +22,11 @@ export function useTurnAsked(): string | null {
 // Cards a platform adds for what only its tools do, recognised by the call itself rather than a tool name (hosted: a
 // call NoClick placed, from cloud/bootstrap). `turn` is the call's turn, for a card another of its cards carries.
 export type CardMatch = (call: CoordinatorToolCall, turn?: readonly CoordinatorToolCall[]) => boolean;
-export const MATCHED_CARDS: { match: CardMatch; Card: ToolCard }[] = [];
+export const MATCHED_CARDS: { match: CardMatch; Card: ToolCard; whileRunning: boolean }[] = [];
 
-export function registerToolCard(match: CardMatch, Card: ToolCard): void {
-    MATCHED_CARDS.push({ match, Card });
+/** `whileRunning`: the card draws while its call still runs too (work it follows live), not only once it answered. */
+export function registerToolCard(match: CardMatch, Card: ToolCard, { whileRunning = false }: { whileRunning?: boolean } = {}): void {
+    MATCHED_CARDS.push({ match, Card, whileRunning });
 }
 
 // How a turn shows the agent at work (its calls as it makes them, the wait for its reply), where the platform draws
