@@ -51,7 +51,7 @@ function accountLine(credential: CredentialInfo, app: string): string {
     const login = text(meta.login);
     const identity = (login !== 'unknown' ? login : null) ?? text(meta.email);
     if (identity) return identity;
-    // A subscription sign-in is named by its plan, not the name its handler gave it ("Anthropic (Claude Code)").
+    // A subscription sign-in is named by its plan, not the name its handler gave it ("Claude (Claude Code)").
     if (AGENT_SIGN_IN_NAMES[credential.credential_type]) return subscriptionLine([credential.credential_type], app);
     if (credential.credential_type === AGENT_ENV_CREDENTIAL_TYPE && Array.isArray(meta.var_names)) {
         const names = meta.var_names.filter((n): n is string => typeof n === 'string');

@@ -38,6 +38,7 @@ from dataclasses import dataclass
 from typing import Dict, Optional, Tuple
 
 from billing.exceptions import INSUFFICIENT_CREDITS_RE, SPEND_CAP_RE, InsufficientBalanceError, SpendCapReached
+from nodes.agent.config.providers import AI_COMPANY_NAMES
 
 
 def _coerce_text(value) -> Optional[str]:
@@ -234,12 +235,12 @@ _PROVIDER_META: Dict[str, Dict[str, str]] = {
         "keys_url": "https://wahooks.com",
     },
     "anthropic": {
-        "label": "Anthropic",
+        "label": AI_COMPANY_NAMES["anthropic"],
         "billing_url": "https://platform.claude.com/settings/billing",
         "keys_url": "https://platform.claude.com/settings/keys",
     },
     "openai": {
-        "label": "OpenAI",
+        "label": AI_COMPANY_NAMES["openai"],
         "billing_url": "https://platform.openai.com/settings/organization/billing/overview",
         "keys_url": "https://platform.openai.com/api-keys",
     },

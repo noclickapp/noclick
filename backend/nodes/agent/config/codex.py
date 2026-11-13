@@ -24,7 +24,7 @@ class CodexConfig(BaseAgentFields):
         title="Codex Model",
         description=(
             "A ChatGPT sign-in runs the account's general models listed here. "
-            "Codex-family ids (e.g. gpt-5-codex) need an OpenAI API key."
+            "Codex-family ids (e.g. gpt-5-codex) need a ChatGPT API key."
         ),
         json_schema_extra={
             "x-dynamic-options": {

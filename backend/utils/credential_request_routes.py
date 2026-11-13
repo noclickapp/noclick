@@ -349,11 +349,11 @@ _ENV_LABEL_ACRONYMS = {"API", "ID", "JWT", "AWS", "HF", "NLP", "AI", "URL", "PSE
 
 
 def _format_env_var_label(env_var: str) -> str:
-    """Human label for a credential env var, e.g. ANTHROPIC_API_KEY → 'Anthropic API Key'."""
-    return " ".join(
-        w if w in _ENV_LABEL_ACRONYMS else w.capitalize()
-        for w in env_var.split("_")
-    )
+    """Human label for a credential env var, its provider as people know it: ANTHROPIC_API_KEY → 'Claude API Key'."""
+    from nodes.agent.config.providers import AI_COMPANY_NAMES
+
+    provider, *rest = [w if w in _ENV_LABEL_ACRONYMS else w.capitalize() for w in env_var.split("_")]
+    return " ".join([AI_COMPANY_NAMES.get(provider.lower(), provider), *rest])
 
 
 def _get_agent_provider(credential_type: str) -> Optional[str]:

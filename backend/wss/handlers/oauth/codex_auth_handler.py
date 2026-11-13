@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 # Provider device-code mechanics live in harness_oauth_flows (the shared source
 # used by both this handler and the public credential-provide endpoints).
-from nodes.agent.harness_oauth_flows import codex_start, codex_complete, OAuthFlowError
+from nodes.agent.harness_oauth_flows import AGENT_OAUTH_FLOWS, codex_start, codex_complete, OAuthFlowError
 
 
 class CodexAuthHandler(DatabasePoolMixin, SocketIOHandler):
@@ -159,7 +159,7 @@ class CodexAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
 
-            credential_name = request.credential_name or "ChatGPT (Codex)"
+            credential_name = request.credential_name or AGENT_OAUTH_FLOWS["agent_codex_oauth"].credential_name
 
             async with pool.acquire() as conn:
                 from repositories.credentials import create_credential_with_limit_check

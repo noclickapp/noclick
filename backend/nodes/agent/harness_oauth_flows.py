@@ -336,7 +336,7 @@ AGENT_OAUTH_FLOWS: Dict[str, AgentOAuthFlow] = {
     ),
     "agent_claude_code_oauth": AgentOAuthFlow(
         "agent_claude_code_oauth", "pkce", "Sign in with Claude",
-        "Anthropic (Claude Code)", {"provider": "claude_code", "auth_mode": "oauth"},
+        "Claude (Claude Code)", {"provider": "claude_code", "auth_mode": "oauth"},
         claude_code_start, claude_code_complete,
     ),
 }

@@ -255,6 +255,52 @@ class TestRegistryMirrors:
         src = _read_repo_file("frontend/app/lib/agentCredentialModel.ts")
         fe = re.search(r"CLAUDE_PLAN_REFUSAL\s*=\s*'([^']*)'", src)
         assert fe and fe.group(1) == CLAUDE_PLAN_REFUSAL
+        assert "Use a Claude API key" in CLAUDE_PLAN_REFUSAL
+
+    def test_fe_ai_company_names_match(self):
+        """Both sides name a company as people know it (Claude, ChatGPT), and the FE keeps the company's own name as
+        an alias search finds it by."""
+        from nodes.agent.config.providers import AI_COMPANY_NAMES
+
+        src = _read_repo_file("frontend/app/types/provider.tsx")
+        for provider, name in AI_COMPANY_NAMES.items():
+            fe = re.search(rf"\[ModelProvider\.{provider.upper()}\]:\s*\{{\s*title:\s*'([^']*)',\s*aliases:\s*\[([^\]]*)\]",
+                           src)
+            assert fe, f"PROVIDER_METADATA[{provider}] not found"
+            assert fe.group(1) == name
+            assert provider in fe.group(2).lower()
+
+    def test_ai_company_names_on_backend_labels(self):
+        """What the engine's own copy calls a key: the agent's credential ask, the provide page's field, a provider
+        error."""
+        from nodes.agent.provider_errors import provider_label
+        from utils.credential_request_routes import _format_env_var_label
+
+        def ask(**config):
+            return agent_credential_requirement(config).label
+
+        assert ask(model="anthropic/claude-sonnet-4-5") == "Claude agent credential (ANTHROPIC_API_KEY)"
+        assert ask(model="openai/gpt-4o") == "ChatGPT agent credential (OPENAI_API_KEY)"
+        assert ask(model="claude-code").startswith("Claude Code agent credential")
+        assert (_format_env_var_label("ANTHROPIC_API_KEY"), _format_env_var_label("OPENAI_API_KEY")) == (
+            "Claude API Key", "ChatGPT API Key")
+        assert (provider_label("anthropic"), provider_label("openai")) == ("Claude", "ChatGPT")
+
+    def test_fe_sign_in_names_match(self):
+        """A sign-in's button and the credential it mints name its plan as the FE does: "Sign in with Claude",
+        "Claude (Claude Code)"."""
+        from nodes.agent.config.providers import AI_COMPANY_NAMES
+        from nodes.agent.harness_oauth_flows import AGENT_OAUTH_FLOWS
+
+        src = _read_repo_file("frontend/app/lib/agentCredentialModel.ts")
+        fe = {t: (plan, sign_in) for t, plan, sign_in in re.findall(
+            r"(agent_\w+_oauth):\s*\{\s*subscription:\s*'([^']*)',\s*signInWith:\s*'([^']*)'\s*\}", src)}
+        for cred_type, provider in (("agent_claude_code_oauth", "anthropic"), ("agent_codex_oauth", "openai")):
+            plan, sign_in = fe[cred_type]
+            flow = AGENT_OAUTH_FLOWS[cred_type]
+            assert plan == AI_COMPANY_NAMES[provider]
+            assert flow.label == f"Sign in with {sign_in}"
+            assert flow.credential_name.startswith(f"{plan} (")
 
     def test_fe_vendor_key_aliases_match(self):
         from nodes.agent.config.providers import AGENT_VENDOR_KEY_ALIASES
@@ -383,7 +429,7 @@ class TestCodexChatGPTModelGuidance:
         general = codex_chatgpt_models()
         assert general and all(m in line for m in general)
         assert "never a codex-family id like gpt-5-codex" in line
-        assert "OpenAI API key" in line
+        assert "ChatGPT API key" in line
         assert "✗" not in line
 
     @pytest.mark.parametrize("model", ["gpt-5-codex", "gpt-5.1-codex"])
@@ -415,7 +461,7 @@ class TestCodexChatGPTModelGuidance:
         from nodes.agent.config._cli_models_loader import codex_chatgpt_models, codex_options
 
         labels = {o["value"]: o["label"] for o in codex_options()}
-        assert labels["gpt-5-codex"] == "gpt-5-codex (OpenAI API key only)"
+        assert labels["gpt-5-codex"] == "gpt-5-codex (ChatGPT API key only)"
         assert all(labels[m] == m for m in codex_chatgpt_models())
 
 

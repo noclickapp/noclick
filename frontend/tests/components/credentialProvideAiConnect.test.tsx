@@ -39,7 +39,7 @@ const request = (overrides: Partial<ProvideRequestDetails>): ProvideRequestDetai
     requires_pkce: false,
     credential_fields: [],
     available_methods: [
-        keyMethod('agent_anthropic', 'ANTHROPIC_API_KEY', 'Anthropic API Key'),
+        keyMethod('agent_anthropic', 'ANTHROPIC_API_KEY', 'Claude API Key'),
         signInMethod('agent_claude_code_oauth', 'Sign in with Claude', 'pkce'),
     ],
     status: 'pending',
@@ -159,7 +159,7 @@ it('says why a link offers an AI key without its plan: the agent asking runs whe
         <CredentialProvideFlow
             token="t"
             apiBase=""
-            held={request({ available_methods: [keyMethod('agent_anthropic', 'ANTHROPIC_API_KEY', 'Anthropic API Key')], sign_in_withheld: 'opencode' })}
+            held={request({ available_methods: [keyMethod('agent_anthropic', 'ANTHROPIC_API_KEY', 'Claude API Key')], sign_in_withheld: 'opencode' })}
             onProvided={() => {}}
         />
     );
@@ -183,7 +183,7 @@ it('an ask for an AI key carries the sign-in its link offers', async () => {
         provide_url: 'https://noclick.test/credential/provide/x',
     }));
     Object.assign(navigator, { clipboard: { writeText: vi.fn(async () => {}) } });
-    render(<AskSomeoneForm credentialType="agent_anthropic" app="Anthropic" send={send} signIn={{ agentOAuthType: 'agent_claude_code_oauth' }} />);
+    render(<AskSomeoneForm credentialType="agent_anthropic" app="Claude" send={send} signIn={{ agentOAuthType: 'agent_claude_code_oauth' }} />);
     fireEvent.click(screen.getByRole('button', { name: /Copy a link instead/ }));
     await waitFor(() => expect(send).toHaveBeenCalled());
     expect(send.mock.calls[0][0]).toMatchObject({

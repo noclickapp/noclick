@@ -64,9 +64,9 @@ const answers = () => sendEventAsync.mock.calls.filter(([req]) => req.event_name
 
 describe('answering a build’s question on its card', () => {
     it('steps aside for the build at once, then shows the builder’s next question', async () => {
-        const server = serve({ ask_id: 'ask-1', title: 'Connect Anthropic' });
+        const server = serve({ ask_id: 'ask-1', title: 'Connect Claude' });
         card();
-        fireEvent.click(await screen.findByText('Connect Anthropic'));
+        fireEvent.click(await screen.findByText('Connect Claude'));
 
         // Sent: the build goes on with it, and there's nothing left to answer twice.
         await waitFor(() => expect(screen.queryByTestId('ask')).toBeNull());
@@ -81,13 +81,13 @@ describe('answering a build’s question on its card', () => {
     });
 
     it('puts the question back when the builder refuses the answer', async () => {
-        const server = serve({ ask_id: 'ask-1', title: 'Connect Anthropic' });
+        const server = serve({ ask_id: 'ask-1', title: 'Connect Claude' });
         card();
-        fireEvent.click(await screen.findByText('Connect Anthropic'));
+        fireEvent.click(await screen.findByText('Connect Claude'));
         await waitFor(() => expect(screen.queryByTestId('ask')).toBeNull());
 
         await act(async () => server.answers[0]({ error: 'This build is not waiting for that answer, or has already resumed.' }));
-        expect((await screen.findByTestId('ask')).textContent).toBe('Connect Anthropic');
+        expect((await screen.findByTestId('ask')).textContent).toBe('Connect Claude');
         expect(status()).toBe('waiting');
     });
 });

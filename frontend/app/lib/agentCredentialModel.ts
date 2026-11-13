@@ -261,7 +261,7 @@ const AGENT_OAUTH_ALIAS: Partial<Record<ModelProvider, string>> = {
 const CLAUDE_PLAN_CREDENTIAL_TYPE = 'agent_claude_code_oauth';
 // Mirrors backend CLAUDE_PLAN_REFUSAL (nodes/agent/config/providers.py).
 export const CLAUDE_PLAN_REFUSAL =
-    'A Claude plan runs only in Claude Code. Use an Anthropic API key, or switch the agent to Claude Code.';
+    'A Claude plan runs only in Claude Code. Use a Claude API key, or switch the agent to Claude Code.';
 
 // A vendor's CLI harness and its models read the same API key
 // (ANTHROPIC_API_KEY, OPENAI_API_KEY), so a key saved under either type serves

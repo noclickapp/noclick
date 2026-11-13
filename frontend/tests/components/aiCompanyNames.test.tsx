@@ -33,7 +33,7 @@ const account = (credential_type: string, name: string): ConnectedAccount => {
 
 const ACCOUNTS = [
     account('agent_anthropic', 'Anthropic - 11/14/2026'),
-    account('agent_claude_code_oauth', 'Anthropic (Claude Code)'),
+    account('agent_claude_code_oauth', 'Claude (Claude Code)'),
     account('agent_openai', 'OpenAI - 11/14/2026'),
     account('agent_codex_oauth', 'ChatGPT (Codex)'),
     { ...account('google_gmail_oauth', 'ada@example.com'), app: 'Gmail', line: 'ada@example.com' },

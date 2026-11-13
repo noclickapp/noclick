@@ -378,7 +378,7 @@ export const RUNTIME_CREDENTIALS: Record<
     sdk: { type: '', connectedAs: null, credentialId: null },
     'claude-code': {
         type: 'agent_claude_code_oauth',
-        connectedAs: 'Anthropic (Claude Code)',
+        connectedAs: 'Claude (Claude Code)',
         credentialId: FIXTURE_IDS.claudeCredential,
     },
     codex: {

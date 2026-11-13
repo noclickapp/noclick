@@ -126,7 +126,7 @@ def codex_options() -> List[Dict[str, str]]:
     """`{value, label}` entries for the Codex model dropdown. Codex-family ids
     say they need an API key: the picker can't tell which credential runs."""
     return [
-        {"value": m, "label": f"{m} (OpenAI API key only)" if is_codex_family_model(m) else m}
+        {"value": m, "label": f"{m} (ChatGPT API key only)" if is_codex_family_model(m) else m}
         for m in codex_models()
     ]
 

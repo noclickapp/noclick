@@ -32,7 +32,7 @@ describe('describeAccount', () => {
     });
 
     it('names an agent account by its company as people know it, and a sign-in by its plan where the company does not say it', () => {
-        const claude = credential({ credential_type: 'agent_claude_code_oauth', name: 'Anthropic (Claude Code)', metadata: { provider: 'claude_code' } });
+        const claude = credential({ credential_type: 'agent_claude_code_oauth', name: 'Claude (Claude Code)', metadata: { provider: 'claude_code' } });
         // "Claude · Subscription", never "Claude · Claude subscription".
         expect(describeAccount(claude)).toEqual({ app: 'Claude', line: 'Subscription' });
         expect(describeAccount(credential({ credential_type: 'agent_codex_oauth', name: 'ChatGPT (Codex)' }))).toEqual({ app: 'ChatGPT', line: 'Subscription' });
@@ -89,7 +89,7 @@ describe('companyAccountRow', () => {
     };
 
     it('titles a sign-in by its plan, or by the account it signed in as', () => {
-        expect(row({ credential_type: 'agent_claude_code_oauth', name: 'Anthropic (Claude Code)' })).toEqual({ title: 'Subscription', meta: 'Added Jun 15, 2026' });
+        expect(row({ credential_type: 'agent_claude_code_oauth', name: 'Claude (Claude Code)' })).toEqual({ title: 'Subscription', meta: 'Added Jun 15, 2026' });
         expect(row({ credential_type: 'agent_codex_oauth', name: 'ChatGPT (Codex)', metadata: { email: 'ada@example.com' } })).toEqual({ title: 'ada@example.com', meta: 'Subscription' });
         expect(row({ credential_type: 'agent_xai_oauth', name: 'xAI (SuperGrok)' })).toEqual({ title: 'SuperGrok subscription', meta: 'Added Jun 15, 2026' });
     });

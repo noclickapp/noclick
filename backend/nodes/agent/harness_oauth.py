@@ -410,7 +410,7 @@ async def ensure_fresh_harness_tokens(
 CODEX_FREE_PLAN_MESSAGE = (
     "This ChatGPT account is on the Free plan, which doesn't include Codex. "
     "Sign in with a plan that does (Plus, Pro, Business, Edu or Enterprise), "
-    "or connect an OpenAI API key instead."
+    "or connect a ChatGPT API key instead."
 )
 
 

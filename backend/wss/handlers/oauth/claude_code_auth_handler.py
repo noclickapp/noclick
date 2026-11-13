@@ -1,7 +1,7 @@
 """
 Handler for Claude Code CLI OAuth 2.0 PKCE flow.
 Manages the authorization code + PKCE exchange that allows users to authenticate
-with their Anthropic account for use with the Claude Code agent.
+with their Claude account for use with the Claude Code agent.
 """
 
 import logging
@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 # PKCE mechanics (verifier stash + token exchange) live in harness_oauth_flows,
 # the shared source used by both this handler and the public provide endpoints.
 from nodes.agent.harness_oauth_flows import (
+    AGENT_OAUTH_FLOWS,
     claude_code_start,
     claude_code_complete,
     OAuthFlowError,
@@ -194,7 +195,7 @@ class ClaudeCodeAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
 
-            credential_name = request.credential_name or "Anthropic (Claude Code)"
+            credential_name = request.credential_name or AGENT_OAUTH_FLOWS["agent_claude_code_oauth"].credential_name
 
             async with pool.acquire() as conn:
                 user_tier = session.get('user_data', {}).get('subscription_tier', 'free')
@@ -223,7 +224,7 @@ class ClaudeCodeAuthHandler(DatabasePoolMixin, SocketIOHandler):
                         success=True,
                         credential_id=str(row['id']),
                         credential_name=row['name'],
-                        message="Anthropic account connected successfully"
+                        message="Claude account connected successfully"
                     ).model_dump()
                 ))
 

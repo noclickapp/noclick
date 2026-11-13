@@ -839,7 +839,7 @@ class TestCredentialRequestHTTPAPI:
             assert details.is_oauth is False
             assert [f.name for f in details.credential_fields] == ['ANTHROPIC_API_KEY']
             assert details.credential_fields[0].type == 'password'
-            assert details.credential_fields[0].label == 'Anthropic API Key'
+            assert details.credential_fields[0].label == 'Claude API Key'
 
             # Provide stores the nested agent blob + provider metadata
             body = ProvideCredentialBody(credential_data={'ANTHROPIC_API_KEY': 'sk-ant-test-999'})

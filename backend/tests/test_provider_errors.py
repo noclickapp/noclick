@@ -188,7 +188,7 @@ def test_a_claude_plan_limit_as_the_whole_reply_fails_the_turn():
     line = "You've hit your weekly limit · resets 2am (UTC)"
     response, error = normalize_turn_result(line, None)
     assert response == ""
-    assert error.startswith("Your Anthropic subscription hit its usage limit.")
+    assert error.startswith("Your Claude subscription hit its usage limit.")
     assert "not your NoClick credits" in error and "switch this agent to an API key" in error
     assert error.endswith(f"Provider message: {line}")
     assert classify_provider_error(line, channel="response").action() == {
@@ -407,7 +407,7 @@ def test_normalize_rewrites_error_channel():
         "partial answer", "API Error: 401 authentication_error: invalid x-api-key"
     )
     assert response == "partial answer", "response must survive an error rewrite"
-    assert "Anthropic rejected the API key" in error
+    assert "Claude rejected the API key" in error
 
 
 def test_normalize_leaves_unclassified_error_verbatim(caplog):
@@ -537,5 +537,5 @@ def test_provider_label_is_the_name_a_person_reads():
     from nodes.agent.provider_errors import provider_label
 
     assert provider_label("openrouter") == "OpenRouter"
-    assert provider_label("anthropic") == "Anthropic"
+    assert provider_label("anthropic") == "Claude"
     assert provider_label("not-a-provider") == "the model provider"

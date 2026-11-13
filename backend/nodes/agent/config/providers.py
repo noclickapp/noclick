@@ -543,9 +543,13 @@ AGENT_OAUTH_CREDENTIAL_TYPES: Dict[str, str] = {
 CLAUDE_PLAN_CREDENTIAL_TYPE = AGENT_OAUTH_CREDENTIAL_TYPES["claude-code"]
 # Mirrored by the FE CLAUDE_PLAN_REFUSAL (agentCredentialModel.ts).
 CLAUDE_PLAN_REFUSAL = (
-    "A Claude plan runs only in Claude Code. Use an Anthropic API key, "
+    "A Claude plan runs only in Claude Code. Use a Claude API key, "
     "or switch the agent to Claude Code."
 )
+
+# The name people know a model provider by where it isn't the company's own: the FE PROVIDER_METADATA titles
+# (types/provider.tsx). Display only; ids, credential types and env vars keep the company's.
+AI_COMPANY_NAMES: Dict[str, str] = {"anthropic": "Claude", "openai": "ChatGPT"}
 
 
 def register_subscription_provider(
@@ -648,7 +652,8 @@ def _requirement_for(cred_model: str, *, oauth_capable: bool) -> AgentCredential
         oauth_type = AGENT_OAUTH_CREDENTIAL_TYPES.get(provider_name)
         if oauth_type:
             accepted.append(oauth_type)
-    label = f"{stem.replace('_', ' ').title()} agent credential ({' or '.join(env_vars)})"
+    name = AI_COMPANY_NAMES.get(stem) or stem.replace('_', ' ').title()
+    label = f"{name} agent credential ({' or '.join(env_vars)})"
     return AgentCredentialRequirement(
         required=True,
         credential_type=primary,
@@ -794,7 +799,7 @@ def codex_chatgpt_model_note(config: Any, credential_ids: Optional[Dict[str, Any
     return (
         f"[ChatGPT sign-in: {verdict}codex_model takes one of the account's general models "
         f"({', '.join(codex_chatgpt_models())}), never a codex-family id like gpt-5-codex; "
-        "those are for an OpenAI API key, and a ChatGPT account rejects them (HTTP 400)]"
+        "those are for a ChatGPT API key, and a ChatGPT sign-in rejects them (HTTP 400)]"
     )
 
 

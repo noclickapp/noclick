@@ -566,7 +566,7 @@ def explain_codex_failure(
 
     if not (chatgpt_auth and _CODEX_NO_API_KEY in failure):
         return failure
-    prefix = "Codex fell back to an OpenAI API key, and none is connected."
+    prefix = "Codex fell back to a ChatGPT API key, and none is connected."
     plan = chatgpt_plan_type(id_token)
     if plan == "free":
         return f"{prefix} {CODEX_FREE_PLAN_MESSAGE}"
@@ -577,7 +577,7 @@ def explain_codex_failure(
         )
     return (
         f"{prefix} The ChatGPT sign-in (plan: {plan}) was not accepted by Codex. "
-        "Reconnect the ChatGPT account, or connect an OpenAI API key instead."
+        "Reconnect the ChatGPT account, or connect a ChatGPT API key instead."
     )
 
 
