@@ -25,8 +25,14 @@ export interface CoordinatorChat {
     needsKey?: string | null;
     loadError: string | null;
     retry: () => void;
-    /** False when nothing went out (nothing to send, no thread yet, a turn still running, no connection). */
+    /** False when nothing went out (nothing to send, no thread yet, a turn still running that it can't join, no
+     *  connection). */
     send: (text: string, attachments?: AgentChatAttachment[], references?: ChatReference[]) => boolean;
+    /** While a turn this page started (or took up) runs, words sent join it (`send` steers) rather than wait for it:
+     *  the composer offers Steer, and Stop with nothing typed. Files can't join a running turn. */
+    steers?: boolean;
+    /** Stops the turn this page started or took up, where the chat can. */
+    stop?: () => void;
     /** Where a file the composer adds goes. */
     upload: ChatUpload;
     /** The memory panel's transport; the coordinator's own when absent. */

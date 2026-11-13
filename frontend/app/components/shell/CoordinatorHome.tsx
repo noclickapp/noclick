@@ -12,6 +12,7 @@ import { flushSync } from 'react-dom';
 import { ArrowUpRight, Brain } from 'lucide-react';
 import { AgentChatComposer } from '~/components/chat/AgentChatComposer';
 import { ChatReferenceChip } from '~/components/chat/ChatReferenceChip';
+import { composerPrimary } from '~/components/chat/composerPrimary';
 import { preloadMarkdownRenderer } from '~/components/chat/MarkdownRendererLazy';
 import { CoordinatorTranscript, useTranscriptJobs } from '~/components/coordinator/CoordinatorTranscript';
 import { InstanceKeyPrompt } from '~/components/credential/InstanceKeyPrompt';
@@ -278,6 +279,18 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
     const hasContext = readyAttachments.length > 0 || references.length > 0;
     // A file that failed to upload holds the send until it's removed; the message never goes out without it.
     const failed = files.attachments.some((a) => a.status === 'error');
+    // While NoClick works, what's written joins its turn (Steer) where the chat can, and an empty box stops it; a file
+    // waits for the turn to end.
+    const primary = composerPrimary({
+        filled: !!draft.trim() || hasContext,
+        ready: !!conversationId,
+        uploading,
+        failed,
+        working: isStreaming,
+        canStop: !!coordinator.stop,
+        canSteer: !!coordinator.steers,
+        unsteerable: files.attachments.length > 0,
+    });
     // While it can't run the model picked, Send (and Enter) asks for the account that runs it.
     const accountAsk = coordinator.composerControls?.ask;
     // A self-hosted install without the model's key asks for it where the composer goes, then opens the chat again.
@@ -289,10 +302,10 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
         <AgentChatComposer
             value={draft}
             onChange={setDraft}
-            onSubmit={() => (accountAsk ? accountAsk.open() : submit())}
+            onSubmit={() => (accountAsk ? accountAsk.open() : primary.kind !== 'stop' && !primary.disabled && submit())}
             placeholder={empty ? 'Describe a task, or ask anything' : 'Message NoClick'}
             inputDisabled={!conversationId}
-            sendDisabled={(!draft.trim() && !hasContext) || uploading || failed || !conversationId || isStreaming}
+            primary={{ kind: primary.kind === 'submit' ? 'send' : primary.kind, disabled: primary.disabled, onStop: coordinator.stop }}
             textareaRef={textareaRef}
             transitionName={COMPOSER_TRANSITION}
             size={empty ? 'tall' : 'default'}

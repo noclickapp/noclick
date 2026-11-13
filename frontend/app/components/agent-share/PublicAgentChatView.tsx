@@ -10,6 +10,7 @@ import { useShareSocket } from '~/hooks/useShareSocket';
 import { useStickToBottom } from '~/hooks/useStickToBottom';
 import { AgentChatTranscript } from '~/components/chat/AgentChatTranscript';
 import { AgentChatComposer } from '~/components/chat/AgentChatComposer';
+import { composerPrimary } from '~/components/chat/composerPrimary';
 import { SerializedIcon } from '~/components/shared/SerializedIcon';
 import { ToolLogosRow, type ToolLogo } from './ToolLogosRow';
 import { PoweredByBadge } from './PoweredByBadge';
@@ -210,7 +211,7 @@ export function PublicAgentChatView({
           onSubmit={submit}
           placeholder={`Message ${meta.agent.label}`}
           inputDisabled={!ready}
-          sendDisabled={!draft.trim() || isStreaming || !ready}
+          sendDisabled={composerPrimary({ filled: !!draft.trim(), ready, working: isStreaming }).disabled}
           footerEnd={
             brand ? (
               brand.supportUrl ? (

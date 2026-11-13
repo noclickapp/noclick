@@ -8,7 +8,8 @@
 // the caller passes `onAddFiles` (the public share page doesn't, yet).
 
 import { useMemo, useRef, useState } from 'react';
-import { ArrowUp, FileText, Loader2, Paperclip, X } from 'lucide-react';
+import { ArrowUp, CornerUpRight, FileText, ListPlus, Loader2, Paperclip, X } from 'lucide-react';
+import { ShortcutTooltip } from '~/components/shared/ShortcutTooltip';
 import { UploadProgressBar } from '~/components/ui/upload-progress';
 import { cn } from '~/lib/utils';
 import { useIsMobile } from '~/hooks/useIsMobile';
@@ -22,6 +23,7 @@ import {
     type MentionToken,
 } from '~/utils/mentionToken';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
+import type { PrimaryKind } from './composerPrimary';
 
 // Cap for the auto-grow: past this the textarea scrolls internally. Lower on
 // mobile so the composer never dominates a small screen.
@@ -130,20 +132,68 @@ export function AttachmentTrayItem({
     );
 }
 
-/** Send: a filled circle, greyed out while there is nothing to send. */
-export function ComposerSendButton({ onClick, disabled }: { onClick: () => void; disabled?: boolean }) {
+const PRIMARY_LOOK: Record<Exclude<PrimaryKind, 'submit'>, { label: string; tip: string }> = {
+    send: { label: 'Send', tip: 'Send (Enter) · new line (Shift+Enter)' },
+    steer: { label: 'Steer', tip: 'Joins what it’s doing now' },
+    queue: { label: 'Queue', tip: 'Goes once this turn ends' },
+    stop: { label: 'Stop', tip: 'Stop' },
+};
+
+const PRIMARY_SIZE = { md: { box: 'h-9 w-9', icon: 'h-[18px] w-[18px]', square: 'h-3 w-3' }, sm: { box: 'h-8 w-8', icon: 'h-4 w-4', square: 'h-2.5 w-2.5' } };
+
+/** The box's round button, the same circle in every box (`composerPrimary` says which): Send, Steer (joins the turn
+ *  at work), Queue (goes once it ends) or, with nothing typed while the agent works, Stop, a filled square. Primary
+ *  ink on primary-foreground, so it inverts with the theme; never red, which is kept for failures. Greyed out while it
+ *  can't act. */
+export function ComposerPrimaryButton({
+    kind,
+    disabled,
+    busy,
+    onClick,
+    size = 'md',
+}: {
+    kind: Exclude<PrimaryKind, 'submit'>;
+    disabled?: boolean;
+    busy?: boolean;
+    onClick: (e: { metaKey: boolean; ctrlKey: boolean }) => void;
+    size?: 'md' | 'sm';
+}) {
+    const look = PRIMARY_LOOK[kind];
+    const sized = PRIMARY_SIZE[size];
     return (
-        <button
-            type="button"
-            onClick={onClick}
-            disabled={disabled}
-            aria-label="Send"
-            title="Send (Enter) · new line (Shift+Enter)"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-[background-color,color,opacity] hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:bg-foreground/[0.08] disabled:text-foreground/35 disabled:hover:opacity-100"
-        >
-            <ArrowUp className="h-[18px] w-[18px]" strokeWidth={2.25} />
-        </button>
+        <ShortcutTooltip label={look.tip}>
+            <button
+                type="button"
+                onClick={onClick}
+                disabled={disabled}
+                aria-label={look.label}
+                data-primary={kind}
+                className={cn(
+                    'grid shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-[background-color,color,opacity,transform] duration-150 hover:opacity-90 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:bg-foreground/[0.08] disabled:text-foreground/35 disabled:hover:opacity-100 disabled:active:scale-100',
+                    sized.box
+                )}
+            >
+                <span key={kind} className="grid place-items-center duration-150 animate-in zoom-in-75 motion-reduce:animate-none">
+                    {busy ? (
+                        <Loader2 className={cn(sized.icon, 'animate-spin')} strokeWidth={2} />
+                    ) : kind === 'stop' ? (
+                        <span data-stop-square className={cn('block rounded-[2px] bg-current', sized.square)} />
+                    ) : kind === 'steer' ? (
+                        <CornerUpRight className={sized.icon} strokeWidth={2.25} />
+                    ) : kind === 'queue' ? (
+                        <ListPlus className={sized.icon} strokeWidth={2.25} />
+                    ) : (
+                        <ArrowUp className={sized.icon} strokeWidth={2.25} />
+                    )}
+                </span>
+            </button>
+        </ShortcutTooltip>
     );
+}
+
+/** Send: the round button, greyed out while there is nothing to send. */
+export function ComposerSendButton({ onClick, disabled }: { onClick: () => void; disabled?: boolean }) {
+    return <ComposerPrimaryButton kind="send" onClick={onClick} disabled={disabled} />;
 }
 
 /** The composer's surface: a raised card in light, a hairline ring in dark. The
@@ -174,6 +224,7 @@ export function AgentChatComposer({
     cardRef,
     size = 'default',
     sendButton,
+    primary,
     className,
 }: {
     value: string;
@@ -216,6 +267,9 @@ export function AgentChatComposer({
     size?: 'default' | 'tall';
     /** Stands in for Send (e.g. what to connect before anything can go out); Enter still calls `onSubmit`. */
     sendButton?: React.ReactNode;
+    /** What the round button is now (`composerPrimary`), in place of Send gated by `sendDisabled`: Stop calls
+     *  `onStop`, anything else `onSubmit`. */
+    primary?: { kind: Exclude<PrimaryKind, 'submit'>; disabled: boolean; onStop?: () => void };
     /** The outer frame's spacing, for a host that lays the box out itself. */
     className?: string;
 }) {
@@ -295,7 +349,13 @@ export function AgentChatComposer({
     useAutoGrowTextarea(ref, value, maxTextareaHeight);
     const focusText = useSurfaceFocus(ref);
 
-    const send = sendButton ?? <ComposerSendButton onClick={onSubmit} disabled={sendDisabled} />;
+    const send =
+        sendButton ??
+        (primary ? (
+            <ComposerPrimaryButton kind={primary.kind} disabled={primary.disabled} onClick={() => (primary.kind === 'stop' ? primary.onStop?.() : onSubmit())} />
+        ) : (
+            <ComposerSendButton onClick={onSubmit} disabled={sendDisabled} />
+        ));
 
     return (
         <div className={cn('shrink-0 px-3 sm:px-6 pb-5 pt-2', className)}>
