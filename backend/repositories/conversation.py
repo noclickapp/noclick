@@ -33,6 +33,60 @@ _AGENT_THREAD_RE = re.compile(r"ck:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}
 # A note the account added to an agent's conversation (``{"note": {key, text, data}}``), relayed to its next turn once.
 NOTE_EVENT_KINDS: Dict[str, str] = {"note": "key"}
 
+# The compaction checkpoint over a conversation's model history (``coder.openai_agent.compaction``), a pointer in
+# ``conversations.metadata`` to a summary kept elsewhere: a platform's (``CONVERSATION_CHECKPOINTS``) and the
+# coordinator's own from before it was an agent (``repositories.coordinator_context``, a ``coordinator_memories`` row).
+CHECKPOINT_KEY = "context_checkpoint"
+COORDINATOR_CHECKPOINT_KEY = "coordinator_context"
+# The rest of ``conversations.metadata`` that describes the model history, so goes with it (``forget_history``): the
+# history, and the verdict on its last move between harnesses. What describes the agent or its connection stays:
+# ``last_mcp_delivery`` and ``mcp_delivery_failures`` (its tool servers as its last turn found them),
+# ``email_thread`` (the owner's mail thread replies go on in), ``coordinator_epoch`` (the coordinator's reset fence).
+HISTORY_KEYS = ("sdk_history", "last_interchange")
+
+
+async def drop_checkpoint(conn, conversation_id: str) -> None:
+    """The conversation's compaction checkpoint goes, inside the caller's transaction: its pointers, and the summary
+    each points at. A pointer left over a history that no longer holds what it covered fails every later turn
+    ("Context checkpoint no longer matches"), and a summary left behind is the old thread kept."""
+    from repositories.coordinator_memories import CoordinatorMemoryRepo
+    from utils.capabilities import FORGET_CONVERSATION_CHECKPOINT, capability
+
+    row = await conn.fetchrow("SELECT user_id::text AS user_id, metadata FROM conversations "
+                              "WHERE conversation_id = $1 FOR UPDATE", conversation_id)
+    if row is None:
+        return
+    await conn.execute("UPDATE conversations SET metadata = COALESCE(metadata, '{}'::jsonb) - $2::text[] "
+                       "WHERE conversation_id = $1", conversation_id, [CHECKPOINT_KEY, COORDINATOR_CHECKPOINT_KEY])
+    summary = ((row["metadata"] or {}).get(COORDINATOR_CHECKPOINT_KEY) or {}).get("memory_id")
+    if summary:
+        await CoordinatorMemoryRepo.forget(conn, row["user_id"], summary)
+    if forget := capability(FORGET_CONVERSATION_CHECKPOINT):
+        await forget(conn, conversation_id=conversation_id)
+
+
+async def drop_checkpoint_past_history(conn, conversation_id: str) -> None:
+    """Once the history was cut (a revert, the SDK popping its last item): its checkpoint goes if it covered more than
+    is left (``drop_checkpoint``). Inside the caller's transaction."""
+    past = await conn.fetchval(
+        f"""SELECT GREATEST(COALESCE((metadata->'{CHECKPOINT_KEY}'->>'covered')::int, 0),
+                            COALESCE((metadata->'{COORDINATOR_CHECKPOINT_KEY}'->>'covered')::int, 0))
+                   > jsonb_array_length(COALESCE(metadata->'sdk_history', '[]'::jsonb))
+            FROM conversations WHERE conversation_id = $1 FOR UPDATE""", conversation_id)
+    if past:
+        await drop_checkpoint(conn, conversation_id)
+
+
+async def forget_history(conn, conversation_id: str) -> None:
+    """Wipe the conversation's model history inside the caller's transaction: its items (the key and their rows),
+    its checkpoint (``drop_checkpoint``) and the rest of what describes it (``HISTORY_KEYS``)."""
+    from repositories import conversation_history
+
+    await drop_checkpoint(conn, conversation_id)
+    await conn.execute("UPDATE conversations SET metadata = COALESCE(metadata, '{}'::jsonb) - $2::text[] "
+                       "WHERE conversation_id = $1", conversation_id, list(HISTORY_KEYS))
+    await conversation_history.clear(conn, conversation_id)
+
 
 def agent_thread_workflow(conversation_id: Optional[str]) -> Optional[str]:
     """The workflow of an agent's thread (``ck:{workflow}:{node}:{key}``), else None."""
@@ -624,28 +678,28 @@ class ConversationRepo:
             out.append(row)
         return out
 
-    async def reset_conversation(self, conversation_id: str, user_id: str) -> bool:
-        """Wipe a conversation in place — transcript, SDK history, parked ask —
-        keeping its id, for a durable per-account thread that starts over."""
-        from repositories import conversation_history
-
-        async with self._pool.acquire() as conn, conn.transaction():
-            row = await conn.fetchrow(
-                """
-                UPDATE conversations
-                SET events = '[]'::jsonb,
-                    metadata = COALESCE(metadata, '{}'::jsonb) - 'sdk_history',
-                    pending_ask = NULL,
-                    title = NULL,
-                    preview = NULL,
-                    last_activity = NOW()
-                WHERE conversation_id = $1 AND user_id::text = $2::text
-                RETURNING conversation_id
-                """,
-                conversation_id, user_id,
-            )
-            if row is not None:
-                await conversation_history.clear(conn, conversation_id)
+    async def reset_conversation(self, conversation_id: str, user_id: str, *, conn=None) -> bool:
+        """Wipe a conversation in place — transcript, model history and all that describes it (``forget_history``),
+        parked ask — keeping its id, for a durable per-account thread that starts over. ``conn``: inside the caller's
+        transaction."""
+        if conn is None:
+            async with self._pool.acquire() as conn, conn.transaction():
+                return await self.reset_conversation(conversation_id, user_id, conn=conn)
+        row = await conn.fetchrow(
+            """
+            UPDATE conversations
+            SET events = '[]'::jsonb,
+                pending_ask = NULL,
+                title = NULL,
+                preview = NULL,
+                last_activity = NOW()
+            WHERE conversation_id = $1 AND user_id::text = $2::text
+            RETURNING conversation_id
+            """,
+            conversation_id, user_id,
+        )
+        if row is not None:
+            await forget_history(conn, conversation_id)
         return row is not None
 
     # ──────────────────────────────────────────────────────────────────────

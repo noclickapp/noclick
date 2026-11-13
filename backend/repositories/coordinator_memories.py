@@ -97,12 +97,19 @@ class CoordinatorMemoryRepo:
 
     async def delete(self, user_id: str, memory_id: str, expected_version: int):
         async with self.pool.acquire() as conn:
-            row = await conn.fetchrow(
-                """UPDATE coordinator_memories SET deleted_at=clock_timestamp(), updated_at=clock_timestamp(),
-                   description='', content='', origin_conversation_id=NULL, version=version+1
-                   WHERE user_id=$1::uuid AND id=$2::uuid AND version=$3 AND deleted_at IS NULL RETURNING id""",
-                user_id, memory_id, expected_version,
-            )
+            row = await conn.fetchrow(_TOMBSTONE + " AND version=$3 RETURNING id", user_id, memory_id, expected_version)
         if row is None:
             raise MemoryConflict("Memory changed or was deleted. Reload it before deleting.")
         return {"deleted": True}
+
+    @staticmethod
+    async def forget(conn, user_id: str, memory_id: str) -> None:
+        """Delete it whatever its version, inside the caller's transaction: a conversation's compaction summary, once
+        the history it summed up is wiped (``repositories.conversation.drop_checkpoint``)."""
+        await conn.execute(_TOMBSTONE, user_id, memory_id)
+
+
+# Deleting erases a memory's content and keeps its name as a tombstone.
+_TOMBSTONE = """UPDATE coordinator_memories SET deleted_at=clock_timestamp(), updated_at=clock_timestamp(),
+                description='', content='', origin_conversation_id=NULL, version=version+1
+                WHERE user_id=$1::uuid AND id=$2::uuid AND deleted_at IS NULL"""

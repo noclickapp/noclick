@@ -107,6 +107,62 @@ async def test_starting_a_thread_over_clears_both(pool):
     assert await _in_step(pool, coordinator) == []
 
 
+@pytest.mark.parametrize("wipe", ["reset_conversation", "clear_session"])
+async def test_a_wiped_history_takes_what_describes_it_and_keeps_its_connection(pool, wipe):
+    """A history wiped in place (a thread started over, the SDK's ``clear_session``) takes with it its compaction
+    checkpoint and the verdict on its last move between harnesses: a checkpoint left over the empty history failed
+    every later turn ("Context checkpoint no longer matches"). What describes the agent's connection stays."""
+    from coder.openai_agent.compaction import fingerprint
+    from coder.openai_agent.session import PostgresSession
+    from repositories.conversation import ConversationRepo
+
+    pool, made = pool
+    chat = _thread(made)
+    items = [{"role": "user", "content": "Where's my invoice?"}, {"role": "assistant", "content": "Attached."}]
+    session = PostgresSession(chat, user_id=USER)
+    await session.add_items(items)
+    kept = {"last_mcp_delivery": {"ready": True, "servers": []}, "mcp_delivery_failures": [{"ready": False}],
+            "email_thread": {"message_id": "<m1@noclick.app>", "subject": "Invoices"}}
+    await pool.execute(
+        "UPDATE conversations SET metadata = metadata || $2::jsonb WHERE conversation_id = $1", chat,
+        {"context_checkpoint": {"memory": "context.x", "covered": 2, "fingerprint": fingerprint(items)},
+         "last_interchange": {"ok": True, "source_harness": "codex", "target_harness": "sdk"}, **kept})
+
+    if wipe == "reset_conversation":
+        assert await ConversationRepo(pool).reset_conversation(chat, USER)
+    else:
+        await session.clear_session()
+
+    assert await pool.fetchval("SELECT metadata FROM conversations WHERE conversation_id = $1", chat) == kept
+    assert await _in_step(pool, chat) == []
+
+
+async def test_a_popped_item_the_checkpoint_covered_takes_the_checkpoint(pool):
+    """The SDK pops a retried turn's items off the history; a pop into what the checkpoint covered leaves it over items
+    that are gone, which would fail the next turn, so it goes. A pop past it keeps it."""
+    from coder.openai_agent.compaction import fingerprint
+    from coder.openai_agent.session import PostgresSession
+
+    pool, made = pool
+    chat = _thread(made)
+    items = [{"role": "user", "content": f"message {i}"} for i in range(4)]
+    session = PostgresSession(chat, user_id=USER)
+    await session.add_items(items)
+    checkpoint = {"memory": "context.x", "covered": 3, "fingerprint": fingerprint(items[:3])}
+    await pool.execute("UPDATE conversations SET metadata = metadata || $2::jsonb WHERE conversation_id = $1", chat,
+                       {"context_checkpoint": checkpoint})
+
+    async def pointer():
+        return (await pool.fetchval("SELECT metadata FROM conversations WHERE conversation_id = $1",
+                                    chat)).get("context_checkpoint")
+
+    assert (await session.pop_item())["content"] == "message 3"
+    assert await pointer() == checkpoint
+    assert (await session.pop_item())["content"] == "message 2"
+    assert await pointer() is None
+    assert [i["content"] for i in await _in_step(pool, chat)] == ["message 0", "message 1"]
+
+
 async def test_its_rows_follow_the_conversation_renamed_or_deleted(pool):
     from coder.openai_agent.session import PostgresSession
 

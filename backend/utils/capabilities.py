@@ -289,6 +289,12 @@ WAKEUPS = "agent.wakeups"
 # checkpoint (None), nothing compacts.
 CONVERSATION_CHECKPOINTS = "agent.conversation_checkpoints"
 
+# Delete the summary a ``CONVERSATION_CHECKPOINTS`` store keeps for a conversation, once its pointer goes with the
+# history it covered (a reset, a cut past it; ``repositories.conversation.drop_checkpoint``):
+# async (conn, *, conversation_id) -> None, inside the caller's transaction; a conversation it keeps none for is a
+# no-op.
+FORGET_CONVERSATION_CHECKPOINT = "agent.forget_conversation_checkpoint"
+
 # Let a spawned agent reach the agent that gave it its task (the
 # ``tell_parent`` tool): async (pool, *, spec, arguments) -> result dict.
 # ``spec`` is the agent's ``_tellParent`` runtime config; without a provider

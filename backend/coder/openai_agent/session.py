@@ -209,6 +209,7 @@ class PostgresSession:
         if self._read_only:
             return None
         from repositories import conversation_history
+        from repositories.conversation import drop_checkpoint_past_history
         from utils.database_pool import get_native_pool
         async with get_native_pool().acquire() as conn, conn.transaction():
             row = await conn.fetchrow(
@@ -243,29 +244,17 @@ class PostgresSession:
             if not row:
                 return None
             await conversation_history.pop(conn, self.session_id)
+            await drop_checkpoint_past_history(conn, self.session_id)
         return _decode_jsonb(row["popped"])
 
     async def clear_session(self) -> None:
-        """Wipe all items for this session (does NOT delete the row)."""
+        """Wipe all items for this session, with their compaction checkpoint (does NOT delete the row)."""
         if self._read_only:
             return
-        from repositories import conversation_history
+        from repositories.conversation import forget_history
         from utils.database_pool import get_native_pool
         async with get_native_pool().acquire() as conn, conn.transaction():
-            await conn.execute(
-                f"""
-                UPDATE conversations
-                SET metadata = jsonb_set(
-                    COALESCE(metadata, '{{}}'::jsonb),
-                    '{{{_HISTORY_KEY}}}',
-                    '[]'::jsonb,
-                    true
-                )
-                WHERE conversation_id = $1
-                """,
-                self.session_id,
-            )
-            await conversation_history.clear(conn, self.session_id)
+            await forget_history(conn, self.session_id)
 
 
 # ---------------------------------------------------------------------- #

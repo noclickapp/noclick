@@ -138,6 +138,35 @@ async def test_prefix_mismatch_never_discards_history(context_db):
         await compact(model_data(changed))
 
 
+@pytest.mark.parametrize("reset", ["reset_conversation", "coordinator_reset"])
+async def test_a_reset_takes_the_checkpoint_with_the_history_and_the_next_turn_runs(context_db, reset):
+    """Starting the thread over wipes its checkpoint and the summary it points at with the history. A reset that left
+    the pointer over the history it wiped failed every later turn ("Context checkpoint no longer matches this
+    conversation"); a summary left behind kept the old thread in the coordinator's memory."""
+    from repositories.conversation import ConversationRepo
+    from repositories.coordinator_wakeups import CoordinatorWakeupRepo
+
+    pool, raw, _, budget = context_db
+    compact = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=budget)
+    await compact(model_data(raw))
+    checkpoint, _ = await compact.repo.load()
+    assert checkpoint["covered"] and await compact.store.read(checkpoint)
+
+    if reset == "reset_conversation":
+        assert await ConversationRepo(pool).reset_conversation(f"coordinator:{USER}", USER)
+    else:
+        assert await CoordinatorWakeupRepo(pool).reset(USER)
+
+    assert await compact.repo.load() == ({}, [])
+    assert await compact.store.read(checkpoint) is None
+    assert not (await CoordinatorMemoryRepo(pool).list_headers(USER))["memories"]
+    epoch = await CoordinatorWakeupRepo(pool).epoch(USER)
+    turn = [{"role": "user", "content": "Let's start over."}]
+    view = await compaction.CoordinatorCompactor(pool, USER, epoch=epoch, model="test", budget=budget)(
+        model_data(turn))
+    assert view.input == turn
+
+
 async def test_repeated_compaction_does_not_replay_covered_prefix(context_db):
     pool, raw, summary, budget = context_db
     compact = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=budget)

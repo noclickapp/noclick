@@ -7,7 +7,6 @@ decides what to do next. A started turn is never blindly replayed after a crash.
 import asyncio
 import uuid
 
-from repositories import conversation_history
 from repositories.conversation import ConversationRepo
 from repositories.coordinator_jobs import TERMINAL
 
@@ -27,23 +26,22 @@ class CoordinatorWakeupRepo:
 
     async def reset(self, user_id):
         # Caller holds coordinator_lock, so a reset cannot split a model turn.
+        conversation_id = f"coordinator:{user_id}"
         async with self.pool.acquire() as conn:
             async with conn.transaction():
-                row = await conn.fetchrow(
-                    """UPDATE conversations SET events='[]'::jsonb,
-                       metadata=(COALESCE(metadata,'{}'::jsonb)-'sdk_history'-'coordinator_context') ||
-                         jsonb_build_object('coordinator_epoch', $3::text),
-                       pending_ask=NULL, title=NULL, preview=NULL, last_activity=now()
-                       WHERE conversation_id=$1 AND user_id=$2::uuid RETURNING conversation_id""",
-                    f"coordinator:{user_id}", user_id, str(uuid.uuid4()),
-                )
-                if row is not None:
-                    await conversation_history.clear(conn, f"coordinator:{user_id}")
+                reset = await ConversationRepo(self.pool).reset_conversation(conversation_id, user_id, conn=conn)
+                if reset:
+                    # A new epoch fences off a compaction commit still under way from before.
+                    await conn.execute(
+                        "UPDATE conversations SET metadata = COALESCE(metadata, '{}'::jsonb) || "
+                        "jsonb_build_object('coordinator_epoch', $2::text) WHERE conversation_id = $1",
+                        conversation_id, str(uuid.uuid4()),
+                    )
                 await conn.execute(
                     "UPDATE coordinator_wakeups SET status='skipped', lease_until=NULL "
                     "WHERE user_id=$1::uuid AND status NOT IN ('done','skipped')", user_id,
                 )
-        return row is not None
+        return reset
 
     async def enqueue(self, *, job, context, payload):
         """Transfer a finished job's outcome to the inbox atomically and idempotently."""
