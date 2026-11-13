@@ -28,175 +28,200 @@
    "display_name": "Create Order",
    "category": "Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_order",
    "display_name": "Update Order",
    "category": "Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_order",
    "display_name": "Get Order",
    "category": "Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_order",
    "display_name": "Delete Order",
    "category": "Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_orders_by_date",
    "display_name": "List Orders by Date",
    "category": "Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_orders_by_route",
    "display_name": "List Orders in Route",
    "category": "Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_updated_orders",
    "display_name": "List Orders after Status Change",
    "category": "Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "complete_order",
    "display_name": "Complete Order",
    "category": "Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reject_order",
    "display_name": "Reject Order",
    "category": "Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_route",
    "display_name": "Create Route",
    "category": "Routes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_route",
    "display_name": "Update Route",
    "category": "Routes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_route",
    "display_name": "Get Route",
    "category": "Routes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_route",
    "display_name": "Delete Route",
    "category": "Routes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_routes_by_date",
    "display_name": "List Routes by Date",
    "category": "Routes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_order_to_route",
    "display_name": "Move Order to Route",
    "category": "Routes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_route",
    "display_name": "Start Route",
    "category": "Routes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "close_route",
    "display_name": "Close Route",
    "category": "Routes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_route_ready",
    "display_name": "Mark Route Ready",
    "category": "Routes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_route_exports",
    "display_name": "List Routes Awaiting Export",
    "category": "Routes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "confirm_route_export",
    "display_name": "Confirm Route Export",
    "category": "Routes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_drivers",
    "display_name": "List Drivers",
    "category": "Drivers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_vehicles",
    "display_name": "List Vehicles",
    "category": "Vehicles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_vehicle",
    "display_name": "Create Vehicle",
    "category": "Vehicles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_address",
    "display_name": "Add or Update Address",
    "category": "Addresses",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_order_status_changed",
    "display_name": "On Order Status Changed",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

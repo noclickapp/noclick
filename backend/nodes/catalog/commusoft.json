@@ -22,168 +22,192 @@
    "display_name": null,
    "category": null,
    "description": "List properties using GET /properties.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_property",
    "display_name": null,
    "category": null,
    "description": "Get property using GET /properties/{propertyID}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer",
    "display_name": null,
    "category": null,
    "description": "Create customer using POST /customers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer",
    "display_name": null,
    "category": null,
    "description": "Update customer using PATCH /customers/{propertyID}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": null,
    "category": null,
    "description": "List contacts using GET /propertyContacts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact",
    "display_name": null,
    "category": null,
    "description": "Create contact using POST /properties/{propertyID}/contacts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact",
    "display_name": null,
    "category": null,
    "description": "Update contact using PATCH /contacts/{contactID}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_assets",
    "display_name": null,
    "category": null,
    "description": "List assets using GET /assets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_asset",
    "display_name": null,
    "category": null,
    "description": "Get asset using GET /assets/{assetID}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_opportunities",
    "display_name": null,
    "category": null,
    "description": "List opportunities using GET /opportunities.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_opportunity",
    "display_name": null,
    "category": null,
    "description": "Get opportunity using GET /opportunities/{opportunityID}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_opportunity",
    "display_name": null,
    "category": null,
    "description": "Create opportunity using POST /properties/{propertyID}/opportunities.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "change_opportunity_stage",
    "display_name": null,
    "category": null,
    "description": "Change opportunity stage using POST /opportunities/{opportunityID}/changeStage.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_jobs",
    "display_name": null,
    "category": null,
    "description": "List jobs using GET /jobs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_job",
    "display_name": null,
    "category": null,
    "description": "Get job using GET /jobs/{jobID}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_job",
    "display_name": null,
    "category": null,
    "description": "Create job using POST /properties/{propertyID}/jobs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_job",
    "display_name": null,
    "category": null,
    "description": "Update job using PATCH /jobs/{jobID}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "change_job_stage",
    "display_name": null,
    "category": null,
    "description": "Change job stage using POST /jobs/{jobID}/changeStage.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "complete_job",
    "display_name": null,
    "category": null,
    "description": "Complete job using POST /jobs/{jobID}/complete.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_appointments",
    "display_name": null,
    "category": null,
    "description": "List appointments using GET /appointments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_appointment",
    "display_name": null,
    "category": null,
    "description": "Get appointment using GET /appointments/{appointmentID}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_appointment",
    "display_name": null,
    "category": null,
    "description": "Create appointment using POST /appointments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_appointment",
    "display_name": null,
    "category": null,
    "description": "Delete appointment using DELETE /appointments/{appointmentID}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": null,
    "category": null,
    "description": "List users using GET /users.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

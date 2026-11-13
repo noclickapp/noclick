@@ -39,49 +39,56 @@
    "display_name": null,
    "category": null,
    "description": "Validate one address; definitive results consume one request of quota.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_bulk_job",
    "display_name": null,
    "category": null,
    "description": "Submit addresses for asynchronous verification; charged when accepted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_bulk_jobs",
    "display_name": null,
    "category": null,
    "description": "Read one page; pass next_before to the following request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bulk_job",
    "display_name": null,
    "category": null,
    "description": "Read status and progress; poll about once per minute until completed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_bulk_job",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a job, its input list and its stored results.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bulk_job_results",
    "display_name": null,
    "category": null,
    "description": "Download completed results as JSON or a CSV file. Pending jobs return 409.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account_status",
    "display_name": null,
    "category": null,
    "description": "Read the authenticated account ID, plan and quota without consuming credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

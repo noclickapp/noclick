@@ -29,70 +29,80 @@
    "display_name": null,
    "category": null,
    "description": "Convert HTML or a web page to a PDF file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_xls",
    "display_name": null,
    "category": null,
    "description": "Convert spreadsheet XML to an XLS file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_xlsx",
    "display_name": null,
    "category": null,
    "description": "Convert spreadsheet XML to an XLSX file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_hosted_document",
    "display_name": null,
    "category": null,
    "description": "Create a hosted document and return its download URL (paid add-on).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_async_document",
    "display_name": null,
    "category": null,
    "description": "Queue a document and return its status ID without polling.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_hosted_async_document",
    "display_name": null,
    "category": null,
    "description": "Queue a hosted document (paid add-on) and return its status ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document_status",
    "display_name": null,
    "category": null,
    "description": "Read the status, download metadata or failure of an asynchronous job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "download_document",
    "display_name": null,
    "category": null,
    "description": "Download a completed file by download_id; consumes a provider download.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "expire_document",
    "display_name": null,
    "category": null,
    "description": "Expire a hosted document so its public download link stops working.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_connection",
    "display_name": null,
    "category": null,
    "description": "Read the credential's existing document status without creating a file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -27,168 +27,192 @@
    "display_name": null,
    "category": null,
    "description": "Read the organization associated with the API token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_project",
    "display_name": null,
    "category": null,
    "description": "Permanently delete the selected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rules",
    "display_name": null,
    "category": null,
    "description": "List published rules; saved drafts are excluded.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_rule",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_redirection",
    "display_name": null,
    "category": null,
    "description": "Create a simple redirect as a draft; publish separately to apply it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_rule",
    "display_name": null,
    "category": null,
    "description": "Create a draft rule with redirect, header, status or HTML actions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_rule",
    "display_name": null,
    "category": null,
    "description": "Replace the rule with these fields as a draft; publish separately.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_rule",
    "display_name": null,
    "category": null,
    "description": "Stage deletion of a rule; publish separately to apply it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_rule_statistics",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_drafts",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_draft",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_draft",
    "display_name": null,
    "category": null,
    "description": "Discard a pending draft change.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_project",
    "display_name": null,
    "category": null,
    "description": "Publish all pending draft changes in this project. Limited to 20 calls per day.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_domains",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_domain",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_domain",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a managed domain.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_instances",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_instance",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_instance",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ips",
    "display_name": null,
    "category": null,
    "description": "Read the redirection.io service IP addresses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

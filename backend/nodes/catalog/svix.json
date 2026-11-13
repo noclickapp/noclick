@@ -22,119 +22,136 @@
    "display_name": "List Application Metadata",
    "category": "Applications",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_application",
    "display_name": "Get Application Metadata",
    "category": "Applications",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_application",
    "display_name": "Create Application",
    "category": "Applications",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_application",
    "display_name": "Rename Application",
    "category": "Applications",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_application",
    "display_name": "Delete Empty Application",
    "category": "Applications",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_event_types",
    "display_name": "List Event-Type Metadata",
    "category": "Event Types",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event_type",
    "display_name": "Get Event-Type Metadata",
    "category": "Event Types",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_event_type",
    "display_name": "Create Event Type",
    "category": "Event Types",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_event_type",
    "display_name": "Update Event-Type Description",
    "category": "Event Types",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_event_type",
    "display_name": "Archive Event Type",
    "category": "Event Types",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_endpoints",
    "display_name": "List Endpoint Configuration",
    "category": "Endpoints",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_endpoint",
    "display_name": "Get Endpoint Configuration",
    "category": "Endpoints",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_messages",
    "display_name": "List Message Metadata",
    "category": "Delivery Status",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message",
    "display_name": "Get Message Metadata",
    "category": "Delivery Status",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_message_attempts",
    "display_name": "List Message Delivery Attempts",
    "category": "Delivery Status",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_endpoint_attempts",
    "display_name": "List Endpoint Delivery Attempts",
    "category": "Delivery Status",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_attempt",
    "display_name": "Get Delivery Attempt Status",
    "category": "Delivery Status",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

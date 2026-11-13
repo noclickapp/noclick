@@ -27,98 +27,112 @@
    "display_name": null,
    "category": null,
    "description": "List organizations accessible to the authorization token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization",
    "display_name": null,
    "category": null,
    "description": "Get an organization's profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_organization",
    "display_name": null,
    "category": null,
    "description": "Update the organization's display name and optional public profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_badge_templates",
    "display_name": null,
    "category": null,
    "description": "Read one page of badge templates. Increment page for further results.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_badge_template",
    "display_name": null,
    "category": null,
    "description": "Get one badge template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_badge_template",
    "display_name": null,
    "category": null,
    "description": "Create a badge template with criteria, skills and an image URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_badge_template",
    "display_name": null,
    "category": null,
    "description": "Update a template's name and selected template settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_badge_template",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a badge template; Credly rejects templates with children.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issued_badges",
    "display_name": null,
    "category": null,
    "description": "Read one page of issued badges with optional recipient and state filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issued_badge",
    "display_name": null,
    "category": null,
    "description": "Read one issued badge.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "issue_badge",
    "display_name": null,
    "category": null,
    "description": "Issue a badge; Credly normally sends an earner notification.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_badge",
    "display_name": null,
    "category": null,
    "description": "Replace a badge with corrected fields; an optional message notifies the earner.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "revoke_badge",
    "display_name": null,
    "category": null,
    "description": "Revoke a badge and record the reason; optionally suppress notification.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_issued_badge",
    "display_name": null,
    "category": null,
    "description": "Permanently delete an issued badge.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -28,140 +28,160 @@
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_print",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_print",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_print",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_print",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_backgrounds",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_background",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_background",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_background",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_background",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_mailing_lists",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_mailing_list",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_mailing_list",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_mailing_list",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_mailing_list",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_recipients",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_recipient",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_recipient",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_recipient",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_recipient",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

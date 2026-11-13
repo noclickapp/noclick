@@ -22,70 +22,80 @@
    "display_name": "Create Template",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": "List Templates",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template",
    "display_name": "Get Template",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_template",
    "display_name": "Update Template",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_template",
    "display_name": "Delete Template",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_document",
    "display_name": "Generate Document",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_documents",
    "display_name": "List Documents",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document",
    "display_name": "Get Document",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_document",
    "display_name": "Rename Document",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_document",
    "display_name": "Delete Document",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,161 +22,187 @@
    "display_name": "On Resource Event",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "procore_oauth"
+   ]
   },
   {
    "name": "get_current_user",
    "display_name": "Get Current User",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_companies",
    "display_name": "List Companies",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Projects",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": "Get Project",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": "Create Project",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project",
    "display_name": "Update Project",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_vendors",
    "display_name": "List Vendors",
    "category": "Directory",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_vendor",
    "display_name": "Get Vendor",
    "category": "Directory",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_vendor",
    "display_name": "Create Vendor",
    "category": "Directory",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_vendor",
    "display_name": "Update Vendor",
    "category": "Directory",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_users",
    "display_name": "List Project Users",
    "category": "Directory",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rfis",
    "display_name": "List Rfis",
    "category": "RFIs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_rfi",
    "display_name": "Get Rfi",
    "category": "RFIs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_rfi",
    "display_name": "Create Rfi",
    "category": "RFIs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_rfi",
    "display_name": "Update Rfi",
    "category": "RFIs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_submittals",
    "display_name": "List Submittals",
    "category": "Submittals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_submittal",
    "display_name": "Get Submittal",
    "category": "Submittals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_submittal",
    "display_name": "Create Submittal",
    "category": "Submittals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_notes_logs",
    "display_name": "List Notes Logs",
    "category": "Daily Log",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_notes_log",
    "display_name": "Create Notes Log",
    "category": "Daily Log",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_locations",
    "display_name": "List Locations",
    "category": "Locations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_location",
    "display_name": "Create Location",
    "category": "Locations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

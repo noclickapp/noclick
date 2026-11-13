@@ -27,154 +27,179 @@
    "display_name": "Search",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_documents",
    "display_name": "Get Documents",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_collections",
    "display_name": "List Collections",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_collection",
    "display_name": "Get Collection",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_collection",
    "display_name": "Create Collection",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_collection",
    "display_name": "Update Collection",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_collections",
    "display_name": "Delete Collections",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_collection_items",
    "display_name": "Add Collection Items",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_collection_item",
    "display_name": "Remove Collection Item",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_answers",
    "display_name": "List Answers",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_answer",
    "display_name": "Get Answer",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_answer",
    "display_name": "Create Answer",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_answer",
    "display_name": "Update Answer",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_answer",
    "display_name": "Delete Answer",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_shortcuts",
    "display_name": "List Go Links",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_shortcut",
    "display_name": "Get Go Link",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_shortcut",
    "display_name": "Create Go Link",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_shortcut",
    "display_name": "Update Go Link",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_shortcut",
    "display_name": "Delete Go Link",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_trigger_presets",
    "display_name": "List Trigger Presets",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_trigger_preset",
    "display_name": "Get Trigger Preset",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_event",
    "display_name": "On Glean Preset Event",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "glean_api_token"
+   ]
   }
  ],
  "agent_tool_provider": true,

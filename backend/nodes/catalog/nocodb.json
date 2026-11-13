@@ -22,308 +22,352 @@
    "display_name": "List Workspaces",
    "category": "Workspace",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workspace",
    "display_name": "Get Workspace",
    "category": "Workspace",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_workspace",
    "display_name": "Create Workspace",
    "category": "Workspace",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_workspace",
    "display_name": "Update Workspace",
    "category": "Workspace",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_workspace",
    "display_name": "Delete Workspace",
    "category": "Workspace",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_bases",
    "display_name": "List Bases",
    "category": "Base",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_base",
    "display_name": "Get Base",
    "category": "Base",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_base",
    "display_name": "Create Base",
    "category": "Base",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_base",
    "display_name": "Update Base",
    "category": "Base",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_base",
    "display_name": "Delete Base",
    "category": "Base",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tables",
    "display_name": "List Tables",
    "category": "Table",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_table",
    "display_name": "Get Table",
    "category": "Table",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_table",
    "display_name": "Create Table",
    "category": "Table",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_table",
    "display_name": "Update Table",
    "category": "Table",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_table",
    "display_name": "Delete Table",
    "category": "Table",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_field",
    "display_name": "Get Field",
    "category": "Field",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_field",
    "display_name": "Create Field",
    "category": "Field",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_field",
    "display_name": "Update Field",
    "category": "Field",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_field",
    "display_name": "Delete Field",
    "category": "Field",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_views",
    "display_name": "List Views",
    "category": "View",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_view",
    "display_name": "Get View",
    "category": "View",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_view",
    "display_name": "Create View",
    "category": "View",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_view",
    "display_name": "Update View",
    "category": "View",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_view",
    "display_name": "Delete View",
    "category": "View",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_records",
    "display_name": "List Records",
    "category": "Record",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_record",
    "display_name": "Get Record",
    "category": "Record",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "count_records",
    "display_name": "Count Records",
    "category": "Record",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_records",
    "display_name": "Create Records",
    "category": "Record",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_records",
    "display_name": "Update Records",
    "category": "Record",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_records",
    "display_name": "Delete Records",
    "category": "Record",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_records",
    "display_name": "Upsert Records",
    "category": "Record",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_links",
    "display_name": "List Links",
    "category": "Link",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_links",
    "display_name": "Add Links",
    "category": "Link",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_links",
    "display_name": "Delete Links",
    "category": "Link",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_hooks",
    "display_name": "List Hooks",
    "category": "Webhook",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_hook",
    "display_name": "Get Hook",
    "category": "Webhook",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_hook",
    "display_name": "Create Hook",
    "category": "Webhook",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_hook",
    "display_name": "Update Hook",
    "category": "Webhook",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_hook",
    "display_name": "Delete Hook",
    "category": "Webhook",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_comments",
    "display_name": "List Comments",
    "category": "Comment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_comment",
    "display_name": "Create Comment",
    "category": "Comment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_comment",
    "display_name": "Update Comment",
    "category": "Comment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_comment",
    "display_name": "Delete Comment",
    "category": "Comment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resolve_comment",
    "display_name": "Resolve Comment",
    "category": "Comment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

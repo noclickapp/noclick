@@ -22,175 +22,203 @@
    "display_name": "Create Event Subscriber",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_products",
    "display_name": "List Products",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product",
    "display_name": "Get Product",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_product",
    "display_name": "Create Product",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_product",
    "display_name": "Upsert Product",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_product",
    "display_name": "Delete Product",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_product_models",
    "display_name": "List Product Models",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product_model",
    "display_name": "Get Product Model",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_product_model",
    "display_name": "Create Product Model",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_product_model",
    "display_name": "Upsert Product Model",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_product_model",
    "display_name": "Delete Product Model",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_categories",
    "display_name": "List Categories",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_category",
    "display_name": "Get Category",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_category",
    "display_name": "Upsert Category",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_families",
    "display_name": "List Families",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_family",
    "display_name": "Get Family",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_family",
    "display_name": "Upsert Family",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_attributes",
    "display_name": "List Attributes",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_attribute",
    "display_name": "Get Attribute",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_attribute_options",
    "display_name": "List Attribute Options",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_attribute_option",
    "display_name": "Upsert Attribute Option",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channels",
    "display_name": "List Channels",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_locales",
    "display_name": "List Locales",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_media_file",
    "display_name": "Get Media File",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_product_event",
    "display_name": "Product Created, Updated or Deleted",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "akeneo_token"
+   ]
   }
  ],
  "agent_tool_provider": true,

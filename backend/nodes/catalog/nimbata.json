@@ -38,168 +38,192 @@
    "display_name": null,
    "category": null,
    "description": "Identify the token owner and primary organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": null,
    "category": null,
    "description": "List projects.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": null,
    "category": null,
    "description": "Get project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_calls",
    "display_name": null,
    "category": null,
    "description": "List calls.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_call",
    "display_name": null,
    "category": null,
    "description": "Get call.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_leads",
    "display_name": null,
    "category": null,
    "description": "List leads.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lead",
    "display_name": null,
    "category": null,
    "description": "Get lead.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lead_timeline",
    "display_name": null,
    "category": null,
    "description": "Get lead timeline.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_call_activity",
    "display_name": null,
    "category": null,
    "description": "Get call activity.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tag_categories",
    "display_name": null,
    "category": null,
    "description": "List tag categories.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": null,
    "category": null,
    "description": "List tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_call_tags",
    "display_name": null,
    "category": null,
    "description": "Update call tags. Changes may trigger Nimbata call-update workflows. Existing tags are preserved.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_call_tags",
    "display_name": null,
    "category": null,
    "description": "Update call tags. Changes may trigger Nimbata call-update workflows. An empty list removes all tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_call_tag",
    "display_name": null,
    "category": null,
    "description": "Remove one call tag. Changes may trigger Nimbata call-update workflows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_call_rating",
    "display_name": null,
    "category": null,
    "description": "Rating from zero to five, kept to two decimals. Changes may run call-update workflows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_call_rating",
    "display_name": null,
    "category": null,
    "description": "Clear the call rating. Changes may run call-update workflows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_call_value",
    "display_name": null,
    "category": null,
    "description": "Amount in the project currency, kept to two decimals. Changes may run call-update workflows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_call_value",
    "display_name": null,
    "category": null,
    "description": "Clear the call value. Changes may run call-update workflows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_call_comments",
    "display_name": null,
    "category": null,
    "description": "Call comments saved as sent. Changes may run call-update workflows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_call_comments",
    "display_name": null,
    "category": null,
    "description": "Clear the call comments. Changes may run call-update workflows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_call_followup_date",
    "display_name": null,
    "category": null,
    "description": "Follow-up day in YYYY-MM-DD.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_call_followup_date",
    "display_name": null,
    "category": null,
    "description": "Clear the call followup date. Changes may run call-update workflows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_call_caller_name",
    "display_name": null,
    "category": null,
    "description": "Sets the caller name across all calls from that number in this project. Inbound calls only; no workflows run.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_call_caller_name",
    "display_name": null,
    "category": null,
    "description": "Clear the call caller name. Applies to the caller number across the project; inbound calls only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -39,7 +39,8 @@
    "display_name": "Search Web and News",
    "category": "Search",
    "description": "Search web and news, optionally extracting highlights or full pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

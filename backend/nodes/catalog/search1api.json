@@ -34,84 +34,96 @@
    "display_name": null,
    "category": null,
    "description": "Search the web using multiple search engines",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_maps",
    "display_name": null,
    "category": null,
    "description": "Search Google Maps for local businesses and places",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_news",
    "display_name": null,
    "category": null,
    "description": "Search news articles across multiple sources",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ask",
    "display_name": null,
    "category": null,
    "description": "Search the engines a natural-language request calls for",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "crawl_page",
    "display_name": null,
    "category": null,
    "description": "Crawl a URL and extract its content",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sitemap",
    "display_name": null,
    "category": null,
    "description": "Extract sitemap URLs from a website",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_trending",
    "display_name": null,
    "category": null,
    "description": "Get trending topics from various platforms",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_content",
    "display_name": null,
    "category": null,
    "description": "Extract structured content from a URL",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_deepcrawl",
    "display_name": null,
    "category": null,
    "description": "Deep crawl a website across multiple pages",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deepcrawl_status",
    "display_name": null,
    "category": null,
    "description": "Check deepcrawl task status",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_usage",
    "display_name": null,
    "category": null,
    "description": "Get API key usage statistics",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_feedback",
    "display_name": null,
    "category": null,
    "description": "Report a Search1API problem or feature request. Submits a report to Search1API; omit credentials and private content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

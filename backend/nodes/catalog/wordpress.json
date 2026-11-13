@@ -52,266 +52,304 @@
    "display_name": "List Posts",
    "category": "Post",
    "description": "List posts with filtering, sorting, and pagination",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_post",
    "display_name": "Get Post",
    "category": "Post",
    "description": "Get a single post by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_post",
    "display_name": "Create Post",
    "category": "Post",
    "description": "Create a new post",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_post",
    "display_name": "Update Post",
    "category": "Post",
    "description": "Update an existing post",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_post",
    "display_name": "Delete Post",
    "category": "Post",
    "description": "Delete a post",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pages",
    "display_name": "List Pages",
    "category": "Page",
    "description": "List pages with filtering and pagination",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_page",
    "display_name": "Get Page",
    "category": "Page",
    "description": "Get a single page by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_page",
    "display_name": "Create Page",
    "category": "Page",
    "description": "Create a new page",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_page",
    "display_name": "Update Page",
    "category": "Page",
    "description": "Update an existing page",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_page",
    "display_name": "Delete Page",
    "category": "Page",
    "description": "Delete a page",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_media_items",
    "display_name": "List Media Items",
    "category": "Media",
    "description": "List media items",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_media_item",
    "display_name": "Get Media Item",
    "category": "Media",
    "description": "Get a single media item by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_media_file",
    "display_name": "Upload Media File",
    "category": "Media",
    "description": "Upload a new media file",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_media_metadata",
    "display_name": "Update Media Metadata",
    "category": "Media",
    "description": "Update media metadata",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_media_item",
    "display_name": "Delete Media Item",
    "category": "Media",
    "description": "Delete a media item",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": "List Users",
    "category": "User",
    "description": "List users",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": "Get User",
    "category": "User",
    "description": "Get a single user by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_user",
    "display_name": "Create User",
    "category": "User",
    "description": "Create a new user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_user",
    "display_name": "Update User",
    "category": "User",
    "description": "Update an existing user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_user",
    "display_name": "Delete User",
    "category": "User",
    "description": "Delete a user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_comments",
    "display_name": "List Comments",
    "category": "Comment",
    "description": "List comments",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_comment",
    "display_name": "Get Comment",
    "category": "Comment",
    "description": "Get a single comment by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_post_comment",
    "display_name": "Create Post Comment",
    "category": "Comment",
    "description": "Create a new comment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_comment",
    "display_name": "Update Comment",
    "category": "Comment",
    "description": "Update an existing comment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_comment",
    "display_name": "Delete Comment",
    "category": "Comment",
    "description": "Delete a comment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_categories",
    "display_name": "List Categories",
    "category": "Category",
    "description": "List categories",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_category",
    "display_name": "Get Category",
    "category": "Category",
    "description": "Get a single category by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_category",
    "display_name": "Create Category",
    "category": "Category",
    "description": "Create a new category",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_category",
    "display_name": "Update Category",
    "category": "Category",
    "description": "Update an existing category",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_category",
    "display_name": "Delete Category",
    "category": "Category",
    "description": "Delete a category",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": "List Tags",
    "category": "Tag",
    "description": "List tags",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tag",
    "display_name": "Get Tag",
    "category": "Tag",
    "description": "Get a single tag by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tag",
    "display_name": "Create Tag",
    "category": "Tag",
    "description": "Create a new tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tag",
    "display_name": "Update Tag",
    "category": "Tag",
    "description": "Update an existing tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tag",
    "display_name": "Delete Tag",
    "category": "Tag",
    "description": "Delete a tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_content",
    "display_name": "Search Content",
    "category": "Post",
    "description": "Search across all content types",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_settings",
    "display_name": "Get Site Settings",
    "category": "Site Settings",
    "description": "Get site settings",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_site_settings",
    "display_name": "Update Site Settings",
    "category": "Site Settings",
    "description": "Update site settings",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

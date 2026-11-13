@@ -22,175 +22,200 @@
    "display_name": null,
    "category": null,
    "description": "Score a property address",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "predict_batch",
    "display_name": null,
    "category": null,
    "description": "Score a batch of property addresses",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_history",
    "display_name": null,
    "category": null,
    "description": "Read a property’s recorded transaction history",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_request",
    "display_name": null,
    "category": null,
    "description": "Check a request without spending",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resolve_property",
    "display_name": null,
    "category": null,
    "description": "Find a property by address",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_property",
    "display_name": null,
    "category": null,
    "description": "Read a property’s record",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_property_history",
    "display_name": null,
    "category": null,
    "description": "Read a property’s ownership history",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_listing_history",
    "display_name": null,
    "category": null,
    "description": "Read a property’s listing history",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_listings",
    "display_name": null,
    "category": null,
    "description": "List properties for sale near a place",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_listing",
    "display_name": null,
    "category": null,
    "description": "Read one listing in full",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rental_listings",
    "display_name": null,
    "category": null,
    "description": "List rentals near a place",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sold_listings",
    "display_name": null,
    "category": null,
    "description": "List recent sales near a place",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_investor_purchases",
    "display_name": null,
    "category": null,
    "description": "List investor purchases near a place",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_investor_purchase",
    "display_name": null,
    "category": null,
    "description": "Read one investor purchase",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_active_investors",
    "display_name": null,
    "category": null,
    "description": "List the investors buying in ZIP codes",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "match_investors",
    "display_name": null,
    "category": null,
    "description": "Rank the investors who buy homes like this one",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_investors",
    "display_name": null,
    "category": null,
    "description": "Find an investor company by name",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_investor_company",
    "display_name": null,
    "category": null,
    "description": "Read an investor company’s profile",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_company_purchases",
    "display_name": null,
    "category": null,
    "description": "List an investor company’s purchases",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_company_sales",
    "display_name": null,
    "category": null,
    "description": "List an investor company’s sales",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lenders",
    "display_name": null,
    "category": null,
    "description": "List the lenders active in a place",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lender",
    "display_name": null,
    "category": null,
    "description": "Read a lender’s profile",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lender_loans",
    "display_name": null,
    "category": null,
    "description": "List a lender’s loans",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lender_borrowers",
    "display_name": null,
    "category": null,
    "description": "List who a lender lends to",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_coverage",
    "display_name": null,
    "category": null,
    "description": "See where the data service has data",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

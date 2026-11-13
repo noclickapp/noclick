@@ -22,147 +22,168 @@
    "display_name": null,
    "category": null,
    "description": "Returns a list of instances",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_instance",
    "display_name": null,
    "category": null,
    "description": "Creates a new instance Asynchronous: poll the resource afterward.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "estimate_instance_size",
    "display_name": null,
    "category": null,
    "description": "Estimate the size of a new instance",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_instance",
    "display_name": null,
    "category": null,
    "description": "Returns instance details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_instance",
    "display_name": null,
    "category": null,
    "description": "Deletes an instance Asynchronous: poll the resource afterward.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_instance",
    "display_name": null,
    "category": null,
    "description": "Edits the instance configuration Asynchronous: poll the resource afterward.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "overwrite_instance",
    "display_name": null,
    "category": null,
    "description": "Overwrites an instance Asynchronous: poll the resource afterward.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_instance",
    "display_name": null,
    "category": null,
    "description": "Pauses an instance. Asynchronous: poll the resource afterward.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_instance",
    "display_name": null,
    "category": null,
    "description": "Resumes an instance Asynchronous: poll the resource afterward.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_snapshot",
    "display_name": null,
    "category": null,
    "description": "Get details of a snapshot.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restore_snapshot",
    "display_name": null,
    "category": null,
    "description": "Restores an instance from a snapshot. Asynchronous: poll the resource afterward.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_snapshots",
    "display_name": null,
    "category": null,
    "description": "Returns a list of snapshots",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_snapshot",
    "display_name": null,
    "category": null,
    "description": "Takes an on-demand snapshot Asynchronous: poll the resource afterward.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upgrade_instance",
    "display_name": null,
    "category": null,
    "description": "Upgrade an AuraDB Professional instance to an AuraDB Business Critical instance",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": null,
    "category": null,
    "description": "Returns a list of projects",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": null,
    "category": null,
    "description": "Returns project details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_managed_keys",
    "display_name": null,
    "category": null,
    "description": "Returns a list of customer managed keys",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer_managed_key",
    "display_name": null,
    "category": null,
    "description": "Creates a new customer managed key Asynchronous: poll the resource afterward.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer_managed_key",
    "display_name": null,
    "category": null,
    "description": "Returns customer managed key details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_customer_managed_key",
    "display_name": null,
    "category": null,
    "description": "Deletes a customer managed key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project_metrics",
    "display_name": null,
    "category": null,
    "description": "Returns project metrics integration details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

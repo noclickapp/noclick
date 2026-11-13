@@ -22,189 +22,216 @@
    "display_name": "Get Current User",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": "List Users",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_collections",
    "display_name": "List Collections",
    "category": "Schema",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_collection",
    "display_name": "Get Collection",
    "category": "Schema",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_collection",
    "display_name": "Create Collection",
    "category": "Schema",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_collection",
    "display_name": "Update Collection",
    "category": "Schema",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_collection",
    "display_name": "Delete Collection",
    "category": "Schema",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_fields",
    "display_name": "List Fields",
    "category": "Schema",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_field",
    "display_name": "Get Field",
    "category": "Schema",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_field",
    "display_name": "Create Field",
    "category": "Schema",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_field",
    "display_name": "Update Field",
    "category": "Schema",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_field",
    "display_name": "Delete Field",
    "category": "Schema",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_items",
    "display_name": "List Items",
    "category": "Content",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_item",
    "display_name": "Get Item",
    "category": "Content",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_item",
    "display_name": "Create Item",
    "category": "Content",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_item",
    "display_name": "Update Item",
    "category": "Content",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_item",
    "display_name": "Delete Item",
    "category": "Content",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_files",
    "display_name": "List Files",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file",
    "display_name": "Get File",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_file",
    "display_name": "Upload File",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_file",
    "display_name": "Update File",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_file",
    "display_name": "Delete File",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": "List Folders",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_folder",
    "display_name": "Get Folder",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder",
    "display_name": "Create Folder",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_folder",
    "display_name": "Update Folder",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_folder",
    "display_name": "Delete Folder",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

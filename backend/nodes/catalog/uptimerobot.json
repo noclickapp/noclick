@@ -34,413 +34,472 @@
    "display_name": "Bulk Pause Monitors",
    "category": "Bulk Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_start_monitors",
    "display_name": "Bulk Start Monitors",
    "category": "Bulk Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_update_monitors",
    "display_name": "Bulk Update Monitors",
    "category": "Bulk Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_incidents",
    "display_name": "List Incidents",
    "category": "Incidents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_incident",
    "display_name": "Get Incident",
    "category": "Incidents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_incident_comments",
    "display_name": "List Incident Comments",
    "category": "Incidents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_incident_comment",
    "display_name": "Create Incident Comment",
    "category": "Incidents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_incident_activity_log",
    "display_name": "Get Incident Activity Log",
    "category": "Incidents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_incident_alerts",
    "display_name": "Get Incident Alerts",
    "category": "Incidents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_incident_comment",
    "display_name": "Update Incident Comment",
    "category": "Incidents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_incident_comment",
    "display_name": "Delete Incident Comment",
    "category": "Incidents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_monitor_group",
    "display_name": "Create Monitor Group",
    "category": "Monitor Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_monitor_groups",
    "display_name": "List Monitor Groups",
    "category": "Monitor Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitor_group",
    "display_name": "Get Monitor Group",
    "category": "Monitor Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_monitor_group",
    "display_name": "Update Monitor Group",
    "category": "Monitor Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_monitor_group",
    "display_name": "Delete Monitor Group",
    "category": "Monitor Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_monitors",
    "display_name": "List Monitors",
    "category": "Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_monitor",
    "display_name": "Create Monitor",
    "category": "Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_aggregate_uptime_stats",
    "display_name": "Get Aggregate Uptime Stats",
    "category": "Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitor_uptime_stats",
    "display_name": "Get Monitor Uptime Stats",
    "category": "Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitor_response_time_stats_by_region",
    "display_name": "Get Monitor Response Time Stats By Region",
    "category": "Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitor_response_time_stats",
    "display_name": "Get Monitor Response Time Stats",
    "category": "Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitor",
    "display_name": "Get Monitor",
    "category": "Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_monitor",
    "display_name": "Update Monitor",
    "category": "Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_monitor",
    "display_name": "Delete Monitor",
    "category": "Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_monitor",
    "display_name": "Reset Monitor",
    "category": "Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_monitor",
    "display_name": "Pause Monitor",
    "category": "Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_monitor",
    "display_name": "Start Monitor",
    "category": "Monitors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_status_pages",
    "display_name": "List Status Pages",
    "category": "Status Pages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_status_page",
    "display_name": "Create Status Page",
    "category": "Status Pages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_status_page",
    "display_name": "Get Status Page",
    "category": "Status Pages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_status_page",
    "display_name": "Update Status Page",
    "category": "Status Pages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_status_page",
    "display_name": "Delete Status Page",
    "category": "Status Pages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_announcements",
    "display_name": "List Announcements",
    "category": "Announcements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_announcement",
    "display_name": "Create Announcement",
    "category": "Announcements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_announcement",
    "display_name": "Get Announcement",
    "category": "Announcements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_announcement",
    "display_name": "Update Announcement",
    "category": "Announcements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pin_announcement",
    "display_name": "Pin Announcement",
    "category": "Announcements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unpin_announcement",
    "display_name": "Unpin Announcement",
    "category": "Announcements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_maintenance_windows",
    "display_name": "List Maintenance Windows",
    "category": "Maintenance Windows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_maintenance_window",
    "display_name": "Create Maintenance Window",
    "category": "Maintenance Windows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_maintenance_window",
    "display_name": "Get Maintenance Window",
    "category": "Maintenance Windows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_maintenance_window",
    "display_name": "Update Maintenance Window",
    "category": "Maintenance Windows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_maintenance_window",
    "display_name": "Delete Maintenance Window",
    "category": "Maintenance Windows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_user",
    "display_name": "Get Current User",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_alert_contacts",
    "display_name": "Get User Alert Contacts",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_all_alert_contacts",
    "display_name": "Get All Alert Contacts",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_integrations",
    "display_name": "List Integrations",
    "category": "Integrations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_integration",
    "display_name": "Create Integration",
    "category": "Integrations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_integration",
    "display_name": "Get Integration",
    "category": "Integrations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_integration",
    "display_name": "Update Integration",
    "category": "Integrations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_integration",
    "display_name": "Delete Integration",
    "category": "Integrations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_alert_contacts",
    "display_name": "List Alert Contacts",
    "category": "Alert Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_alert_contact",
    "display_name": "Create Alert Contact",
    "category": "Alert Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_alert_contact",
    "display_name": "Get Alert Contact",
    "category": "Alert Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_alert_contact",
    "display_name": "Update Alert Contact",
    "category": "Alert Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_alert_contact",
    "display_name": "Delete Alert Contact",
    "category": "Alert Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": "List Tags",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tag",
    "display_name": "Delete Tag",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

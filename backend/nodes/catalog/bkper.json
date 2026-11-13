@@ -22,168 +22,195 @@
    "display_name": "List Books",
    "category": "Bkper",
    "description": "List user books",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_book",
    "display_name": "Create Book",
    "category": "Bkper",
    "description": "createNewBook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_book",
    "display_name": "Update Book",
    "category": "Bkper",
    "description": "Update a book",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_book",
    "display_name": "Get Book",
    "category": "Bkper",
    "description": "Load a book",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_accounts",
    "display_name": "List Accounts",
    "category": "Bkper",
    "description": "List accounts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_account",
    "display_name": "Create Account",
    "category": "Bkper",
    "description": "Create an account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_account",
    "display_name": "Update Account",
    "category": "Bkper",
    "description": "Update an account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": "Get Account",
    "category": "Bkper",
    "description": "Get an account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_account",
    "display_name": "Delete Account",
    "category": "Bkper",
    "description": "Delete an account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_balances",
    "display_name": "Get Balances",
    "category": "Bkper",
    "description": "List accounts|groups Balances",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": "List Events",
    "category": "Bkper",
    "description": "List book events",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_groups",
    "display_name": "List Groups",
    "category": "Bkper",
    "description": "List groups",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_group",
    "display_name": "Create Group",
    "category": "Bkper",
    "description": "Group a group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_group",
    "display_name": "Update Group",
    "category": "Bkper",
    "description": "Update a group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_group",
    "display_name": "Get Group",
    "category": "Bkper",
    "description": "Get a group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transactions",
    "display_name": "List Transactions",
    "category": "Bkper",
    "description": "List transactions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_transaction",
    "display_name": "Create Transaction",
    "category": "Bkper",
    "description": "Create a transaction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_transaction",
    "display_name": "Update Transaction",
    "category": "Bkper",
    "description": "Update a transaction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_transaction",
    "display_name": "Check Transaction",
    "category": "Bkper",
    "description": "Check a transaction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_transaction",
    "display_name": "Post Transaction",
    "category": "Bkper",
    "description": "Post a transaction into accounts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "trash_transaction",
    "display_name": "Trash Transaction",
    "category": "Bkper",
    "description": "Trash a transaction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transaction",
    "display_name": "Get Transaction",
    "category": "Bkper",
    "description": "Get a transaction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": "Get User",
    "category": "Bkper",
    "description": "Retrieve the current user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_book_event",
    "display_name": "On Book Event",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "google_oauth"
+   ]
   }
  ],
  "agent_tool_provider": true,

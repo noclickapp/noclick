@@ -22,28 +22,32 @@
    "display_name": "Verify User Token",
    "category": "Own Account Metadata",
    "description": "Read the protected token verification endpoint and return only its opaque current actor ID. Public account/status success alone cannot prove authentication.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": "Get Own Account Metadata",
    "category": "Own Account Metadata",
    "description": "Independently read your verified account's scalar IDs, counts and raw dates. Reverify the user token before returning output.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_statuses",
    "display_name": "List Own Status Metadata",
    "category": "Own Account Metadata",
    "description": "Read one current actor page with exclude_reblogs and exclude_replies fixed true. The latter excludes replies to other accounts; self replies may remain. Content and nested data are never returned.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_status",
    "display_name": "Get Own Catalog Status Metadata",
    "category": "Own Account Metadata",
    "description": "Require the exact status ID in your current configured catalog page, then independently read its metadata and reverify the actor. Use documented cursors to select older pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

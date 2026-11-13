@@ -27,14 +27,16 @@
    "display_name": null,
    "category": null,
    "description": "Generate a public tweet screenshot as a file or temporary hosted URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_api_usage",
    "display_name": null,
    "category": null,
    "description": "Read the remaining requests and total quota for the supplied API key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

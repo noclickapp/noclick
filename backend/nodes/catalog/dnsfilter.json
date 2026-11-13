@@ -28,133 +28,152 @@
    "display_name": null,
    "category": null,
    "description": "Get current user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_organizations",
    "display_name": null,
    "category": null,
    "description": "Read one provider-default page; output includes provider links.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization",
    "display_name": null,
    "category": null,
    "description": "Get organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_networks",
    "display_name": null,
    "category": null,
    "description": "Read one provider-default page; output includes provider links.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_network",
    "display_name": null,
    "category": null,
    "description": "Get network.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_network",
    "display_name": null,
    "category": null,
    "description": "Create network.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_network",
    "display_name": null,
    "category": null,
    "description": "Update network.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_network",
    "display_name": null,
    "category": null,
    "description": "Delete network.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_policies",
    "display_name": null,
    "category": null,
    "description": "Read one provider-default page; output includes provider links.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_policy",
    "display_name": null,
    "category": null,
    "description": "Get policy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_policy",
    "display_name": null,
    "category": null,
    "description": "Create policy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_policy",
    "display_name": null,
    "category": null,
    "description": "Update policy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_policy",
    "display_name": null,
    "category": null,
    "description": "Delete policy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_blocklist_domain",
    "display_name": null,
    "category": null,
    "description": "Add blocklist domain.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_blocklist_domain",
    "display_name": null,
    "category": null,
    "description": "Remove blocklist domain.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_allowlist_domain",
    "display_name": null,
    "category": null,
    "description": "Add allowlist domain.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_allowlist_domain",
    "display_name": null,
    "category": null,
    "description": "Remove allowlist domain.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_agents",
    "display_name": null,
    "category": null,
    "description": "Read one provider-default page; output includes provider links.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_agent",
    "display_name": null,
    "category": null,
    "description": "Get user agent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

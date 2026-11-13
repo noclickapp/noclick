@@ -22,63 +22,72 @@
    "display_name": "Check Protected API Reachability",
    "category": "Connection",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": "List Account User Metadata",
    "category": "Users",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_legacy_templates",
    "display_name": "List Legacy Numeric Template Metadata",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_v3_templates",
    "display_name": "List V3 UUID Template Metadata",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_v3_documents",
    "display_name": "List V3 Document Metadata",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_v3_document",
    "display_name": "Get Selected V3 Document Metadata",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_draft_document_from_template",
    "display_name": "Create V3 Draft from Selected Template",
    "category": "Draft Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_draft_document",
    "display_name": "Rename Editable V3 Draft",
    "category": "Draft Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "soft_delete_draft_document",
    "display_name": "Soft Delete Editable V3 Draft",
    "category": "Draft Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

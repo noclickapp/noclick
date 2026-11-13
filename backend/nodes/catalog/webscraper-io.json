@@ -27,154 +27,176 @@
    "display_name": null,
    "category": null,
    "description": "Returns a paginated list of sitemaps for the authenticated user's organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "import_sitemap",
    "display_name": null,
    "category": null,
    "description": "Imports a sitemap from raw JSON content and creates a new sitemap.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sitemap",
    "display_name": null,
    "category": null,
    "description": "Returns details for a single sitemap by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_sitemap",
    "display_name": null,
    "category": null,
    "description": "Updates sitemap JSON for an existing sitemap.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_sitemap",
    "display_name": null,
    "category": null,
    "description": "Deletes a sitemap.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_sitemap",
    "display_name": null,
    "category": null,
    "description": "Renames a sitemap and updates related scraping job sitemap names.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_scheduler",
    "display_name": null,
    "category": null,
    "description": "Returns scheduler configuration for a sitemap.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_scheduler",
    "display_name": null,
    "category": null,
    "description": "Enables sitemap scheduler with the provided cron and execution settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_scheduler",
    "display_name": null,
    "category": null,
    "description": "Disables sitemap scheduler.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": null,
    "category": null,
    "description": "Returns tags assigned to a sitemap.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_tag",
    "display_name": null,
    "category": null,
    "description": "Adds a tag to a sitemap.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_tag",
    "display_name": null,
    "category": null,
    "description": "Removes a tag from a sitemap.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_scraping_job",
    "display_name": null,
    "category": null,
    "description": "Creates a new scraping job for a sitemap.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_scraping_jobs",
    "display_name": null,
    "category": null,
    "description": "Returns a paginated list of scraping jobs for the authenticated user's organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_scraping_job",
    "display_name": null,
    "category": null,
    "description": "Returns details for a single scraping job by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_scraping_job",
    "display_name": null,
    "category": null,
    "description": "Deletes a scraping job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_problematic_urls",
    "display_name": null,
    "category": null,
    "description": "Returns a paginated list of problematic URLs for the scraping job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "download_data",
    "display_name": null,
    "category": null,
    "description": "Streams scraping job data as a downloadable file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_data_quality",
    "display_name": null,
    "category": null,
    "description": "Returns data quality statistics for a scraping job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "continue_scraping_job",
    "display_name": null,
    "category": null,
    "description": "Continues a stopped or pausable scraping job. All parameters are optional. Any parameter that is not provided keeps the scraping job's current value.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_scraping_job",
    "display_name": null,
    "category": null,
    "description": "Stops a running or pausable scraping job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": null,
    "category": null,
    "description": "Returns account details for the authenticated user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -26,161 +26,184 @@
    "display_name": null,
    "category": null,
    "description": "List Documents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_document",
    "display_name": null,
    "category": null,
    "description": "Create Document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_labels",
    "display_name": null,
    "category": null,
    "description": "List Labels.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lists",
    "display_name": null,
    "category": null,
    "description": "List Lists.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_list",
    "display_name": null,
    "category": null,
    "description": "Create List.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_members",
    "display_name": null,
    "category": null,
    "description": "List Team Members.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_member",
    "display_name": null,
    "category": null,
    "description": "Me (Team Member).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_messages",
    "display_name": null,
    "category": null,
    "description": "List Messages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_message",
    "display_name": null,
    "category": null,
    "description": "Create Message.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": null,
    "category": null,
    "description": "List Projects.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": null,
    "category": null,
    "description": "Create Project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": null,
    "category": null,
    "description": "Get Project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project",
    "display_name": null,
    "category": null,
    "description": "Update Project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tasks",
    "display_name": null,
    "category": null,
    "description": "List Tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task",
    "display_name": null,
    "category": null,
    "description": "Create Task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task",
    "display_name": null,
    "category": null,
    "description": "Get Task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task",
    "display_name": null,
    "category": null,
    "description": "Update Task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task",
    "display_name": null,
    "category": null,
    "description": "Delete Task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_tasks",
    "display_name": null,
    "category": null,
    "description": "Search Tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_task_assignees",
    "display_name": null,
    "category": null,
    "description": "Add assignees to a Task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_task_labels",
    "display_name": null,
    "category": null,
    "description": "Add labels to a Task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_time_entries",
    "display_name": null,
    "category": null,
    "description": "List Time Entries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_time_entry",
    "display_name": null,
    "category": null,
    "description": "Create Time Entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

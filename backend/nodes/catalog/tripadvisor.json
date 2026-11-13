@@ -22,112 +22,128 @@
    "display_name": null,
    "category": null,
    "description": "Get Location allowlist IDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_allowlist",
    "display_name": null,
    "category": null,
    "description": "Add, remove, or replace location IDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_nearby_catalog",
    "display_name": null,
    "category": null,
    "description": "Search Nearby Locations Catalog.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_catalog",
    "display_name": null,
    "category": null,
    "description": "Search Locations Catalog.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_catalog_location",
    "display_name": null,
    "category": null,
    "description": "Get Catalog Location.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_geos",
    "display_name": null,
    "category": null,
    "description": "Multiple Geos Details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_geo",
    "display_name": null,
    "category": null,
    "description": "Geo Details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_locations",
    "display_name": null,
    "category": null,
    "description": "Multiple Locations Details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_nearby_locations",
    "display_name": null,
    "category": null,
    "description": "Search Nearby Locations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_locations",
    "display_name": null,
    "category": null,
    "description": "Search Locations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_location",
    "display_name": null,
    "category": null,
    "description": "Location Details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_photos",
    "display_name": null,
    "category": null,
    "description": "Location Photos.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_reviews",
    "display_name": null,
    "category": null,
    "description": "Location Reviews.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_feed_files",
    "display_name": null,
    "category": null,
    "description": "List Files.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_feed_file_url",
    "display_name": null,
    "category": null,
    "description": "Feed File URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_review",
    "display_name": "New Review",
    "category": "Triggers",
    "description": "Watch the location's newest reviews using Terra's publication ordering.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

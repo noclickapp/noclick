@@ -34,49 +34,56 @@
    "display_name": "Get Authenticated User",
    "category": "Workspace",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credit_balance",
    "display_name": "Get Credit Balance",
    "category": "Workspace",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_search",
    "display_name": "Create Search",
    "category": "Searches",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_search_results",
    "display_name": "Get Search Results",
    "category": "Searches",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_routine",
    "display_name": "Run Routine",
    "category": "Routines",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_routine_results",
    "display_name": "Get Routine Results",
    "category": "Routines",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_tables",
    "display_name": "Query Tables",
    "category": "Tables",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

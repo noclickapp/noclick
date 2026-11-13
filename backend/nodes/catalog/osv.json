@@ -18,70 +18,80 @@
    "display_name": "List Package Vulnerabilities",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "query_package_version",
    "display_name": "Query Package Version",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "query_purl",
    "display_name": "Query Package URL",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "query_commit",
    "display_name": "Query Git Commit",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "query_git_tag",
    "display_name": "Query Git Repository Tag",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "query_batch",
    "display_name": "Batch Query Vulnerabilities",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_vulnerability",
    "display_name": "Get Vulnerability",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "determine_version",
    "display_name": "Determine C/C++ Version (Experimental)",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_import_findings",
    "display_name": "List Import Findings (Experimental)",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "map_ubuntu_packages",
    "display_name": "Map Ubuntu Binary Packages (Experimental)",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   }
  ],
  "agent_tool_provider": true,

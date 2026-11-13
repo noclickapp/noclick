@@ -22,49 +22,56 @@
    "display_name": "List Google Drive Presentations",
    "category": "Presentation",
    "description": "List Google Slides presentations",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_presentation_metadata",
    "display_name": "Get Presentation Metadata",
    "category": "Presentation",
    "description": "Get a presentation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_new_presentation",
    "display_name": "Create New Presentation",
    "category": "Presentation",
    "description": "Create a new presentation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_slide_page",
    "display_name": "Get Slide Page",
    "category": "Slide",
    "description": "Get a specific slide",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_presentation_slide",
    "display_name": "Add Presentation Slide",
    "category": "Slide",
    "description": "Add a new slide",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_presentation_slide",
    "display_name": "Delete Presentation Slide",
    "category": "Slide",
    "description": "Delete a slide",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_slide_thumbnail",
    "display_name": "Get Slide Thumbnail",
    "category": "Slide",
    "description": "Get a slide thumbnail image",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

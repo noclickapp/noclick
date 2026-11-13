@@ -22,147 +22,168 @@
    "display_name": null,
    "category": null,
    "description": "List Bots. Returns one provider page with pagination metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_conversations",
    "display_name": null,
    "category": null,
    "description": "List Conversations. Returns one provider page with pagination metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_conversation",
    "display_name": null,
    "category": null,
    "description": "Create Conversation. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_conversation",
    "display_name": null,
    "category": null,
    "description": "Get Conversation. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_conversation",
    "display_name": null,
    "category": null,
    "description": "Update Conversation. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_conversation",
    "display_name": null,
    "category": null,
    "description": "Delete Conversation. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_documents",
    "display_name": null,
    "category": null,
    "description": "List Documents. Returns one provider page with pagination metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_document",
    "display_name": null,
    "category": null,
    "description": "Create Document. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_document_from_file",
    "display_name": null,
    "category": null,
    "description": "Create Document from File. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_document_from_webpage",
    "display_name": null,
    "category": null,
    "description": "Create Document from Webpage. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document",
    "display_name": null,
    "category": null,
    "description": "Get Document. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_document",
    "display_name": null,
    "category": null,
    "description": "Delete Document. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": null,
    "category": null,
    "description": "List Folders. Returns one provider page with pagination metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder",
    "display_name": null,
    "category": null,
    "description": "Create Folder. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_folder",
    "display_name": null,
    "category": null,
    "description": "Get Folder. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_folder",
    "display_name": null,
    "category": null,
    "description": "Update Folder. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_messages",
    "display_name": null,
    "category": null,
    "description": "List Messages. Returns one provider page with pagination metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_message",
    "display_name": null,
    "category": null,
    "description": "Send Message. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message",
    "display_name": null,
    "category": null,
    "description": "Get Message. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_message_for_stream",
    "display_name": null,
    "category": null,
    "description": "Send Message for Stream. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_uploads_signed_url",
    "display_name": null,
    "category": null,
    "description": "Get Upload URL. Uses one Cody API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

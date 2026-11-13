@@ -34,119 +34,136 @@
    "display_name": null,
    "category": null,
    "description": "Get User Datasets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_leads",
    "display_name": null,
    "category": null,
    "description": "Retrieve Leads.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lead",
    "display_name": null,
    "category": null,
    "description": "Retrieve Lead Details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sessions",
    "display_name": null,
    "category": null,
    "description": "Retrieve Lead Sessions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": null,
    "category": null,
    "description": "Retrieve Lead Events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lookup_ip",
    "display_name": null,
    "category": null,
    "description": "IP Address Lookup.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lookup_domain",
    "display_name": null,
    "category": null,
    "description": "Domain Lookup.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lookup_email",
    "display_name": null,
    "category": null,
    "description": "Email Lookup (GET).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_segments",
    "display_name": null,
    "category": null,
    "description": "Retrieve Segments for a Given Site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_segment",
    "display_name": null,
    "category": null,
    "description": "Create a New Segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_segment",
    "display_name": null,
    "category": null,
    "description": "Update Existing Segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_segment",
    "display_name": null,
    "category": null,
    "description": "Delete Segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_lead_tags",
    "display_name": null,
    "category": null,
    "description": "Update Lead Tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "assign_lead",
    "display_name": null,
    "category": null,
    "description": "Assign Leads.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_exclusions",
    "display_name": null,
    "category": null,
    "description": "Retrieve leads exclusions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "hide_lead",
    "display_name": null,
    "category": null,
    "description": "Hide leads.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unhide_lead",
    "display_name": null,
    "category": null,
    "description": "Unhide leads.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

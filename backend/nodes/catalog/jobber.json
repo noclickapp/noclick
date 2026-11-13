@@ -22,70 +22,80 @@
    "display_name": null,
    "category": null,
    "description": "Read the connected account's name and ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_clients",
    "display_name": null,
    "category": null,
    "description": "Read the first 25 clients, billing city and pagination cursors.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_client",
    "display_name": null,
    "category": null,
    "description": "Create a client without sending a notification.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_client_custom_fields",
    "display_name": null,
    "category": null,
    "description": "Update numeric custom fields on a client using existing configurations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_jobs",
    "display_name": null,
    "category": null,
    "description": "Read the first ten jobs with their job numbers and titles.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_job",
    "display_name": null,
    "category": null,
    "description": "Read a job by its encoded ID; an absent job returns null.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_quotes",
    "display_name": null,
    "category": null,
    "description": "Read the first ten quotes, their status, title and cost.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_quote",
    "display_name": null,
    "category": null,
    "description": "Read a quote, its cost and client by encoded ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_field_configurations",
    "display_name": null,
    "category": null,
    "description": "Read up to 50 custom field configurations across documented types.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_link_configuration",
    "display_name": null,
    "category": null,
    "description": "Create a link custom field configuration applying to all jobs.\n\n    Requires Custom Field Configurations read/write access and a Jobber\n    Connect, Grow or Plus plan. Job write access alone does not grant this.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

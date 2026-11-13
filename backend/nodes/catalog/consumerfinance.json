@@ -17,35 +17,40 @@
    "display_name": "Search Complaints",
    "category": "Consumer Complaints",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_complaint",
    "display_name": "Get Complaint",
    "category": "Consumer Complaints",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "suggest_companies",
    "display_name": "Suggest Companies",
    "category": "Consumer Complaints",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "suggest_zip_codes",
    "display_name": "Suggest ZIP Codes",
    "category": "Consumer Complaints",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "on_new_complaint",
    "display_name": "On New Complaint",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": false
   }
  ],
  "agent_tool_provider": true,

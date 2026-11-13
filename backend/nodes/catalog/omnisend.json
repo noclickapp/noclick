@@ -31,581 +31,664 @@
    "display_name": "Delete automation workflow",
    "category": "Automations",
    "description": "Delete a single automation workflow by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_campaigns_id",
    "display_name": "Delete campaign",
    "category": "Campaigns",
    "description": "Delete a campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contacts_tags",
    "display_name": "Batch remove tags",
    "category": "Contacts",
    "description": "Removes the specified tags from contacts selected by contact IDs, emails, phone numbers or a segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_email_templates_id",
    "display_name": "Delete email template",
    "category": "Email Templates",
    "description": "With this endpoint you can delete email template by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_email_universal_layouts_id",
    "display_name": "Delete universal layout",
    "category": "Email Universal Layouts",
    "description": "With this endpoint you can delete a universal layout by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_images_id",
    "display_name": "Delete image",
    "category": "Images",
    "description": "With this endpoint you can delete an image by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_product_categories_categoryid",
    "display_name": "Delete product category",
    "category": "Product Categories",
    "description": "With this endpoint you can delete product category.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_products_productid",
    "display_name": "Delete product",
    "category": "Products",
    "description": "Delete product by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_segments_segmentid",
    "display_name": "Delete segment",
    "category": "Segments",
    "description": "Permanently deletes a segment by its unique identifier.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_automations",
    "display_name": "List automation workflows",
    "category": "Automations",
    "description": "List automation workflows with filtering, sorting, and cursor-based pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_automations_id",
    "display_name": "Get automation workflow",
    "category": "Automations",
    "description": "Get a single automation workflow by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_automations_id_blocks_blockid_utm",
    "display_name": "Get UTM tags for an automation block",
    "category": "Automations",
    "description": "Retrieve UTM tracking tags for a specific send-action block.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_automations_id_utm",
    "display_name": "Get aggregated UTM tags for all blocks",
    "category": "Automations",
    "description": "Retrieve UTM tracking tags for all send-action blocks in an automation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_batches",
    "display_name": "Get batches",
    "category": "Batch",
    "description": "Get batches",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_batches_batchid",
    "display_name": "Get batch information",
    "category": "Batch",
    "description": "Get batch information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_batches_batchid_items",
    "display_name": "Get batch items",
    "category": "Batch",
    "description": "Get batch items",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_brands_current",
    "display_name": "Get information about brand",
    "category": "Brands",
    "description": "With this endpoint you can get brand's information.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaigns",
    "display_name": "List campaigns with filtering, sorting, and cursor pagination",
    "category": "Campaigns",
    "description": "List campaigns with filtering, sorting, and cursor-based pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaigns_id",
    "display_name": "Get campaign",
    "category": "Campaigns",
    "description": "Get a single campaign by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaigns_id_utm",
    "display_name": "Get campaign UTM settings",
    "category": "Campaigns",
    "description": "Get UTM tag settings for a campaign. The response shape is the same for all",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contacts_id",
    "display_name": "Get contact",
    "category": "Contacts",
    "description": "Returns the contact with the specified ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email_content_id",
    "display_name": "Get email content",
    "category": "Email Content",
    "description": "With this endpoint you can get email content by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email_templates",
    "display_name": "Get email templates",
    "category": "Email Templates",
    "description": "With this endpoint you can get a paginated list of email templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email_templates_id",
    "display_name": "Get email template",
    "category": "Email Templates",
    "description": "With this endpoint you can get email template by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email_universal_layouts",
    "display_name": "Get universal layouts",
    "category": "Email Universal Layouts",
    "description": "With this endpoint you can get a paginated list of universal layouts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email_universal_layouts_id",
    "display_name": "Get universal layout",
    "category": "Email Universal Layouts",
    "description": "With this endpoint you can get a universal layout by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_images",
    "display_name": "List images",
    "category": "Images",
    "description": "With this endpoint you can get a paginated list of images for a brand.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_images_id",
    "display_name": "Get image",
    "category": "Images",
    "description": "With this endpoint you can get a single image by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product_categories",
    "display_name": "List product categories",
    "category": "Product Categories",
    "description": "List products categories",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product_categories_categoryid",
    "display_name": "Get product category",
    "category": "Product Categories",
    "description": "Get product category by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_products",
    "display_name": "List products",
    "category": "Products",
    "description": "List products",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_products_productid",
    "display_name": "Get product",
    "category": "Products",
    "description": "Get product by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segments",
    "display_name": "List segments",
    "category": "Segments",
    "description": "List segments with sorting and cursor-based pagination support.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segments_segmentid",
    "display_name": "Get segment",
    "category": "Segments",
    "description": "Returns a segment by its unique identifier.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segments_segmentid_statistics",
    "display_name": "Get segment statistics",
    "category": "Segments",
    "description": "Returns statistics for a segment, including the total number of matching contacts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": "List contacts",
    "category": "Contacts",
    "description": "Returns a paginated list of contacts filtered by the provided query parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "patch_automations_id",
    "display_name": "Patch automation workflow",
    "category": "Automations",
    "description": "Partially update an automation workflow. Only the fields provided in the request body are updated.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "patch_campaigns_id",
    "display_name": "Update campaign (draft status only)",
    "category": "Campaigns",
    "description": "Update a campaign draft. Only campaigns in 'draft' status can be updated; any other status returns 409.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "patch_contacts",
    "display_name": "Update contact by email",
    "category": "Contacts",
    "description": "Updates the contact matching the provided email address.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "patch_contacts_id",
    "display_name": "Update contact by ID",
    "category": "Contacts",
    "description": "Updates the contact with the specified ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "patch_product_categories_categoryid",
    "display_name": "Update product category",
    "category": "Product Categories",
    "description": "Update product category by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_analytics_reports",
    "display_name": "Generate report",
    "category": "Reports",
    "description": "Returns aggregated marketing analytics grouped by message send date. Covers delivery, engagement, and revenue attribution metrics for campaigns and automations. Supports optional dimensions (timestamp, channel, activity), filters, and up to 4 queries per request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_analytics_statistics",
    "display_name": "Generate report",
    "category": "Statistics",
    "description": "Returns aggregated marketing analytics grouped by event date (when opens, clicks, orders actually occurred). Covers delivery, engagement, revenue attribution, and audience growth metrics. Requires a timestamp dimension. Supports a rich set of dimensions (client, click, subscription, deliverability) ",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_automations",
    "display_name": "Create automation workflow",
    "category": "Automations",
    "description": "Create a new automation workflow.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_automations_id_blocks_blockid_test_email",
    "display_name": "Send test email",
    "category": "Automations",
    "description": "Send the saved email content of a specific email block as a test",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_automations_id_copy",
    "display_name": "Copy automation workflow",
    "category": "Automations",
    "description": "Create a copy of an existing automation workflow.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_automations_id_disable",
    "display_name": "Disable automation workflow",
    "category": "Automations",
    "description": "Disable an automation workflow. Once disabled, the workflow stops",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_automations_id_enable",
    "display_name": "Enable automation workflow",
    "category": "Automations",
    "description": "Enable an automation workflow. Once enabled, the workflow starts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_batches",
    "display_name": "Create batch",
    "category": "Batch",
    "description": "Batch operations allow for multiple actions of a similar type to be executed in a single request. Utilizing the batch endpoint is recommended to avoid hitting rate limits and to enhance overall performance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_brands_current",
    "display_name": "Connect brand",
    "category": "Brands",
    "description": "With this endpoint you can connect your site to Omnisend.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_campaigns",
    "display_name": "Create campaign",
    "category": "Campaigns",
    "description": "Create a new campaign draft.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_campaigns_id_ab_test_resume",
    "display_name": "Resume A/B test",
    "category": "Campaigns",
    "description": "Resume a stopped A/B test. Automatic winner selection becomes eligible to pick this campaign again.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_campaigns_id_ab_test_stop",
    "display_name": "Stop A/B test",
    "category": "Campaigns",
    "description": "Halt the A/B test winner-selection phase. While stopped, automatic winner selection no longer considers this campaign until it is resumed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_campaigns_id_ab_test_winner",
    "display_name": "Select A/B test winner",
    "category": "Campaigns",
    "description": "Manually pick a variant as the winner. The chosen variant is routed into the send pipeline immediately.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_campaigns_id_cancel",
    "display_name": "Cancel campaign",
    "category": "Campaigns",
    "description": "Cancel a campaign and mark it as canceled.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_campaigns_id_copy",
    "display_name": "Copy campaign",
    "category": "Campaigns",
    "description": "Create a draft copy of an existing campaign, copying content, audience, and settings from the original.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_campaigns_id_restoretodraft",
    "display_name": "Restore campaign to draft",
    "category": "Campaigns",
    "description": "Restore a scheduled campaign to draft while preserving its ID and name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_campaigns_id_send",
    "display_name": "Send campaign",
    "category": "Campaigns",
    "description": "Submit a campaign draft for sending. Only campaigns in 'draft' status can be sent; to send a campaign again, copy it and send the copy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_campaigns_id_test_email",
    "display_name": "Send campaign test email",
    "category": "Campaigns",
    "description": "Render the campaign draft and email it to up to 5 recipients so the merchant (or their AI tool) can preview it without leaving the API. The test uses the campaign's saved subject, sender, and content; only email campaigns are supported.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_contacts",
    "display_name": "Create or update existing contact",
    "category": "Contacts",
    "description": "Creates a new contact. If a contact with the provided email identifier already exists, it will be updated instead.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_contacts_tags",
    "display_name": "Batch add tags",
    "category": "Contacts",
    "description": "Adds the specified tags to contacts selected by contact IDs, emails, phone numbers or a segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_email_content_id_render",
    "display_name": "Render email content",
    "category": "Email Content",
    "description": "With this endpoint you can render email content to HTML by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_email_templates",
    "display_name": "Create email template",
    "category": "Email Templates",
    "description": "With this endpoint you can create a new email template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_email_templates_id_render",
    "display_name": "Render email template",
    "category": "Email Templates",
    "description": "With this endpoint you can render an email template by ID and get the full HTML body for preview purposes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_email_templates_import",
    "display_name": "Import email template from HTML",
    "category": "Email Templates",
    "description": "With this endpoint you can import email template from raw HTML content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_email_universal_layouts",
    "display_name": "Create universal layout",
    "category": "Email Universal Layouts",
    "description": "With this endpoint you can create a new universal layout.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_event_metadata",
    "display_name": "Create custom event metadata",
    "category": "Event Metadata",
    "description": "Declares a new brand-custom event schema. The event identity is the",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_event_metadata_query",
    "display_name": "Query events metadata",
    "category": "Event Metadata",
    "description": "Returns event metadata entries for the given category, optionally filtered",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_events",
    "display_name": "Send Customer event",
    "category": "Events",
    "description": "With this endpoint you can send customer events to Omnisend. Customer events are used to track customer behavior and trigger automations based on that behavior.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_images",
    "display_name": "Upload image by URL",
    "category": "Images",
    "description": "With this endpoint you can upload an image from a publicly accessible URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_images_upload",
    "display_name": "Upload image file",
    "category": "Images",
    "description": "With this endpoint you can upload an image file directly from your computer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_product_categories",
    "display_name": "Create product category",
    "category": "Product Categories",
    "description": "Creates a new product category",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_products",
    "display_name": "Create product",
    "category": "Products",
    "description": "Creates a new product",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_segments",
    "display_name": "Create segment",
    "category": "Segments",
    "description": "Creates a new segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_automations_id_blocks",
    "display_name": "Replace automation workflow blocks",
    "category": "Automations",
    "description": "Replace the full block tree for an automation workflow.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_automations_id_blocks_blockid_utm",
    "display_name": "Update UTM tags for an automation block",
    "category": "Automations",
    "description": "Set UTM tracking tags for a specific send-action block.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_campaigns_id_utm",
    "display_name": "Update campaign UTM settings",
    "category": "Campaigns",
    "description": "Replace UTM tag settings for a campaign. For regular campaigns send a",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_email_content_id",
    "display_name": "Update email content",
    "category": "Email Content",
    "description": "With this endpoint you can update (fully replace) email content by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_email_templates_id",
    "display_name": "Update email template",
    "category": "Email Templates",
    "description": "With this endpoint you can update (fully replace) an email template by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_email_universal_layouts_id",
    "display_name": "Update universal layout",
    "category": "Email Universal Layouts",
    "description": "With this endpoint you can update (fully replace) a universal layout by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_event_metadata",
    "display_name": "Update custom event metadata",
    "category": "Event Metadata",
    "description": "Merges changes into an existing brand-custom event, identified by",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_products_productid",
    "display_name": "Replace product",
    "category": "Products",
    "description": "Replace product by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_segments_segmentid",
    "display_name": "Update segment",
    "category": "Segments",
    "description": "Updates an existing segment by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

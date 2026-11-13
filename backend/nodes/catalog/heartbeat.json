@@ -22,175 +22,200 @@
    "display_name": null,
    "category": null,
    "description": "Get a user by id",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": null,
    "category": null,
    "description": "Return an array of all users within a Heartbeat community",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_user",
    "display_name": null,
    "category": null,
    "description": "Create a new user in a Heartbeat community",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_user",
    "display_name": null,
    "category": null,
    "description": "Update a user's profile information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_user",
    "display_name": null,
    "category": null,
    "description": "Remove a user from a Heartbeat community. The user will no longer be able to access the community. Threads, comments & messages from the user will not be removed",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_user",
    "display_name": null,
    "category": null,
    "description": "Get a user by email",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invitations",
    "display_name": null,
    "category": null,
    "description": "Return an array of all the invitations within a Heartbeat community",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_invitation",
    "display_name": null,
    "category": null,
    "description": "Create a new invitation link within a Heartbeat community",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_roles",
    "display_name": null,
    "category": null,
    "description": "Returns an array of all the roles in a Heartbeat community",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_groups",
    "display_name": null,
    "category": null,
    "description": "Returns an array of all Groups within a Heartbeat community",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_group",
    "display_name": null,
    "category": null,
    "description": "Create a new Group in a Heartbeat community",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_group",
    "display_name": null,
    "category": null,
    "description": "Get a group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_group",
    "display_name": null,
    "category": null,
    "description": "Edit a group. All fields are optional, only fields that are provided will be changed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_group_members",
    "display_name": null,
    "category": null,
    "description": "Add users to a group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_group_members",
    "display_name": null,
    "category": null,
    "description": "Remove users from a group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channels",
    "display_name": null,
    "category": null,
    "description": "Returns an array of all channels",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_threads",
    "display_name": null,
    "category": null,
    "description": "Returns threads in a channel, newest first. Results are paginated using cursor-based pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_thread",
    "display_name": null,
    "category": null,
    "description": "Get a thread",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_thread",
    "display_name": null,
    "category": null,
    "description": "Create a new thread",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_comment",
    "display_name": null,
    "category": null,
    "description": "Create a new comment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": null,
    "category": null,
    "description": "Return an array all Events within a Community",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": null,
    "category": null,
    "description": "Get an event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_courses",
    "display_name": null,
    "category": null,
    "description": "Get all of the courses in your community",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_documents",
    "display_name": null,
    "category": null,
    "description": "Return an array of all documents (wiki posts) within a Heartbeat community. Results are paginated using cursor-based pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document",
    "display_name": null,
    "category": null,
    "description": "Get a document by ID, including its content",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

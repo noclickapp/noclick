@@ -22,189 +22,228 @@
    "display_name": "List Contacts",
    "category": "Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact",
    "display_name": "Create Contact",
    "category": "Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact",
    "display_name": "Update Contact",
    "category": "Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact",
    "display_name": "Delete Contact",
    "category": "Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contact_lists",
    "display_name": "List Contact Lists",
    "category": "Contact Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact_list",
    "display_name": "Create Contact List",
    "category": "Contact Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact_list",
    "display_name": "Update Contact List",
    "category": "Contact Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact_list",
    "display_name": "Delete Contact List",
    "category": "Contact Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contact_list_contacts",
    "display_name": "List Contact List Contacts",
    "category": "Contact Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_contact_to_list",
    "display_name": "Add Contact To List",
    "category": "Contact Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_contact_from_list",
    "display_name": "Remove Contact From List",
    "category": "Contact Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contact_notes",
    "display_name": "List Contact Notes",
    "category": "Contact Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact_note",
    "display_name": "Create Contact Note",
    "category": "Contact Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact_note",
    "display_name": "Update Contact Note",
    "category": "Contact Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact_note",
    "display_name": "Delete Contact Note",
    "category": "Contact Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_deals",
    "display_name": "List Deals",
    "category": "Deals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_deal",
    "display_name": "Create Deal",
    "category": "Deals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_deal",
    "display_name": "Update Deal",
    "category": "Deals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channels",
    "display_name": "List Channels",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_messages",
    "display_name": "List Messages",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_message",
    "display_name": "Send Message",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_conversations",
    "display_name": "List Conversations",
    "category": "Conversations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_conversation",
    "display_name": "Update Conversation",
    "category": "Conversations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_contact_created",
    "display_name": "On Contact Created",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "mateo_api_key"
+   ]
   },
   {
    "name": "on_contact_updated",
    "display_name": "On Contact Updated",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "mateo_api_key"
+   ]
   },
   {
    "name": "on_contact_deleted",
    "display_name": "On Contact Deleted",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "mateo_api_key"
+   ]
   },
   {
    "name": "on_form_completed",
    "display_name": "On Form Completed",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "mateo_api_key"
+   ]
   }
  ],
  "agent_tool_provider": true,

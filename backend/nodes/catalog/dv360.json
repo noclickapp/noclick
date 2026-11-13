@@ -31,259 +31,297 @@
    "display_name": "List Advertisers",
    "category": "Advertisers",
    "description": "List advertisers the authenticated user can access under a partner.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_advertiser",
    "display_name": "Get Advertiser",
    "category": "Advertisers",
    "description": "Fetch a single advertiser's details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_advertiser",
    "display_name": "Create Advertiser",
    "category": "Advertisers",
    "description": "Create a new advertiser under a partner.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_advertiser",
    "display_name": "Update Advertiser",
    "category": "Advertisers",
    "description": "Patch fields on an existing advertiser.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_campaigns",
    "display_name": "List Campaigns",
    "category": "Campaigns",
    "description": "List campaigns for an advertiser.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign",
    "display_name": "Get Campaign",
    "category": "Campaigns",
    "description": "Fetch a single campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_campaign",
    "display_name": "Create Campaign",
    "category": "Campaigns",
    "description": "Create a campaign under an advertiser.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_campaign",
    "display_name": "Update Campaign",
    "category": "Campaigns",
    "description": "Patch fields on a campaign (e.g. status, budget).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_insertion_orders",
    "display_name": "List Insertion Orders",
    "category": "Insertion Orders",
    "description": "List insertion orders for an advertiser.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_insertion_order",
    "display_name": "Create Insertion Order",
    "category": "Insertion Orders",
    "description": "Create an insertion order under a campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_insertion_order",
    "display_name": "Update Insertion Order",
    "category": "Insertion Orders",
    "description": "Patch an insertion order (status, pacing, budget).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_line_items",
    "display_name": "List Line Items",
    "category": "Line Items",
    "description": "List line items for an advertiser.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_line_item",
    "display_name": "Get Line Item",
    "category": "Line Items",
    "description": "Fetch a single line item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_line_item",
    "display_name": "Create Line Item",
    "category": "Line Items",
    "description": "Create a line item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_line_item",
    "display_name": "Update Line Item",
    "category": "Line Items",
    "description": "Patch a line item (status/bid/budget); common pause/activate path.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "duplicate_line_item",
    "display_name": "Duplicate Line Item",
    "category": "Line Items",
    "description": "Clone a line item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_creatives",
    "display_name": "List Creatives",
    "category": "Creatives",
    "description": "List creatives for an advertiser.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_creative",
    "display_name": "Create Creative",
    "category": "Creatives",
    "description": "Create a creative.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_creative",
    "display_name": "Update Creative",
    "category": "Creatives",
    "description": "Patch a creative.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_assigned_targeting",
    "display_name": "List Assigned Targeting",
    "category": "Targeting",
    "description": "List targeting options assigned to a line item for one targeting type.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_assigned_targeting",
    "display_name": "Create Assigned Targeting",
    "category": "Targeting",
    "description": "Assign a targeting option to a line item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_targeting_options",
    "display_name": "Search Targeting Options",
    "category": "Targeting",
    "description": "Search global targeting options (e.g. geo, keywords) by query.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channels",
    "display_name": "List Channels",
    "category": "Channels",
    "description": "List channels (site/app groupings) for an advertiser.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_channel",
    "display_name": "Create Channel",
    "category": "Channels",
    "description": "Create a channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_audiences",
    "display_name": "List Audiences",
    "category": "Audiences",
    "description": "List first-party and partner audiences.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_customer_match_members",
    "display_name": "Edit Customer Match Members",
    "category": "Audiences",
    "description": "Add or remove Customer Match members in a first-party audience.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_report_query",
    "display_name": "Create Report Query",
    "category": "Reporting",
    "description": "Create a Bid Manager reporting query (dimensions/metrics/filters).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_report_query",
    "display_name": "Run Report Query",
    "category": "Reporting",
    "description": "Run a Bid Manager query to generate a fresh report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_insertion_order",
    "display_name": "Get Insertion Order",
    "category": "Insertion Orders",
    "description": "Fetch a single insertion order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_creative",
    "display_name": "Get Creative",
    "category": "Creatives",
    "description": "Fetch a single creative.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_channel",
    "display_name": "Get Channel",
    "category": "Channels",
    "description": "Fetch a single channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_line_item",
    "display_name": "Delete Line Item",
    "category": "Line Items",
    "description": "Delete a (draft) line item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_creative",
    "display_name": "Delete Creative",
    "category": "Creatives",
    "description": "Delete an unused creative.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_report_queries",
    "display_name": "List Report Queries",
    "category": "Reporting",
    "description": "List saved Bid Manager report queries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_report_query",
    "display_name": "Get Report Query",
    "category": "Reporting",
    "description": "Fetch a single Bid Manager report query.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_report",
    "display_name": "Get Report",
    "category": "Reporting",
    "description": "Fetch a single report run (status + download path) of a query.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_job_completed",
    "display_name": "On Async Job Completed",
    "category": "Triggers",
    "description": "Trigger when a report run for a query completes",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   }
  ],
  "agent_tool_provider": true,

@@ -22,91 +22,104 @@
    "display_name": "Check Organization Access",
    "category": "Connection",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization",
    "display_name": "Get Bound Organization",
    "category": "Organization",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_apps",
    "display_name": "List Apps",
    "category": "Apps",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_app",
    "display_name": "Get App Metadata",
    "category": "Apps",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_empty_app",
    "display_name": "Create Empty App",
    "category": "Apps",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_empty_app",
    "display_name": "Rename Empty App",
    "category": "Apps",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_empty_app",
    "display_name": "Delete Empty App",
    "category": "Apps",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_services",
    "display_name": "List App Services",
    "category": "Services",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service",
    "display_name": "Get Service Status",
    "category": "Services",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_deployments",
    "display_name": "List Service Deployments",
    "category": "Deployments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deployment",
    "display_name": "Get Deployment Status",
    "category": "Deployments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_instances",
    "display_name": "List Service Instances",
    "category": "Instances",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_instance",
    "display_name": "Get Instance Status",
    "category": "Instances",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

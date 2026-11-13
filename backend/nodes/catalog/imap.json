@@ -37,70 +37,80 @@
    "display_name": "Search messages",
    "category": "Messages",
    "description": "Find messages in a folder, newest first, with their headers and the start of each.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message",
    "display_name": "Get a message",
    "category": "Messages",
    "description": "One message whole: its headers, text, HTML and attachments (kept as files). Reading it doesn't mark it read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_email",
    "display_name": "Send an email",
    "category": "Send",
    "description": "Send an email from this mailbox over its SMTP server.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reply_to_message",
    "display_name": "Reply to a message",
    "category": "Send",
    "description": "Reply to a message from this mailbox, in its thread: to its sender, or with Reply all to everyone on it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_as_read",
    "display_name": "Mark as read",
    "category": "Messages",
    "description": "Mark messages read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_as_unread",
    "display_name": "Mark as unread",
    "category": "Messages",
    "description": "Mark messages unread.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_message",
    "display_name": "Move a message",
    "category": "Messages",
    "description": "Move messages to another folder: Archive, Trash or one of yours. Nothing is ever deleted for good.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": "List folders",
    "category": "Mailbox",
    "description": "The mailbox's folders, with which one is Sent, Trash and so on.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_connection",
    "display_name": "Check connection",
    "category": "Mailbox",
    "description": "Sign in to the IMAP and SMTP servers, sending nothing, and show the newest senders in the inbox.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_email",
    "display_name": "New email",
    "category": "Triggers",
    "description": "Runs for each new message in a folder that matches the filters.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

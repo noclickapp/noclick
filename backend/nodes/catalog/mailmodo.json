@@ -22,105 +22,120 @@
    "display_name": null,
    "category": null,
    "description": "Read the account's contact lists and their IDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": null,
    "category": null,
    "description": "Read a contact's properties and subscription status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_contact_to_list",
    "display_name": null,
    "category": null,
    "description": "Add or update a contact and add it to a named list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_add_contacts",
    "display_name": null,
    "category": null,
    "description": "Add a batch of contacts; partial failures remain visible in the response.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unsubscribe_contact",
    "display_name": null,
    "category": null,
    "description": "Suppress a contact from further email communication.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resubscribe_contact",
    "display_name": null,
    "category": null,
    "description": "Resubscribe a contact with appropriate consent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_subscription",
    "display_name": null,
    "category": null,
    "description": "Change subscriptions for specific Mailmodo email types.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_contact_from_list",
    "display_name": null,
    "category": null,
    "description": "Remove a contact from a named list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_contact",
    "display_name": null,
    "category": null,
    "description": "Archive an existing contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_campaign_email",
    "display_name": null,
    "category": null,
    "description": "Schedule a campaign email for one contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "broadcast_campaign",
    "display_name": null,
    "category": null,
    "description": "Schedule a campaign for a list or segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_journey",
    "display_name": null,
    "category": null,
    "description": "Start a journey for a contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "abort_journey",
    "display_name": null,
    "category": null,
    "description": "Abort a contact's journey, optionally selecting an instance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_event",
    "display_name": null,
    "category": null,
    "description": "Record a custom event for a contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": null,
    "category": null,
    "description": "Read the account's templates and personalization parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

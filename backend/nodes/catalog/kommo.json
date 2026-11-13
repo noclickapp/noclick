@@ -31,511 +31,588 @@
    "display_name": "Get account",
    "category": "Account",
    "description": "Get account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_leads",
    "display_name": "List leads",
    "category": "Leads",
    "description": "List leads",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lead",
    "display_name": "Get lead",
    "category": "Leads",
    "description": "Get lead",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_leads",
    "display_name": "Add leads",
    "category": "Leads",
    "description": "Add leads",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_lead",
    "display_name": "Update lead",
    "category": "Leads",
    "description": "Update lead",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_leads",
    "display_name": "Update leads in bulk",
    "category": "Leads",
    "description": "Update leads in bulk",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": "List contacts",
    "category": "Contacts",
    "description": "List contacts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": "Get contact",
    "category": "Contacts",
    "description": "Get contact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_contacts",
    "display_name": "Add contacts",
    "category": "Contacts",
    "description": "Add contacts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact",
    "display_name": "Update contact",
    "category": "Contacts",
    "description": "Update contact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contacts",
    "display_name": "Update contacts in bulk",
    "category": "Contacts",
    "description": "Update contacts in bulk",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_companies",
    "display_name": "List companies",
    "category": "Companies",
    "description": "List companies",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company",
    "display_name": "Get company",
    "category": "Companies",
    "description": "Get company",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_companies",
    "display_name": "Add companies",
    "category": "Companies",
    "description": "Add companies",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_company",
    "display_name": "Update company",
    "category": "Companies",
    "description": "Update company",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_companies",
    "display_name": "Update companies in bulk",
    "category": "Companies",
    "description": "Update companies in bulk",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tasks",
    "display_name": "List tasks",
    "category": "Tasks",
    "description": "List tasks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task",
    "display_name": "Get task",
    "category": "Tasks",
    "description": "Get task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_tasks",
    "display_name": "Add tasks",
    "category": "Tasks",
    "description": "Add tasks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task",
    "display_name": "Update task",
    "category": "Tasks",
    "description": "Update task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tasks",
    "display_name": "Update tasks in bulk",
    "category": "Tasks",
    "description": "Update tasks in bulk",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_complex_leads",
    "display_name": "Add leads with contacts and companies",
    "category": "Leads",
    "description": "Add leads with contacts and companies",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_loss_reasons",
    "display_name": "List loss reasons",
    "category": "Leads",
    "description": "List loss reasons",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pipelines",
    "display_name": "List pipelines",
    "category": "Pipelines",
    "description": "List pipelines",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pipeline",
    "display_name": "Get pipeline",
    "category": "Pipelines",
    "description": "Get pipeline",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_pipelines",
    "display_name": "Add pipelines",
    "category": "Pipelines",
    "description": "Add pipelines",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_pipeline",
    "display_name": "Update pipeline",
    "category": "Pipelines",
    "description": "Update pipeline",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_pipeline",
    "display_name": "Delete pipeline",
    "category": "Pipelines",
    "description": "Delete pipeline",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_stages",
    "display_name": "List pipeline stages",
    "category": "Pipelines",
    "description": "List pipeline stages",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_stage",
    "display_name": "Get pipeline stage",
    "category": "Pipelines",
    "description": "Get pipeline stage",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_stages",
    "display_name": "Add pipeline stages",
    "category": "Pipelines",
    "description": "Add pipeline stages",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_stage",
    "display_name": "Update pipeline stage",
    "category": "Pipelines",
    "description": "Update pipeline stage",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_stage",
    "display_name": "Delete pipeline stage",
    "category": "Pipelines",
    "description": "Delete pipeline stage",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_catalogs",
    "display_name": "List catalogs",
    "category": "Catalogs",
    "description": "List catalogs",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_catalog",
    "display_name": "Get catalog",
    "category": "Catalogs",
    "description": "Get catalog",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_catalogs",
    "display_name": "Add catalogs",
    "category": "Catalogs",
    "description": "Add catalogs",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_catalog",
    "display_name": "Update catalog",
    "category": "Catalogs",
    "description": "Update catalog",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_catalog_elements",
    "display_name": "List catalog elements",
    "category": "Catalogs",
    "description": "List catalog elements",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_catalog_element",
    "display_name": "Get catalog element",
    "category": "Catalogs",
    "description": "Get catalog element",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_catalog_elements",
    "display_name": "Add catalog elements",
    "category": "Catalogs",
    "description": "Add catalog elements",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_catalog_element",
    "display_name": "Update catalog element",
    "category": "Catalogs",
    "description": "Update catalog element",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_fields",
    "display_name": "List custom fields",
    "category": "Fields",
    "description": "List custom fields",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_custom_field",
    "display_name": "Get custom field",
    "category": "Fields",
    "description": "Get custom field",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_custom_fields",
    "display_name": "Add custom fields",
    "category": "Fields",
    "description": "Add custom fields",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_custom_field",
    "display_name": "Update custom field",
    "category": "Fields",
    "description": "Update custom field",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_custom_field",
    "display_name": "Delete custom field",
    "category": "Fields",
    "description": "Delete custom field",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": "List users",
    "category": "Users",
    "description": "List users",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": "Get user",
    "category": "Users",
    "description": "Get user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_roles",
    "display_name": "List roles",
    "category": "Users",
    "description": "List roles",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": "List events",
    "category": "Events",
    "description": "List events",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": "Get event",
    "category": "Events",
    "description": "Get event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_event_types",
    "display_name": "List event types",
    "category": "Events",
    "description": "List event types",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_notes",
    "display_name": "List notes for entity type",
    "category": "Notes",
    "description": "List notes for entity type",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_entity_notes",
    "display_name": "List notes for entity",
    "category": "Notes",
    "description": "List notes for entity",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_note",
    "display_name": "Get note",
    "category": "Notes",
    "description": "Get note",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_notes",
    "display_name": "Add notes",
    "category": "Notes",
    "description": "Add notes",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_note",
    "display_name": "Update note",
    "category": "Notes",
    "description": "Update note",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": "List tags",
    "category": "Tags",
    "description": "List tags",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_tags",
    "display_name": "Add tags",
    "category": "Tags",
    "description": "Add tags",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_links",
    "display_name": "List linked entities",
    "category": "Links",
    "description": "List linked entities",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "link_entities",
    "display_name": "Link entities",
    "category": "Links",
    "description": "Link entities",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unlink_entities",
    "display_name": "Unlink entities",
    "category": "Links",
    "description": "Unlink entities",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sources",
    "display_name": "List sources",
    "category": "Sources",
    "description": "List sources",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_source",
    "display_name": "Get source",
    "category": "Sources",
    "description": "Get source",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_sources",
    "display_name": "Add sources",
    "category": "Sources",
    "description": "Add sources",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_source",
    "display_name": "Update source",
    "category": "Sources",
    "description": "Update source",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_source",
    "display_name": "Delete source",
    "category": "Sources",
    "description": "Delete source",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_conversations",
    "display_name": "List conversations",
    "category": "Conversations",
    "description": "List conversations",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_conversation",
    "display_name": "Get conversation",
    "category": "Conversations",
    "description": "Get conversation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhooks",
    "display_name": "List webhooks",
    "category": "Webhooks",
    "description": "List webhooks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_webhook",
    "display_name": "Add webhook",
    "category": "Webhooks",
    "description": "Add webhook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook",
    "display_name": "Delete webhook",
    "category": "Webhooks",
    "description": "Delete webhook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_event",
    "display_name": "On Kommo Event",
    "category": "Triggers",
    "description": "Start a workflow from a Kommo CRM webhook (Advanced plan or higher).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "kommo_oauth",
+    "kommo_long_lived_token"
+   ]
   }
  ],
  "agent_tool_provider": true,

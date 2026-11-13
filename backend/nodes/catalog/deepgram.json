@@ -22,105 +22,120 @@
    "display_name": "Transcribe Audio URL",
    "category": "Speech to Text",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "text_to_speech",
    "display_name": "Generate Speech",
    "category": "Text to Speech",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analyze_text",
    "display_name": "Analyze Text",
    "category": "Text Intelligence",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Projects",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": "Get Project",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project",
    "display_name": "Rename Project",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_models",
    "display_name": "List Project Models",
    "category": "Models",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project_model",
    "display_name": "Get Project Model",
    "category": "Models",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_public_models",
    "display_name": "List Public Models",
    "category": "Models",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_public_model",
    "display_name": "Get Public Model",
    "category": "Models",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_think_models",
    "display_name": "List Voice Agent Think Models",
    "category": "Models",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_usage_breakdown",
    "display_name": "Get Usage Breakdown",
    "category": "Usage",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_requests",
    "display_name": "List Project Requests",
    "category": "Usage",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_request",
    "display_name": "Get Project Request",
    "category": "Usage",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_keys",
    "display_name": "List Project API Keys",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

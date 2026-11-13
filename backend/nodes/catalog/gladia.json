@@ -28,70 +28,80 @@
    "display_name": null,
    "category": null,
    "description": "Import an audio or video URL into Gladia's file storage.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_pre_recorded",
    "display_name": null,
    "category": null,
    "description": "Submit a transcription with optional speaker, subtitle and intelligence features.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pre_recorded",
    "display_name": null,
    "category": null,
    "description": "List this account's pre-recorded jobs and their processing states.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pre_recorded",
    "display_name": null,
    "category": null,
    "description": "Get a pre-recorded job's state and transcript when it is done.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_pre_recorded",
    "display_name": null,
    "category": null,
    "description": "Request deletion of a pre-recorded transcription and its stored data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_live_session",
    "display_name": null,
    "category": null,
    "description": "Create a live session; send audio separately to its returned WebSocket URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_live_sessions",
    "display_name": null,
    "category": null,
    "description": "List this account's live sessions, including their processing states.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_live_session",
    "display_name": null,
    "category": null,
    "description": "Get a live session's state and available transcript results.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_live_session",
    "display_name": null,
    "category": null,
    "description": "Request deletion of a live session and its stored audio and transcript.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_history",
    "display_name": null,
    "category": null,
    "description": "List job history across pre-recorded and live transcription.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

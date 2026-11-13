@@ -22,175 +22,200 @@
    "display_name": null,
    "category": null,
    "description": "GET /prompts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_prompt",
    "display_name": null,
    "category": null,
    "description": "GET /prompts/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_prompt",
    "display_name": null,
    "category": null,
    "description": "DELETE /prompts/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_prompt",
    "display_name": null,
    "category": null,
    "description": "PATCH /prompts/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_datasets",
    "display_name": null,
    "category": null,
    "description": "GET /datasets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dataset",
    "display_name": null,
    "category": null,
    "description": "GET /datasets/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dataset",
    "display_name": null,
    "category": null,
    "description": "DELETE /datasets/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_dataset",
    "display_name": null,
    "category": null,
    "description": "PATCH /datasets/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_evaluators",
    "display_name": null,
    "category": null,
    "description": "GET /evaluators.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_evaluator",
    "display_name": null,
    "category": null,
    "description": "GET /evaluators/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_evaluator",
    "display_name": null,
    "category": null,
    "description": "DELETE /evaluators/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_prompt",
    "display_name": null,
    "category": null,
    "description": "POST /prompts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_prompt_versions",
    "display_name": null,
    "category": null,
    "description": "GET /prompts/{id}/versions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_dataset",
    "display_name": null,
    "category": null,
    "description": "POST /datasets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_datapoints",
    "display_name": null,
    "category": null,
    "description": "GET /datasets/{id}/datapoints.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_evaluations",
    "display_name": null,
    "category": null,
    "description": "GET /evaluations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_evaluation",
    "display_name": null,
    "category": null,
    "description": "GET /evaluations/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_evaluation",
    "display_name": null,
    "category": null,
    "description": "DELETE /evaluations/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_logs",
    "display_name": null,
    "category": null,
    "description": "GET /logs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_log",
    "display_name": null,
    "category": null,
    "description": "GET /logs/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_directories",
    "display_name": null,
    "category": null,
    "description": "GET /directories.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_directory",
    "display_name": null,
    "category": null,
    "description": "GET /directories/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_directory",
    "display_name": null,
    "category": null,
    "description": "POST /directories.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_directory",
    "display_name": null,
    "category": null,
    "description": "PATCH /directories/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_directory",
    "display_name": null,
    "category": null,
    "description": "DELETE /directories/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

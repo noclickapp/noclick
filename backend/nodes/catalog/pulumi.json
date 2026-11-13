@@ -27,28 +27,32 @@
    "display_name": "Read Protected Stack Catalog Metadata",
    "category": "Pulumi Cloud Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_stack",
    "display_name": "Get Stack Metadata",
    "category": "Pulumi Cloud Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_resource_count",
    "display_name": "Get Stack Resource Count Metadata",
    "category": "Pulumi Cloud Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_downstream_references",
    "display_name": "Read Same-Organization Downstream Reference Metadata",
    "category": "Pulumi Cloud Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

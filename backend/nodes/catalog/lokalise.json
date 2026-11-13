@@ -39,133 +39,152 @@
    "display_name": null,
    "category": null,
    "description": "List projects available to the token owner.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": null,
    "category": null,
    "description": "Retrieve a project's settings and statistics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": null,
    "category": null,
    "description": "Create a project in your current or chosen team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project",
    "display_name": null,
    "category": null,
    "description": "Change project name and optional description.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_keys",
    "display_name": null,
    "category": null,
    "description": "List and filter project keys; returns one page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_keys",
    "display_name": null,
    "category": null,
    "description": "Create nonplural keys with optional translations and tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_key",
    "display_name": null,
    "category": null,
    "description": "Retrieve a key and its translations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_key",
    "display_name": null,
    "category": null,
    "description": "Update key metadata, tags, platforms or archive state.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_key",
    "display_name": null,
    "category": null,
    "description": "Delete one key and its translations permanently.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_languages",
    "display_name": null,
    "category": null,
    "description": "List the project's languages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_languages",
    "display_name": null,
    "category": null,
    "description": "Add languages to a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_translations",
    "display_name": null,
    "category": null,
    "description": "List translations, optionally restricted to a language or task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_translation",
    "display_name": null,
    "category": null,
    "description": "Retrieve one translation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_translation",
    "display_name": null,
    "category": null,
    "description": "Update a nonplural translation and its review flags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tasks",
    "display_name": null,
    "category": null,
    "description": "List project translation tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task",
    "display_name": null,
    "category": null,
    "description": "Retrieve task status, assignees and progress.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_comments",
    "display_name": null,
    "category": null,
    "description": "List comments across a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_comments",
    "display_name": null,
    "category": null,
    "description": "Add one or more comments to a key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_teams",
    "display_name": null,
    "category": null,
    "description": "List teams available to the token owner.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,147 +22,168 @@
    "display_name": null,
    "category": null,
    "description": "Read the authenticated member name and token scopes without requiring an additional scope.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_clients",
    "display_name": null,
    "category": null,
    "description": "List clients.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_requests",
    "display_name": null,
    "category": null,
    "description": "List requests.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_client_companies",
    "display_name": null,
    "category": null,
    "description": "List client companies.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": null,
    "category": null,
    "description": "List folders.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_request_templates",
    "display_name": null,
    "category": null,
    "description": "List request templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_page_templates",
    "display_name": null,
    "category": null,
    "description": "List page templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_section_templates",
    "display_name": null,
    "category": null,
    "description": "List section templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_communication_templates",
    "display_name": null,
    "category": null,
    "description": "List communication templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_team_members",
    "display_name": null,
    "category": null,
    "description": "List team members.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_client",
    "display_name": null,
    "category": null,
    "description": "Get client.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_client",
    "display_name": null,
    "category": null,
    "description": "Delete the selected client; success acknowledges deletion without verifying absence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_client",
    "display_name": null,
    "category": null,
    "description": "Create client.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_client",
    "display_name": null,
    "category": null,
    "description": "Update client.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_request",
    "display_name": null,
    "category": null,
    "description": "Get request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_request",
    "display_name": null,
    "category": null,
    "description": "Delete the selected request; success acknowledges deletion without verifying absence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_request",
    "display_name": null,
    "category": null,
    "description": "Create a request for one existing client; inspect build_status and use Get Request later if still building.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_request",
    "display_name": null,
    "category": null,
    "description": "Update request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_request_fields",
    "display_name": null,
    "category": null,
    "description": "Approve request fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_request_fields",
    "display_name": null,
    "category": null,
    "description": "Submit request fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "review_field",
    "display_name": null,
    "category": null,
    "description": "Review field.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

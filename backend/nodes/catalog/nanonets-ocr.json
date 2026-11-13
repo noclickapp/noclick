@@ -22,119 +22,136 @@
    "display_name": null,
    "category": null,
    "description": "Read OCR model categories and training state.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_training_urls",
    "display_name": null,
    "category": null,
    "description": "Add image URLs to an OCR model's training set.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_training_file",
    "display_name": null,
    "category": null,
    "description": "Upload one OCR training image with matching filename metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "train_model",
    "display_name": null,
    "category": null,
    "description": "Start OCR model training; completion is checked with Get Model.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_prediction_files",
    "display_name": null,
    "category": null,
    "description": "Read one documented day batch of moderated and unmoderated predictions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_prediction_file",
    "display_name": null,
    "category": null,
    "description": "Get extracted fields and tables for a prediction file ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "predict_urls",
    "display_name": null,
    "category": null,
    "description": "Extract text, fields and tables from public image URLs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "predict_urls_async",
    "display_name": null,
    "category": null,
    "description": "Queue URL predictions and return file IDs for later retrieval.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "predict_file",
    "display_name": null,
    "category": null,
    "description": "Extract text, fields and tables from one uploaded file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "predict_file_async",
    "display_name": null,
    "category": null,
    "description": "Queue an uploaded file prediction; retrieve results by returned file ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_classification_models",
    "display_name": null,
    "category": null,
    "description": "Read the connected account's classification models.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_classification_model",
    "display_name": null,
    "category": null,
    "description": "Read classification model details by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_classification_training_urls",
    "display_name": null,
    "category": null,
    "description": "Add labelled URLs to a classification model's training set.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_classification_training_file",
    "display_name": null,
    "category": null,
    "description": "Add one labelled file to a classification model's training set.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "train_classification_model",
    "display_name": null,
    "category": null,
    "description": "Start classification model training.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "classify_urls",
    "display_name": null,
    "category": null,
    "description": "Classify public image URLs with a trained classification model.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "classify_file",
    "display_name": null,
    "category": null,
    "description": "Classify one uploaded image with a trained classification model.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

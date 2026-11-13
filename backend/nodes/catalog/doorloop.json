@@ -28,203 +28,232 @@
    "display_name": "On New Task",
    "category": "Triggers",
    "description": "On New Task: poll the documented creation-date-filtered list.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_owner",
    "display_name": "On New Owner",
    "category": "Triggers",
    "description": "On New Owner: poll the documented creation-date-filtered list.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_vendor",
    "display_name": "On New Vendor",
    "category": "Triggers",
    "description": "On New Vendor: poll the documented creation-date-filtered list.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_note",
    "display_name": "On New Note",
    "category": "Triggers",
    "description": "On New Note: poll the documented creation-date-filtered list.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "get_current_user",
    "display_name": null,
    "category": null,
    "description": "Read the user who created this API key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_properties",
    "display_name": null,
    "category": null,
    "description": "List one page of properties.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_property",
    "display_name": null,
    "category": null,
    "description": "Retrieve one property.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_units",
    "display_name": null,
    "category": null,
    "description": "List one page of units.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_unit",
    "display_name": null,
    "category": null,
    "description": "Retrieve one unit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_leases",
    "display_name": null,
    "category": null,
    "description": "List one page of leases.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lease",
    "display_name": null,
    "category": null,
    "description": "Retrieve one lease.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tenants",
    "display_name": null,
    "category": null,
    "description": "List one page of tenants.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tenant",
    "display_name": null,
    "category": null,
    "description": "Retrieve one tenant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tasks",
    "display_name": null,
    "category": null,
    "description": "List one page of tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task",
    "display_name": null,
    "category": null,
    "description": "Retrieve one task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_owners",
    "display_name": null,
    "category": null,
    "description": "List one page of owners.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_owner",
    "display_name": null,
    "category": null,
    "description": "Retrieve one owner.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_vendors",
    "display_name": null,
    "category": null,
    "description": "List one page of vendors.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_vendor",
    "display_name": null,
    "category": null,
    "description": "Retrieve one vendor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lease_payments",
    "display_name": null,
    "category": null,
    "description": "List one page of lease-payments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lease_payment",
    "display_name": null,
    "category": null,
    "description": "Retrieve one lease payment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_notes",
    "display_name": null,
    "category": null,
    "description": "List one page of notes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_note",
    "display_name": null,
    "category": null,
    "description": "Retrieve one note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_prospect",
    "display_name": null,
    "category": null,
    "description": "Create a prospect, which becomes a tenant when linked to a lease.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_owner",
    "display_name": null,
    "category": null,
    "description": "Create a property owner.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task",
    "display_name": null,
    "category": null,
    "description": "Create an internal task with an explicit requesting user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task",
    "display_name": null,
    "category": null,
    "description": "Update an internal task; supply its required type, subject and status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task",
    "display_name": null,
    "category": null,
    "description": "Delete a task by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_note",
    "display_name": null,
    "category": null,
    "description": "Create a note linked to a specific DoorLoop resource.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

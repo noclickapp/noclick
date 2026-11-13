@@ -29,126 +29,144 @@
    "display_name": "Create Checkout",
    "category": "Checkouts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_checkouts",
    "display_name": "List Checkouts",
    "category": "Checkouts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_checkout",
    "display_name": "Get Checkout",
    "category": "Checkouts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_checkout",
    "display_name": "Update Checkout",
    "category": "Checkouts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deactivate_checkout",
    "display_name": "Deactivate Checkout",
    "category": "Checkouts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer",
    "display_name": "Create Customer",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer",
    "display_name": "Get Customer",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer",
    "display_name": "Update Customer",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payment_instruments",
    "display_name": "List Payment Instruments",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deactivate_payment_instrument",
    "display_name": "Deactivate Payment Instrument",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refund_transaction",
    "display_name": "Refund Transaction",
    "category": "Transactions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transaction",
    "display_name": "Get Transaction",
    "category": "Transactions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transactions",
    "display_name": "List Transactions",
    "category": "Transactions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payouts",
    "display_name": "List Payouts",
    "category": "Reconciliation",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_receipt",
    "display_name": "Get Receipt",
    "category": "Reconciliation",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_memberships",
    "display_name": "List Memberships",
    "category": "Merchant Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_merchant",
    "display_name": "Get Merchant",
    "category": "Merchant Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_payment_methods",
    "display_name": "Get Payment Methods",
    "category": "Checkouts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

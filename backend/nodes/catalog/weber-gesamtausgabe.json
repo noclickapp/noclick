@@ -20,105 +20,120 @@
    "display_name": "Search Entities",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_documents",
    "display_name": "List Documents",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_documents",
    "display_name": "Get Documents by ID",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "find_documents_by_author",
    "display_name": "Find Documents by Author",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "find_documents_by_mention",
    "display_name": "Find Documents by Mention",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "find_documents_by_date",
    "display_name": "Find Documents by Date",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "find_on_this_day",
    "display_name": "Find On This Day Events",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_repositories",
    "display_name": "List Repositories",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_repository_items",
    "display_name": "List Repository Items",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "find_code_by_element",
    "display_name": "Find XML Code Samples",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_facets",
    "display_name": "Get Search Facets",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_application_status",
    "display_name": "Get Application Status",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "create_document_id",
    "display_name": "Create Document ID",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_preferences",
    "display_name": "Get Session Preferences",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "set_preferences",
    "display_name": "Set Session Preferences",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   }
  ],
  "agent_tool_provider": true,

@@ -28,140 +28,160 @@
    "display_name": null,
    "category": null,
    "description": "Read one page of conversations, or a contact's conversation by phone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_conversation",
    "display_name": null,
    "category": null,
    "description": "Read a conversation and one page of its posts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_message",
    "display_name": null,
    "category": null,
    "description": "Send a message or internal whisper to a phone number.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "message_conversation",
    "display_name": null,
    "category": null,
    "description": "Send a message or internal whisper to an existing conversation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resolve_conversation",
    "display_name": null,
    "category": null,
    "description": "Resolve an existing conversation without changing its disposition.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "schedule_conversation",
    "display_name": null,
    "category": null,
    "description": "Schedule a customer-visible message to an existing conversation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "schedule_message",
    "display_name": null,
    "category": null,
    "description": "Schedule a customer-visible message to a phone number.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customers",
    "display_name": null,
    "category": null,
    "description": "Read the provider's default customer page or find a contact by phone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer",
    "display_name": null,
    "category": null,
    "description": "Create an address-book customer with a phone number.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer",
    "display_name": null,
    "category": null,
    "description": "Retrieve one customer by UUID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer",
    "display_name": null,
    "category": null,
    "description": "Update supplied contact fields, tags, and custom fields only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_fields",
    "display_name": null,
    "category": null,
    "description": "Read configured address-book custom field names and UUIDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_saved_searches",
    "display_name": null,
    "category": null,
    "description": "Read the account's saved contact searches.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization",
    "display_name": null,
    "category": null,
    "description": "Read organization details, optionally including departments and agents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_departments",
    "display_name": null,
    "category": null,
    "description": "Read departments available to the connected agent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_agent",
    "display_name": null,
    "category": null,
    "description": "Read the agent details exposed by Textline's users endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_availability",
    "display_name": null,
    "category": null,
    "description": "Turn on availability for an agent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_availability",
    "display_name": null,
    "category": null,
    "description": "Turn off availability for an agent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dispositions",
    "display_name": null,
    "category": null,
    "description": "Read conversation dispositions configured in the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_surveys",
    "display_name": null,
    "category": null,
    "description": "Read survey names, types, and UUIDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

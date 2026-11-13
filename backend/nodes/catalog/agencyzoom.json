@@ -28,168 +28,192 @@
    "display_name": null,
    "category": null,
    "description": "Search leads by contact, assignment and pipeline.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_lead",
    "display_name": null,
    "category": null,
    "description": "Create a personal lead in an explicit pipeline and stage.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lead",
    "display_name": null,
    "category": null,
    "description": "Get lead details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lead_notes",
    "display_name": null,
    "category": null,
    "description": "List notes on a lead.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_lead_note",
    "display_name": null,
    "category": null,
    "description": "Add a note to a lead.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lead_tasks",
    "display_name": null,
    "category": null,
    "description": "List tasks for a lead.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_customers",
    "display_name": null,
    "category": null,
    "description": "Search customer records, returning one page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer",
    "display_name": null,
    "category": null,
    "description": "Create a customer assigned to an explicit agent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer",
    "display_name": null,
    "category": null,
    "description": "Get customer details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_customer_note",
    "display_name": null,
    "category": null,
    "description": "Add a note to a customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_tasks",
    "display_name": null,
    "category": null,
    "description": "List tasks for a customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_policies",
    "display_name": null,
    "category": null,
    "description": "List written policies for a customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_ams_policies",
    "display_name": null,
    "category": null,
    "description": "List AMS policies for a customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_tasks",
    "display_name": null,
    "category": null,
    "description": "Search tasks by assignee, status, period and dates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task",
    "display_name": null,
    "category": null,
    "description": "Create a task; meeting invitees may receive invitations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task",
    "display_name": null,
    "category": null,
    "description": "Get task details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task",
    "display_name": null,
    "category": null,
    "description": "Update task details; supply the intended title, due time and assignee.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "complete_task",
    "display_name": null,
    "category": null,
    "description": "Mark a task completed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reopen_task",
    "display_name": null,
    "category": null,
    "description": "Reopen a completed task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_employees",
    "display_name": null,
    "category": null,
    "description": "List the agency's employees to prove the connected account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pipelines",
    "display_name": null,
    "category": null,
    "description": "List pipelines and their stages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lead_sources",
    "display_name": null,
    "category": null,
    "description": "List the agency's lead sources.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": null,
    "category": null,
    "description": "List the agency's tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

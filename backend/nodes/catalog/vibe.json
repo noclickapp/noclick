@@ -34,175 +34,200 @@
    "display_name": null,
    "category": null,
    "description": "List accounts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_advertisers",
    "display_name": null,
    "category": null,
    "description": "List advertisers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_advertiser",
    "display_name": null,
    "category": null,
    "description": "Create an advertiser.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_advertiser",
    "display_name": null,
    "category": null,
    "description": "Get an advertiser.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_advertiser",
    "display_name": null,
    "category": null,
    "description": "Update an advertiser.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_audiences",
    "display_name": null,
    "category": null,
    "description": "List persistent audiences available for sync.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_audience",
    "display_name": null,
    "category": null,
    "description": "Get a persistent audience.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_audience",
    "display_name": null,
    "category": null,
    "description": "Create or upsert an audience under an advertiser.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_campaigns",
    "display_name": null,
    "category": null,
    "description": "List campaigns.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_campaign",
    "display_name": null,
    "category": null,
    "description": "Create a campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign",
    "display_name": null,
    "category": null,
    "description": "Get a campaign by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_campaign",
    "display_name": null,
    "category": null,
    "description": "Update a campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_campaign",
    "display_name": null,
    "category": null,
    "description": "Delete a draft campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "perform_campaign_action",
    "display_name": null,
    "category": null,
    "description": "Perform a lifecycle action on a campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_campaign",
    "display_name": null,
    "category": null,
    "description": "Publish a campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_creatives",
    "display_name": null,
    "category": null,
    "description": "List creatives.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_strategies",
    "display_name": null,
    "category": null,
    "description": "List strategies.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_strategy",
    "display_name": null,
    "category": null,
    "description": "Create a strategy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_strategy",
    "display_name": null,
    "category": null,
    "description": "Get a strategy by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_strategy",
    "display_name": null,
    "category": null,
    "description": "Update a strategy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_strategy",
    "display_name": null,
    "category": null,
    "description": "Delete a strategy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_strategy_creatives",
    "display_name": null,
    "category": null,
    "description": "Replace the creatives attached to a strategy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "perform_strategy_action",
    "display_name": null,
    "category": null,
    "description": "Perform a lifecycle action on a strategy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_report",
    "display_name": null,
    "category": null,
    "description": "Create an async report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_report",
    "display_name": null,
    "category": null,
    "description": "Get the status of an async report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

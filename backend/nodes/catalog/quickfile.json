@@ -27,175 +27,200 @@
    "display_name": null,
    "category": null,
    "description": "Get the business details for the connected user, e.g. business name, type, address, year end date, vat status and account size statistics..",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_clients",
    "display_name": null,
    "category": null,
    "description": "Retrieve client records based on a set of search parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_client",
    "display_name": null,
    "category": null,
    "description": "Retrieve client and contact data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_client",
    "display_name": null,
    "category": null,
    "description": "Create a new client record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_client",
    "display_name": null,
    "category": null,
    "description": "Update an existing client record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_suppliers",
    "display_name": null,
    "category": null,
    "description": "Retrieve supplier records based on a set of search parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_supplier",
    "display_name": null,
    "category": null,
    "description": "Retrieve supplier and contact data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_supplier",
    "display_name": null,
    "category": null,
    "description": "Create a new supplier record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_supplier",
    "display_name": null,
    "category": null,
    "description": "Update a supplier record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invoices",
    "display_name": null,
    "category": null,
    "description": "Search for invoices and estimates using a specific set of search parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_invoice",
    "display_name": null,
    "category": null,
    "description": "Retrieve a single invoice, estimate or recurring invoice template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_invoice",
    "display_name": null,
    "category": null,
    "description": "Create a new invoice, estimate or recurring invoice template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_invoice",
    "display_name": null,
    "category": null,
    "description": "Create a new invoice, estimate or recurring invoice template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_invoice_pdf",
    "display_name": null,
    "category": null,
    "description": "Retrieve a URL to for an invoice or estimate PDF document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_invoice",
    "display_name": null,
    "category": null,
    "description": "Send a single invoice, estimate or recurring invoice template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_client_payments",
    "display_name": null,
    "category": null,
    "description": "Search for a payment based on specific search parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_client_payment",
    "display_name": null,
    "category": null,
    "description": "Retrieve a payment record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_client_payment",
    "display_name": null,
    "category": null,
    "description": "Create a new payment record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_purchases",
    "display_name": null,
    "category": null,
    "description": "Search for purchases using a specific set of search parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_purchase",
    "display_name": null,
    "category": null,
    "description": "Retrieve a single purchase.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_purchase",
    "display_name": null,
    "category": null,
    "description": "Create a new purchase.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_bank_accounts",
    "display_name": null,
    "category": null,
    "description": "Returns a list of bank accounts with optional nominal code and type filtering.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chart_of_accounts",
    "display_name": null,
    "category": null,
    "description": "Retreives a chart of nominal accounts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_client",
    "display_name": null,
    "category": "Triggers",
    "description": "Poll all clients ordered by the documented created_date column.\n\n    Existing records become the baseline when armed. Edits do not fire.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_supplier",
    "display_name": null,
    "category": "Triggers",
    "description": "Poll all suppliers ordered by the documented created_date column.\n\n    Existing records become the baseline when armed. Edits do not fire.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

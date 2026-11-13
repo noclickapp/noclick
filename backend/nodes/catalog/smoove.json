@@ -28,140 +28,160 @@
    "display_name": null,
    "category": null,
    "description": "Get active contacts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact",
    "display_name": null,
    "category": null,
    "description": "Create or update a contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": null,
    "category": null,
    "description": "Get a contact by identifier.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact",
    "display_name": null,
    "category": null,
    "description": "Update a contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "contact_exists",
    "display_name": null,
    "category": null,
    "description": "Check if a contact exists.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unsubscribe_contact",
    "display_name": null,
    "category": null,
    "description": "Unsubscribe a contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact_status",
    "display_name": null,
    "category": null,
    "description": "Get a contact status by identifier.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_unsubscribed_contacts",
    "display_name": null,
    "category": null,
    "description": "Get unsubscribed contacts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contact_fields",
    "display_name": null,
    "category": null,
    "description": "Get account contact fields (system and custom).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lists",
    "display_name": null,
    "category": null,
    "description": "Get all lists.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_list",
    "display_name": null,
    "category": null,
    "description": "Create a new list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list",
    "display_name": null,
    "category": null,
    "description": "Get a list by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_list_contacts",
    "display_name": null,
    "category": null,
    "description": "Get contacts in a list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_landing_pages",
    "display_name": null,
    "category": null,
    "description": "Get active landing pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_landing_page",
    "display_name": null,
    "category": null,
    "description": "Get a landing page by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_landing_page_recipients",
    "display_name": null,
    "category": null,
    "description": "Get contacts who subscribed via a landing page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_campaign_templates",
    "display_name": null,
    "category": null,
    "description": "Get custom email campaign templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign_statistics",
    "display_name": null,
    "category": null,
    "description": "Get an email campaign's aggregated report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_campaign_recipients",
    "display_name": null,
    "category": null,
    "description": "Get email campaign recipients and their responses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_communication",
    "display_name": null,
    "category": null,
    "description": "Create a CRM communication log entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

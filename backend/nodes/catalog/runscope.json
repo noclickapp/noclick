@@ -26,175 +26,203 @@
    "display_name": "Get Account",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_team_people",
    "display_name": "List Team People",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_team_integrations",
    "display_name": "List Team Integrations",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_team_agents",
    "display_name": "List Team Agents",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_buckets",
    "display_name": "List Buckets",
    "category": "Buckets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bucket",
    "display_name": "Get Bucket",
    "category": "Buckets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_bucket",
    "display_name": "Create Bucket",
    "category": "Buckets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_bucket",
    "display_name": "Delete Bucket",
    "category": "Buckets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tests",
    "display_name": "List Tests",
    "category": "Tests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_test",
    "display_name": "Get Test",
    "category": "Tests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_test",
    "display_name": "Create Test",
    "category": "Tests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_test",
    "display_name": "Update Test",
    "category": "Tests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_test",
    "display_name": "Delete Test",
    "category": "Tests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_steps",
    "display_name": "List Steps",
    "category": "Steps",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_step",
    "display_name": "Create Step",
    "category": "Steps",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_step",
    "display_name": "Update Step",
    "category": "Steps",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_step",
    "display_name": "Delete Step",
    "category": "Steps",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_test_environments",
    "display_name": "List Test Environments",
    "category": "Environments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_test_environment",
    "display_name": "Create Test Environment",
    "category": "Environments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_test_environment",
    "display_name": "Update Test Environment",
    "category": "Environments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_shared_environments",
    "display_name": "List Shared Environments",
    "category": "Environments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_shared_environment",
    "display_name": "Create Shared Environment",
    "category": "Environments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_shared_environment",
    "display_name": "Update Shared Environment",
    "category": "Environments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_test_metrics",
    "display_name": "Get Test Metrics",
    "category": "Tests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_test_completed",
    "display_name": "On Test Completed",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "runscope_api_token"
+   ]
   }
  ],
  "agent_tool_provider": true,

@@ -22,133 +22,157 @@
    "display_name": "On Calendar Event",
    "category": null,
    "description": "Trigger: fires when events change on a Google Calendar.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_event_active",
    "display_name": "On Event Created or Updated",
    "category": null,
    "description": "Trigger: fires when a calendar event is created or updated.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_event_cancelled",
    "display_name": "On Event Cancelled",
    "category": null,
    "description": "Trigger: fires when a calendar event is cancelled or deleted.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_event_created",
    "display_name": "On Event Created",
    "category": null,
    "description": "Trigger: fires when a new calendar event is created.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_event_updated",
    "display_name": "On Event Updated",
    "category": null,
    "description": "Trigger: fires when an existing calendar event is modified.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_event_tentative",
    "display_name": "On Event Tentative",
    "category": null,
    "description": "Trigger: fires when a calendar event is tentatively accepted.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "list_calendar_events",
    "display_name": "List Calendar Events",
    "category": "Event",
    "description": "List events from calendar",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "fetch_calendar_event",
    "display_name": "Fetch Calendar Event",
    "category": "Event",
    "description": "Get a specific event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_calendar_event",
    "display_name": "Create Calendar Event",
    "category": "Event",
    "description": "Create a new event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_calendar_event",
    "display_name": "Update Calendar Event",
    "category": "Event",
    "description": "Update an existing event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_calendar_event",
    "display_name": "Delete Calendar Event",
    "category": "Event",
    "description": "Delete an event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_event_from_text",
    "display_name": "Create Event from Text",
    "category": "Event",
    "description": "Create event from text",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "fetch_recurring_event_instances",
    "display_name": "Fetch Recurring Event Instances",
    "category": "Event",
    "description": "Get recurring event instances",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_event_to_calendar",
    "display_name": "Move Event to Calendar",
    "category": "Event",
    "description": "Move event to another calendar",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_calendar_availability",
    "display_name": "Query Calendar Availability",
    "category": "Availability",
    "description": "Check availability",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_calendars",
    "display_name": "List User Calendars",
    "category": "Calendar",
    "description": "List all calendars",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "fetch_calendar_metadata",
    "display_name": "Fetch Calendar Metadata",
    "category": "Calendar",
    "description": "Get calendar details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_new_calendar",
    "display_name": "Create New Calendar",
    "category": "Calendar",
    "description": "Create a new calendar",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_calendar_events",
    "display_name": "Clear Calendar Events",
    "category": "Calendar",
    "description": "Clear all events",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

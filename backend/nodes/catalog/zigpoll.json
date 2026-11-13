@@ -34,154 +34,176 @@
    "display_name": null,
    "category": null,
    "description": "Get current user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_accounts",
    "display_name": null,
    "category": null,
    "description": "Get all accounts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": null,
    "category": null,
    "description": "Get account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_polls",
    "display_name": null,
    "category": null,
    "description": "Get all polls.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_poll",
    "display_name": null,
    "category": null,
    "description": "Get poll.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_slides",
    "display_name": null,
    "category": null,
    "description": "Get all slides.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_slide",
    "display_name": null,
    "category": null,
    "description": "Get slide.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_responses",
    "display_name": null,
    "category": null,
    "description": "Get all responses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_participants",
    "display_name": null,
    "category": null,
    "description": "Get all participants.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_emails",
    "display_name": null,
    "category": null,
    "description": "Get all emails.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_insights",
    "display_name": null,
    "category": null,
    "description": "Get all insights.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metadata",
    "display_name": null,
    "category": null,
    "description": "Response metadata breakdown.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_locations",
    "display_name": null,
    "category": null,
    "description": "Geographic breakdown.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_devices",
    "display_name": null,
    "category": null,
    "description": "Device, browser and OS breakdown.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_trends",
    "display_name": null,
    "category": null,
    "description": "Responses over time.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_poll",
    "display_name": null,
    "category": null,
    "description": "Create poll.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_poll",
    "display_name": null,
    "category": null,
    "description": "Update poll.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_slide",
    "display_name": null,
    "category": null,
    "description": "Create slide.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_slide",
    "display_name": null,
    "category": null,
    "description": "Update slide.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_email",
    "display_name": null,
    "category": null,
    "description": "Send email campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_sms",
    "display_name": null,
    "category": null,
    "description": "Send SMS campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_survey_link",
    "display_name": null,
    "category": null,
    "description": "Generate a unique survey link.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

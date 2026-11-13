@@ -22,105 +22,120 @@
    "display_name": "List User Metadata",
    "category": "Users",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": "Get User Metadata",
    "category": "Users",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_spaces",
    "display_name": "List Space Metadata",
    "category": "Spaces",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_space",
    "display_name": "Get Space Metadata",
    "category": "Spaces",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pages",
    "display_name": "List Page Metadata",
    "category": "Pages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_page",
    "display_name": "Find Page Metadata by ID",
    "category": "Pages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_draft_page",
    "display_name": "Create Draft Page",
    "category": "Pages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_draft_page",
    "display_name": "Update Draft Page Content",
    "category": "Pages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_draft_page",
    "display_name": "Delete Owned Draft Page",
    "category": "Pages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_articles",
    "display_name": "List Published Article Metadata",
    "category": "Articles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_article",
    "display_name": "Get Article Metadata",
    "category": "Articles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": "List Event Metadata",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": "Get Event Metadata",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_update",
    "display_name": "On New Update",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_event",
    "display_name": "On New Event",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

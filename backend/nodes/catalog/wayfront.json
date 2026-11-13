@@ -34,175 +34,200 @@
    "display_name": null,
    "category": null,
    "description": "List clients.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_client",
    "display_name": null,
    "category": null,
    "description": "Get client.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_client",
    "display_name": null,
    "category": null,
    "description": "Create client.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_client",
    "display_name": null,
    "category": null,
    "description": "Update client.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_companies",
    "display_name": null,
    "category": null,
    "description": "List companies.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company",
    "display_name": null,
    "category": null,
    "description": "Get company.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_company",
    "display_name": null,
    "category": null,
    "description": "Create company.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_company",
    "display_name": null,
    "category": null,
    "description": "Update company.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_orders",
    "display_name": null,
    "category": null,
    "description": "List orders.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_order",
    "display_name": null,
    "category": null,
    "description": "Get order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_order",
    "display_name": null,
    "category": null,
    "description": "Create order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_order",
    "display_name": null,
    "category": null,
    "description": "Update order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_order_tasks",
    "display_name": null,
    "category": null,
    "description": "List order tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_order_task",
    "display_name": null,
    "category": null,
    "description": "Create order task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task",
    "display_name": null,
    "category": null,
    "description": "Update task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task",
    "display_name": null,
    "category": null,
    "description": "Delete task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_order_messages",
    "display_name": null,
    "category": null,
    "description": "List order messages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_order_message",
    "display_name": null,
    "category": null,
    "description": "Create order message.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_services",
    "display_name": null,
    "category": null,
    "description": "List services.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service",
    "display_name": null,
    "category": null,
    "description": "Get service.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invoices",
    "display_name": null,
    "category": null,
    "description": "List invoices.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_invoice",
    "display_name": null,
    "category": null,
    "description": "Get invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_subscriptions",
    "display_name": null,
    "category": null,
    "description": "List subscriptions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscription",
    "display_name": null,
    "category": null,
    "description": "Get subscription.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_team",
    "display_name": null,
    "category": null,
    "description": "List team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,70 +22,80 @@
    "display_name": "List Modules",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_fields",
    "display_name": "List Module Fields",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_user",
    "display_name": "Get Current User",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_records",
    "display_name": "List Records",
    "category": "Records",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_record",
    "display_name": "Get Record",
    "category": "Records",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_records",
    "display_name": "Search Records",
    "category": "Records",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_record",
    "display_name": "Create Record",
    "category": "Records",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_record",
    "display_name": "Update Record",
    "category": "Records",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_record",
    "display_name": "Upsert Record",
    "category": "Records",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_record",
    "display_name": "Delete Record",
    "category": "Records",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

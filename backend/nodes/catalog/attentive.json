@@ -40,105 +40,120 @@
    "display_name": null,
    "category": null,
    "description": "Me.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_segments",
    "display_name": null,
    "category": null,
    "description": "List segments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_segment",
    "display_name": null,
    "category": null,
    "description": "Create new segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segment",
    "display_name": null,
    "category": null,
    "description": "Get segment by external ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_segment",
    "display_name": null,
    "category": null,
    "description": "Partial update segment by external ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_segment",
    "display_name": null,
    "category": null,
    "description": "Archive segment by external ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_custom_event",
    "display_name": null,
    "category": null,
    "description": "Custom Events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_custom_attributes",
    "display_name": null,
    "category": null,
    "description": "Custom Attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_custom_attributes",
    "display_name": null,
    "category": null,
    "description": "Get Custom Attributes for a User.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "subscribe_user",
    "display_name": null,
    "category": null,
    "description": "Subscribe user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscriptions",
    "display_name": null,
    "category": null,
    "description": "Get subscription eligibility for a user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unsubscribe_user",
    "display_name": null,
    "category": null,
    "description": "Unsubscribe subscriptions for a user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "record_product_view",
    "display_name": null,
    "category": null,
    "description": "Product view.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "record_add_to_cart",
    "display_name": null,
    "category": null,
    "description": "Add to cart.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "record_purchase",
    "display_name": null,
    "category": null,
    "description": "Purchase.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,294 +22,342 @@
    "display_name": "Search",
    "category": "Search",
    "description": "Search across boards, cards, and members.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_me",
    "display_name": "Get Authenticated Member",
    "category": "Members",
    "description": "Get the authenticated member's profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_member_boards",
    "display_name": "Get Member's Boards",
    "category": "Members",
    "description": "List boards belonging to a member.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_member_cards",
    "display_name": "Get Member's Cards",
    "category": "Members",
    "description": "Get all cards assigned to a member.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_board",
    "display_name": "Get Board",
    "category": "Boards",
    "description": "Retrieve a single board's details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_board",
    "display_name": "Create Board",
    "category": "Boards",
    "description": "Create a new board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_board",
    "display_name": "Update Board",
    "category": "Boards",
    "description": "Update an existing board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_board",
    "display_name": "Delete Board",
    "category": "Boards",
    "description": "Permanently delete a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_board_lists",
    "display_name": "Get Lists on a Board",
    "category": "Boards",
    "description": "Get all lists (columns) on a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_board_cards",
    "display_name": "Get Cards on a Board",
    "category": "Boards",
    "description": "Get all cards on a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_board_labels",
    "display_name": "Get Board Labels",
    "category": "Boards",
    "description": "List labels available on a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_board_members",
    "display_name": "Get Board Members",
    "category": "Boards",
    "description": "List members of a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_board_actions",
    "display_name": "Get Board Actions",
    "category": "Boards",
    "description": "Get the activity feed (actions) for a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_member_to_board",
    "display_name": "Add Member to Board",
    "category": "Boards",
    "description": "Add or update a member's role on a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_member_from_board",
    "display_name": "Remove Member from Board",
    "category": "Boards",
    "description": "Remove a member from a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_list",
    "display_name": "Create List",
    "category": "Lists",
    "description": "Create a new list (column) on a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_list",
    "display_name": "Update List",
    "category": "Lists",
    "description": "Rename or modify a list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list_cards",
    "display_name": "Get Cards in a List",
    "category": "Lists",
    "description": "Get all cards within a list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_list",
    "display_name": "Archive List",
    "category": "Lists",
    "description": "Archive or unarchive a list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_all_cards",
    "display_name": "Move All Cards in a List",
    "category": "Lists",
    "description": "Move every card in a list to another list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_card",
    "display_name": "Get Card",
    "category": "Cards",
    "description": "Retrieve a single card.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_card",
    "display_name": "Create Card",
    "category": "Cards",
    "description": "Create a new card in a list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_card",
    "display_name": "Update Card",
    "category": "Cards",
    "description": "Update a card (rename, move, set due date, archive).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_card",
    "display_name": "Delete Card",
    "category": "Cards",
    "description": "Permanently delete a card.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_comment",
    "display_name": "Add Comment to Card",
    "category": "Cards",
    "description": "Post a comment on a card.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_attachment",
    "display_name": "Add Attachment to Card",
    "category": "Cards",
    "description": "Attach a URL to a card.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_member",
    "display_name": "Add Member to Card",
    "category": "Cards",
    "description": "Assign a member to a card.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_member",
    "display_name": "Remove Member from Card",
    "category": "Cards",
    "description": "Unassign a member from a card.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_label",
    "display_name": "Add Label to Card",
    "category": "Cards",
    "description": "Add an existing label to a card.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_label",
    "display_name": "Remove Label from Card",
    "category": "Cards",
    "description": "Remove a label from a card.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_card_actions",
    "display_name": "Get Card Actions",
    "category": "Cards",
    "description": "Get the activity feed (actions) for a card.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_card_checklists",
    "display_name": "Get Card Checklists",
    "category": "Checklists",
    "description": "Get all checklists on a card.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_checklist",
    "display_name": "Create Checklist on Card",
    "category": "Checklists",
    "description": "Add a checklist to a card.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_checklist_item",
    "display_name": "Add Checklist Item",
    "category": "Checklists",
    "description": "Add an item to a checklist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_checklist_item",
    "display_name": "Update Checklist Item",
    "category": "Checklists",
    "description": "Check or uncheck a checklist item (check item state).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_checklist",
    "display_name": "Delete Checklist",
    "category": "Checklists",
    "description": "Delete a checklist from a card.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_checklist_item",
    "display_name": "Delete Checklist Item",
    "category": "Checklists",
    "description": "Delete an item from a checklist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_label",
    "display_name": "Create Label",
    "category": "Labels",
    "description": "Create a new label on a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_label",
    "display_name": "Update Label",
    "category": "Labels",
    "description": "Rename or recolor a board label.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_label",
    "display_name": "Delete Label",
    "category": "Labels",
    "description": "Delete a label from a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_board_change",
    "display_name": "On Board Change",
    "category": null,
    "description": "Fire the workflow when anything changes on a Trello board.\n\n    Watches the entire board model — fires on card creation/updates/comments,\n    list changes, board membership changes, and more. Use On Card Change instead\n    if you only care about a specific card.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "trello_api_key"
+   ]
   },
   {
    "name": "on_card_change",
    "display_name": "On Card Change",
    "category": null,
    "description": "Fire the workflow when a specific Trello card changes.\n\n    Watches a single card model — fires only on changes to that card (comments,\n    member assignments, checklist updates, etc.). Use On Board Change instead\n    if you want to react to any card activity on a board.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "trello_api_key"
+   ]
   }
  ],
  "agent_tool_provider": true,

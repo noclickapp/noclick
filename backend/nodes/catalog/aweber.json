@@ -34,378 +34,432 @@
    "display_name": "Get webforms for account",
    "category": "Webforms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_split_tests_for_account",
    "display_name": "Get split tests for account",
    "category": "Webforms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webforms_for_list",
    "display_name": "Get webforms for list",
    "category": "Webforms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webform_for_list",
    "display_name": "Get webform for list",
    "category": "Webforms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_split_tests_for_list",
    "display_name": "Get split tests for list",
    "category": "Webforms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_split_test_for_list",
    "display_name": "Get split test for list",
    "category": "Webforms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_split_test_components",
    "display_name": "Get split test components",
    "category": "Webforms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_split_test_component",
    "display_name": "Get split test component",
    "category": "Webforms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "broadcast_links_analytics",
    "display_name": "Broadcast Links Analytics",
    "category": "Beta Endpoints",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscribers",
    "display_name": "Get subscribers",
    "category": "Subscribers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_subscriber",
    "display_name": "Add subscriber",
    "category": "Subscribers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_subscriber_by_email",
    "display_name": "Update subscriber by email",
    "category": "Subscribers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_subscriber_by_email",
    "display_name": "Delete subscriber by email",
    "category": "Subscribers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_subscriber_by_id",
    "display_name": "Update subscriber by ID",
    "category": "Subscribers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_subscriber_by_id",
    "display_name": "Delete subscriber by ID",
    "category": "Subscribers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscriber",
    "display_name": "Get subscriber",
    "category": "Subscribers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_subscriber",
    "display_name": "Move subscriber",
    "category": "Subscribers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_subscribers_for_list",
    "display_name": "Find subscribers for list",
    "category": "Subscribers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_subscribers_for_account",
    "display_name": "Find subscribers for account",
    "category": "Subscribers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscriber_activity",
    "display_name": "Get subscriber activity",
    "category": "Subscribers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_a_purchase",
    "display_name": "Create a purchase",
    "category": "Subscribers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_integrations",
    "display_name": "Get integrations",
    "category": "Integrations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_integration",
    "display_name": "Get integration",
    "category": "Integrations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaigns",
    "display_name": "Get campaigns",
    "category": "Campaigns",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign",
    "display_name": "Get campaign",
    "category": "Campaigns",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_campaigns",
    "display_name": "Find campaigns",
    "category": "Campaigns",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_broadcast_statistics",
    "display_name": "Get broadcast statistics",
    "category": "Campaigns",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_broadcast_statistic",
    "display_name": "Get broadcast statistic",
    "category": "Campaigns",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segments",
    "display_name": "Get segments",
    "category": "Segments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segment",
    "display_name": "Get segment",
    "category": "Segments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_broadcasts",
    "display_name": "Get broadcasts",
    "category": "Broadcasts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_broadcast",
    "display_name": "Create broadcast",
    "category": "Broadcasts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_broadcast",
    "display_name": "Get broadcast",
    "category": "Broadcasts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_broadcast",
    "display_name": "Update broadcast",
    "category": "Broadcasts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_broadcast",
    "display_name": "Delete broadcast",
    "category": "Broadcasts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_scheduled_broadcast",
    "display_name": "Cancel scheduled broadcast",
    "category": "Broadcasts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_total_broadcasts",
    "display_name": "Get total broadcasts",
    "category": "Broadcasts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "schedule_broadcast",
    "display_name": "Schedule broadcast",
    "category": "Broadcasts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_broadcast_opens",
    "display_name": "Get broadcast opens",
    "category": "Broadcasts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_broadcast_clicks",
    "display_name": "Get broadcast clicks",
    "category": "Broadcasts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lists",
    "display_name": "Get lists",
    "category": "Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list",
    "display_name": "Get list",
    "category": "Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_lists",
    "display_name": "Find lists",
    "category": "Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tags_for_list",
    "display_name": "Get tags for list",
    "category": "Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_custom_fields",
    "display_name": "Get custom fields",
    "category": "Custom Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_custom_field",
    "display_name": "Add custom field",
    "category": "Custom Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_custom_field",
    "display_name": "Get custom field",
    "category": "Custom Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_custom_field",
    "display_name": "Update custom field",
    "category": "Custom Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_custom_field",
    "display_name": "Delete custom field",
    "category": "Custom Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_accounts",
    "display_name": "Get accounts",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": "Get account",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_landing_pages",
    "display_name": "Get landing pages",
    "category": "Landing Pages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_landing_page",
    "display_name": "Get landing page",
    "category": "Landing Pages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_subscriber",
    "display_name": "On New Subscriber",
    "category": "Triggers",
    "description": "Poll the documented creation-ordered subscriber collection for one list.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

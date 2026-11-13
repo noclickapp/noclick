@@ -22,140 +22,160 @@
    "display_name": null,
    "category": null,
    "description": "GET /v1/info/balance — get balance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_call_price",
    "display_name": null,
    "category": null,
    "description": "GET /v1/info/price — get call price.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_timezone",
    "display_name": null,
    "category": null,
    "description": "GET /v1/info/timezone — get timezone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tariff",
    "display_name": null,
    "category": null,
    "description": "GET /v1/tariff — get tariff.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "request_callback",
    "display_name": null,
    "category": null,
    "description": "GET /v1/request/callback — request callback.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sip_numbers",
    "display_name": null,
    "category": null,
    "description": "GET /v1/sip — list sip numbers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sip_status",
    "display_name": null,
    "category": null,
    "description": "GET /v1/sip/{sip}/status — get sip status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_sip_caller_id",
    "display_name": null,
    "category": null,
    "description": "PUT /v1/sip/callerid — set sip caller id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sip_forwarding",
    "display_name": null,
    "category": null,
    "description": "GET /v1/sip/redirection — get sip forwarding.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_sip_forwarding",
    "display_name": null,
    "category": null,
    "description": "PUT /v1/sip/redirection — set sip forwarding.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_call_statistics",
    "display_name": null,
    "category": null,
    "description": "GET /v1/statistics — get call statistics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pbx_statistics",
    "display_name": null,
    "category": null,
    "description": "GET /v1/statistics/pbx — get pbx statistics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pbx_extensions",
    "display_name": null,
    "category": null,
    "description": "GET /v1/pbx/internal — list pbx extensions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pbx_extension_status",
    "display_name": null,
    "category": null,
    "description": "GET /v1/pbx/internal/{pbxsip}/status — get pbx extension status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pbx_extension_info",
    "display_name": null,
    "category": null,
    "description": "GET /v1/pbx/internal/{pbxsip}/info — get pbx extension info.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pbx_forwarding",
    "display_name": null,
    "category": null,
    "description": "GET /v1/pbx/redirection — get pbx forwarding.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_pbx_forwarding",
    "display_name": null,
    "category": null,
    "description": "POST /v1/pbx/redirection — set pbx forwarding.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_virtual_numbers",
    "display_name": null,
    "category": null,
    "description": "GET /v1/direct_numbers — list virtual numbers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_sms",
    "display_name": null,
    "category": null,
    "description": "POST /v1/sms/send — send sms.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sms_templates",
    "display_name": null,
    "category": null,
    "description": "GET /v1/sms/templates — list sms templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

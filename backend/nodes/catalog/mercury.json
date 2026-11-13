@@ -40,175 +40,200 @@
    "display_name": null,
    "category": null,
    "description": "Retrieve a paginated list of accounts. Supports cursor-based pagination with limit, order, start_after, and end_before query parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": null,
    "category": null,
    "description": "Get account by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transactions",
    "display_name": null,
    "category": null,
    "description": "Retrieve a paginated list of all transactions across all accounts. Supports advanced filtering by date ranges, status, categories, and cursor-based pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_account_transactions",
    "display_name": null,
    "category": null,
    "description": "Retrieve a paginated list of transactions for a specific account. Supports filtering by date range, status, and search terms.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transaction",
    "display_name": null,
    "category": null,
    "description": "Retrieve a single transaction by its ID. Returns full transaction details including attachments, check images, and related metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_transaction",
    "display_name": null,
    "category": null,
    "description": "Update the note and/or category of an existing transaction. Use null values to clear existing data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_recipients",
    "display_name": null,
    "category": null,
    "description": "Retrieve a paginated list of all recipients. Use cursor parameters (start_after, end_before) for pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_recipient",
    "display_name": null,
    "category": null,
    "description": "Retrieve details of a specific recipient by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_recipient",
    "display_name": null,
    "category": null,
    "description": "Create a new recipient for making payments",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_recipient",
    "display_name": null,
    "category": null,
    "description": "Update an existing recipient's information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_recipient",
    "display_name": null,
    "category": null,
    "description": "Delete a specific recipient by ID. Fails if the recipient is blocked by scheduled payments, pending approvals, or active ACH authorizations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_money",
    "display_name": null,
    "category": null,
    "description": "Send money from an account to a recipient. Creates a transaction that will be processed immediately or may require approval.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_transfer",
    "display_name": null,
    "category": null,
    "description": "Transfer funds between two accounts within the same organization. Supports transfers between depository accounts (checking/savings), from a depository account to a treasury/investment account, and from a treasury/investment account to a depository account. Creates paired debit and credit transactions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customers",
    "display_name": null,
    "category": null,
    "description": "Retrieve a paginated list of customers. Supports cursor-based pagination with limit, order, start_after, and end_before query parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer",
    "display_name": null,
    "category": null,
    "description": "Retrieve details of a specific customer by their ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer",
    "display_name": null,
    "category": null,
    "description": "Create a new customer for the organization",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer",
    "display_name": null,
    "category": null,
    "description": "Update an existing customer",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_customer",
    "display_name": null,
    "category": null,
    "description": "Delete a customer. This action cannot be undone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invoices",
    "display_name": null,
    "category": null,
    "description": "Retrieve a paginated list of invoices. Supports cursor-based pagination with limit, order, start_after, and end_before query parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_invoice",
    "display_name": null,
    "category": null,
    "description": "Retrieve details of an invoice by its ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_invoice",
    "display_name": null,
    "category": null,
    "description": "Create a new invoice for the organization",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_invoice",
    "display_name": null,
    "category": null,
    "description": "Update an existing invoice",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_invoice",
    "display_name": null,
    "category": null,
    "description": "Cancel an invoice. This action cannot be undone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_account_statements",
    "display_name": null,
    "category": null,
    "description": "Retrieve a paginated list of monthly statements for a depository account. For IO credit accounts, use getCreditAccountStatements. Supports cursor-based pagination with limit, order, start_after, and end_before query parameters, as well as date range filtering with start and end parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization",
    "display_name": null,
    "category": null,
    "description": "Retrieve information about your organization including EIN, legal business name, and DBAs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

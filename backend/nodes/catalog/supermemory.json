@@ -39,161 +39,184 @@
    "display_name": null,
    "category": null,
    "description": "POST /ns/{namespace}/document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "batch_add_documents",
    "display_name": null,
    "category": null,
    "description": "POST /ns/{namespace}/document/batch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document",
    "display_name": null,
    "category": null,
    "description": "GET /ns/{namespace}/document/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_document",
    "display_name": null,
    "category": null,
    "description": "PATCH /ns/{namespace}/document/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_documents",
    "display_name": null,
    "category": null,
    "description": "DELETE /ns/{namespace}/document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search",
    "display_name": null,
    "category": null,
    "description": "POST /ns/{namespace}/search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_profile",
    "display_name": null,
    "category": null,
    "description": "POST /ns/{namespace}/profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_profile_buckets",
    "display_name": null,
    "category": null,
    "description": "GET /ns/{namespace}/profile/buckets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_profile_buckets",
    "display_name": null,
    "category": null,
    "description": "PUT /ns/{namespace}/profile/buckets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_profile_buckets",
    "display_name": null,
    "category": null,
    "description": "DELETE /ns/{namespace}/profile/buckets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "forget_memories",
    "display_name": null,
    "category": null,
    "description": "DELETE /ns/{namespace}/memories.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "forget_memories_semantic",
    "display_name": null,
    "category": null,
    "description": "DELETE /ns/{namespace}/memories/semantic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_resources",
    "display_name": null,
    "category": null,
    "description": "POST /ns/{namespace}/list/{type}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_connectors",
    "display_name": null,
    "category": null,
    "description": "GET /ns/{namespace}/connectors.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_connector",
    "display_name": null,
    "category": null,
    "description": "GET /ns/{namespace}/connectors/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_connector",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "sync_connector",
    "display_name": null,
    "category": null,
    "description": "POST /ns/{namespace}/connectors/{id}/sync.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_namespaces",
    "display_name": null,
    "category": null,
    "description": "GET /ns.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_namespace",
    "display_name": null,
    "category": null,
    "description": "GET /ns/{namespace}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_namespace",
    "display_name": null,
    "category": null,
    "description": "PATCH /ns/{namespace}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization",
    "display_name": null,
    "category": null,
    "description": "GET /organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_memory",
    "display_name": null,
    "category": null,
    "description": "GET /ns/{namespace}/memories/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "count_document_memories",
    "display_name": null,
    "category": null,
    "description": "POST /ns/{namespace}/list/documents/memory-counts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

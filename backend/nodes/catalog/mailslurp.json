@@ -34,126 +34,144 @@
    "display_name": null,
    "category": null,
    "description": "get_account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_inboxes",
    "display_name": null,
    "category": null,
    "description": "List All Inboxes Paginated.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_inbox",
    "display_name": null,
    "category": null,
    "description": "Create an inbox email address. An inbox has a real email address and can send and receive emails. Inboxes can be either `SMTP` or `HTTP` inboxes..",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_inbox",
    "display_name": null,
    "category": null,
    "description": "Get Inbox. Returns properties of an inbox..",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_inbox",
    "display_name": null,
    "category": null,
    "description": "Update Inbox. Change name and description. Email address is not editable..",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_inbox",
    "display_name": null,
    "category": null,
    "description": "Delete inbox.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_emails",
    "display_name": null,
    "category": null,
    "description": "Get emails in an Inbox. This method is not idempotent as it allows retries and waits if you want certain conditions to be met before returning. For simple listing and sorting of known emails use the email controller instead..",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_email",
    "display_name": null,
    "category": null,
    "description": "Send Email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email",
    "display_name": null,
    "category": null,
    "description": "Get hydrated email (headers and body).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reply_to_email",
    "display_name": null,
    "category": null,
    "description": "Reply to an email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_email",
    "display_name": null,
    "category": null,
    "description": "Delete an email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_email_read",
    "display_name": null,
    "category": null,
    "description": "Mark an email as read or unread.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sent_emails",
    "display_name": null,
    "category": null,
    "description": "Get all sent emails in paginated form.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sent_email",
    "display_name": null,
    "category": null,
    "description": "Get sent email receipt.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": null,
    "category": null,
    "description": "Get all contacts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact",
    "display_name": null,
    "category": null,
    "description": "Create a contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": null,
    "category": null,
    "description": "Get contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact",
    "display_name": null,
    "category": null,
    "description": "Delete contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

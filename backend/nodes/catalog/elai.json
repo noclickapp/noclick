@@ -22,133 +22,152 @@
    "display_name": null,
    "category": null,
    "description": "Read the admin, workspace, organization, plan and minute balance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_videos",
    "display_name": null,
    "category": null,
    "description": "Read a page of videos. Continue with page + 1 until page equals pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_video",
    "display_name": null,
    "category": null,
    "description": "Read a video, including slides and render status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_video",
    "display_name": null,
    "category": null,
    "description": "Create a video from prepared slides; rendering is a separate action.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_video",
    "display_name": null,
    "category": null,
    "description": "Update a video's name, tags or public-link visibility.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_video",
    "display_name": null,
    "category": null,
    "description": "Delete the selected video.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "render_video",
    "display_name": null,
    "category": null,
    "description": "Queue rendering. Acceptance does not mean an MP4 is ready; poll Get Video.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_video",
    "display_name": null,
    "category": null,
    "description": "Copy a video or template into a new video.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translate_video",
    "display_name": null,
    "category": null,
    "description": "Translate a video into the selected voice-catalog language and locale.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_from_text",
    "display_name": null,
    "category": null,
    "description": "Create a story video from plain text, HTML or a source URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_voices",
    "display_name": null,
    "category": null,
    "description": "Read language groups and their supported voices/providers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_avatars",
    "display_name": null,
    "category": null,
    "description": "Read avatars available to the workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_avatar",
    "display_name": null,
    "category": null,
    "description": "Read an avatar and its variants.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": null,
    "category": null,
    "description": "Read private workspace templates and the public slide-template catalog.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template",
    "display_name": null,
    "category": null,
    "description": "Read a slide template's full content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_uploads",
    "display_name": null,
    "category": null,
    "description": "Read a page of media assets. Continue at offset + limit when hasMore.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_video_exports",
    "display_name": null,
    "category": null,
    "description": "Read the video's exports to an external destination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_video_history",
    "display_name": null,
    "category": null,
    "description": "Read video edit history. Provider failures can time out.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_voices",
    "display_name": null,
    "category": null,
    "description": "Read custom voices belonging to this workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -29,70 +29,80 @@
    "display_name": null,
    "category": null,
    "description": "Search Google using its dedicated published endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_bing",
    "display_name": null,
    "category": null,
    "description": "Search Bing using its dedicated published endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_videos",
    "display_name": null,
    "category": null,
    "description": "Search Videos using its dedicated published endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_jobs",
    "display_name": null,
    "category": null,
    "description": "Search Jobs using its dedicated published endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_scholar",
    "display_name": null,
    "category": null,
    "description": "Search Scholar using its dedicated published endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_news",
    "display_name": null,
    "category": null,
    "description": "Search News using its dedicated published endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_images",
    "display_name": null,
    "category": null,
    "description": "Search Images using its dedicated published endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_serp_rank",
    "display_name": null,
    "category": null,
    "description": "Get SERP Rank using its dedicated published endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_crawl_results",
    "display_name": null,
    "category": null,
    "description": "Get Crawl Results using its dedicated published endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_products",
    "display_name": null,
    "category": null,
    "description": "Search Products using its dedicated published endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

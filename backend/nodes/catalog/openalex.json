@@ -41,182 +41,208 @@
    "display_name": "New Work",
    "category": "Triggers",
    "description": "Watch the latest 100 works by creation date; Member+ or Partner required. First poll baselines silently; narrow busy feeds with search/filter to avoid missing records outside the window.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_work",
    "display_name": "New or Updated Work",
    "category": "Triggers",
    "description": "Watch the latest 100 works by update timestamp; Member+ or Partner required. Fires once per ID/timestamp after baselining; narrow busy feeds to avoid missing records outside the window.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "list_works",
    "display_name": null,
    "category": null,
    "description": "List works from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_work",
    "display_name": null,
    "category": null,
    "description": "Get work from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_authors",
    "display_name": null,
    "category": null,
    "description": "List authors from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_author",
    "display_name": null,
    "category": null,
    "description": "Get author from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sources",
    "display_name": null,
    "category": null,
    "description": "List sources from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_source",
    "display_name": null,
    "category": null,
    "description": "Get source from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_institutions",
    "display_name": null,
    "category": null,
    "description": "List institutions from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_institution",
    "display_name": null,
    "category": null,
    "description": "Get institution from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_topics",
    "display_name": null,
    "category": null,
    "description": "List topics from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_topic",
    "display_name": null,
    "category": null,
    "description": "Get topic from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_keywords",
    "display_name": null,
    "category": null,
    "description": "List keywords from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_keyword",
    "display_name": null,
    "category": null,
    "description": "Get keyword from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_publishers",
    "display_name": null,
    "category": null,
    "description": "List publishers from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_publisher",
    "display_name": null,
    "category": null,
    "description": "Get publisher from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_funders",
    "display_name": null,
    "category": null,
    "description": "List funders from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_funder",
    "display_name": null,
    "category": null,
    "description": "Get funder from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_domains",
    "display_name": null,
    "category": null,
    "description": "List domains from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain",
    "display_name": null,
    "category": null,
    "description": "Get domain from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_fields",
    "display_name": null,
    "category": null,
    "description": "List fields from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_field",
    "display_name": null,
    "category": null,
    "description": "Get field from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_subfields",
    "display_name": null,
    "category": null,
    "description": "List subfields from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subfield",
    "display_name": null,
    "category": null,
    "description": "Get subfield from OpenAlex.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "autocomplete",
    "display_name": null,
    "category": null,
    "description": "Find up to ten entities by a partial name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_rate_limit",
    "display_name": null,
    "category": null,
    "description": "Check this API key's current usage and remaining budget.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

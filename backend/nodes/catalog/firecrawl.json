@@ -34,371 +34,429 @@
    "display_name": "Scrape URL",
    "category": "Scraping",
    "description": "Scrape a single URL and return content as markdown / HTML / links.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_scrape",
    "display_name": "Get Scrape Status",
    "category": "Scraping",
    "description": "Poll an async scrape job by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "batch_scrape",
    "display_name": "Batch Scrape",
    "category": "Scraping",
    "description": "Submit many URLs to scrape asynchronously; returns a job id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_batch_scrape",
    "display_name": "Get Batch Scrape Status",
    "category": "Scraping",
    "description": "Poll a batch scrape job by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_batch_scrape",
    "display_name": "Cancel Batch Scrape",
    "category": "Scraping",
    "description": "Cancel an in-progress batch scrape job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_batch_scrape_errors",
    "display_name": "Get Batch Scrape Errors",
    "category": "Scraping",
    "description": "Retrieve per-URL errors for a batch scrape job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "crawl",
    "display_name": "Crawl Website",
    "category": "Crawling",
    "description": "Start an async crawl of a site from a starting URL; returns a job id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_crawl",
    "display_name": "Get Crawl Status",
    "category": "Crawling",
    "description": "Poll a crawl job's status by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_crawl",
    "display_name": "Cancel Crawl",
    "category": "Crawling",
    "description": "Cancel an in-progress crawl job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_crawl_errors",
    "display_name": "Get Crawl Errors",
    "category": "Crawling",
    "description": "Retrieve per-URL errors and robots.txt-blocked URLs for a crawl job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_active_crawls",
    "display_name": "List Active Crawls",
    "category": "Crawling",
    "description": "List all currently running crawl jobs for the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "crawl_params_preview",
    "display_name": "Crawl Params Preview",
    "category": "Crawling",
    "description": "Generate suggested crawl parameters from a natural-language prompt + URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "map",
    "display_name": "Map Website",
    "category": "Discovery",
    "description": "Quickly return a complete list of URLs discovered on a website.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search",
    "display_name": "Search the Web",
    "category": "Discovery",
    "description": "Web search returning results, optionally with full-page content scraped.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_research_github",
    "display_name": "Search GitHub History",
    "category": "Research",
    "description": "Search GitHub history.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_research_papers",
    "display_name": "Search Papers",
    "category": "Research",
    "description": "Search academic papers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_research_paper",
    "display_name": "Get Paper",
    "category": "Research",
    "description": "Inspect or read a paper.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_similar_research_papers",
    "display_name": "Find Related Papers",
    "category": "Research",
    "description": "Find related papers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract",
    "display_name": "Extract Structured Data",
    "category": "Extraction",
    "description": "LLM-powered structured extraction from URLs (async; returns a job id).\n\n    Deprecated by Firecrawl in favor of the agent operation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_extract",
    "display_name": "Get Extract Status",
    "category": "Extraction",
    "description": "Poll an extract job by id. Deprecated.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "agent",
    "display_name": "Agent (Autonomous Extract)",
    "category": "Extraction",
    "description": "Autonomous AI web data gathering from a prompt + schema (async).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_agent",
    "display_name": "Get Agent Status",
    "category": "Extraction",
    "description": "Poll an agent job by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_agent",
    "display_name": "Cancel Agent",
    "category": "Extraction",
    "description": "Cancel an in-progress agent job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "parse",
    "display_name": "Parse a File",
    "category": "Files",
    "description": "Parse a remote file (PDF, DOCX, etc.) into markdown or other formats.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_interact_session",
    "display_name": "Create Interact Session",
    "category": "Interact",
    "description": "Create a Firecrawl interact session.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_interact_sessions",
    "display_name": "List Interact Sessions",
    "category": "Interact",
    "description": "List active Firecrawl interact sessions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "execute_interact_session",
    "display_name": "Execute in Interact Session",
    "category": "Interact",
    "description": "Execute code in a Firecrawl interact session.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_interact_session",
    "display_name": "Delete Interact Session",
    "category": "Interact",
    "description": "Delete a Firecrawl interact session.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scrape_interact",
    "display_name": "Interact With Scrape Job",
    "category": "Interact",
    "description": "Execute code in the scrape-bound interact session.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_scrape_interact",
    "display_name": "Stop Scrape Interaction",
    "category": "Interact",
    "description": "Stop the scrape-bound interact session.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "credit_usage",
    "display_name": "Get Credit Usage",
    "category": "Usage",
    "description": "Return remaining credits for the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "token_usage",
    "display_name": "Get Token Usage",
    "category": "Usage",
    "description": "Return LLM token usage (for extract/agent operations).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "credit_usage_historical",
    "display_name": "Get Historical Credit Usage",
    "category": "Usage",
    "description": "Return historical credit usage for the account's team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "token_usage_historical",
    "display_name": "Get Historical Token Usage",
    "category": "Usage",
    "description": "Return historical token usage for the account's team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "queue_status",
    "display_name": "Get Queue Status",
    "category": "Usage",
    "description": "Inspect the account's current job queue depth/status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "team_activity",
    "display_name": "List Team Activity",
    "category": "Usage",
    "description": "List recent API activity for the authenticated team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_feedback",
    "display_name": "Submit Endpoint Feedback",
    "category": "Support",
    "description": "Submit feedback for a v2 job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_search_feedback",
    "display_name": "Submit Search Feedback",
    "category": "Support",
    "description": "Submit feedback for a search job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "support_ask",
    "display_name": "Ask Firecrawl Support",
    "category": "Support",
    "description": "Ask the Firecrawl support agent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "support_docs_search",
    "display_name": "Search Firecrawl Docs",
    "category": "Support",
    "description": "Search Firecrawl docs with citations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_monitor",
    "display_name": "Create Monitor",
    "category": "Monitoring",
    "description": "Create a monitor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_monitors",
    "display_name": "List Monitors",
    "category": "Monitoring",
    "description": "List monitors.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitor",
    "display_name": "Get Monitor",
    "category": "Monitoring",
    "description": "Get a monitor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_monitor",
    "display_name": "Update Monitor",
    "category": "Monitoring",
    "description": "Update a monitor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_monitor",
    "display_name": "Delete Monitor",
    "category": "Monitoring",
    "description": "Delete a monitor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_monitor_checks",
    "display_name": "List Monitor Checks",
    "category": "Monitoring",
    "description": "List checks for a monitor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitor_check",
    "display_name": "Get Monitor Check",
    "category": "Monitoring",
    "description": "Get a single monitor check and page details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_monitor",
    "display_name": "Run Monitor",
    "category": "Monitoring",
    "description": "Run a monitor immediately.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "receive_webhook",
    "display_name": "On Any Firecrawl Event",
    "category": null,
    "description": "Receive any published Firecrawl webhook event.\n\n    Firecrawl webhooks are configured per-job by adding a `webhook` object to a\n    crawl / batch / extract request or to a monitor definition. Firecrawl also\n    accepts webhook objects on `/agent` in live API testing, and publishes\n    agent webhook payloads in its webhook OpenAPI. The trigger therefore accepts\n    any Firecrawl webhook, but only crawl / batch scrape / agent / monitor have\n    a published event taxonomy suitable for decomposed trigger variants.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_crawl_event",
    "display_name": "On Crawl Event",
    "category": null,
    "description": "Receive Firecrawl crawl webhook events.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_batch_scrape_event",
    "display_name": "On Batch Scrape Event",
    "category": null,
    "description": "Receive Firecrawl batch scrape webhook events.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_agent_event",
    "display_name": "On Agent Event",
    "category": null,
    "description": "Receive Firecrawl agent webhook events.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_monitor_event",
    "display_name": "On Monitor Event",
    "category": null,
    "description": "Receive Firecrawl monitor webhook events.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   }
  ],
  "agent_tool_provider": true,

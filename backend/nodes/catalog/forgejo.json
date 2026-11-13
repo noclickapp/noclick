@@ -27,35 +27,40 @@
    "display_name": "Get Authenticated Actor ID",
    "category": "Forgejo Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_repositories",
    "display_name": "List Accessible Repository Metadata",
    "category": "Forgejo Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_repository",
    "display_name": "Get Selected Repository Metadata",
    "category": "Forgejo Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issues",
    "display_name": "List Selected Repository Issues",
    "category": "Forgejo Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue",
    "display_name": "Get Selected Issue Metadata",
    "category": "Forgejo Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

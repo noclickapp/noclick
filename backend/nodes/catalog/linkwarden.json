@@ -22,21 +22,24 @@
    "display_name": "List Collection Metadata",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_collection",
    "display_name": "Get Collection Metadata",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": "List Tag Metadata",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

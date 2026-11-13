@@ -34,154 +34,176 @@
    "display_name": null,
    "category": null,
    "description": "Get the current account's name, URL and record counts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_token",
    "display_name": null,
    "category": null,
    "description": "Inspect the current token's permissions without returning its secret value.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_media",
    "display_name": null,
    "category": null,
    "description": "List or find media by exact name, folder, type or archive status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_media",
    "display_name": null,
    "category": null,
    "description": "Fetch a media's metadata and processing status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_media",
    "display_name": null,
    "category": null,
    "description": "Update media metadata. Supplied tags replace all existing tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_media",
    "display_name": null,
    "category": null,
    "description": "Move a media to Recently Deleted; this does not prove permanent purging.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_media",
    "display_name": null,
    "category": null,
    "description": "Copy media and assets. Wistia may fall back to the original folder if the target is invalid.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_media_stats",
    "display_name": null,
    "category": null,
    "description": "Read aggregated embed statistics for a media.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "import_media",
    "display_name": null,
    "category": null,
    "description": "Queue a media import from a publicly accessible URL; poll the returned job separately.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_job",
    "display_name": null,
    "category": null,
    "description": "Read the status of a background import or other asynchronous job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": null,
    "category": null,
    "description": "List folders in the connected account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_folder",
    "display_name": null,
    "category": null,
    "description": "Read a folder and its media link without following the link.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder",
    "display_name": null,
    "category": null,
    "description": "Create a private folder with anonymous uploads and downloads disabled.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_folder",
    "display_name": null,
    "category": null,
    "description": "Update a folder name or description without changing its sharing settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_folder",
    "display_name": null,
    "category": null,
    "description": "Delete a folder AND all media inside it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": null,
    "category": null,
    "description": "List account tags and their usage counts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tag",
    "display_name": null,
    "category": null,
    "description": "Create a tag; Wistia lowercases and normalizes whitespace in the name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tag",
    "display_name": null,
    "category": null,
    "description": "Delete an account tag by its name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_captions",
    "display_name": null,
    "category": null,
    "description": "List the caption tracks on a media.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_captions",
    "display_name": null,
    "category": null,
    "description": "Create captions from SRT text; omit language to let Wistia detect it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_media",
    "display_name": "On New Media",
    "category": "Triggers",
    "description": "Watch new media; the first poll records existing media without firing.\n\n    Monitors up to 2,000 media per scope; choose a folder for larger libraries.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_updated_media",
    "display_name": "On New or Updated Media",
    "category": "Triggers",
    "description": "Watch new or updated media, including processing and metadata changes.\n\n    The first poll records existing versions without firing. Monitors up to\n    2,000 media per scope; choose a folder for larger libraries.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

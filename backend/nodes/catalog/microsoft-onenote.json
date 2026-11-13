@@ -22,147 +22,168 @@
    "display_name": "List Notebooks",
    "category": "Notebook",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_notebook",
    "display_name": "Get Notebook",
    "category": "Notebook",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_notebook",
    "display_name": "Create Notebook",
    "category": "Notebook",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_notebook_sections",
    "display_name": "List Notebook Sections",
    "category": "Section",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sections",
    "display_name": "List Sections",
    "category": "Section",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_section",
    "display_name": "Get Section",
    "category": "Section",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_section",
    "display_name": "Create Section",
    "category": "Section",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_section_groups",
    "display_name": "List Section Groups",
    "category": "Section Group",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_section_group",
    "display_name": "Get Section Group",
    "category": "Section Group",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_section_group",
    "display_name": "Create Section Group",
    "category": "Section Group",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pages",
    "display_name": "List Pages",
    "category": "Page",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_section_pages",
    "display_name": "List Section Pages",
    "category": "Page",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_page",
    "display_name": "Get Page",
    "category": "Page",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_page_content",
    "display_name": "Get Page Content",
    "category": "Page",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_page_preview",
    "display_name": "Get Page Preview",
    "category": "Page",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_page",
    "display_name": "Create Page",
    "category": "Page",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "append_page_content",
    "display_name": "Append Page Content",
    "category": "Page",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_page_content",
    "display_name": "Replace Page Content",
    "category": "Page",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_page",
    "display_name": "Delete Page",
    "category": "Page",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_page",
    "display_name": "New Page",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_page",
    "display_name": "New or Updated Page",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

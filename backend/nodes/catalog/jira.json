@@ -31,1379 +31,1580 @@
    "display_name": "On Issue Created",
    "category": null,
    "description": "Trigger: fires when a Jira issue is created.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_issue_updated",
    "display_name": "On Issue Updated",
    "category": null,
    "description": "Trigger: fires when a Jira issue is updated.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_issue_deleted",
    "display_name": "On Issue Deleted",
    "category": null,
    "description": "Trigger: fires when a Jira issue is deleted.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_comment_added",
    "display_name": "On Comment Added",
    "category": null,
    "description": "Trigger: fires when a comment is added to a Jira issue.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "get_issue",
    "display_name": "Get Issue",
    "category": "Issue",
    "description": "Get a specific issue by key or ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_issues_with_jql",
    "display_name": "Search Issues with Jql",
    "category": "Issue",
    "description": "Search for issues using JQL",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_issue",
    "display_name": "Create Issue",
    "category": "Issue",
    "description": "Create a new issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issue",
    "display_name": "Update Issue",
    "category": "Issue",
    "description": "Update an existing issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "transition_issue_status",
    "display_name": "Transition Issue Status",
    "category": "Issue",
    "description": "Transition an issue to a new status",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_transitions",
    "display_name": "List Issue Transitions",
    "category": "Issue",
    "description": "List available transitions for an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_comment_to_issue",
    "display_name": "Add Comment to Issue",
    "category": "Issue",
    "description": "Add a comment to an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_issue",
    "display_name": "Delete Issue",
    "category": "Issue",
    "description": "Delete an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Projects",
    "category": "Project",
    "description": "List accessible projects",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": "Get Project",
    "category": "Project",
    "description": "Get project details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_users",
    "display_name": "Search Users",
    "category": "User",
    "description": "Search for users",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_user",
    "display_name": "Get Current User",
    "category": "User",
    "description": "Get current user details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_attachment_metadata",
    "display_name": "Get Attachment Metadata",
    "category": "Attachment",
    "description": "Get metadata for an attachment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "download_attachment",
    "display_name": "Download Attachment",
    "category": "Issue",
    "description": "Download an attachment (returns a stored file reference)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_attachment",
    "display_name": "Delete Attachment",
    "category": "Attachment",
    "description": "Delete an attachment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_attachment_to_issue",
    "display_name": "Add Attachment to Issue",
    "category": "Issue",
    "description": "Add attachment to an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_attachments",
    "display_name": "List Issue Attachments",
    "category": "Issue",
    "description": "Get all attachments for an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_attachment_human_readable",
    "display_name": "Get Attachment Human Readable",
    "category": "Issue",
    "description": "Get attachment with expanded human-readable data",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_worklog_to_issue",
    "display_name": "Add Worklog to Issue",
    "category": "Issue",
    "description": "Add worklog to an issue (time tracking)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_worklog",
    "display_name": "Get Worklog",
    "category": "Issue",
    "description": "Get a worklog by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_worklog",
    "display_name": "Update Worklog",
    "category": "Issue",
    "description": "Update a worklog",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_worklog",
    "display_name": "Delete Worklog",
    "category": "Issue",
    "description": "Delete a worklog",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_worklogs",
    "display_name": "List Issue Worklogs",
    "category": "Issue",
    "description": "Get all worklogs for an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_deleted_worklog_ids",
    "display_name": "List Deleted Worklog Ids",
    "category": "Worklog",
    "description": "Get list of IDs for deleted worklogs",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_updated_worklog_ids",
    "display_name": "List Updated Worklog Ids",
    "category": "Worklog",
    "description": "Get list of IDs for updated worklogs",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_worklog_property_keys",
    "display_name": "List Worklog Property Keys",
    "category": "Issue",
    "description": "Get all worklog property keys for a worklog",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project_component",
    "display_name": "Create Project Component",
    "category": "Component",
    "description": "Create a project component",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_component",
    "display_name": "Get Component",
    "category": "Component",
    "description": "Get a component by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_component",
    "display_name": "Update Component",
    "category": "Component",
    "description": "Update a component",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_component",
    "display_name": "Delete Component",
    "category": "Component",
    "description": "Delete a component",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_components",
    "display_name": "List Project Components",
    "category": "Project",
    "description": "Get all components for a project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_component_issue_count",
    "display_name": "Get Component Issue Count",
    "category": "Component",
    "description": "Get issue count for a component",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project_version",
    "display_name": "Create Project Version",
    "category": "Version",
    "description": "Create a project version/release",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_version",
    "display_name": "Get Version",
    "category": "Version",
    "description": "Get a version by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_version",
    "display_name": "Update Version",
    "category": "Version",
    "description": "Update a version",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_version",
    "display_name": "Delete Version",
    "category": "Version",
    "description": "Delete a version",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_versions",
    "display_name": "List Project Versions",
    "category": "Project",
    "description": "Get all versions for a project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_project_versions",
    "display_name": "Merge Project Versions",
    "category": "Version",
    "description": "Merge two versions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_version_position",
    "display_name": "Move Version Position",
    "category": "Version",
    "description": "Move version position",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_version_issue_counts",
    "display_name": "Get Version Issue Counts",
    "category": "Version",
    "description": "Get issue counts for a version",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_version_unresolved_count",
    "display_name": "Get Version Unresolved Count",
    "category": "Version",
    "description": "Get count of unresolved issues for a version",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue_link",
    "display_name": "Get Issue Link",
    "category": "Issue",
    "description": "Get an issue link by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "link_two_issues",
    "display_name": "Link Two Issues",
    "category": "Issue",
    "description": "Create a link between two issues",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_issue_link",
    "display_name": "Delete Issue Link",
    "category": "Issue",
    "description": "Delete an issue link",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_watchers",
    "display_name": "List Issue Watchers",
    "category": "Issue",
    "description": "Get watchers for an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_watcher_to_issue",
    "display_name": "Add Watcher to Issue",
    "category": "Issue",
    "description": "Add watcher to an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_watcher_from_issue",
    "display_name": "Remove Watcher from Issue",
    "category": "Issue",
    "description": "Remove watcher from an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_priorities",
    "display_name": "List Priorities",
    "category": "Priority",
    "description": "Get all priorities",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_priority",
    "display_name": "Get Priority",
    "category": "Priority",
    "description": "Get a priority by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_resolutions",
    "display_name": "List Resolutions",
    "category": "Resolution",
    "description": "Get all resolutions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_resolution",
    "display_name": "Get Resolution",
    "category": "Resolution",
    "description": "Get a resolution by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_statuses",
    "display_name": "List Statuses",
    "category": "Status",
    "description": "Get all statuses",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_status",
    "display_name": "Get Status",
    "category": "Status",
    "description": "Get a status by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_types",
    "display_name": "List Issue Types",
    "category": "Issue Type",
    "description": "Get all issue types",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue_type",
    "display_name": "Get Issue Type",
    "category": "Issue Type",
    "description": "Get an issue type by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_issue_types",
    "display_name": "List Project Issue Types",
    "category": "Project",
    "description": "Get issue types for a project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_jql_filter",
    "display_name": "Create Jql Filter",
    "category": "Filter",
    "description": "Create a filter (saved JQL query)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_filter",
    "display_name": "Get Filter",
    "category": "Filter",
    "description": "Get a filter by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_filter",
    "display_name": "Update Filter",
    "category": "Filter",
    "description": "Update a filter",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_filter",
    "display_name": "Delete Filter",
    "category": "Filter",
    "description": "Delete a filter",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_filters",
    "display_name": "Search Filters",
    "category": "Filter",
    "description": "Search for filters",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue_comment",
    "display_name": "Get Issue Comment",
    "category": "Issue",
    "description": "Get a comment by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_comments",
    "display_name": "List Issue Comments",
    "category": "Issue",
    "description": "Get all comments for an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issue_comment",
    "display_name": "Update Issue Comment",
    "category": "Issue",
    "description": "Update a comment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_issue_comment",
    "display_name": "Delete Issue Comment",
    "category": "Issue",
    "description": "Delete a comment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_fields",
    "display_name": "List Fields",
    "category": "Field",
    "description": "Get all fields",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_custom_field",
    "display_name": "Create Custom Field",
    "category": "Field",
    "description": "Create a custom field",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_boards",
    "display_name": "List Boards",
    "category": "Board",
    "description": "Get all boards",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_board",
    "display_name": "Get Board",
    "category": "Board",
    "description": "Get a board by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_board_issues",
    "display_name": "List Board Issues",
    "category": "Board",
    "description": "Get issues for a board",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_board_backlog",
    "display_name": "Get Board Backlog",
    "category": "Board",
    "description": "Get backlog issues for a board",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_board_sprints",
    "display_name": "List Board Sprints",
    "category": "Sprint",
    "description": "Get sprints for a board",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sprint",
    "display_name": "Get Sprint",
    "category": "Sprint",
    "description": "Get a sprint by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_sprint",
    "display_name": "Create Sprint",
    "category": "Sprint",
    "description": "Create a sprint",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_sprint",
    "display_name": "Update Sprint",
    "category": "Sprint",
    "description": "Update a sprint",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_sprint",
    "display_name": "Delete Sprint",
    "category": "Sprint",
    "description": "Delete a sprint",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sprint_issues",
    "display_name": "List Sprint Issues",
    "category": "Sprint",
    "description": "Get issues in a sprint",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_issues_to_sprint",
    "display_name": "Move Issues to Sprint",
    "category": "Issue",
    "description": "Move issues to a sprint",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_epic",
    "display_name": "Get Epic",
    "category": "Epic",
    "description": "Get an epic by ID or key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_epic_issues",
    "display_name": "List Epic Issues",
    "category": "Epic",
    "description": "Get issues in an epic",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_issues_to_epic",
    "display_name": "Move Issues to Epic",
    "category": "Issue",
    "description": "Move issues to an epic",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_remote_links",
    "display_name": "List Issue Remote Links",
    "category": "Issue",
    "description": "Get remote links for an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_remote_link_on_issue",
    "display_name": "Create Remote Link on Issue",
    "category": "Issue",
    "description": "Create a remote link on an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_remote_link",
    "display_name": "Delete Remote Link",
    "category": "Issue",
    "description": "Delete a remote link",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue_labels",
    "display_name": "Get Issue Labels",
    "category": "Issue",
    "description": "Get all labels for an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_labels_to_issue",
    "display_name": "Add Labels to Issue",
    "category": "Issue",
    "description": "Add labels to an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_issue_labels",
    "display_name": "Replace Issue Labels",
    "category": "Issue",
    "description": "Set labels for an issue (replaces existing)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue_property",
    "display_name": "Get Issue Property",
    "category": "Issue",
    "description": "Get a property value for an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_issue_property",
    "display_name": "Set Issue Property",
    "category": "Issue",
    "description": "Set a property value for an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_issue_property",
    "display_name": "Delete Issue Property",
    "category": "Issue",
    "description": "Delete a property from an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_property_keys",
    "display_name": "List Issue Property Keys",
    "category": "Issue",
    "description": "Get all property keys for an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_user_permissions",
    "display_name": "Get Current User Permissions",
    "category": "User",
    "description": "Get permissions for the current user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_all_permissions",
    "display_name": "List All Permissions",
    "category": "Permission",
    "description": "Get all permissions in the system",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_user_permissions",
    "display_name": "Check User Permissions",
    "category": "Permission",
    "description": "Check if user has specific permissions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_permission_schemes",
    "display_name": "List Permission Schemes",
    "category": "Permission Scheme",
    "description": "Get all permission schemes",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_permission_scheme",
    "display_name": "Get Permission Scheme",
    "category": "Permission Scheme",
    "description": "Get a permission scheme by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_permission_scheme",
    "display_name": "Create Permission Scheme",
    "category": "Permission Scheme",
    "description": "Create a new permission scheme",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_permission_scheme",
    "display_name": "Delete Permission Scheme",
    "category": "Permission Scheme",
    "description": "Delete a permission scheme",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_groups",
    "display_name": "List Groups",
    "category": "Group",
    "description": "Get all groups",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_group",
    "display_name": "Get Group",
    "category": "Group",
    "description": "Get a group by name",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_group",
    "display_name": "Create Group",
    "category": "Group",
    "description": "Create a new group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_group",
    "display_name": "Delete Group",
    "category": "Group",
    "description": "Delete a group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_user_to_group",
    "display_name": "Add User to Group",
    "category": "Group",
    "description": "Add a user to a group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_user_from_group",
    "display_name": "Remove User from Group",
    "category": "Group",
    "description": "Remove a user from a group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_group_members",
    "display_name": "List Group Members",
    "category": "Group",
    "description": "Get members of a group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_roles",
    "display_name": "List Project Roles",
    "category": "Project",
    "description": "Get all project roles for a project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project_role",
    "display_name": "Get Project Role",
    "category": "Project",
    "description": "Get a specific project role",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_actors_to_project_role",
    "display_name": "Add Actors to Project Role",
    "category": "Project",
    "description": "Add actors (users/groups) to a project role",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_actors_from_project_role",
    "display_name": "Remove Actors from Project Role",
    "category": "Project",
    "description": "Remove actors from a project role",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_screens",
    "display_name": "List Screens",
    "category": "Screen",
    "description": "Get all screens",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_screen",
    "display_name": "Get Screen",
    "category": "Screen",
    "description": "Get a screen by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_screen_tabs",
    "display_name": "List Screen Tabs",
    "category": "Screen",
    "description": "Get all tabs for a screen",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_screen_tab_fields",
    "display_name": "List Screen Tab Fields",
    "category": "Screen",
    "description": "Get all fields for a screen tab",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_security_schemes",
    "display_name": "List Issue Security Schemes",
    "category": "Issue Security",
    "description": "Get all issue security schemes",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue_security_scheme",
    "display_name": "Get Issue Security Scheme",
    "category": "Issue Security",
    "description": "Get an issue security scheme by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_notification_schemes",
    "display_name": "List Notification Schemes",
    "category": "Notification Scheme",
    "description": "Get all notification schemes",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_notification_scheme",
    "display_name": "Get Notification Scheme",
    "category": "Notification Scheme",
    "description": "Get a notification scheme by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workflows",
    "display_name": "List Workflows",
    "category": "Workflow",
    "description": "Get all workflows",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workflow",
    "display_name": "Get Workflow",
    "category": "Workflow",
    "description": "Get a workflow by name",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workflow_schemes",
    "display_name": "List Workflow Schemes",
    "category": "Workflow",
    "description": "Get all workflow schemes",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workflow_scheme",
    "display_name": "Get Workflow Scheme",
    "category": "Workflow",
    "description": "Get a workflow scheme by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dashboards",
    "display_name": "List Dashboards",
    "category": "Dashboard",
    "description": "Get all dashboards",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dashboard",
    "display_name": "Get Dashboard",
    "category": "Dashboard",
    "description": "Get a dashboard by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_dashboard",
    "display_name": "Create Dashboard",
    "category": "Dashboard",
    "description": "Create a new dashboard",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_dashboard",
    "display_name": "Update Dashboard",
    "category": "Dashboard",
    "description": "Update a dashboard",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dashboard",
    "display_name": "Delete Dashboard",
    "category": "Dashboard",
    "description": "Delete a dashboard",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_audit_log",
    "display_name": "Get Audit Log",
    "category": "System",
    "description": "Get audit log records",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_projects",
    "display_name": "Search Projects",
    "category": "Project",
    "description": "Search for projects",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_application_property",
    "display_name": "Get Application Property",
    "category": "System",
    "description": "Get an application property",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_jira_server_info",
    "display_name": "Get Jira Server Info",
    "category": "System",
    "description": "Get Jira server information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_link_types",
    "display_name": "List Issue Link Types",
    "category": "Issue Link Type",
    "description": "Get all issue link types",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue_link_type",
    "display_name": "Get Issue Link Type",
    "category": "Issue Link Type",
    "description": "Get an issue link type by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_issue_link_type",
    "display_name": "Create Issue Link Type",
    "category": "Issue Link Type",
    "description": "Create a new issue link type",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issue_link_type",
    "display_name": "Update Issue Link Type",
    "category": "Issue Link Type",
    "description": "Update an issue link type",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_issue_link_type",
    "display_name": "Delete Issue Link Type",
    "category": "Issue Link Type",
    "description": "Delete an issue link type",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_field_configurations",
    "display_name": "List Field Configurations",
    "category": "Field",
    "description": "Get all field configurations",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_field_configuration",
    "display_name": "Get Field Configuration",
    "category": "Field",
    "description": "Get a field configuration by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_field_configuration_schemes",
    "display_name": "List Field Configuration Schemes",
    "category": "Field",
    "description": "Get all field configuration schemes",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_field_configuration_scheme",
    "display_name": "Get Field Configuration Scheme",
    "category": "Field",
    "description": "Get a field configuration scheme by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_type_schemes",
    "display_name": "List Issue Type Schemes",
    "category": "Issue Type",
    "description": "Get all issue type schemes",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue_type_scheme",
    "display_name": "Get Issue Type Scheme",
    "category": "Issue Type",
    "description": "Get an issue type scheme by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_issue_type_scheme",
    "display_name": "Create Issue Type Scheme",
    "category": "Issue Type",
    "description": "Create an issue type scheme",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issue_type_scheme",
    "display_name": "Update Issue Type Scheme",
    "category": "Issue Type",
    "description": "Update an issue type scheme",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_issue_type_scheme",
    "display_name": "Delete Issue Type Scheme",
    "category": "Issue Type",
    "description": "Delete an issue type scheme",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_type_screen_schemes",
    "display_name": "List Issue Type Screen Schemes",
    "category": "Issue Type",
    "description": "Get all issue type screen schemes",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue_type_screen_scheme",
    "display_name": "Get Issue Type Screen Scheme",
    "category": "Issue Type",
    "description": "Get an issue type screen scheme by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_priority_scheme",
    "display_name": "Get Priority Scheme",
    "category": "Priority",
    "description": "Get a priority scheme by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_priority_schemes",
    "display_name": "List Priority Schemes",
    "category": "Priority",
    "description": "Get all priority schemes",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_project",
    "display_name": "Archive Project",
    "category": "Project",
    "description": "Archive a project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restore_archived_project",
    "display_name": "Restore Archived Project",
    "category": "Project",
    "description": "Restore an archived project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project_category",
    "display_name": "Get Project Category",
    "category": "Project",
    "description": "Get a project category by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_categories",
    "display_name": "List Project Categories",
    "category": "Project",
    "description": "Get all project categories",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project_category",
    "display_name": "Create Project Category",
    "category": "Project",
    "description": "Create a project category",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project_category",
    "display_name": "Update Project Category",
    "category": "Project",
    "description": "Update a project category",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_project_category",
    "display_name": "Delete Project Category",
    "category": "Project",
    "description": "Delete a project category",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "assign_issue_to_user",
    "display_name": "Assign Issue to User",
    "category": "Issue",
    "description": "Assign an issue to a user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue_changelog",
    "display_name": "Get Issue Changelog",
    "category": "Issue",
    "description": "Get changelog for an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_issue_notification",
    "display_name": "Send Issue Notification",
    "category": "Issue",
    "description": "Send notification for an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue_votes",
    "display_name": "Get Issue Votes",
    "category": "Issue",
    "description": "Get votes for an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_vote_to_issue",
    "display_name": "Add Vote to Issue",
    "category": "Issue",
    "description": "Add vote to an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_vote_from_issue",
    "display_name": "Remove Vote from Issue",
    "category": "Issue",
    "description": "Remove vote from an issue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": "Get User",
    "category": "User",
    "description": "Get a user by account ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_groups",
    "display_name": "List User Groups",
    "category": "User",
    "description": "Get groups that a user belongs to",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_properties",
    "display_name": "List User Properties",
    "category": "User",
    "description": "Get all properties for a user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_property",
    "display_name": "Get User Property",
    "category": "User",
    "description": "Get a property for a user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_user_property",
    "display_name": "Set User Property",
    "category": "User",
    "description": "Set a property for a user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_user_property",
    "display_name": "Delete User Property",
    "category": "User",
    "description": "Delete a property from a user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_create_issues",
    "display_name": "Bulk Create Issues",
    "category": "Issue",
    "description": "Create multiple issues in bulk",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_update_issues",
    "display_name": "Bulk Update Issues",
    "category": "Issue",
    "description": "Update multiple issues in bulk",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_delete_issues",
    "display_name": "Bulk Delete Issues",
    "category": "Issue",
    "description": "Delete multiple issues in bulk",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_avatars",
    "display_name": "List Project Avatars",
    "category": "Project",
    "description": "Get all avatars for a project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_type_avatars",
    "display_name": "List Issue Type Avatars",
    "category": "Issue Type",
    "description": "Get all avatars for an issue type",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_application_properties",
    "display_name": "List Application Properties",
    "category": "System",
    "description": "Get all application properties",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_application_property",
    "display_name": "Set Application Property",
    "category": "System",
    "description": "Set an application property",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_global_configuration",
    "display_name": "Get Global Configuration",
    "category": "System",
    "description": "Get global configuration",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue_security_level",
    "display_name": "Get Issue Security Level",
    "category": "Issue",
    "description": "Get issue security level by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_status",
    "display_name": "Create Status",
    "category": "Status",
    "description": "Create a new status",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_status",
    "display_name": "Update Status",
    "category": "Status",
    "description": "Update a status",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_status",
    "display_name": "Delete Status",
    "category": "Status",
    "description": "Delete a status",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_resolution",
    "display_name": "Create Resolution",
    "category": "Resolution",
    "description": "Create a new resolution",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_resolution",
    "display_name": "Update Resolution",
    "category": "Resolution",
    "description": "Update a resolution",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_resolution",
    "display_name": "Delete Resolution",
    "category": "Resolution",
    "description": "Delete a resolution",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_priority",
    "display_name": "Create Priority",
    "category": "Priority",
    "description": "Create a new priority",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_priority",
    "display_name": "Update Priority",
    "category": "Priority",
    "description": "Update a priority",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_priority",
    "display_name": "Delete Priority",
    "category": "Priority",
    "description": "Delete a priority",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_issue_type",
    "display_name": "Create Issue Type",
    "category": "Issue Type",
    "description": "Create a new issue type",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issue_type",
    "display_name": "Update Issue Type",
    "category": "Issue Type",
    "description": "Update an issue type",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_issue_type",
    "display_name": "Delete Issue Type",
    "category": "Issue Type",
    "description": "Delete an issue type",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_jql_query",
    "display_name": "Validate Jql Query",
    "category": "JQL",
    "description": "Validate a JQL query",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_jql_autocomplete_suggestions",
    "display_name": "Get Jql Autocomplete Suggestions",
    "category": "JQL",
    "description": "Get auto-complete suggestions for JQL",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_user_preferences",
    "display_name": "Get Current User Preferences",
    "category": "User",
    "description": "Get current user preferences",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_current_user_preference",
    "display_name": "Set Current User Preference",
    "category": "User",
    "description": "Set a user preference",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_jira_license_info",
    "display_name": "Get Jira License Info",
    "category": "System",
    "description": "Get Jira license information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

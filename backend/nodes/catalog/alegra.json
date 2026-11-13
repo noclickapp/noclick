@@ -22,161 +22,193 @@
    "display_name": "List Invoices",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_invoice",
    "display_name": "Get Invoice",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_invoice",
    "display_name": "Create Invoice",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_invoice",
    "display_name": "Update Invoice",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_invoice",
    "display_name": "Delete Invoice",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payments",
    "display_name": "List Payments",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_payment",
    "display_name": "Get Payment",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_payment",
    "display_name": "Create Payment",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_payment",
    "display_name": "Update Payment",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_payment",
    "display_name": "Delete Payment",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credit_notes",
    "display_name": "List Credit Notes",
    "category": "Credit Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credit_note",
    "display_name": "Get Credit Note",
    "category": "Credit Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_credit_note",
    "display_name": "Create Credit Note",
    "category": "Credit Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_credit_note",
    "display_name": "Update Credit Note",
    "category": "Credit Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_credit_note",
    "display_name": "Delete Credit Note",
    "category": "Credit Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_estimates",
    "display_name": "List Estimates",
    "category": "Estimates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_estimate",
    "display_name": "Get Estimate",
    "category": "Estimates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_estimate",
    "display_name": "Create Estimate",
    "category": "Estimates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_estimate",
    "display_name": "Update Estimate",
    "category": "Estimates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_estimate",
    "display_name": "Delete Estimate",
    "category": "Estimates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_invoice",
    "display_name": "On New Invoice",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "alegra_api_token"
+   ]
   },
   {
    "name": "on_new_client",
    "display_name": "On New Client",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "alegra_api_token"
+   ]
   },
   {
    "name": "on_new_item",
    "display_name": "On New Item",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "alegra_api_token"
+   ]
   }
  ],
  "agent_tool_provider": true,

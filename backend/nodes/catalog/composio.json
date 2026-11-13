@@ -22,133 +22,152 @@
    "display_name": null,
    "category": null,
    "description": "Discover tools and their schemas by toolkit or search query.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tool",
    "display_name": null,
    "category": null,
    "description": "Read a tool's argument schema before executing it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "execute_tool",
    "display_name": null,
    "category": null,
    "description": "Execute one tool as an explicit connected account and user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_toolkits",
    "display_name": null,
    "category": null,
    "description": "Find toolkits available to the project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_toolkit",
    "display_name": null,
    "category": null,
    "description": "Read toolkit authentication requirements and metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_toolkit_categories",
    "display_name": null,
    "category": null,
    "description": "List toolkit categories for discovery filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_auth_configs",
    "display_name": null,
    "category": null,
    "description": "List project authentication configurations without their secrets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_auth_config",
    "display_name": null,
    "category": null,
    "description": "Read an authentication configuration's non-secret metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_auth_config",
    "display_name": null,
    "category": null,
    "description": "Create a Composio-managed auth configuration for a toolkit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_auth_config",
    "display_name": null,
    "category": null,
    "description": "Delete one auth configuration; does not request upstream revocation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_connected_accounts",
    "display_name": null,
    "category": null,
    "description": "Read the project's own connected account metadata as connection evidence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_connected_account",
    "display_name": null,
    "category": null,
    "description": "Read one connected account, omitting connection state and credential data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_connected_account",
    "display_name": null,
    "category": null,
    "description": "Delete a connected account; does not request upstream revocation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_trigger_types",
    "display_name": null,
    "category": null,
    "description": "Discover trigger types and their configuration schemas.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_trigger_type",
    "display_name": null,
    "category": null,
    "description": "Read the configuration and payload schemas of one trigger type.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_active_triggers",
    "display_name": null,
    "category": null,
    "description": "List project trigger instances with explicit pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_trigger",
    "display_name": null,
    "category": null,
    "description": "Create or update a trigger using an existing connected account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_trigger",
    "display_name": null,
    "category": null,
    "description": "Enable or disable a trigger as the acting user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_trigger",
    "display_name": null,
    "category": null,
    "description": "Delete one trigger instance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

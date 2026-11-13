@@ -22,154 +22,179 @@
    "display_name": null,
    "category": "Companies",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company",
    "display_name": null,
    "category": "Companies",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_employments",
    "display_name": null,
    "category": "Employments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_employment",
    "display_name": null,
    "category": "Employments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invite_employment",
    "display_name": null,
    "category": "Employments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_timeoff",
    "display_name": null,
    "category": "Time Off",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_timeoff",
    "display_name": null,
    "category": "Time Off",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_timeoff",
    "display_name": null,
    "category": "Time Off",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_timeoff",
    "display_name": null,
    "category": "Time Off",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "decline_timeoff",
    "display_name": null,
    "category": "Time Off",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_expenses",
    "display_name": null,
    "category": "Expenses",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_expense",
    "display_name": null,
    "category": "Expenses",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_expense",
    "display_name": null,
    "category": "Expenses",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_incentives",
    "display_name": null,
    "category": "Incentives",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_incentive",
    "display_name": null,
    "category": "Incentives",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_incentive",
    "display_name": null,
    "category": "Incentives",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_incentive",
    "display_name": null,
    "category": "Incentives",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_timesheets",
    "display_name": null,
    "category": "Timesheets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_timesheet",
    "display_name": null,
    "category": "Timesheets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_timesheet",
    "display_name": null,
    "category": "Timesheets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_back_timesheet",
    "display_name": null,
    "category": "Timesheets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_event",
    "display_name": null,
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "remote_api_token"
+   ]
   }
  ],
  "agent_tool_provider": true,

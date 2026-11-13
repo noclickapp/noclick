@@ -22,112 +22,128 @@
    "display_name": null,
    "category": null,
    "description": "API key plan and usage.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_cryptocurrencies",
    "display_name": null,
    "category": null,
    "description": "Cryptocurrency ID map.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_latest_listings",
    "display_name": null,
    "category": null,
    "description": "Latest ranked cryptocurrencies.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_latest_quotes",
    "display_name": null,
    "category": null,
    "description": "Latest cryptocurrency prices.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_cryptocurrency_info",
    "display_name": null,
    "category": null,
    "description": "Cryptocurrency metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_latest_ohlcv",
    "display_name": null,
    "category": null,
    "description": "Latest cryptocurrency OHLCV.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_historical_ohlcv",
    "display_name": null,
    "category": null,
    "description": "Historical cryptocurrency OHLCV.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_global_metrics",
    "display_name": null,
    "category": null,
    "description": "Global market metrics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_fiat_currencies",
    "display_name": null,
    "category": null,
    "description": "Fiat currency ID map.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "convert_price",
    "display_name": null,
    "category": null,
    "description": "Convert a currency amount.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_exchanges",
    "display_name": null,
    "category": null,
    "description": "Exchange ID map.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_exchange_info",
    "display_name": null,
    "category": null,
    "description": "Exchange metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_exchange_quotes",
    "display_name": null,
    "category": null,
    "description": "Latest exchange volumes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_categories",
    "display_name": null,
    "category": null,
    "description": "Cryptocurrency categories.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_fear_and_greed",
    "display_name": null,
    "category": null,
    "description": "Latest Fear and Greed Index.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_fear_and_greed_history",
    "display_name": null,
    "category": null,
    "description": "Historical Fear and Greed Index.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -27,140 +27,160 @@
    "display_name": "List campaigns",
    "category": null,
    "description": "List campaigns.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign",
    "display_name": "Get a campaign",
    "category": null,
    "description": "Get a campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_campaign",
    "display_name": "Create a campaign",
    "category": null,
    "description": "Create a campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_campaign",
    "display_name": "Update a campaign",
    "category": null,
    "description": "Update a campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_buyer",
    "display_name": "Pause a buyer",
    "category": null,
    "description": "Pause a buyer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_buyer",
    "display_name": "Resume a buyer",
    "category": null,
    "description": "Resume a buyer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_supplier",
    "display_name": "Pause a supplier",
    "category": null,
    "description": "Pause a supplier.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_supplier",
    "display_name": "Resume a supplier",
    "category": null,
    "description": "Resume a supplier.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_caps",
    "display_name": "Read caps",
    "category": null,
    "description": "Read caps.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_caps",
    "display_name": "Set caps",
    "category": null,
    "description": "Set caps.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_filters",
    "display_name": "List filters",
    "category": null,
    "description": "List filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_filter",
    "display_name": "Pause a filter",
    "category": null,
    "description": "Pause a filter.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_filter",
    "display_name": "Resume a filter",
    "category": null,
    "description": "Resume a filter.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_leads",
    "display_name": "List leads",
    "category": null,
    "description": "List leads.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lead",
    "display_name": "Get a lead",
    "category": null,
    "description": "Get a lead.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "return_lead",
    "display_name": "Return a lead",
    "category": null,
    "description": "Return a lead.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_clients",
    "display_name": "List clients",
    "category": null,
    "description": "List clients.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_client",
    "display_name": "Create a client",
    "category": null,
    "description": "Create a client.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "campaign_statistics",
    "display_name": "Campaign statistics",
    "category": null,
    "description": "Campaign statistics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_lead",
    "display_name": "On New Lead (Latest 500)",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

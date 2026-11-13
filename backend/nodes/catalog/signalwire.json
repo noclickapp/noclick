@@ -22,84 +22,96 @@
    "display_name": "Get connected project",
    "category": "Project",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_message_logs",
    "display_name": "List message logs",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message_log",
    "display_name": "Get message log",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_call_logs",
    "display_name": "List call logs",
    "category": "Voice",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_call_log",
    "display_name": "Get call log",
    "category": "Voice",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_phone_numbers",
    "display_name": "List owned phone numbers",
    "category": "Phone numbers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_phone_number",
    "display_name": "Get owned phone number",
    "category": "Phone numbers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_resources",
    "display_name": "List Fabric resource metadata",
    "category": "Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_resource",
    "display_name": "Get Fabric resource metadata",
    "category": "Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_sms",
    "display_name": "Send SMS",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "redact_message",
    "display_name": "Redact message body",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_phone_number",
    "display_name": "Rename owned phone number",
    "category": "Phone numbers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

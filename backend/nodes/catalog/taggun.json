@@ -28,91 +28,104 @@
    "display_name": null,
    "category": null,
    "description": "Extract receipt totals, date and merchant from a URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scan_verbose_url",
    "display_name": null,
    "category": null,
    "description": "Extract detailed receipt entities and optional line items from a URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scan_simple_encoded",
    "display_name": null,
    "category": null,
    "description": "Extract receipt totals, date and merchant from encoded image bytes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scan_verbose_encoded",
    "display_name": null,
    "category": null,
    "description": "Extract detailed receipt entities from encoded image bytes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_receipt_url",
    "display_name": null,
    "category": null,
    "description": "Validate a receipt against supplied validation rules.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_campaign_url",
    "display_name": null,
    "category": null,
    "description": "Validate a receipt against a saved campaign's rules.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_campaign_settings",
    "display_name": null,
    "category": null,
    "description": "List campaign setting IDs belonging to this API key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign_settings",
    "display_name": null,
    "category": null,
    "description": "Read the validation settings of one campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_campaign_settings",
    "display_name": null,
    "category": null,
    "description": "Create validation settings for a campaign ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_campaign_settings",
    "display_name": null,
    "category": null,
    "description": "Update the validation settings for a campaign ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_campaign_settings",
    "display_name": null,
    "category": null,
    "description": "Delete the saved validation settings for a campaign ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_receipt_feedback",
    "display_name": null,
    "category": null,
    "description": "Submit manually verified receipt values for feedback and training.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_merchant_name",
    "display_name": null,
    "category": null,
    "description": "Add a merchant keyword to the account's model, updated daily by Taggun.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

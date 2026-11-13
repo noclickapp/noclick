@@ -29,112 +29,128 @@
    "display_name": "On New Allowance Transaction",
    "category": "Triggers",
    "description": "Watch new allowance transactions within the provider's transactionDays window.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "get_current_user",
    "display_name": null,
    "category": null,
    "description": "Gets user info.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": null,
    "category": null,
    "description": "returns list of users.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_user",
    "display_name": null,
    "category": null,
    "description": "updates user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_child_user",
    "display_name": null,
    "category": null,
    "description": "adds new child user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_chores",
    "display_name": null,
    "category": null,
    "description": "returns list of chores for given user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_chore",
    "display_name": null,
    "category": null,
    "description": "adds chore for given user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_chore",
    "display_name": null,
    "category": null,
    "description": "updates chore for given chore id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_chore",
    "display_name": null,
    "category": null,
    "description": "deletes chore for given chore id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_allowance",
    "display_name": null,
    "category": null,
    "description": "returns allowance balance and allowance transactions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_allowance_transaction",
    "display_name": null,
    "category": null,
    "description": "adds new allowance transaction to kidUserID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_wishlist",
    "display_name": null,
    "category": null,
    "description": "Get list of wishlist items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_wish",
    "display_name": null,
    "category": null,
    "description": "Add item to kid's wishlist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_wish",
    "display_name": null,
    "category": null,
    "description": "Update item on kid's wishlist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_wish",
    "display_name": null,
    "category": null,
    "description": "Delete item from wishlist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_share_link",
    "display_name": null,
    "category": null,
    "description": "Create Share Link.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

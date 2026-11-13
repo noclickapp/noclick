@@ -22,70 +22,80 @@
    "display_name": null,
    "category": null,
    "description": "List the account's proxy email addresses and usage metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_proxy_binding",
    "display_name": null,
    "category": null,
    "description": "Create an alias forwarding to the supplied real email addresses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_proxy_binding",
    "display_name": null,
    "category": null,
    "description": "Change selected alias settings; omitted fields are preserved.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_forwarding_addresses",
    "display_name": null,
    "category": null,
    "description": "Replace the forwarding destinations and their enabled flags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_callback_url",
    "display_name": null,
    "category": null,
    "description": "Set the URL receiving incoming-email webhooks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_email_browsing",
    "display_name": null,
    "category": null,
    "description": "Enable browsing received email through the API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_email_browsing",
    "display_name": null,
    "category": null,
    "description": "Disable API browsing of received mail for this alias.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_received_email_links",
    "display_name": null,
    "category": null,
    "description": "Read the last 55 received messages for a browsable alias.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_received_email",
    "display_name": null,
    "category": null,
    "description": "Read one received message's payload and attachment links.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_callback",
    "display_name": null,
    "category": null,
    "description": "Read the payload captured by an existing webhook receiver hash.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

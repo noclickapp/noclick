@@ -21,28 +21,32 @@
    "display_name": "Add Rows",
    "category": "Rows",
    "description": "Add rows after the table's last row; the first Add to a new name makes the table.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "read_rows",
    "display_name": "Read Rows",
    "category": "Rows",
    "description": "Read rows in order, all of them or those matching a column, a page at a time.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "update_rows",
    "display_name": "Update Rows",
    "category": "Rows",
    "description": "Set columns of the rows named by id or by a match; their other columns stay.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "delete_rows",
    "display_name": "Delete Rows",
    "category": "Rows",
    "description": "Delete the rows named by id or by a match.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   }
  ],
  "agent_tool_provider": true,

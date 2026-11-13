@@ -22,112 +22,128 @@
    "display_name": "List Events",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": "Get Event",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_event",
    "display_name": "Create Event",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rates",
    "display_name": "List Rates",
    "category": "Rates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_rate",
    "display_name": "Create Rate",
    "category": "Rate",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_attendees",
    "display_name": "List Attendees",
    "category": "Attendees",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_attendee",
    "display_name": "Get Attendee",
    "category": "Attendee",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_attendee_by_barcode",
    "display_name": "Get Attendee By Barcode",
    "category": "Attendee",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_orders",
    "display_name": "List Orders",
    "category": "Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_order",
    "display_name": "Get Order",
    "category": "Order",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_invoice",
    "display_name": "Get Invoice",
    "category": "Invoice",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_resale_ticket",
    "display_name": "Validate Resale Ticket",
    "category": "Ticket",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "swap_resale_ticket",
    "display_name": "Swap Resale Ticket",
    "category": "Ticket",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_swap_history",
    "display_name": "Get Swap History",
    "category": "Ticket",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_attendee",
    "display_name": "On New Or Updated Attendee",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_order",
    "display_name": "On New Or Updated Order",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

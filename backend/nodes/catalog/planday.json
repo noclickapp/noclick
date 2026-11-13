@@ -29,84 +29,96 @@
    "display_name": "Get Portal Info",
    "category": "Workforce Metadata",
    "description": "Read actual protected portal ID, name, company name, country and timezone. Child portals and aliases are not traversed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_departments",
    "display_name": "List Departments",
    "category": "Workforce Metadata",
    "description": "Read one department metadata page; department:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_department",
    "display_name": "Get Department",
    "category": "Workforce Metadata",
    "description": "Read exact department ID; department:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_employee_groups",
    "display_name": "List Employee Groups",
    "category": "Workforce Metadata",
    "description": "Read one employee-group page; employeegroup:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_employee_group",
    "display_name": "Get Employee Group",
    "category": "Workforce Metadata",
    "description": "Read exact employee group ID; employeegroup:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_employees",
    "display_name": "List Employee Metadata",
    "category": "Workforce Metadata",
    "description": "Read active employee IDs and department/group/type bindings, omitting personal and special fields; employee:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_employee",
    "display_name": "Get Employee Metadata",
    "category": "Workforce Metadata",
    "description": "Read exact employee ID and business profile only; no custom/special fields; employee:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_department_employees",
    "display_name": "List Department Employee IDs",
    "category": "Workforce Metadata",
    "description": "Read a protected department first, then its documented unpaged employee-ID relation; no pagination query is invented. Maximum 500 IDs accepted locally.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_shifts",
    "display_name": "List Department Shift Metadata",
    "category": "Workforce Metadata",
    "description": "Read one department-scoped scheduling page within a required local date window, at most 31 inclusive days; shift:read. No punchclock details, comments or costs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_shift",
    "display_name": "Get Department Shift Metadata",
    "category": "Workforce Metadata",
    "description": "Read exact shift ID and independently verify returned department parent; shift:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_employee",
    "display_name": "On New or Updated Employee",
    "category": "Triggers",
    "description": "Monitor active employee metadata; employee:read. Existing records form a baseline. Deactivations are excluded. Maximum 1,000 records per poll; narrow Modified After for larger portals.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_shift",
    "display_name": "On New or Updated Shift",
    "category": "Triggers",
    "description": "Monitor shift metadata; shift:read. Existing records form a baseline. Deleted shifts are excluded. Maximum 1,000 records per poll; narrow Department or Modified After for larger schedules.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

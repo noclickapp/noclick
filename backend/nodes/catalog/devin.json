@@ -34,133 +34,152 @@
    "display_name": "Create Session",
    "category": "Sessions",
    "description": "Start a new Devin session from a task prompt.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sessions",
    "display_name": "List Sessions",
    "category": "Sessions",
    "description": "List Devin sessions for the organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_session",
    "display_name": "Get Session",
    "category": "Sessions",
    "description": "Retrieve a session's status, output, structured output, and metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_message",
    "display_name": "Send Message",
    "category": "Sessions",
    "description": "Send a follow-up message to an active session (auto-resumes if suspended).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tags",
    "display_name": "Update Session Tags",
    "category": "Sessions",
    "description": "Replace the tags associated with a session (max 50).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "terminate_session",
    "display_name": "Terminate Session",
    "category": "Sessions",
    "description": "Terminate an active session (cannot be resumed afterward).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_attachment",
    "display_name": "Upload Attachment",
    "category": "Attachments",
    "description": "Upload a file for Devin to work with; returns a reference URL for a prompt.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_knowledge",
    "display_name": "List Knowledge",
    "category": "Knowledge",
    "description": "List all knowledge notes and folders for the organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_knowledge",
    "display_name": "Create Knowledge",
    "category": "Knowledge",
    "description": "Create a new knowledge entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_knowledge",
    "display_name": "Update Knowledge",
    "category": "Knowledge",
    "description": "Update an existing knowledge entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_knowledge",
    "display_name": "Delete Knowledge",
    "category": "Knowledge",
    "description": "Delete a knowledge entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_playbooks",
    "display_name": "List Playbooks",
    "category": "Playbooks",
    "description": "List all playbooks accessible to the organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_playbook",
    "display_name": "Get Playbook",
    "category": "Playbooks",
    "description": "Retrieve a specific playbook's details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_playbook",
    "display_name": "Create Playbook",
    "category": "Playbooks",
    "description": "Create a new team playbook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_secrets",
    "display_name": "List Secrets",
    "category": "Secrets",
    "description": "List metadata for all org secrets (values are never returned).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_secret",
    "display_name": "Create Secret",
    "category": "Secrets",
    "description": "Create a new org secret for use in sessions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_secret",
    "display_name": "Delete Secret",
    "category": "Secrets",
    "description": "Permanently delete a secret by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_self",
    "display_name": "Get Self",
    "category": "Account",
    "description": "Return information about the authenticated API key / principal (v3).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_session_finished",
    "display_name": "On Session Finished",
    "category": "Triggers",
    "description": "Poll-based trigger that fires when a Devin session newly reaches a\n    terminal status (finished / blocked / expired / stopped).\n\n    Devin has no outbound webhooks, so this provisions a webhook + cron schedule\n    (the wake-up signal) and polls GET /v1/sessions on each tick, emitting only\n    sessions whose (session_id, status) pair has not been seen before.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

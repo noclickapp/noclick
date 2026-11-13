@@ -31,84 +31,96 @@
    "display_name": "Get Connected Network",
    "category": "Network",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_locations",
    "display_name": "List Locations",
    "category": "Locations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_location",
    "display_name": "Get Location Metadata",
    "category": "Locations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_resources",
    "display_name": "List Resource Metadata",
    "category": "Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_resource",
    "display_name": "Get Resource Metadata",
    "category": "Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_resource_metadata",
    "display_name": "Update Resource Title or Description",
    "category": "Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_resource_availability",
    "display_name": "Check Resource Availability",
    "category": "Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_bookings",
    "display_name": "List Resource Booking Metadata",
    "category": "Bookings",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_booking",
    "display_name": "Get Booking Metadata",
    "category": "Bookings",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_booking_metadata",
    "display_name": "Update Booking Title or Memo",
    "category": "Bookings",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_memberships",
    "display_name": "List Membership Metadata",
    "category": "Members",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_membership",
    "display_name": "Get Membership Metadata",
    "category": "Members",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

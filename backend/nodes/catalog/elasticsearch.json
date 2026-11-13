@@ -33,217 +33,248 @@
    "display_name": "Search",
    "category": "Search",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "count",
    "display_name": "Count Documents",
    "category": "Search",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "multi_search",
    "display_name": "Multi Search",
    "category": "Search",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "index_document",
    "display_name": "Index Document",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_document",
    "display_name": "Create Document",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_index",
    "display_name": "Bulk Index",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_write",
    "display_name": "Bulk Write",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document",
    "display_name": "Get Document",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document_source",
    "display_name": "Get Document Source",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "document_exists",
    "display_name": "Document Exists",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "multi_get",
    "display_name": "Multi Get",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_document",
    "display_name": "Update Document",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_document",
    "display_name": "Delete Document",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_by_query",
    "display_name": "Delete By Query",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_by_query",
    "display_name": "Update By Query",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reindex_documents",
    "display_name": "Reindex Documents",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_indices",
    "display_name": "List Indices",
    "category": "Index",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "index_exists",
    "display_name": "Index Exists",
    "category": "Index",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_index",
    "display_name": "Get Index",
    "category": "Index",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_index",
    "display_name": "Create Index",
    "category": "Index",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_index",
    "display_name": "Delete Index",
    "category": "Index",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refresh_index",
    "display_name": "Refresh Index",
    "category": "Index",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_mapping",
    "display_name": "Get Mapping",
    "category": "Index",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_mapping",
    "display_name": "Update Mapping",
    "category": "Index",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_settings",
    "display_name": "Get Settings",
    "category": "Index",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_settings",
    "display_name": "Update Settings",
    "category": "Index",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_aliases",
    "display_name": "List Aliases",
    "category": "Aliases",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "alias_exists",
    "display_name": "Alias Exists",
    "category": "Aliases",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_aliases",
    "display_name": "Update Aliases",
    "category": "Aliases",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_index_stats",
    "display_name": "Get Index Stats",
    "category": "Index",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_and_index",
    "display_name": "Upload & Index Document",
    "category": "Documents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

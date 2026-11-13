@@ -34,217 +34,248 @@
    "display_name": "Convert Text to Speech",
    "category": "Audio Generation",
    "description": "Convert text to speech",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stream_text_to_speech_realtime",
    "display_name": "Stream Text to Speech Realtime",
    "category": "Audio Generation",
    "description": "Stream text to speech in real-time",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "convert_text_to_speech_with_timestamps",
    "display_name": "Convert Text to Speech with Timestamps",
    "category": "Audio Generation",
    "description": "Convert text to speech with word-level timestamps",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "convert_audio_using_voice",
    "display_name": "Convert Audio Using Voice",
    "category": "Audio Generation",
    "description": "Convert audio using a voice (voice changer)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "transcribe_audio_to_text",
    "display_name": "Transcribe Audio to Text",
    "category": "Audio Generation",
    "description": "Transcribe audio to text",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_available_voices",
    "display_name": "List Available Voices",
    "category": "Voice",
    "description": "List all available voices",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_voice_by_id",
    "display_name": "Get Voice by Id",
    "category": "Voice",
    "description": "Get voice details by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clone_voice_from_audio_samples",
    "display_name": "Clone Voice from Audio Samples",
    "category": "Voice",
    "description": "Clone a voice from audio samples (Instant Voice Cloning)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_voice_settings",
    "display_name": "Edit Voice Settings",
    "category": "Voice",
    "description": "Edit voice settings and metadata",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_custom_voice",
    "display_name": "Delete Custom Voice",
    "category": "Voice",
    "description": "Delete a custom voice",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_sound_effects_from_text",
    "display_name": "Generate Sound Effects from Text",
    "category": "Audio Generation",
    "description": "Generate sound effects from text description",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "isolate_vocals_from_audio",
    "display_name": "Isolate Vocals from Audio",
    "category": "Audio Generation",
    "description": "Isolate vocals from audio",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_dubbing_project",
    "display_name": "Create Dubbing Project",
    "category": "Dubbing Project",
    "description": "Create a dubbing project for video/audio",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dubbing_project_status",
    "display_name": "Get Dubbing Project Status",
    "category": "Dubbing Project",
    "description": "Get dubbing project status and metadata",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dubbing_project",
    "display_name": "Delete Dubbing Project",
    "category": "Dubbing Project",
    "description": "Delete a dubbing project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_generated_audio_history",
    "display_name": "List Generated Audio History",
    "category": "Generated Audio History",
    "description": "List all generated audio history",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_history_item_details",
    "display_name": "Get History Item Details",
    "category": "Generated Audio History",
    "description": "Get a specific history item by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_history_item",
    "display_name": "Delete History Item",
    "category": "Generated Audio History",
    "description": "Delete a history item",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_history_item_audio",
    "display_name": "Get History Item Audio",
    "category": "Generated Audio History",
    "description": "Get audio file from history item",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "download_history_items",
    "display_name": "Download History Items",
    "category": "Generated Audio History",
    "description": "Download multiple history items",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pronunciation_dictionaries",
    "display_name": "List Pronunciation Dictionaries",
    "category": "Pronunciation Dictionary",
    "description": "List all pronunciation dictionaries",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pronunciation_dictionary_by_id",
    "display_name": "Get Pronunciation Dictionary by Id",
    "category": "Pronunciation Dictionary",
    "description": "Get a pronunciation dictionary by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_pronunciation_dictionary",
    "display_name": "Create Pronunciation Dictionary",
    "category": "Pronunciation Dictionary",
    "description": "Create a pronunciation dictionary from rules",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_pronunciation_dictionary",
    "display_name": "Delete Pronunciation Dictionary",
    "category": "Pronunciation Dictionary",
    "description": "Delete a pronunciation dictionary",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_audio_native_project",
    "display_name": "Create Audio Native Project",
    "category": "Audio Native Project",
    "description": "Create an audio native project (embeddable audio player)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_audio_native_project_details",
    "display_name": "Get Audio Native Project Details",
    "category": "Audio Native Project",
    "description": "Get audio native project details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_audio_native_project",
    "display_name": "Delete Audio Native Project",
    "category": "Audio Native Project",
    "description": "Delete an audio native project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_available_ai_models",
    "display_name": "List Available Ai Models",
    "category": "Model",
    "description": "List all available AI models",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_account_information",
    "display_name": "Get User Account Information",
    "category": "Account",
    "description": "Get user account information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscription_information",
    "display_name": "Get Subscription Information",
    "category": "Account",
    "description": "Get subscription information and limits",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_character_usage_stats",
    "display_name": "Get Character Usage Stats",
    "category": "Account",
    "description": "Get character usage statistics",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

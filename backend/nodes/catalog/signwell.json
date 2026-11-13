@@ -27,161 +27,187 @@
    "display_name": "On SignWell Event",
    "category": "Triggers",
    "description": "Start a workflow when the selected SignWell document or template event arrives.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "signwell_api_key"
+   ]
   },
   {
    "name": "get_me",
    "display_name": null,
    "category": null,
    "description": "Get credentials.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": null,
    "category": null,
    "description": "Get Account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_document",
    "display_name": null,
    "category": null,
    "description": "Create Document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document",
    "display_name": null,
    "category": null,
    "description": "Get Document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_document",
    "display_name": null,
    "category": null,
    "description": "Delete Document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_document_from_template",
    "display_name": null,
    "category": null,
    "description": "Create Document from Template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_document",
    "display_name": null,
    "category": null,
    "description": "Update and Send Document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_recipients",
    "display_name": null,
    "category": null,
    "description": "Update Recipients.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_authentication",
    "display_name": null,
    "category": null,
    "description": "Update Authentication.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_reminder",
    "display_name": null,
    "category": null,
    "description": "Send Reminder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_completed_pdf_url",
    "display_name": null,
    "category": null,
    "description": "Completed PDF.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_template",
    "display_name": null,
    "category": null,
    "description": "Create Template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template",
    "display_name": null,
    "category": null,
    "description": "Get Template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_template",
    "display_name": null,
    "category": null,
    "description": "Update Template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_template",
    "display_name": null,
    "category": null,
    "description": "Delete Template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_api_application",
    "display_name": null,
    "category": null,
    "description": "Get API Application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhooks",
    "display_name": null,
    "category": null,
    "description": "List Webhooks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webhook",
    "display_name": null,
    "category": null,
    "description": "Create Webhook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook",
    "display_name": null,
    "category": null,
    "description": "Delete Webhook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bulk_send",
    "display_name": null,
    "category": null,
    "description": "Get Bulk Send.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_bulk_sends",
    "display_name": null,
    "category": null,
    "description": "List Bulk Sendings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bulk_send_documents",
    "display_name": null,
    "category": null,
    "description": "Get Bulk Send Documents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

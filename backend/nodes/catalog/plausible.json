@@ -22,161 +22,184 @@
    "display_name": "Query Stats",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_overview",
    "display_name": "Get Overview",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_realtime",
    "display_name": "Get Realtime Visitors",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_breakdown",
    "display_name": "Get Breakdown",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_timeseries",
    "display_name": "Get Timeseries",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sites",
    "display_name": "List Sites",
    "category": "Sites",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_teams",
    "display_name": "List Teams",
    "category": "Sites",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site",
    "display_name": "Get Site",
    "category": "Sites",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_site",
    "display_name": "Create Site",
    "category": "Sites",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_site",
    "display_name": "Update Site",
    "category": "Sites",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_site",
    "display_name": "Delete Site",
    "category": "Sites",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_goals",
    "display_name": "List Goals",
    "category": "Goals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_goal",
    "display_name": "Find or Create Goal",
    "category": "Goals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_goal",
    "display_name": "Delete Goal",
    "category": "Goals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_properties",
    "display_name": "List Custom Properties",
    "category": "Custom Properties",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_custom_property",
    "display_name": "Create Custom Property",
    "category": "Custom Properties",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_custom_property",
    "display_name": "Delete Custom Property",
    "category": "Custom Properties",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guests",
    "display_name": "List Guests",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_guest",
    "display_name": "Invite Guest",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_guest",
    "display_name": "Remove Guest",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_shared_link",
    "display_name": "Find or Create Shared Link",
    "category": "Sites",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "record_event",
    "display_name": "Record Custom Event",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "record_pageview",
    "display_name": "Record Pageview",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

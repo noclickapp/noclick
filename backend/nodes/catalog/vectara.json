@@ -31,84 +31,96 @@
    "display_name": "Get Bound Corpus",
    "category": "Corpora",
    "description": "Read the explicitly bound corpus metadata and usage; proves scoped reachability only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_corpus",
    "display_name": "Create Bound Corpus",
    "category": "Corpora",
    "description": "Create the credential-bound corpus key. Requires account creation permission and may consume account resources.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_corpus",
    "display_name": "Update Corpus Metadata",
    "category": "Corpora",
    "description": "Change only the bound corpus name and description.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_documents",
    "display_name": "List Documents",
    "category": "Documents",
    "description": "Read one bounded document ID and selected scalar metadata page; omit document contents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document",
    "display_name": "Get Document Metadata",
    "category": "Documents",
    "description": "Read one selected document ID, usage and explicitly selected scalar metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "index_document",
    "display_name": "Index Text Document",
    "category": "Documents",
    "description": "Index one owned core text document. May consume resources; read back its explicit ID before repeating an uncertain write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_document_metadata",
    "display_name": "Merge Document Metadata",
    "category": "Documents",
    "description": "Merge scalar metadata fields into the selected document using PATCH.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_document_metadata",
    "display_name": "Replace Document Metadata",
    "category": "Documents",
    "description": "Replace all metadata on the selected document using PUT. An empty object clears metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_document",
    "display_name": "Delete Document",
    "category": "Documents",
    "description": "Delete one deliberately selected document. The acknowledgement does not verify absence; get it again for readback.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_corpus",
    "display_name": "Search Corpus without Generation",
    "category": "Search",
    "description": "Retrieve bounded matching text with generation, saved history and query rewriting disabled. Search may consume resources.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_corpus_jobs",
    "display_name": "List Corpus Jobs",
    "category": "Jobs",
    "description": "Read an existing job page filtered to the bound corpus; refuse jobs that also belong to another corpus.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_corpus_job",
    "display_name": "Get Corpus Job State",
    "category": "Jobs",
    "description": "Read one existing exclusively bound job; pending and failed provider states remain explicit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

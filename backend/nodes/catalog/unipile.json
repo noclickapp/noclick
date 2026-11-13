@@ -22,154 +22,176 @@
    "display_name": null,
    "category": null,
    "description": "List accounts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": null,
    "category": null,
    "description": "Get account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_chats",
    "display_name": null,
    "category": null,
    "description": "List chats.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat",
    "display_name": null,
    "category": null,
    "description": "Get chat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_chat_messages",
    "display_name": null,
    "category": null,
    "description": "List chat messages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_message",
    "display_name": null,
    "category": null,
    "description": "Send message.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_chat",
    "display_name": null,
    "category": null,
    "description": "Start chat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_chat_read_status",
    "display_name": null,
    "category": null,
    "description": "Set chat read status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message",
    "display_name": null,
    "category": null,
    "description": "Get message.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_message",
    "display_name": null,
    "category": null,
    "description": "Edit message.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_message_reaction",
    "display_name": null,
    "category": null,
    "description": "Add message reaction.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_emails",
    "display_name": null,
    "category": null,
    "description": "List emails.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email",
    "display_name": null,
    "category": null,
    "description": "Get email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_email_unread",
    "display_name": null,
    "category": null,
    "description": "Set email unread.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_email_contacts",
    "display_name": null,
    "category": null,
    "description": "List email contacts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_email",
    "display_name": null,
    "category": null,
    "description": "Send email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_own_profile",
    "display_name": null,
    "category": null,
    "description": "Get own profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_profile",
    "display_name": null,
    "category": null,
    "description": "Get profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_invitation",
    "display_name": null,
    "category": null,
    "description": "Send invitation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_relations",
    "display_name": null,
    "category": null,
    "description": "List relations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sent_invitations",
    "display_name": null,
    "category": null,
    "description": "List sent invitations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_posts",
    "display_name": null,
    "category": null,
    "description": "List user posts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

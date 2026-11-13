@@ -28,161 +28,184 @@
    "display_name": null,
    "category": null,
    "description": "Get information about this retailer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customers",
    "display_name": null,
    "category": null,
    "description": "List customers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer",
    "display_name": null,
    "category": null,
    "description": "Get a single customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer",
    "display_name": null,
    "category": null,
    "description": "Create a new customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer",
    "display_name": null,
    "category": null,
    "description": "Update a customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_products",
    "display_name": null,
    "category": null,
    "description": "List products.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product",
    "display_name": null,
    "category": null,
    "description": "Get product by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sales",
    "display_name": null,
    "category": null,
    "description": "List Sales.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sale",
    "display_name": null,
    "category": null,
    "description": "Get a single sale.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_product_inventory",
    "display_name": null,
    "category": null,
    "description": "List inventory records for a single product.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_outlets",
    "display_name": null,
    "category": null,
    "description": "List outlets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_outlet",
    "display_name": null,
    "category": null,
    "description": "Get a single outlet.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_registers",
    "display_name": null,
    "category": null,
    "description": "List registers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_register",
    "display_name": null,
    "category": null,
    "description": "Get a single register.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_brands",
    "display_name": null,
    "category": null,
    "description": "List brands.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_brand",
    "display_name": null,
    "category": null,
    "description": "Get a single brand.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_brand",
    "display_name": null,
    "category": null,
    "description": "Create brand.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_brand",
    "display_name": null,
    "category": null,
    "description": "Update a single brand.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_suppliers",
    "display_name": null,
    "category": null,
    "description": "List suppliers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_supplier",
    "display_name": null,
    "category": null,
    "description": "Get a single supplier.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_supplier",
    "display_name": null,
    "category": null,
    "description": "Create new supplier.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_groups",
    "display_name": null,
    "category": null,
    "description": "List customer groups.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_taxes",
    "display_name": null,
    "category": null,
    "description": "List taxes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -43,581 +43,674 @@
    "display_name": "List Projects",
    "category": "Projects",
    "description": "List projects accessible to the token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": "Get Project",
    "category": "Projects",
    "description": "Retrieve a single project by ID or namespace/path.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": "Create Project",
    "category": "Projects",
    "description": "Create a new project (repository).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_members",
    "display_name": "List Project Members",
    "category": "Projects",
    "description": "List members of a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issues",
    "display_name": "List Issues",
    "category": "Issues",
    "description": "List issues in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue",
    "display_name": "Get Issue",
    "category": "Issues",
    "description": "Get a single issue by its project-scoped IID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_issue",
    "display_name": "Create Issue",
    "category": "Issues",
    "description": "Create an issue in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issue",
    "display_name": "Update Issue",
    "category": "Issues",
    "description": "Edit issue fields or change its state.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_note",
    "display_name": "Add Comment",
    "category": "Issues",
    "description": "Add a comment (note) to an issue or merge request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_merge_requests",
    "display_name": "List Merge Requests",
    "category": "Merge Requests",
    "description": "List merge requests in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_merge_request",
    "display_name": "Get Merge Request",
    "category": "Merge Requests",
    "description": "Get a single merge request by IID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_merge_request",
    "display_name": "Create Merge Request",
    "category": "Merge Requests",
    "description": "Open a merge request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_merge_request",
    "display_name": "Update Merge Request",
    "category": "Merge Requests",
    "description": "Edit a merge request or change its state.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_merge_request",
    "display_name": "Merge Merge Request",
    "category": "Merge Requests",
    "description": "Accept/merge a merge request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_branches",
    "display_name": "List Branches",
    "category": "Repository",
    "description": "List repository branches.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_branch",
    "display_name": "Create Branch",
    "category": "Repository",
    "description": "Create a repository branch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_branch",
    "display_name": "Delete Branch",
    "category": "Repository",
    "description": "Delete a repository branch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_commits",
    "display_name": "List Commits",
    "category": "Repository",
    "description": "List repository commits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_commit",
    "display_name": "Create Commit",
    "category": "Repository",
    "description": "Create a commit with file actions in one call.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file",
    "display_name": "Get File",
    "category": "Repository",
    "description": "Get a repository file's content and metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_file",
    "display_name": "Create/Update File",
    "category": "Repository",
    "description": "Create or update a single repository file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tag",
    "display_name": "Create Tag",
    "category": "Repository",
    "description": "Create a git tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pipelines",
    "display_name": "List Pipelines",
    "category": "CI/CD",
    "description": "List CI/CD pipelines.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_pipeline",
    "display_name": "Create Pipeline",
    "category": "CI/CD",
    "description": "Trigger a new pipeline on a ref.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pipeline_jobs",
    "display_name": "List Pipeline Jobs",
    "category": "CI/CD",
    "description": "List jobs for a pipeline.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_release",
    "display_name": "Create Release",
    "category": "Releases",
    "description": "Create a release tied to a tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_groups",
    "display_name": "List Groups",
    "category": "Groups",
    "description": "List groups visible to the token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search",
    "display_name": "Global Search",
    "category": "Search",
    "description": "Global search across GitLab.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": "Get Current User",
    "category": "User",
    "description": "Return the authenticated user (token validity check).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pipeline",
    "display_name": "Get Pipeline",
    "category": "CI/CD",
    "description": "Get a single pipeline.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retry_pipeline",
    "display_name": "Retry Pipeline",
    "category": "CI/CD",
    "description": "Retry the failed/canceled jobs of a pipeline.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_pipeline",
    "display_name": "Cancel Pipeline",
    "category": "CI/CD",
    "description": "Cancel a pipeline's running jobs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_job",
    "display_name": "Get Job",
    "category": "CI/CD",
    "description": "Get a single job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_job_log",
    "display_name": "Get Job Log",
    "category": "CI/CD",
    "description": "Get a job's log/trace (plain text).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retry_job",
    "display_name": "Retry Job",
    "category": "CI/CD",
    "description": "Retry a single job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "play_job",
    "display_name": "Play Job",
    "category": "CI/CD",
    "description": "Run a manual job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_job",
    "display_name": "Cancel Job",
    "category": "CI/CD",
    "description": "Cancel a single job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_variables",
    "display_name": "List Variables",
    "category": "CI/CD Variables",
    "description": "List a project's CI/CD variables.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_variable",
    "display_name": "Create Variable",
    "category": "CI/CD Variables",
    "description": "Create a project CI/CD variable.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_variable",
    "display_name": "Update Variable",
    "category": "CI/CD Variables",
    "description": "Update a project CI/CD variable's value.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_variable",
    "display_name": "Delete Variable",
    "category": "CI/CD Variables",
    "description": "Delete a project CI/CD variable.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_merge_request",
    "display_name": "Approve Merge Request",
    "category": "Merge Requests",
    "description": "Approve a merge request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unapprove_merge_request",
    "display_name": "Unapprove Merge Request",
    "category": "Merge Requests",
    "description": "Remove your approval from a merge request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_notes",
    "display_name": "List Notes",
    "category": "Issues",
    "description": "List comments (notes) on an issue or merge request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_issue",
    "display_name": "Delete Issue",
    "category": "Issues",
    "description": "Delete an issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_labels",
    "display_name": "List Labels",
    "category": "Labels",
    "description": "List a project's labels.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_label",
    "display_name": "Create Label",
    "category": "Labels",
    "description": "Create a project label.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_label",
    "display_name": "Delete Label",
    "category": "Labels",
    "description": "Delete a project label.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_milestones",
    "display_name": "List Milestones",
    "category": "Milestones",
    "description": "List a project's milestones.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_milestone",
    "display_name": "Create Milestone",
    "category": "Milestones",
    "description": "Create a project milestone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_member",
    "display_name": "Add Member",
    "category": "Members",
    "description": "Add a user as a project member.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_member",
    "display_name": "Remove Member",
    "category": "Members",
    "description": "Remove a project member.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_releases",
    "display_name": "List Releases",
    "category": "Releases",
    "description": "List a project's releases.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_release",
    "display_name": "Get Release",
    "category": "Releases",
    "description": "Get a release by tag name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_commit_status",
    "display_name": "Set Commit Status",
    "category": "Repository",
    "description": "Post a build/commit status onto a commit SHA.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_environments",
    "display_name": "List Environments",
    "category": "Environments",
    "description": "List a project's environments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_environment",
    "display_name": "Create Environment",
    "category": "Environments",
    "description": "Create an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_environment",
    "display_name": "Stop Environment",
    "category": "Environments",
    "description": "Stop an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_environment",
    "display_name": "Delete Environment",
    "category": "Environments",
    "description": "Delete a stopped environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_deployments",
    "display_name": "List Deployments",
    "category": "Deployments",
    "description": "List a project's deployments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deployment",
    "display_name": "Get Deployment",
    "category": "Deployments",
    "description": "Get a single deployment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_deployment",
    "display_name": "Create Deployment",
    "category": "Deployments",
    "description": "Create a deployment record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_wikis",
    "display_name": "List Wiki Pages",
    "category": "Wikis",
    "description": "List a project's wiki pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_wiki",
    "display_name": "Get Wiki Page",
    "category": "Wikis",
    "description": "Get a wiki page by slug.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_wiki",
    "display_name": "Create Wiki Page",
    "category": "Wikis",
    "description": "Create a wiki page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_wiki",
    "display_name": "Update Wiki Page",
    "category": "Wikis",
    "description": "Update a wiki page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_wiki",
    "display_name": "Delete Wiki Page",
    "category": "Wikis",
    "description": "Delete a wiki page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_protected_branches",
    "display_name": "List Protected Branches",
    "category": "Protected Branches",
    "description": "List protected branches.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "protect_branch",
    "display_name": "Protect Branch",
    "category": "Protected Branches",
    "description": "Protect a branch (or wildcard).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unprotect_branch",
    "display_name": "Unprotect Branch",
    "category": "Protected Branches",
    "description": "Unprotect a branch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_todos",
    "display_name": "List Todos",
    "category": "Todos",
    "description": "List the current user's todos.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_todo_done",
    "display_name": "Mark Todo Done",
    "category": "Todos",
    "description": "Mark a single todo as done.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_all_todos_done",
    "display_name": "Mark All Todos Done",
    "category": "Todos",
    "description": "Mark all of the current user's todos as done.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_hooks",
    "display_name": "List Webhooks",
    "category": "Webhooks",
    "description": "List a project's webhooks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_hook",
    "display_name": "Create Webhook",
    "category": "Webhooks",
    "description": "Create a project webhook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_hook",
    "display_name": "Delete Webhook",
    "category": "Webhooks",
    "description": "Delete a project webhook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_release",
    "display_name": "Update Release",
    "category": "Releases",
    "description": "Update a release's name/notes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_release",
    "display_name": "Delete Release",
    "category": "Releases",
    "description": "Delete a release (the tag is kept).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_epics",
    "display_name": "List Epics",
    "category": "Epics",
    "description": "List a group's epics (Premium).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_epic",
    "display_name": "Create Epic",
    "category": "Epics",
    "description": "Create an epic in a group (Premium).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_epic",
    "display_name": "Update Epic",
    "category": "Epics",
    "description": "Update an epic (Premium).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_project_event",
    "display_name": "On Project Event",
    "category": null,
    "description": "Fire the workflow when a project hook event arrives.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "gitlab_oauth",
+    "gitlab_token",
+    "gitlab_mcp"
+   ]
   },
   {
    "name": "on_group_event",
    "display_name": "On Group Event (Premium)",
    "category": null,
    "description": "Fire the workflow when a GROUP hook event arrives (across all the group's\n    projects, plus group-level member/subgroup/project events).\n\n    NOTE: Group webhooks are a GitLab Premium/Ultimate feature. On a free-tier\n    group the hook can be created but GitLab never delivers events to it.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "gitlab_oauth",
+    "gitlab_token",
+    "gitlab_mcp"
+   ]
   }
  ],
  "agent_tool_provider": true,

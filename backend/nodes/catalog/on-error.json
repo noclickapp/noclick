@@ -12,7 +12,8 @@
    "display_name": null,
    "category": null,
    "description": "Execute on-error node",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   }
  ],
  "agent_tool_provider": false,

@@ -31,623 +31,712 @@
    "display_name": "List Buckets",
    "category": "Buckets",
    "description": "List the buckets in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bucket",
    "display_name": "Get Bucket",
    "category": "Buckets",
    "description": "Get a bucket's metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_bucket",
    "display_name": "Create Bucket",
    "category": "Buckets",
    "description": "Create a new bucket in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_bucket",
    "display_name": "Update Bucket",
    "category": "Buckets",
    "description": "Replace a bucket's metadata (full update).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "patch_bucket",
    "display_name": "Patch Bucket",
    "category": "Buckets",
    "description": "Partially update a bucket's metadata (e.g. labels, lifecycle).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_bucket",
    "display_name": "Delete Bucket",
    "category": "Buckets",
    "description": "Delete an empty bucket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lock_retention_policy",
    "display_name": "Lock Retention Policy",
    "category": "Buckets",
    "description": "Permanently lock a bucket's retention policy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_storage_layout",
    "display_name": "Get Storage Layout",
    "category": "Buckets",
    "description": "Return a bucket's storage layout and HNS status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restore_bucket",
    "display_name": "Restore Bucket",
    "category": "Buckets",
    "description": "Restore a soft-deleted bucket generation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "relocate_bucket",
    "display_name": "Relocate Bucket",
    "category": "Buckets",
    "description": "Start a dry-run or live bucket relocation operation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bucket_iam",
    "display_name": "Get Bucket IAM Policy",
    "category": "IAM",
    "description": "Read a bucket's IAM policy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_bucket_iam",
    "display_name": "Set Bucket IAM Policy",
    "category": "IAM",
    "description": "Replace a bucket's IAM policy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "test_iam_permissions",
    "display_name": "Test IAM Permissions",
    "category": "IAM",
    "description": "Check the caller's permissions on a bucket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_object_iam",
    "display_name": "Get Object IAM Policy",
    "category": "IAM",
    "description": "Read an object's IAM policy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_object_iam",
    "display_name": "Set Object IAM Policy",
    "category": "IAM",
    "description": "Replace an object's IAM policy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "test_object_iam_permissions",
    "display_name": "Test Object IAM Permissions",
    "category": "IAM",
    "description": "Check the caller's permissions on an object.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_objects",
    "display_name": "List Objects",
    "category": "Objects",
    "description": "List the objects in a bucket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_object",
    "display_name": "Get Object Metadata",
    "category": "Objects",
    "description": "Get an object's metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "download_object",
    "display_name": "Download Object",
    "category": "Objects",
    "description": "Download an object's bytes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_object",
    "display_name": "Upload Object",
    "category": "Objects",
    "description": "Upload a new object using simple, multipart, or resumable upload.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_object",
    "display_name": "Update Object Metadata",
    "category": "Objects",
    "description": "Replace an object's metadata (full update).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "patch_object",
    "display_name": "Patch Object Metadata",
    "category": "Objects",
    "description": "Partially update an object's metadata (e.g. contentType, custom metadata).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_object",
    "display_name": "Delete Object",
    "category": "Objects",
    "description": "Delete an object (or a specific generation).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_object",
    "display_name": "Copy Object",
    "category": "Objects",
    "description": "Copy an object to a new destination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rewrite_object",
    "display_name": "Rewrite Object",
    "category": "Objects",
    "description": "Rewrite/copy large objects (resumable via rewriteToken).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "compose_objects",
    "display_name": "Compose Objects",
    "category": "Objects",
    "description": "Concatenate up to 32 source objects into one destination object.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_object",
    "display_name": "Move Object",
    "category": "Objects",
    "description": "Rename/move an object within a bucket (HNS-enabled buckets).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restore_object",
    "display_name": "Restore Object",
    "category": "Objects",
    "description": "Restore a soft-deleted object generation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_object_acl",
    "display_name": "Get Object ACL",
    "category": "Objects",
    "description": "List the access-control entries for an object.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_restore_objects",
    "display_name": "Bulk Restore Objects",
    "category": "Objects",
    "description": "Start a long-running bulk restore for soft-deleted objects in a bucket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_notification",
    "display_name": "Create Notification Config",
    "category": "Notifications",
    "description": "Create a Pub/Sub notification config for bucket events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_notification",
    "display_name": "Get Notification Config",
    "category": "Notifications",
    "description": "Get a notification config by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_notifications",
    "display_name": "List Notification Configs",
    "category": "Notifications",
    "description": "List a bucket's Pub/Sub notification configs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_notification",
    "display_name": "Delete Notification Config",
    "category": "Notifications",
    "description": "Delete a notification config.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_hmac_key",
    "display_name": "Create HMAC Key",
    "category": "Projects",
    "description": "Create an HMAC key for a service account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_hmac_keys",
    "display_name": "List HMAC Keys",
    "category": "Projects",
    "description": "List a project's HMAC keys.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_hmac_key",
    "display_name": "Get HMAC Key",
    "category": "Projects",
    "description": "Get HMAC key metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_hmac_key",
    "display_name": "Update HMAC Key",
    "category": "Projects",
    "description": "Update an HMAC key's state.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_hmac_key",
    "display_name": "Delete HMAC Key",
    "category": "Projects",
    "description": "Delete an HMAC key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service_account",
    "display_name": "Get Service Account",
    "category": "Projects",
    "description": "Get the project's Cloud Storage service account email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_operation",
    "display_name": "Get Operation",
    "category": "Operations",
    "description": "Get a long-running bucket operation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_operations",
    "display_name": "List Operations",
    "category": "Operations",
    "description": "List long-running bucket operations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_operation",
    "display_name": "Cancel Operation",
    "category": "Operations",
    "description": "Cancel a long-running bucket operation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "advance_relocate_bucket",
    "display_name": "Advance Relocate Bucket",
    "category": "Operations",
    "description": "Advance a relocation operation to final synchronization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_bucket_acl",
    "display_name": "List Bucket ACLs",
    "category": "Bucket ACLs",
    "description": "List ACL entries on a bucket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bucket_acl",
    "display_name": "Get Bucket ACL",
    "category": "Bucket ACLs",
    "description": "Get a single bucket ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_bucket_acl",
    "display_name": "Create Bucket ACL",
    "category": "Bucket ACLs",
    "description": "Create a bucket ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "patch_bucket_acl",
    "display_name": "Patch Bucket ACL",
    "category": "Bucket ACLs",
    "description": "Patch a bucket ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_bucket_acl",
    "display_name": "Update Bucket ACL",
    "category": "Bucket ACLs",
    "description": "Replace a bucket ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_bucket_acl",
    "display_name": "Delete Bucket ACL",
    "category": "Bucket ACLs",
    "description": "Delete a bucket ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_default_object_acl",
    "display_name": "List Default Object ACLs",
    "category": "Default Object ACLs",
    "description": "List default object ACL entries on a bucket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_default_object_acl",
    "display_name": "Get Default Object ACL",
    "category": "Default Object ACLs",
    "description": "Get a single default object ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_default_object_acl",
    "display_name": "Create Default Object ACL",
    "category": "Default Object ACLs",
    "description": "Create a default object ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "patch_default_object_acl",
    "display_name": "Patch Default Object ACL",
    "category": "Default Object ACLs",
    "description": "Patch a default object ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_default_object_acl",
    "display_name": "Update Default Object ACL",
    "category": "Default Object ACLs",
    "description": "Replace a default object ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_default_object_acl",
    "display_name": "Delete Default Object ACL",
    "category": "Default Object ACLs",
    "description": "Delete a default object ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_object_acl_entries",
    "display_name": "List Object ACLs",
    "category": "Object ACLs",
    "description": "List ACL entries on an object.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_object_acl_entry",
    "display_name": "Get Object ACL Entry",
    "category": "Object ACLs",
    "description": "Get a single object ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_object_acl_entry",
    "display_name": "Create Object ACL Entry",
    "category": "Object ACLs",
    "description": "Create an object ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "patch_object_acl_entry",
    "display_name": "Patch Object ACL Entry",
    "category": "Object ACLs",
    "description": "Patch an object ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_object_acl_entry",
    "display_name": "Update Object ACL Entry",
    "category": "Object ACLs",
    "description": "Replace an object ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_object_acl_entry",
    "display_name": "Delete Object ACL Entry",
    "category": "Object ACLs",
    "description": "Delete an object ACL entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": "List Folders",
    "category": "Folders",
    "description": "List folders in an HNS-enabled bucket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_folder",
    "display_name": "Get Folder",
    "category": "Folders",
    "description": "Get folder metadata from an HNS-enabled bucket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder",
    "display_name": "Create Folder",
    "category": "Folders",
    "description": "Create a folder in an HNS-enabled bucket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_folder",
    "display_name": "Rename Folder",
    "category": "Folders",
    "description": "Rename a folder in an HNS-enabled bucket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_folder",
    "display_name": "Delete Folder",
    "category": "Folders",
    "description": "Delete an empty folder from an HNS-enabled bucket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_folder_recursive",
    "display_name": "Delete Folder Recursively",
    "category": "Folders",
    "description": "Delete a folder and all descendants from an HNS-enabled bucket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_managed_folders",
    "display_name": "List Managed Folders",
    "category": "Managed Folders",
    "description": "List managed folders in a bucket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_managed_folder",
    "display_name": "Get Managed Folder",
    "category": "Managed Folders",
    "description": "Get a managed folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_managed_folder",
    "display_name": "Create Managed Folder",
    "category": "Managed Folders",
    "description": "Create a managed folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_managed_folder",
    "display_name": "Delete Managed Folder",
    "category": "Managed Folders",
    "description": "Delete a managed folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_managed_folder_iam",
    "display_name": "Get Managed Folder IAM Policy",
    "category": "Managed Folders",
    "description": "Get the IAM policy for a managed folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_managed_folder_iam",
    "display_name": "Set Managed Folder IAM Policy",
    "category": "Managed Folders",
    "description": "Set the IAM policy for a managed folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "test_managed_folder_iam_permissions",
    "display_name": "Test Managed Folder IAM Permissions",
    "category": "Managed Folders",
    "description": "Test caller permissions on a managed folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_anywhere_caches",
    "display_name": "List Anywhere Caches",
    "category": "Anywhere Cache",
    "description": "List Rapid Cache instances for a bucket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_anywhere_cache",
    "display_name": "Get Anywhere Cache",
    "category": "Anywhere Cache",
    "description": "Get a Rapid Cache instance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_anywhere_cache",
    "display_name": "Create Anywhere Cache",
    "category": "Anywhere Cache",
    "description": "Create a Rapid Cache instance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_anywhere_cache",
    "display_name": "Update Anywhere Cache",
    "category": "Anywhere Cache",
    "description": "Update a Rapid Cache instance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_anywhere_cache",
    "display_name": "Disable Anywhere Cache",
    "category": "Anywhere Cache",
    "description": "Disable a Rapid Cache instance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_anywhere_cache",
    "display_name": "Pause Anywhere Cache",
    "category": "Anywhere Cache",
    "description": "Pause an Anywhere Cache instance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_anywhere_cache",
    "display_name": "Resume Anywhere Cache",
    "category": "Anywhere Cache",
    "description": "Resume a Rapid Cache instance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project_intelligence_config",
    "display_name": "Get Project Intelligence Config",
    "category": "Storage Intelligence",
    "description": "Get the Storage Intelligence config for a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project_intelligence_config",
    "display_name": "Update Project Intelligence Config",
    "category": "Storage Intelligence",
    "description": "Update the Storage Intelligence config for a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_folder_intelligence_config",
    "display_name": "Get Folder Intelligence Config",
    "category": "Storage Intelligence",
    "description": "Get the Storage Intelligence config for a folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_folder_intelligence_config",
    "display_name": "Update Folder Intelligence Config",
    "category": "Storage Intelligence",
    "description": "Update the Storage Intelligence config for a folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization_intelligence_config",
    "display_name": "Get Organization Intelligence Config",
    "category": "Storage Intelligence",
    "description": "Get the Storage Intelligence config for an organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_organization_intelligence_config",
    "display_name": "Update Organization Intelligence Config",
    "category": "Storage Intelligence",
    "description": "Update the Storage Intelligence config for an organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_object",
    "display_name": "On New Object",
    "category": "Triggers",
    "description": "Poll a bucket/prefix and trigger on newly-created objects.\n\n    GCS has no direct HTTP webhook (only Pub/Sub notifications), so this trigger\n    is poll-based: an external scheduler POSTs the node's webhook URL on the\n    configured schedule, ``execute()`` lists objects, and emits only those whose\n    creation time is newer than the last poll. The cursor (``last_polled_at``)\n    is the max ``timeCreated`` seen so far, so already-seen objects never\n    re-emit. The first poll baselines (records the cursor, emits nothing).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

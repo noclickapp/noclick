@@ -22,238 +22,272 @@
    "display_name": "Test Authentication",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Projects",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": "Get Project",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": "Create Project",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project",
    "display_name": "Update Project",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_project",
    "display_name": "Delete Project",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_data",
    "display_name": "List Data",
    "category": "Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_data",
    "display_name": "Get Data",
    "category": "Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_data",
    "display_name": "Export Data",
    "category": "Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_data",
    "display_name": "Create Data",
    "category": "Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_data",
    "display_name": "Update Data",
    "category": "Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_data",
    "display_name": "Delete Data",
    "category": "Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_docs",
    "display_name": "List Docs",
    "category": "Docs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_doc",
    "display_name": "Get Doc",
    "category": "Docs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_doc",
    "display_name": "Export Doc",
    "category": "Docs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_doc",
    "display_name": "Create Doc",
    "category": "Docs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_doc",
    "display_name": "Update Doc",
    "category": "Docs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_doc",
    "display_name": "Delete Doc",
    "category": "Docs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": "List Contacts",
    "category": "Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": "Get Contact",
    "category": "Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact",
    "display_name": "Create Contact",
    "category": "Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact",
    "display_name": "Update Contact",
    "category": "Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact",
    "display_name": "Delete Contact",
    "category": "Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": "List Tags",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tag",
    "display_name": "Get Tag",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tag_boards",
    "display_name": "List Tag Boards",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tag",
    "display_name": "Create Tag",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_highlights",
    "display_name": "List Highlights",
    "category": "Highlights",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_highlight",
    "display_name": "Get Highlight",
    "category": "Highlights",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_highlight",
    "display_name": "Create Highlight",
    "category": "Highlights",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_workspace",
    "display_name": "Search Workspace",
    "category": "Search",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_data",
    "display_name": "On New Data",
    "category": "Triggers",
    "description": "Poll for new research data metadata, without replaying existing data.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_doc",
    "display_name": "On New Doc",
    "category": "Triggers",
    "description": "Poll for new research doc metadata; export the doc to read its content.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_highlight",
    "display_name": "On New or Updated Highlight",
    "category": "Triggers",
    "description": "Detect new highlight IDs and changed updated_at values from List highlights.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

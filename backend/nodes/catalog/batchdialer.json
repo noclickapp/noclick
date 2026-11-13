@@ -22,112 +22,128 @@
    "display_name": null,
    "category": null,
    "description": "List active campaigns.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_campaigns",
    "display_name": null,
    "category": null,
    "description": "Search campaigns, returning one numbered page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contact_lists",
    "display_name": null,
    "category": null,
    "description": "List the account's contact lists.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": null,
    "category": null,
    "description": "List one page of contacts; BatchDialer documents filters in a GET JSON body.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact",
    "display_name": null,
    "category": null,
    "description": "Add one contact. The provider spells mailingpostacode without the second l.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "import_contacts",
    "display_name": null,
    "category": null,
    "description": "Synchronously import contacts into explicit campaigns; inspect ids, success and warnings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": null,
    "category": null,
    "description": "Read a contact by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact",
    "display_name": null,
    "category": null,
    "description": "Update the supplied contact fields with BatchDialer's PUT endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact",
    "display_name": null,
    "category": null,
    "description": "Delete one contact permanently by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_vendor_contact_ids",
    "display_name": null,
    "category": null,
    "description": "Look up external vendor IDs for BatchDialer contact IDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_recent_calls",
    "display_name": null,
    "category": null,
    "description": "Read one page of recent calls.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_recent_calls_v2",
    "display_name": null,
    "category": null,
    "description": "Read a cursor page; pass the response's nextPage unchanged as next_page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lead_calls",
    "display_name": null,
    "category": null,
    "description": "Retrieve call history by external vendor contact ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transcription",
    "display_name": null,
    "category": null,
    "description": "Read a call's JSON transcription segments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_agent_report",
    "display_name": null,
    "category": null,
    "description": "Read agent performance with optional date, agent and campaign filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_available_numbers",
    "display_name": null,
    "category": null,
    "description": "Find available phone numbers by state and/or area code.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

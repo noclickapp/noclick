@@ -22,175 +22,200 @@
    "display_name": "List Tasks",
    "category": "Tasks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task",
    "display_name": "Get Task",
    "category": "Tasks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task",
    "display_name": "Create Task",
    "category": "Tasks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task",
    "display_name": "Update Task",
    "category": "Tasks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task",
    "display_name": "Delete Task",
    "category": "Tasks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": "List Contacts",
    "category": "Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": "Get Contact",
    "category": "Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact",
    "display_name": "Create Contact",
    "category": "Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact",
    "display_name": "Update Contact",
    "category": "Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact",
    "display_name": "Delete Contact",
    "category": "Contacts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_animals",
    "display_name": "List Animals",
    "category": "Animals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_animal",
    "display_name": "Get Animal",
    "category": "Animals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_animal",
    "display_name": "Create Animal",
    "category": "Animals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_animal",
    "display_name": "Update Animal",
    "category": "Animals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_orders",
    "display_name": "List Orders",
    "category": "Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_order",
    "display_name": "Get Order",
    "category": "Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_order",
    "display_name": "Create Order",
    "category": "Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_order",
    "display_name": "Update Order",
    "category": "Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_products",
    "display_name": "List Products",
    "category": "Products",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product",
    "display_name": "Get Product",
    "category": "Products",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_crops",
    "display_name": "List Crops",
    "category": "Crops",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_crop",
    "display_name": "Get Crop",
    "category": "Crops",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_task_changed",
    "display_name": "New or Updated Task",
    "category": "Triggers",
    "description": "Watch changes by scanning up to 2,000 records sorted by updated_at. Existing records form the initial baseline. A truncated scan fails without advancing the baseline.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_animal_changed",
    "display_name": "New or Updated Animal",
    "category": "Triggers",
    "description": "Watch changes by scanning up to 2,000 records sorted by updated_at. Existing records form the initial baseline. A truncated scan fails without advancing the baseline.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_crop_changed",
    "display_name": "New or Updated Crop Planting",
    "category": "Triggers",
    "description": "Watch changes by scanning up to 2,000 records sorted by updated_at. Existing records form the initial baseline. A truncated scan fails without advancing the baseline.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

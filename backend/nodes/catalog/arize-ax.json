@@ -30,175 +30,200 @@
    "display_name": null,
    "category": null,
    "description": "List spaces.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": null,
    "category": null,
    "description": "List projects.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": null,
    "category": null,
    "description": "Get a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_datasets",
    "display_name": null,
    "category": null,
    "description": "List datasets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_dataset",
    "display_name": null,
    "category": null,
    "description": "Create a dataset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dataset",
    "display_name": null,
    "category": null,
    "description": "Get a dataset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_dataset",
    "display_name": null,
    "category": null,
    "description": "Update a dataset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dataset",
    "display_name": null,
    "category": null,
    "description": "Delete a dataset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dataset_examples",
    "display_name": null,
    "category": null,
    "description": "List dataset examples.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "insert_dataset_examples",
    "display_name": null,
    "category": null,
    "description": "Add new examples to a dataset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_dataset_examples",
    "display_name": null,
    "category": null,
    "description": "Update existing examples in a dataset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dataset_examples",
    "display_name": null,
    "category": null,
    "description": "Delete dataset examples.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_experiments",
    "display_name": null,
    "category": null,
    "description": "List experiments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_experiment",
    "display_name": null,
    "category": null,
    "description": "Create an experiment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_experiment",
    "display_name": null,
    "category": null,
    "description": "Get an experiment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_experiment",
    "display_name": null,
    "category": null,
    "description": "Delete an experiment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_experiment_runs",
    "display_name": null,
    "category": null,
    "description": "List experiment runs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "insert_experiment_runs",
    "display_name": null,
    "category": null,
    "description": "Append runs to an experiment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_prompts",
    "display_name": null,
    "category": null,
    "description": "List prompts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_prompt",
    "display_name": null,
    "category": null,
    "description": "Create a prompt.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_prompt",
    "display_name": null,
    "category": null,
    "description": "Get a prompt.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_prompt",
    "display_name": null,
    "category": null,
    "description": "Update a prompt.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_prompt",
    "display_name": null,
    "category": null,
    "description": "Delete a prompt.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_prompt_versions",
    "display_name": null,
    "category": null,
    "description": "List prompt versions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_prompt_version",
    "display_name": null,
    "category": null,
    "description": "Create a prompt version.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

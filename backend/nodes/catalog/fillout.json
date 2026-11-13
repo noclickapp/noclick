@@ -22,189 +22,216 @@
    "display_name": "List Forms",
    "category": "Forms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_form",
    "display_name": "Get Form Metadata",
    "category": "Forms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_submissions",
    "display_name": "List Submissions",
    "category": "Submissions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_submission",
    "display_name": "Get Submission",
    "category": "Submissions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_submissions",
    "display_name": "Create Submissions",
    "category": "Submissions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_submission",
    "display_name": "Delete Submission",
    "category": "Submissions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_form_webhook",
    "display_name": "Create Form Webhook",
    "category": "Form Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_form_webhook",
    "display_name": "Remove Form Webhook",
    "category": "Form Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_databases",
    "display_name": "List Databases",
    "category": "Databases",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_database",
    "display_name": "Get Database",
    "category": "Databases",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_database",
    "display_name": "Create Database",
    "category": "Databases",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_database",
    "display_name": "Delete Database",
    "category": "Databases",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_table",
    "display_name": "Create Table",
    "category": "Tables",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_table",
    "display_name": "Rename Table",
    "category": "Tables",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_table",
    "display_name": "Delete Table",
    "category": "Tables",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_fields",
    "display_name": "List Fields",
    "category": "Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_field",
    "display_name": "Create Field",
    "category": "Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_field",
    "display_name": "Update Field",
    "category": "Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_field",
    "display_name": "Delete Field",
    "category": "Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_records",
    "display_name": "List Records",
    "category": "Records",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_record",
    "display_name": "Get Record",
    "category": "Records",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_record",
    "display_name": "Create Record",
    "category": "Records",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_record",
    "display_name": "Update Record",
    "category": "Records",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_record",
    "display_name": "Delete Record",
    "category": "Records",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_database_webhooks",
    "display_name": "List Database Webhooks",
    "category": "Database Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_database_webhook",
    "display_name": "Create Database Webhook",
    "category": "Database Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_database_webhook",
    "display_name": "Delete Database Webhook",
    "category": "Database Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

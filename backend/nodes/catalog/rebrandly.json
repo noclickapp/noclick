@@ -22,35 +22,40 @@
    "display_name": "List Workspace Metadata",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_domains",
    "display_name": "List Domain Metadata",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain",
    "display_name": "Get Domain Metadata",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_links",
    "display_name": "List Link Metadata",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_link",
    "display_name": "Get Link Metadata",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

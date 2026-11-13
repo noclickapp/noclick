@@ -22,147 +22,168 @@
    "display_name": null,
    "category": null,
    "description": "Retrieve a list of Documents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document",
    "display_name": null,
    "category": null,
    "description": "Retrieve a Document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_document",
    "display_name": null,
    "category": null,
    "description": "Create a Document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_document",
    "display_name": null,
    "category": null,
    "description": "Delete a Document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_documents",
    "display_name": null,
    "category": null,
    "description": "Search documents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_document_attachments",
    "display_name": null,
    "category": null,
    "description": "Retrieve a list of Document Attachments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document_attachment",
    "display_name": null,
    "category": null,
    "description": "Retrieve a Document Attachment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_document_attachment",
    "display_name": null,
    "category": null,
    "description": "Create a Document Attachment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_signrequests",
    "display_name": null,
    "category": null,
    "description": "Retrieve a list of SignRequests.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_signrequest",
    "display_name": null,
    "category": null,
    "description": "Retrieve a SignRequest.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_signrequest",
    "display_name": null,
    "category": null,
    "description": "Create a SignRequest.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "quick_create_signrequest",
    "display_name": null,
    "category": null,
    "description": "Quick create a SignRequest.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_signrequest",
    "display_name": null,
    "category": null,
    "description": "Cancel a SignRequest.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resend_signrequest_email",
    "display_name": null,
    "category": null,
    "description": "Resend a SignRequest.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "forward_signer",
    "display_name": null,
    "category": null,
    "description": "Forward a SignRequest to a different signer by email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": null,
    "category": null,
    "description": "Retrieve a list of Templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template",
    "display_name": null,
    "category": null,
    "description": "Retrieve a Template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": null,
    "category": null,
    "description": "Retrieve a list of Events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": null,
    "category": null,
    "description": "Retrieve an Event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_teams",
    "display_name": null,
    "category": null,
    "description": "Retrieve a list of Teams.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team",
    "display_name": null,
    "category": null,
    "description": "Retrieve a Team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

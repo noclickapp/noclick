@@ -26,140 +26,160 @@
    "display_name": null,
    "category": null,
    "description": "List incidents in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_incident",
    "display_name": null,
    "category": null,
    "description": "Get incident in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_incident",
    "display_name": null,
    "category": null,
    "description": "Create incident in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_incident",
    "display_name": null,
    "category": null,
    "description": "Update incident in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": null,
    "category": null,
    "description": "List users in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": null,
    "category": null,
    "description": "Get user in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_user",
    "display_name": null,
    "category": null,
    "description": "Create user in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_user",
    "display_name": null,
    "category": null,
    "description": "Update user in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_solutions",
    "display_name": null,
    "category": null,
    "description": "List solutions in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_solution",
    "display_name": null,
    "category": null,
    "description": "Get solution in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_solution",
    "display_name": null,
    "category": null,
    "description": "Create solution in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_solution",
    "display_name": null,
    "category": null,
    "description": "Update solution in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_problems",
    "display_name": null,
    "category": null,
    "description": "List problems in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_problem",
    "display_name": null,
    "category": null,
    "description": "Get problem in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_problem",
    "display_name": null,
    "category": null,
    "description": "Create problem in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_problem",
    "display_name": null,
    "category": null,
    "description": "Update problem in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_changes",
    "display_name": null,
    "category": null,
    "description": "List changes in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_change",
    "display_name": null,
    "category": null,
    "description": "Get change in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_change",
    "display_name": null,
    "category": null,
    "description": "Create change in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_change",
    "display_name": null,
    "category": null,
    "description": "Update change in SolarWinds Service Desk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

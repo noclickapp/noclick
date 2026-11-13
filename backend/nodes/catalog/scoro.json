@@ -22,175 +22,200 @@
    "display_name": "List Companies",
    "category": "CRM",
    "description": "List Companies",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company",
    "display_name": "Get Company",
    "category": "CRM",
    "description": "Get Company",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_company",
    "display_name": "Create Company",
    "category": "CRM",
    "description": "Create Company",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_company",
    "display_name": "Update Company",
    "category": "CRM",
    "description": "Update Company",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_persons",
    "display_name": "List Persons",
    "category": "CRM",
    "description": "List Persons",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_person",
    "display_name": "Get Person",
    "category": "CRM",
    "description": "Get Person",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_person",
    "display_name": "Create Person",
    "category": "CRM",
    "description": "Create Person",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_person",
    "display_name": "Update Person",
    "category": "CRM",
    "description": "Update Person",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Projects",
    "category": "Projects",
    "description": "List Projects",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": "Get Project",
    "category": "Projects",
    "description": "Get Project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": "Create Project",
    "category": "Projects",
    "description": "Create Project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project",
    "display_name": "Update Project",
    "category": "Projects",
    "description": "Update Project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tasks",
    "display_name": "List Tasks",
    "category": "Tasks",
    "description": "List Tasks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task",
    "display_name": "Get Task",
    "category": "Tasks",
    "description": "Get Task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task",
    "display_name": "Create Task",
    "category": "Tasks",
    "description": "Create Task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task",
    "display_name": "Update Task",
    "category": "Tasks",
    "description": "Update Task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_quotes",
    "display_name": "List Quotes",
    "category": "Sales",
    "description": "List Quotes",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_quote",
    "display_name": "Get Quote",
    "category": "Sales",
    "description": "Get Quote",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_quote",
    "display_name": "Create Quote",
    "category": "Sales",
    "description": "Create Quote",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invoices",
    "display_name": "List Invoices",
    "category": "Sales",
    "description": "List Invoices",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_invoice",
    "display_name": "Get Invoice",
    "category": "Sales",
    "description": "Get Invoice",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_invoice",
    "display_name": "Create Invoice",
    "category": "Sales",
    "description": "Create Invoice",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_user",
    "display_name": "Get Current User",
    "category": "Account",
    "description": "Get Current User",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_time_entries",
    "display_name": "List Time Entries",
    "category": "Time",
    "description": "List Time Entries",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_time_entry",
    "display_name": "Create Time Entry",
    "category": "Time",
    "description": "Create Time Entry",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -34,140 +34,160 @@
    "display_name": null,
    "category": null,
    "description": "Read the account that owns this API key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file",
    "display_name": null,
    "category": null,
    "description": "Get a file report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_url",
    "display_name": null,
    "category": null,
    "description": "Get a URL report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain",
    "display_name": null,
    "category": null,
    "description": "Get a domain report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ip",
    "display_name": null,
    "category": null,
    "description": "Get an IP address report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_analysis",
    "display_name": null,
    "category": null,
    "description": "Get the status and results of a URL or file analysis.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scan_url",
    "display_name": null,
    "category": null,
    "description": "Submit a URL to VirusTotal for scanning.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rescan_file",
    "display_name": null,
    "category": null,
    "description": "Request another analysis of a previously submitted file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rescan_url",
    "display_name": null,
    "category": null,
    "description": "Request another analysis of a previously submitted URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file_behavior_summary",
    "display_name": null,
    "category": null,
    "description": "Get the summary of sandbox behavior reports for a file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_file_comments",
    "display_name": null,
    "category": null,
    "description": "Get one page of comments for this file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_file_votes",
    "display_name": null,
    "category": null,
    "description": "Get one page of votes for this file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_url_comments",
    "display_name": null,
    "category": null,
    "description": "Get one page of comments for this url.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_url_votes",
    "display_name": null,
    "category": null,
    "description": "Get one page of votes for this url.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_domain_comments",
    "display_name": null,
    "category": null,
    "description": "Get one page of comments for this domain.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_domain_votes",
    "display_name": null,
    "category": null,
    "description": "Get one page of votes for this domain.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ip_comments",
    "display_name": null,
    "category": null,
    "description": "Get one page of comments for this ip.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ip_votes",
    "display_name": null,
    "category": null,
    "description": "Get one page of votes for this ip.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_ioc_notification",
    "display_name": "New IoC Notification",
    "category": "Triggers",
    "description": "Watch new IoC Stream notifications; requires IoC Stream access on your plan.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_livehunt_match",
    "display_name": "New Livehunt Match",
    "category": "Triggers",
    "description": "Watch new Livehunt YARA matches; requires Livehunt access on your plan.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

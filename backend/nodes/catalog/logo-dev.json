@@ -38,119 +38,136 @@
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_brand_by_id",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_brand_logo",
    "display_name": null,
    "category": null,
    "description": "Returns JSON with a temporary image URL; costs API credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_brandmark",
    "display_name": null,
    "category": null,
    "description": "Returns the wide logo lockup as a temporary image URL; costs API credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_brands",
    "display_name": null,
    "category": null,
    "description": "Each search costs API credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscription",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "subscribe_brand",
    "display_name": null,
    "category": null,
    "description": "Paid plan. Enables brand.updated events; safe to repeat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unsubscribe_brand",
    "display_name": null,
    "category": null,
    "description": "Paid plan. Stops brand.updated events for this brand.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webhook_endpoint",
    "display_name": null,
    "category": null,
    "description": "Paid plan and owner/admin role. Registers a URL for event deliveries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhook_endpoints",
    "display_name": null,
    "category": null,
    "description": "Paid plan. Returns all team endpoints; not paginated.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webhook_endpoint",
    "display_name": null,
    "category": null,
    "description": "Requires a paid plan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_webhook_endpoint",
    "display_name": null,
    "category": null,
    "description": "Paid plan and owner/admin role. Omitted fields retain their current value.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook_endpoint",
    "display_name": null,
    "category": null,
    "description": "Paid plan and owner/admin role. Permanently stops deliveries to this endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webhook_secret",
    "display_name": null,
    "category": null,
    "description": "Paid plan. Returns sensitive signing material; protect workflow outputs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rotate_webhook_secret",
    "display_name": null,
    "category": null,
    "description": "Paid plan and owner/admin role. Replaces the secret; update your verification code with the returned key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": null,
    "category": null,
    "description": "Returns plan and credit balances. Not billed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "flag_domains",
    "display_name": null,
    "category": null,
    "description": "Pro plan or above. Submits corrections for manual review; does not immediately change brand data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

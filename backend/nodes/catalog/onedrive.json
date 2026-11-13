@@ -22,259 +22,296 @@
    "display_name": "Get Item Metadata",
    "category": "Item",
    "description": "Get metadata for a file or folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folder_contents",
    "display_name": "List Folder Contents",
    "category": "Folder",
    "description": "List contents of a folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_file",
    "display_name": "Upload File",
    "category": "File",
    "description": "Upload a file (for files up to 4MB)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_large_file_upload_session",
    "display_name": "Create Large File Upload Session",
    "category": "File",
    "description": "Create upload session for large files (>4MB)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "download_item",
    "display_name": "Download Item",
    "category": "Item",
    "description": "Download file content",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_item_metadata",
    "display_name": "Update Item Metadata",
    "category": "Item",
    "description": "Update file or folder metadata",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder",
    "display_name": "Create Folder",
    "category": "Folder",
    "description": "Create a new folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_item",
    "display_name": "Copy Item",
    "category": "Item",
    "description": "Copy a file or folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_item",
    "display_name": "Move Item",
    "category": "Item",
    "description": "Move a file or folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_item",
    "display_name": "Delete Item",
    "category": "Item",
    "description": "Delete a file or folder (moves to recycle bin)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restore_item_from_recycle_bin",
    "display_name": "Restore Item from Recycle Bin",
    "category": "Item",
    "description": "Restore a deleted item from recycle bin",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "permanently_delete_item",
    "display_name": "Permanently Delete Item",
    "category": "Item",
    "description": "Permanently delete an item (cannot be recovered)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_drive_info",
    "display_name": "Get Drive Info",
    "category": "Drive",
    "description": "Get drive information and quota",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_drive_items",
    "display_name": "Search Drive Items",
    "category": "Drive",
    "description": "Search for items in OneDrive",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "track_drive_changes",
    "display_name": "Track Drive Changes",
    "category": "Drive",
    "description": "Track changes in OneDrive (delta query)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_sharing_link",
    "display_name": "Create Sharing Link",
    "category": "File",
    "description": "Create a sharing link for an item",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_permissions",
    "display_name": "List Item Permissions",
    "category": "Item",
    "description": "List permissions for an item",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "grant_item_permission",
    "display_name": "Grant Item Permission",
    "category": "Item",
    "description": "Grant permission to a user or group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_item_permission",
    "display_name": "Update Item Permission",
    "category": "Item",
    "description": "Update an existing permission",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_item_permission",
    "display_name": "Delete Item Permission",
    "category": "Item",
    "description": "Remove a permission",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_sharing_invitation",
    "display_name": "Send Sharing Invitation",
    "category": "File",
    "description": "Send a sharing invitation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_file_versions",
    "display_name": "List File Versions",
    "category": "File",
    "description": "List all versions of a file",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file_version",
    "display_name": "Get File Version",
    "category": "File",
    "description": "Get a specific version of a file",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restore_file_version",
    "display_name": "Restore File Version",
    "category": "File",
    "description": "Restore a file to a previous version",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_thumbnails",
    "display_name": "List Item Thumbnails",
    "category": "File",
    "description": "Get thumbnail images for a file",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_item_thumbnail",
    "display_name": "Get Item Thumbnail",
    "category": "Item",
    "description": "Get a specific thumbnail size",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_item_preview_url",
    "display_name": "Get Item Preview Url",
    "category": "Item",
    "description": "Get a preview URL for a file",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_item_download_stream",
    "display_name": "Get Item Download Stream",
    "category": "Item",
    "description": "Get download stream URL for a file",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_out_file",
    "display_name": "Check Out File",
    "category": "Item",
    "description": "Check out a file (lock for editing)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_in_file",
    "display_name": "Check in File",
    "category": "Item",
    "description": "Check in a file (unlock and save)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "discard_file_checkout",
    "display_name": "Discard File Checkout",
    "category": "Item",
    "description": "Discard checkout (unlock without saving)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_item_analytics",
    "display_name": "Get Item Analytics",
    "category": "Item",
    "description": "Get analytics for a file",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_special_folder",
    "display_name": "Get Special Folder",
    "category": "Folder",
    "description": "Access special folders (Documents, Photos, etc.)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_shared_items",
    "display_name": "List Shared Items",
    "category": "Drive",
    "description": "List items shared with the user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_recent_items",
    "display_name": "List Recent Items",
    "category": "Drive",
    "description": "List recently accessed items",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "follow_item",
    "display_name": "Follow Item",
    "category": "Item",
    "description": "Follow an item for updates",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unfollow_item",
    "display_name": "Unfollow Item",
    "category": "Item",
    "description": "Unfollow an item",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

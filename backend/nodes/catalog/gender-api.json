@@ -26,70 +26,80 @@
    "display_name": null,
    "category": null,
    "description": "Query gender from one first name, optionally localized.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_full_name",
    "display_name": null,
    "category": null,
    "description": "Split one full name and query gender.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_email",
    "display_name": null,
    "category": null,
    "description": "Extract a name from an email address and query gender.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_first_names_batch",
    "display_name": null,
    "category": null,
    "description": "Query gender for multiple first names in a single request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_full_names_batch",
    "display_name": null,
    "category": null,
    "description": "Split and query multiple full names in a single request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_emails_batch",
    "display_name": null,
    "category": null,
    "description": "Extract names and query multiple email addresses in a single request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_origin_first_name",
    "display_name": null,
    "category": null,
    "description": "Query likely countries of origin and gender from a first name (two credits).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_origin_full_name",
    "display_name": null,
    "category": null,
    "description": "Query likely countries of origin and gender from a full name (two credits).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_origin_email",
    "display_name": null,
    "category": null,
    "description": "Query likely countries of origin and gender from an email address (two credits).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_statistics",
    "display_name": null,
    "category": null,
    "description": "Read this account's remaining credits, limit status and last month's usage (free).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

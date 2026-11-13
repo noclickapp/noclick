@@ -22,14 +22,16 @@
    "display_name": "Read Protected Device Catalog Metadata",
    "category": "Device Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_device",
    "display_name": "Get Selected Device Metadata",
    "category": "Device Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,105 +22,120 @@
    "display_name": null,
    "category": null,
    "description": "List device descriptors available to your account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_device_status",
    "display_name": null,
    "category": null,
    "description": "Read live device availability; public devices have aggregated states.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_session",
    "display_name": null,
    "category": null,
    "description": "Allocate a device; poll Get Session until ACTIVE before interacting. Uses your device quota.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sessions",
    "display_name": null,
    "category": null,
    "description": "Read pending, active and recently closed sessions for the authenticated account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_session",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "close_session",
    "display_name": null,
    "category": null,
    "description": "Release a device session; CLOSING is an acknowledgement, not completed cleanup.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "execute_shell_command",
    "display_name": null,
    "category": null,
    "description": "Execute a short Android adb shell command without the adb shell prefix.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "open_url",
    "display_name": null,
    "category": null,
    "description": "Open a URL or iOS deep link on an ACTIVE device; Android uses Chrome.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "install_app",
    "display_name": null,
    "category": null,
    "description": "Start a background app installation; poll List App Installations for completion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_app_installations",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "uninstall_app",
    "display_name": null,
    "category": null,
    "description": "Uninstall the specified iOS bundle or Android package from this device.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "apply_settings",
    "display_name": null,
    "category": null,
    "description": "Change orientation and optional Android locale/animations during an ACTIVE session.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "take_screenshot",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_appium",
    "display_name": null,
    "category": null,
    "description": "Start the hosted Appium server for this device session.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_appium",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

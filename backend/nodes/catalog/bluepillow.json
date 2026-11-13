@@ -22,77 +22,88 @@
    "display_name": null,
    "category": null,
    "description": "Read public service health and per-booking-site status; does not test a key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "issue_anonymous_key",
    "display_name": null,
    "category": null,
    "description": "Issue a persistent anonymous key. Reuse existing keys; issuance is IP-capped.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_property_preview",
    "display_name": null,
    "category": null,
    "description": "Read a public static preview without pricing or availability.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_property",
    "display_name": null,
    "category": null,
    "description": "Read property facts and optional review enrichments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resolve_destination",
    "display_name": null,
    "category": null,
    "description": "Resolve a place name to destination IDs. This authenticated read also checks key acceptance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "discover_destinations",
    "display_name": null,
    "category": null,
    "description": "Discover destinations within a radius of a coordinate.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_stays",
    "display_name": null,
    "category": null,
    "description": "Search ranked stays for a resolved destination. One page per execution.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "recommend_stay",
    "display_name": null,
    "category": null,
    "description": "Choose a recommended stay and alternatives for a resolved destination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "recommend_by_hotel",
    "display_name": null,
    "category": null,
    "description": "Find the best booking site for a property already chosen by the user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_offer",
    "display_name": null,
    "category": null,
    "description": "Re-price a previously seen offer; still_valid=false is a successful validation verdict.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "initiate_booking",
    "display_name": null,
    "category": null,
    "description": "Create a tracked booking link for the end user. This does not book or pay.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

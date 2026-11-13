@@ -22,98 +22,112 @@
    "display_name": null,
    "category": null,
    "description": "Read the account name and UID to verify the API key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_properties",
    "display_name": null,
    "category": null,
    "description": "List account properties and their included related data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_property",
    "display_name": null,
    "category": null,
    "description": "Read a single property and its related data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_availability",
    "display_name": null,
    "category": null,
    "description": "Find available properties using the documented search criteria.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_calendar",
    "display_name": null,
    "category": null,
    "description": "Read one property's calendar, up to twelve months per request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_calendar",
    "display_name": null,
    "category": null,
    "description": "Queue calendar changes; acceptance does not mean they have been applied.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_hooks",
    "display_name": null,
    "category": null,
    "description": "Read registered webhook subscriptions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_hook",
    "display_name": null,
    "category": null,
    "description": "Register a webhook; retain its returned secret to verify deliveries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_hook",
    "display_name": null,
    "category": null,
    "description": "Unsubscribe a webhook by its ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rotate_hook_secret",
    "display_name": null,
    "category": null,
    "description": "Rotate a webhook's signing secret; update the receiver immediately.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_booking_attributes",
    "display_name": null,
    "category": null,
    "description": "List writable booking attribute definitions (requires partner client ID).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_custom_booking_attribute",
    "display_name": null,
    "category": null,
    "description": "Create a namespaced attribute; Uplisting must configure the partner prefix.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_booking_attributes",
    "display_name": null,
    "category": null,
    "description": "Set writable custom booking attributes (requires partner client ID).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_booking",
    "display_name": null,
    "category": null,
    "description": "Create a confirmed booking (requires partner client ID).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

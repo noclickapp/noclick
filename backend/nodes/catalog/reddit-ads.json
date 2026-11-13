@@ -22,147 +22,168 @@
    "display_name": "Get My Ads Identity",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_my_businesses",
    "display_name": "List My Businesses",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_business",
    "display_name": "Get Business",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ad_accounts",
    "display_name": "List Business Ad Accounts",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ad_account",
    "display_name": "Get Ad Account",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_campaigns",
    "display_name": "List Campaigns",
    "category": "Campaign",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign",
    "display_name": "Get Campaign",
    "category": "Campaign",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_campaign",
    "display_name": "Create Manual Campaign",
    "category": "Campaign",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_campaign",
    "display_name": "Update Campaign",
    "category": "Campaign",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ad_groups",
    "display_name": "List Ad Groups",
    "category": "Ad Group",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ad_group",
    "display_name": "Get Ad Group",
    "category": "Ad Group",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ad_group",
    "display_name": "Create Manual Ad Group",
    "category": "Ad Group",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ad_group",
    "display_name": "Update Ad Group",
    "category": "Ad Group",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ads",
    "display_name": "List Ads",
    "category": "Ad",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ad",
    "display_name": "Get Ad",
    "category": "Ad",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ad",
    "display_name": "Create Standard Ad",
    "category": "Ad",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ad",
    "display_name": "Update Ad",
    "category": "Ad",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_report",
    "display_name": "Get Performance Report",
    "category": "Reporting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_audiences",
    "display_name": "List Custom Audiences",
    "category": "Audience",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pixels",
    "display_name": "List Pixels",
    "category": "Measurement",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_profiles",
    "display_name": "List Profiles",
    "category": "Creative",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

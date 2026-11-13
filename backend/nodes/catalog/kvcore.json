@@ -27,105 +27,120 @@
    "display_name": null,
    "category": null,
    "description": "Update Contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact",
    "display_name": null,
    "category": null,
    "description": "Permanently remove the specified contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact_tags",
    "display_name": null,
    "category": null,
    "description": "Get Tag List.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_contact_tags",
    "display_name": null,
    "category": null,
    "description": "Add Tags to Contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_contact_tags",
    "display_name": null,
    "category": null,
    "description": "Remove Tags from Contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_note",
    "display_name": null,
    "category": null,
    "description": "Get Note Details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_note",
    "display_name": null,
    "category": null,
    "description": "Add a Note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_note",
    "display_name": null,
    "category": null,
    "description": "Update a Note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_call",
    "display_name": null,
    "category": null,
    "description": "Get Call Details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "log_call",
    "display_name": null,
    "category": null,
    "description": "Log a Call.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_call",
    "display_name": null,
    "category": null,
    "description": "Update a Call.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_search_alerts",
    "display_name": null,
    "category": null,
    "description": "Get Contact Search Alert.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": null,
    "category": null,
    "description": "Read the first page of users visible to the connected account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": null,
    "category": null,
    "description": "Get User Details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_manual_listings",
    "display_name": null,
    "category": null,
    "description": "Read the first page of manual listings with pagination metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

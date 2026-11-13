@@ -31,77 +31,88 @@
    "display_name": "List shops",
    "category": "Shops",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_blueprints",
    "display_name": "List catalog blueprints",
    "category": "Catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_blueprint",
    "display_name": "Get blueprint",
    "category": "Catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_size_guide",
    "display_name": "Get blueprint size guide",
    "category": "Catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_blueprint_print_providers",
    "display_name": "List blueprint print providers",
    "category": "Catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_print_providers",
    "display_name": "List print providers",
    "category": "Catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_print_provider",
    "display_name": "Get print provider",
    "category": "Catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_variants",
    "display_name": "List blueprint variants",
    "category": "Catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_products",
    "display_name": "List shop products",
    "category": "Products",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product",
    "display_name": "Get product metadata",
    "category": "Products",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_product_metadata",
    "display_name": "Update product title / description",
    "category": "Products",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

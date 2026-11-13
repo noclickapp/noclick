@@ -22,105 +22,120 @@
    "display_name": null,
    "category": null,
    "description": "Geocoding Endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_isochrone",
    "display_name": null,
    "category": null,
    "description": "Isochrone Endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_matrix",
    "display_name": null,
    "category": null,
    "description": "GET Matrix Endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "calculate_matrix",
    "display_name": null,
    "category": null,
    "description": "POST Matrix Endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_matrix",
    "display_name": null,
    "category": null,
    "description": "Batch Matrix Endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_matrix_solution",
    "display_name": null,
    "category": null,
    "description": "GET Batch Matrix Endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_route",
    "display_name": null,
    "category": null,
    "description": "GET Route Endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "calculate_route",
    "display_name": null,
    "category": null,
    "description": "POST Route Endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_coverage",
    "display_name": null,
    "category": null,
    "description": "Coverage information.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "solve_clustering",
    "display_name": null,
    "category": null,
    "description": "POST Cluster Endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_clustering",
    "display_name": null,
    "category": null,
    "description": "Batch Cluster Endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_clustering_solution",
    "display_name": null,
    "category": null,
    "description": "GET Batch Solution Endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "solve_optimization",
    "display_name": null,
    "category": null,
    "description": "POST route optimization problem.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_optimization",
    "display_name": null,
    "category": null,
    "description": "POST route optimization problem (batch mode).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_optimization_solution",
    "display_name": null,
    "category": null,
    "description": "GET the solution (batch mode).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

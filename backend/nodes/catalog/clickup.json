@@ -31,1120 +31,1284 @@
    "display_name": "Get Authorized Workspaces",
    "category": "Hierarchy",
    "description": "List the Workspaces (teams) the token can access.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_spaces",
    "display_name": "Get Spaces",
    "category": "Hierarchy",
    "description": "List spaces in a Workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_folders",
    "display_name": "Get Folders",
    "category": "Hierarchy",
    "description": "List folders in a space.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lists",
    "display_name": "Get Lists",
    "category": "Hierarchy",
    "description": "List the lists inside a folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workspace_members",
    "display_name": "Get Workspace Members",
    "category": "Hierarchy",
    "description": "List members of a Workspace (for assignee selection).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task",
    "display_name": "Create Task",
    "category": "Tasks",
    "description": "Create a new task in a list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tasks",
    "display_name": "Get Tasks",
    "category": "Tasks",
    "description": "Retrieve tasks in a list (paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task",
    "display_name": "Get Task",
    "category": "Tasks",
    "description": "Fetch a single task's full details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task",
    "display_name": "Update Task",
    "category": "Tasks",
    "description": "Modify a task (name, status, priority, dates, etc.).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task",
    "display_name": "Delete Task",
    "category": "Tasks",
    "description": "Remove a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_filtered_team_tasks",
    "display_name": "Get Filtered Team Tasks",
    "category": "Tasks",
    "description": "Query tasks across a whole Workspace by filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_list",
    "display_name": "Create List",
    "category": "Lists & Folders",
    "description": "Create a list inside a folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder",
    "display_name": "Create Folder",
    "category": "Lists & Folders",
    "description": "Create a folder in a space.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task_comment",
    "display_name": "Create Task Comment",
    "category": "Comments",
    "description": "Add a comment to a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task_comments",
    "display_name": "Get Task Comments",
    "category": "Comments",
    "description": "Retrieve comments on a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_accessible_fields",
    "display_name": "Get Accessible Custom Fields",
    "category": "Custom Fields",
    "description": "List custom fields available in a list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_custom_field",
    "display_name": "Set Custom Field Value",
    "category": "Custom Fields",
    "description": "Set a custom field value on a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_time_entry",
    "display_name": "Create Time Entry",
    "category": "Time Tracking",
    "description": "Log a time entry in a Workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_time_entries",
    "display_name": "Get Time Entries",
    "category": "Time Tracking",
    "description": "Retrieve time entries within a date range.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_timer",
    "display_name": "Start Timer",
    "category": "Time Tracking",
    "description": "Start a running timer (optionally tied to a task).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_timer",
    "display_name": "Stop Timer",
    "category": "Time Tracking",
    "description": "Stop the currently running timer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_goal",
    "display_name": "Create Goal",
    "category": "Goals",
    "description": "Create a goal in a Workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_goals",
    "display_name": "Get Goals",
    "category": "Goals",
    "description": "List Workspace goals.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task_attachment",
    "display_name": "Create Task Attachment",
    "category": "Attachments",
    "description": "Attach a file (by URL) to a task. NoClick downloads the URL and uploads it\n    to ClickUp as multipart/form-data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "custom_request",
    "display_name": "Custom API Request",
    "category": "Advanced",
    "description": "Escape hatch: call ANY ClickUp endpoint not modeled as a first-class op.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_authorized_user",
    "display_name": "Get Authorized User",
    "category": "Authorization",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_tasks",
    "display_name": "Merge Tasks",
    "category": "Tasks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task_time_in_status",
    "display_name": "Get Task Time in Status",
    "category": "Tasks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bulk_tasks_time_in_status",
    "display_name": "Get Bulk Tasks' Time in Status",
    "category": "Tasks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task_from_template",
    "display_name": "Create Task From Template",
    "category": "Tasks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_dependency",
    "display_name": "Add Dependency",
    "category": "Task Relationships",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dependency",
    "display_name": "Delete Dependency",
    "category": "Task Relationships",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_task_link",
    "display_name": "Add Task Link",
    "category": "Task Relationships",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task_link",
    "display_name": "Delete Task Link",
    "category": "Task Relationships",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_task_to_list",
    "display_name": "Add Task to List",
    "category": "Tasks in Multiple Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_task_from_list",
    "display_name": "Remove Task From List",
    "category": "Tasks in Multiple Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_space_tags",
    "display_name": "Get Space Tags",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_space_tag",
    "display_name": "Create Space Tag",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_space_tag",
    "display_name": "Edit Space Tag",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_space_tag",
    "display_name": "Delete Space Tag",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_tag_to_task",
    "display_name": "Add Tag to Task",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_tag_from_task",
    "display_name": "Remove Tag From Task",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_checklist",
    "display_name": "Create Checklist",
    "category": "Checklists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_checklist",
    "display_name": "Edit Checklist",
    "category": "Checklists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_checklist",
    "display_name": "Delete Checklist",
    "category": "Checklists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_checklist_item",
    "display_name": "Create Checklist Item",
    "category": "Checklists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_checklist_item",
    "display_name": "Edit Checklist Item",
    "category": "Checklists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_checklist_item",
    "display_name": "Delete Checklist Item",
    "category": "Checklists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat_view_comments",
    "display_name": "Get Chat View Comments",
    "category": "Comments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_chat_view_comment",
    "display_name": "Create Chat View Comment",
    "category": "Comments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list_comments",
    "display_name": "Get List Comments",
    "category": "Comments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_list_comment",
    "display_name": "Create List Comment",
    "category": "Comments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_comment",
    "display_name": "Update Comment",
    "category": "Comments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_comment",
    "display_name": "Delete Comment",
    "category": "Comments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_threaded_comments",
    "display_name": "Get Threaded Comments",
    "category": "Comments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_threaded_comment",
    "display_name": "Create Threaded Comment",
    "category": "Comments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_custom_field_value",
    "display_name": "Remove Custom Field Value",
    "category": "Custom Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team_custom_fields",
    "display_name": "Get Workspace Custom Fields",
    "category": "Custom Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_folderless_lists",
    "display_name": "Get Folderless Lists",
    "category": "Lists & Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folderless_list",
    "display_name": "Create Folderless List",
    "category": "Lists & Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list",
    "display_name": "Get List",
    "category": "Lists & Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_list",
    "display_name": "Update List",
    "category": "Lists & Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_list",
    "display_name": "Delete List",
    "category": "Lists & Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_list_from_template_in_folder",
    "display_name": "Create List From Template (Folder)",
    "category": "Lists & Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folderless_list_from_template",
    "display_name": "Create Folderless List From Template",
    "category": "Lists & Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_folder",
    "display_name": "Get Folder",
    "category": "Lists & Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_folder",
    "display_name": "Update Folder",
    "category": "Lists & Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_folder",
    "display_name": "Delete Folder",
    "category": "Lists & Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder_from_template",
    "display_name": "Create Folder From Template",
    "category": "Lists & Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_space",
    "display_name": "Create Space",
    "category": "Hierarchy",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_space",
    "display_name": "Get Space",
    "category": "Hierarchy",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_space",
    "display_name": "Update Space",
    "category": "Hierarchy",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_space",
    "display_name": "Delete Space",
    "category": "Hierarchy",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_goal",
    "display_name": "Get Goal",
    "category": "Goals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_goal",
    "display_name": "Update Goal",
    "category": "Goals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_goal",
    "display_name": "Delete Goal",
    "category": "Goals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_key_result",
    "display_name": "Create Key Result",
    "category": "Goals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_key_result",
    "display_name": "Edit Key Result",
    "category": "Goals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_key_result",
    "display_name": "Delete Key Result",
    "category": "Goals",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team_views",
    "display_name": "Get Workspace Views",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_space_views",
    "display_name": "Get Space Views",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_folder_views",
    "display_name": "Get Folder Views",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list_views",
    "display_name": "Get List Views",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_team_view",
    "display_name": "Create Workspace View",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_space_view",
    "display_name": "Create Space View",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder_view",
    "display_name": "Create Folder View",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_list_view",
    "display_name": "Create List View",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_view",
    "display_name": "Get View",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_view",
    "display_name": "Update View",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_view",
    "display_name": "Delete View",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_view_tasks",
    "display_name": "Get View Tasks",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task_members",
    "display_name": "Get Task Members",
    "category": "Members",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list_members",
    "display_name": "Get List Members",
    "category": "Members",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invite_guest_to_workspace",
    "display_name": "Invite Guest to Workspace",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guest",
    "display_name": "Get Guest",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_guest_on_workspace",
    "display_name": "Edit Guest on Workspace",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_guest_from_workspace",
    "display_name": "Remove Guest From Workspace",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_guest_to_task",
    "display_name": "Add Guest to Task",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_guest_from_task",
    "display_name": "Remove Guest From Task",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_guest_to_list",
    "display_name": "Add Guest to List",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_guest_from_list",
    "display_name": "Remove Guest From List",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_guest_to_folder",
    "display_name": "Add Guest to Folder",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_guest_from_folder",
    "display_name": "Remove Guest From Folder",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invite_user_to_workspace",
    "display_name": "Invite User to Workspace",
    "category": "Users",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": "Get User",
    "category": "Users",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_user_on_workspace",
    "display_name": "Edit User on Workspace",
    "category": "Users",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_user_from_workspace",
    "display_name": "Remove User From Workspace",
    "category": "Users",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_user_group",
    "display_name": "Create User Group",
    "category": "User Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_groups",
    "display_name": "Get User Groups",
    "category": "User Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_user_group",
    "display_name": "Update User Group",
    "category": "User Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_user_group",
    "display_name": "Delete User Group",
    "category": "User Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_custom_roles",
    "display_name": "Get Custom Roles",
    "category": "Roles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_shared_hierarchy",
    "display_name": "Get Shared Hierarchy",
    "category": "Hierarchy",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_singular_time_entry",
    "display_name": "Get Single Time Entry",
    "category": "Time Tracking",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_time_entry",
    "display_name": "Update Time Entry",
    "category": "Time Tracking",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_time_entry",
    "display_name": "Delete Time Entry",
    "category": "Time Tracking",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_running_time_entry",
    "display_name": "Get Running Time Entry",
    "category": "Time Tracking",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_time_entry_history",
    "display_name": "Get Time Entry History",
    "category": "Time Tracking",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_all_tags_from_time_entries",
    "display_name": "Get All Time Entry Tags",
    "category": "Time Tracking",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_tags_from_time_entries",
    "display_name": "Add Tags to Time Entries",
    "category": "Time Tracking",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_tags_from_time_entries",
    "display_name": "Remove Tags From Time Entries",
    "category": "Time Tracking",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "change_tag_names_from_time_entries",
    "display_name": "Rename Time Entry Tag",
    "category": "Time Tracking",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "track_time",
    "display_name": "Track Time (Legacy)",
    "category": "Time Tracking",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tracked_time",
    "display_name": "Get Tracked Time (Legacy)",
    "category": "Time Tracking",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_time_tracked",
    "display_name": "Edit Tracked Time (Legacy)",
    "category": "Time Tracking",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_time_tracked",
    "display_name": "Delete Tracked Time (Legacy)",
    "category": "Time Tracking",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webhooks",
    "display_name": "Get Webhooks",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webhook",
    "display_name": "Create Webhook",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_webhook",
    "display_name": "Update Webhook",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook",
    "display_name": "Delete Webhook",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workspace_seats",
    "display_name": "Get Workspace Seats",
    "category": "Workspaces",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workspace_plan",
    "display_name": "Get Workspace Plan",
    "category": "Workspaces",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_docs",
    "display_name": "Search Docs",
    "category": "Docs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_doc",
    "display_name": "Create Doc",
    "category": "Docs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_doc",
    "display_name": "Get Doc",
    "category": "Docs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_doc_page_listing",
    "display_name": "Get Doc Page Listing",
    "category": "Docs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_doc_pages",
    "display_name": "Get Doc Pages",
    "category": "Docs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_page",
    "display_name": "Create Doc Page",
    "category": "Docs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_page",
    "display_name": "Get Doc Page",
    "category": "Docs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_page",
    "display_name": "Edit Doc Page",
    "category": "Docs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_chat_channels",
    "display_name": "List Chat Channels",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_chat_channel",
    "display_name": "Create Chat Channel",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_chat_location_channel",
    "display_name": "Create Chat Location Channel",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_chat_direct_message_channel",
    "display_name": "Create Chat DM Channel",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat_channel",
    "display_name": "Get Chat Channel",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_chat_channel",
    "display_name": "Update Chat Channel",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat_channel_followers",
    "display_name": "Get Chat Channel Followers",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat_channel_members",
    "display_name": "Get Chat Channel Members",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_chat_messages",
    "display_name": "List Chat Messages",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_chat_message",
    "display_name": "Create Chat Message",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_chat_message",
    "display_name": "Update Chat Message",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_chat_message",
    "display_name": "Delete Chat Message",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_chat_reply",
    "display_name": "Create Chat Reply",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat_replies",
    "display_name": "Get Chat Replies",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat_message_reactions",
    "display_name": "Get Chat Message Reactions",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_chat_reaction",
    "display_name": "Create Chat Reaction",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_chat_reaction",
    "display_name": "Delete Chat Reaction",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat_message_tagged_users",
    "display_name": "Get Chat Message Tagged Users",
    "category": "Chat",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_audit_logs",
    "display_name": "Create Audit Logs",
    "category": "Audit Logs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_task_event",
    "display_name": "On Task Event",
    "category": null,
    "description": "Fire the workflow on selected ClickUp webhook event(s).\n\n    The user picks WHICH event(s) fire via ``event_types`` (task/list/folder/\n    space/goal lifecycle events, or ``*`` for all). The selection is passed to\n    ClickUp's ``POST /team/{team_id}/webhook`` ``events`` array and re-checked at\n    runtime against the inbound payload's ``event`` field.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "clickup_oauth",
+    "clickup_pat"
+   ]
   }
  ],
  "agent_tool_provider": true,

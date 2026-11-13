@@ -22,140 +22,160 @@
    "display_name": null,
    "category": null,
    "description": "List audit logs using cursor pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_audit_log",
    "display_name": null,
    "category": null,
    "description": "Get audit log by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "verify_audit_log",
    "display_name": null,
    "category": null,
    "description": "Verify audit log.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_validations",
    "display_name": null,
    "category": null,
    "description": "List validations, one offset page at a time.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_validation",
    "display_name": null,
    "category": null,
    "description": "Get validation by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_validations",
    "display_name": null,
    "category": null,
    "description": "Get user validation details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reject_validation",
    "display_name": null,
    "category": null,
    "description": "Reject validation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "revalidate_validation",
    "display_name": null,
    "category": null,
    "description": "Re-initiate validation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_validation",
    "display_name": null,
    "category": null,
    "description": "Cancel validation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retry_validation",
    "display_name": null,
    "category": null,
    "description": "Retries to create user and his first credential.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_validation",
    "display_name": null,
    "category": null,
    "description": "Enable validation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_validation",
    "display_name": null,
    "category": null,
    "description": "Disable validation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invalidate_validation",
    "display_name": null,
    "category": null,
    "description": "Invalidate validation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_selfenrolled_user_validation",
    "display_name": null,
    "category": null,
    "description": "Approve self-enrolled user validation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reject_selfenrolled_user_validation",
    "display_name": null,
    "category": null,
    "description": "Reject self-enrolled user validation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_organization_validation",
    "display_name": null,
    "category": null,
    "description": "Approve organization details for a validation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reject_organization_validation",
    "display_name": null,
    "category": null,
    "description": "Reject organization details for a validation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credential",
    "display_name": null,
    "category": null,
    "description": "Returns credential details by credential name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_credential",
    "display_name": null,
    "category": null,
    "description": "Cancel credential by credential name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "revoke_credential",
    "display_name": null,
    "category": null,
    "description": "Revoke credentials.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,147 +22,168 @@
    "display_name": null,
    "category": null,
    "description": "Get Databases. Retrieve a list of all databases accessible to the authenticated user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_database",
    "display_name": null,
    "category": null,
    "description": "Get Single Database. Retrieve details of a specific database by its ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_database",
    "display_name": null,
    "category": null,
    "description": "Create a Database. Create a new database in the specified workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_database",
    "display_name": null,
    "category": null,
    "description": "Update Database. Update the details of an existing database.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_database",
    "display_name": null,
    "category": null,
    "description": "Delete Database. Delete a specific database by its ID. It can only be deleted if it is empty, unless the 'force' parameter is used.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tables",
    "display_name": null,
    "category": null,
    "description": "Get Tables. Retrieve a list of all tables in the specified database.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_table",
    "display_name": null,
    "category": null,
    "description": "Get Single Table. Retrieve details of a specific table by its ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_table",
    "display_name": null,
    "category": null,
    "description": "Create Table. Create a new table in the specified database.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_table",
    "display_name": null,
    "category": null,
    "description": "Update Table. Update a table's name and/or description. To modify fields, use the field-specific endpoints.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_table",
    "display_name": null,
    "category": null,
    "description": "Delete Table. Delete a specific table by its ID. It can only be deleted if it is empty, unless the 'force' parameter is used.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_table_views",
    "display_name": null,
    "category": null,
    "description": "Get Table Views. Retrieve a list of views for a specific table.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_table_field",
    "display_name": null,
    "category": null,
    "description": "Add Table Field. Add a new field to a table.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_table_field",
    "display_name": null,
    "category": null,
    "description": "Get Table Field. Retrieve details of a specific field.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_table_field",
    "display_name": null,
    "category": null,
    "description": "Update Table Field. Update the properties of a specific field.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_table_field",
    "display_name": null,
    "category": null,
    "description": "Delete Table Field. Delete a specific field from a table.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_records",
    "display_name": null,
    "category": null,
    "description": "Get Records. Retrieve a list of all records in the specified table.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_record",
    "display_name": null,
    "category": null,
    "description": "Get Single Record. Retrieve details of a specific record by its ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_record",
    "display_name": null,
    "category": null,
    "description": "Create Record. Create a new record in the specified table.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_record",
    "display_name": null,
    "category": null,
    "description": "Update Record. Partially update a specific record by its ID. Only the fields provided in the request body will be changed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_record",
    "display_name": null,
    "category": null,
    "description": "Delete Record. Delete a specific record by its ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_records",
    "display_name": null,
    "category": null,
    "description": "Search Records. Search for records in the specified table based on filter, sort, and pagination criteria.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,161 +22,184 @@
    "display_name": null,
    "category": null,
    "description": "List owned scorecards.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document",
    "display_name": null,
    "category": null,
    "description": "Get a scorecard.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_document",
    "display_name": null,
    "category": null,
    "description": "Create an empty scorecard.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_document",
    "display_name": null,
    "category": null,
    "description": "Update scorecard properties.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_document",
    "display_name": null,
    "category": null,
    "description": "Delete a scorecard.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document_tree",
    "display_name": null,
    "category": null,
    "description": "Get the owned scorecard tree.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_indicators",
    "display_name": null,
    "category": null,
    "description": "List indicators in a scorecard.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_indicator_tree",
    "display_name": null,
    "category": null,
    "description": "Get the indicator hierarchy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_indicator",
    "display_name": null,
    "category": null,
    "description": "Get indicator properties.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_indicator",
    "display_name": null,
    "category": null,
    "description": "Update indicator properties.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_indicator_value",
    "display_name": null,
    "category": null,
    "description": "Get one indicator value at a date.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_indicator_value",
    "display_name": null,
    "category": null,
    "description": "Set one indicator value at a date.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_all_values",
    "display_name": null,
    "category": null,
    "description": "Get all indicator values at a date.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_selected_values",
    "display_name": null,
    "category": null,
    "description": "Get selected indicator values at a date.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_selected_values",
    "display_name": null,
    "category": null,
    "description": "Set multiple indicator values at a date.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_maps",
    "display_name": null,
    "category": null,
    "description": "List scorecard strategy maps.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refresh_map",
    "display_name": null,
    "category": null,
    "description": "Rerun the strategy map wizard.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refresh_all_maps",
    "display_name": null,
    "category": null,
    "description": "Rerun all strategy map wizards.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization",
    "display_name": null,
    "category": null,
    "description": "Get organization settings and strategy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_fields",
    "display_name": null,
    "category": null,
    "description": "List account custom field definitions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_indicator_custom_values",
    "display_name": null,
    "category": null,
    "description": "List filled custom values for an indicator.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_custom_value",
    "display_name": null,
    "category": null,
    "description": "Get one indicator custom field value.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_custom_value",
    "display_name": null,
    "category": null,
    "description": "Set or clear an indicator custom field value.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

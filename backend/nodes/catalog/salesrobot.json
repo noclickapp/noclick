@@ -22,140 +22,160 @@
    "display_name": null,
    "category": null,
    "description": "List the connected LinkedIn account's campaigns.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_campaign",
    "display_name": null,
    "category": null,
    "description": "Create an advanced LinkedIn campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_campaign",
    "display_name": null,
    "category": null,
    "description": "Pause or resume one campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_campaign",
    "display_name": null,
    "category": null,
    "description": "Start a configured campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign_stats",
    "display_name": null,
    "category": null,
    "description": "Read time-wise statistics for one campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_prospects",
    "display_name": null,
    "category": null,
    "description": "Read one page of campaign prospects; increment page to continue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_prospect_status",
    "display_name": null,
    "category": null,
    "description": "Read campaign execution details for one prospect.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_prospect",
    "display_name": null,
    "category": null,
    "description": "Pause or resume campaign execution for one prospect.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_prospect",
    "display_name": null,
    "category": null,
    "description": "Add a single prospect to a campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_prospect",
    "display_name": null,
    "category": null,
    "description": "Update documented prospect fields; omitted fields are not sent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_prospect",
    "display_name": null,
    "category": null,
    "description": "Delete a single prospect from the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_prospects",
    "display_name": null,
    "category": null,
    "description": "Delete an explicit selection of prospects; never select the whole account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "import_prospects",
    "display_name": null,
    "category": null,
    "description": "Import prospects from a LinkedIn search URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_blacklist",
    "display_name": null,
    "category": null,
    "description": "Update company and profile blacklist entries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_blacklist",
    "display_name": null,
    "category": null,
    "description": "Copy a blacklist from another LinkedIn account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_schedule",
    "display_name": null,
    "category": null,
    "description": "Set the connected account's outreach schedule.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_quota",
    "display_name": null,
    "category": null,
    "description": "Set daily quotas and warm-up settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tag_chat",
    "display_name": null,
    "category": null,
    "description": "Set tags on a LinkedIn inbox conversation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_message",
    "display_name": null,
    "category": null,
    "description": "Send one LinkedIn message to a prospect.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tag_account",
    "display_name": null,
    "category": null,
    "description": "Add tags to the connected LinkedIn account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,84 +22,101 @@
    "display_name": "Add Rows",
    "category": "Rows",
    "description": "Insert one or more new rows into a table.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_rows",
    "display_name": "Edit Rows",
    "category": "Rows",
    "description": "Update existing rows; each row must include the key column(s) plus changed columns.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_rows",
    "display_name": "Delete Rows",
    "category": "Rows",
    "description": "Delete existing rows; each row must include the key column value(s).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_rows",
    "display_name": "Find Rows by Key",
    "category": "Find",
    "description": "Read specific rows by key; provide key values in Rows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_all_rows",
    "display_name": "Find All Rows",
    "category": "Find",
    "description": "Return every row in the table (empty Rows, no Selector).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_with_selector",
    "display_name": "Find with Selector",
    "category": "Find",
    "description": "Read rows matching an AppSheet Selector expression (FILTER/SELECT/ORDERBY/TOP).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invoke_action",
    "display_name": "Invoke Custom Action",
    "category": "Actions",
    "description": "Run a data-change action predefined in the app against the supplied rows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_rows_added",
    "display_name": "On Rows Added",
    "category": null,
    "description": "Fires when rows are added (AppSheet bot event: 'Adds only').",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_rows_updated",
    "display_name": "On Rows Updated",
    "category": null,
    "description": "Fires when rows are updated (AppSheet bot event: 'Updates only').",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_rows_deleted",
    "display_name": "On Rows Deleted",
    "category": null,
    "description": "Fires when rows are deleted (AppSheet bot event: 'Deletes only').",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_data_change",
    "display_name": "On Any Data Change",
    "category": null,
    "description": "Fires on any data change (AppSheet bot event: 'Adds and updates' / 'All changes').",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "on_schedule",
    "display_name": "On Schedule",
    "category": null,
    "description": "Fires on a schedule (AppSheet bot event: 'Scheduled').",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   }
  ],
  "agent_tool_provider": true,

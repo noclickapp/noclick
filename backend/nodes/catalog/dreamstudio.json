@@ -26,70 +26,80 @@
    "display_name": null,
    "category": null,
    "description": "Read your account identity and organization memberships.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_balance",
    "display_name": null,
    "category": null,
    "description": "Read the credit balance for your account or organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_engines",
    "display_name": null,
    "category": null,
    "description": "List engines available to your account or organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "text_to_image",
    "display_name": null,
    "category": null,
    "description": "Generate images from weighted text prompts (uses credits).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "image_to_image_strength",
    "display_name": null,
    "category": null,
    "description": "Transform an image using image strength (uses credits).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "image_to_image_schedule",
    "display_name": null,
    "category": null,
    "description": "Transform an image using diffusion step scheduling (uses credits).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upscale_image",
    "display_name": null,
    "category": null,
    "description": "Upscale a PNG, optionally choosing one target dimension (uses credits).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mask_alpha",
    "display_name": null,
    "category": null,
    "description": "Inpaint transparent pixels from the source PNG alpha channel (uses credits).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mask_white",
    "display_name": null,
    "category": null,
    "description": "Inpaint white mask pixels while preserving black pixels (uses credits).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mask_black",
    "display_name": null,
    "category": null,
    "description": "Inpaint black mask pixels while preserving white pixels (uses credits).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

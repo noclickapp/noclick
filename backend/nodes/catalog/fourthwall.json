@@ -34,175 +34,200 @@
    "display_name": null,
    "category": null,
    "description": "Get current shop.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_orders",
    "display_name": null,
    "category": null,
    "description": "Get all orders.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_order",
    "display_name": null,
    "category": null,
    "description": "Get order by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_order_by_friendly_id",
    "display_name": null,
    "category": null,
    "description": "Get order by friendly id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_products",
    "display_name": null,
    "category": null,
    "description": "Get all products (offers).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product",
    "display_name": null,
    "category": null,
    "description": "Get product (offer) by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product_inventory",
    "display_name": null,
    "category": null,
    "description": "Get product (offer) inventory by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_product_state",
    "display_name": null,
    "category": null,
    "description": "Update product (offer) lifecycle state.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_product_availability",
    "display_name": null,
    "category": null,
    "description": "Update product (offer) availability by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_product",
    "display_name": null,
    "category": null,
    "description": "Archive a product (offer).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_collections",
    "display_name": null,
    "category": null,
    "description": "Get all collections.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_collection",
    "display_name": null,
    "category": null,
    "description": "Get collection by ID or slug.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_collection",
    "display_name": null,
    "category": null,
    "description": "Create a new collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_collection",
    "display_name": null,
    "category": null,
    "description": "Update a collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_collection_products",
    "display_name": null,
    "category": null,
    "description": "Get products in a collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_collection_products",
    "display_name": null,
    "category": null,
    "description": "Set collection products.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_collection_availability",
    "display_name": null,
    "category": null,
    "description": "Update collection availability.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_promotions",
    "display_name": null,
    "category": null,
    "description": "Get all promotions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_promotion",
    "display_name": null,
    "category": null,
    "description": "Get a promotion by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_entries",
    "display_name": null,
    "category": null,
    "description": "Get all mailing list entries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_donations",
    "display_name": null,
    "category": null,
    "description": "Get all donations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_donation",
    "display_name": null,
    "category": null,
    "description": "Get donation by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_members",
    "display_name": null,
    "category": null,
    "description": "List members.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_member",
    "display_name": null,
    "category": null,
    "description": "Get member.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tiers",
    "display_name": null,
    "category": null,
    "description": "List membership tiers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

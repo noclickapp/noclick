@@ -27,28 +27,32 @@
    "display_name": "Read Accessible Location Metadata",
    "category": "Grocy Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_location",
    "display_name": "Get Current Location Metadata",
    "category": "Grocy Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_quantity_units",
    "display_name": "Read Accessible Quantity Unit Metadata",
    "category": "Grocy Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_quantity_unit",
    "display_name": "Get Current Quantity Unit Metadata",
    "category": "Grocy Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

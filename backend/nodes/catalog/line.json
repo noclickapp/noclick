@@ -22,168 +22,192 @@
    "display_name": null,
    "category": null,
    "description": "Get the connected LINE Official Account profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_profile",
    "display_name": null,
    "category": null,
    "description": "Get a user profile using a webhook user ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_followers",
    "display_name": null,
    "category": null,
    "description": "Read one page of follower IDs; use next as start. Verified or premium accounts only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_group_summary",
    "display_name": null,
    "category": null,
    "description": "Get the name and picture of a group the bot has joined.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_group_member_count",
    "display_name": null,
    "category": null,
    "description": "Count group members, excluding the bot.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_group_members",
    "display_name": null,
    "category": null,
    "description": "Read one page of group member IDs; verified or premium accounts only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_group_member_profile",
    "display_name": null,
    "category": null,
    "description": "Get a group member profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_room_member_count",
    "display_name": null,
    "category": null,
    "description": "Count members of a multi-person chat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_room_members",
    "display_name": null,
    "category": null,
    "description": "Read one page of room member IDs; verified or premium accounts only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_room_member_profile",
    "display_name": null,
    "category": null,
    "description": "Get a multi-person chat member profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message_quota",
    "display_name": null,
    "category": null,
    "description": "Get the monthly message quota.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message_quota_consumption",
    "display_name": null,
    "category": null,
    "description": "Get this month's message usage.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rich_menus",
    "display_name": null,
    "category": null,
    "description": "List rich menus created through the Messaging API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_rich_menu",
    "display_name": null,
    "category": null,
    "description": "Get a rich menu definition.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_default_rich_menu",
    "display_name": null,
    "category": null,
    "description": "Get the default rich menu ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_rich_menu",
    "display_name": null,
    "category": null,
    "description": "Get the rich menu assigned to a user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "link_user_rich_menu",
    "display_name": null,
    "category": null,
    "description": "Assign an existing rich menu to one user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unlink_user_rich_menu",
    "display_name": null,
    "category": null,
    "description": "Remove a user-specific rich menu assignment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_default_rich_menu",
    "display_name": null,
    "category": null,
    "description": "Set an existing rich menu as the default.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_default_rich_menu",
    "display_name": null,
    "category": null,
    "description": "Cancel the default rich menu assignment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reply_message",
    "display_name": null,
    "category": null,
    "description": "Reply with a text message using a short-lived, single-use webhook reply token. Acceptance does not prove delivery.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "push_message",
    "display_name": null,
    "category": null,
    "description": "Send one text message to a user, group or room. Acceptance does not prove delivery.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "multicast_message",
    "display_name": null,
    "category": null,
    "description": "Send one text message to up to 500 user IDs. Acceptance does not prove delivery.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "broadcast_message",
    "display_name": null,
    "category": null,
    "description": "Send one text message to all friends of this Official Account. Acceptance does not prove delivery.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

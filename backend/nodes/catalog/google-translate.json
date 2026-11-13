@@ -40,91 +40,105 @@
    "display_name": "Translate Text (v3)",
    "category": "Translate",
    "description": "Translate one or more strings with the v3 Advanced API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "v3_detect_language",
    "display_name": "Detect Language (v3)",
    "category": "Translate",
    "description": "Detect the source language of input text (v3 Advanced).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "v3_supported_languages",
    "display_name": "Get Supported Languages (v3)",
    "category": "Translate",
    "description": "List languages supported for translation/detection (v3 Advanced).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "v3_romanize_text",
    "display_name": "Romanize Text (v3)",
    "category": "Translate",
    "description": "Transliterate non-Latin-script text into Latin (romanization).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "v3_translate_document",
    "display_name": "Translate Document (v3)",
    "category": "Documents",
    "description": "Translate a single document inline, preserving formatting (v3 Advanced).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "v3_batch_translate_text",
    "display_name": "Batch Translate Text (v3)",
    "category": "Batch",
    "description": "Async bulk text translation from/to Cloud Storage (returns an LRO).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "v3_create_glossary",
    "display_name": "Create Glossary (v3)",
    "category": "Glossaries",
    "description": "Create a glossary for custom terminology (returns an LRO).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "v3_list_glossaries",
    "display_name": "List Glossaries (v3)",
    "category": "Glossaries",
    "description": "List glossaries in a project/location.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "v3_get_operation",
    "display_name": "Get Operation Status (v3)",
    "category": "Operations",
    "description": "Poll the status of a long-running operation (batch/glossary jobs).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "v2_translate_text",
    "display_name": "Translate Text (Basic)",
    "category": "Translate (Basic)",
    "description": "Translate text using the v2 Basic API (API key).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "v2_detect_language",
    "display_name": "Detect Language (Basic)",
    "category": "Translate (Basic)",
    "description": "Detect the source language of text using the v2 Basic API (API key).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "v2_list_languages",
    "display_name": "List Languages (Basic)",
    "category": "Translate (Basic)",
    "description": "List supported languages using the v2 Basic API (API key).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_batch_completed",
    "display_name": "On Batch Operation Completed",
    "category": "Triggers",
    "description": "Trigger when a batch/glossary/model job finishes",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   }
  ],
  "agent_tool_provider": true,

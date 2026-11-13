@@ -28,7 +28,8 @@
    "display_name": null,
    "category": null,
    "description": "Get metadata, images and platform-specific content for one URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

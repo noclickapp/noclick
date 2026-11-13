@@ -29,49 +29,56 @@
    "display_name": "Create Upscale Task",
    "category": "Video",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_upload_url",
    "display_name": "Create Upload URL",
    "category": "Video",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_upscale_task",
    "display_name": "Get Upscale Task",
    "category": "Video",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_upscale_tasks",
    "display_name": "List Upscale Tasks",
    "category": "Video",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account_balance",
    "display_name": "Get Account Balance",
    "category": "Video",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_task",
    "display_name": "On New Upscale Task",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_task_updated",
    "display_name": "On Upscale Task Updated",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

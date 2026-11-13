@@ -34,91 +34,105 @@
    "display_name": "Run Model (Sync)",
    "category": "Model Run",
    "description": "Run a model endpoint synchronously and get the result inline.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_queue",
    "display_name": "Submit to Queue",
    "category": "Model Run",
    "description": "Submit an async request to the fal queue (best for long-running jobs).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_status",
    "display_name": "Get Request Status",
    "category": "Model Run",
    "description": "Poll the status of a queued request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_result",
    "display_name": "Get Request Result",
    "category": "Model Run",
    "description": "Fetch the completed result payload of a queued request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_request",
    "display_name": "Cancel Request",
    "category": "Model Run",
    "description": "Cancel a queued or in-progress request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "initiate_upload",
    "display_name": "Initiate File Upload",
    "category": "Storage",
    "description": "Initiate a file upload to fal's CDN; returns a presigned upload URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_models",
    "display_name": "Search Models",
    "category": "Platform",
    "description": "Search and list available model endpoints.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_usage",
    "display_name": "Get Usage",
    "category": "Platform",
    "description": "Retrieve granular usage line items for the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_requests",
    "display_name": "List Requests by Endpoint",
    "category": "Platform",
    "description": "List recent requests for a specific model endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_keys",
    "display_name": "List API Keys",
    "category": "Keys",
    "description": "List all API keys for the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_key",
    "display_name": "Create API Key",
    "category": "Keys",
    "description": "Create a new API key for the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_key",
    "display_name": "Delete API Key",
    "category": "Keys",
    "description": "Delete an API key by its ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_job_completed",
    "display_name": "On Job Completed",
    "category": null,
    "description": "Fire the workflow when a queued fal job completes (success or error).\n\n    fal posts the completion event to whatever URL is passed as the queue\n    submit's `webhook_url`. Wire this trigger and paste its URL into the\n    Submit to Queue operation's Webhook URL field.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   }
  ],
  "agent_tool_provider": true,

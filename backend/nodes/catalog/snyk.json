@@ -22,140 +22,160 @@
    "display_name": null,
    "category": null,
    "description": "Read the token owner details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_organizations",
    "display_name": null,
    "category": null,
    "description": "List organizations accessible to this token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization_settings",
    "display_name": null,
    "category": null,
    "description": "Read organization settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_organization_members",
    "display_name": null,
    "category": null,
    "description": "List organization members.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_integrations",
    "display_name": null,
    "category": null,
    "description": "List configured source integrations. Requires organization admin access.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": null,
    "category": null,
    "description": "Retrieve a project and its issue counts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project",
    "display_name": null,
    "category": null,
    "description": "Change the monitored branch or project owner.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "activate_project",
    "display_name": null,
    "category": null,
    "description": "Activate project monitoring.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deactivate_project",
    "display_name": null,
    "category": null,
    "description": "Deactivate project monitoring.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_project",
    "display_name": null,
    "category": null,
    "description": "Permanently delete the selected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issues",
    "display_name": null,
    "category": null,
    "description": "List aggregated vulnerability and license issues.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dependency_graph",
    "display_name": null,
    "category": null,
    "description": "Retrieve the project dependency graph.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ignores",
    "display_name": null,
    "category": null,
    "description": "List project ignore rules.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ignore",
    "display_name": null,
    "category": null,
    "description": "Retrieve ignore rules for one issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_ignore",
    "display_name": null,
    "category": null,
    "description": "Add an ignore rule for an issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ignore",
    "display_name": null,
    "category": null,
    "description": "Delete all ignore rules for the selected issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_project_tag",
    "display_name": null,
    "category": null,
    "description": "Apply a tag to the project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_project_tag",
    "display_name": null,
    "category": null,
    "description": "Remove a tag from the project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project_settings",
    "display_name": null,
    "category": null,
    "description": "Read project-specific settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_project_settings",
    "display_name": null,
    "category": null,
    "description": "Remove project-specific settings and inherit integration settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

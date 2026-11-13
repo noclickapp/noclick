@@ -12,14 +12,16 @@
    "display_name": "Render HTML",
    "category": "General",
    "description": "Runtime representation of an annotated type.\n\n    At its core 'Annotated[t, dec1, dec2, ...]' is an alias for the type 't'\n    with extra annotations. The alias behaves like a normal typing alias.\n    Instantiating is the same as instantiating the underlying type; binding\n    it to types is also the same.\n\n    The metadata itself is stored in a '__metadata__' attribute as a tuple.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "render_jsx_react_interface",
    "display_name": "Render React/JSX",
    "category": "General",
    "description": "Runtime representation of an annotated type.\n\n    At its core 'Annotated[t, dec1, dec2, ...]' is an alias for the type 't'\n    with extra annotations. The alias behaves like a normal typing alias.\n    Instantiating is the same as instantiating the underlying type; binding\n    it to types is also the same.\n\n    The metadata itself is stored in a '__metadata__' attribute as a tuple.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   }
  ],
  "agent_tool_provider": false,

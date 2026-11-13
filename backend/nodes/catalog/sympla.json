@@ -22,119 +22,136 @@
    "display_name": "On New or Updated Order",
    "category": "Triggers",
    "description": "Watch an event's orders. Existing orders form a baseline when armed.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_participant",
    "display_name": "On New or Updated Participant",
    "category": "Triggers",
    "description": "Watch an event's participants. Existing participants form a baseline when armed.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": null,
    "category": null,
    "description": "List events using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": null,
    "category": null,
    "description": "Get event using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_orders",
    "display_name": null,
    "category": null,
    "description": "List orders using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_order",
    "display_name": null,
    "category": null,
    "description": "Get order using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_order_participants",
    "display_name": null,
    "category": null,
    "description": "List order participants using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_participants",
    "display_name": null,
    "category": null,
    "description": "List participants using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_participant_by_ticket",
    "display_name": null,
    "category": null,
    "description": "Get participant by ticket using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_in_by_ticket",
    "display_name": null,
    "category": null,
    "description": "Check in by ticket using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_participant",
    "display_name": null,
    "category": null,
    "description": "Get participant using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_in_participant",
    "display_name": null,
    "category": null,
    "description": "Check in participant using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_presentations",
    "display_name": null,
    "category": null,
    "description": "List presentations using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_presentation",
    "display_name": null,
    "category": null,
    "description": "Get presentation using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_presentation_orders",
    "display_name": null,
    "category": null,
    "description": "List presentation orders using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_presentation_participants",
    "display_name": null,
    "category": null,
    "description": "List presentation participants using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_in_qr_code",
    "display_name": null,
    "category": null,
    "description": "Check in qr code using the Sympla producer API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

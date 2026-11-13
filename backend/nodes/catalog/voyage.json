@@ -39,98 +39,112 @@
    "display_name": "Generate Text Embeddings",
    "category": "Embeddings",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "embed_multimodal",
    "display_name": "Generate Multimodal Embeddings",
    "category": "Embeddings",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "embed_contextualized",
    "display_name": "Generate Contextualized Chunk Embeddings",
    "category": "Embeddings",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rerank",
    "display_name": "Rerank Documents",
    "category": "Reranking",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_file",
    "display_name": "Upload Batch File",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_files",
    "display_name": "List Files",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file",
    "display_name": "Get File",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_file",
    "display_name": "Delete File",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file_content",
    "display_name": "Get File Content",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_delete_files",
    "display_name": "Bulk Delete Files",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_batch",
    "display_name": "Create Batch Job",
    "category": "Batch",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_batches",
    "display_name": "List Batch Jobs",
    "category": "Batch",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_batch",
    "display_name": "Get Batch Job",
    "category": "Batch",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_batch",
    "display_name": "Cancel Batch Job",
    "category": "Batch",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

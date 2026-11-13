@@ -22,98 +22,112 @@
    "display_name": null,
    "category": null,
    "description": "Send a single SMS with duplicate protection enabled by default.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_bulk_sms",
    "display_name": null,
    "category": null,
    "description": "Send the same SMS to multiple numbers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_balance",
    "display_name": null,
    "category": null,
    "description": "Read the account's remaining SMS balance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sender_names",
    "display_name": null,
    "category": null,
    "description": "List the account's sender names and their approval status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message_status",
    "display_name": null,
    "category": null,
    "description": "Read the current status of an accepted SMS.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message_report",
    "display_name": null,
    "category": null,
    "description": "Read delivery details for each destination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": null,
    "category": null,
    "description": "List the account's saved message templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "save_template",
    "display_name": null,
    "category": null,
    "description": "Create or replace a template with merge fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template",
    "display_name": null,
    "category": null,
    "description": "Read a saved template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_template",
    "display_name": null,
    "category": null,
    "description": "Delete a saved template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_template",
    "display_name": null,
    "category": null,
    "description": "Send a saved template with shared and per-recipient merge values.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_usage",
    "display_name": null,
    "category": null,
    "description": "Read rate limits and last known balance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_messages",
    "display_name": null,
    "category": null,
    "description": "Read a page of the sent-message archive, newest first.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_sent_message",
    "display_name": "On New Sent Message",
    "category": "Triggers",
    "description": "Poll the date-filtered sent archive; emits new records after an initial baseline.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

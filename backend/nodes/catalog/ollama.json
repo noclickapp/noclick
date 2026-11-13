@@ -31,105 +31,120 @@
    "display_name": null,
    "category": null,
    "description": "Generate text; returns the complete response and usage metrics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_chat",
    "display_name": null,
    "category": null,
    "description": "Generate the next assistant message; tool calls are returned, not executed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_embeddings",
    "display_name": null,
    "category": null,
    "description": "Generate vector embeddings for one text or a batch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_models",
    "display_name": null,
    "category": null,
    "description": "List models available from the selected endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_running_models",
    "display_name": null,
    "category": null,
    "description": "List models currently loaded on the Ollama server.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "show_model",
    "display_name": null,
    "category": null,
    "description": "Show a model's metadata, capabilities and template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_model",
    "display_name": null,
    "category": null,
    "description": "Create a model from an existing model on your own Ollama server.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_model",
    "display_name": null,
    "category": null,
    "description": "Copy a model to a new name on your own Ollama server.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pull_model",
    "display_name": null,
    "category": null,
    "description": "Download a model onto your own Ollama server.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "push_model",
    "display_name": null,
    "category": null,
    "description": "Publish a model from your own server, signed in with publishing permission.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_model",
    "display_name": null,
    "category": null,
    "description": "Delete a model from your own Ollama server.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_version",
    "display_name": null,
    "category": null,
    "description": "Get the Ollama server version.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_usage",
    "display_name": null,
    "category": null,
    "description": "Read Ollama cloud account usage; team scope requires team admin access.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_balance",
    "display_name": null,
    "category": null,
    "description": "Read the Ollama cloud account's included and purchased credit balance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_model",
    "display_name": "On New or Updated Model",
    "category": "Triggers",
    "description": "Watch a reachable Ollama server for newly available or modified models.\n\n    Polls the complete /api/tags snapshot and compares each model's documented\n    modified_at timestamp. Existing models establish a quiet initial baseline.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,154 +22,176 @@
    "display_name": null,
    "category": null,
    "description": "Get the current user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization",
    "display_name": null,
    "category": null,
    "description": "Get the organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_offerings",
    "display_name": null,
    "category": null,
    "description": "List offerings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_offering",
    "display_name": null,
    "category": null,
    "description": "Get an offering.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_offering",
    "display_name": null,
    "category": null,
    "description": "Update offering metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customers",
    "display_name": null,
    "category": null,
    "description": "List customers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer",
    "display_name": null,
    "category": null,
    "description": "Get a customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer",
    "display_name": null,
    "category": null,
    "description": "Update customer metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer_overview",
    "display_name": null,
    "category": null,
    "description": "Get a customer overview.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_purchases",
    "display_name": null,
    "category": null,
    "description": "List purchases.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_purchase",
    "display_name": null,
    "category": null,
    "description": "Get a purchase.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_subscriptions",
    "display_name": null,
    "category": null,
    "description": "List subscriptions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscription",
    "display_name": null,
    "category": null,
    "description": "Get a subscription.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_subscription",
    "display_name": null,
    "category": null,
    "description": "Update subscription metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payments",
    "display_name": null,
    "category": null,
    "description": "List payments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_payment",
    "display_name": null,
    "category": null,
    "description": "Get a payment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_payment",
    "display_name": null,
    "category": null,
    "description": "Update payment metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payouts",
    "display_name": null,
    "category": null,
    "description": "List payouts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_payout",
    "display_name": null,
    "category": null,
    "description": "Get a payout.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_offerings_report",
    "display_name": null,
    "category": null,
    "description": "Report on offerings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscriptions_report",
    "display_name": null,
    "category": null,
    "description": "Report on subscriptions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_payments_report",
    "display_name": null,
    "category": null,
    "description": "Report on payments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

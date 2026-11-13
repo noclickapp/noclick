@@ -31,280 +31,320 @@
    "display_name": "Run Select Query",
    "category": "Query",
    "description": "Execute a SELECT query and return results as JSON",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "execute_sql_statement",
    "display_name": "Execute Sql Statement",
    "category": "Query",
    "description": "Execute an INSERT, UPDATE, DELETE, or other non-SELECT statement",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "execute_batch_statements",
    "display_name": "Execute Batch Statements",
    "category": "Query",
    "description": "Execute a statement with multiple parameter sets (batch operations)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_query_with_cursor",
    "display_name": "Run Query with Cursor",
    "category": "Query",
    "description": "Execute query with cursor for large result sets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_data_to_table",
    "display_name": "Copy Data to Table",
    "category": "Query",
    "description": "Bulk import data to a table using COPY",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_data_from_table",
    "display_name": "Copy Data from Table",
    "category": "Query",
    "description": "Bulk export data from a table using COPY",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_schema_tables",
    "display_name": "List Schema Tables",
    "category": "Table",
    "description": "List all tables in a schema",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_table_columns",
    "display_name": "List Table Columns",
    "category": "Table",
    "description": "Get column metadata for a table",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_table_info",
    "display_name": "Get Table Info",
    "category": "Table",
    "description": "Get detailed information about a table including constraints and indexes",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_table",
    "display_name": "Create Table",
    "category": "Table",
    "description": "Create a new table",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "drop_table",
    "display_name": "Drop Table",
    "category": "Table",
    "description": "Drop a table",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "truncate_table",
    "display_name": "Truncate Table",
    "category": "Table",
    "description": "Truncate a table (remove all rows)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_schemas",
    "display_name": "List Schemas",
    "category": "Schema",
    "description": "List all schemas in the database",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_schema",
    "display_name": "Create Schema",
    "category": "Schema",
    "description": "Create a new schema",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "drop_schema",
    "display_name": "Drop Schema",
    "category": "Schema",
    "description": "Drop a schema",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_databases",
    "display_name": "List Databases",
    "category": "Database",
    "description": "List all databases in the PostgreSQL server",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_schema_indexes",
    "display_name": "List Schema Indexes",
    "category": "Index",
    "description": "List all indexes in a schema",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_index",
    "display_name": "Create Index",
    "category": "Index",
    "description": "Create an index on a table",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "drop_index",
    "display_name": "Drop Index",
    "category": "Index",
    "description": "Drop an index",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_schema_views",
    "display_name": "List Schema Views",
    "category": "View",
    "description": "List all views in a schema",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_view",
    "display_name": "Create View",
    "category": "View",
    "description": "Create a view",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "drop_view",
    "display_name": "Drop View",
    "category": "View",
    "description": "Drop a view",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_schema_sequences",
    "display_name": "List Schema Sequences",
    "category": "Sequence",
    "description": "List all sequences in a schema",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sequence_next_value",
    "display_name": "Get Sequence Next Value",
    "category": "Sequence",
    "description": "Get the next value from a sequence (nextval)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sequence_current_value",
    "display_name": "Get Sequence Current Value",
    "category": "Sequence",
    "description": "Get the current value from a sequence (currval)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_sequence_value",
    "display_name": "Set Sequence Value",
    "category": "Sequence",
    "description": "Set the current value of a sequence (setval)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_schema_functions",
    "display_name": "List Schema Functions",
    "category": "Function",
    "description": "List all functions in a schema",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "call_database_function",
    "display_name": "Call Database Function",
    "category": "Function",
    "description": "Call a PostgreSQL function",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_table_constraints",
    "display_name": "List Table Constraints",
    "category": "Table",
    "description": "List all constraints for a table",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_schema_triggers",
    "display_name": "List Schema Triggers",
    "category": "Trigger",
    "description": "List all triggers in a schema",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_extensions",
    "display_name": "List Extensions",
    "category": "Extension",
    "description": "List all installed extensions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "install_extension",
    "display_name": "Install Extension",
    "category": "Extension",
    "description": "Create/install an extension",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_database_users",
    "display_name": "List Database Users",
    "category": "Role",
    "description": "List all database users",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_database_roles",
    "display_name": "List Database Roles",
    "category": "Role",
    "description": "List all database roles",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "explain_query_plan",
    "display_name": "Explain Query Plan",
    "category": "Query",
    "description": "Explain a query's execution plan",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "vacuum_table",
    "display_name": "Vacuum Table",
    "category": "Table",
    "description": "Vacuum a table to reclaim storage and update statistics",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analyze_table_statistics",
    "display_name": "Analyze Table Statistics",
    "category": "Table",
    "description": "Analyze a table to update statistics",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "begin_transaction",
    "display_name": "Begin Transaction",
    "category": "Transaction",
    "description": "Begin a new transaction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "commit_transaction",
    "display_name": "Commit Transaction",
    "category": "Transaction",
    "description": "Commit the current transaction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rollback_transaction",
    "display_name": "Rollback Transaction",
    "category": "Transaction",
    "description": "Rollback the current transaction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

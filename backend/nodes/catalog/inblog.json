@@ -34,168 +34,192 @@
    "display_name": null,
    "category": null,
    "description": "Read the API key’s connected blog and granted scopes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_posts",
    "display_name": null,
    "category": null,
    "description": "List posts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_post",
    "display_name": null,
    "category": null,
    "description": "Get post.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_post",
    "display_name": null,
    "category": null,
    "description": "Create post.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_post",
    "display_name": null,
    "category": null,
    "description": "Update post.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_post",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a post.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_post",
    "display_name": null,
    "category": null,
    "description": "Publish post.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": null,
    "category": null,
    "description": "List tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tag",
    "display_name": null,
    "category": null,
    "description": "Get tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tag",
    "display_name": null,
    "category": null,
    "description": "Create tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tag",
    "display_name": null,
    "category": null,
    "description": "Update tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tag",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_authors",
    "display_name": null,
    "category": null,
    "description": "List authors.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_author",
    "display_name": null,
    "category": null,
    "description": "Get author.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_blog",
    "display_name": null,
    "category": null,
    "description": "Read the blog connected to the API key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_redirects",
    "display_name": null,
    "category": null,
    "description": "List redirects.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_redirect",
    "display_name": null,
    "category": null,
    "description": "Get redirect.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_redirect",
    "display_name": null,
    "category": null,
    "description": "Create redirect.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_redirect",
    "display_name": null,
    "category": null,
    "description": "Update redirect.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_redirect",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a redirect rule.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_forms",
    "display_name": null,
    "category": null,
    "description": "List forms.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_form",
    "display_name": null,
    "category": null,
    "description": "Get form.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_form_responses",
    "display_name": null,
    "category": null,
    "description": "List form responses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_form_response",
    "display_name": null,
    "category": null,
    "description": "Get form response.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

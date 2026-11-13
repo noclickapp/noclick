@@ -30,70 +30,80 @@
    "display_name": null,
    "category": null,
    "description": "Map a batch of identifiers to FIGIs. Results retain input order and per-job warnings/errors.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_instruments",
    "display_name": null,
    "category": null,
    "description": "Search instruments by keywords and optional filters; send next as start for another page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "filter_instruments",
    "display_name": null,
    "category": null,
    "description": "Filter instruments, ordered alphabetically by FIGI, returning total and a continuation token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_identifier_types",
    "display_name": null,
    "category": null,
    "description": "List OpenFIGI identifier types.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_exchange_codes",
    "display_name": null,
    "category": null,
    "description": "List OpenFIGI exchange codes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_mic_codes",
    "display_name": null,
    "category": null,
    "description": "List OpenFIGI market identifier codes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_currencies",
    "display_name": null,
    "category": null,
    "description": "List OpenFIGI currencies.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_market_sectors",
    "display_name": null,
    "category": null,
    "description": "List OpenFIGI market sectors.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_security_types",
    "display_name": null,
    "category": null,
    "description": "List OpenFIGI security types.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_security_types_2",
    "display_name": null,
    "category": null,
    "description": "List OpenFIGI secondary security types.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

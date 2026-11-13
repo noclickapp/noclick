@@ -22,175 +22,200 @@
    "display_name": null,
    "category": null,
    "description": "List users on the connected account, with optional search and a page cursor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": null,
    "category": null,
    "description": "Retrieve a user by user ID, username or extension.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_recent_calls",
    "display_name": null,
    "category": null,
    "description": "List one page of the connected user's recent calls.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_call",
    "display_name": null,
    "category": null,
    "description": "Retrieve the details of a call.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_conversations",
    "display_name": null,
    "category": null,
    "description": "List one page of conversations, including each conversation's most recent item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_conversation",
    "display_name": null,
    "category": null,
    "description": "Retrieve a conversation and its details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_conversation_items",
    "display_name": null,
    "category": null,
    "description": "List the first page of items in a conversation. Returns the oldest message ID; cursor paging is not exposed for this operation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_sms_conversation",
    "display_name": null,
    "category": null,
    "description": "Start a new SMS conversation by sending a text message from a Telzio number.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_sms",
    "display_name": null,
    "category": null,
    "description": "Send a text message in an existing SMS conversation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_phonebook",
    "display_name": null,
    "category": null,
    "description": "Search contacts and organizations by name, or list them when no search is supplied.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": null,
    "category": null,
    "description": "Retrieve a contact and its phonebook endpoints.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact",
    "display_name": null,
    "category": null,
    "description": "Create a phonebook contact, optionally linked to an organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact",
    "display_name": null,
    "category": null,
    "description": "Rename a phonebook contact and optionally change its organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a phonebook contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_comments",
    "display_name": null,
    "category": null,
    "description": "List one page of comments on a call, voicemail or other Telzio item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_comment",
    "display_name": null,
    "category": null,
    "description": "Add a comment to a Telzio item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_queues",
    "display_name": null,
    "category": null,
    "description": "List call queues the connected user can access.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_queue",
    "display_name": null,
    "category": null,
    "description": "Retrieve a call queue, including its agents and waiting calls.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_recordings",
    "display_name": null,
    "category": null,
    "description": "List one page of recordings the connected user can access.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_recording",
    "display_name": null,
    "category": null,
    "description": "Retrieve recording details without downloading audio.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_voicemails",
    "display_name": null,
    "category": null,
    "description": "List one page of the connected user's available voicemails.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_voicemail",
    "display_name": null,
    "category": null,
    "description": "Retrieve a voicemail assigned to the connected user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_voicemail",
    "display_name": null,
    "category": null,
    "description": "Mark a voicemail as listened or unlistened.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": null,
    "category": null,
    "description": "List one page of tags associated with the connected account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tag",
    "display_name": null,
    "category": null,
    "description": "Create a tag for the connected account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

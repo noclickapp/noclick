@@ -22,140 +22,163 @@
    "display_name": "New submission",
    "category": "Triggers",
    "description": "Bind a dedicated existing REST service to receive new submissions; edits do not send events. NoClick replaces its delivery settings and disables it on disconnect.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "kobotoolbox_api_token"
+   ]
   },
   {
    "name": "get_account",
    "display_name": null,
    "category": null,
    "description": "Read the authenticated account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": null,
    "category": null,
    "description": "List accessible projects and library assets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": null,
    "category": null,
    "description": "Read a project asset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": null,
    "category": null,
    "description": "Create a draft survey project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_project",
    "display_name": null,
    "category": null,
    "description": "Delete a project and its data permanently.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_form_content",
    "display_name": null,
    "category": null,
    "description": "Read structured form content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_submissions",
    "display_name": null,
    "category": null,
    "description": "Read a page of JSON submissions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_submission",
    "display_name": null,
    "category": null,
    "description": "Read one submission.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_submission",
    "display_name": null,
    "category": null,
    "description": "Delete one submission permanently.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_validation_status",
    "display_name": null,
    "category": null,
    "description": "Read the submission validation status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_validation_status",
    "display_name": null,
    "category": null,
    "description": "Approve, reject or hold a submission for validation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_validation_status",
    "display_name": null,
    "category": null,
    "description": "Remove the submission validation status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deployment",
    "display_name": null,
    "category": null,
    "description": "Read the form deployment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deploy_project",
    "display_name": null,
    "category": null,
    "description": "Deploy or redeploy the project form.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_deployment_active",
    "display_name": null,
    "category": null,
    "description": "Archive or reactivate an existing deployment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_exports",
    "display_name": null,
    "category": null,
    "description": "List asynchronous export tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_export",
    "display_name": null,
    "category": null,
    "description": "Read export status and the provider download URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_export",
    "display_name": null,
    "category": null,
    "description": "Queue a CSV, XLS, GeoJSON or SPSS labels export; poll Get Export for completion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_export",
    "display_name": null,
    "category": null,
    "description": "Delete an export task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

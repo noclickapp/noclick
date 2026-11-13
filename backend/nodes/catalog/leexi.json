@@ -34,154 +34,176 @@
    "display_name": null,
    "category": null,
    "description": "List calls. List all calls and meetings within the API key's access scope. Keys with whole-company access list every call; scoped keys list only the calls they can access.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_call",
    "display_name": null,
    "category": null,
    "description": "Create a call. Create a call or meeting asynchronously (creation time is typically a few minutes). You must first finish uploading the recording of the call using a presigned recording url retrieved with the [Request a presigned url](/reference/request-a-presigned-url) endpoint. Use the [LIST users](/reference/list-users) endpoint to find the user_uuid to use in this request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_call",
    "display_name": null,
    "category": null,
    "description": "Get call. Getting a single call or meeting. This returns the same attributes as the [LIST calls](/reference/list-calls) endpoint with additionally the call topics and the call transcript. The simple_transcript has paragraph-level timestamps, while the transcript also has word-level timestamps. The call must be within the API key's access scope, otherwise the endpoint responds with 404.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "request_presigned_url",
    "display_name": null,
    "category": null,
    "description": "Request a presigned url. Request a presigned URL to upload a call recording, before creating the call. To upload the file you must send a PUT request to the returned url, with the headers provided by the endpoint (single-part upload). This uploaded file automatically expires after 3 days unless used to create a call.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_call_notes",
    "display_name": null,
    "category": null,
    "description": "List call notes. List call notes for a given call. `call_uuid` is required. You can optionally filter by `prompt_uuid`. Only call notes generated from prompts in the `summary` or `text` categories are returned. The call must be within the API key's access scope, otherwise no notes are returned.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_call_note",
    "display_name": null,
    "category": null,
    "description": "Delete a call note. Delete a call note",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_call_note",
    "display_name": null,
    "category": null,
    "description": "Get a call note. Retrieve a single call note",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_call_note",
    "display_name": null,
    "category": null,
    "description": "Update a call note. Update a note for a given call",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_meeting_events",
    "display_name": null,
    "category": null,
    "description": "list meeting events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_meeting_event",
    "display_name": null,
    "category": null,
    "description": "Delete a meeting event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_meeting_event",
    "display_name": null,
    "category": null,
    "description": "Get a meeting event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "launch_meeting_assistant",
    "display_name": null,
    "category": null,
    "description": "Launch a meeting assistant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_teams",
    "display_name": null,
    "category": null,
    "description": "List teams. List all teams in your workspace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_team",
    "display_name": null,
    "category": null,
    "description": "Create a team. Create a team in your workspace. The team inherits your company settings and gets the default email templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_team",
    "display_name": null,
    "category": null,
    "description": "Delete a team. Delete a team. Only a team with no users and no calls can be deleted; deactivate it instead with a `PATCH` setting `active` to `false`.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team",
    "display_name": null,
    "category": null,
    "description": "Get a team. Retrieve a single team of your workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_team",
    "display_name": null,
    "category": null,
    "description": "Update a team. Update a team. Only the attributes present in the body are updated.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": null,
    "category": null,
    "description": "List Users. List all users in your workspace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_user",
    "display_name": null,
    "category": null,
    "description": "Create a user. Create a user in your workspace. The user receives a welcome email with a link to set their password, unless `send_welcome_email` is `false`.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deactivate_user",
    "display_name": null,
    "category": null,
    "description": "Deactivate a user. Deactivate a user. Users are never permanently deleted: their calls and history are kept, their sessions are revoked and they stop consuming a license. Reactivate them with a `PATCH` setting `active` to `true`.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": null,
    "category": null,
    "description": "Get a user. Retrieve a single user of your workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_user",
    "display_name": null,
    "category": null,
    "description": "Update a user. Update a user. Only the attributes present in the body are updated.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

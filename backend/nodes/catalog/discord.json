@@ -34,1015 +34,1192 @@
    "display_name": "Send Message to Channel",
    "category": "Message",
    "description": "Send a message to a Discord channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_embed_message_to_channel",
    "display_name": "Send Embed Message to Channel",
    "category": "Message",
    "description": "Send an embed message to a Discord channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message_by_id",
    "display_name": "Get Message by Id",
    "category": "Message",
    "description": "Get a single message by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channel_messages",
    "display_name": "List Channel Messages",
    "category": "Message",
    "description": "Get messages from a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_message_content",
    "display_name": "Edit Message Content",
    "category": "Message",
    "description": "Edit an existing message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_message_from_channel",
    "display_name": "Delete Message from Channel",
    "category": "Message",
    "description": "Delete a message from a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "crosspost_message_to_announcement_channel",
    "display_name": "Crosspost Message to Announcement Channel",
    "category": "Message",
    "description": "Crosspost a message in an announcement channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pin_message_in_channel",
    "display_name": "Pin Message in Channel",
    "category": "Message",
    "description": "Pin a message in a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unpin_message_from_channel",
    "display_name": "Unpin Message from Channel",
    "category": "Message",
    "description": "Unpin a message in a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pinned_messages_in_channel",
    "display_name": "List Pinned Messages in Channel",
    "category": "Message",
    "description": "Get pinned messages in a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_delete_channel_messages",
    "display_name": "Bulk Delete Channel Messages",
    "category": "Message",
    "description": "Bulk delete messages (2-100 messages, less than 14 days old)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_reaction_to_message",
    "display_name": "Add Reaction to Message",
    "category": "Reaction",
    "description": "Add a reaction to a message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_reaction_from_message",
    "display_name": "Remove Reaction from Message",
    "category": "Reaction",
    "description": "Remove a reaction from a message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_message_reaction_users",
    "display_name": "List Message Reaction Users",
    "category": "Reaction",
    "description": "Get users who reacted with a specific emoji",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_all_message_reactions",
    "display_name": "Delete All Message Reactions",
    "category": "Reaction",
    "description": "Delete all reactions from a message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_emoji_reactions_from_message",
    "display_name": "Delete Emoji Reactions from Message",
    "category": "Reaction",
    "description": "Delete all reactions for a specific emoji",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_channel_info",
    "display_name": "Get Channel Info",
    "category": "Channel",
    "description": "Get information about a Discord channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_channel_in_guild",
    "display_name": "Create Channel in Guild",
    "category": "Channel",
    "description": "Create a new channel in a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_channel_settings",
    "display_name": "Update Channel Settings",
    "category": "Channel",
    "description": "Modify an existing channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_channel",
    "display_name": "Delete Channel",
    "category": "Channel",
    "description": "Delete a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "show_typing_indicator_in_channel",
    "display_name": "Show Typing Indicator in Channel",
    "category": "Channel",
    "description": "Trigger typing indicator in a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_channel_permission_overwrites",
    "display_name": "Edit Channel Permission Overwrites",
    "category": "Channel",
    "description": "Edit channel permission overwrites",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_channels",
    "display_name": "List Guild Channels",
    "category": "Channel",
    "description": "List all channels in a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_thread_from_existing_message",
    "display_name": "Start Thread from Existing Message",
    "category": "Thread",
    "description": "Start a thread from an existing message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_thread_in_forum_channel",
    "display_name": "Start Thread in Forum Channel",
    "category": "Thread",
    "description": "Start a thread without a message (forum/media channels)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "join_thread",
    "display_name": "Join Thread",
    "category": "Thread",
    "description": "Join a thread",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "leave_thread",
    "display_name": "Leave Thread",
    "category": "Thread",
    "description": "Leave a thread",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_member_to_thread",
    "display_name": "Add Member to Thread",
    "category": "Thread",
    "description": "Add a member to a thread",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_member_from_thread",
    "display_name": "Remove Member from Thread",
    "category": "Thread",
    "description": "Remove a member from a thread",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_thread_members",
    "display_name": "List Thread Members",
    "category": "Thread",
    "description": "List members in a thread",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_active_threads",
    "display_name": "List Guild Active Threads",
    "category": "Thread",
    "description": "List all active threads in a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_guilds",
    "display_name": "List User Guilds",
    "category": "Guild",
    "description": "List guilds (servers) the user/bot is a member of",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guild_info",
    "display_name": "Get Guild Info",
    "category": "Guild",
    "description": "Get information about a Discord guild (server)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_guild_settings",
    "display_name": "Update Guild Settings",
    "category": "Guild",
    "description": "Modify guild settings",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guild_preview",
    "display_name": "Get Guild Preview",
    "category": "Guild",
    "description": "Get guild preview (public guilds)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guild_vanity_url",
    "display_name": "Get Guild Vanity Url",
    "category": "Guild",
    "description": "Get guild vanity URL",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guild_prune_count",
    "display_name": "Get Guild Prune Count",
    "category": "Guild",
    "description": "Get guild prune count (inactive members)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "begin_guild_prune_for_inactive_members",
    "display_name": "Begin Guild Prune for Inactive Members",
    "category": "Guild",
    "description": "Begin guild prune (remove inactive members)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_authenticated_user_info",
    "display_name": "Get Authenticated User Info",
    "category": "User",
    "description": "Get information about the authenticated user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_members",
    "display_name": "List Guild Members",
    "category": "Member",
    "description": "Get members of a guild (server)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guild_member_info",
    "display_name": "Get Guild Member Info",
    "category": "Member",
    "description": "Get a specific guild member",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_guild_member_info",
    "display_name": "Update Guild Member Info",
    "category": "Member",
    "description": "Modify a guild member (nickname, roles)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "kick_member_from_guild",
    "display_name": "Kick Member from Guild",
    "category": "Member",
    "description": "Kick a member from a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ban_member_from_guild",
    "display_name": "Ban Member from Guild",
    "category": "Member",
    "description": "Ban a member from a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unban_member_from_guild",
    "display_name": "Unban Member from Guild",
    "category": "Member",
    "description": "Unban a member from a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_bans",
    "display_name": "List Guild Bans",
    "category": "Member",
    "description": "Get all bans for a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guild_ban",
    "display_name": "Get Guild Ban",
    "category": "Member",
    "description": "Get a specific ban",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_roles",
    "display_name": "List Guild Roles",
    "category": "Role",
    "description": "Get all roles in a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_role_in_guild",
    "display_name": "Create Role in Guild",
    "category": "Role",
    "description": "Create a new role in a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_guild_role",
    "display_name": "Update Guild Role",
    "category": "Role",
    "description": "Modify an existing role",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_role_from_guild",
    "display_name": "Delete Role from Guild",
    "category": "Role",
    "description": "Delete a role from a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_role_to_guild_member",
    "display_name": "Add Role to Guild Member",
    "category": "Role",
    "description": "Add a role to a guild member",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_role_from_guild_member",
    "display_name": "Remove Role from Guild Member",
    "category": "Role",
    "description": "Remove a role from a guild member",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_invite_info",
    "display_name": "Get Invite Info",
    "category": "Invite",
    "description": "Get information about an invite",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_invite",
    "display_name": "Delete Invite",
    "category": "Invite",
    "description": "Delete an invite",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channel_invites",
    "display_name": "List Channel Invites",
    "category": "Channel",
    "description": "Get all invites for a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_channel_invite",
    "display_name": "Create Channel Invite",
    "category": "Invite",
    "description": "Create a new invite for a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_invites",
    "display_name": "List Guild Invites",
    "category": "Guild",
    "description": "Get all invites for a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "execute_webhook_send_message",
    "display_name": "Execute Webhook Send Message",
    "category": "Webhook",
    "description": "Execute a Discord webhook to send a message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_application_authorized",
    "display_name": "On Application Authorized",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "discord_bot_install",
+    "discord_bot_token"
+   ]
   },
   {
    "name": "on_application_deauthorized",
    "display_name": "On Application Deauthorized",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "discord_bot_install",
+    "discord_bot_token"
+   ]
   },
   {
    "name": "on_entitlement_create",
    "display_name": "On Entitlement Create",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "discord_bot_install",
+    "discord_bot_token"
+   ]
   },
   {
    "name": "on_entitlement_update",
    "display_name": "On Entitlement Update",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "discord_bot_install",
+    "discord_bot_token"
+   ]
   },
   {
    "name": "on_entitlement_delete",
    "display_name": "On Entitlement Delete",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "discord_bot_install",
+    "discord_bot_token"
+   ]
   },
   {
    "name": "on_slash_command",
    "display_name": "On Slash Command",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "discord_bot_install",
+    "discord_bot_token"
+   ]
   },
   {
    "name": "on_message",
    "display_name": "On Channel Message",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "discord_bot_install",
+    "discord_bot_token"
+   ]
   },
   {
    "name": "on_mention",
    "display_name": "On Bot Mention",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "discord_bot_install",
+    "discord_bot_token"
+   ]
   },
   {
    "name": "list_channel_webhooks",
    "display_name": "List Channel Webhooks",
    "category": "Channel",
    "description": "Get all webhooks for a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_webhooks",
    "display_name": "List Guild Webhooks",
    "category": "Webhook",
    "description": "Get all webhooks for a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webhook_by_id",
    "display_name": "Get Webhook by Id",
    "category": "Webhook",
    "description": "Get a webhook by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_channel_webhook",
    "display_name": "Create Channel Webhook",
    "category": "Webhook",
    "description": "Create a new webhook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_webhook_settings",
    "display_name": "Update Webhook Settings",
    "category": "Webhook",
    "description": "Modify an existing webhook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook",
    "display_name": "Delete Webhook",
    "category": "Webhook",
    "description": "Delete a webhook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_emojis",
    "display_name": "List Guild Emojis",
    "category": "Emoji",
    "description": "List all emojis in a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_emoji_from_guild",
    "display_name": "Get Emoji from Guild",
    "category": "Emoji",
    "description": "Get a specific emoji from a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_emoji_in_guild",
    "display_name": "Create Emoji in Guild",
    "category": "Emoji",
    "description": "Create a new emoji in a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_guild_emoji",
    "display_name": "Update Guild Emoji",
    "category": "Emoji",
    "description": "Modify an existing emoji",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_emoji_from_guild",
    "display_name": "Delete Emoji from Guild",
    "category": "Emoji",
    "description": "Delete an emoji from a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_stickers",
    "display_name": "List Guild Stickers",
    "category": "Sticker",
    "description": "List all stickers in a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sticker_from_guild",
    "display_name": "Get Sticker from Guild",
    "category": "Sticker",
    "description": "Get a specific sticker from a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_guild_sticker",
    "display_name": "Update Guild Sticker",
    "category": "Sticker",
    "description": "Modify an existing sticker",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_sticker_from_guild",
    "display_name": "Delete Sticker from Guild",
    "category": "Sticker",
    "description": "Delete a sticker from a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_scheduled_events",
    "display_name": "List Guild Scheduled Events",
    "category": "Scheduled Event",
    "description": "List all scheduled events in a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_scheduled_event",
    "display_name": "Get Scheduled Event",
    "category": "Scheduled Event",
    "description": "Get a specific scheduled event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_scheduled_event",
    "display_name": "Create Scheduled Event",
    "category": "Scheduled Event",
    "description": "Create a new scheduled event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_scheduled_event",
    "display_name": "Update Scheduled Event",
    "category": "Scheduled Event",
    "description": "Modify an existing scheduled event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_scheduled_event",
    "display_name": "Delete Scheduled Event",
    "category": "Scheduled Event",
    "description": "Delete a scheduled event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_scheduled_event_users",
    "display_name": "List Scheduled Event Users",
    "category": "Scheduled Event",
    "description": "Get users interested in a scheduled event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_auto_moderation_rules",
    "display_name": "List Guild Auto Moderation Rules",
    "category": "Auto Moderation",
    "description": "List all auto moderation rules in a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_auto_moderation_rule",
    "display_name": "Get Auto Moderation Rule",
    "category": "Auto Moderation",
    "description": "Get a specific auto moderation rule",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_auto_moderation_rule",
    "display_name": "Create Auto Moderation Rule",
    "category": "Auto Moderation",
    "description": "Create a new auto moderation rule",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_auto_moderation_rule",
    "display_name": "Update Auto Moderation Rule",
    "category": "Auto Moderation",
    "description": "Modify an existing auto moderation rule",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_auto_moderation_rule",
    "display_name": "Delete Auto Moderation Rule",
    "category": "Auto Moderation",
    "description": "Delete an auto moderation rule",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guild_audit_log",
    "display_name": "Get Guild Audit Log",
    "category": "Guild",
    "description": "Get the audit log for a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_stage_instance",
    "display_name": "Create Stage Instance",
    "category": "Stage Instance",
    "description": "Create a stage instance (go live)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_stage_instance_for_channel",
    "display_name": "Get Stage Instance for Channel",
    "category": "Stage Instance",
    "description": "Get the stage instance for a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_stage_instance",
    "display_name": "Update Stage Instance",
    "category": "Stage Instance",
    "description": "Modify a stage instance",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_stage_instance",
    "display_name": "Delete Stage Instance",
    "category": "Stage Instance",
    "description": "Delete a stage instance (end the stage)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_available_voice_regions",
    "display_name": "List Available Voice Regions",
    "category": "Voice",
    "description": "List available voice regions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_poll_answer_voters",
    "display_name": "List Poll Answer Voters",
    "category": "Poll",
    "description": "Get voters for a poll answer",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "end_poll_immediately",
    "display_name": "End Poll Immediately",
    "category": "Message",
    "description": "Immediately end a poll",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "play_soundboard_sound_in_voice_channel",
    "display_name": "Play Soundboard Sound in Voice Channel",
    "category": "Soundboard",
    "description": "Play a soundboard sound in a voice channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_default_soundboard_sounds",
    "display_name": "List Default Soundboard Sounds",
    "category": "Soundboard",
    "description": "List default soundboard sounds available to all users",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_soundboard_sounds",
    "display_name": "List Guild Soundboard Sounds",
    "category": "Soundboard",
    "description": "List guild's soundboard sounds",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guild_soundboard_sound",
    "display_name": "Get Guild Soundboard Sound",
    "category": "Soundboard",
    "description": "Get a specific guild soundboard sound",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_guild_soundboard_sound",
    "display_name": "Create Guild Soundboard Sound",
    "category": "Soundboard",
    "description": "Create a new soundboard sound for a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_guild_soundboard_sound",
    "display_name": "Update Guild Soundboard Sound",
    "category": "Soundboard",
    "description": "Modify a guild soundboard sound",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_guild_soundboard_sound",
    "display_name": "Delete Guild Soundboard Sound",
    "category": "Soundboard",
    "description": "Delete a guild soundboard sound",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guild_template",
    "display_name": "Get Guild Template",
    "category": "Guild Template",
    "description": "Get a guild template by code",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_guild_from_template",
    "display_name": "Create Guild from Template",
    "category": "Guild",
    "description": "Deprecated: Discord no longer supports guild creation by apps.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_templates",
    "display_name": "List Guild Templates",
    "category": "Guild Template",
    "description": "Get all templates for a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_guild_template",
    "display_name": "Create Guild Template",
    "category": "Guild Template",
    "description": "Create a guild template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "sync_guild_template_with_state",
    "display_name": "Sync Guild Template with State",
    "category": "Guild Template",
    "description": "Sync a guild template with current guild state",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_guild_template",
    "display_name": "Update Guild Template",
    "category": "Guild Template",
    "description": "Modify a guild template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_guild_template",
    "display_name": "Delete Guild Template",
    "category": "Guild Template",
    "description": "Delete a guild template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guild_onboarding_config",
    "display_name": "Get Guild Onboarding Config",
    "category": "Guild",
    "description": "Get guild onboarding configuration",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_guild_onboarding_config",
    "display_name": "Update Guild Onboarding Config",
    "category": "Guild",
    "description": "Modify guild onboarding configuration",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_direct_message_channel",
    "display_name": "Create Direct Message Channel",
    "category": "Direct Message",
    "description": "Create a DM channel with a user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_group_direct_message_channel",
    "display_name": "Create Group Direct Message Channel",
    "category": "Direct Message",
    "description": "Create a group DM channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_global_application_commands",
    "display_name": "List Global Application Commands",
    "category": "Application Command",
    "description": "Get all global application commands",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_global_application_command",
    "display_name": "Create Global Application Command",
    "category": "Application Command",
    "description": "Create a global application command",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_global_application_command",
    "display_name": "Get Global Application Command",
    "category": "Application Command",
    "description": "Get a specific global application command",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_global_application_command",
    "display_name": "Edit Global Application Command",
    "category": "Application Command",
    "description": "Edit a global application command",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_global_application_command",
    "display_name": "Delete Global Application Command",
    "category": "Application Command",
    "description": "Delete a global application command",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_application_commands",
    "display_name": "List Guild Application Commands",
    "category": "Application Command",
    "description": "Get all guild application commands",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_guild_application_command",
    "display_name": "Create Guild Application Command",
    "category": "Application Command",
    "description": "Create a guild application command",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guild_application_command",
    "display_name": "Get Guild Application Command",
    "category": "Application Command",
    "description": "Get a specific guild application command",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_guild_application_command",
    "display_name": "Edit Guild Application Command",
    "category": "Application Command",
    "description": "Edit a guild application command",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_guild_application_command",
    "display_name": "Delete Guild Application Command",
    "category": "Application Command",
    "description": "Delete a guild application command",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_application_skus",
    "display_name": "List Application Skus",
    "category": "SKU",
    "description": "List all SKUs for an application",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_application_entitlements",
    "display_name": "List Application Entitlements",
    "category": "Entitlement",
    "description": "List entitlements for an application",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_test_entitlement",
    "display_name": "Create Test Entitlement",
    "category": "Entitlement",
    "description": "Create a test entitlement",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_test_entitlement",
    "display_name": "Delete Test Entitlement",
    "category": "Entitlement",
    "description": "Delete a test entitlement",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "consume_one_time_purchase_entitlement",
    "display_name": "Consume One Time Purchase Entitlement",
    "category": "Entitlement",
    "description": "Consume a one-time purchase entitlement",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guild_widget_settings",
    "display_name": "Get Guild Widget Settings",
    "category": "Guild",
    "description": "Get guild widget settings",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_guild_widget_settings",
    "display_name": "Update Guild Widget Settings",
    "category": "Guild",
    "description": "Modify guild widget settings",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guild_welcome_screen",
    "display_name": "Get Guild Welcome Screen",
    "category": "Guild",
    "description": "Get guild welcome screen",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_guild_welcome_screen",
    "display_name": "Update Guild Welcome Screen",
    "category": "Guild",
    "description": "Modify guild welcome screen",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_current_user_voice_state",
    "display_name": "Update Current User Voice State",
    "category": "Voice",
    "description": "Modify current user's voice state",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_user_voice_state",
    "display_name": "Update User Voice State",
    "category": "Voice",
    "description": "Modify another user's voice state",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_current_user_guilds",
    "display_name": "List Current User Guilds",
    "category": "User",
    "description": "Get current user's guilds",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "leave_guild",
    "display_name": "Leave Guild",
    "category": "Guild",
    "description": "Leave a guild",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_connections",
    "display_name": "List User Connections",
    "category": "User",
    "description": "Get user's connections",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guild_integrations",
    "display_name": "List Guild Integrations",
    "category": "Guild",
    "description": "Get guild integrations",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_guild_integration",
    "display_name": "Delete Guild Integration",
    "category": "Guild",
    "description": "Delete a guild integration",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

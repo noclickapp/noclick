@@ -22,14 +22,16 @@
    "display_name": "List Album Metadata",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_album",
    "display_name": "Get Album Metadata",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

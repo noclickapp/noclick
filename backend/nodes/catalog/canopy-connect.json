@@ -22,154 +22,176 @@
    "display_name": null,
    "category": null,
    "description": "Get team. See https://docs.usecanopy.com/reference/get-team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pulls",
    "display_name": null,
    "category": null,
    "description": "List pulls. See https://docs.usecanopy.com/reference/get-pulls.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pull",
    "display_name": null,
    "category": null,
    "description": "Get pull. See https://docs.usecanopy.com/reference/get-pull-by-id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_pull",
    "display_name": null,
    "category": null,
    "description": "Update pull. See https://docs.usecanopy.com/reference/patch-pull-by-id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_pull_policy",
    "display_name": null,
    "category": null,
    "description": "Check pull policy. See https://docs.usecanopy.com/reference/post-pull-policy-check.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhooks",
    "display_name": null,
    "category": null,
    "description": "List webhooks. See https://docs.usecanopy.com/reference/get-webhooks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webhook",
    "display_name": null,
    "category": null,
    "description": "Create webhook. See https://docs.usecanopy.com/reference/post-webhooks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_webhook",
    "display_name": null,
    "category": null,
    "description": "Update webhook. See https://docs.usecanopy.com/reference/patch-webhook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook",
    "display_name": null,
    "category": null,
    "description": "Delete webhook. See https://docs.usecanopy.com/reference/delete-webhook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_monitorings",
    "display_name": null,
    "category": null,
    "description": "List monitorings. See https://docs.usecanopy.com/reference/get-monitorings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_monitoring",
    "display_name": null,
    "category": null,
    "description": "Create monitoring. See https://docs.usecanopy.com/reference/post-monitoring.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitoring",
    "display_name": null,
    "category": null,
    "description": "Get monitoring. See https://docs.usecanopy.com/reference/get-monitoring.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_monitoring",
    "display_name": null,
    "category": null,
    "description": "Update monitoring. See https://docs.usecanopy.com/reference/patch-monitoring.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_monitoring",
    "display_name": null,
    "category": null,
    "description": "Delete monitoring. See https://docs.usecanopy.com/reference/delete-monitoring.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_widgets",
    "display_name": null,
    "category": null,
    "description": "List widgets. See https://docs.usecanopy.com/reference/get-widgets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_widget",
    "display_name": null,
    "category": null,
    "description": "Create widget. See https://docs.usecanopy.com/reference/post-widgets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_widget",
    "display_name": null,
    "category": null,
    "description": "Get widget. See https://docs.usecanopy.com/reference/get-widgetId.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_widget",
    "display_name": null,
    "category": null,
    "description": "Update widget. See https://docs.usecanopy.com/reference/patch-widgetId.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_widget",
    "display_name": null,
    "category": null,
    "description": "Delete widget. See https://docs.usecanopy.com/reference/delete-widgetId.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitoring_reconnect_token",
    "display_name": null,
    "category": null,
    "description": "Get monitoring reconnect token. See https://docs.usecanopy.com/reference/get-monitoring-reconnect-token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refresh_monitoring",
    "display_name": null,
    "category": null,
    "description": "Refresh monitoring. See https://docs.usecanopy.com/reference/post-monitoring-refresh.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitoring_events",
    "display_name": null,
    "category": null,
    "description": "Get monitoring events. See https://docs.usecanopy.com/reference/get-monitoring-events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

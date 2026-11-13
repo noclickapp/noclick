@@ -22,175 +22,203 @@
    "display_name": "List Accounts",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": "Get Account",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_account",
    "display_name": "Create Account",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account_balance",
    "display_name": "Get Account Balance",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_account_numbers",
    "display_name": "List Account Numbers",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_account_number",
    "display_name": "Create Account Number",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transactions",
    "display_name": "List Transactions",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transaction",
    "display_name": "Get Transaction",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ach_transfers",
    "display_name": "List Ach Transfers",
    "category": "Transfers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ach_transfer",
    "display_name": "Get Ach Transfer",
    "category": "Transfers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ach_transfer",
    "display_name": "Create Ach Transfer",
    "category": "Transfers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_ach_transfer",
    "display_name": "Approve Ach Transfer",
    "category": "Transfers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_ach_transfer",
    "display_name": "Cancel Ach Transfer",
    "category": "Transfers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_wire_transfers",
    "display_name": "List Wire Transfers",
    "category": "Transfers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_wire_transfer",
    "display_name": "Get Wire Transfer",
    "category": "Transfers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_wire_transfer",
    "display_name": "Create Wire Transfer",
    "category": "Transfers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_wire_transfer",
    "display_name": "Approve Wire Transfer",
    "category": "Transfers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_wire_transfer",
    "display_name": "Cancel Wire Transfer",
    "category": "Transfers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_account_transfer",
    "display_name": "Create Account Transfer",
    "category": "Transfers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_external_accounts",
    "display_name": "List External Accounts",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_external_account",
    "display_name": "Create External Account",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_cards",
    "display_name": "List Cards",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_card",
    "display_name": "Create Card",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_card",
    "display_name": "Update Card",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_event",
    "display_name": "On Increase Event",
    "category": "Triggers",
    "description": "Receive banking events; the event references the resource to retrieve.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "increase_api_key"
+   ]
   }
  ],
  "agent_tool_provider": true,

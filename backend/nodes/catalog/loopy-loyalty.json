@@ -28,112 +28,128 @@
    "display_name": null,
    "category": null,
    "description": "List the connected account's campaigns.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign",
    "display_name": null,
    "category": null,
    "description": "Get a campaign by its ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign_by_name",
    "display_name": null,
    "category": null,
    "description": "Get a campaign by its exact name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_cards",
    "display_name": null,
    "category": null,
    "description": "List one page of cards in a campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": null,
    "category": null,
    "description": "List one page of campaign transaction events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_card",
    "display_name": null,
    "category": null,
    "description": "Get a card, optionally including events and rewards.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_card_by_unique_id",
    "display_name": null,
    "category": null,
    "description": "Find a card using the campaign's unique customer identifier.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrol_customer",
    "display_name": null,
    "category": null,
    "description": "Enrol a customer using the campaign's configured data field names.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_stamps",
    "display_name": null,
    "category": null,
    "description": "Add stamps to a card; a negative number deducts stamps.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "redeem_reward",
    "display_name": null,
    "category": null,
    "description": "Redeem rewards by card ID, using a one-based reward type.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_stamps_by_unique_id",
    "display_name": null,
    "category": null,
    "description": "Add or deduct stamps using the customer's unique identifier.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "redeem_reward_by_unique_id",
    "display_name": null,
    "category": null,
    "description": "Redeem rewards using the customer's unique identifier.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_card_message",
    "display_name": null,
    "category": null,
    "description": "Send a message to one card; delivery depends on the mobile wallet.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resync_card",
    "display_name": null,
    "category": null,
    "description": "Request a card resync with the mobile wallet.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_locations",
    "display_name": null,
    "category": null,
    "description": "List the connected account's locations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_location",
    "display_name": null,
    "category": null,
    "description": "Get a location by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

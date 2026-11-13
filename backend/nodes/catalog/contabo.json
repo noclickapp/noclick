@@ -33,70 +33,80 @@
    "display_name": "List Instance Metadata",
    "category": "Cloud Metadata",
    "description": "Read one protected instance page with IDs, states, time, capacity, region and OS metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_instance",
    "display_name": "Get Instance Metadata",
    "category": "Cloud Metadata",
    "description": "Read the exact protected numeric instance ID and verify the singleton data array.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_images",
    "display_name": "List Image Metadata",
    "category": "Cloud Metadata",
    "description": "Read one image page with IDs, format, sizes, OS/version and standard/custom flags. No source URLs or error text.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_image",
    "display_name": "Get Image Metadata",
    "category": "Cloud Metadata",
    "description": "Read the exact existing image ID and verify the singleton data array.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_snapshots",
    "display_name": "List Instance Snapshot Metadata",
    "category": "Cloud Metadata",
    "description": "First verify the exact parent instance, then read one page whose snapshots all match that parent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_snapshot",
    "display_name": "Get Instance Snapshot Metadata",
    "category": "Cloud Metadata",
    "description": "Verify the instance parent and exact snapshot ID; metadata only, no restore or download.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "image_stats",
    "display_name": "Get Custom Image Capacity",
    "category": "Cloud Metadata",
    "description": "Read documented currentImagesCount and total/used/free image MB only; no customer or tenant fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_instance",
    "display_name": "On New Instance",
    "category": "Triggers",
    "description": "Poll instances ordered by createdDate. Existing resources form a quiet baseline. Watch the 100 most recently created resources; choose a schedule frequent enough to keep new resources in this window.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_image",
    "display_name": "On New or Updated Image",
    "category": "Triggers",
    "description": "Poll images ordered by lastModifiedDate. Emit each unseen image ID and modification timestamp after baselining. Watch the 100 most recent resources; choose a schedule frequent enough to keep changes in this window.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_snapshot",
    "display_name": "On New Snapshot",
    "category": "Triggers",
    "description": "Poll snapshots ordered by createdDate within the selected instance. Existing snapshots form a quiet baseline. Watch the 100 most recent resources; choose a schedule frequent enough to keep changes in this window.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

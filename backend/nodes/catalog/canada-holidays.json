@@ -18,70 +18,80 @@
    "display_name": "List Canadian Holidays",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_federal_holidays",
    "display_name": "List Federal Holidays",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_non_federal_holidays",
    "display_name": "List Non-Federal Holidays",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_optional_holidays",
    "display_name": "List Holidays Including Optional Observances",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_holiday",
    "display_name": "Get Holiday and Observing Provinces",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_provinces",
    "display_name": "List Provinces and Their Holidays",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_province",
    "display_name": "Get Province Holiday Calendar",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_province_with_optional_holidays",
    "display_name": "Get Province Calendar Including Optional Holidays",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_api_info",
    "display_name": "Get API Information",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_api_spec",
    "display_name": "Get Published API Specification",
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   }
  ],
  "agent_tool_provider": true,

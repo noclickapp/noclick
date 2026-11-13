@@ -34,140 +34,160 @@
    "display_name": "List Organizations",
    "category": "Organizations",
    "description": "List organizations",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization",
    "display_name": "Get Organization",
    "category": "Organizations",
    "description": "Get organization",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_members",
    "display_name": "List Members",
    "category": "Members",
    "description": "List members",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Projects",
    "category": "Projects",
    "description": "List projects",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": "Get Project",
    "category": "Projects",
    "description": "Get project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": "Create Project",
    "category": "Projects",
    "description": "Create project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project",
    "display_name": "Update Project",
    "category": "Projects",
    "description": "Update project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_clients",
    "display_name": "List Clients",
    "category": "Clients",
    "description": "List clients",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_client",
    "display_name": "Get Client",
    "category": "Clients",
    "description": "Get client",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_client",
    "display_name": "Create Client",
    "category": "Clients",
    "description": "Create client",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_client",
    "display_name": "Update Client",
    "category": "Clients",
    "description": "Update client",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tasks",
    "display_name": "List Tasks",
    "category": "Tasks",
    "description": "List tasks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task",
    "display_name": "Get Task",
    "category": "Tasks",
    "description": "Get task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task",
    "display_name": "Create Task",
    "category": "Tasks",
    "description": "Create task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task",
    "display_name": "Update Task",
    "category": "Tasks",
    "description": "Update task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task",
    "display_name": "Delete Task",
    "category": "Tasks",
    "description": "Delete task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_daily_activities",
    "display_name": "List Daily Activities",
    "category": "Activity",
    "description": "List daily activities",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_timesheets",
    "display_name": "List Timesheets",
    "category": "Timesheets",
    "description": "List timesheets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_timesheet",
    "display_name": "Update Timesheet",
    "category": "Timesheets",
    "description": "Update timesheet",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_time_entry",
    "display_name": "Create Time Entry",
    "category": "Time Entries",
    "description": "Create time entry",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

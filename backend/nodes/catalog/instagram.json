@@ -49,280 +49,338 @@
    "display_name": "On Comment",
    "category": "Comment",
    "description": "A new customer comment delivered by Instagram's signed webhook.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "instagram_login",
+    "instagram_oauth",
+    "instagram_system_user_token",
+    "instagram_page_access_token"
+   ]
   },
   {
    "name": "on_mention",
    "display_name": "On Mention",
    "category": "Comment",
    "description": "Receive @mentions in comments and captions on public posts and Reels.\n\n    Connect with Facebook Login through a linked Facebook Page.\n    Includes other accounts' posts. Private posts and Story mentions are not\n    supported. Meta can omit author details or media URLs for restricted media.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "instagram_login",
+    "instagram_oauth",
+    "instagram_system_user_token",
+    "instagram_page_access_token"
+   ]
   },
   {
    "name": "on_message",
    "display_name": "On Message",
    "category": "Messaging",
    "description": "An inbound customer message delivered by Instagram's signed webhook.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "instagram_login",
+    "instagram_oauth",
+    "instagram_system_user_token",
+    "instagram_page_access_token"
+   ]
   },
   {
    "name": "get_user_profile",
    "display_name": "Get User Profile",
    "category": "Profile",
    "description": "Get the authenticated user's Instagram profile",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_media",
    "display_name": "List User Media",
    "category": "Media",
    "description": "List media from the authenticated user's account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_media_details",
    "display_name": "Get Media Details",
    "category": "Media",
    "description": "Get details of a specific media item",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_photo_post",
    "display_name": "Publish Photo Post",
    "category": "Media",
    "description": "Publish a photo to Instagram",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_video_reel",
    "display_name": "Publish Video Reel",
    "category": "Media",
    "description": "Publish a video (Reel) to Instagram",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_carousel_post",
    "display_name": "Publish Carousel Post",
    "category": "Media",
    "description": "Publish a carousel (multiple images/videos) to Instagram",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_media_comments",
    "display_name": "List Media Comments",
    "category": "Comment",
    "description": "List comments on a media item",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_comment",
    "display_name": "Get Comment",
    "category": "Comment",
    "description": "Read one comment selected by ID, including its author and parent media.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_media_comment",
    "display_name": "Create Media Comment",
    "category": "Comment",
    "description": "Create a comment on a media item",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reply_to_comment",
    "display_name": "Reply to Comment",
    "category": "Comment",
    "description": "Reply to a comment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "hide_or_unhide_comment",
    "display_name": "Hide or Unhide Comment",
    "category": "Comment",
    "description": "Hide or unhide a comment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_comment",
    "display_name": "Delete Comment",
    "category": "Comment",
    "description": "Delete a comment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_media_insights",
    "display_name": "Get Media Insights",
    "category": "Media",
    "description": "Get insights for a specific media item",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account_insights",
    "display_name": "Get Account Insights",
    "category": "Profile",
    "description": "Get insights for the Instagram account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_hashtag_id",
    "display_name": "Search Hashtag Id",
    "category": "Hashtag",
    "description": "Search for a hashtag ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_hashtag_media",
    "display_name": "Get Hashtag Media",
    "category": "Hashtag",
    "description": "Get top or recent media for a hashtag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "discover_business_account",
    "display_name": "Discover Business Account",
    "category": "Profile",
    "description": "Discover public business/creator account information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_photo_story",
    "display_name": "Publish Photo Story",
    "category": "Story",
    "description": "Publish a photo story to Instagram",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_video_story",
    "display_name": "Publish Video Story",
    "category": "Story",
    "description": "Publish a video story to Instagram",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_mentioned_media",
    "display_name": "Get Mentioned Media",
    "category": "Media",
    "description": "Get media where the account is @mentioned",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_mentioned_comments",
    "display_name": "Get Mentioned Comments",
    "category": "Comment",
    "description": "Get comments where the account is @mentioned",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tag_products_in_media",
    "display_name": "Tag Products in Media",
    "category": "Media",
    "description": "Tag products in a media post for Instagram Shopping",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_media_product_tags",
    "display_name": "Get Media Product Tags",
    "category": "Media",
    "description": "Get product tags on a media post",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_product_tags_from_media",
    "display_name": "Delete Product Tags from Media",
    "category": "Media",
    "description": "Delete product tags from a media post",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_dm",
    "display_name": "Send DM",
    "category": "Messaging",
    "description": "Send a text direct message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_dm_attachment",
    "display_name": "Send DM Attachment",
    "category": "Messaging",
    "description": "Send a media attachment (image/video/audio) as a direct message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_dm_reaction",
    "display_name": "Send DM Reaction",
    "category": "Messaging",
    "description": "React to a direct message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_dm_seen",
    "display_name": "Mark DM Seen",
    "category": "Messaging",
    "description": "Mark direct messages from a sender as seen",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_conversations",
    "display_name": "List Conversations",
    "category": "Messaging",
    "description": "List Instagram DM conversations",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_conversation",
    "display_name": "Get Conversation",
    "category": "Messaging",
    "description": "Get a conversation and its messages",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dm_message",
    "display_name": "Get DM Message",
    "category": "Messaging",
    "description": "Get a single direct message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scrape_profile_metadata",
    "display_name": "Scrape Profile Metadata",
    "category": "Profile",
    "description": "Scrape public Instagram profile metadata via Apify ($1.60/1k profiles).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "scrape_profile_posts",
    "display_name": "Scrape Profile Posts",
    "category": "Profile",
    "description": "Scrape recent posts from one or more public Instagram profiles via Apify ($1/1k posts).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "scrape_individual_post",
    "display_name": "Scrape Individual Post",
    "category": "Media",
    "description": "Scrape a specific Instagram post or reel by URL via Apify ($1.50/1k results).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "scrape_hashtag_posts",
    "display_name": "Scrape Hashtag Posts",
    "category": "Hashtag",
    "description": "Scrape recent posts for a hashtag via Apify ($1.50/1k results).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "scrape_profile_reels",
    "display_name": "Scrape Profile Reels",
    "category": "Profile",
    "description": "Scrape reels from public Instagram profiles via Apify ($1/1k reels).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "scrape_post_comments",
    "display_name": "Scrape Post Comments",
    "category": "Comment",
    "description": "Scrape comments from Instagram posts or reels via Apify ($1–$1.50/1k comments).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   }
  ],
  "agent_tool_provider": true,

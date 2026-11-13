@@ -22,112 +22,128 @@
    "display_name": null,
    "category": null,
    "description": "Yelp AI API (Search & Chat). https://docs.developer.yelp.com/reference/v2_ai_chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_businesses",
    "display_name": null,
    "category": null,
    "description": "Search. https://docs.developer.yelp.com/reference/v3_business_search",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_businesses_by_phone",
    "display_name": null,
    "category": null,
    "description": "Phone Search. https://docs.developer.yelp.com/reference/v3_business_phone_search",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "match_businesses",
    "display_name": null,
    "category": null,
    "description": "Business Match. https://docs.developer.yelp.com/reference/v3_business_match",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_business",
    "display_name": null,
    "category": null,
    "description": "Business Details. https://docs.developer.yelp.com/reference/v3_business_info",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_delivery",
    "display_name": null,
    "category": null,
    "description": "Food Delivery Search. https://docs.developer.yelp.com/reference/v3_transaction_search",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_business_engagement",
    "display_name": null,
    "category": null,
    "description": "Engagement Metrics. https://docs.developer.yelp.com/reference/v3_get_businesses_engagement",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service_offerings",
    "display_name": null,
    "category": null,
    "description": "Service Offerings. https://docs.developer.yelp.com/reference/v3_business_service_offerings",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_categories",
    "display_name": null,
    "category": null,
    "description": "All Categories. https://docs.developer.yelp.com/reference/v3_all_categories",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_category",
    "display_name": null,
    "category": null,
    "description": "Category Details. https://docs.developer.yelp.com/reference/v3_categories",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_events",
    "display_name": null,
    "category": null,
    "description": "Event Search. https://docs.developer.yelp.com/reference/v3_events_search",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": null,
    "category": null,
    "description": "Event Details. https://docs.developer.yelp.com/reference/v3_event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_featured_event",
    "display_name": null,
    "category": null,
    "description": "Featured Event. https://docs.developer.yelp.com/reference/v3_featured_event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "autocomplete",
    "display_name": null,
    "category": null,
    "description": "Autocomplete. https://docs.developer.yelp.com/reference/v3_autocomplete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_reviews",
    "display_name": null,
    "category": null,
    "description": "Reviews. https://docs.developer.yelp.com/reference/v3_business_reviews",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_review_highlights",
    "display_name": null,
    "category": null,
    "description": "Review Highlights. https://docs.developer.yelp.com/reference/v3_business_review_highlights",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

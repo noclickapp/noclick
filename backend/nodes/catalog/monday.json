@@ -31,476 +31,548 @@
    "display_name": "List Boards",
    "category": "Boards",
    "description": "List boards in the account (name, columns, groups).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_board",
    "display_name": "Get Board",
    "category": "Boards",
    "description": "Fetch a single board's metadata, columns, and groups by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_board",
    "display_name": "Create Board",
    "category": "Boards",
    "description": "Create a new board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_board",
    "display_name": "Update Board",
    "category": "Boards",
    "description": "Update a board's name, description, or communication settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_board",
    "display_name": "Delete Board",
    "category": "Boards",
    "description": "Permanently delete a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_board",
    "display_name": "Archive Board",
    "category": "Boards",
    "description": "Archive a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "duplicate_board",
    "display_name": "Duplicate Board",
    "category": "Boards",
    "description": "Duplicate a board (structure only, with items, or with items and updates).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_items",
    "display_name": "List Items",
    "category": "Items",
    "description": "List items on a board (cursor-paginated, with column values).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_items",
    "display_name": "Get Items By ID",
    "category": "Items",
    "description": "Fetch specific items by ID with their column values.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_items_by_column",
    "display_name": "Query Items By Column Value",
    "category": "Items",
    "description": "Search/filter items on a board by a column value.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_item",
    "display_name": "Create Item",
    "category": "Items",
    "description": "Create an item on a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_subitem",
    "display_name": "Create Subitem",
    "category": "Items",
    "description": "Create a subitem under a parent item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "change_column_value",
    "display_name": "Update Item Column Value",
    "category": "Items",
    "description": "Change one column's value on an item (typed JSON value).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "change_multiple_column_values",
    "display_name": "Update Multiple Column Values",
    "category": "Items",
    "description": "Change several columns at once via a JSON map.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "change_simple_column_value",
    "display_name": "Update Simple Column Value",
    "category": "Items",
    "description": "Change a column using a plain string value (simple types).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_item_to_group",
    "display_name": "Move Item To Group",
    "category": "Items",
    "description": "Move an item to a different group within the same board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_item_to_board",
    "display_name": "Move Item To Board",
    "category": "Items",
    "description": "Move an item to another board and group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_item",
    "display_name": "Archive Item",
    "category": "Items",
    "description": "Archive an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_item",
    "display_name": "Delete Item",
    "category": "Items",
    "description": "Permanently delete an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "duplicate_item",
    "display_name": "Duplicate Item",
    "category": "Items",
    "description": "Duplicate an existing item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subitems",
    "display_name": "Get Subitems",
    "category": "Items",
    "description": "Get all subitems of a parent item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_item_updates",
    "display_name": "Clear Item Updates",
    "category": "Items",
    "description": "Clear all updates/comments from an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_group",
    "display_name": "Create Group",
    "category": "Groups & Columns",
    "description": "Create a new group (section) on a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_group",
    "display_name": "Delete Group",
    "category": "Groups & Columns",
    "description": "Delete a group from a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_groups",
    "display_name": "List Groups",
    "category": "Groups & Columns",
    "description": "List all groups on a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_group",
    "display_name": "Archive Group",
    "category": "Groups & Columns",
    "description": "Archive a group and all its items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "duplicate_group",
    "display_name": "Duplicate Group",
    "category": "Groups & Columns",
    "description": "Duplicate a group and all its items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_group",
    "display_name": "Update Group",
    "category": "Groups & Columns",
    "description": "Rename or recolor a group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_column",
    "display_name": "Create Column",
    "category": "Groups & Columns",
    "description": "Add a column to a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_column",
    "display_name": "Delete Column",
    "category": "Groups & Columns",
    "description": "Permanently delete a column from a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_column",
    "display_name": "Rename Column",
    "category": "Groups & Columns",
    "description": "Rename a column on a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_update",
    "display_name": "Create Update (Comment)",
    "category": "Updates & Notifications",
    "description": "Post an update/comment on an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_notification",
    "display_name": "Create Notification",
    "category": "Updates & Notifications",
    "description": "Send an in-app notification to a user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_updates",
    "display_name": "Get Item Updates",
    "category": "Updates & Notifications",
    "description": "Get updates/comments on an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_update",
    "display_name": "Delete Update",
    "category": "Updates & Notifications",
    "description": "Delete an update/comment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_update",
    "display_name": "Edit Update",
    "category": "Updates & Notifications",
    "description": "Edit an existing update/comment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "like_update",
    "display_name": "Like Update",
    "category": "Updates & Notifications",
    "description": "Like an update/comment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tags",
    "display_name": "Get Tags",
    "category": "Tags",
    "description": "Get account-level tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_or_get_tag",
    "display_name": "Create or Get Tag",
    "category": "Tags",
    "description": "Create or get an existing account-level tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_teams",
    "display_name": "Get Teams",
    "category": "Teams",
    "description": "List teams in the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_users_to_team",
    "display_name": "Add Users To Team",
    "category": "Teams",
    "description": "Add users to a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_users_from_team",
    "display_name": "Remove Users From Team",
    "category": "Teams",
    "description": "Remove users from a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_team",
    "display_name": null,
    "category": "Teams",
    "description": "Create a new team in the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_team",
    "display_name": null,
    "category": "Teams",
    "description": "Delete a team from the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": "List Users",
    "category": "Account",
    "description": "List account users.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_me",
    "display_name": "Get Current User",
    "category": "Account",
    "description": "Get the authenticated user's profile and account info.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workspaces",
    "display_name": "List Workspaces",
    "category": "Account",
    "description": "List workspaces in the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_workspace",
    "display_name": null,
    "category": "Workspaces",
    "description": "Create a new monday.com workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_workspace",
    "display_name": null,
    "category": "Workspaces",
    "description": "Update a monday.com workspace's name, kind, or description.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_workspace",
    "display_name": null,
    "category": "Workspaces",
    "description": "Permanently delete a monday.com workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_users_to_board",
    "display_name": null,
    "category": "Boards",
    "description": "Subscribe users to a board as subscribers or owners.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_users_from_board",
    "display_name": null,
    "category": "Boards",
    "description": "Remove subscribers from a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_teams_to_board",
    "display_name": null,
    "category": "Boards",
    "description": "Add teams as subscribers to a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": null,
    "category": "Folders",
    "description": "List folders in a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder",
    "display_name": null,
    "category": "Folders",
    "description": "Create a folder in a workspace to organize boards.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_folder",
    "display_name": null,
    "category": "Folders",
    "description": "Rename or move a folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_folder",
    "display_name": null,
    "category": "Folders",
    "description": "Delete a folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_docs",
    "display_name": null,
    "category": "Docs",
    "description": "List monday.com Docs, optionally filtered by workspace or specific doc IDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_doc",
    "display_name": null,
    "category": "Docs",
    "description": "Create a new monday.com Doc in a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_doc_block",
    "display_name": null,
    "category": "Docs",
    "description": "Add a content block to a monday.com Doc.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_doc_block",
    "display_name": null,
    "category": "Docs",
    "description": "Update the content of an existing monday.com Doc block.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_doc_block",
    "display_name": null,
    "category": "Docs",
    "description": "Delete a block from a monday.com Doc.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_assets",
    "display_name": null,
    "category": "Files",
    "description": "Get file assets (attachments) by their IDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unlike_update",
    "display_name": null,
    "category": "Updates",
    "description": "Remove a like from an update (comment).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webhook",
    "display_name": "Create Webhook",
    "category": "Webhooks",
    "description": "Register a webhook on a board for an event type.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook",
    "display_name": "Delete Webhook",
    "category": "Webhooks",
    "description": "Remove a webhook by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhooks",
    "display_name": "List Webhooks",
    "category": "Webhooks",
    "description": "List all webhooks registered on a board.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_board_event",
    "display_name": "On Board Event",
    "category": null,
    "description": "Fire the workflow when a board event occurs (new item, column change, etc.).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "monday_oauth",
+    "monday_api_token"
+   ]
   }
  ],
  "agent_tool_provider": true,

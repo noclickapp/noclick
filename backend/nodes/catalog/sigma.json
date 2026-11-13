@@ -22,280 +22,321 @@
    "display_name": "List Workbooks",
    "category": "Workbooks",
    "description": "List workbooks the credential can access.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workbook",
    "display_name": "Get Workbook",
    "category": "Workbooks",
    "description": "Get metadata for a single workbook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_workbook",
    "display_name": "Create Workbook",
    "category": "Workbooks",
    "description": "Create a new workbook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_workbook",
    "display_name": "Update Workbook",
    "category": "Workbooks",
    "description": "Update a workbook's metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_workbook",
    "display_name": "Delete Workbook",
    "category": "Workbooks",
    "description": "Delete a workbook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_workbook",
    "display_name": "Export Workbook",
    "category": "Workbooks",
    "description": "Trigger an async export of a workbook (returns a queryId).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "download_export",
    "display_name": "Download Export",
    "category": "Workbooks",
    "description": "Download the file produced by an export once ready.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "materialize_workbook",
    "display_name": "Materialize Workbook",
    "category": "Workbooks",
    "description": "Trigger a materialization job for a workbook element.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workbook_sources",
    "display_name": "Get Workbook Sources",
    "category": "Workbooks",
    "description": "List the data sources a workbook depends on.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_members",
    "display_name": "List Members",
    "category": "Members",
    "description": "List organization members/users.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_member",
    "display_name": "Get Member",
    "category": "Members",
    "description": "Get a single member's profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_member",
    "display_name": "Create Member",
    "category": "Members",
    "description": "Invite/provision a new member.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_member",
    "display_name": "Update Member",
    "category": "Members",
    "description": "Update a member's account type, name, or status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_member",
    "display_name": "Delete Member",
    "category": "Members",
    "description": "Deactivate/delete a member.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_teams",
    "display_name": "List Teams",
    "category": "Teams",
    "description": "List teams in the organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team",
    "display_name": "Get Team",
    "category": "Teams",
    "description": "Get details of a single team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_team",
    "display_name": "Create Team",
    "category": "Teams",
    "description": "Create a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_team",
    "display_name": "Update Team",
    "category": "Teams",
    "description": "Update a team's name or description.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_team",
    "display_name": "Delete Team",
    "category": "Teams",
    "description": "Delete a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_team_members",
    "display_name": "Add Members to Team",
    "category": "Teams",
    "description": "Add one or more members to a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_team_member",
    "display_name": "Remove Member from Team",
    "category": "Teams",
    "description": "Remove a member from a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_team_members",
    "display_name": "List Team Members",
    "category": "Teams",
    "description": "List members of a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_connections",
    "display_name": "List Connections",
    "category": "Connections",
    "description": "List data-warehouse connections.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_connection",
    "display_name": "Get Connection",
    "category": "Connections",
    "description": "Get details of a single connection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_connection",
    "display_name": "Create Connection",
    "category": "Connections",
    "description": "Create a connection to a cloud data warehouse.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "test_connection",
    "display_name": "Test Connection",
    "category": "Connections",
    "description": "Test read/write access of an existing connection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_connection",
    "display_name": "Delete Connection",
    "category": "Connections",
    "description": "Delete a connection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "sync_connection",
    "display_name": "Sync Connection",
    "category": "Connections",
    "description": "Sync a connection (refresh its schema in Sigma).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workspaces",
    "display_name": "List Workspaces",
    "category": "Workspaces",
    "description": "List workspaces.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workspace",
    "display_name": "Get Workspace",
    "category": "Workspaces",
    "description": "Get a single workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_workspace",
    "display_name": "Create Workspace",
    "category": "Workspaces",
    "description": "Create a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_workspace",
    "display_name": "Update Workspace",
    "category": "Workspaces",
    "description": "Rename a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_workspace",
    "display_name": "Delete Workspace",
    "category": "Workspaces",
    "description": "Permanently delete a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_workspace_grant",
    "display_name": "Add Workspace Grant",
    "category": "Workspaces",
    "description": "Grant a user or team access to a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_files",
    "display_name": "List Files",
    "category": "Catalog",
    "description": "List folders/documents in the file tree.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_data_models",
    "display_name": "List Data Models",
    "category": "Catalog",
    "description": "List data models.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_data_model_spec",
    "display_name": "Get Data Model Spec",
    "category": "Catalog",
    "description": "Get the as-code representation of a data model.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_account_types",
    "display_name": "List Account Types",
    "category": "Catalog",
    "description": "List available account types (license/permission tiers).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_api_credentials",
    "display_name": "List API Credentials",
    "category": "Catalog",
    "description": "List the org's API credentials (non-sensitive metadata).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_export_completed",
    "display_name": "On Export Completed",
    "category": "Triggers",
    "description": "Trigger when a workbook export/materialization finishes",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   }
  ],
  "agent_tool_provider": true,

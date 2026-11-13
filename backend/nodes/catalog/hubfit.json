@@ -29,175 +29,215 @@
    "display_name": "List clients",
    "category": "Clients",
    "description": "List clients.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_client",
    "display_name": "Create a client",
    "category": "Clients",
    "description": "Create a client.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_client",
    "display_name": "Get a client",
    "category": "Clients",
    "description": "Get a client.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_client_notes",
    "display_name": "List a client's notes",
    "category": "Notes",
    "description": "List a client's notes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_client_note",
    "display_name": "Add a note to a client",
    "category": "Notes",
    "description": "Add a note to a client.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_client_message",
    "display_name": "Send a message to a client",
    "category": "Messages",
    "description": "Send a message to a client.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": "List tags",
    "category": "Tags",
    "description": "List tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_onboarding_flows",
    "display_name": "List onboarding flows",
    "category": "Onboarding flows",
    "description": "List onboarding flows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_completed_workouts",
    "display_name": "List completed workouts",
    "category": "Completed workouts",
    "description": "List completed workouts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_completed_workout",
    "display_name": "Get a completed workout",
    "category": "Completed workouts",
    "description": "Get a completed workout.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_check_in_submissions",
    "display_name": "List check-in submissions",
    "category": "Check-in submissions",
    "description": "List check-in submissions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_check_in_submission",
    "display_name": "Get a check-in submission",
    "category": "Check-in submissions",
    "description": "Get a check-in submission.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "review_check_in_submission",
    "display_name": "Review a check-in submission",
    "category": "Check-in submissions",
    "description": "Review a check-in submission.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_questionnaire_submission",
    "display_name": "Get a questionnaire submission",
    "category": "Questionnaire submissions",
    "description": "Get a questionnaire submission.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_package_purchases",
    "display_name": "List package purchases",
    "category": "Package purchases",
    "description": "List package purchases.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_package_purchase",
    "display_name": "Get a package purchase",
    "category": "Package purchases",
    "description": "Get a package purchase.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tasks",
    "display_name": "List tasks",
    "category": "Tasks",
    "description": "List tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task",
    "display_name": "Add a task",
    "category": "Tasks",
    "description": "Add a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task",
    "display_name": "Get a task",
    "category": "Tasks",
    "description": "Get a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task",
    "display_name": "Change a task",
    "category": "Tasks",
    "description": "Change a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_client_created",
    "display_name": "On client created",
    "category": "Triggers",
    "description": "Receive the documented client.created record reference.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "hubfit_api_key"
+   ]
   },
   {
    "name": "on_check_in_submitted",
    "display_name": "On check in submitted",
    "category": "Triggers",
    "description": "Receive the documented check_in_submission.created record reference.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "hubfit_api_key"
+   ]
   },
   {
    "name": "on_workout_completed",
    "display_name": "On workout completed",
    "category": "Triggers",
    "description": "Receive the documented completed_workout.created record reference.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "hubfit_api_key"
+   ]
   },
   {
    "name": "on_package_purchased",
    "display_name": "On package purchased",
    "category": "Triggers",
    "description": "Receive the documented package_purchase.created record reference.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "hubfit_api_key"
+   ]
   },
   {
    "name": "on_questionnaire_submitted",
    "display_name": "On questionnaire submitted",
    "category": "Triggers",
    "description": "Receive the documented questionnaire_submission.created record reference.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "hubfit_api_key"
+   ]
   }
  ],
  "agent_tool_provider": true,

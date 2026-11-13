@@ -34,322 +34,372 @@
    "display_name": "Test API Key",
    "category": "Account",
    "description": "Verify the API key is valid and return the team name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact",
    "display_name": "Create Contact",
    "category": "Contacts",
    "description": "Add a new contact (by email) to the audience.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact",
    "display_name": "Update Contact",
    "category": "Contacts",
    "description": "Update an existing contact's properties (upserts if not found).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_contact",
    "display_name": "Find Contact",
    "category": "Contacts",
    "description": "Look up a contact by email or userId.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact",
    "display_name": "Delete Contact",
    "category": "Contacts",
    "description": "Remove a contact from the audience by email or userId.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_suppression",
    "display_name": "Get Suppression Status",
    "category": "Contacts",
    "description": "Check whether a contact is suppressed and the removal quota.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_suppression",
    "display_name": "Remove Suppression",
    "category": "Contacts",
    "description": "Restore (un-suppress) a previously suppressed contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact_property",
    "display_name": "Create Contact Property",
    "category": "Contact Properties",
    "description": "Define a new custom contact property.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contact_properties",
    "display_name": "List Contact Properties",
    "category": "Contact Properties",
    "description": "List all contact properties for the team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_mailing_lists",
    "display_name": "List Mailing Lists",
    "category": "Mailing Lists",
    "description": "Retrieve the account's mailing lists.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_event",
    "display_name": "Send Event",
    "category": "Events",
    "description": "Send an event for a contact to trigger event-based loops.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_transactional",
    "display_name": "Send Transactional Email",
    "category": "Transactional",
    "description": "Send a published transactional email to a contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transactional",
    "display_name": "List Transactional Emails",
    "category": "Transactional",
    "description": "List transactional emails (paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transactional",
    "display_name": "Get Transactional Email",
    "category": "Transactional",
    "description": "Retrieve a single transactional email by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_transactional_email",
    "display_name": "Create Transactional Email",
    "category": "Transactional",
    "description": "Create a new transactional email template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_transactional_email",
    "display_name": "Update Transactional Email",
    "category": "Transactional",
    "description": "Update an existing transactional email template's name or group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ensure_transactional_email_draft",
    "display_name": "Ensure Transactional Email Draft",
    "category": "Transactional",
    "description": "Ensure a transactional email is in draft state (revert from published if needed).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_transactional_email",
    "display_name": "Publish Transactional Email",
    "category": "Transactional",
    "description": "Publish a transactional email template so it can be sent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_campaigns",
    "display_name": "List Campaigns",
    "category": "Campaigns",
    "description": "List campaigns (paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_campaign",
    "display_name": "Create Campaign",
    "category": "Campaigns",
    "description": "Create a new draft campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign",
    "display_name": "Get Campaign",
    "category": "Campaigns",
    "description": "Retrieve a single campaign by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_campaign",
    "display_name": "Update Campaign",
    "category": "Campaigns",
    "description": "Update a draft campaign's details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_campaign_groups",
    "display_name": "List Campaign Groups",
    "category": "Campaign Groups",
    "description": "List campaign groups (paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign_group",
    "display_name": "Get Campaign Group",
    "category": "Campaign Groups",
    "description": "Retrieve a single campaign group by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_campaign_group",
    "display_name": "Create Campaign Group",
    "category": "Campaign Groups",
    "description": "Create a new campaign group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_campaign_group",
    "display_name": "Update Campaign Group",
    "category": "Campaign Groups",
    "description": "Update an existing campaign group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transactional_groups",
    "display_name": "List Transactional Groups",
    "category": "Transactional Groups",
    "description": "List transactional groups (paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transactional_group",
    "display_name": "Get Transactional Group",
    "category": "Transactional Groups",
    "description": "Retrieve a single transactional group by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_transactional_group",
    "display_name": "Create Transactional Group",
    "category": "Transactional Groups",
    "description": "Create a new transactional group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_transactional_group",
    "display_name": "Update Transactional Group",
    "category": "Transactional Groups",
    "description": "Update an existing transactional group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email_message",
    "display_name": "Get Email Message",
    "category": "Email Messages",
    "description": "Retrieve an email message (campaign content) with compiled output.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_email_message",
    "display_name": "Update Email Message",
    "category": "Email Messages",
    "description": "Update subject, sender, preview text, or content of an email message.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_email_message_preview",
    "display_name": "Send Email Message Preview",
    "category": "Email Messages",
    "description": "Send a preview of an email message to one or more addresses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_themes",
    "display_name": "List Themes",
    "category": "Design",
    "description": "List email themes (paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_theme",
    "display_name": "Get Theme",
    "category": "Design",
    "description": "Retrieve a single email theme by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_components",
    "display_name": "List Components",
    "category": "Design",
    "description": "List reusable email components (paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_component",
    "display_name": "Get Component",
    "category": "Design",
    "description": "Retrieve a single reusable email component by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_audience_segments",
    "display_name": "List Audience Segments",
    "category": "Audience",
    "description": "List audience segments (paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_audience_segment",
    "display_name": "Get Audience Segment",
    "category": "Audience",
    "description": "Retrieve a single audience segment by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_upload",
    "display_name": "Upload Image",
    "category": "Uploads",
    "description": "Upload an image asset to Loops via the platform upload component.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "complete_upload",
    "display_name": "Complete Upload",
    "category": "Uploads",
    "description": "Finalize a previously initiated upload and get the public URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workflows",
    "display_name": "List Workflows",
    "category": "Workflows",
    "description": "List automation workflows (alpha, paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workflow",
    "display_name": "Get Workflow",
    "category": "Workflows",
    "description": "Retrieve a single automation workflow by id (alpha).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workflow_node",
    "display_name": "Get Workflow Node",
    "category": "Workflows",
    "description": "Retrieve a single node inside an automation workflow (alpha).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sending_ips",
    "display_name": "List Dedicated Sending IPs",
    "category": "Account",
    "description": "Retrieve the team's dedicated sending IP addresses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_loops_event",
    "display_name": "On Loops Event",
    "category": "Triggers",
    "description": "Receive outbound webhook events from Loops (Settings → Webhooks in the Loops dashboard).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "loops_api_key",
+    "loops_mcp"
+   ]
   }
  ],
  "agent_tool_provider": true,

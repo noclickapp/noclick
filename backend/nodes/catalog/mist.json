@@ -28,154 +28,182 @@
    "display_name": "Get Current Account",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sites",
    "display_name": "List Organization Sites",
    "category": "Sites",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_site",
    "display_name": "Create Site",
    "category": "Sites",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site",
    "display_name": "Get Site",
    "category": "Sites",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_site",
    "display_name": "Update Site",
    "category": "Sites",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_inventory",
    "display_name": "List Organization Inventory",
    "category": "Devices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_devices",
    "display_name": "List Site Devices",
    "category": "Devices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_device",
    "display_name": "Get Device",
    "category": "Devices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_device_stats",
    "display_name": "List Device Statistics",
    "category": "Devices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restart_device",
    "display_name": "Restart Device",
    "category": "Devices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_clients",
    "display_name": "List Wireless Client Statistics",
    "category": "Clients",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_wlans",
    "display_name": "List WLANs",
    "category": "WLANs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_wlan",
    "display_name": "Get WLAN",
    "category": "WLANs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_wlan",
    "display_name": "Create PSK WLAN",
    "category": "WLANs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_wlan",
    "display_name": "Update WLAN Name or Status",
    "category": "WLANs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_wlan",
    "display_name": "Delete WLAN",
    "category": "WLANs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_device_events",
    "display_name": "Search Device Events",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_alarms",
    "display_name": "Search Alarms",
    "category": "Alarms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "acknowledge_alarm",
    "display_name": "Acknowledge Alarm",
    "category": "Alarms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unacknowledge_alarm",
    "display_name": "Unacknowledge Alarm",
    "category": "Alarms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_device_status",
    "display_name": "On Device Up or Down",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "mist_api_token"
+   ]
   },
   {
    "name": "on_alarm",
    "display_name": "On Alarm",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "mist_api_token"
+   ]
   }
  ],
  "agent_tool_provider": true,

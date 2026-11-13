@@ -43,1267 +43,1468 @@
    "display_name": "List Sites",
    "category": "Site",
    "description": "**Note:** Environment variable keys and values have moved from `build_settings.env` and `repo.env` to a new endpoint. Please use [getEnvVars](#tag/environmentVariables/operation/getEnvVars) to retrieve site environment variables.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_site",
    "display_name": "Create Site",
    "category": "Site",
    "description": "**Note:** Environment variable keys and values have moved from `build_settings.env` and `repo.env` to a new endpoint. Please use [createEnvVars](#tag/environmentVariables/operation/createEnvVars) to create environment variables for a site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site",
    "display_name": "Get Site",
    "category": "Site",
    "description": "**Note:** Environment variable keys and values have moved from `build_settings.env` and `repo.env` to a new endpoint. Please use [getEnvVars](#tag/environmentVariables/operation/getEnvVars) to retrieve site environment variables.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_site",
    "display_name": "Update Site",
    "category": "Site",
    "description": "**Note:** Environment variable keys and values have moved from `build_settings.env` and `repo.env` to a new endpoint. Please use [updateEnvVar](#tag/environmentVariables/operation/updateEnvVar) to update a site's environment variables.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_site",
    "display_name": "Delete Site",
    "category": "Site",
    "description": "Delete Site",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "provision_site_t_l_s_certificate",
    "display_name": "Provision Site T L S Certificate",
    "category": "Sni Certificate",
    "description": "Provisions or updates a TLS certificate for the site.\n\n**Creating a certificate (site has no certificate):**\n- Omit certificate params to initiate Let's Encrypt provisioning\n- Provide certificate, key, and ca_certificates to upload a custom certificate\n\n**Updating a certificate (site already has a certificate):**\n- REQUIRES certificate, key, and ca_certificates to replace with a new custom certificate\n- Use POST /api/v1/sites/{site_id}/ssl/renew to renew an existing Let's Encrypt certificate",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "show_site_t_l_s_certificate",
    "display_name": "Show Site T L S Certificate",
    "category": "Sni Certificate",
    "description": "Show Site T L S Certificate",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_all_certificates",
    "display_name": "Get All Certificates",
    "category": "Sni Certificate",
    "description": "Get All Certificates",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_env_vars",
    "display_name": "Get Env Vars",
    "category": "Environment Variables",
    "description": "Returns all environment variables for an account or site. An account corresponds to a team in the Netlify UI.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_env_vars",
    "display_name": "Create Env Vars",
    "category": "Environment Variables",
    "description": "Creates new environment variables. Granular scopes are available on Pro plans and above.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_env_vars",
    "display_name": "Get Site Env Vars",
    "category": "Environment Variables",
    "description": "Returns all environment variables for a site. This convenience method behaves the same as `getEnvVars` but doesn't require an `account_id` as input.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_env_var",
    "display_name": "Get Env Var",
    "category": "Environment Variables",
    "description": "Returns an individual environment variable.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_env_var",
    "display_name": "Update Env Var",
    "category": "Environment Variables",
    "description": "Updates an existing environment variable and all of its values. Existing values will be replaced by values provided.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_env_var_value",
    "display_name": "Set Env Var Value",
    "category": "Environment Variables",
    "description": "Updates or creates a new value for an existing environment variable.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_env_var",
    "display_name": "Delete Env Var",
    "category": "Environment Variables",
    "description": "Deletes an environment variable",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_env_var_value",
    "display_name": "Delete Env Var Value",
    "category": "Environment Variables",
    "description": "Deletes a specific environment variable value.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_site_functions",
    "display_name": "Search Site Functions",
    "category": "Function",
    "description": "Search Site Functions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_forms",
    "display_name": "List Site Forms",
    "category": "Form",
    "description": "List Site Forms",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_site_form",
    "display_name": "Delete Site Form",
    "category": "Form",
    "description": "Delete Site Form",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_submissions",
    "display_name": "List Site Submissions",
    "category": "Submission",
    "description": "List Site Submissions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_files",
    "display_name": "List Site Files",
    "category": "File",
    "description": "List Site Files",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_assets",
    "display_name": "List Site Assets",
    "category": "Asset",
    "description": "List Site Assets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_site_asset",
    "display_name": "Create Site Asset",
    "category": "Asset",
    "description": "Create Site Asset",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_asset_info",
    "display_name": "Get Site Asset Info",
    "category": "Asset",
    "description": "Get Site Asset Info",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_site_asset",
    "display_name": "Update Site Asset",
    "category": "Asset",
    "description": "Update Site Asset",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_site_asset",
    "display_name": "Delete Site Asset",
    "category": "Asset",
    "description": "Delete Site Asset",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_asset_public_signature",
    "display_name": "Get Site Asset Public Signature",
    "category": "Asset Public Signature",
    "description": "Get Site Asset Public Signature",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_file_by_path_name",
    "display_name": "Get Site File By Path Name",
    "category": "File",
    "description": "Get Site File By Path Name",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "purge_cache",
    "display_name": "Purge Cache",
    "category": "Purge",
    "description": "Purges cached content from Netlify's CDN. Supports purging by Cache-Tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_snippets",
    "display_name": "List Site Snippets",
    "category": "Snippet",
    "description": "List Site Snippets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_site_snippet",
    "display_name": "Create Site Snippet",
    "category": "Snippet",
    "description": "Create Site Snippet",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_snippet",
    "display_name": "Get Site Snippet",
    "category": "Snippet",
    "description": "Get Site Snippet",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_site_snippet",
    "display_name": "Update Site Snippet",
    "category": "Snippet",
    "description": "Update Site Snippet",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_site_snippet",
    "display_name": "Delete Site Snippet",
    "category": "Snippet",
    "description": "Delete Site Snippet",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_metadata",
    "display_name": "Get Site Metadata",
    "category": "Metadata",
    "description": "Get Site Metadata",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_site_metadata",
    "display_name": "Update Site Metadata",
    "category": "Metadata",
    "description": "Update Site Metadata",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_build_hooks",
    "display_name": "List Site Build Hooks",
    "category": "Build Hook",
    "description": "List Site Build Hooks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_site_build_hook",
    "display_name": "Create Site Build Hook",
    "category": "Build Hook",
    "description": "Create Site Build Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_build_hook",
    "display_name": "Get Site Build Hook",
    "category": "Build Hook",
    "description": "Get Site Build Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_site_build_hook",
    "display_name": "Update Site Build Hook",
    "category": "Build Hook",
    "description": "Update Site Build Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_site_build_hook",
    "display_name": "Delete Site Build Hook",
    "category": "Build Hook",
    "description": "Delete Site Build Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_deploys",
    "display_name": "List Site Deploys",
    "category": "Deploy",
    "description": "List Site Deploys",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_site_deploy",
    "display_name": "Create Site Deploy",
    "category": "Deploy",
    "description": "Create Site Deploy",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_deploy",
    "display_name": "Get Site Deploy",
    "category": "Deploy",
    "description": "Get Site Deploy",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_site_deploy",
    "display_name": "Update Site Deploy",
    "category": "Deploy",
    "description": "Update Site Deploy",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_site_deploy",
    "display_name": "Delete Site Deploy",
    "category": "Deploy",
    "description": "Delete Site Deploy",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_site_deploy",
    "display_name": "Cancel Site Deploy",
    "category": "Deploy",
    "description": "Cancel Site Deploy",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restore_site_deploy",
    "display_name": "Restore Site Deploy",
    "category": "Deploy",
    "description": "Restore Site Deploy",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_builds",
    "display_name": "List Site Builds",
    "category": "Build",
    "description": "List Site Builds",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_deployed_branches",
    "display_name": "List Site Deployed Branches",
    "category": "Deployed Branch",
    "description": "List Site Deployed Branches",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unlink_site_repo",
    "display_name": "Unlink Site Repo",
    "category": "Site",
    "description": "[Beta] Unlinks the repo from the site.\n\nThis action will also:\n- Delete associated deploy keys\n- Delete outgoing webhooks for the repo\n- Delete the site's build hooks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_site",
    "display_name": "Enable Site",
    "category": "Site",
    "description": "Re-enables a site that was previously disabled by the user. Sites that were disabled for usage exceeded or marked as spam cannot be re-enabled via this endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_site",
    "display_name": "Disable Site",
    "category": "Site",
    "description": "Disables a site, preventing it from serving content. The site can be re-enabled later using the enable endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_build",
    "display_name": "Get Site Build",
    "category": "Build",
    "description": "Get Site Build",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_site_build_log",
    "display_name": "Update Site Build Log",
    "category": "Build Log Msg",
    "description": "Update Site Build Log",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "notify_build_start",
    "display_name": "Notify Build Start",
    "category": "Build",
    "description": "Notify Build Start",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account_build_status",
    "display_name": "Get Account Build Status",
    "category": "Build",
    "description": "Get Account Build Status",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_d_n_s_for_site",
    "display_name": "Get D N S For Site",
    "category": "Dns Zone",
    "description": "Get D N S For Site",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "configure_d_n_s_for_site",
    "display_name": "Configure D N S For Site",
    "category": "Dns Zone",
    "description": "Configure D N S For Site",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rollback_site_deploy",
    "display_name": "Rollback Site Deploy",
    "category": "Deploy",
    "description": "Rollback Site Deploy",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deploy",
    "display_name": "Get Deploy",
    "category": "Deploy",
    "description": "Get Deploy",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_deploy",
    "display_name": "Delete Deploy",
    "category": "Deploy",
    "description": "Delete Deploy",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_deploy_validations",
    "display_name": "Update Deploy Validations",
    "category": "Deploy",
    "description": "Updates the deploy validations report for a deploy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lock_deploy",
    "display_name": "Lock Deploy",
    "category": "Deploy",
    "description": "Lock Deploy",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unlock_deploy",
    "display_name": "Unlock Deploy",
    "category": "Deploy",
    "description": "Unlock Deploy",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_plugin",
    "display_name": "Update Plugin",
    "category": "X-Internal",
    "description": "This is an internal-only endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_latest_plugin_runs",
    "display_name": "Get Latest Plugin Runs",
    "category": "X-Internal",
    "description": "This is an internal-only endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_plugin_run",
    "display_name": "Create Plugin Run",
    "category": "X-Internal",
    "description": "This is an internal-only endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_form_submissions",
    "display_name": "List Form Submissions",
    "category": "Submission",
    "description": "List Form Submissions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_hooks_by_site_id",
    "display_name": "List Hooks By Site Id",
    "category": "Hook",
    "description": "List Hooks By Site Id",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_hook_by_site_id",
    "display_name": "Create Hook By Site Id",
    "category": "Hook",
    "description": "Create Hook By Site Id",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_hook",
    "display_name": "Get Hook",
    "category": "Hook",
    "description": "Get Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_hook",
    "display_name": "Update Hook",
    "category": "Hook",
    "description": "Update Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_hook",
    "display_name": "Delete Hook",
    "category": "Hook",
    "description": "Delete Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_hook",
    "display_name": "Enable Hook",
    "category": "Hook",
    "description": "Enable Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_hook_types",
    "display_name": "List Hook Types",
    "category": "Hook Type",
    "description": "List Hook Types",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ticket",
    "display_name": "Create Ticket",
    "category": "Ticket",
    "description": "Create Ticket",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "show_ticket",
    "display_name": "Show Ticket",
    "category": "Ticket",
    "description": "Show Ticket",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "exchange_ticket",
    "display_name": "Exchange Ticket",
    "category": "Access Token",
    "description": "Exchange Ticket",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_deploy_keys",
    "display_name": "List Deploy Keys",
    "category": "Deploy Key",
    "description": "List Deploy Keys",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_deploy_key",
    "display_name": "Create Deploy Key",
    "category": "Deploy Key",
    "description": "Create Deploy Key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deploy_key",
    "display_name": "Get Deploy Key",
    "category": "Deploy Key",
    "description": "Get Deploy Key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_deploy_key",
    "display_name": "Delete Deploy Key",
    "category": "Deploy Key",
    "description": "Delete Deploy Key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_site_in_team",
    "display_name": "Create Site In Team",
    "category": "Site",
    "description": "**Note:** Environment variable keys and values have moved from `build_settings.env` and `repo.env` to a new endpoint. Please use [createEnvVars](#tag/environmentVariables/operation/createEnvVars) to create environment variables for a site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sites_for_account",
    "display_name": "List Sites For Account",
    "category": "Site",
    "description": "**Note:** Environment variable keys and values have moved from `build_settings.env` and `repo.env` to a new endpoint. Please use [getEnvVars](#tag/environmentVariables/operation/getEnvVars) to retrieve site environment variables.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_members_for_account",
    "display_name": "List Members For Account",
    "category": "Member",
    "description": "List Members For Account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_member_to_account",
    "display_name": "Add Member To Account",
    "category": "Member",
    "description": "Add Member To Account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account_member",
    "display_name": "Get Account Member",
    "category": "Member",
    "description": "Get Account Member",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_account_member",
    "display_name": "Update Account Member",
    "category": "Member",
    "description": "Update Account Member",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_account_member",
    "display_name": "Remove Account Member",
    "category": "Member",
    "description": "Remove Account Member",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payment_methods_for_user",
    "display_name": "List Payment Methods For User",
    "category": "Payment Method",
    "description": "List Payment Methods For User",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_account_types_for_user",
    "display_name": "List Account Types For User",
    "category": "Account Type",
    "description": "List Account Types For User",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_accounts_for_user",
    "display_name": "List Accounts For User",
    "category": "Account Membership",
    "description": "List Accounts For User",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_account",
    "display_name": "Create Account",
    "category": "Account Membership",
    "description": "Create Account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": "Get Account",
    "category": "Account Membership",
    "description": "Get Account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_account",
    "display_name": "Update Account",
    "category": "Account Membership",
    "description": "Update Account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_account",
    "display_name": "Cancel Account",
    "category": "Account Membership",
    "description": "Cancel Account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_account_audit_events",
    "display_name": "List Account Audit Events",
    "category": "Audit Log",
    "description": "List Account Audit Events",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_agent_runners",
    "display_name": "List Agent Runners",
    "category": "Agent Runner",
    "description": "List Agent Runners",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_agent_runner",
    "display_name": "Create Agent Runner",
    "category": "Agent Runner",
    "description": "Create Agent Runner",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_agent_runner_upload_url",
    "display_name": "Create Agent Runner Upload Url",
    "category": "Agent Runner",
    "description": "Create Agent Runner Upload Url",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_agent_runner",
    "display_name": "Get Agent Runner",
    "category": "Agent Runner",
    "description": "Get Agent Runner",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_agent_runner",
    "display_name": "Update Agent Runner",
    "category": "Agent Runner",
    "description": "Update Agent Runner",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_agent_runner",
    "display_name": "Delete Agent Runner",
    "category": "Agent Runner",
    "description": "Delete Agent Runner",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_agent_runner",
    "display_name": "Archive Agent Runner",
    "category": "Agent Runner",
    "description": "Archive Agent Runner",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "agent_runner_pull_request",
    "display_name": "Agent Runner Pull Request",
    "category": "Agent Runner",
    "description": "Agent Runner Pull Request",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "agent_runner_commit_to_branch",
    "display_name": "Agent Runner Commit To Branch",
    "category": "Agent Runner",
    "description": "Agent Runner Commit To Branch",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_agent_runner_sessions",
    "display_name": "List Agent Runner Sessions",
    "category": "Agent Runner Session",
    "description": "List Agent Runner Sessions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_agent_runner_session",
    "display_name": "Create Agent Runner Session",
    "category": "Agent Runner Session",
    "description": "Create Agent Runner Session",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_agent_runner_session",
    "display_name": "Get Agent Runner Session",
    "category": "Agent Runner Session",
    "description": "Get Agent Runner Session",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_agent_runner_session",
    "display_name": "Update Agent Runner Session",
    "category": "Agent Runner Session",
    "description": "Update Agent Runner Session",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_agent_runner_session",
    "display_name": "Delete Agent Runner Session",
    "category": "Agent Runner Session",
    "description": "Delete Agent Runner Session",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_form_submission",
    "display_name": "List Form Submission",
    "category": "Submission",
    "description": "List Form Submission",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_submission",
    "display_name": "Delete Submission",
    "category": "Submission",
    "description": "Delete Submission",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_service_instances_for_site",
    "display_name": "List Service Instances For Site",
    "category": "Service Instance",
    "description": "List Service Instances For Site",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_service_instance",
    "display_name": "Create Service Instance",
    "category": "Service Instance",
    "description": "Create Service Instance",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "show_service_instance",
    "display_name": "Show Service Instance",
    "category": "Service Instance",
    "description": "Show Service Instance",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_service_instance",
    "display_name": "Update Service Instance",
    "category": "Service Instance",
    "description": "Update Service Instance",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_service_instance",
    "display_name": "Delete Service Instance",
    "category": "Service Instance",
    "description": "Delete Service Instance",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_services",
    "display_name": "Get Services",
    "category": "Service",
    "description": "Get Services",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "show_service",
    "display_name": "Show Service",
    "category": "Service",
    "description": "Show Service",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "show_service_manifest",
    "display_name": "Show Service Manifest",
    "category": "Service",
    "description": "Show Service Manifest",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_user",
    "display_name": "Get Current User",
    "category": "User",
    "description": "Get Current User",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_split_test",
    "display_name": "Create Split Test",
    "category": "Split Test",
    "description": "Create Split Test",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_split_tests",
    "display_name": "Get Split Tests",
    "category": "Split Test",
    "description": "Get Split Tests",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_split_test",
    "display_name": "Update Split Test",
    "category": "Split Test",
    "description": "Update Split Test",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_split_test",
    "display_name": "Get Split Test",
    "category": "Split Test",
    "description": "Get Split Test",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_split_test",
    "display_name": "Enable Split Test",
    "category": "Split Test",
    "description": "Enable Split Test",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_split_test",
    "display_name": "Disable Split Test",
    "category": "Split Test",
    "description": "Disable Split Test",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_dns_zone",
    "display_name": "Create Dns Zone",
    "category": "Dns Zone",
    "description": "Create Dns Zone",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dns_zones",
    "display_name": "Get Dns Zones",
    "category": "Dns Zone",
    "description": "Get Dns Zones",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dns_zone",
    "display_name": "Get Dns Zone",
    "category": "Dns Zone",
    "description": "Get Dns Zone",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dns_zone",
    "display_name": "Delete Dns Zone",
    "category": "Dns Zone",
    "description": "Delete Dns Zone",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "transfer_dns_zone",
    "display_name": "Transfer Dns Zone",
    "category": "Dns Zone",
    "description": "Transfer Dns Zone",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dns_records",
    "display_name": "Get Dns Records",
    "category": "Dns Zone",
    "description": "Get Dns Records",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_dns_record",
    "display_name": "Create Dns Record",
    "category": "Dns Zone",
    "description": "Create Dns Record",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_individual_dns_record",
    "display_name": "Get Individual Dns Record",
    "category": "Dns Zone",
    "description": "Get Individual Dns Record",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dns_record",
    "display_name": "Delete Dns Record",
    "category": "Dns Zone",
    "description": "Delete Dns Record",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_dev_servers",
    "display_name": "List Site Dev Servers",
    "category": "Dev Server",
    "description": "List Site Dev Servers",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_site_dev_server",
    "display_name": "Create Site Dev Server",
    "category": "Dev Server",
    "description": "Create Site Dev Server",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_site_dev_servers",
    "display_name": "Delete Site Dev Servers",
    "category": "Dev Server",
    "description": "Delete Site Dev Servers",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_dev_server",
    "display_name": "Get Site Dev Server",
    "category": "Dev Server",
    "description": "Get Site Dev Server",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_dev_server_activity",
    "display_name": "Mark Dev Server Activity",
    "category": "Dev Server",
    "description": "Mark Dev Server Activity",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_dev_server_state",
    "display_name": "Update Dev Server State",
    "category": "Dev Server",
    "description": "Update Dev Server State",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_dev_server_hooks",
    "display_name": "List Site Dev Server Hooks",
    "category": "Dev Server Hook",
    "description": "List Site Dev Server Hooks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_site_dev_server_hook",
    "display_name": "Create Site Dev Server Hook",
    "category": "Dev Server Hook",
    "description": "Create Site Dev Server Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_dev_server_hook",
    "display_name": "Get Site Dev Server Hook",
    "category": "Dev Server Hook",
    "description": "Get Site Dev Server Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_site_dev_server_hook",
    "display_name": "Update Site Dev Server Hook",
    "category": "Dev Server Hook",
    "description": "Update Site Dev Server Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_site_dev_server_hook",
    "display_name": "Delete Site Dev Server Hook",
    "category": "Dev Server Hook",
    "description": "Delete Site Dev Server Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_agent_runner_hooks",
    "display_name": "List Site Agent Runner Hooks",
    "category": "Agent Runner Hook",
    "description": "List Site Agent Runner Hooks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_site_agent_runner_hook",
    "display_name": "Create Site Agent Runner Hook",
    "category": "Agent Runner Hook",
    "description": "Create Site Agent Runner Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_agent_runner_hook",
    "display_name": "Get Site Agent Runner Hook",
    "category": "Agent Runner Hook",
    "description": "Get Site Agent Runner Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_site_agent_runner_hook",
    "display_name": "Update Site Agent Runner Hook",
    "category": "Agent Runner Hook",
    "description": "Update Site Agent Runner Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_site_agent_runner_hook",
    "display_name": "Delete Site Agent Runner Hook",
    "category": "Agent Runner Hook",
    "description": "Delete Site Agent Runner Hook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_a_i_gateway_providers",
    "display_name": "Get A I Gateway Providers",
    "category": "Ai Gateway",
    "description": "Get A I Gateway Providers",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_a_i_gateway_token",
    "display_name": "Get A I Gateway Token",
    "category": "Ai Gateway",
    "description": "Returns an AI Gateway token for a specific site",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account_a_i_gateway_token",
    "display_name": "Get Account A I Gateway Token",
    "category": "Ai Gateway",
    "description": "Returns an AI Gateway token scoped to an account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_site_database",
    "display_name": "Create Site Database",
    "category": "Database",
    "description": "Creates a new database for the specified site. If a database already exists, returns the existing connection string. The database region defaults to the site's functions region if not specified.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_database",
    "display_name": "Get Site Database",
    "category": "Database",
    "description": "Returns the database connection string for the specified site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_site_database",
    "display_name": "Delete Site Database",
    "category": "Database",
    "description": "Deletes the database and all associated branches and snapshots for the specified site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_site_database_branch",
    "display_name": "Create Site Database Branch",
    "category": "Database",
    "description": "Creates a new database branch. If a branch already exists for the specified branch ID, returns the existing connection string.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_database_branches",
    "display_name": "List Site Database Branches",
    "category": "Database",
    "description": "Returns all branches for the site's database with compute status and metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_database_branch",
    "display_name": "Get Site Database Branch",
    "category": "Database",
    "description": "Returns the database branch connection string for a specific branch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_site_database_branch",
    "display_name": "Delete Site Database Branch",
    "category": "Database",
    "description": "Deletes a database branch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_site_database_branch",
    "display_name": "Reset Site Database Branch",
    "category": "Database",
    "description": "Resets a non-production database branch by re-forking it from a source branch (defaults to the production branch). If the target branch is already in sync with the source, returns the existing connection string without performing a reset, unless `force=true` is passed. The production branch cannot be reset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_site_database_branch_compute_settings",
    "display_name": "Set Site Database Branch Compute Settings",
    "category": "Database",
    "description": "Sets compute settings for a specific database branch, overriding project-level settings. Requires a Pro or higher plan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_site_database_compute_settings",
    "display_name": "Set Site Database Compute Settings",
    "category": "Database",
    "description": "Sets project-level compute settings for the database. Applied to new branches. Can be overridden per-branch. Requires a Pro or higher plan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_database_compute_settings",
    "display_name": "Get Site Database Compute Settings",
    "category": "Database",
    "description": "Returns the project-level compute settings for the database. Returns effective settings (custom or tier defaults). Requires a Pro or higher plan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_site_database_compute_settings",
    "display_name": "Clear Site Database Compute Settings",
    "category": "Database",
    "description": "Resets project-level compute settings to tier defaults. Requires a Pro or higher plan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_database_migrations",
    "display_name": "List Site Database Migrations",
    "category": "Database",
    "description": "Returns the list of migrations available for the specified branch, indicating which ones have been applied to the database.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_database_migration",
    "display_name": "Get Site Database Migration",
    "category": "Database",
    "description": "Returns the contents of a named migration for the specified branch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_site_database_migrations",
    "display_name": "Run Site Database Migrations",
    "category": "Database",
    "description": "Runs database migrations for the specified deploy. Finds the deploy and determines the appropriate branch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_site_database_snapshot",
    "display_name": "Create Site Database Snapshot",
    "category": "Database",
    "description": "Creates a point-in-time snapshot of a database branch. Defaults to the production branch if no branch name is specified.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_database_snapshots",
    "display_name": "List Site Database Snapshots",
    "category": "Database",
    "description": "Returns all snapshots for the site's database.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_site_database_snapshot",
    "display_name": "Delete Site Database Snapshot",
    "category": "Database",
    "description": "Deletes a database snapshot.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restore_site_database_snapshot",
    "display_name": "Restore Site Database Snapshot",
    "category": "Database",
    "description": "Restores a snapshot to a database branch. Defaults to the production branch if no branch_name is specified.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "test_connection",
    "display_name": "Test Connection",
    "category": "Account",
    "description": "Verify the Netlify credential and return the current user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_deploy_succeeded",
    "display_name": "On Deploy Succeeded",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "netlify_oauth",
+    "netlify_pat",
+    "netlify_mcp"
+   ]
   },
   {
    "name": "on_deploy_failed",
    "display_name": "On Deploy Failed",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "netlify_oauth",
+    "netlify_pat",
+    "netlify_mcp"
+   ]
   },
   {
    "name": "on_deploy_started",
    "display_name": "On Deploy Started",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "netlify_oauth",
+    "netlify_pat",
+    "netlify_mcp"
+   ]
   },
   {
    "name": "on_form_submission",
    "display_name": "On Form Submission",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "netlify_oauth",
+    "netlify_pat",
+    "netlify_mcp"
+   ]
   }
  ],
  "agent_tool_provider": true,

@@ -43,168 +43,192 @@
    "display_name": null,
    "category": null,
    "description": "Get credit balance (Scrape Creators). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_request_history",
    "display_name": null,
    "category": null,
    "description": "Get request history (Scrape Creators). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_daily_usage",
    "display_name": null,
    "category": null,
    "description": "Get daily usage (Scrape Creators). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_most_used_routes",
    "display_name": null,
    "category": null,
    "description": "Get most used routes (Scrape Creators). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tiktok_profile",
    "display_name": null,
    "category": null,
    "description": "Profile (TikTok). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tiktok_videos",
    "display_name": null,
    "category": null,
    "description": "Read one TikTok video-feed page. Feeds may omit posts; absence does not prove deletion. Keep region, sort_by and include_pinned unchanged while paginating.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tiktok_video",
    "display_name": null,
    "category": null,
    "description": "Video Info (TikTok). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tiktok_transcript",
    "display_name": null,
    "category": null,
    "description": "Transcript (TikTok). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tiktok_comments",
    "display_name": null,
    "category": null,
    "description": "Comments (TikTok). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_tiktok_videos",
    "display_name": null,
    "category": null,
    "description": "Search by Keyword (TikTok). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_instagram_profile",
    "display_name": null,
    "category": null,
    "description": "Profile (Instagram). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_instagram_posts",
    "display_name": null,
    "category": null,
    "description": "Posts (Instagram). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_instagram_post",
    "display_name": null,
    "category": null,
    "description": "Post/Reel Info (Instagram). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_instagram_comments",
    "display_name": null,
    "category": null,
    "description": "Comments (Instagram). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_instagram_profiles",
    "display_name": null,
    "category": null,
    "description": "Search Instagram Profiles (Instagram). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_youtube_channel",
    "display_name": null,
    "category": null,
    "description": "Channel Details (YouTube). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_youtube_videos",
    "display_name": null,
    "category": null,
    "description": "Channel Videos (YouTube). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_youtube_video",
    "display_name": null,
    "category": null,
    "description": "Video/Short Details (YouTube). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_youtube_transcript",
    "display_name": null,
    "category": null,
    "description": "Transcript (YouTube). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_youtube",
    "display_name": null,
    "category": null,
    "description": "Search (YouTube). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_linkedin_profile",
    "display_name": null,
    "category": null,
    "description": "Person's Profile (LinkedIn). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_linkedin_company",
    "display_name": null,
    "category": null,
    "description": "Company Page (LinkedIn). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_twitter_posts",
    "display_name": null,
    "category": null,
    "description": "Search Posts (Twitter). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_reddit",
    "display_name": null,
    "category": null,
    "description": "Search (Reddit). Returns one page of provider JSON in data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

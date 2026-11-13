@@ -19,168 +19,192 @@
    "display_name": "Get Token Id",
    "category": null,
    "description": "Returns the tokenId representing a token. GET /ntp1/tokenid/{tokensymbol}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "broadcast_tx",
    "display_name": "Broadcast Signed NTP1 Transaction",
    "category": null,
    "description": "Broadcasts a signed raw transaction to the network. POST /ntp1/broadcast.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_address_info",
    "display_name": "Get Address Info",
    "category": null,
    "description": "Information On a Neblio Address. GET /ntp1/addressinfo/{address}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_transaction_info",
    "display_name": "Get Transaction Info",
    "category": null,
    "description": "Information On an NTP1 Transaction. GET /ntp1/transactioninfo/{txid}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_token_metadata",
    "display_name": "Get Token Metadata",
    "category": null,
    "description": "Get Metadata of Token. GET /ntp1/tokenmetadata/{tokenid}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_token_metadata_of_utxo",
    "display_name": "Get Token Metadata Of Utxo",
    "category": null,
    "description": "Get UTXO Metadata of Token. GET /ntp1/tokenmetadata/{tokenid}/{utxo}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_token_holders",
    "display_name": "Get Token Holders",
    "category": null,
    "description": "Get Addresses Holding a Token. GET /ntp1/stakeholders/{tokenid}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "issue_token",
    "display_name": "Build Token Issuance",
    "category": null,
    "description": "Builds a transaction that issues a new NTP1 Token. POST /ntp1/issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "send_token",
    "display_name": "Build Token Transfer",
    "category": null,
    "description": "Builds a transaction that sends an NTP1 Token. POST /ntp1/sendtoken.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "burn_token",
    "display_name": "Build Token Burn",
    "category": null,
    "description": "Builds a transaction that burns an NTP1 Token. POST /ntp1/burntoken.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "send_tx",
    "display_name": "Broadcast Signed Transaction",
    "category": null,
    "description": "Broadcasts a signed raw transaction to the network (not NTP1 specific). POST /ins/tx/send.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_block",
    "display_name": "Get Block",
    "category": null,
    "description": "Returns information regarding a Neblio block. GET /ins/block/{blockhash}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_block_index",
    "display_name": "Get Block Index",
    "category": null,
    "description": "Returns block hash of block. GET /ins/block-index/{blockindex}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_tx",
    "display_name": "Get Tx",
    "category": null,
    "description": "Returns transaction object. GET /ins/tx/{txid}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_raw_tx",
    "display_name": "Get Raw Tx",
    "category": null,
    "description": "Returns raw transaction hex. GET /ins/rawtx/{txid}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_address",
    "display_name": "Get Address",
    "category": null,
    "description": "Returns address object. GET /ins/addr/{address}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_address_balance",
    "display_name": "Get Address Balance",
    "category": null,
    "description": "Returns address balance in sats. GET /ins/addr/{address}/balance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_address_unconfirmed_balance",
    "display_name": "Get Address Unconfirmed Balance",
    "category": null,
    "description": "Returns address unconfirmed balance in sats. GET /ins/addr/{address}/unconfirmedBalance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_address_total_received",
    "display_name": "Get Address Total Received",
    "category": null,
    "description": "Returns total received by address in sats. GET /ins/addr/{address}/totalReceived.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_address_utxos",
    "display_name": "Get Address Utxos",
    "category": null,
    "description": "Returns all UTXOs at a given address. GET /ins/addr/{address}/utxo.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_address_total_sent",
    "display_name": "Get Address Total Sent",
    "category": null,
    "description": "Returns total sent by address in sats. GET /ins/addr/{address}/totalSent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_txs",
    "display_name": "Get Txs",
    "category": null,
    "description": "Get transactions by block or address. GET /ins/txs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_sync",
    "display_name": "Get Sync",
    "category": null,
    "description": "Get node sync status. GET /ins/sync.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_status",
    "display_name": "Get Status",
    "category": null,
    "description": "Utility API for calling several blockchain node functions. GET /ins/status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   }
  ],
  "agent_tool_provider": true,

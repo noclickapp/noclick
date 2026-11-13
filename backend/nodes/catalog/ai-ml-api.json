@@ -34,84 +34,96 @@
    "display_name": null,
    "category": null,
    "description": "Generate a text response using the Responses API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_chat_completion",
    "display_name": null,
    "category": null,
    "description": "Generate a chat completion from conversation messages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_embeddings",
    "display_name": null,
    "category": null,
    "description": "Embed text for semantic search and retrieval.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_image",
    "display_name": null,
    "category": null,
    "description": "Generate an image; provider base64 media is returned as a file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_transcription",
    "display_name": null,
    "category": null,
    "description": "Start transcription of an audio URL; use the returned generation ID to poll.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transcription",
    "display_name": null,
    "category": null,
    "description": "Read a transcription job using the returned generation ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_message",
    "display_name": null,
    "category": null,
    "description": "Generate an Anthropic-compatible message.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_video",
    "display_name": null,
    "category": null,
    "description": "Start a Seedance video generation; poll with Get video.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_video",
    "display_name": null,
    "category": null,
    "description": "Read one video generation's status and output URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_audio",
    "display_name": null,
    "category": null,
    "description": "Start an Eleven Music generation; poll with Get audio.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_audio",
    "display_name": null,
    "category": null,
    "description": "Read one music generation's status and output URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_document",
    "display_name": null,
    "category": null,
    "description": "Extract text from a document using Google Document AI OCR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -34,140 +34,160 @@
    "display_name": "Check Account Credit Access",
    "category": "Connection",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credit_limits",
    "display_name": "Get Account Credit Limits",
    "category": "Connection",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Audit Projects",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain_overview",
    "display_name": "Get Domain Overview",
    "category": "Domain Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain_history",
    "display_name": "Get Domain History",
    "category": "Domain Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_domain_keywords",
    "display_name": "List Domain Keywords",
    "category": "Domain Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_domain_competitors",
    "display_name": "List Organic Domain Competitors",
    "category": "Domain Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_keyword_metrics",
    "display_name": "Get Keyword Metrics",
    "category": "Keyword Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_related_keywords",
    "display_name": "List Related Keywords",
    "category": "Keyword Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_keyword_trends",
    "display_name": "Get Keyword Trends",
    "category": "Keyword Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_keyword_top",
    "display_name": "Get Keyword Top Domains",
    "category": "Keyword Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_backlink_summary",
    "display_name": "Get Backlink Summary",
    "category": "Backlinks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_referring_domains",
    "display_name": "List Referring Domains",
    "category": "Backlinks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rank_projects",
    "display_name": "List Rank Tracker Projects",
    "category": "Rank Tracker",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rank_regions",
    "display_name": "List Rank Project Regions",
    "category": "Rank Tracker",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_rank_status",
    "display_name": "Get Existing Rank Parsing Status",
    "category": "Rank Tracker",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rank_keywords",
    "display_name": "List Tracked Keyword Metadata",
    "category": "Rank Tracker",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_audit_reports",
    "display_name": "List Existing Audit Reports",
    "category": "Site Audit",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_audit_status",
    "display_name": "Get Existing Audit Status",
    "category": "Site Audit",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_audit_categories",
    "display_name": "Get Audit Category Counts",
    "category": "Site Audit",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

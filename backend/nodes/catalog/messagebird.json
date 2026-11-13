@@ -26,84 +26,96 @@
    "display_name": "Send SMS",
    "category": "Messages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "schedule_sms",
    "display_name": "Schedule SMS",
    "category": "Messages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_flash_sms",
    "display_name": "Send Flash SMS",
    "category": "Messages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_binary_sms",
    "display_name": "Send Binary SMS",
    "category": "Messages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_messages",
    "display_name": "List Messages",
    "category": "Messages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_received_messages",
    "display_name": "List Received Messages",
    "category": "Messages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sent_messages",
    "display_name": "List Sent Messages",
    "category": "Messages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_messages",
    "display_name": "Search Messages",
    "category": "Messages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message",
    "display_name": "Get Message",
    "category": "Messages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_message",
    "display_name": "Delete Scheduled Message",
    "category": "Messages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_message",
    "display_name": "New SMS Message",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_delivery_status_changed",
    "display_name": "SMS Delivery Status Changed",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -26,63 +26,72 @@
    "display_name": null,
    "category": null,
    "description": "Read the authenticated account's remaining credits without spending any.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich_organization",
    "display_name": null,
    "category": null,
    "description": "Enrich one company by LinkedIn URL, domain or name. Uses enrichment credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_enrich_organizations",
    "display_name": null,
    "category": null,
    "description": "Enrich up to 100 organizations (10 on Free); returns one result per query.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich_person",
    "display_name": null,
    "category": null,
    "description": "Enrich a person by a complete matching group. Uses enrichment credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lookup_person_by_email",
    "display_name": null,
    "category": null,
    "description": "Find a person's enriched profile by email. Uses enrichment credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_enrich_persons",
    "display_name": null,
    "category": null,
    "description": "Enrich up to 100 people (10 on Free); returns one result per query.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "verify_email",
    "display_name": null,
    "category": null,
    "description": "Verify one mailbox synchronously. Costs one verification credit, including cache hits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_verify_emails",
    "display_name": null,
    "category": null,
    "description": "Queue up to 500 emails (100 on Free). Only one job per account may run at a time.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bulk_verification_job",
    "display_name": null,
    "category": null,
    "description": "Read a verification job. Follow retry_after seconds until status is completed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -27,105 +27,120 @@
    "display_name": null,
    "category": null,
    "description": "List one page of sheets owned by the API user; use page to continue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sheet",
    "display_name": null,
    "category": null,
    "description": "Read a sheet's columns, scripts and importer settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_sheet",
    "display_name": null,
    "category": null,
    "description": "Create a sheet importer. Every supplied script item is created.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_sheet",
    "display_name": null,
    "category": null,
    "description": "PUT updates supplied fields. Supplied script collections replace stored collections: omitted items are deleted, and [] clears the collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "patch_sheet",
    "display_name": null,
    "category": null,
    "description": "PATCH changes only supplied fields. Script collections merge named items; [] is a no-op and _delete removes a named item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_sheet",
    "display_name": null,
    "category": null,
    "description": "Change only the sheet title.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_sheet_columns",
    "display_name": null,
    "category": null,
    "description": "Set the sheet's column definitions and built-in validation rules.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_destinations",
    "display_name": null,
    "category": null,
    "description": "Configure the destination receiving imported rows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_webhooks",
    "display_name": null,
    "category": null,
    "description": "Configure the import-completion webhook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_import_steps",
    "display_name": null,
    "category": null,
    "description": "Configure upload, mapping, verification and result-screen settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_security_settings",
    "display_name": null,
    "category": null,
    "description": "Configure region, allowed domains and upload security settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_virtual_columns",
    "display_name": null,
    "category": null,
    "description": "Merge computed columns by column_name; _delete removes one and [] is a no-op.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_validation_functions",
    "display_name": null,
    "category": null,
    "description": "Merge validators by function_name. Omitted code and scope fields are preserved on existing items; _delete removes one.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_data_transforms",
    "display_name": null,
    "category": null,
    "description": "Merge transforms by transform_name. Omitted fields are preserved on existing items; _delete removes one.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_pdf_metadata",
    "display_name": null,
    "category": null,
    "description": "Replace the PDF/DOCX metadata extraction configuration; [] clears it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

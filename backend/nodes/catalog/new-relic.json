@@ -22,133 +22,152 @@
    "display_name": "Get Current User",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_accounts",
    "display_name": "List Accounts",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": "Get Account",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_nrql",
    "display_name": "Run NRQL Query",
    "category": "Queries",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_entities",
    "display_name": "Search Entities",
    "category": "Entities",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_entity",
    "display_name": "Get Entity",
    "category": "Entities",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dashboards",
    "display_name": "List Dashboards",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dashboard",
    "display_name": "Get Dashboard",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_dashboard",
    "display_name": "Create Dashboard",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dashboard",
    "display_name": "Delete Dashboard",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "undelete_dashboard",
    "display_name": "Undelete Dashboard",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_alert_policies",
    "display_name": "List Alert Policies",
    "category": "Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_alert_policy",
    "display_name": "Create Alert Policy",
    "category": "Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_alert_policy",
    "display_name": "Rename Alert Policy",
    "category": "Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_alert_policy",
    "display_name": "Delete Alert Policy",
    "category": "Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_applications",
    "display_name": "List APM Applications",
    "category": "APM",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_application",
    "display_name": "Get APM Application",
    "category": "APM",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_deployments",
    "display_name": "List APM Deployments",
    "category": "APM",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_application_metrics",
    "display_name": "List APM Metrics",
    "category": "APM",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

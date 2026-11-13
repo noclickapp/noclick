@@ -22,203 +22,244 @@
    "display_name": "On Vehicle Event",
    "category": "Triggers",
    "description": "Start when a vehicle is created, updated, assigned or changes status.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "fleetio_api_key"
+   ]
   },
   {
    "name": "on_issue_event",
    "display_name": "On Issue Event",
    "category": "Triggers",
    "description": "Start when an issue is reported, updated, resolved or closed.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "fleetio_api_key"
+   ]
   },
   {
    "name": "on_fuel_entry_event",
    "display_name": "On Fuel Entry Event",
    "category": "Triggers",
    "description": "Start when a fuel entry is created, updated or deleted.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "fleetio_api_key"
+   ]
   },
   {
    "name": "on_service_entry_event",
    "display_name": "On Service Entry Event",
    "category": "Triggers",
    "description": "Start when a service entry is created, updated or deleted.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "fleetio_api_key"
+   ]
   },
   {
    "name": "list_vehicles",
    "display_name": null,
    "category": null,
    "description": "List vehicles.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_vehicle",
    "display_name": null,
    "category": null,
    "description": "Get vehicle.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": null,
    "category": null,
    "description": "List contacts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": null,
    "category": null,
    "description": "Get contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_vendors",
    "display_name": null,
    "category": null,
    "description": "List vendors.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_vendor",
    "display_name": null,
    "category": null,
    "description": "Get vendor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issues",
    "display_name": null,
    "category": null,
    "description": "List issues.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue",
    "display_name": null,
    "category": null,
    "description": "Get issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_fuel_entries",
    "display_name": null,
    "category": null,
    "description": "List fuel entries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_fuel_entry",
    "display_name": null,
    "category": null,
    "description": "Get fuel entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_service_entries",
    "display_name": null,
    "category": null,
    "description": "List service entries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service_entry",
    "display_name": null,
    "category": null,
    "description": "Get service entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_vehicle_statuses",
    "display_name": null,
    "category": null,
    "description": "List vehicle statuses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_vehicle_types",
    "display_name": null,
    "category": null,
    "description": "List vehicle types.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_vehicle",
    "display_name": null,
    "category": null,
    "description": "Create vehicle.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_vehicle",
    "display_name": null,
    "category": null,
    "description": "Update vehicle.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact",
    "display_name": null,
    "category": null,
    "description": "Create contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact",
    "display_name": null,
    "category": null,
    "description": "Update contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_vendor",
    "display_name": null,
    "category": null,
    "description": "Create vendor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_vendor",
    "display_name": null,
    "category": null,
    "description": "Update vendor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_issue",
    "display_name": null,
    "category": null,
    "description": "Create issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issue",
    "display_name": null,
    "category": null,
    "description": "Update issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "close_issue",
    "display_name": null,
    "category": null,
    "description": "Close issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resolve_issue",
    "display_name": null,
    "category": null,
    "description": "Resolve issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reopen_issue",
    "display_name": null,
    "category": null,
    "description": "Reopen issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

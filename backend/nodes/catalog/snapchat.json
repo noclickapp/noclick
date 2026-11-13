@@ -22,84 +22,96 @@
    "display_name": null,
    "category": null,
    "description": "Report a website purchase with value, currency and a deduplication ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_add_cart",
    "display_name": null,
    "category": null,
    "description": "Report a website add-to-cart conversion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_start_checkout",
    "display_name": null,
    "category": null,
    "description": "Report a website checkout start.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_view_content",
    "display_name": null,
    "category": null,
    "description": "Report a website product or content view.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_sign_up",
    "display_name": null,
    "category": null,
    "description": "Report a completed website signup.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_search",
    "display_name": null,
    "category": null,
    "description": "Report a website search with optional search text.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_subscribe",
    "display_name": null,
    "category": null,
    "description": "Report a website subscription conversion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_add_to_wishlist",
    "display_name": null,
    "category": null,
    "description": "Report a website wishlist addition.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_events",
    "display_name": null,
    "category": null,
    "description": "Send a batch of website conversions in one sendEvent request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_events",
    "display_name": null,
    "category": null,
    "description": "Send website events to the test validation endpoint, without live conversions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_validation_logs",
    "display_name": null,
    "category": null,
    "description": "Read the asset's test event metadata from the last 24 hours.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_validation_stats",
    "display_name": null,
    "category": null,
    "description": "Read live and test event counts and latest timestamps for this asset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

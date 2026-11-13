@@ -31,21 +31,27 @@
    "display_name": "On Incoming Call",
    "category": null,
    "description": "Trigger: the number is called. The wired agent answers, live.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "phone_number"
+   ]
   },
   {
    "name": "place_call",
    "display_name": "Place a Call",
    "category": "Calls",
    "description": "Dial a number from this one and hold the whole conversation yourself: the agent behind this tool is the voice on the call and pursues the goal end to end (keypad menus included). Returns at once while the call runs; when it ends, the full transcript arrives in this conversation as a new message — report the outcome then, never redial.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_number",
    "display_name": "Get Number",
    "category": "Number",
    "description": "Read-only: the number this credential holds and whether the provider still has it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

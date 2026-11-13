@@ -22,35 +22,41 @@
    "display_name": "Send Email",
    "category": "Email",
    "description": "Send a transactional email through Resend.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email",
    "display_name": "Get Email",
    "category": "Email",
    "description": "Retrieve the status and details of a sent email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_email",
    "display_name": "Reschedule Email",
    "category": "Email",
    "description": "Reschedule a previously scheduled email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_email",
    "display_name": "Cancel Email",
    "category": "Email",
    "description": "Cancel a scheduled email before it is sent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "receive_webhook",
    "display_name": "Receive Webhook Events",
    "category": null,
    "description": "Receive webhook events from Resend (delivered, bounced, opened, complained).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   }
  ],
  "agent_tool_provider": true,

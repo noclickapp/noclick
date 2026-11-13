@@ -27,28 +27,32 @@
    "display_name": "Read Protected Zone Metadata",
    "category": "STACKIT DNS Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_zone",
    "display_name": "Get Zone Metadata",
    "category": "STACKIT DNS Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rrsets",
    "display_name": "Read Zone RRset Metadata",
    "category": "STACKIT DNS Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_rrset",
    "display_name": "Get RRset Metadata",
    "category": "STACKIT DNS Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

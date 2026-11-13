@@ -28,147 +28,168 @@
    "display_name": null,
    "category": null,
    "description": "List all devices in the tailnet, without pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_device",
    "display_name": null,
    "category": null,
    "description": "Get a device's details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_device",
    "display_name": null,
    "category": null,
    "description": "Remove a device from its tailnet.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "expire_device_key",
    "display_name": null,
    "category": null,
    "description": "Expire the device's node key, requiring reauthentication.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_device_routes",
    "display_name": null,
    "category": null,
    "description": "Read advertised and enabled subnet routes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_device_routes",
    "display_name": null,
    "category": null,
    "description": "Replace enabled routes; an empty list disables all routes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "authorize_device",
    "display_name": null,
    "category": null,
    "description": "Authorize or deauthorize a device.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_device_name",
    "display_name": null,
    "category": null,
    "description": "Set a device's MagicDNS name, or reset it from its OS hostname.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_device_tags",
    "display_name": null,
    "category": null,
    "description": "Replace the complete list of identity tags on a device.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_device_key",
    "display_name": null,
    "category": null,
    "description": "Enable or disable device key expiry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dns_nameservers",
    "display_name": null,
    "category": null,
    "description": "Read the global DNS nameservers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_dns_nameservers",
    "display_name": null,
    "category": null,
    "description": "Replace global DNS nameservers; [] removes them.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dns_preferences",
    "display_name": null,
    "category": null,
    "description": "Read whether MagicDNS is enabled.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_dns_preferences",
    "display_name": null,
    "category": null,
    "description": "Enable or disable MagicDNS.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dns_search_paths",
    "display_name": null,
    "category": null,
    "description": "Read DNS search domains.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_dns_search_paths",
    "display_name": null,
    "category": null,
    "description": "Replace DNS search domains; [] removes them.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_keys",
    "display_name": null,
    "category": null,
    "description": "List key metadata; secret key material is omitted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_key",
    "display_name": null,
    "category": null,
    "description": "Read metadata for an auth key or trust credential.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_key",
    "display_name": null,
    "category": null,
    "description": "Revoke an auth key or trust credential.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": null,
    "category": null,
    "description": "List tailnet users with optional relation and role filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": null,
    "category": null,
    "description": "Get a tailnet user's details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

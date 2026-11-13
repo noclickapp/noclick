@@ -22,175 +22,200 @@
    "display_name": "List Videos",
    "category": "Videos",
    "description": "Read projected video metadata with bounded offset pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_video",
    "display_name": "Get Video",
    "category": "Videos",
    "description": "Read one video in the selected Video Cloud account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_catalog_counts",
    "display_name": "Get Catalog Counts",
    "category": "Catalog",
    "description": "Read current video and playlist counts; these are not playback analytics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_video_draft",
    "display_name": "Create Video Draft",
    "category": "Videos",
    "description": "Create an inactive metadata placeholder without media ingest.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_video_metadata",
    "display_name": "Update Video Metadata",
    "category": "Videos",
    "description": "Update metadata; existing video-change subscriptions may fire.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_video",
    "display_name": "Delete Video",
    "category": "Videos",
    "description": "Delete a video record and its associated assets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_playlists",
    "display_name": "List Playlists",
    "category": "Playlists",
    "description": "Read account playlist metadata with bounded pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_playlist",
    "display_name": "Get Playlist",
    "category": "Playlists",
    "description": "Read a playlist in the selected account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_playlist_videos",
    "display_name": "List Playlist Videos",
    "category": "Playlists",
    "description": "Read video metadata under a current account playlist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_manual_playlist",
    "display_name": "Create Manual Playlist",
    "category": "Playlists",
    "description": "Create an explicit playlist with optional video membership.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_playlist",
    "display_name": "Update Playlist",
    "category": "Playlists",
    "description": "Update metadata or replace a manual playlist's membership.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_playlist",
    "display_name": "Delete Playlist",
    "category": "Playlists",
    "description": "Delete a playlist in the selected account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": "List Folders",
    "category": "Folders",
    "description": "Read locally paged account folder metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_folder",
    "display_name": "Get Folder",
    "category": "Folders",
    "description": "Read current folder metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folder_videos",
    "display_name": "List Folder Videos",
    "category": "Folders",
    "description": "Read videos under the selected current folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder",
    "display_name": "Create Folder",
    "category": "Folders",
    "description": "Create an account folder with a unique name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_folder",
    "display_name": "Rename Folder",
    "category": "Folders",
    "description": "Rename the selected account folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_empty_folder",
    "display_name": "Delete Empty Folder",
    "category": "Folders",
    "description": "Delete only an empty folder after matching its current name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_video_to_folder",
    "display_name": "Add Video to Folder",
    "category": "Folders",
    "description": "Move an account video into this folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_video_from_folder",
    "display_name": "Remove Video from Folder",
    "category": "Folders",
    "description": "Remove a video only when it currently belongs to this folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_video_fields",
    "display_name": "Get Video Fields",
    "category": "Catalog",
    "description": "Read projected standard and custom field definitions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_labels",
    "display_name": "List Labels",
    "category": "Labels",
    "description": "Read account label paths when labels are enabled.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_label",
    "display_name": "Create Label",
    "category": "Labels",
    "description": "Create a label path and missing ancestors.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_label",
    "display_name": "Rename Label",
    "category": "Labels",
    "description": "Rename a final label segment and its descendants.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_label",
    "display_name": "Delete Label",
    "category": "Labels",
    "description": "Delete a label subtree; removal from videos is asynchronous.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

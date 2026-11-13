@@ -22,161 +22,184 @@
    "display_name": null,
    "category": null,
    "description": "Get the current authenticated account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account_capacity",
    "display_name": null,
    "category": null,
    "description": "Read account compute capacity.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account_limits",
    "display_name": null,
    "category": null,
    "description": "Read account workspace and rate limits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workspaces",
    "display_name": null,
    "category": null,
    "description": "List workspaces and their computers; Orgo may create a default workspace on the first call.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_computer",
    "display_name": null,
    "category": null,
    "description": "Provision a cloud computer; this can spend Orgo credit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_computer",
    "display_name": null,
    "category": null,
    "description": "Get computer state and connection details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_computer",
    "display_name": null,
    "category": null,
    "description": "Rename a computer or change when it is deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_computer",
    "display_name": null,
    "category": null,
    "description": "Delete a computer and everything on it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_computer",
    "display_name": null,
    "category": null,
    "description": "Start a computer; poll an asynchronous operation separately.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_computer",
    "display_name": null,
    "category": null,
    "description": "Stop a computer while keeping its disk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restart_computer",
    "display_name": null,
    "category": null,
    "description": "Restart a computer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "suspend_computer",
    "display_name": null,
    "category": null,
    "description": "Pause a computer with its memory saved.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_computer",
    "display_name": null,
    "category": null,
    "description": "Resume a paused computer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_computer_operation",
    "display_name": null,
    "category": null,
    "description": "Poll one computer lifecycle operation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_bash",
    "display_name": null,
    "category": null,
    "description": "Run a shell command on a computer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "click",
    "display_name": null,
    "category": null,
    "description": "Click a screen coordinate.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "type_text",
    "display_name": null,
    "category": null,
    "description": "Type text into the focused application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "press_key",
    "display_name": null,
    "category": null,
    "description": "Press a key or keyboard shortcut.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_public_urls",
    "display_name": null,
    "category": null,
    "description": "List the public URLs on a computer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_public_url",
    "display_name": null,
    "category": null,
    "description": "Expose a computer port through a public URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_public_url",
    "display_name": null,
    "category": null,
    "description": "Change a public URL port or password.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_public_url",
    "display_name": null,
    "category": null,
    "description": "Remove a public URL; the application keeps running.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_computer_apps",
    "display_name": null,
    "category": null,
    "description": "List apps saved on a computer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

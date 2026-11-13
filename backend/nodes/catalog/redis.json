@@ -40,1659 +40,1898 @@
    "display_name": "Get Key Value",
    "category": "Key",
    "description": "Get the value of a key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_key_value",
    "display_name": "Set Key Value",
    "category": "Key",
    "description": "Set the value of a key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_multiple_key_values",
    "display_name": "Get Multiple Key Values",
    "category": "Key",
    "description": "Get the values of multiple keys",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_multiple_key_value_pairs",
    "display_name": "Set Multiple Key Value Pairs",
    "category": "Key",
    "description": "Set multiple key-value pairs",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "increment_key_by_one",
    "display_name": "Increment Key by One",
    "category": "Key",
    "description": "Increment the integer value of a key by 1",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "increment_key_by_amount",
    "display_name": "Increment Key by Amount",
    "category": "Key",
    "description": "Increment the integer value of a key by a given amount",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "decrement_key_by_one",
    "display_name": "Decrement Key by One",
    "category": "Key",
    "description": "Decrement the integer value of a key by 1",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "append_value_to_key",
    "display_name": "Append Value to Key",
    "category": "Key",
    "description": "Append a value to a key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_string_value_length",
    "display_name": "Get String Value Length",
    "category": "String",
    "description": "Get the length of the value stored at a key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_hash_field_value",
    "display_name": "Get Hash Field Value",
    "category": "Hash",
    "description": "Get the value of a hash field",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_hash_field_value",
    "display_name": "Set Hash Field Value",
    "category": "Hash",
    "description": "Set the value of a hash field",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_all_hash_fields_and_values",
    "display_name": "Get All Hash Fields and Values",
    "category": "Hash",
    "description": "Get all fields and values in a hash",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_hash_fields",
    "display_name": "Delete Hash Fields",
    "category": "Hash",
    "description": "Delete one or more hash fields",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_multiple_hash_field_values",
    "display_name": "Get Multiple Hash Field Values",
    "category": "Hash",
    "description": "Get the values of multiple hash fields",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_multiple_hash_fields",
    "display_name": "Set Multiple Hash Fields",
    "category": "Hash",
    "description": "Set multiple hash fields",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_all_hash_field_names",
    "display_name": "Get All Hash Field Names",
    "category": "Hash",
    "description": "Get all field names in a hash",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_all_hash_values",
    "display_name": "Get All Hash Values",
    "category": "Hash",
    "description": "Get all values in a hash",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_if_hash_field_exists",
    "display_name": "Check If Hash Field Exists",
    "category": "Hash",
    "description": "Check if a hash field exists",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_hash_field_count",
    "display_name": "Get Hash Field Count",
    "category": "Hash",
    "description": "Get the number of fields in a hash",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "push_to_list_beginning",
    "display_name": "Push to List Beginning",
    "category": "List",
    "description": "Push values to the beginning of a list",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "push_to_list_end",
    "display_name": "Push to List End",
    "category": "List",
    "description": "Push values to the end of a list",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_first_element",
    "display_name": "Pop First Element",
    "category": "List",
    "description": "Remove and return the first element of a list",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_last_element",
    "display_name": "Pop Last Element",
    "category": "List",
    "description": "Remove and return the last element of a list",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list_range",
    "display_name": "Get List Range",
    "category": "List",
    "description": "Get a range of elements from a list",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list_length",
    "display_name": "Get List Length",
    "category": "List",
    "description": "Get the length of a list",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list_element_by_index",
    "display_name": "Get List Element by Index",
    "category": "List",
    "description": "Get an element from a list by index",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_list_element_by_index",
    "display_name": "Set List Element by Index",
    "category": "List",
    "description": "Set an element in a list by index",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_members_to_set",
    "display_name": "Add Members to Set",
    "category": "Set",
    "description": "Add members to a set",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_members_from_set",
    "display_name": "Remove Members from Set",
    "category": "Set",
    "description": "Remove members from a set",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_all_set_members",
    "display_name": "Get All Set Members",
    "category": "Set",
    "description": "Get all members of a set",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_if_member_in_set",
    "display_name": "Check If Member in Set",
    "category": "Set",
    "description": "Check if a value is a member of a set",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_set_member_count",
    "display_name": "Get Set Member Count",
    "category": "Set",
    "description": "Get the number of members in a set",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_set_union",
    "display_name": "Get Set Union",
    "category": "Set",
    "description": "Return the union of multiple sets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_set_intersection",
    "display_name": "Get Set Intersection",
    "category": "Set",
    "description": "Return the intersection of multiple sets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_set_difference",
    "display_name": "Get Set Difference",
    "category": "Set",
    "description": "Return the difference of multiple sets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_members_to_sorted_set",
    "display_name": "Add Members to Sorted Set",
    "category": "Sorted Set",
    "description": "Add members to a sorted set with scores",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_members_from_sorted_set",
    "display_name": "Remove Members from Sorted Set",
    "category": "Sorted Set",
    "description": "Remove members from a sorted set",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sorted_set_member_range",
    "display_name": "Get Sorted Set Member Range",
    "category": "Sorted Set",
    "description": "Get a range of members from a sorted set",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sorted_set_member_rank",
    "display_name": "Get Sorted Set Member Rank",
    "category": "Sorted Set",
    "description": "Get the rank of a member in a sorted set",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sorted_set_member_score",
    "display_name": "Get Sorted Set Member Score",
    "category": "Sorted Set",
    "description": "Get the score of a member in a sorted set",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sorted_set_member_count",
    "display_name": "Get Sorted Set Member Count",
    "category": "Sorted Set",
    "description": "Get the number of members in a sorted set",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_keys",
    "display_name": "Delete Keys",
    "category": "Key",
    "description": "Delete one or more keys",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_if_keys_exist",
    "display_name": "Check If Keys Exist",
    "category": "Key",
    "description": "Check if one or more keys exist",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_key_expiration_seconds",
    "display_name": "Set Key Expiration Seconds",
    "category": "Key",
    "description": "Set a timeout on a key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_key_time_to_live",
    "display_name": "Get Key Time to Live",
    "category": "Key",
    "description": "Get the time to live for a key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_keys_matching_pattern",
    "display_name": "Find Keys Matching Pattern",
    "category": "Key",
    "description": "Find all keys matching a pattern",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_key_value_type",
    "display_name": "Get Key Value Type",
    "category": "Key",
    "description": "Get the type of a key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_key",
    "display_name": "Rename Key",
    "category": "Key",
    "description": "Rename a key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_and_delete_key",
    "display_name": "Get and Delete Key",
    "category": "Key",
    "description": "Getdel operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_with_expiration_options",
    "display_name": "Get with Expiration Options",
    "category": "Key",
    "description": "Getex operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_substring_by_range",
    "display_name": "Get Substring by Range",
    "category": "String",
    "description": "Getrange operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_string_range_at_offset",
    "display_name": "Set String Range at Offset",
    "category": "String",
    "description": "Setrange operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "increment_key_by_float",
    "display_name": "Increment Key by Float",
    "category": "Key",
    "description": "Incrbyfloat operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "decrement_key_by_amount",
    "display_name": "Decrement Key by Amount",
    "category": "Key",
    "description": "Decrby operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_multiple_pairs_if_not_exist",
    "display_name": "Set Multiple Pairs If Not Exist",
    "category": "Key",
    "description": "Msetnx operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_key_value_with_expiration_seconds",
    "display_name": "Set Key Value with Expiration Seconds",
    "category": "Key",
    "description": "Setex operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_key_value_with_expiration_milliseconds",
    "display_name": "Set Key Value with Expiration Milliseconds",
    "category": "Key",
    "description": "Psetex operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_key_if_not_exists",
    "display_name": "Set Key If Not Exists",
    "category": "Key",
    "description": "Setnx operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_and_set_key_value",
    "display_name": "Get and Set Key Value",
    "category": "Key",
    "description": "Getset operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "increment_hash_field_by_amount",
    "display_name": "Increment Hash Field by Amount",
    "category": "Hash",
    "description": "Hincrby operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "increment_hash_field_by_float",
    "display_name": "Increment Hash Field by Float",
    "category": "Hash",
    "description": "Hincrbyfloat operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_hash_field_if_not_exists",
    "display_name": "Set Hash Field If Not Exists",
    "category": "Hash",
    "description": "Hsetnx operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_hash_field_value_length",
    "display_name": "Get Hash Field Value Length",
    "category": "Hash",
    "description": "Hstrlen operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_random_hash_field",
    "display_name": "Get Random Hash Field",
    "category": "Hash",
    "description": "Hrandfield operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scan_hash_fields_iteratively",
    "display_name": "Scan Hash Fields Iteratively",
    "category": "Hash",
    "description": "Hscan operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "insert_into_list",
    "display_name": "Insert Into List",
    "category": "List",
    "description": "Linsert operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_elements_from_list",
    "display_name": "Remove Elements from List",
    "category": "List",
    "description": "Lrem operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "trim_list_to_range",
    "display_name": "Trim List to Range",
    "category": "List",
    "description": "Ltrim operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_element_position_in_list",
    "display_name": "Find Element Position in List",
    "category": "List",
    "description": "Lpos operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_element_between_lists",
    "display_name": "Move Element Between Lists",
    "category": "List",
    "description": "Lmove operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "push_to_list_beginning_if_exists",
    "display_name": "Push to List Beginning If Exists",
    "category": "List",
    "description": "Lpushx operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "push_to_list_end_if_exists",
    "display_name": "Push to List End If Exists",
    "category": "List",
    "description": "Rpushx operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_and_push_across_lists",
    "display_name": "Pop and Push Across Lists",
    "category": "List",
    "description": "Rpoplpush operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_random_members_from_set",
    "display_name": "Pop Random Members from Set",
    "category": "Set",
    "description": "Spop operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_random_set_members",
    "display_name": "Get Random Set Members",
    "category": "Set",
    "description": "Srandmember operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_member_between_sets",
    "display_name": "Move Member Between Sets",
    "category": "Set",
    "description": "Smove operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "store_set_difference",
    "display_name": "Store Set Difference",
    "category": "Set",
    "description": "Sdiffstore operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "store_set_intersection",
    "display_name": "Store Set Intersection",
    "category": "Set",
    "description": "Sinterstore operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "store_set_union",
    "display_name": "Store Set Union",
    "category": "Set",
    "description": "Sunionstore operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_multiple_members_in_set",
    "display_name": "Check Multiple Members in Set",
    "category": "Set",
    "description": "Smismember operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "increment_sorted_set_member_score",
    "display_name": "Increment Sorted Set Member Score",
    "category": "Sorted Set",
    "description": "Zincrby operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "count_sorted_set_members_in_score_range",
    "display_name": "Count Sorted Set Members in Score Range",
    "category": "Sorted Set",
    "description": "Zcount operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_highest_score_member",
    "display_name": "Pop Highest Score Member",
    "category": "Sorted Set",
    "description": "Zpopmax operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_lowest_score_member",
    "display_name": "Pop Lowest Score Member",
    "category": "Sorted Set",
    "description": "Zpopmin operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sorted_set_member_range_reverse",
    "display_name": "Get Sorted Set Member Range Reverse",
    "category": "Sorted Set",
    "description": "Zrevrange operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sorted_set_member_rank_reverse",
    "display_name": "Get Sorted Set Member Rank Reverse",
    "category": "Sorted Set",
    "description": "Zrevrank operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sorted_set_range_by_score",
    "display_name": "Get Sorted Set Range by Score",
    "category": "Sorted Set",
    "description": "Zrangebyscore operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sorted_set_range_by_score_reverse",
    "display_name": "Get Sorted Set Range by Score Reverse",
    "category": "Sorted Set",
    "description": "Zrevrangebyscore operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sorted_set_range_by_lexical_order",
    "display_name": "Get Sorted Set Range by Lexical Order",
    "category": "Sorted Set",
    "description": "Zrangebylex operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sorted_set_range_by_lexical_order_reverse",
    "display_name": "Get Sorted Set Range by Lexical Order Reverse",
    "category": "Sorted Set",
    "description": "Zrevrangebylex operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_sorted_set_members_by_rank_range",
    "display_name": "Remove Sorted Set Members by Rank Range",
    "category": "Sorted Set",
    "description": "Zremrangebyrank operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_sorted_set_members_by_score_range",
    "display_name": "Remove Sorted Set Members by Score Range",
    "category": "Sorted Set",
    "description": "Zremrangebyscore operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_sorted_set_members_by_lexical_range",
    "display_name": "Remove Sorted Set Members by Lexical Range",
    "category": "Sorted Set",
    "description": "Zremrangebylex operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "count_sorted_set_members_in_lexical_range",
    "display_name": "Count Sorted Set Members in Lexical Range",
    "category": "Sorted Set",
    "description": "Zlexcount operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_multiple_sorted_set_member_scores",
    "display_name": "Get Multiple Sorted Set Member Scores",
    "category": "Sorted Set",
    "description": "Zmscore operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scan_sorted_set_members_iteratively",
    "display_name": "Scan Sorted Set Members Iteratively",
    "category": "Sorted Set",
    "description": "Zscan operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_random_sorted_set_members",
    "display_name": "Get Random Sorted Set Members",
    "category": "Sorted Set",
    "description": "Zrandmember operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_bit_at_offset",
    "display_name": "Set Bit at Offset",
    "category": "String",
    "description": "Setbit operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bit_at_offset",
    "display_name": "Get Bit at Offset",
    "category": "String",
    "description": "Getbit operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "count_set_bits",
    "display_name": "Count Set Bits",
    "category": "Bit",
    "description": "Bitcount operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_first_bit_position",
    "display_name": "Find First Bit Position",
    "category": "Bit",
    "description": "Bitpos operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "perform_bitwise_operation",
    "display_name": "Perform Bitwise Operation",
    "category": "Bit",
    "description": "Bitop operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "perform_bitfield_operation",
    "display_name": "Perform Bitfield Operation",
    "category": "Bit",
    "description": "Bitfield operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_to_hyperloglog",
    "display_name": "Add to Hyperloglog",
    "category": "HyperLogLog",
    "description": "Pfadd operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "count_hyperloglog_cardinality",
    "display_name": "Count Hyperloglog Cardinality",
    "category": "HyperLogLog",
    "description": "Pfcount operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_hyperloglog_sets",
    "display_name": "Merge Hyperloglog Sets",
    "category": "HyperLogLog",
    "description": "Pfmerge operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_geospatial_members",
    "display_name": "Add Geospatial Members",
    "category": "Geospatial",
    "description": "Geoadd operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_distance_between_geospatial_members",
    "display_name": "Get Distance Between Geospatial Members",
    "category": "Geospatial",
    "description": "Geodist operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_geohash_for_members",
    "display_name": "Get Geohash for Members",
    "category": "Geospatial",
    "description": "Geohash operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_position_of_members",
    "display_name": "Get Position of Members",
    "category": "Geospatial",
    "description": "Geopos operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_geospatial_members",
    "display_name": "Search Geospatial Members",
    "category": "Geospatial",
    "description": "Geosearch operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_and_store_geospatial_members",
    "display_name": "Search and Store Geospatial Members",
    "category": "Geospatial",
    "description": "Geosearchstore operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_members_in_radius",
    "display_name": "Find Members in Radius",
    "category": "Geospatial",
    "description": "Georadius operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_members_in_radius_from_member",
    "display_name": "Find Members in Radius from Member",
    "category": "Geospatial",
    "description": "Georadiusbymember operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scan_keys_iteratively",
    "display_name": "Scan Keys Iteratively",
    "category": "Key",
    "description": "Scan operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_key",
    "display_name": "Copy Key",
    "category": "Key",
    "description": "Copy operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unlink_keys_async",
    "display_name": "Unlink Keys Async",
    "category": "Key",
    "description": "Unlink operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "dump_serialized_key",
    "display_name": "Dump Serialized Key",
    "category": "Key",
    "description": "Dump operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restore_serialized_key",
    "display_name": "Restore Serialized Key",
    "category": "Key",
    "description": "Restore operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "touch_keys_to_update_access_time",
    "display_name": "Touch Keys to Update Access Time",
    "category": "Key",
    "description": "Touch operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_key_expiration_milliseconds",
    "display_name": "Set Key Expiration Milliseconds",
    "category": "Key",
    "description": "Pexpire operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_key_expiration_at_unix_timestamp_milliseconds",
    "display_name": "Set Key Expiration at Unix Timestamp Milliseconds",
    "category": "Key",
    "description": "Pexpireat operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_key_time_to_live_milliseconds",
    "display_name": "Get Key Time to Live Milliseconds",
    "category": "Key",
    "description": "Pttl operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_key_expiration_at_unix_timestamp",
    "display_name": "Set Key Expiration at Unix Timestamp",
    "category": "Key",
    "description": "Expireat operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_key_expiration_unix_timestamp",
    "display_name": "Get Key Expiration Unix Timestamp",
    "category": "Key",
    "description": "Expiretime operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_key_expiration_unix_timestamp_milliseconds",
    "display_name": "Get Key Expiration Unix Timestamp Milliseconds",
    "category": "Key",
    "description": "Pexpiretime operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_key_if_new_not_exists",
    "display_name": "Rename Key If New Not Exists",
    "category": "Key",
    "description": "Renamenx operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_random_key",
    "display_name": "Get Random Key",
    "category": "Key",
    "description": "Randomkey operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "sort_list_set_or_sorted_set",
    "display_name": "Sort List Set or Sorted Set",
    "category": "Server",
    "description": "Sort operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "execute_commands_in_pipeline",
    "display_name": "Execute Commands in Pipeline",
    "category": "Server",
    "description": "Execute multiple commands in a single request",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "append_to_stream",
    "display_name": "Append to Stream",
    "category": "Stream",
    "description": "Append a new entry to a stream",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "read_from_streams",
    "display_name": "Read from Streams",
    "category": "Stream",
    "description": "Read data from one or more streams",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "read_from_consumer_group",
    "display_name": "Read from Consumer Group",
    "category": "Stream",
    "description": "Read data from stream consumer group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_stream_entry_count",
    "display_name": "Get Stream Entry Count",
    "category": "Stream",
    "description": "Get the number of entries in a stream",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_stream_entry_range",
    "display_name": "Get Stream Entry Range",
    "category": "Stream",
    "description": "Return a range of entries from a stream",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_stream_entry_range_reverse",
    "display_name": "Get Stream Entry Range Reverse",
    "category": "Stream",
    "description": "Return a range of entries in reverse order",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_stream_entries",
    "display_name": "Delete Stream Entries",
    "category": "Stream",
    "description": "Remove entries from a stream",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "trim_stream_to_length",
    "display_name": "Trim Stream to Length",
    "category": "Stream",
    "description": "Trim stream to a given length",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "acknowledge_stream_messages",
    "display_name": "Acknowledge Stream Messages",
    "category": "Stream",
    "description": "Acknowledge stream messages",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pending_stream_messages",
    "display_name": "Get Pending Stream Messages",
    "category": "Stream",
    "description": "Get information about pending messages",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "claim_pending_stream_messages",
    "display_name": "Claim Pending Stream Messages",
    "category": "Stream",
    "description": "Claim pending messages from another consumer",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "auto_claim_pending_stream_messages",
    "display_name": "Auto Claim Pending Stream Messages",
    "category": "Stream",
    "description": "Automatically claim pending messages",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_stream_consumer_group",
    "display_name": "Create Stream Consumer Group",
    "category": "Stream",
    "description": "Create a consumer group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "destroy_stream_consumer_group",
    "display_name": "Destroy Stream Consumer Group",
    "category": "Stream",
    "description": "Destroy a consumer group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_consumer_group_last_delivered_id",
    "display_name": "Set Consumer Group Last Delivered Id",
    "category": "Stream",
    "description": "Set the consumer group last delivered ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_stream_information",
    "display_name": "Get Stream Information",
    "category": "Stream",
    "description": "Get information about a stream",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_json_value",
    "display_name": "Set Json Value",
    "category": "JSON",
    "description": "Set JSON value at path\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_json_value",
    "display_name": "Get Json Value",
    "category": "JSON",
    "description": "Get JSON value from path\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_json_value",
    "display_name": "Delete Json Value",
    "category": "JSON",
    "description": "Delete JSON value at path\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_json_from_multiple_keys",
    "display_name": "Get Json from Multiple Keys",
    "category": "JSON",
    "description": "Get JSON values from multiple keys\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_json_in_multiple_keys",
    "display_name": "Set Json in Multiple Keys",
    "category": "JSON",
    "description": "Set JSON values in multiple keys atomically\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "append_to_json_array",
    "display_name": "Append to Json Array",
    "category": "JSON",
    "description": "Append values to JSON array\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "insert_into_json_array",
    "display_name": "Insert Into Json Array",
    "category": "JSON",
    "description": "Insert values into JSON array at index\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_index_in_json_array",
    "display_name": "Find Index in Json Array",
    "category": "JSON",
    "description": "Find index of value in JSON array\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_json_array_length",
    "display_name": "Get Json Array Length",
    "category": "JSON",
    "description": "Get length of JSON array\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_from_json_array",
    "display_name": "Pop from Json Array",
    "category": "JSON",
    "description": "Remove and return element from JSON array\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "trim_json_array",
    "display_name": "Trim Json Array",
    "category": "JSON",
    "description": "Trim JSON array to specified range\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_json_container",
    "display_name": "Clear Json Container",
    "category": "JSON",
    "description": "Clear container values (arrays/objects)\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "increment_json_number",
    "display_name": "Increment Json Number",
    "category": "JSON",
    "description": "Increment JSON number by value\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "multiply_json_number",
    "display_name": "Multiply Json Number",
    "category": "JSON",
    "description": "Multiply JSON number by value\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "append_to_json_string",
    "display_name": "Append to Json String",
    "category": "JSON",
    "description": "Append string to JSON string value\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_json_string_length",
    "display_name": "Get Json String Length",
    "category": "JSON",
    "description": "Get length of JSON string\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_json_object_keys",
    "display_name": "Get Json Object Keys",
    "category": "JSON",
    "description": "Get keys of JSON object\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_json_object_key_count",
    "display_name": "Get Json Object Key Count",
    "category": "JSON",
    "description": "Get number of keys in JSON object\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_json_value_type",
    "display_name": "Get Json Value Type",
    "category": "JSON",
    "description": "Get type of JSON value\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_json_values",
    "display_name": "Merge Json Values",
    "category": "JSON",
    "description": "Merge JSON values\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "toggle_json_boolean",
    "display_name": "Toggle Json Boolean",
    "category": "JSON",
    "description": "Toggle JSON boolean value\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_json_in_resp_format",
    "display_name": "Get Json in Resp Format",
    "category": "JSON",
    "description": "Return JSON value in RESP form\n    \n    \n    **Requires:** RedisJSON module",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "execute_lua_script",
    "display_name": "Execute Lua Script",
    "category": "Script",
    "description": "Execute Lua script",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "execute_lua_script_by_sha",
    "display_name": "Execute Lua Script by Sha",
    "category": "Script",
    "description": "Execute Lua script by SHA1 digest",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "execute_readonly_lua_script",
    "display_name": "Execute Readonly Lua Script",
    "category": "Script",
    "description": "Execute read-only Lua script",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "execute_readonly_lua_script_by_sha",
    "display_name": "Execute Readonly Lua Script by Sha",
    "category": "Script",
    "description": "Execute read-only Lua script by SHA1",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "call_redis_function",
    "display_name": "Call Redis Function",
    "category": "Function",
    "description": "Call Redis function",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "call_readonly_redis_function",
    "display_name": "Call Readonly Redis Function",
    "category": "Function",
    "description": "Call read-only Redis function",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "load_function_library",
    "display_name": "Load Function Library",
    "category": "Function",
    "description": "Load Redis function library",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_function_library",
    "display_name": "Delete Function Library",
    "category": "Function",
    "description": "Delete Redis function library",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_all_function_libraries",
    "display_name": "Delete All Function Libraries",
    "category": "Function",
    "description": "Delete all function libraries",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_function_libraries",
    "display_name": "List Function Libraries",
    "category": "Function",
    "description": "List all function libraries",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_function_execution_stats",
    "display_name": "Get Function Execution Stats",
    "category": "Function",
    "description": "Get function execution statistics",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_if_scripts_exist",
    "display_name": "Check If Scripts Exist",
    "category": "Script",
    "description": "Check if scripts exist",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_all_cached_scripts",
    "display_name": "Remove All Cached Scripts",
    "category": "Script",
    "description": "Remove all scripts from script cache",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "load_script_into_cache",
    "display_name": "Load Script Into Cache",
    "category": "Script",
    "description": "Load script into cache",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_message_to_channel",
    "display_name": "Publish Message to Channel",
    "category": "PubSub",
    "description": "Post a message to a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "subscribe_to_channels",
    "display_name": "Subscribe to Channels",
    "category": null,
    "description": "Subscribe to channels",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "unsubscribe_from_channels",
    "display_name": "Unsubscribe from Channels",
    "category": "PubSub",
    "description": "Unsubscribe from channels",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "subscribe_to_channel_patterns",
    "display_name": "Subscribe to Channel Patterns",
    "category": null,
    "description": "Subscribe to channels matching patterns",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   },
   {
    "name": "unsubscribe_from_channel_patterns",
    "display_name": "Unsubscribe from Channel Patterns",
    "category": "PubSub",
    "description": "Unsubscribe from channel patterns",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pubsub_system_state",
    "display_name": "Get Pubsub System State",
    "category": "PubSub",
    "description": "Get pub/sub system state",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_transaction",
    "display_name": "Start Transaction",
    "category": "Transaction",
    "description": "Mark the start of a transaction block",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "execute_transaction",
    "display_name": "Execute Transaction",
    "category": "Transaction",
    "description": "Execute all commands in transaction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "discard_transaction_commands",
    "display_name": "Discard Transaction Commands",
    "category": "Transaction",
    "description": "Discard all commands in transaction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "watch_keys_for_transaction",
    "display_name": "Watch Keys for Transaction",
    "category": "Transaction",
    "description": "Watch keys for conditional execution",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_watching_keys",
    "display_name": "Stop Watching Keys",
    "category": "Transaction",
    "description": "Unwatch all keys",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ping_server",
    "display_name": "Ping Server",
    "category": "Connection",
    "description": "Ping the server",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "echo_message",
    "display_name": "Echo Message",
    "category": "Connection",
    "description": "Echo the given string",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "select_database",
    "display_name": "Select Database",
    "category": "Connection",
    "description": "Select the database",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "authenticate_to_server",
    "display_name": "Authenticate to Server",
    "category": "Connection",
    "description": "Authenticate to the server",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "handshake_with_server",
    "display_name": "Handshake with Server",
    "category": "Connection",
    "description": "Handshake with server",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "close_connection",
    "display_name": "Close Connection",
    "category": "Connection",
    "description": "Close the connection",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_connection_state",
    "display_name": "Reset Connection State",
    "category": "Connection",
    "description": "Reset the connection state",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_client_connection_id",
    "display_name": "Get Client Connection Id",
    "category": "Connection",
    "description": "Get client connection ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_client_connection_name",
    "display_name": "Get Client Connection Name",
    "category": "Connection",
    "description": "Get the connection name",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_client_connection_name",
    "display_name": "Set Client Connection Name",
    "category": "Connection",
    "description": "Set the connection name",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_client_connection_info",
    "display_name": "Get Client Connection Info",
    "category": "Connection",
    "description": "Get client connection info",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_all_client_connections",
    "display_name": "List All Client Connections",
    "category": "Connection",
    "description": "List all client connections",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_client_connection_attributes",
    "display_name": "Set Client Connection Attributes",
    "category": "Connection",
    "description": "Set client connection attributes",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_database_key_count",
    "display_name": "Get Database Key Count",
    "category": "Key",
    "description": "Get the number of keys in database",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_all_keys_all_databases",
    "display_name": "Delete All Keys All Databases",
    "category": "Key",
    "description": "Remove all keys from all databases",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_all_keys_current_database",
    "display_name": "Delete All Keys Current Database",
    "category": "Key",
    "description": "Remove all keys from current database",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "listen_for_server_requests",
    "display_name": "Listen for Server Requests",
    "category": "Server",
    "description": "Listen for all requests received by server",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_server_time",
    "display_name": "Get Server Time",
    "category": "Server",
    "description": "Get server time",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_first_element_blocking",
    "display_name": "Pop First Element Blocking",
    "category": "List",
    "description": "Remove and get the first element, block if empty",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_last_element_blocking",
    "display_name": "Pop Last Element Blocking",
    "category": "List",
    "description": "Remove and get the last element, block if empty",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_and_push_between_lists_blocking",
    "display_name": "Pop and Push Between Lists Blocking",
    "category": "List",
    "description": "Pop element from source, push to dest, block if empty",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_and_push_across_lists_blocking",
    "display_name": "Pop and Push Across Lists Blocking",
    "category": "List",
    "description": "Pop from source, push to dest, block if empty",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_from_multiple_lists_blocking",
    "display_name": "Pop from Multiple Lists Blocking",
    "category": "List",
    "description": "Pop elements from lists, block if empty",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_from_multiple_lists",
    "display_name": "Pop from Multiple Lists",
    "category": "List",
    "description": "Pop elements from multiple lists",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_set_intersection_cardinality",
    "display_name": "Get Set Intersection Cardinality",
    "category": "Set",
    "description": "Get cardinality of intersection between sets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scan_set_members_iteratively",
    "display_name": "Scan Set Members Iteratively",
    "category": "Set",
    "description": "Incrementally iterate set members",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_from_sorted_sets_blocking",
    "display_name": "Pop from Sorted Sets Blocking",
    "category": "Sorted Set",
    "description": "Pop elements from sorted sets, block if empty",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_highest_score_member_blocking",
    "display_name": "Pop Highest Score Member Blocking",
    "category": "Sorted Set",
    "description": "Remove and return highest scored member, block if empty",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_lowest_score_member_blocking",
    "display_name": "Pop Lowest Score Member Blocking",
    "category": "Sorted Set",
    "description": "Remove and return lowest scored member, block if empty",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sorted_set_difference",
    "display_name": "Get Sorted Set Difference",
    "category": "Sorted Set",
    "description": "Get difference between sorted sets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "store_sorted_set_difference",
    "display_name": "Store Sorted Set Difference",
    "category": "Sorted Set",
    "description": "Store difference of sorted sets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sorted_set_intersection",
    "display_name": "Get Sorted Set Intersection",
    "category": "Sorted Set",
    "description": "Get intersection of sorted sets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sorted_set_intersection_cardinality",
    "display_name": "Get Sorted Set Intersection Cardinality",
    "category": "Sorted Set",
    "description": "Get cardinality of sorted set intersection",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "store_sorted_set_intersection",
    "display_name": "Store Sorted Set Intersection",
    "category": "Sorted Set",
    "description": "Store intersection of sorted sets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pop_from_sorted_sets",
    "display_name": "Pop from Sorted Sets",
    "category": "Sorted Set",
    "description": "Pop elements from sorted sets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "store_sorted_set_range",
    "display_name": "Store Sorted Set Range",
    "category": "Sorted Set",
    "description": "Store range from sorted set",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sorted_set_union",
    "display_name": "Get Sorted Set Union",
    "category": "Sorted Set",
    "description": "Get union of sorted sets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "store_sorted_set_union",
    "display_name": "Store Sorted Set Union",
    "category": "Sorted Set",
    "description": "Store union of sorted sets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "perform_bitfield_operation_readonly",
    "display_name": "Perform Bitfield Operation Readonly",
    "category": "Bit",
    "description": "Read-only bitfield operations",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_and_delete_hash_field",
    "display_name": "Get and Delete Hash Field",
    "category": "Hash",
    "description": "Get hash field value and delete it",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_hash_field_with_expiration",
    "display_name": "Get Hash Field with Expiration",
    "category": "Hash",
    "description": "Get hash field with expiration",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_hash_field_with_expiration",
    "display_name": "Set Hash Field with Expiration",
    "category": "Hash",
    "description": "Set hash field with expiration",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_members_in_radius_readonly",
    "display_name": "Find Members in Radius Readonly",
    "category": "Geospatial",
    "description": "Read-only query radius with center coordinates",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_members_in_radius_from_member_readonly",
    "display_name": "Find Members in Radius from Member Readonly",
    "category": "Geospatial",
    "description": "Read-only query radius with center member",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

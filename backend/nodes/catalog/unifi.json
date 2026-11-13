@@ -22,98 +22,112 @@
    "display_name": null,
    "category": null,
    "description": "List hosts associated with your UI account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_host",
    "display_name": null,
    "category": null,
    "description": "Get a host by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sites",
    "display_name": null,
    "category": null,
    "description": "List Network sites and statistics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_devices",
    "display_name": null,
    "category": null,
    "description": "List devices managed by your hosts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_isp_metrics",
    "display_name": null,
    "category": null,
    "description": "Get ISP metrics across all sites.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_isp_metrics",
    "display_name": null,
    "category": null,
    "description": "Query ISP metrics for host/site pairs; partialSuccess is preserved.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sd_wan_configs",
    "display_name": null,
    "category": null,
    "description": "List SD-WAN configurations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sd_wan_config",
    "display_name": null,
    "category": null,
    "description": "Get a SD-WAN configuration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sd_wan_config_status",
    "display_name": null,
    "category": null,
    "description": "Get SD-WAN deployment status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "connector_get",
    "display_name": null,
    "category": null,
    "description": "Forward one GET request to a console application. Consult the application API contract for its payload.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "connector_post",
    "display_name": null,
    "category": null,
    "description": "Forward one POST request to a console application. Consult the application API contract for its payload.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "connector_put",
    "display_name": null,
    "category": null,
    "description": "Forward one PUT request to a console application. Consult the application API contract for its payload.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "connector_patch",
    "display_name": null,
    "category": null,
    "description": "Forward one PATCH request to a console application. Consult the application API contract for its payload.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "connector_delete",
    "display_name": null,
    "category": null,
    "description": "Forward one DELETE request to a console application. Consult the application API contract for its payload.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,42 +22,48 @@
    "display_name": "List Google Drive Documents",
    "category": "Document",
    "description": "List Google Docs documents",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "fetch_document_content",
    "display_name": "Fetch Document Content",
    "category": "Document",
    "description": "Get a document",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_new_document",
    "display_name": "Create New Document",
    "category": "Document",
    "description": "Create a new document",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "append_text_to_document",
    "display_name": "Append Text to Document",
    "category": "Document",
    "description": "Append text to document",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "insert_text_in_document",
    "display_name": "Insert Text in Document",
    "category": "Document",
    "description": "Insert text at position",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_document_text",
    "display_name": "Replace Document Text",
    "category": "Document",
    "description": "Replace text in document",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -41,273 +41,316 @@
    "display_name": "New Form Submission",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "tally_api_key",
+    "tally_mcp"
+   ]
   },
   {
    "name": "list_forms",
    "display_name": "List Forms",
    "category": "Forms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_form",
    "display_name": "Create Form",
    "category": "Forms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_form",
    "display_name": "Get Form",
    "category": "Forms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_form",
    "display_name": "Update Form",
    "category": "Forms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_form",
    "display_name": "Delete Form",
    "category": "Forms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_user",
    "display_name": "Current User",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workspaces",
    "display_name": "List Workspaces",
    "category": "Workspaces",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_workspace",
    "display_name": "Create Workspace",
    "category": "Workspaces",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workspace",
    "display_name": "Get Workspace",
    "category": "Workspaces",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_workspace",
    "display_name": "Update Workspace",
    "category": "Workspaces",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_workspace",
    "display_name": "Delete Workspace",
    "category": "Workspaces",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": "List Folders",
    "category": "Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder",
    "display_name": "Create Folder",
    "category": "Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_folder",
    "display_name": "Update Folder",
    "category": "Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_folder",
    "display_name": "Delete Folder",
    "category": "Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_organization_users",
    "display_name": "List Organization Users",
    "category": "Organization",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_organization_user",
    "display_name": "Remove Organization User",
    "category": "Organization",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_organization_invites",
    "display_name": "List Organization Invites",
    "category": "Organization",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_organization_invites",
    "display_name": "Create Organization Invites",
    "category": "Organization",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_organization_invite",
    "display_name": "Cancel Organization Invite",
    "category": "Organization",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_form_questions",
    "display_name": "List Form Questions",
    "category": "Forms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_form_question",
    "display_name": "Update Form Question",
    "category": "Forms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_form_blocks",
    "display_name": "List Form Blocks",
    "category": "Forms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_form_blocks",
    "display_name": "Update Form Blocks",
    "category": "Forms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_submissions",
    "display_name": "List Submissions",
    "category": "Submissions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_submission",
    "display_name": "Get Submission",
    "category": "Submissions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_submission",
    "display_name": "Delete Submission",
    "category": "Submissions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_form_metrics",
    "display_name": "Get Form Metrics",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_form_visits",
    "display_name": "Get Form Visits",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_form_submission_analytics",
    "display_name": "Get Form Submission Analytics",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_form_dimensions",
    "display_name": "Get Form Dimensions",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_form_drop_off",
    "display_name": "Get Form Drop-off",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhooks",
    "display_name": "List Webhooks",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webhook",
    "display_name": "Create Webhook",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_webhook",
    "display_name": "Update Webhook",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook",
    "display_name": "Delete Webhook",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhook_events",
    "display_name": "List Webhook Events",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retry_webhook_event",
    "display_name": "Retry Webhook Event",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

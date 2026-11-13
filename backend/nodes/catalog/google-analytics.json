@@ -22,21 +22,24 @@
    "display_name": "Run Ga4 Standard Report",
    "category": "Report",
    "description": "Run a GA4 report",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_ga4_realtime_report",
    "display_name": "Run Ga4 Realtime Report",
    "category": "Report",
    "description": "Run a GA4 realtime report",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "fetch_ga4_dimensions_and_metrics",
    "display_name": "Fetch Ga4 Dimensions and Metrics",
    "category": "Metadata",
    "description": "List available dimensions and metrics",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

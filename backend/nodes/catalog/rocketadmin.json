@@ -28,70 +28,80 @@
    "display_name": "List Connections",
    "category": "Connections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tables",
    "display_name": "List Tables",
    "category": "Tables",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tables_with_categories",
    "display_name": "List Tables with Categories",
    "category": "Tables",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_table_structure",
    "display_name": "Get Table Structure",
    "category": "Tables",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_table_structure_uncached",
    "display_name": "Get Table Structure without Cache",
    "category": "Tables",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rows",
    "display_name": "List Rows",
    "category": "Rows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_row",
    "display_name": "Get Row",
    "category": "Rows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_row",
    "display_name": "Create Row",
    "category": "Rows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_row",
    "display_name": "Update Row",
    "category": "Rows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_row",
    "display_name": "Delete Row",
    "category": "Rows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

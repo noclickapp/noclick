@@ -34,161 +34,184 @@
    "display_name": null,
    "category": null,
    "description": "List mailboxes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_mailbox",
    "display_name": null,
    "category": null,
    "description": "Get mailbox.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_mailbox",
    "display_name": null,
    "category": null,
    "description": "Create mailbox.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_mailbox",
    "display_name": null,
    "category": null,
    "description": "Update mailbox.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_mailbox",
    "display_name": null,
    "category": null,
    "description": "Delete mailbox.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_mailbox",
    "display_name": null,
    "category": null,
    "description": "Copy mailbox.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_mailbox_schema",
    "display_name": null,
    "category": null,
    "description": "Get mailbox schema.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_documents",
    "display_name": null,
    "category": null,
    "description": "List documents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document",
    "display_name": null,
    "category": null,
    "description": "Get document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_document",
    "display_name": null,
    "category": null,
    "description": "Delete document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document_logs",
    "display_name": null,
    "category": null,
    "description": "Get document logs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reprocess_document",
    "display_name": null,
    "category": null,
    "description": "Reprocess document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "skip_document",
    "display_name": null,
    "category": null,
    "description": "Skip document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_document",
    "display_name": null,
    "category": null,
    "description": "Copy document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_email",
    "display_name": null,
    "category": null,
    "description": "Upload email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": null,
    "category": null,
    "description": "List templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template",
    "display_name": null,
    "category": null,
    "description": "Get template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_template",
    "display_name": null,
    "category": null,
    "description": "Delete template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_template",
    "display_name": null,
    "category": null,
    "description": "Copy template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_downloads",
    "display_name": null,
    "category": null,
    "description": "List custom downloads.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_custom_download",
    "display_name": null,
    "category": null,
    "description": "Create custom download.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_custom_download",
    "display_name": null,
    "category": null,
    "description": "Update custom download.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_custom_download",
    "display_name": null,
    "category": null,
    "description": "Delete custom download.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

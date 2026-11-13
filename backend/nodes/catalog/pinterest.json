@@ -31,1848 +31,2112 @@
    "display_name": "Get ad account analytics",
    "category": "Ad Accounts",
    "description": "Get analytics for the specified `ad_account_id`, filtered by the specified options.\n\n  - The token's user_account must either be the Owner of the specified ad account, or have one of the necessary roles granted to them via [Business Access](https://help.pinterest.com/en/business/article/share-and-manage-access-to-your-ad-accounts): Admin, Analyst, Campaign",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_account_countries_get",
    "display_name": "Get ad accounts countries",
    "category": "Resources",
    "description": "Get Ad Accounts countries",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_account_targeting_analytics_get",
    "display_name": "Get targeting analytics for an ad account",
    "category": "Ad Accounts",
    "description": "Get targeting analytics for an ad account.\nFor the requested account and metrics, the response will include the requested metric information\n(e.g. SPEND_IN_DOLLAR) for the requested target type (e.g. \"age_bucket\") for applicable values (e.g. \"45-49\"). <p/>\n\n* The token's user_account must either be the Owner of the specified ad account, or have one of the ne",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_accounts_audiences_shared_accounts_list",
    "display_name": "List accounts with access to an audience owned by an ad account",
    "category": "Audience Sharing",
    "description": "List all ad accounts and/or businesses that have access to a specific audience. The audience must be owned by the requesting ad account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_accounts_create",
    "display_name": "Create ad account",
    "category": "Ad Accounts",
    "description": "Create a new ad account. Different ad accounts can support different currencies, payment methods, etc.\nAn ad account is needed to create campaigns, ad groups, and ads; other accounts (your employees or partners) can be assigned business access and appropriate roles to access an ad account.\n\nYou can set up up to 50 ad accounts per user. (The user must have a",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_accounts_get",
    "display_name": "Get ad account",
    "category": "Ad Accounts",
    "description": "Get an ad account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_accounts_list",
    "display_name": "List ad accounts",
    "category": "Ad Accounts",
    "description": "Get a list of the ad_accounts that the \"operation user_account\" has access to.\n        - This includes ad_accounts they own and ad_accounts that are owned by others who have granted them [Business Access](https://help.pinterest.com/en/business/article/share-and-manage-access-to-your-ad-accounts).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_accounts_subscriptions_del_by_id",
    "display_name": "Delete lead ads subscription",
    "category": "Lead Ads",
    "description": "Delete an existing lead ads webhook subscription by ID.\n  - Only requests for the OWNER or ADMIN of the ad_account will be allowed.'",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_accounts_subscriptions_get_by_id",
    "display_name": "Get lead ads subscription by ID",
    "category": "Lead Ads",
    "description": "Get an existing lead ads webhook subscription by ID.\n  - Only requests for the OWNER or ADMIN of the ad_account will be allowed.'",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_accounts_subscriptions_get_list",
    "display_name": "Get lead ads subscriptions",
    "category": "Lead Ads",
    "description": "Get the advertiser's list of lead ads subscriptions. Only requests for the OWNER or ADMIN of the ad_account will be allowed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_accounts_subscriptions_post",
    "display_name": "Create lead ads subscription",
    "category": "Lead Ads",
    "description": "Create a lead ads webhook subscription.\nSubscriptions allow Pinterest to deliver lead data from Ads Manager directly to the subscriber. Subscriptions can exist for a specific lead form or at ad account level.\n  - Only requests for the OWNER or ADMIN of the ad_account will be allowed.\n  - Advertisers can set up multiple integrations using ad_account_id + lead",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_groups_analytics",
    "display_name": "Get ad group analytics",
    "category": "Ad Groups",
    "description": "Get analytics for the specified ad groups in the specified `ad_account_id`, filtered by the specified options.\n\n- The token's user_account must either be the Owner of the specified ad account, or have one of the necessary roles granted to them via [Business Access](https://help.pinterest.com/en/business/article/share-and-manage-access-to-your-ad-accounts): A",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_groups_audience_sizing",
    "display_name": "Get audience sizing",
    "category": "Ad Groups",
    "description": "Get potential audience size for an ad group with given targeting criteria.\nPotential audience size estimates the number of people you may be able to reach per month with your campaign.\nIt is based on historical advertising data and the targeting criteria you select.\nIt does not guarantee results or take into account factors such as bid, budget, schedule, sea",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_groups_bid_floor_get",
    "display_name": "Get bid floors",
    "category": "Ad Groups",
    "description": "List bid floors for your campaign configuration. Bid floors are given in microcurrency values based on the currency in the bid floor specification.\n\nMicrocurrency is used to track very small transactions, based on the currency set in the advertiser's profile.\n\nA microcurrency unit is 10^(-6) of the standard unit of currency selected in the advertiser's profi",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_groups_create",
    "display_name": "Create ad groups",
    "category": "Ad Groups",
    "description": "Create multiple new ad groups. All ads in a given ad group will have the same budget, bid, run dates, targeting, and placement (search, browse, other).\n\nFor more information, [click here](https://help.pinterest.com/en/business/article/campaign-structure).\n\n**Notes:**\n- `bid_in_micro_currency` and `budget_in_micro_currency` should be expressed in microcurrenc",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_groups_dynamic_titles_download_csv",
    "display_name": "Get dynamic titles CSV download URL",
    "category": "Ad Groups",
    "description": "Get a presigned S3 download URL for the dynamic titles review CSV. Returns 400 if titles have not been generated yet.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_groups_dynamic_titles_get_status",
    "display_name": "Get dynamic titles status",
    "category": "Ad Groups",
    "description": "Get dynamic titles generation status for an ad group, including whether titles are ready for review and counts of generated and reviewed titles.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_groups_dynamic_titles_get_upload_url",
    "display_name": "Get dynamic titles upload URL",
    "category": "Ad Groups",
    "description": "Get a presigned S3 upload URL for the dynamic titles review CSV and a request_id for submission.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_groups_dynamic_titles_process_csv",
    "display_name": "Process dynamic titles CSV",
    "category": "Ad Groups",
    "description": "Validate and process the uploaded dynamic titles review CSV. Returns validation errors if the CSV is invalid.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_groups_get",
    "display_name": "Get ad group",
    "category": "Ad Groups",
    "description": "Get a specific ad group given the ad group ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_groups_list",
    "display_name": "List ad groups",
    "category": "Ad Groups",
    "description": "List ad groups based on provided campaign IDs or ad group IDs.(campaign_ids or ad_group_ids).\n**Note:** Provide only campaign_id or ad_group_id. Do not provide both.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_groups_targeting_analytics_get",
    "display_name": "Get targeting analytics for ad groups",
    "category": "Ad Groups",
    "description": "Get targeting analytics for one or more ad groups. For the requested ad group(s) and metrics, the response will include the requested metric information (e.g. SPEND_IN_DOLLAR) for the requested target type (e.g. \"age_bucket\") for applicable values (e.g. \"45-49\").\n\n- The token's user_account must either be the Owner of the specified ad account, or have one of",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_groups_update",
    "display_name": "Update ad groups",
    "category": "Ad Groups",
    "description": "Update multiple existing ad groups.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_pins_analytics",
    "display_name": "Get pins analytics",
    "category": "Campaigns",
    "description": "Get analytics for the pins given a campaign and pins in the specified `ad_account_id`, filtered by the specified options.\n- The token's user_account must either be the Owner of the specified ad account, or have one of the necessary roles granted to them via [Business Access](https://help.pinterest.com/en/business/article/share-and-manage-access-to-your-ad-ac",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_previews_create",
    "display_name": "Create ad preview with pin or image",
    "category": "Ads",
    "description": "Create an ad preview given an ad account ID and either an existing organic pin ID or the URL for an image to be used to create the Pin and the ad.\n\nIf you are creating a preview from an existing Pin, that Pin must be promotable: that is, it must have a clickthrough link and meet other requirements. (See [Ads Overview](https://help.pinterest.com/en/business/a",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ad_targeting_analytics_get",
    "display_name": "Get targeting analytics for ads",
    "category": "Ads",
    "description": "Get targeting analytics for one or more ads. For the requested ad(s) and metrics, the response will include the requested metric information (e.g. SPEND_IN_DOLLAR) for the requested target type (e.g. \"age_bucket\") for applicable values (e.g. \"45-49\").\n\n* The token's user_account must either be the Owner of the specified ad account, or have one of the necessa",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ads_analytics",
    "display_name": "Get ad analytics",
    "category": "Ads",
    "description": "Get analytics for the specified ads in the specified `ad_account_id`, filtered by the specified options.\n    - The token's user_account must either be the Owner of the specified ad account, or have one of the necessary roles granted to them via [Business Access](https://help.pinterest.com/en/business/article/share-and-manage-access-to-your-ad-accounts):",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ads_create",
    "display_name": "Create ads",
    "category": "Ads",
    "description": "Create multiple new ads. Request must contain ad_group_id, creative_type, and the source Pin pin_id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ads_credit_redeem",
    "display_name": "Redeem ad credits",
    "category": "Billing",
    "description": "Redeem ads credit on behalf of the ad account id and apply it towards billing.\n\n**This endpoint might not be available to all apps. [Learn more](/docs/getting-started/using-beta-and-restricted-features/).**",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ads_credits_discounts_get",
    "display_name": "Get ads credit discounts",
    "category": "Billing",
    "description": "Returns the list of discounts applied to the account.\n\n**This endpoint might not be available to all apps. [Learn more](/docs/getting-started/using-beta-and-restricted-features/).**",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ads_get",
    "display_name": "Get ad",
    "category": "Ads",
    "description": "Get a specific ad given the ad ID. If your pin is rejected, rejected_reasons will\ncontain additional information from the Ad Review process.\nFor more information about our policies and rejection reasons see the [Pinterest advertising standards](https://www.pinterest.com/_/_/policy/advertising-guidelines/).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ads_list",
    "display_name": "List ads",
    "category": "Ads",
    "description": "List ads that meet the filters provided:\n    - Listed campaign ids or ad group ids or ad ids\n    - Listed entity statuses\n\nIf no filter is provided, all ads in the ad account are returned.\n\n**Note:**\nProvide only `campaign_id` or `ad_group_id` or `ad_id`. Do not provide more than one type.\n\nReview status is provided for each ad; if `review_status` is `REJECT",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ads_update",
    "display_name": "Update ads",
    "category": "Ads",
    "description": "Update multiple existing ads",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "advanced_auction_items_get_post",
    "display_name": "Get item bid options (POST)",
    "category": "Advanced Auction",
    "description": "Get the bid options for a batch of retail catalog items.\n\nThe catalog must be owned by the \"operation user_account\". [See detailed documentation here.](/docs/api-features/shopping-overview/#Update%20items%20in%20batch) By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [Lis",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "advanced_auction_items_submit_post",
    "display_name": "Operate on item level bid options",
    "category": "Advanced Auction",
    "description": "This endpoint supports multiple operations on a set of one or more bid options (bid price and bid adjustments for targeting categories) for retail catalog items. These advanced auction settings are applied in campaigns using objective_type `CATALOG_SALES` and ad groups using bid_strategy_type `MAX_BID`.\n\nThe catalog must be owned by the \"operation user_accou",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "advertiser_defined_events_create",
    "display_name": "Create advertiser defined events",
    "category": "Conversions",
    "description": "Map advertiser defined events to standard events for the given ad account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "advertiser_defined_events_delete",
    "display_name": "Delete advertiser defined events",
    "category": "Conversions",
    "description": "Untrack advertiser defined events for the given ad account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "advertiser_defined_events_get",
    "display_name": "Get advertiser defined events",
    "category": "Conversions",
    "description": "Get advertiser defined events for the given ad account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "advertiser_defined_events_update",
    "display_name": "Update advertiser defined events",
    "category": "Conversions",
    "description": "Update advertiser defined event names or mappings for the given ad account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analytics_create_conversion_product_report",
    "display_name": "Create a request for a brand, category, SKU report",
    "category": "Ad Accounts",
    "description": "[Restricted](/docs/getting-started/using-beta-and-restricted-features/)\n  This creates an asynchronous brand, category, SKU report based on the given request. This request returns a token that you can use to download the report when it is ready.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analytics_create_mmm_report",
    "display_name": "Create a request for a Marketing Mix Modeling (MMM) report",
    "category": "Ad Accounts",
    "description": "This creates an asynchronous mmm report based on the given request.\n    It returns a token that you can use to download the report when it is\n    ready. NOTE: An additional limit of 5 queries per minute per advertiser\n    applies to this endpoint while it's in beta release.\n    For the ADVERTISER_PAID_SPEND_IN_DOLLAR,\n    ADVERTISER_PAID_ECPC_IN_DOLLAR,",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analytics_create_report",
    "display_name": "Create async request for an account analytics report",
    "category": "Ad Accounts",
    "description": "This returns a token that you can use to download the report when it is ready.\n  Note that this endpoint requires the parameters to be passed as JSON-formatted in the request body. This endpoint does not support URL query parameters.\n  - The token's user_account must either be the Owner of the specified ad account, or have one of the necessary roles grante",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analytics_create_template_report",
    "display_name": "Create async request for an analytics report using a template",
    "category": "Ad Accounts",
    "description": "This takes a template ID and an optional custom timeframe and\n  constructs an asynchronous report based on the template. It returns\n  a token that you can use to download the report when it is ready.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analytics_get_conversion_product_report",
    "display_name": "Get advertiser brand, category, SKU report",
    "category": "Ad Accounts",
    "description": "[Restricted](/docs/getting-started/using-beta-and-restricted-features/)\n  Get a brand, category, SKU report for an ad account. This call returns the URL for the report that matches the token returned in the request to the Create brand, category, SKU report endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analytics_get_mmm_report",
    "display_name": "Get advertiser Marketing Mix Modeling (MMM) report.",
    "category": "Ad Accounts",
    "description": "Get an mmm report for an ad account. This returns a URL to an\n    mmm metrics report given a token returned from the create mmm report endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analytics_get_report",
    "display_name": "Get the account analytics report created by the async call",
    "category": "Ad Accounts",
    "description": "This returns a URL to an analytics report given a token returned from the post request report creation call.\n  You can use the URL to download the report. The link is valid for five minutes and the report is valid for one hour.\n  - The token's user_account must either be the Owner of the specified ad account, or have one of the necessary roles granted to t",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "asset_access_requests_create",
    "display_name": "Create a request to access an existing partner's assets.",
    "category": "Business Access Invite",
    "description": "Create a request to access an existing partner's assets with the specified permissions. The request will be sent to the partner for approval. The assets that can be requested are ad accounts and profiles.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "asset_group_create",
    "display_name": "Create a new asset group.",
    "category": "Business Access Assets",
    "description": "Create a new asset group with the specified parameters.\n- An [asset group](https://help.pinterest.com/en/business/article/asset-groups) is a custom group of assets based on how you would like to manage your accounts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "asset_group_delete",
    "display_name": "Delete asset groups.",
    "category": "Business Access Assets",
    "description": "Delete a batch of asset groups.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "asset_group_update",
    "display_name": "Update asset groups.",
    "category": "Business Access Assets",
    "description": "Update a batch of asset groups with the specified parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "audience_insights_get",
    "display_name": "Get audience insights",
    "category": "Audience Insights",
    "description": "Get Audience Insights for an ad account. The response will return insights for 3 types of audiences: the ad account's engaged audience on Pinterest, the ad account's total audience on Pinterest and Pinterest's total audience.\n\n[Learn more about Audience Insights](https://help.pinterest.com/en/business/article/audience-insights).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "audience_insights_scope_and_type_get",
    "display_name": "Get audience insights scope and type",
    "category": "Audience Insights",
    "description": "Get the scope and type of available audiences, which along with a date, is an audience that has recently had an interaction (referred to here as a type) on pins. Interacted pins can belong to at least the most common **partner** or **Pinterest** scopes. This means that user interactions made on advertiser or partner pins will have the **partner** scope. You",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "audiences_create",
    "display_name": "Create audience",
    "category": "Audiences",
    "description": "Create a new audience for the ad account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "audiences_get",
    "display_name": "Get audience",
    "category": "Audiences",
    "description": "Get a specific audience given the audience ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "audiences_list",
    "display_name": "List audiences",
    "category": "Audiences",
    "description": "Get list of audiences for the ad account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "audiences_update",
    "display_name": "Update audience",
    "category": "Audiences",
    "description": "Update an existing audience for the ad account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "billing_invoice_download_get",
    "display_name": "Get download url for a billing invoice",
    "category": "Billing",
    "description": "Get download url for a billing invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "billing_invoices_get",
    "display_name": "Get billing invoices",
    "category": "Billing",
    "description": "Get billing invoices in the advertiser account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "billing_profiles_get",
    "display_name": "Get billing profiles",
    "category": "Billing",
    "description": "Get billing profiles in the advertiser account.\n\n**This endpoint might not be available to all apps. [Learn more](/docs/getting-started/using-beta-and-restricted-features/).**",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "board_sections_create",
    "display_name": "Create board section",
    "category": "Boards",
    "description": "Create a board section on a board owned by the \"operation user_account\" - or on a group board that has been shared with this account.\nOptional: Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "board_sections_delete",
    "display_name": "Delete board section",
    "category": "Boards",
    "description": "Delete a board section on a board owned by the \"operation user_account\" - or on a group board that has been shared with this account.\nOptional: Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "board_sections_list",
    "display_name": "List board sections",
    "category": "Boards",
    "description": "Get a list of all board sections from a board owned by the \"operation user_account\" - or a group board that has been shared with this account.\nOptional: Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "board_sections_list_pins",
    "display_name": "List Pins on board section",
    "category": "Boards",
    "description": "Get a list of the Pins on a board section of a board owned by the \"operation user_account\" - or on a group board that has been shared with this account.\nOptional: Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "board_sections_update",
    "display_name": "Update board section",
    "category": "Boards",
    "description": "Update a board section on a board owned by the \"operation user_account\" - or on a group board that has been shared with this account.\nOptional: Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "boards_create",
    "display_name": "Create board",
    "category": "Boards",
    "description": "Create a board owned by the \"operation user_account\".\nOptional: Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\".\n* By default, the \"operation user_account\" is the token user_account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "boards_delete",
    "display_name": "Delete board",
    "category": "Boards",
    "description": "Delete a board owned by the \"operation user_account\".\n* Optional: Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\".\n* By default, the \"operation user_account\" is the token user_account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "boards_get",
    "display_name": "Get board",
    "category": "Boards",
    "description": "Get a board owned by the operation user_account - or a group board that has been shared with this account.\n* Optional: Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\".\n* By default, the \"operation user_account\" is the token user_account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "boards_list",
    "display_name": "List boards",
    "category": "Boards",
    "description": "Get a list of the boards owned by the \"operation user_account\" + group boards where this account is a collaborator\nOptional: Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\".\nOptional: Specify a privacy type (public, protected, or secret) to indicate which boards to return.\n* If no privacy is speci",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "boards_list_pins",
    "display_name": "List Pins on board",
    "category": "Boards",
    "description": "Get a list of the Pins on a board owned by the \"operation user_account\" - or on a group board that has been shared with this account.\n- Optional: Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "boards_update",
    "display_name": "Update board",
    "category": "Boards",
    "description": "Update a board owned by the \"operating user_account\".\n* Optional: Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\".\n* By default, the \"operation user_account\" is the token user_account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "boards_user_follows_list",
    "display_name": "List following boards",
    "category": "User Account",
    "description": "Get a list of the boards a user follows. The request returns a board summary object array.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "brand_accounts_create",
    "display_name": "Create a Brand Account",
    "category": "Business Access Relationships",
    "description": "Create a Brand Account that will be a child business of a business hierarchy. Request must contain name, username, and country.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "brand_accounts_update",
    "display_name": "Update a Brand Account",
    "category": "Business Access Relationships",
    "description": "Update an existing Brand Account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_download_create",
    "display_name": "Get advertiser entities in bulk",
    "category": "Bulk",
    "description": "Create an asynchronous report that may include information on campaigns, ad groups, product groups, ads,\nkeywords, schedules,and/or labels; can filter by campaigns. Though the entities may be active, archived, or paused,\nonly active entities will return data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_request_get",
    "display_name": "Download advertiser entities in bulk",
    "category": "Bulk",
    "description": "Get the status of a bulk request by `request_id`, along with a download URL that will allow you to download the\nnew or updated entity data (campaigns, ad groups, product groups, ads, schedules, or keywords).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_upsert_create",
    "display_name": "Create/update ad entities in bulk",
    "category": "Bulk",
    "description": "Either create or update any combination of campaigns, ad groups, product groups, ads, keywords, schedules, or labels.\nNote that this request will be processed asynchronously; the response will include a <code>request_id</code>\nthat can be used to obtain the status of the request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "business_account_audiences_shared_accounts_list",
    "display_name": "List accounts with access to an audience owned by a business",
    "category": "Audience Sharing",
    "description": "List all ad accounts and/or businesses that have access to a specific audience. The audience must either be owned by an ad account in the requesting business, or it must have been shared with the requesting business. If the requesting business is not the owner of the audience, only ad accounts owned by the requesting business will be returned.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "business_asset_members_get",
    "display_name": "Get members with access to asset",
    "category": "Business Access Assets",
    "description": "Get all the members the requesting business has granted access to on the given asset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "business_asset_partners_get",
    "display_name": "Get partners with access to asset",
    "category": "Business Access Assets",
    "description": "Get all the partners the requesting business has granted access to on the given asset.\nNote: If the asset has been shared with you, an empty array will be returned. This is because an asset shared with\nyou cannot be shared with a different partner.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "business_assets_get",
    "display_name": "List business assets",
    "category": "Business Access Assets",
    "description": "Get all the assets the requesting business has access to. This includes assets the business owns and assets the business has access to through partnerships.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "business_member_assets_get",
    "display_name": "Get assets assigned to a member",
    "category": "Business Access Assets",
    "description": "Get assets on which you assigned asset permissions to the given member. Can be used to:\n- get all assets, regardless of asset type or\n- get assets of one asset type by using the asset_type query.\nThe return response will include the permissions the member has to that asset and the asset type.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "business_members_asset_access_delete",
    "display_name": "Delete member access to asset",
    "category": "Business Access Assets",
    "description": "Terminate multiple members' access to an asset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "business_members_asset_access_update",
    "display_name": "Assign/Update member asset permissions",
    "category": "Business Access Assets",
    "description": "Grant multiple members access to assets and/or update multiple member's exisiting permissions to an asset.\nNote: Not all listed permissions are applicable to each asset type. For example, PROFILE_PUBLISHER would not be applicable to an asset of type AD_ACCOUNT. The permission level PROFILE_PUBLISHER is only available to an asset of the type PROFILE.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "business_partner_asset_access_get",
    "display_name": "Get assets assigned to a partner or assets assigned by a partner",
    "category": "Business Access Assets",
    "description": "Can be used to get the business assets your partner has granted you access to or the business assets you have\ngranted your partner access to. If you specify:\n- partner_type=INTERNAL, you will retrieve your business assets that the partner has access to.\n- partner_type=EXTERNAL, you will retrieve the partner's business assets that the partner has granted you",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "campaign_ad_preview_create",
    "display_name": "Create ad preview records for one or more ad groups",
    "category": "Ads",
    "description": "Create ad preview records for one or more ad groups that can be shared.\nEach ad group is processed independently; individual failures do not block other previews.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "campaign_ad_preview_delete",
    "display_name": "Delete ad preview records for one or more ad groups",
    "category": "Ads",
    "description": "Delete ad preview records for one or more ad groups.\nAll ad groups are validated before deleting any records.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "campaign_ad_preview_read",
    "display_name": "Fetch ad preview records for one or more ad groups",
    "category": "Ads",
    "description": "Fetch ad preview records for one or more ad groups.\nReturns all active previews associated with the provided ad group IDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "campaign_targeting_analytics_get",
    "display_name": "Get targeting analytics for campaigns",
    "category": "Campaigns",
    "description": "Get targeting analytics for one or more campaigns. For the requested account and metrics, the response will include the requested metric information (e.g. SPEND_IN_DOLLAR) for the requested target type (e.g. \"age_bucket\") for applicable values (e.g. \"45-49\").\n\n* The token's user_account must either be the Owner of the specified ad account, or have one of the",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "campaigns_analytics",
    "display_name": "Get campaign analytics",
    "category": "Campaigns",
    "description": "Get analytics for the specified campaigns in the specified `ad_account_id`, filtered by the specified options.\n- The token's user_account must either be the Owner of the specified ad account, or have one of the necessary roles granted to them via [Business Access](https://help.pinterest.com/en/business/article/share-and-manage-access-to-your-ad-accounts): Ad",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "campaigns_create",
    "display_name": "Create campaigns",
    "category": "Campaigns",
    "description": "Create multiple new campaigns. Every campaign has its own campaign_id\nand houses one or more ad groups, which contain one or more ads.\n\nFor more, see [Set up your campaign](https://help.pinterest.com/en/business/article/set-up-your-campaign/).\n\n**Note:**\n- The values for `lifetime_spend_cap` and `daily_spend_cap` are microcurrency amounts based on the curren",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "campaigns_get",
    "display_name": "Get campaign",
    "category": "Campaigns",
    "description": "Get a specific campaign given the campaign ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "campaigns_list",
    "display_name": "List campaigns",
    "category": "Campaigns",
    "description": "Get a list of the campaigns in the specified `ad_account_id`, filtered by the specified options.\n- The token's user_account must either be the Owner of the specified ad account, or have one of the necessary\nroles granted to them via [Business Access](https://help.pinterest.com/en/business/article/share-and-manage-access-to-your-ad-accounts): Admin, Analyst,",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "campaigns_update",
    "display_name": "Update campaigns",
    "category": "Campaigns",
    "description": "Update multiple ad campaigns based on campaign_ids.\n\n**Note:**\n- The values for `lifetime_spend_cap` and `daily_spend_cap` are microcurrency amounts based on the currency field set in the advertiser's profile (e.g. USD).\n\nMicrocurrency is used to track very small transactions, based on the currency set in the advertiser's profile.\n\nA microcurrency unit is 10",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_invites_or_requests",
    "display_name": "Cancel invites/requests",
    "category": "Business Access Invite",
    "description": "Cancel membership/partnership invites and/or requests.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_available_filter_values",
    "display_name": "List available filter values",
    "category": "Catalogs",
    "description": "Get the available filter attributes and values associated with a given feed or catalog owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n- `country`, `language`, and `feed_id` are only used in retail catalogs.\n- Note: It is not guaranteed that all available filter values will be returned. Instead thi",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_create",
    "display_name": "Create catalog",
    "category": "Catalogs",
    "description": "Create a new catalog owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an ad_account_id (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In order to do this, the token u",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_list",
    "display_name": "List catalogs",
    "category": "Catalogs",
    "description": "Fetch catalogs owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an ad_account_id (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In order to do this, the token user_ac",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_local_inventory_items_batch_operate",
    "display_name": "Operate on local inventory item batch",
    "category": "Catalog Supplemental",
    "description": "Managing local inventory information in batches supporting CREATE, UPDATE, UPSERT, DELETE operations.\nUp to 1000 items per request to match catalogs/items.\n\n- Must provide both item_id and store_code to identify a local inventory item.\n\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an ad_account_id",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_local_inventory_items_post",
    "display_name": "Get local inventory items (POST)",
    "category": "Catalog Supplemental",
    "description": "Get local inventory items for a catalog owned by the \"operation user_account\".\n\n- Must provide an array of {item_id, store_code} pairs in item filters to identify local inventory items.\n\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an ad_account_id (obtained via [List ad accounts](/docs/api/v5/#ope",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_local_stores_create",
    "display_name": "Create local stores",
    "category": "Catalog Supplemental",
    "description": "Create a local store for a catalog owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n- Supports optional filtering by store codes.\n\nOptional: Business Access: Specify an ad_account_id (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as th",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_local_stores_delete",
    "display_name": "Delete local stores",
    "category": "Catalog Supplemental",
    "description": "Delete multiple local stores for a catalog owned by the \"operation user_account\".\n  - By default, the \"operation user_account\" is the token user_account.\n  - Supports optional filtering by store codes.\n\n  Optional: Business Access: Specify an ad_account_id (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_local_stores_list",
    "display_name": "List local stores",
    "category": "Catalog Supplemental",
    "description": "Fetch local stores for a catalog owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n- Supports optional filtering by store codes.\n\nOptional: Business Access: Specify an ad_account_id (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_local_stores_update",
    "display_name": "Update local stores",
    "category": "Catalog Supplemental",
    "description": "Update a local store for a catalog owned by the \"operation user_account\".\n  - By default, the \"operation user_account\" is the token user_account.\n  - Supports optional filtering by store codes.\n\n  Optional: Business Access: Specify an ad_account_id (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_accou",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_product_group_pins_list",
    "display_name": "List products by product group",
    "category": "Catalog Product Groups",
    "description": "Get a list of product pins for a given Catalogs Product Group Id owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation u",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_product_groups_create",
    "display_name": "Create product group",
    "category": "Catalog Product Groups",
    "description": "Create product group to use in Catalogs owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In order to",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_product_groups_create_many",
    "display_name": "Create product groups",
    "category": "Catalog Product Groups",
    "description": "Create product group to use in Catalogs owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In order to",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_product_groups_delete",
    "display_name": "Delete product group",
    "category": "Catalog Product Groups",
    "description": "Delete a product group owned by the \"operation user_account\" from being in use in Catalogs.\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\"",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_product_groups_delete_many",
    "display_name": "Delete product groups",
    "category": "Catalog Product Groups",
    "description": "Delete product groups owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In order to do this, the toke",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_product_groups_get",
    "display_name": "Get product group",
    "category": "Catalog Product Groups",
    "description": "Get a single product group for a given Catalogs Product Group Id owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation u",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_product_groups_list",
    "display_name": "List product groups",
    "category": "Catalog Product Groups",
    "description": "Get a list of product groups for a given Catalogs Feed Id owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_acc",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_product_groups_product_counts_get",
    "display_name": "Get product counts",
    "category": "Catalog Product Groups",
    "description": "Get a product counts for a given Catalogs Product Group owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_accou",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_product_groups_update",
    "display_name": "Update single product group",
    "category": "Catalog Product Groups",
    "description": "Update product group owned by the \"operation user_account\" to use in Catalogs.\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In order to",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_supplemental_items_batch_get",
    "display_name": "Get supplemental items batch status",
    "category": "Catalog Supplemental",
    "description": "Fetch the status and results of a supplemental items batch operation.\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an ad_account_id (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In order to do this, t",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversion_deletion_request_create",
    "display_name": "Create a conversion deletion request",
    "category": "Conversion Deletion Requests",
    "description": "**This endpoint is currently in beta and not available to all apps.**\n[Learn more](/docs/key-concepts/using-beta-and-restricted-features/).\nCreate a request to delete conversion data for a list of user emails and/or EPIKs, limited to the specified `ad_account_id`.\nAfter 72 hours the request is processed and submitted to our deletion process. Then the deletio",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversion_deletion_request_delete",
    "display_name": "Delete a conversion deletion request",
    "category": "Conversion Deletion Requests",
    "description": "**This endpoint is currently in beta and not available to all apps.**\n[Learn more](/docs/key-concepts/using-beta-and-restricted-features/).\nDelete a conversion deletion request from `ad_account_id` with `request_id`.\nThis will cancel the request and prevent it from being processed. This can only be\ndone if the request is in the `PENDING` status and before th",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversion_deletion_request_get",
    "display_name": "Get a single conversion deletion request",
    "category": "Conversion Deletion Requests",
    "description": "**This endpoint is currently in beta and not available to all apps.**\n[Learn more](/docs/key-concepts/using-beta-and-restricted-features/).\nGet a single conversion deletion request from `ad_account_id` with `request_id`.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversion_deletion_request_list",
    "display_name": "List conversion deletion requests",
    "category": "Conversion Deletion Requests",
    "description": "**This endpoint is currently in beta and not available to all apps.**\n[Learn more](/docs/key-concepts/using-beta-and-restricted-features/).\nGet a list of the conversion deletion requests for the specified `ad_account_id`.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversion_eqs_list",
    "display_name": "Get event quality score (EQS)",
    "category": "Conversion Eqs",
    "description": "Get the Event Quality Score (EQS) of your conversion signals.\n\n[Event Quality Score](https://help.pinterest.com/en/business/article/eqs) indicates how effective the customer information and event insights (metadata) passed with your web, app and offline conversion events may be at matching to a Pinterest user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversion_tags_create",
    "display_name": "Create conversion tag",
    "category": "Conversion Tags",
    "description": "Create a conversion tag, also known as [Pinterest tag](https://help.pinterest.com/en/business/article/set-up-the-pinterest-tag), with the option to enable enhanced match.\n\nThe Pinterest Tag tracks actions people take on the ad account's website after they view the ad account's ad on Pinterest. The advertiser needs to customize this tag to track conversions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversion_tags_get",
    "display_name": "Get conversion tag",
    "category": "Conversion Tags",
    "description": "Get information about an existing conversion tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversion_tags_list",
    "display_name": "List conversion tags",
    "category": "Conversion Tags",
    "description": "List conversion tags associated with an ad account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "country_keywords_metrics_get",
    "display_name": "Get country's keyword metrics",
    "category": "Keywords",
    "description": "See keyword metrics for a specified country, aggregated across all of Pinterest.\n  (Definitions are available from the \"Get delivery metrics definitions\"\n  [API endpoint](/docs/api/v5/#operation/delivery_metrics/get)).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_asset_invites",
    "display_name": "Update invite/request with an asset permission",
    "category": "Business Access Invite",
    "description": "Assign asset permissions information to an existing invite/request. Can be used to:\n- Request access to a partner's asset. Note: This is only for when no existing partnership exists. If an existing\n  partnership exists, use \"Create a request to access an existing partner's assets\" to request access to your\n  partner's assets.\n    - invite_type=\"PARTNER_REQUE",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_membership_or_partnership_invites",
    "display_name": "Create invites or requests",
    "category": "Business Access Invite",
    "description": "Create batch invites or requests. Can create batch invites or requests as described below.\n- Invite members to join the business. This would required specifying the following:\n    - invite_type=\"MEMBER_INVITE\"\n    - business_role=\"EMPLOYEE\" OR business_role=\"BIZ_ADMIN\" (To learn more about business roles, visit\n    https://help.pinterest.com/en/business/arti",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customer_list_uploads_create",
    "display_name": "Create customer list upload",
    "category": "Customer List Uploads",
    "description": "Create a customer list upload request for multipart S3 upload.\n\nNote: Each part must be at least 5mb; however the last part can be any size greater than 0.\nClients with smaller files can request a single part count. This minimal part size restriction is defined by the AWS S3 API.\n\n**Please review the [update customer list endpoint](/docs/api/v5/customer_list",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customer_list_uploads_get",
    "display_name": "Get customer list upload",
    "category": "Customer List Uploads",
    "description": "Get the metadata for a given upload by its ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customer_list_uploads_run",
    "display_name": "Run customer list upload",
    "category": "Customer List Uploads",
    "description": "Begin processing a customer list upload.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customer_lists_create",
    "display_name": "Create customer lists",
    "category": "Customer Lists",
    "description": "Create a customer list from your records (hashed or plain-text email addresses, or hashed MAIDs or IDFAs).\n\nA customer list is one of the four types of Pinterest audiences: for more information, see [Audience targeting](https://help.pinterest.com/en/business/article/audience-targeting) or the [Audiences](/docs/api-features/targeting-overview/) section of the",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customer_lists_get",
    "display_name": "Get customer list",
    "category": "Customer Lists",
    "description": "Gets a specific customer list given the customer list ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customer_lists_list",
    "display_name": "Get customer lists",
    "category": "Customer Lists",
    "description": "Get a set of customer lists including id and name based on the filters provided.\n\n(Customer lists are a type of audience.) For more information, see [Audience targeting](https://help.pinterest.com/en/business/article/audience-targeting) or the [Audiences](/docs/api-features/targeting-overview/) section of the ads management guide.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customer_lists_update",
    "display_name": "Update customer list",
    "category": "Customer Lists",
    "description": "Append or remove records to/from an existing customer list. (A customer list is one of the four types of Pinterest audiences.)\n\nWhen you add records to an existing customer list, the system scans the additions for existing Pinterest accounts; those are the records that will be added to your \"CUSTOMER_LIST\" audience. Your original list of records to add will",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customer_segment_create",
    "display_name": "Create customer segments",
    "category": "Customer Segment",
    "description": "Customer segments allow advertisers to define existing customers for Pinterest Performance+ campaigns. Customer segments are made up of audience lists.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customer_segment_list",
    "display_name": "List customer segments",
    "category": "Customer Segment",
    "description": "Get a list of the customer segments in the specified `ad_account_id`.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customer_segment_update",
    "display_name": "Update customer segments",
    "category": "Customer Segment",
    "description": "Update the customer segment given advertiser ID and customer segment ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_business_membership",
    "display_name": "Terminate business memberships",
    "category": "Business Access Relationships",
    "description": "Terminate memberships between the specified members and your business.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_business_partners",
    "display_name": "Terminate business partnerships",
    "category": "Business Access Relationships",
    "description": "Terminate partnerships between the specified partners and your business.\nNote: You may only batch terminate partners of the same partner type.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_partner_asset_access_handler_impl",
    "display_name": "Delete partner access to asset",
    "category": "Business Access Assets",
    "description": "Terminate multiple partners' access to an asset. If\n- partner_type=INTERNAL: You will terminate a partner's asset access to your business assets.\n- partner_type=EXTERNAL: You will terminate your own access to your partner's business assets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delivery_metrics_get",
    "display_name": "Get available metrics' definitions",
    "category": "Resources",
    "description": "Get the definitions for ads and organic metrics available across both synchronous and asynchronous report endpoints.\nThe `display_name` attribute will match how the metric is named in our native tools like Ads Manager.\nSee [Organic Analytics](/docs/api-features/analytics-overview/) and [Ads Analytics](/docs/api-features/ads-reporting/) for more information.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "events_create",
    "display_name": "Send conversions",
    "category": "Conversion Events",
    "description": "The Pinterest API offers advertisers a way to send Pinterest their conversion information (including web conversions, in-app conversions, or even offline conversions) based on their `ad_account_id`. The request body should be a JSON object.\n- This endpoint requires an `access_token` be generated through Ads Manager. Review the [Conversions Guide](/docs/api-f",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "feed_processing_results_list",
    "display_name": "List feed processing results",
    "category": "Catalog Feeds",
    "description": "Fetch a feed processing results owned by the \"operation user_account\". Please note that for now the bookmark parameter is not functional and only the first page will be available until it is implemented in some release in the near future.\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "feeds_create",
    "display_name": "Create feed",
    "category": "Catalog Feeds",
    "description": "Create a new feed owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nPlease, be aware that \"default_country\"\nand \"default_locale\" are not required in the spec for forward compatibility\nbut for now the API will not accept requests without those fields.\n\nOptional: Business Access: Specify an `ad_accoun",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "feeds_delete",
    "display_name": "Delete feed",
    "category": "Catalog Feeds",
    "description": "Delete a feed owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In order to do this, the token user_a",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "feeds_get",
    "display_name": "Get feed",
    "category": "Catalog Feeds",
    "description": "Get a single feed owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In order to do this, the token us",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "feeds_ingest",
    "display_name": "Ingest feed items",
    "category": "Catalog Feeds",
    "description": "Ingest items for a given feed owned by the \"operation user_account\".\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In order to do this, the token user_account must have one of the following [Business Access",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "feeds_list",
    "display_name": "List feeds",
    "category": "Catalog Feeds",
    "description": "Fetch feeds owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In order to do this, the token user_acc",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "feeds_update",
    "display_name": "Update feed",
    "category": "Catalog Feeds",
    "description": "Update a feed owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In order to do this, the token user_a",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "follow_user_update",
    "display_name": "Follow user",
    "category": "User Account",
    "description": "**This endpoint is currently in beta and not available to all apps. [Learn more](/docs/getting-started/using-beta-and-restricted-features/).**\n\nUse this request, as a signed-in user, to follow another user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "followers_list",
    "display_name": "List followers",
    "category": "User Account",
    "description": "Get a list of your followers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ad_groups_by_promotion_ids_list",
    "display_name": "List of ad groups using promotions IDs.",
    "category": "Ad Groups",
    "description": "Get a list of ad groups that are associated with those promotion ids",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_business_employers",
    "display_name": "List business employers for user",
    "category": "Business Access Relationships",
    "description": "Get all of the viewing user's business employers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_business_members",
    "display_name": "Get business members",
    "category": "Business Access Relationships",
    "description": "Get all members of the specified business. The return response will include the member's business_role and assets they have access to if assets_summary=TRUE",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_business_partners",
    "display_name": "Get business partners",
    "category": "Business Access Relationships",
    "description": "Get all partners of the specified business.\n\nIf the assets_summary=TRUE and:\n- partner_type=INTERNAL, the business assets returned are your business assets the partner has access to.\n- partner_type=EXTERNAL, the business assets returned are your partner's business assets the partner has granted you\n  access to.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign_delivery_estimates",
    "display_name": "Get campaign delivery estimates",
    "category": "Campaigns",
    "description": "Get delivery estimates for an ads campaign\n\n**This endpoint is currently in beta and is not available to all apps [Learn more](/docs/new/about-beta-access/).**",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_invites",
    "display_name": "Get invites/requests",
    "category": "Business Access Invite",
    "description": "Get the membership/partnership invites and/or requests for the authorized user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_commerce_del",
    "display_name": "Delete commerce integration",
    "category": "Integrations",
    "description": "Delete commerce integration metadata for the given external business ID. Note: If you're interested in joining the beta, please reach out to your Pinterest account manager.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_commerce_get",
    "display_name": "Get commerce integration",
    "category": "Integrations",
    "description": "Get commerce integration metadata associated with the given external business ID. Note: If you're interested in joining the beta, please reach out to your Pinterest account manager.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_commerce_patch",
    "display_name": "Update commerce integration",
    "category": "Integrations",
    "description": "Update commerce integration metadata for the given external business ID. Note: If you're interested in joining the beta, please reach out to your Pinterest account manager.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_commerce_post",
    "display_name": "Create commerce integration",
    "category": "Integrations",
    "description": "Create commerce integration metadata to link an external business ID with a Pinterest merchant & ad account. Note: If you're interested in joining the beta, please reach out to your Pinterest account manager.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_get_by_id",
    "display_name": "Get integration metadata",
    "category": "Integrations",
    "description": "Get integration metadata by ID.\nNote: If you're interested in joining the beta, please reach out to your Pinterest account manager.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_get_list",
    "display_name": "Get integration metadata list",
    "category": "Integrations",
    "description": "Get integration metadata list.\nNote: If you're interested in joining the beta, please reach out to your Pinterest account manager.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_logs_post",
    "display_name": "Receives batched logs from integration applications.",
    "category": "Integrations",
    "description": "This endpoint receives batched logs from integration applications on partner platforms.\nNote: If you're interested in joining the beta, please reach out to your Pinterest account manager.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "interest_targeting_options_get",
    "display_name": "Get interest details",
    "category": "Resources",
    "description": "Get details of a specific interest given interest ID.\n\nClick [here](https://docs.google.com/spreadsheets/d/1HxL-0Z3p2fgxis9YBP2HWC3tvPrs1hAuHDRtH-NJTIM/edit#gid=118370875) for a spreadsheet listing interests and their IDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "items_batch_get",
    "display_name": "Get item batch status",
    "category": "Catalog Items",
    "description": "Get a single catalogs items batch owned by the \"operating user_account\". [See detailed documentation here.](/docs/api-features/shopping-overview/#Update%20items%20in%20batch)\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "items_batch_post",
    "display_name": "Operate on item batch",
    "category": "Catalog Items",
    "description": "This endpoint supports multiple operations on a set of one or more catalog items owned by the \"operation user_account\". [See detailed documentation here.](/docs/work-with-catalogs/modify-items-in-batch/)\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "items_issues_list",
    "display_name": "List item issues",
    "category": "Catalog Feeds",
    "description": "List item validation issues for a given feed processing result owned by the \"operation user_account\". Up to 20 random samples of affected items are returned for each error and warning code. Please note that for now query parameters 'item_numbers' and 'item_validation_issue' cannot be used simultaneously until it is implemented in some release in the future.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "items_post",
    "display_name": "Get catalogs items (POST)",
    "category": "Catalog Items",
    "description": "Get the items of the catalog owned by the \"operation user_account\". [See detailed documentation here.](/docs/api-features/shopping-overview/#Update%20items%20in%20batch)\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accou",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "keywords_create",
    "display_name": "Create keywords",
    "category": "Keywords",
    "description": "Create keywords for the following entity types (advertiser, campaign, ad group, or ad). For more information, see [Keyword targeting](https://help.pinterest.com/en/business/article/keyword-targeting).\n\n  **Notes:**\n  - Advertisers and campaigns can only be assigned keywords with excluding (`_NEGATIVE`).\n  - All keyword match types are available for ad grou",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "keywords_get",
    "display_name": "Get keywords",
    "category": "Keywords",
    "description": "Get a list of keywords based on the filters provided. If no filter is provided, it will default to the `ad_account_id` filter, which means it will only return keywords that specifically have `parent_id` set to the `ad_account_id`. Note: Keywords can have `ad_account_ids`, `campaign_ids`, and `ad_group_ids` set as their `parent_ids`. Keywords created thro",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "keywords_update",
    "display_name": "Update keywords",
    "category": "Keywords",
    "description": "Update one or more keywords' bid and archived fields. Archiving\n  a keyword effectively deletes it - keywords no longer receive metrics and\n  are no longer visible within the parent entity's keywords list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "labels_apply",
    "display_name": "Apply label to entity",
    "category": "Labels",
    "description": "[Closed beta](/docs/getting-started/using-beta-and-restricted-features/)\n\n  Apply a label to one or more campaigns.\n  Future releases may support labels for other [entities](/docs/key-concepts/pinterest-entities/) in addition to campaigns.\n  Currently, you can apply **brand** and **custom** labels. Future releases will provide more options.\n\n  **Note:** Yo",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "labels_create",
    "display_name": "Create labels",
    "category": "Labels",
    "description": "[Closed beta](/docs/getting-started/using-beta-and-restricted-features/)\n\nApply one or more labels to a campaign.\nFuture releases may support labels for other [entities](/docs/key-concepts/pinterest-entities/).\nCurrently, you can apply brand and custom labels. Future releases will provide more options.\n\n**Note:** You can only apply one brand label to a campa",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "labels_list",
    "display_name": "List labels",
    "category": "Labels",
    "description": "[Closed beta](/docs/getting-started/using-beta-and-restricted-features/)\n\nSee a list of labels for assets that your account owns, and filter the list by different criteria.\nIf no filter is provided, it will default to labels associated with the ad account id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "labels_remove",
    "display_name": "Remove label from entities",
    "category": "Labels",
    "description": "[Closed beta](/docs/getting-started/using-beta-and-restricted-features/)\n\n  Remove a label from one or more entities.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "labels_update",
    "display_name": "Update labels",
    "category": "Labels",
    "description": "[Closed beta](/docs/getting-started/using-beta-and-restricted-features/)\n\nChange the properties of one or more labels.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lead_form_get",
    "display_name": "Get lead form by id",
    "category": "Lead Forms",
    "description": "**This feature is currently in beta and not available to all apps, if you're interested in joining the beta, please reach out to your Pinterest account manager.**\n\nGets a lead form given it's ID. It must also be associated with the provided ad account ID.\n\nFor more, see [Lead ads](https://help.pinterest.com/en/business/article/lead-ads).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lead_form_questions_get",
    "display_name": "Get lead form questions",
    "category": "Resources",
    "description": "Get a list of all lead form question type names. Some questions might not be used.\n\n**This endpoint is currently in beta and not available to all apps. [Learn more](/docs/getting-started/using-beta-and-restricted-features/).**",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lead_form_test_create",
    "display_name": "Create lead form test data",
    "category": "Lead Forms",
    "description": "Create lead form test data based on the list of answers provided as part of the body.\n- List of answers should follow the questions creation order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lead_forms_create",
    "display_name": "Create lead forms",
    "category": "Lead Forms",
    "description": "**This feature is currently in beta and not available to all apps, if you're interested in joining the beta, please reach out to your Pinterest account manager.**\n\nCreate lead forms. Lead forms are used in lead ads and allow you to control what text appears on the lead form's description, questions and confirmation sections.\n\nFor more, see [Lead ads](https:/",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lead_forms_list",
    "display_name": "List lead forms",
    "category": "Lead Forms",
    "description": "**This feature is currently in beta and not available to all apps, if you're interested in joining the beta, please reach out to your Pinterest account manager.**\n\nList lead forms associated with an ad account ID.\n\nFor more, see [Lead ads](https://help.pinterest.com/en/business/article/lead-ads).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lead_forms_update",
    "display_name": "Update lead forms",
    "category": "Lead Forms",
    "description": "**This feature is currently in beta and not available to all apps, if you're interested in joining the beta, please reach out to your Pinterest account manager.**\n\nUpdate lead forms. Lead ads help you reach people who are actively looking for, and interested in, your goods and services. The lead form can be associated with an ad to allow people to fill out t",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "leads_export_create",
    "display_name": "Create a request to export leads collected from a lead ad",
    "category": "Leads Export",
    "description": "**This feature is currently in beta and not available to all apps. If you're interested in joining the beta, please reach out to your Pinterest account manager.**\n\nCreate an export of leads collected from a lead ad. This returns a `leads_export_id` token that you can use to download the export when it is ready.\n\nNote: Lead ad data will be available up to 30",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "leads_export_get",
    "display_name": "Get the lead export from the lead export create call",
    "category": "Leads Export",
    "description": "**This feature is currently in beta and not available to all apps. If you're interested in joining the beta, please reach out to your Pinterest account manager.**\n\nGet the export of leads collected from a lead ad. This returns a URL to a list of lead export given a lead_export_id token returned from the create a lead export call. You can use the URL to downl",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "linked_business_accounts_get",
    "display_name": "List linked businesses",
    "category": "User Account",
    "description": "Get a list of your linked business accounts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "media_create",
    "display_name": "Register media upload",
    "category": "Media",
    "description": "Register your intent to upload media.\n\nThe response includes all of the information needed to upload the media to Pinterest.\n\nTo upload the media, make an HTTP POST request (using `curl`, for example) to `upload_url` using the `Content-Type` header value. Send the media file's contents as the request's `file` parameter and also include all of the parameters",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "media_get",
    "display_name": "Get media upload details",
    "category": "Media",
    "description": "Get details for a registered media upload, including its current status.\n\n**[Learn more](/docs/api-features/creating-boards-and-pins/#creating-video-pins)** about video Pin creation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "media_list",
    "display_name": "List media uploads",
    "category": "Media",
    "description": "List media uploads filtered by given parameters.\n\n**[Learn more](/docs/api-features/creating-boards-and-pins/#creating-video-pins)** about video Pin creation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "metrics_ready_state_get",
    "display_name": "Get metrics ready state",
    "category": "Resources",
    "description": "Learn whether conversion or non-conversion metrics are finalized and ready to query.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "msot_events_create",
    "display_name": "Send Measurement Source Of Truth (MSOT) attributed conversion events",
    "category": "Msot Events",
    "description": "**This feature is currently in beta and not available to all apps.**\nIf you are interested in joining the beta, reach out to your Pinterest account manager.\n\nAdvertisers or their measurement partners can send attributed MSOT conversion events to Pinterest\nbased on their `ad_account_id`. The request body should be a JSON object.\n\n- These events will not be us",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "multi_pins_analytics",
    "display_name": "Get multiple Pin analytics",
    "category": "Pins",
    "description": "**This endpoint is currently in beta and not available to all apps. [Learn more](/docs/getting-started/using-beta-and-restricted-features/).**\n\nGet analytics for multiple pins owned by the \"operation user_account\" - or on a group board that has been shared with this account.\n- The maximum number of pins supported in a single request is 100.\n- By default, the",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "notification_post",
    "display_name": "Receive notifications from external partners.",
    "category": "Notification",
    "description": "Used by third-party partners to send notifications to Pinterest. These notifications could be specific for your use-case or generic notification that are accepted by Pinterests' systems. This API is gated and you need to request access to this feature.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "oauth_conversion_token",
    "display_name": "Generate OAuth access token for conversion API",
    "category": "Oauth",
    "description": "Generate a new and long-lived OAuth access token dedicated for sending conversions using a valid access token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ocpm_eligible_conversion_tags_get",
    "display_name": "Get Ocpm eligible conversion tags",
    "category": "Conversion Tags",
    "description": "Get Ocpm eligible conversion tag events for an ad account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "order_lines_get",
    "display_name": "Get order line",
    "category": "Order Lines",
    "description": "Get a specific existing order line associated with an ad account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "order_lines_list",
    "display_name": "Get order lines.",
    "category": "Order Lines",
    "description": "List existing order lines associated with an ad account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "page_visit_conversion_tags_get",
    "display_name": "Get page visit conversion tags",
    "category": "Conversion Tags",
    "description": "Get all page visit conversion tag events for an ad account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pins_analytics",
    "display_name": "Get Pin analytics",
    "category": "Pins",
    "description": "Get analytics for a Pin owned by the \"operation user_account\" - or on a group board that has been shared with this account.\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pins_create",
    "display_name": "Create Pin",
    "category": "Pins",
    "description": "Create a Pin on a board or board section owned by the \"operation user_account\".\n\n Note: If the current \"operation user_account\" (defined by the access token) has access to another user's Ad Accounts via Pinterest Business Access, you can modify your request to make use of the current operation_user_account's permissions to those Ad Accounts by including the",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pins_delete",
    "display_name": "Delete Pin",
    "category": "Pins",
    "description": "Delete a Pins owned by the \"operation user_account\" - or on a group board that has been shared with this account.\n  - By default, the \"operation user_account\" is the token user_account.\n\n  Optional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pins_get",
    "display_name": "Get Pin",
    "category": "Pins",
    "description": "Get a Pin owned by the \"operation user_account\" - or on a group board that has been shared with this account.\n  - By default, the \"operation user_account\" is the token user_account.\n\n  Optional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pins_list",
    "display_name": "List Pins",
    "category": "Pins",
    "description": "Get a list of the Pins owned by the \"operation user_account\".\n    - By default, the \"operation user_account\" is the token user_account.\n    - All Pins owned by the \"operation user_account\" are included, regardless of who owns the board they are on.\n\n    Optional: Business Access: Specify an `ad_account_id` to use the owner of that ad_account as the \"oper",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pins_save",
    "display_name": "Save Pin",
    "category": "Pins",
    "description": "Save a Pin on a board or board section owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In order to d",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pins_update",
    "display_name": "Update Pin",
    "category": "Pins",
    "description": "Update a pin owned by the \"operating user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In order to do this, the token user_ac",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "product_group_promotions_create",
    "display_name": "Create product group promotions",
    "category": "Product Group Promotions",
    "description": "Add one or more product groups from your catalog to an existing ad group. (Product groups added to an ad group are a 'product group promotion.')",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "product_group_promotions_get",
    "display_name": "Get a product group promotion by id",
    "category": "Product Group Promotions",
    "description": "Get a product group promotion by id",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "product_group_promotions_list",
    "display_name": "Get product group promotions",
    "category": "Product Group Promotions",
    "description": "List existing product group promotions associated with an ad account.\n\nInclude either ad_group_id or product_group_promotion_ids in your request.\n\n**Note:** ad_group_ids and product_group_promotion_ids are mutually exclusive parameters.\nOnly provide one. If multiple options are provided, product_group_promotion_ids takes precedence over ad_group_ids. If none",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "product_group_promotions_update",
    "display_name": "Update product group promotions",
    "category": "Product Group Promotions",
    "description": "Update multiple existing Product Group Promotions (by product_group_id)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "product_groups_analytics",
    "display_name": "Get product group analytics",
    "category": "Product Group Promotions",
    "description": "Get analytics for the specified product groups in the specified `ad_account_id`, filtered by the specified options.\n\n- The token's user_account must either be the Owner of the specified ad account, or have one of the necessary roles granted to them via [Business Access](https://help.pinterest.com/en/business/article/share-and-manage-access-to-your-ad-account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "product_tags_bulk_add",
    "display_name": "Add product tags to pin",
    "category": "Product Tags",
    "description": "Add product tags to a pin. Product tags allow you to tag product pins onto a hero pin.\n- Maximum 24 product tags can be added in a single request.\n- Duplicate pin_ids in the request will result in an error.\n- If any product tag fails eligibility check, the entire request fails (all-or-nothing).\n- If a product tag is already tagged on the pin, it is treated a",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "product_tags_bulk_delete",
    "display_name": "Delete product tags from pin",
    "category": "Product Tags",
    "description": "Delete product tags from a pin.\n- If a product tag is not found on the pin, it is treated as a no-op success.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "product_tags_list",
    "display_name": "Get product tags for pin",
    "category": "Product Tags",
    "description": "Retrieve all product tags for a pin.\n- Returns an empty array if the pin has no product tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "products_by_product_group_filter_list",
    "display_name": "List products by filter",
    "category": "Catalog Product Groups",
    "description": "List products Pins owned by the \"operation user_account\" that meet the criteria specified in the Catalogs Product Group Filter given in the request.\n- This endpoint has been implemented in POST to allow for complex filters. This specific POST endpoint is designed to be idempotent.\n- By default, the \"operation user_account\" is the token user_account.\n\nOptiona",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "promotions_create",
    "display_name": "Create promotions",
    "category": "Promotions",
    "description": "Create multiple new promotions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "promotions_delete",
    "display_name": "Delete promotion by id",
    "category": "Promotions",
    "description": "Delete a promotion within Pinterest.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "promotions_get",
    "display_name": "Get promotion by id",
    "category": "Promotions",
    "description": "Get a promotion by its Pinterest-specific id. It must be associated with the provided ad account id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "promotions_list",
    "display_name": "Get promotions",
    "category": "Promotions",
    "description": "Gets all promotions associated with an ad account ID that can be\napplied to an ad group. Can be either internally-saved promotions or external\npromotions imported from a commerce integration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "promotions_update",
    "display_name": "Update promotions",
    "category": "Promotions",
    "description": "Update multiple promotions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reports_create",
    "display_name": "Build catalogs report",
    "category": "Catalog Reports",
    "description": "Async request to create a report of the catalog owned by the \"operation user_account\". This endpoint generates a report upon receiving the first approved request of the day. Any following requests with identical parameters will yield the same report even if data has changed.\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Bus",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reports_get",
    "display_name": "Get catalogs report",
    "category": "Catalog Reports",
    "description": "This returns a URL to a report given a token returned from [Build catalogs report](/docs/api/v5/#operation/reports/create). You can use the URL to download the report.\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reports_stats",
    "display_name": "List report stats",
    "category": "Catalog Reports",
    "description": "List aggregated numbers of issues for a catalog owned by the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an `ad_account_id` (obtained via [List ad accounts](/docs/api/v5/#operation/ad_accounts/list)) to use the owner of that ad_account as the \"operation user_account\". In",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "respond_business_access_invites",
    "display_name": "Accept or decline an invite/request",
    "category": "Business Access Invite",
    "description": "Accept or decline invites or requests.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "sandbox_delete",
    "display_name": "Delete ads data for ad account in API Sandbox",
    "category": "Ad Accounts",
    "description": "Delete an ad account and all the ads data associated with that account.\nA string message is returned indicating the status of the delete operation.\n\nNote: This endpoint is only allowed in the Pinterest API Sandbox (https://api-sandbox.pinterest.com/v5).\nGo to /docs/developer-tools/sandbox/ for more information.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "schedules_create",
    "display_name": "Create schedules",
    "category": "Schedules",
    "description": "Batch create schedules",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "schedules_list",
    "display_name": "Get Schedules",
    "category": "Schedules",
    "description": "Get schedules for a specific advertiser",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "schedules_update",
    "display_name": "Update schedules",
    "category": "Schedules",
    "description": "Update one or more schedules",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_partner_pins",
    "display_name": "Search pins by a given search term",
    "category": "Search",
    "description": "**This endpoint is currently in beta and not available to all apps. [Learn more](/docs/getting-started/using-beta-and-restricted-features/).**\n\nGet the top 10 Pins by a given search term.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_user_boards_get",
    "display_name": "Search user's boards",
    "category": "Search",
    "description": "Search for boards for the \"operation user_account\". This includes boards of all board types.\n- By default, the \"operation user_account\" is the token user_account.\n\nIf using Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\". See [Understanding Business Access](/docs/getting-started/using-business-acc",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_user_pins_list",
    "display_name": "Search user's Pins",
    "category": "Search",
    "description": "Search for pins for the \"operation user_account\".\n- By default, the \"operation user_account\" is the token user_account.\n\nIf using Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\". See [Understanding Business Access](/docs/getting-started/using-business-access/) for more information.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "shared_audiences_for_business_list",
    "display_name": "List received audiences for a business",
    "category": "Audience Sharing",
    "description": "Get a list of received audiences for the given business.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ssio_accounts_get",
    "display_name": "Get Salesforce account details including bill-to information.",
    "category": "Billing",
    "description": "Get Salesforce account details including bill-to information to be used in insertion orders process for `ad_account_id`.\n  - The token's `user_account` must either be the owner of the specified ad account, or have one of the necessary roles granted via [Business Access](https://help.pinterest.com/en/business/article/share-and-manage-access-to-your-ad-accou",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ssio_insertion_order_create",
    "display_name": "Create insertion order through SSIO.",
    "category": "Billing",
    "description": "Create insertion order through SSIO for `ad_account_id`.\n  - The token's `user_account` must either be the owner of the specified ad account, or have one of the necessary roles granted via [Business Access](https://help.pinterest.com/en/business/article/share-and-manage-access-to-your-ad-accounts): Admin, Finance, Campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ssio_insertion_order_edit",
    "display_name": "Edit insertion order through SSIO.",
    "category": "Billing",
    "description": "Edit insertion order through SSIO for `ad_account_id`.\n  - The token's `user_account` must either be the owner of the specified ad account, or have one of the necessary roles granted via [Business Access](https://help.pinterest.com/en/business/article/share-and-manage-access-to-your-ad-accounts): Admin, Finance, Campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ssio_insertion_orders_status_get_by_ad_account",
    "display_name": "Get insertion order status by ad account id.",
    "category": "Billing",
    "description": "Get insertion order status for `ad_account_id`.\n  - The token's `user_account` must either be the owner of the specified ad account, or have one of the necessary roles granted via [Business Access](https://help.pinterest.com/en/business/article/share-and-manage-access-to-your-ad-accounts): Admin, Finance, Campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ssio_insertion_orders_status_get_by_pin_order_id",
    "display_name": "Get insertion order status by pin order id.",
    "category": "Billing",
    "description": "Get insertion order status for `pin_order_id`.\n  - The token's `user_account` must either be the owner of the specified ad account, or have one of the necessary roles granted via [Business Access](https://help.pinterest.com/en/business/article/share-and-manage-access-to-your-ad-accounts): Admin, Finance, Campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ssio_order_lines_get_by_ad_account",
    "display_name": "Get Salesforce order lines by ad account id.",
    "category": "Billing",
    "description": "Get Salesforce order lines for account id `ad_account_id`.\n  - The token's `user_account` must either be the owner of the specified ad account, or have one of the necessary roles granted via [Business Access](https://help.pinterest.com/en/business/article/share-and-manage-access-to-your-ad-accounts): Admin, Finance, Campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "system_user_update",
    "display_name": "Update a system user information.",
    "category": "Business Access Relationships",
    "description": "Update a system user information such as name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "targeting_options_get",
    "display_name": "Get targeting options",
    "category": "Resources",
    "description": "You can use targeting values in ads placement to define your intended audience.\n\n    Targeting metrics are organized around targeting specifications.\n\n    For more information on ads targeting, see [Audience targeting](https://help.pinterest.com/en/business/article/audience-targeting).\n\n    **Sample return:**\n\n    ```\n    [{\"36313\": \"Australia: Moreton B",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "targeting_template_create",
    "display_name": "Create targeting templates",
    "category": "Targeting Template",
    "description": "Targeting templates allow advertisers to save a set of targeting details including audience lists, keywords & interest, demographics, and placements to use more than once during the campaign creation process.\n\nTemplates can be used to build out basic targeting criteria that you plan to use across campaigns and to reuse performance targeting from prior campai",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "targeting_template_list",
    "display_name": "List targeting templates",
    "category": "Targeting Template",
    "description": "Get a list of the targeting templates in the specified `ad_account_id`",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "targeting_template_update",
    "display_name": "Update targeting templates",
    "category": "Targeting Template",
    "description": "Update the targeting template given advertiser ID and targeting template ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "templates_list",
    "display_name": "List templates",
    "category": "Ad Accounts",
    "description": "Gets all Templates associated with an ad account ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "terms_of_service_get",
    "display_name": "Get terms of service",
    "category": "Terms Of Service",
    "description": "Get the text of the terms of service and see whether the advertiser has accepted the terms of service.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "terms_related_list",
    "display_name": "List related terms",
    "category": "Terms",
    "description": "Get a list of terms logically related to each input term.\n\nExample: the term 'workout' would list related terms like 'one song workout', 'yoga workout', 'workout motivation', etc.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "terms_suggested_list",
    "display_name": "List suggested terms",
    "category": "Terms",
    "description": "Get popular search terms that begin with your input term.\n\nExample: 'sport' would return popular terms like 'sports bar' and 'sportswear', but not 'motor sports' since the phrase does not begin with the given term.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "trending_keywords_list",
    "display_name": "List trending keywords",
    "category": "Keywords",
    "description": "Get the top trending search keywords among the Pinterest user audience.\n\nTrending keywords can be used to inform ad targeting, budget strategy, and creative decisions about which products and Pins will resonate with your audience.\n\nGeographic, demographic and interest-based filters are available to narrow down to the top trends among a specific audience. Mul",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "trends_editorial_articles_list",
    "display_name": "Returns editorial articles for a given region",
    "category": "Trends",
    "description": "Get a list of published editorial articles. Translations of the editorials will be provided if available; otherwise, the default language will be English.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "trends_featured_topics_list",
    "display_name": "Get featured topics",
    "category": "Trends",
    "description": "Enables advertisers to pull top five trending topics by interest and market, at full parity with the Pinterest Trends UI.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "trends_product_categories_details_list",
    "display_name": "Get product category details",
    "category": "Trends",
    "description": "Enables advertisers to retrieve demographic information, related pins, and trend lines for specified product categories",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "trends_product_categories_trending_list",
    "display_name": "Get a list of growing Shopping Product Categories",
    "category": "Trends",
    "description": "Get a list of growing Shopping Product Categories in ranked order allowing filtering by engagement type, vertical, age, and gender.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unverify_website_delete",
    "display_name": "Unverify website",
    "category": "User Account",
    "description": "Unverify a website verified by the signed-in user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ad_account_to_ad_account_shared_audience",
    "display_name": "Update audience sharing between ad accounts",
    "category": "Audience Sharing",
    "description": "From an ad account, share a specific audience with another ad account, or revoke access to a previously shared audience. Only the audience owner account can share the audience. The recipient ad account(s) must be in the same [Pinterest Business Hierarchy](https://help.pinterest.com/en/business/article/create-and-manage-accounts) as the business owner of the",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ad_account_to_business_shared_audience",
    "display_name": "Update audience sharing from an ad account to businesses",
    "category": "Audience Sharing",
    "description": "From an ad account, share a specific audience with a business account, or revoke access to a previously shared audience. Only the audience owner account can share the audience. The recipient business account must be in the same business hierarchy as the business owner of the ad account.\n\nThis endpoint is not available to all apps. [Learn more](/docs/getting-",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_business_memberships",
    "display_name": "Update member's business role",
    "category": "Business Access Relationships",
    "description": "Update a member's business role within the business.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_business_to_ad_account_shared_audience",
    "display_name": "Update audience sharing from a business to ad accounts",
    "category": "Audience Sharing",
    "description": "From a business, share a specific audience with other ad account(s), or revoke access to a previously shared audience.\n\n- If the business is the owner of the audience, it can share with any ad account within the same business hierarchy.\n- If the business is the recipient of the audience, it can share with any of its owned ad accounts.\n\nThis endpoint is not a",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_business_to_business_shared_audience",
    "display_name": "Update audience sharing between businesses",
    "category": "Audience Sharing",
    "description": "From a business, share a specific audience with another business account, or revoke access to a previously shared audience. Only the audience owner can share the audience with other businesses, and the recipient business must be within the same business hierarchy.\n\nThis endpoint is not available to all apps. [Learn more](/docs/getting-started/using-beta-and-",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_partner_asset_access_handler_impl",
    "display_name": "Assign/Update partner asset permissions",
    "category": "Business Access Assets",
    "description": "Grant multiple partners access to assets and/or update multiple partner's exisiting permissions to an asset.\nIf your partner already had permissions on the asset, they will be overriden with the new permissions you assign to them.\nTo learn more about permission levels, visit https://help.pinterest.com/en/business/article/business-manager-overview\n\nNote: Not",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_account_analytics",
    "display_name": "Get user account analytics",
    "category": "User Account",
    "description": "Get analytics for the \"operation user_account\"\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\".",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_account_analytics_top_pins",
    "display_name": "Get user account top pins analytics",
    "category": "User Account",
    "description": "Gets analytics data about a user's top pins (limited to the top 50).\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\".",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_account_analytics_top_video_pins",
    "display_name": "Get user account top video pins analytics",
    "category": "User Account",
    "description": "Gets analytics data about a user's top video pins (limited to the top 50).\n- By default, the \"operation user_account\" is the token user_account.\n\nOptional: Business Access: Specify an ad_account_id to use the owner of that ad_account as the \"operation user_account\".",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_account_followed_interests",
    "display_name": "List following interests",
    "category": "User Account",
    "description": "Get a list of a user's following interests in one place.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_account",
    "display_name": "Get user account",
    "category": "User Account",
    "description": "Get account information for the \"operation user_account\"\n- By default, the \"operation user_account\" is the token user_account.\n\n[Understanding Business Access]: https://developers.pinterest.com/docs/getting-started/using-business-access/ \"Understanding Business Access\"\nIf using Business Access: Specify an ad_account_id to use the owner of that ad_account as",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_following_get",
    "display_name": "List following",
    "category": "User Account",
    "description": "Get a list of who a certain user follows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_websites_get",
    "display_name": "Get user websites",
    "category": "User Account",
    "description": "Get user websites, claimed or not",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "verify_website_update",
    "display_name": "Verify website",
    "category": "User Account",
    "description": "Verify a website as a signed-in user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "website_verification_get",
    "display_name": "Get user verification code for website claiming",
    "category": "User Account",
    "description": "Get verification code for user to install on the website to claim it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

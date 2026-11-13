@@ -28,14 +28,16 @@
    "display_name": null,
    "category": null,
    "description": "Generate random UUIDs, optionally choosing a documented UUID version.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "parse_uuid",
    "display_name": null,
    "category": null,
    "description": "Check a UUID string's validity and return its version.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

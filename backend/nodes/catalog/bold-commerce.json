@@ -22,175 +22,209 @@
    "display_name": "Get Shop Information",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customers",
    "display_name": "List Customers",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer",
    "display_name": "Get Customer",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer",
    "display_name": "Update Customer",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_addresses",
    "display_name": "List Customer Addresses",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_subscriptions",
    "display_name": "List Customer Subscriptions",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_subscriptions",
    "display_name": "List Subscriptions",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscription",
    "display_name": "Get Subscription",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_discount_code",
    "display_name": "Apply Discount Code",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_discount_code",
    "display_name": "Remove Discount Code",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_next_order_datetime",
    "display_name": "Change Next Order Date",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "skip_order",
    "display_name": "Skip Subscription Order",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "recover_order",
    "display_name": "Unskip Subscription Order",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_subscription",
    "display_name": "Cancel Subscription",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_subscription",
    "display_name": "Pause Subscription",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reactivate_subscription",
    "display_name": "Reactivate Subscription",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_orders",
    "display_name": "List Subscription Orders",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_order",
    "display_name": "Get Subscription Order",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_future_orders",
    "display_name": "List Future Subscription Orders",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payment_methods",
    "display_name": "List Subscription Payment Methods",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_subscription_groups",
    "display_name": "List Subscription Groups",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscription_group",
    "display_name": "Get Subscription Group",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_subscription_event",
    "display_name": "On Subscription Event",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "bold_commerce_token"
+   ]
   },
   {
    "name": "on_customer_event",
    "display_name": "On Customer Event",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "bold_commerce_token"
+   ]
   },
   {
    "name": "on_order_created",
    "display_name": "On Subscription Order Created",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "bold_commerce_token"
+   ]
   }
  ],
  "agent_tool_provider": true,

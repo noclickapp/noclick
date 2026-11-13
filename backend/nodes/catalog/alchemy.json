@@ -27,70 +27,80 @@
    "display_name": null,
    "category": null,
    "description": "List supported chain network IDs for app configuration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_apps",
    "display_name": null,
    "category": null,
    "description": "List this account's apps, one page at a time; pass back next_cursor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_app",
    "display_name": null,
    "category": null,
    "description": "Retrieve an app's metadata and allowlists; API keys and RPC URLs are omitted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_app",
    "display_name": null,
    "category": null,
    "description": "Create an app with network IDs returned by list_chains.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_app",
    "display_name": null,
    "category": null,
    "description": "Change an app's name or description without replacing its allowlists.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_app",
    "display_name": null,
    "category": null,
    "description": "Permanently delete the specified app, invalidating its API access.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_network_allowlist",
    "display_name": null,
    "category": null,
    "description": "Replace all enabled networks; an empty list removes all networks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_address_allowlist",
    "display_name": null,
    "category": null,
    "description": "Replace the address allowlist; an empty list clears restrictions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_origin_allowlist",
    "display_name": null,
    "category": null,
    "description": "Replace the origin allowlist; an empty list clears restrictions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ip_allowlist",
    "display_name": null,
    "category": null,
    "description": "Replace the IP/CIDR allowlist; an empty list clears restrictions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

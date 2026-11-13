@@ -26,161 +26,187 @@
    "display_name": "List all sessions",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_session",
    "display_name": "Get session by ID",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_chats",
    "display_name": "Get active chats for a session",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_messages",
    "display_name": "Get message history for a session",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_text",
    "display_name": "Send a text message",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reply",
    "display_name": "Reply to a message",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_image",
    "display_name": "Send an image message",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_document",
    "display_name": "Send a document/file",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "react",
    "display_name": "Add or remove a reaction to a message",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "forward_message",
    "display_name": "Forward a message to another chat",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_message",
    "display_name": "Edit the text of a message sent by this account",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_message",
    "display_name": "Delete a message",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": "Get all contacts for a session",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": "Get a specific contact by ID",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_number",
    "display_name": "Check if a phone number exists on WhatsApp",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_groups",
    "display_name": "Get all groups for a session",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_group",
    "display_name": "Get detailed group info",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_group",
    "display_name": "Create a new group",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": "List all templates for a session",
    "category": "Read",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_template",
    "display_name": "Render a stored text template and send it as a text message",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_read",
    "display_name": "Mark a chat as read/seen",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_chat",
    "display_name": "Archive or unarchive a chat",
    "category": "Write",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_message",
    "display_name": "On Incoming Message",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "openwa_api_key"
+   ]
   }
  ],
  "agent_tool_provider": true,

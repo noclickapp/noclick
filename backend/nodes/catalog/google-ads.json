@@ -22,35 +22,40 @@
    "display_name": "Get Campaign Performance Metrics",
    "category": "General",
    "description": "Get campaign performance",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ad_group_performance_metrics",
    "display_name": "Get Ad Group Performance Metrics",
    "category": "General",
    "description": "Get ad group performance",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_keyword_performance_metrics",
    "display_name": "Get Keyword Performance Metrics",
    "category": "General",
    "description": "Get keyword performance",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_search_terms_triggering_ads",
    "display_name": "Get Search Terms Triggering Ads",
    "category": "General",
    "description": "Get search terms report",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_gaql_query",
    "display_name": "Run Gaql Query",
    "category": "General",
    "description": "Run a custom GAQL query",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

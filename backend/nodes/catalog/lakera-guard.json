@@ -22,28 +22,32 @@
    "display_name": null,
    "category": null,
    "description": "Screen an LLM interaction using the project's runtime Guard policy.\n\n    Guard can create screening logs. In detect mode flagged is always false;\n    use the returned action and breakdown when interpreting results.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_detection_results",
    "display_name": null,
    "category": null,
    "description": "Analyze historic content and calibrate detectors without screening logs.\n\n    This endpoint does not make a flagging decision. Do not use its results\n    for runtime security decisions; use Screen Content for runtime screening.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_policy_health",
    "display_name": null,
    "category": null,
    "description": "Check the policy configuration of an explicit project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_policy",
    "display_name": null,
    "category": null,
    "description": "Call the published policy-lint endpoint with no request body.\n\n    The provider publishes no policy-input schema for this endpoint. For an\n    arbitrary policy file, use the dashboard's policy-linter editor instead.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

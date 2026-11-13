@@ -27,161 +27,184 @@
    "display_name": null,
    "category": null,
    "description": "Get user profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "attach_audience_achievements",
    "display_name": null,
    "category": null,
    "description": "Attach achievements to an audience.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_audience_attributes",
    "display_name": null,
    "category": null,
    "description": "Get attributes for a specific audience.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "store_audience_attributes",
    "display_name": null,
    "category": null,
    "description": "Store audience attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_audience",
    "display_name": null,
    "category": null,
    "description": "Get a paginated list of audiences with optional filtering, sorting, and related resources.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_audience",
    "display_name": null,
    "category": null,
    "description": "Create a new audience.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_audience_hubs",
    "display_name": null,
    "category": null,
    "description": "Get hubs for an audience.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "attach_audience_hubs",
    "display_name": null,
    "category": null,
    "description": "Attach hubs to an audience.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "detach_audience_hubs",
    "display_name": null,
    "category": null,
    "description": "Detach hubs from an audience.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_audience_tags",
    "display_name": null,
    "category": null,
    "description": "Get all tags for audience.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_member_tags",
    "display_name": null,
    "category": null,
    "description": "Get tags associated with a specific audience.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "attach_audience_tags",
    "display_name": null,
    "category": null,
    "description": "Attach tags to an audience.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "detach_audience_tags",
    "display_name": null,
    "category": null,
    "description": "Detach tags from an audience.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_attributes",
    "display_name": null,
    "category": null,
    "description": "Get a list of attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_achievements",
    "display_name": null,
    "category": null,
    "description": "Get a list of achievements.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_files",
    "display_name": null,
    "category": null,
    "description": "List all files with optional filtering, sorting, and related resources.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_file_tags",
    "display_name": null,
    "category": null,
    "description": "Get all tags for files.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_selected_file_tags",
    "display_name": null,
    "category": null,
    "description": "Get tags associated with a specific file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_file_tags",
    "display_name": null,
    "category": null,
    "description": "Update tags for a specific file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": null,
    "category": null,
    "description": "Get a list of folders.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_playlists",
    "display_name": null,
    "category": null,
    "description": "Get a list of playlists.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_hubs",
    "display_name": null,
    "category": null,
    "description": "Get a list of hubs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_widgets",
    "display_name": null,
    "category": null,
    "description": "Get a list of widgets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

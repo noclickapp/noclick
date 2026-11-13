@@ -22,175 +22,200 @@
    "display_name": null,
    "category": null,
    "description": "List lists",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list",
    "display_name": null,
    "category": null,
    "description": "Get list",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_subscribers",
    "display_name": null,
    "category": null,
    "description": "List subscribers",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_subscriber",
    "display_name": null,
    "category": null,
    "description": "Add subscriber",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_subscriber",
    "display_name": null,
    "category": null,
    "description": "Update subscriber",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unsubscribe_subscriber",
    "display_name": null,
    "category": null,
    "description": "Unsubscribe subscriber",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscriber_count",
    "display_name": null,
    "category": null,
    "description": "Get subscriber count",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_subscribers",
    "display_name": null,
    "category": null,
    "description": "Delete subscribers",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_groups",
    "display_name": null,
    "category": null,
    "description": "List groups",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_group",
    "display_name": null,
    "category": null,
    "description": "Create group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_group",
    "display_name": null,
    "category": null,
    "description": "Update group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_group",
    "display_name": null,
    "category": null,
    "description": "Delete group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "assign_group",
    "display_name": null,
    "category": null,
    "description": "Assign group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "release_group",
    "display_name": null,
    "category": null,
    "description": "Release group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_emails",
    "display_name": null,
    "category": null,
    "description": "List emails",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email",
    "display_name": null,
    "category": null,
    "description": "Get email",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_email",
    "display_name": null,
    "category": null,
    "description": "Create email",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_email",
    "display_name": null,
    "category": null,
    "description": "Update email",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_email",
    "display_name": null,
    "category": null,
    "description": "Delete email",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_email",
    "display_name": null,
    "category": null,
    "description": "Copy email",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email_stats",
    "display_name": null,
    "category": null,
    "description": "Get email stats",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email_logs",
    "display_name": null,
    "category": null,
    "description": "Get email logs",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email_content",
    "display_name": null,
    "category": null,
    "description": "Get email content",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_email_content",
    "display_name": null,
    "category": null,
    "description": "Update email content",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_email",
    "display_name": null,
    "category": null,
    "description": "Send this normal email to its configured audience; acceptance does not prove delivery.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

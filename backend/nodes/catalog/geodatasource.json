@@ -29,21 +29,24 @@
    "display_name": null,
    "category": null,
    "description": "Find the nearest city and its location, currency, time zone and distance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_nearby_cities",
    "display_name": null,
    "category": null,
    "description": "Find cities within the provider's fixed 20 km search radius.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_neighboring_countries",
    "display_name": null,
    "category": null,
    "description": "List countries sharing a land border with a two-letter country code.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

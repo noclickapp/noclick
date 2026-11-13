@@ -40,154 +40,176 @@
    "display_name": null,
    "category": null,
    "description": "List brand templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_clip_project",
    "display_name": null,
    "category": null,
    "description": "Create clip project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_clip_project",
    "display_name": null,
    "category": null,
    "description": "Get clip project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project_visibility",
    "display_name": null,
    "category": null,
    "description": "Update project visibility.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_exportable_clips",
    "display_name": null,
    "category": null,
    "description": "List exportable clips.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_collection_content",
    "display_name": null,
    "category": null,
    "description": "Remove collection content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_collection_content",
    "display_name": null,
    "category": null,
    "description": "Add collection content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_collection",
    "display_name": null,
    "category": null,
    "description": "Delete collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_collection",
    "display_name": null,
    "category": null,
    "description": "Create collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_collections",
    "display_name": null,
    "category": null,
    "description": "List collections.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_collection",
    "display_name": null,
    "category": null,
    "description": "Export collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_censor_job",
    "display_name": null,
    "category": null,
    "description": "Create censor job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_censor_job",
    "display_name": null,
    "category": null,
    "description": "Get censor job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_social_accounts",
    "display_name": null,
    "category": null,
    "description": "List social accounts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_social_copy_job",
    "display_name": null,
    "category": null,
    "description": "Create social copy job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_social_copy_job",
    "display_name": null,
    "category": null,
    "description": "Get social copy job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_post",
    "display_name": null,
    "category": null,
    "description": "Publish post.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "schedule_post",
    "display_name": null,
    "category": null,
    "description": "Schedule post.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_scheduled_post",
    "display_name": null,
    "category": null,
    "description": "Cancel scheduled post.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_thumbnail_job",
    "display_name": null,
    "category": null,
    "description": "Create thumbnail job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_generative_job",
    "display_name": null,
    "category": null,
    "description": "Get generative job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transcript",
    "display_name": null,
    "category": null,
    "description": "Get transcript.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -26,175 +26,200 @@
    "display_name": null,
    "category": null,
    "description": "List profiles.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_profile",
    "display_name": null,
    "category": null,
    "description": "Get profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dids",
    "display_name": null,
    "category": null,
    "description": "List dids.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_did",
    "display_name": null,
    "category": null,
    "description": "Get did.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": null,
    "category": null,
    "description": "List templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template",
    "display_name": null,
    "category": null,
    "description": "Get template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_template",
    "display_name": null,
    "category": null,
    "description": "Permanently delete this template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credentials",
    "display_name": null,
    "category": null,
    "description": "List credentials.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credential",
    "display_name": null,
    "category": null,
    "description": "Get credential.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_credential",
    "display_name": null,
    "category": null,
    "description": "Permanently delete this credential.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_schemas",
    "display_name": null,
    "category": null,
    "description": "List schemas.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_schema",
    "display_name": null,
    "category": null,
    "description": "Get schema.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_schema",
    "display_name": null,
    "category": null,
    "description": "Permanently delete this schema.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_proof_requests",
    "display_name": null,
    "category": null,
    "description": "List proof requests.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_proof_request",
    "display_name": null,
    "category": null,
    "description": "Get proof request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_proof_request",
    "display_name": null,
    "category": null,
    "description": "Permanently delete this proof request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_did",
    "display_name": null,
    "category": null,
    "description": "Submit DID creation; the returned job is not proof of blockchain completion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_template",
    "display_name": null,
    "category": null,
    "description": "Create template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "issue_credential",
    "display_name": null,
    "category": null,
    "description": "Issue a verifiable credential without persisting encrypted contents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "revoke_credential",
    "display_name": null,
    "category": null,
    "description": "Revoke credential.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unrevoke_credential",
    "display_name": null,
    "category": null,
    "description": "Unrevoke credential.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "verify_credential",
    "display_name": null,
    "category": null,
    "description": "Verify credential.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_schema",
    "display_name": null,
    "category": null,
    "description": "Submit schema creation; use get_job to observe completion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_proof_request",
    "display_name": null,
    "category": null,
    "description": "Create proof request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_job",
    "display_name": null,
    "category": null,
    "description": "Get job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

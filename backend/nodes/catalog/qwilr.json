@@ -41,63 +41,72 @@
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_page",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_acceptance_summary",
    "display_name": null,
    "category": null,
    "description": "Reads real acceptance counts only; does not accept, sign, pay, return signer details or request preview acceptance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_saved_blocks",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": null,
    "category": null,
    "description": "ID, name, creation date and team names only. No email, roles or current-user identity claim.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_draft_from_template",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_draft_from_blocks",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_draft_blocks",
    "display_name": null,
    "category": null,
    "description": "Full content replacement, supported by Qwilr only for pages originally created from saved blocks. No provider CAS contract is documented; concurrent edits remain possible.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_draft_expiry",
    "display_name": null,
    "category": null,
    "description": "Stores expiry on an existing draft. The countdown starts when someone later publishes; expiry can then disable its link and decline the page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

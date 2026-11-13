@@ -27,105 +27,120 @@
    "display_name": "Check API Key",
    "category": "Connection",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analyze_sentiment",
    "display_name": "Analyze Sentiment",
    "category": "Document Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analyze_sentiment_from_storage",
    "display_name": "Analyze Sentiment from Cloud Storage",
    "category": "Document Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analyze_entities",
    "display_name": "Analyze Entities",
    "category": "Document Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analyze_entities_from_storage",
    "display_name": "Analyze Entities from Cloud Storage",
    "category": "Document Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analyze_entity_sentiment",
    "display_name": "Analyze Entity Sentiment",
    "category": "Document Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analyze_entity_sentiment_from_storage",
    "display_name": "Analyze Entity Sentiment from Cloud Storage",
    "category": "Document Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "classify_text",
    "display_name": "Classify Text",
    "category": "Document Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "classify_text_from_storage",
    "display_name": "Classify Text from Cloud Storage",
    "category": "Document Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "moderate_text",
    "display_name": "Moderate Text",
    "category": "Document Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "moderate_text_from_storage",
    "display_name": "Moderate Text from Cloud Storage",
    "category": "Document Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analyze_syntax",
    "display_name": "Analyze Syntax",
    "category": "Document Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "analyze_syntax_from_storage",
    "display_name": "Analyze Syntax from Cloud Storage",
    "category": "Document Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "annotate_text",
    "display_name": "Annotate Text",
    "category": "Document Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "annotate_text_from_storage",
    "display_name": "Annotate Text from Cloud Storage",
    "category": "Document Analysis",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

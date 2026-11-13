@@ -28,105 +28,120 @@
    "display_name": null,
    "category": null,
    "description": "This API returns a list of authority control tasks in Alma.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_authority_control_task",
    "display_name": null,
    "category": null,
    "description": "This API returns an authority control task in Alma.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "dismiss_authority_control_task",
    "display_name": null,
    "category": null,
    "description": "This API operates on an authority control task. given a Authority Control Task ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_printouts",
    "display_name": null,
    "category": null,
    "description": "This API returns a list of Printouts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "act_on_printouts",
    "display_name": null,
    "category": null,
    "description": "This API performs an action on printouts: mark as printed or canceled. 10,000 records can be handled in one requests. Only printouts which were updated will be returned.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_printout",
    "display_name": null,
    "category": null,
    "description": "This Web service creates a Printout given a Printout Obj.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_printout",
    "display_name": null,
    "category": null,
    "description": "This Web service returns a Printout given a Printout ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "act_on_printout",
    "display_name": null,
    "category": null,
    "description": "This API operates on an printout. given a Printout ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_requested_resources",
    "display_name": null,
    "category": null,
    "description": "This API returns a list of requested resources to be picked from the shelf in Alma",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_requested_resources_reported",
    "display_name": null,
    "category": null,
    "description": "This API performs an action on requested resources that are on the shelf in Alma",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lending_requests",
    "display_name": null,
    "category": null,
    "description": "This API returns a list of lending requests in Alma",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_lending_requests_reported",
    "display_name": null,
    "category": null,
    "description": "This API preforms the requested action on a list (specified by given filters) of lending requests in Alma",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_connection_test",
    "display_name": null,
    "category": null,
    "description": "This API is used to test if the API key was configured correctly.It returns a short XML (no schema available - the output is subject to changes) with the following structure:<test>GET - OK - institutionCode: 01ABC_INST</test>",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "test_write_permissions",
    "display_name": null,
    "category": null,
    "description": "This API is used to test if the API key was configured correctly, including read/write permissions.It returns a short XML (no schema available - the output is subject to changes) with the following structure:<test>POST - OK</test>",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_authority_task",
    "display_name": null,
    "category": "Triggers",
    "description": "Poll task creation order, baseline on arming, then emit unseen task IDs.\n\n    Lists up to 2,000 most recent tasks. Narrow by vocabulary when the review\n    queue is larger; a truncated queue fails without advancing the seen set.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -31,91 +31,104 @@
    "display_name": "Check API Reachability",
    "category": "Connection",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_centers",
    "display_name": "List Centers",
    "category": "Centers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_center",
    "display_name": "Get Center Metadata",
    "category": "Centers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization_metadata",
    "display_name": "Get Organization Metadata",
    "category": "Organization",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guest_configuration",
    "display_name": "Get Guest Configuration Metadata",
    "category": "Organization",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_center_services",
    "display_name": "List Center Service Metadata",
    "category": "Services",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service",
    "display_name": "Get Service Metadata",
    "category": "Services",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_center_employees",
    "display_name": "List Center Employee Metadata",
    "category": "Employees",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_center_employee",
    "display_name": "Find Center Employee Metadata",
    "category": "Employees",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_center_guests",
    "display_name": "List Center Guest Metadata",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guest",
    "display_name": "Get Guest CRM Metadata",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guest_appointments",
    "display_name": "List Guest Appointment Metadata",
    "category": "Appointments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_guest_crm_metadata",
    "display_name": "Update Guest CRM Metadata",
    "category": "Guests",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

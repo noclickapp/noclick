@@ -31,98 +31,112 @@
    "display_name": "Check Protected Account Access",
    "category": "Administrative Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_accounts",
    "display_name": "List Current Account Metadata",
    "category": "Administrative Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": "Get Account Metadata",
    "category": "Administrative Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Allowed Project Metadata",
    "category": "Administrative Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": "Get Project Metadata",
    "category": "Administrative Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_environments",
    "display_name": "List Project Environment Metadata",
    "category": "Administrative Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_environment",
    "display_name": "Get Environment Metadata",
    "category": "Administrative Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_jobs",
    "display_name": "List Environment Job Definitions",
    "category": "Administrative Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_job",
    "display_name": "Get Job Definition Metadata",
    "category": "Administrative Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_runs",
    "display_name": "List Job Run Metadata",
    "category": "Administrative Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_run",
    "display_name": "Get Run Metadata",
    "category": "Administrative Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_run_status",
    "display_name": "Get Current Run Status",
    "category": "Administrative Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_run_artifacts",
    "display_name": "List Supported Run Artifacts",
    "category": "Administrative Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_run_artifact_summary",
    "display_name": "Get Projected JSON Artifact Summary",
    "category": "Administrative Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

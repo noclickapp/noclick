@@ -40,154 +40,180 @@
    "display_name": null,
    "category": null,
    "description": "List the first page of account campaigns, with pagination metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign",
    "display_name": null,
    "category": null,
    "description": "Read a campaign by its Givebutter ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_campaign",
    "display_name": null,
    "category": null,
    "description": "Create a fundraising campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_campaign",
    "display_name": null,
    "category": null,
    "description": "Update campaign details; only supplied fields are sent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": null,
    "category": null,
    "description": "Find donors by email or name; returns one page and pagination metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": null,
    "category": null,
    "description": "Read one contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact",
    "display_name": null,
    "category": null,
    "description": "Create an individual donor contact without forcing a duplicate.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact",
    "display_name": null,
    "category": null,
    "description": "Update supplied donor profile fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restore_contact",
    "display_name": null,
    "category": null,
    "description": "Restore an archived contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_contact_tags",
    "display_name": null,
    "category": null,
    "description": "Add tags while retaining the contact's existing tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_contact_tags",
    "display_name": null,
    "category": null,
    "description": "Remove the named tags from a contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contact_activities",
    "display_name": null,
    "category": null,
    "description": "Read the first page of a contact's activity timeline.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact_activity",
    "display_name": null,
    "category": null,
    "description": "Record a donor interaction or volunteer activity.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_funds",
    "display_name": null,
    "category": null,
    "description": "List the first page of designation funds.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_fund",
    "display_name": null,
    "category": null,
    "description": "Read one designation fund.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_fund",
    "display_name": null,
    "category": null,
    "description": "Create a designation fund.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_fund",
    "display_name": null,
    "category": null,
    "description": "Update a designation fund's name and optional code.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transactions",
    "display_name": null,
    "category": null,
    "description": "List the first page of donations, optionally filtered by dates or contacts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transaction",
    "display_name": null,
    "category": null,
    "description": "Read one donation transaction.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_plans",
    "display_name": null,
    "category": null,
    "description": "List the first page of recurring donation plans.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_plan",
    "display_name": null,
    "category": null,
    "description": "Read one recurring donation plan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_event",
    "display_name": "On Givebutter Event",
    "category": "Triggers",
    "description": "Start a workflow or agent when the selected Givebutter event arrives.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "givebutter_api_key",
+    "givebutter_mcp"
+   ]
   }
  ],
  "agent_tool_provider": true,

@@ -22,189 +22,228 @@
    "display_name": "On Feature Flag Created",
    "category": "Triggers",
    "description": "Start when a feature flag is created.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "unleash_token"
+   ]
   },
   {
    "name": "on_strategy_added",
    "display_name": "On Flag Strategy Added",
    "category": "Triggers",
    "description": "Start when a rollout strategy is added to a flag.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "unleash_token"
+   ]
   },
   {
    "name": "on_feature_tagged",
    "display_name": "On Feature Flag Tagged",
    "category": "Triggers",
    "description": "Start when a tag is added to a feature flag.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "unleash_token"
+   ]
   },
   {
    "name": "on_feature_moved",
    "display_name": "On Feature Flag Moved",
    "category": "Triggers",
    "description": "Start when a feature flag moves to another project.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "unleash_token"
+   ]
   },
   {
    "name": "list_projects",
    "display_name": null,
    "category": null,
    "description": "List projects visible to this token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": null,
    "category": null,
    "description": "Get a project overview.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_features",
    "display_name": null,
    "category": null,
    "description": "List feature flags in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_feature",
    "display_name": null,
    "category": null,
    "description": "Get a flag and its configuration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_feature",
    "display_name": null,
    "category": null,
    "description": "Create a feature flag in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_feature",
    "display_name": null,
    "category": null,
    "description": "Update supplied flag metadata fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_feature",
    "display_name": null,
    "category": null,
    "description": "Archive a feature flag; this removes it from SDK evaluation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_feature_environment",
    "display_name": null,
    "category": null,
    "description": "Get flag configuration for an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_feature",
    "display_name": null,
    "category": null,
    "description": "Enable a flag in the selected environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_feature",
    "display_name": null,
    "category": null,
    "description": "Disable a flag in the selected environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_strategies",
    "display_name": null,
    "category": null,
    "description": "List activation strategies for a flag environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_strategy",
    "display_name": null,
    "category": null,
    "description": "Read one activation strategy configuration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_strategy",
    "display_name": null,
    "category": null,
    "description": "Add an activation strategy to a flag environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_strategy",
    "display_name": null,
    "category": null,
    "description": "Update supplied strategy configuration fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_strategy",
    "display_name": null,
    "category": null,
    "description": "Remove an activation strategy from a flag environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_variants",
    "display_name": null,
    "category": null,
    "description": "Read flag variants for an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_environments",
    "display_name": null,
    "category": null,
    "description": "List configured environments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_environment",
    "display_name": null,
    "category": null,
    "description": "Read an environment by name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_segments",
    "display_name": null,
    "category": null,
    "description": "List reusable targeting segments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segment",
    "display_name": null,
    "category": null,
    "description": "Read a reusable targeting segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_segment",
    "display_name": null,
    "category": null,
    "description": "Create a reusable targeting segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_segment",
    "display_name": null,
    "category": null,
    "description": "Replace a segment name and constraints.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_segment",
    "display_name": null,
    "category": null,
    "description": "Delete a targeting segment; fails if still referenced.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

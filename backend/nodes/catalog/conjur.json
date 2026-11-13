@@ -22,105 +22,120 @@
    "display_name": null,
    "category": null,
    "description": "Show the authenticated account and username.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_secret",
    "display_name": null,
    "category": null,
    "description": "Read the latest or a retained version of a secret value.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_secret",
    "display_name": null,
    "category": null,
    "description": "Add a new secret value to an existing variable.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_secrets",
    "display_name": null,
    "category": null,
    "description": "Fetch several secrets in one API call.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_resources",
    "display_name": null,
    "category": null,
    "description": "List accessible resources for the authenticated account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_account_resources",
    "display_name": null,
    "category": null,
    "description": "List resources through the account resource endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_kind_resources",
    "display_name": null,
    "category": null,
    "description": "List resources of a selected kind in the connected account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_resource",
    "display_name": null,
    "category": null,
    "description": "Read resource metadata, permissions and versions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_role",
    "display_name": null,
    "category": null,
    "description": "Get role details, direct members or memberships.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_role_member",
    "display_name": null,
    "category": null,
    "description": "Grant the selected role to a member.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_role_member",
    "display_name": null,
    "category": null,
    "description": "Revoke a direct role membership.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "load_policy",
    "display_name": null,
    "category": null,
    "description": "Add policy data; omitted objects are retained and deletions are refused.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_policy",
    "display_name": null,
    "category": null,
    "description": "Modify policy data, including explicit delete, revoke and deny statements.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_policy",
    "display_name": null,
    "category": null,
    "description": "Replace a policy: existing objects omitted from this YAML will be deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_public_keys",
    "display_name": null,
    "category": null,
    "description": "Read SSH public keys for a user or host.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

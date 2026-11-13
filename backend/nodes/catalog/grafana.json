@@ -42,441 +42,508 @@
    "display_name": "List Annotations",
    "category": "Annotations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_annotation",
    "display_name": "Create Annotation",
    "category": "Annotations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_annotation",
    "display_name": "Get Annotation",
    "category": "Annotations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_annotation",
    "display_name": "Update Annotation",
    "category": "Annotations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_annotation",
    "display_name": "Delete Annotation",
    "category": "Annotations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "patch_annotation",
    "display_name": "Patch Annotation",
    "category": "Annotations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "save_dashboard",
    "display_name": "Save Dashboard",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dashboard",
    "display_name": "Get Dashboard",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dashboard",
    "display_name": "Delete Dashboard",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dashboard_versions",
    "display_name": "List Dashboard Versions",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_data_sources",
    "display_name": "List Data Sources",
    "category": "Data Sources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_data_source",
    "display_name": "Create Data Source",
    "category": "Data Sources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_data_source",
    "display_name": "Get Data Source",
    "category": "Data Sources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_data_source",
    "display_name": "Update Data Source",
    "category": "Data Sources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_data_source",
    "display_name": "Delete Data Source",
    "category": "Data Sources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_data_source_health",
    "display_name": "Check Data Source Health",
    "category": "Data Sources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": "List Folders",
    "category": "Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder",
    "display_name": "Create Folder",
    "category": "Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_folder",
    "display_name": "Get Folder",
    "category": "Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_folder",
    "display_name": "Update Folder",
    "category": "Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_folder",
    "display_name": "Delete Folder",
    "category": "Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_folder_counts",
    "display_name": "Get Folder Counts",
    "category": "Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_folder",
    "display_name": "Move Folder",
    "category": "Folders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_library_elements",
    "display_name": "List Library Elements",
    "category": "Library Elements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_library_element",
    "display_name": "Create Library Element",
    "category": "Library Elements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_library_element_by_name",
    "display_name": "Get Library Element By Name",
    "category": "Library Elements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_library_element",
    "display_name": "Get Library Element",
    "category": "Library Elements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_library_element",
    "display_name": "Delete Library Element",
    "category": "Library Elements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_library_element",
    "display_name": "Update Library Element",
    "category": "Library Elements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_library_element_connections",
    "display_name": "Get Library Element Connections",
    "category": "Library Elements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_playlists",
    "display_name": "List Playlists",
    "category": "Playlists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_playlist",
    "display_name": "Create Playlist",
    "category": "Playlists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_playlist",
    "display_name": "Get Playlist",
    "category": "Playlists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_playlist",
    "display_name": "Update Playlist",
    "category": "Playlists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_playlist",
    "display_name": "Delete Playlist",
    "category": "Playlists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_playlist_items",
    "display_name": "Get Playlist Items",
    "category": "Playlists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_dashboards",
    "display_name": "Search Dashboards",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_team",
    "display_name": "Create Team",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_teams",
    "display_name": "List Teams",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team_by_id",
    "display_name": "Get Team By ID",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_team",
    "display_name": "Update Team",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_team_by_id",
    "display_name": "Delete Team By ID",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team_members",
    "display_name": "Get Team Members",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_team_memberships",
    "display_name": "Set Team Memberships",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_team_member",
    "display_name": "Add Team Member",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_alert_rules",
    "display_name": "List Alert Rules",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_alert_rule",
    "display_name": "Create Alert Rule",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_alert_rule",
    "display_name": "Get Alert Rule",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_alert_rule",
    "display_name": "Update Alert Rule",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contact_points",
    "display_name": "List Contact Points",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact_point",
    "display_name": "Create Contact Point",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact_point",
    "display_name": "Update Contact Point",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact_point",
    "display_name": "Delete Contact Point",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_mute_timings",
    "display_name": "List Mute Timings",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_mute_timing",
    "display_name": "Create Mute Timing",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_mute_timing",
    "display_name": "Get Mute Timing",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_mute_timing",
    "display_name": "Update Mute Timing",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_mute_timing",
    "display_name": "Delete Mute Timing",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_notification_policies",
    "display_name": "Get Notification Policies",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_notification_policies",
    "display_name": "Set Notification Policies",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_notification_policies",
    "display_name": "Reset Notification Policies",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_notification_templates",
    "display_name": "List Notification Templates",
    "category": "Alerting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_alert_notification",
    "display_name": "On Alert Notification",
    "category": "Triggers",
    "description": "Receive Grafana's default grouped alert notification payload.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "grafana_service_account_token",
+    "grafana_mcp"
+   ]
   }
  ],
  "agent_tool_provider": true,

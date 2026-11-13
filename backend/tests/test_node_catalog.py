@@ -342,6 +342,47 @@ def test_listings_and_the_node_search_read_what_the_classes_say(classes, monkeyp
     assert read == {t: (node_search._facts(t), node_search._operations(t)) for t in classes}
 
 
+def test_an_operation_needs_an_account_as_the_credential_hint_says_on_noclicks_keys(classes, monkeypatch):
+    """``needs_account`` is ``run_op.needs_credential_hint``'s verdict with no config where NoClick holds every
+    platform key (a self-hosted instance holding none runs those operations with an account): false for each
+    operation the schema marks keyless, and for every operation of a node that takes no credential."""
+    from nodes.agent.node_op_tools import _iter_operation_defs
+    from nodes.core.run_op import needs_credential_hint
+
+    monkeypatch.delenv("NOCLICK_LOCAL", raising=False)
+    keyless = 0
+    for node_type, cls in classes.items():
+        operations = {op["name"]: op for op in catalog.node_facts(node_type)["operations"]}
+        if not credential_classes_for_node(cls):
+            assert not any(op["needs_account"] for op in operations.values()), node_type
+            continue
+        for entry in [*_iter_operation_defs(cls), *_iter_operation_defs(cls, triggers=True)]:
+            if not any(key.startswith(("x-credentials-optional", "x-platform-key")) for key in entry["member"]):
+                assert operations[entry["operation"]]["needs_account"], (node_type, entry["operation"])
+                continue
+            needs = operations[entry["operation"]]["needs_account"]
+            assert needs == needs_credential_hint(node_type, entry["operation"]), (node_type, entry["operation"])
+            keyless += not needs
+    assert narrowed() or keyless >= 20
+
+
+def test_a_file_whose_operations_predate_a_fact_is_read_from_its_class(tmp_path, monkeypatch):
+    """An operation without one of ``OPERATION_FACTS`` (a file generated before ``needs_account``) is the class's."""
+    exa = NODE_REGISTRY["automation-exa"]
+    written = json.loads(catalog.catalog_path("automation-exa").read_text())
+    for op in written["operations"]:
+        del op["needs_account"]
+    (tmp_path / "exa.json").write_text(json.dumps(written))
+    monkeypatch.setattr(catalog, "catalog_path", lambda node_type, real=catalog.catalog_path: real(node_type, tmp_path))
+    catalog._read.cache_clear()
+    try:
+        facts = catalog.node_facts("automation-exa")
+        assert facts["operations"] == catalog.class_facts("automation-exa", exa)["operations"]
+        assert {op["name"]: op["needs_account"] for op in facts["operations"]}["search"] is False
+    finally:
+        catalog._read.cache_clear()
+
+
 def test_a_type_whose_file_predates_a_fact_is_read_from_its_class(tmp_path, monkeypatch):
     """An integration generated before a fact was added and merged after has a file without it: its class answers,
     never a missing key."""

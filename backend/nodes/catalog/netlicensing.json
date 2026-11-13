@@ -27,175 +27,200 @@
    "display_name": null,
    "category": null,
    "description": "Return a list of all configured Products for the current Vendor. Lists return the provider default page only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product",
    "display_name": null,
    "category": null,
    "description": "Return a Product by 'productNumber'.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_product",
    "display_name": null,
    "category": null,
    "description": "Creates a new Product.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_product",
    "display_name": null,
    "category": null,
    "description": "Sets the provided properties to a Product. Return an updated Product.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_product_modules",
    "display_name": null,
    "category": null,
    "description": "Return a list of all Product Modules for the current Vendor. Lists return the provider default page only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product_module",
    "display_name": null,
    "category": null,
    "description": "Return a Product Module by 'productModuleNumber'.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_product_module",
    "display_name": null,
    "category": null,
    "description": "Creates a new Product Module.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_product_module",
    "display_name": null,
    "category": null,
    "description": "Sets the provided properties to a Product Module. Return an updated Product Module.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_license_templates",
    "display_name": null,
    "category": null,
    "description": "Return a list of all License Templates for the current Vendor. Lists return the provider default page only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_license_template",
    "display_name": null,
    "category": null,
    "description": "Return a License Template by 'licenseTemplateNumber'.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_license_template",
    "display_name": null,
    "category": null,
    "description": "Creates a new License Template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_license_template",
    "display_name": null,
    "category": null,
    "description": "Sets the provided properties to a License Template. Return an updated License Template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_licensees",
    "display_name": null,
    "category": null,
    "description": "Return a list of all Licensees for the current Vendor. Lists return the provider default page only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_licensee",
    "display_name": null,
    "category": null,
    "description": "Return a Licensee by 'licenseeNumber'.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_licensee",
    "display_name": null,
    "category": null,
    "description": "Creates a new Licensee.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_licensee",
    "display_name": null,
    "category": null,
    "description": "Sets the provided properties to a Licensee. Return an updated Licensee.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_licensee",
    "display_name": null,
    "category": null,
    "description": "Delete a Licensee by 'number'.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_licenses",
    "display_name": null,
    "category": null,
    "description": "Return a list of all Licenses for the current Vendor. Lists return the provider default page only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_license",
    "display_name": null,
    "category": null,
    "description": "Get License by a 'licenseNumber'.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_license",
    "display_name": null,
    "category": null,
    "description": "Creates a new License.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_license",
    "display_name": null,
    "category": null,
    "description": "Update License by a 'licenseNumber'.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_license",
    "display_name": null,
    "category": null,
    "description": "Delete License by a 'licenseNumber'.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_licensee",
    "display_name": null,
    "category": null,
    "description": "Validates active Licenses of the Licensee.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transactions",
    "display_name": null,
    "category": null,
    "description": "Return a list of all Transactions for the current Vendor. Lists return the provider default page only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transaction",
    "display_name": null,
    "category": null,
    "description": "Return a Transaction by 'transactionNumber'.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

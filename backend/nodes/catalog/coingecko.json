@@ -22,154 +22,176 @@
    "display_name": null,
    "category": null,
    "description": "Check connection: GET /ping.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_prices",
    "display_name": null,
    "category": null,
    "description": "Get prices: GET /simple/price.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_token_prices",
    "display_name": null,
    "category": null,
    "description": "Get token prices: GET /simple/token_price/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_supported_currencies",
    "display_name": null,
    "category": null,
    "description": "List supported currencies: GET /simple/supported_vs_currencies.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_coins",
    "display_name": null,
    "category": null,
    "description": "List coins: GET /coins/list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_coin_markets",
    "display_name": null,
    "category": null,
    "description": "List coin markets: GET /coins/markets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_coin",
    "display_name": null,
    "category": null,
    "description": "Get coin: GET /coins/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_coin_history",
    "display_name": null,
    "category": null,
    "description": "Get coin history: GET /coins/{id}/history.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_market_chart",
    "display_name": null,
    "category": null,
    "description": "Get market chart: GET /coins/{id}/market_chart.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ohlc",
    "display_name": null,
    "category": null,
    "description": "Get ohlc: GET /coins/{id}/ohlc.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_categories",
    "display_name": null,
    "category": null,
    "description": "List categories: GET /coins/categories/list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_category_markets",
    "display_name": null,
    "category": null,
    "description": "List category markets: GET /coins/categories.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_exchanges",
    "display_name": null,
    "category": null,
    "description": "List exchanges: GET /exchanges.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_exchange",
    "display_name": null,
    "category": null,
    "description": "Get exchange: GET /exchanges/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search",
    "display_name": null,
    "category": null,
    "description": "Search: GET /search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_trending",
    "display_name": null,
    "category": null,
    "description": "Get trending: GET /search/trending.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_global",
    "display_name": null,
    "category": null,
    "description": "Get global: GET /global.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_defi_global",
    "display_name": null,
    "category": null,
    "description": "Get defi global: GET /global/decentralized_finance_defi.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_exchange_rates",
    "display_name": null,
    "category": null,
    "description": "Get exchange rates: GET /exchange_rates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_asset_platforms",
    "display_name": null,
    "category": null,
    "description": "List asset platforms: GET /asset_platforms.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_pool",
    "display_name": "On New Pool",
    "category": "Triggers",
    "description": "Watch the latest 20 liquidity pools. The first poll records a baseline.\n\n    Pools outside this window between polls can be missed; choose a network\n    and a shorter schedule for busy feeds. This is not a complete history.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_updated_token",
    "display_name": "On Token Metadata Updated",
    "category": "Triggers",
    "description": "Watch the 100 most recently updated token metadata records.\n\n    The first poll records a baseline. Updates outside this window between\n    polls can be missed. Each token's metadata timestamp identifies an update.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

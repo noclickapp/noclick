@@ -34,98 +34,112 @@
    "display_name": null,
    "category": null,
    "description": "News.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_companies",
    "display_name": null,
    "category": null,
    "description": "Company Search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich_company",
    "display_name": null,
    "category": null,
    "description": "Company Enrichment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product_reviews",
    "display_name": null,
    "category": null,
    "description": "Product Reviews.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_employee_reviews",
    "display_name": null,
    "category": null,
    "description": "Employee Reviews.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_industries",
    "display_name": null,
    "category": null,
    "description": "Industry Search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_headcount_trends",
    "display_name": null,
    "category": null,
    "description": "Headcount Trends.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_job_posts",
    "display_name": null,
    "category": null,
    "description": "Job Posts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_social_posts",
    "display_name": null,
    "category": null,
    "description": "Social Posts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_website_traffic",
    "display_name": null,
    "category": null,
    "description": "Website Traffic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_company_addition_request",
    "display_name": null,
    "category": null,
    "description": "Company Addition.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_request_status",
    "display_name": null,
    "category": null,
    "description": "Request Status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_company_list",
    "display_name": null,
    "category": null,
    "description": "Generate Company List.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "build_filters",
    "display_name": null,
    "category": null,
    "description": "Build Filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,105 +22,120 @@
    "display_name": "Get Current User",
    "category": "Account",
    "description": "Get the account associated with the API key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workspaces",
    "display_name": "List Workspaces",
    "category": "Workspaces",
    "description": "List workspaces available to the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Projects",
    "category": "Projects",
    "description": "List projects in a workspace with name and page filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": "Create Project",
    "category": "Projects",
    "description": "Create a project with optional client, billing, visibility, and note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_clients",
    "display_name": "List Clients",
    "category": "Clients",
    "description": "Find clients in a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_client",
    "display_name": "Create Client",
    "category": "Clients",
    "description": "Create a client in a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": "List Tags",
    "category": "Tags",
    "description": "Find tags in a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tag",
    "display_name": "Create Tag",
    "category": "Tags",
    "description": "Create a tag in a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tasks",
    "display_name": "List Tasks",
    "category": "Tasks",
    "description": "Find tasks on a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task",
    "display_name": "Create Task",
    "category": "Tasks",
    "description": "Create a task on a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_time_entries",
    "display_name": "List Time Entries",
    "category": "Time Entries",
    "description": "List a user's entries with date, project, and page filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_time_entry",
    "display_name": "Get Time Entry",
    "category": "Time Entries",
    "description": "Read one time entry by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_time_entry",
    "display_name": "Create Time Entry",
    "category": "Time Entries",
    "description": "Record an entry or start a running timer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_timer",
    "display_name": "Stop Timer",
    "category": "Time Entries",
    "description": "Stop the connected user's running timer at a specified time.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_time_entry",
    "display_name": "Delete Time Entry",
    "category": "Time Entries",
    "description": "Remove one time entry by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

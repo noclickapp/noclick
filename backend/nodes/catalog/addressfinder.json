@@ -28,119 +28,136 @@
    "display_name": null,
    "category": null,
    "description": "Address Autocomplete API: /au/address/autocomplete.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_au_address_metadata",
    "display_name": null,
    "category": null,
    "description": "Address Metadata API: /au/address/metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "verify_au_address",
    "display_name": null,
    "category": null,
    "description": "Address Verification API: /au/address/v2/verification.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_au_locations",
    "display_name": null,
    "category": null,
    "description": "Location Autocomplete API: /au/location/autocomplete.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_au_location_metadata",
    "display_name": null,
    "category": null,
    "description": "Location Metadata API: /au/location/metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_nz_addresses",
    "display_name": null,
    "category": null,
    "description": "Address Autocomplete API: /nz/address/autocomplete.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_nz_address_metadata",
    "display_name": null,
    "category": null,
    "description": "Address Metadata API: /nz/address/metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "verify_nz_address",
    "display_name": null,
    "category": null,
    "description": "Address Verification API: /nz/address/verification.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_nz_locations",
    "display_name": null,
    "category": null,
    "description": "Location Autocomplete API: /nz/location/autocomplete.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_nz_location_metadata",
    "display_name": null,
    "category": null,
    "description": "Location Metadata API: /nz/location/metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_nz_points_of_interest",
    "display_name": null,
    "category": null,
    "description": "POI Autocomplete API: /nz/points_of_interest/autocomplete.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_nz_point_of_interest_metadata",
    "display_name": null,
    "category": null,
    "description": "POI Metadata API: /nz/points_of_interest/metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_nz_reverse_geocode",
    "display_name": null,
    "category": null,
    "description": "Address Reverse Geocode API: /nz/address/reverse_geocode.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "verify_email",
    "display_name": null,
    "category": null,
    "description": "Email Verification API: /email/v1/verification.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "verify_phone",
    "display_name": null,
    "category": null,
    "description": "Phone Verification API: /phone/v1/verification.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_international_addresses",
    "display_name": null,
    "category": null,
    "description": "International Address Autocomplete API: /{country}/address/v2/autocomplete.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_international_address_metadata",
    "display_name": null,
    "category": null,
    "description": "International Address Metadata API: /{country}/address/v2/metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

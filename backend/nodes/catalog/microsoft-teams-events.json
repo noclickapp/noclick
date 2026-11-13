@@ -22,98 +22,112 @@
    "display_name": "Get Account",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_my_webinars",
    "display_name": "List My Webinars",
    "category": "Webinars",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webinar",
    "display_name": "Get Webinar",
    "category": "Webinars",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webinar",
    "display_name": "Create Webinar",
    "category": "Webinars",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_webinar",
    "display_name": "Update Webinar",
    "category": "Webinars",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_presenter",
    "display_name": "Create Presenter",
    "category": "Webinars",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_presenter",
    "display_name": "Update Presenter",
    "category": "Webinars",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_registration_configuration",
    "display_name": "Get Registration Configuration",
    "category": "Webinars",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_registration_questions",
    "display_name": "List Registration Questions",
    "category": "Webinars",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_registration_question",
    "display_name": "Create Registration Question",
    "category": "Webinars",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_registration_question",
    "display_name": "Delete Registration Question",
    "category": "Webinars",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_registration",
    "display_name": "Get Registration",
    "category": "Webinars",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sessions",
    "display_name": "List Sessions",
    "category": "Webinars",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_session",
    "display_name": "Get Session",
    "category": "Webinars",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

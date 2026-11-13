@@ -28,175 +28,200 @@
    "display_name": "Get Settings",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_last_activities",
    "display_name": "Get Last Activities",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search",
    "display_name": "Search",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_movie",
    "display_name": "Get Movie",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_show",
    "display_name": "Get Show",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_trending_movies",
    "display_name": "List Trending Movies",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_movie_history",
    "display_name": "List Movie History",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_episode_history",
    "display_name": "List Episode History",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_watchlist",
    "display_name": "List Watchlist",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_to_watchlist",
    "display_name": "Add To Watchlist",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_from_watchlist",
    "display_name": "Remove From Watchlist",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_to_history",
    "display_name": "Add To History",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_from_history",
    "display_name": "Remove From History",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rate_item",
    "display_name": "Rate Item",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_rating",
    "display_name": "Remove Rating",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_to_collection",
    "display_name": "Add To Collection",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_from_collection",
    "display_name": "Remove From Collection",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_collection",
    "display_name": "List Collection",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lists",
    "display_name": "List Lists",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_list",
    "display_name": "Create List",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_list_item",
    "display_name": "Add List Item",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_list_item",
    "display_name": "Remove List Item",
    "category": "Trakt",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_movie_watched",
    "display_name": "On Movie Watched",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_episode_watched",
    "display_name": "On Episode Watched",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_watchlist_item_added",
    "display_name": "On Watchlist Item Added",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

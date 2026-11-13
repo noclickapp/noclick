@@ -28,154 +28,176 @@
    "display_name": null,
    "category": null,
    "description": "Get Catalogs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_catalog",
    "display_name": null,
    "category": null,
    "description": "Create Catalog.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_collections",
    "display_name": null,
    "category": null,
    "description": "Get Collections.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_collection",
    "display_name": null,
    "category": null,
    "description": "Create Collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_mockups",
    "display_name": null,
    "category": null,
    "description": "Get Mockups.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_mockup",
    "display_name": null,
    "category": null,
    "description": "Get Specific Mockup.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ai_mockup",
    "display_name": null,
    "category": null,
    "description": "Create MockAnything AI Mockup.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ai_mockup_status",
    "display_name": null,
    "category": null,
    "description": "Get MockAnything AI Mockup Status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_blank_products",
    "display_name": null,
    "category": null,
    "description": "List Entitled Blank Products.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_ai_products",
    "display_name": null,
    "category": null,
    "description": "Search POD Products.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ai_product",
    "display_name": null,
    "category": null,
    "description": "Get POD Product Details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ai_styles",
    "display_name": null,
    "category": null,
    "description": "List Available Styles.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_motion_mockup",
    "display_name": null,
    "category": null,
    "description": "Submit a MotionMockups AI Request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_motion_status",
    "display_name": null,
    "category": null,
    "description": "Get MotionMockups AI Request Status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_motion_models",
    "display_name": null,
    "category": null,
    "description": "List MotionMockups AI Models.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_psd",
    "display_name": null,
    "category": null,
    "description": "Upload a PSD file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_psd",
    "display_name": null,
    "category": null,
    "description": "Delete a PSD file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_products",
    "display_name": null,
    "category": null,
    "description": "Retrieve a list of products.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_bulk_render",
    "display_name": null,
    "category": null,
    "description": "Create Bulk Renders Based on Mockup Collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_render",
    "display_name": null,
    "category": null,
    "description": "Create a Mockup Render.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_batch_render",
    "display_name": null,
    "category": null,
    "description": "Render Multiple Mockups.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_print_files",
    "display_name": null,
    "category": null,
    "description": "Export Print Files.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

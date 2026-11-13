@@ -22,154 +22,179 @@
    "display_name": "Video Completed",
    "category": "Triggers",
    "description": "Start a workflow when HeyGen finishes an avatar video.\n\n    Payload and signature: https://developers.heygen.com/docs/webhook-events\n    and https://developers.heygen.com/docs/webhooks.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "heygen_api_key"
+   ]
   },
   {
    "name": "get_current_user",
    "display_name": null,
    "category": null,
    "description": "Get current user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_video",
    "display_name": null,
    "category": null,
    "description": "Create an avatar video from a script; returns a queued job, not a finished video.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_videos",
    "display_name": null,
    "category": null,
    "description": "List videos.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_video",
    "display_name": null,
    "category": null,
    "description": "Get video.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_video",
    "display_name": null,
    "category": null,
    "description": "Delete video.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template",
    "display_name": null,
    "category": null,
    "description": "Get template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_avatar_group",
    "display_name": null,
    "category": null,
    "description": "Get avatar group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_voice",
    "display_name": null,
    "category": null,
    "description": "Get voice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_translation",
    "display_name": null,
    "category": null,
    "description": "Get translation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_translation",
    "display_name": null,
    "category": null,
    "description": "Delete translation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_folder",
    "display_name": null,
    "category": null,
    "description": "Get folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_asset",
    "display_name": null,
    "category": null,
    "description": "Get asset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_asset",
    "display_name": null,
    "category": null,
    "description": "Delete asset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": null,
    "category": null,
    "description": "List templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_from_template",
    "display_name": null,
    "category": null,
    "description": "Generate from template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_avatar_groups",
    "display_name": null,
    "category": null,
    "description": "List avatar groups.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_voices",
    "display_name": null,
    "category": null,
    "description": "List voices.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_translation",
    "display_name": null,
    "category": null,
    "description": "Create translation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_translations",
    "display_name": null,
    "category": null,
    "description": "List translations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_translation_languages",
    "display_name": null,
    "category": null,
    "description": "List translation languages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder",
    "display_name": null,
    "category": null,
    "description": "Create folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

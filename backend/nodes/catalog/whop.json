@@ -34,161 +34,188 @@
    "display_name": "On Whop Event",
    "category": "Triggers",
    "description": "Start a workflow when a signed Whop commerce event arrives.\n\n    Needs developer:manage_webhook and the selected event's receive/read permissions:\n    https://docs.whop.com/developer/guides/webhooks",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "whop_api_key",
+    "whop_mcp"
+   ]
   },
   {
    "name": "get_account",
    "display_name": null,
    "category": null,
    "description": "Retrieve Requesting Account. Permissions: [{'bearerAuth': ['company:balance:read']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_products",
    "display_name": null,
    "category": null,
    "description": "List Products. Permissions: [{}, {'bearerAuth': ['access_pass:basic:read']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product",
    "display_name": null,
    "category": null,
    "description": "Retrieve Product. Permissions: []",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_memberships",
    "display_name": null,
    "category": null,
    "description": "List Memberships. Permissions: [{'bearerAuth': ['member:basic:read']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_membership",
    "display_name": null,
    "category": null,
    "description": "Retrieve Membership. Permissions: [{'bearerAuth': ['member:basic:read']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payments",
    "display_name": null,
    "category": null,
    "description": "List Payments. Permissions: [{'bearerAuth': ['payment:basic:read']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_payment",
    "display_name": null,
    "category": null,
    "description": "Retrieve Payment. Permissions: [{'bearerAuth': ['payment:basic:read']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_refunds",
    "display_name": null,
    "category": null,
    "description": "List Refunds. Permissions: [{'bearerAuth': ['payment:basic:read']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_refund",
    "display_name": null,
    "category": null,
    "description": "Retrieve Refund. Permissions: [{'bearerAuth': ['payment:basic:read']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_promo_codes",
    "display_name": null,
    "category": null,
    "description": "List Promo Codes. Permissions: [{'bearerAuth': ['promo_code:basic:read']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_promo_code",
    "display_name": null,
    "category": null,
    "description": "Retrieve Promo Code. Permissions: [{'bearerAuth': ['promo_code:basic:read']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_product",
    "display_name": null,
    "category": null,
    "description": "Create Product. Permissions: [{'bearerAuth': ['access_pass:create']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_product",
    "display_name": null,
    "category": null,
    "description": "Update Product. Permissions: [{'bearerAuth': ['access_pass:update']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_product",
    "display_name": null,
    "category": null,
    "description": "Delete Product. Permissions: [{'bearerAuth': ['access_pass:delete']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_product",
    "display_name": null,
    "category": null,
    "description": "Publish Product. Permissions: [{'bearerAuth': ['access_pass:update']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unpublish_product",
    "display_name": null,
    "category": null,
    "description": "Unpublish Product. Permissions: [{'bearerAuth': ['access_pass:update']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_membership",
    "display_name": null,
    "category": null,
    "description": "Update Membership. Permissions: [{'bearerAuth': ['member:manage']}, {'bearerAuth': ['membership:cancel']}, {'bearerAuth': ['member:payment_methods:manage']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_membership",
    "display_name": null,
    "category": null,
    "description": "Cancel Membership. Permissions: [{'bearerAuth': ['membership:cancel']}, {'bearerAuth': ['member:manage']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refund_payment",
    "display_name": null,
    "category": null,
    "description": "Refund Payment. Permissions: [{'bearerAuth': ['payment:manage']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_promo_code",
    "display_name": null,
    "category": null,
    "description": "Create Promo Code. Permissions: [{'bearerAuth': ['promo_code:create']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "activate_promo_code",
    "display_name": null,
    "category": null,
    "description": "Activate Promo Code. Permissions: [{'bearerAuth': ['promo_code:update']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deactivate_promo_code",
    "display_name": null,
    "category": null,
    "description": "Deactivate Promo Code. Permissions: [{'bearerAuth': ['promo_code:update']}]",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

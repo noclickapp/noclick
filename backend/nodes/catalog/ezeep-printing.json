@@ -27,175 +27,203 @@
    "display_name": "Get Current User",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_printers",
    "display_name": "List Printers",
    "category": "Printers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_printer",
    "display_name": "Get Printer",
    "category": "Printers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_printer",
    "display_name": "Update Printer",
    "category": "Printers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_printer",
    "display_name": "Delete Printer",
    "category": "Printers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_printer_capabilities",
    "display_name": "Get Printer Capabilities",
    "category": "Printers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_print_jobs",
    "display_name": "List Print Jobs",
    "category": "Print Jobs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_print_job",
    "display_name": "Get Print Job",
    "category": "Print Jobs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_print_job",
    "display_name": "Delete Print Job",
    "category": "Print Jobs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_connectors",
    "display_name": "List Connectors",
    "category": "Connectors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_connector",
    "display_name": "Get Connector",
    "category": "Connectors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_connector",
    "display_name": "Update Connector",
    "category": "Connectors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_groups",
    "display_name": "List Groups",
    "category": "Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_group",
    "display_name": "Get Group",
    "category": "Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_group",
    "display_name": "Create Group",
    "category": "Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_group",
    "display_name": "Update Group",
    "category": "Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_group",
    "display_name": "Delete Group",
    "category": "Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": "List Users",
    "category": "Users",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": "Get User",
    "category": "Users",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_printer_profiles",
    "display_name": "List Printer Profiles",
    "category": "Printer Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_printer_profile",
    "display_name": "Get Printer Profile",
    "category": "Printer Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_printer_profile",
    "display_name": "Create Printer Profile",
    "category": "Printer Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_printer_profile",
    "display_name": "Update Printer Profile",
    "category": "Printer Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_printer_profile",
    "display_name": "Delete Printer Profile",
    "category": "Printer Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_print_job_succeeded",
    "display_name": "On Print Job Completed",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "ezeep_printing_oauth"
+   ]
   }
  ],
  "agent_tool_provider": true,

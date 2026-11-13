@@ -34,217 +34,252 @@
    "display_name": "Get Self",
    "category": "Account",
    "description": "Return info about the authenticated user (also the auth-test ping).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": "List Events",
    "category": "Events",
    "description": "List events the calendar manages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": "Get Event",
    "category": "Events",
    "description": "Return full details about an event you have manage access for.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_event",
    "display_name": "Create Event",
    "category": "Events",
    "description": "Create a new event on the calendar.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_event",
    "display_name": "Update Event",
    "category": "Events",
    "description": "Update an existing event's details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_event",
    "display_name": "Cancel Event",
    "category": "Events",
    "description": "Cancel an event. Pair with the cancel-request token obtained from Luma.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lookup_event",
    "display_name": "Lookup Event",
    "category": "Events",
    "description": "Check whether an event already exists on the calendar.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guests",
    "display_name": "List Guests",
    "category": "Guests",
    "description": "List guests who registered or were invited to an event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guest",
    "display_name": "Get Guest",
    "category": "Guests",
    "description": "Get detailed information for a single event guest.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_guests",
    "display_name": "Add Guests",
    "category": "Guests",
    "description": "Add (register/invite) guests to an event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_guest_status",
    "display_name": "Update Guest Status",
    "category": "Guests",
    "description": "Approve, decline, or otherwise change a guest's status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_invites",
    "display_name": "Send Invites",
    "category": "Guests",
    "description": "Send invitation emails to event guests.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_host",
    "display_name": "Add Host",
    "category": "Hosts",
    "description": "Add a host to an event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_host",
    "display_name": "Update Host",
    "category": "Hosts",
    "description": "Update a host's permissions or visibility.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_host",
    "display_name": "Remove Host",
    "category": "Hosts",
    "description": "Remove a host from an event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ticket_types",
    "display_name": "List Ticket Types",
    "category": "Ticket Types",
    "description": "List all ticket types for an event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ticket_type",
    "display_name": "Create Ticket Type",
    "category": "Ticket Types",
    "description": "Create a new ticket type for an event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ticket_type",
    "display_name": "Update Ticket Type",
    "category": "Ticket Types",
    "description": "Update an existing ticket type configuration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_event_coupon",
    "display_name": "Create Event Coupon",
    "category": "Coupons",
    "description": "Create a coupon applied when a guest registers for the event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_event_coupons",
    "display_name": "List Event Coupons",
    "category": "Coupons",
    "description": "List all coupons created for an event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_calendar_coupon",
    "display_name": "Create Calendar Coupon",
    "category": "Coupons",
    "description": "Create a coupon usable on any event in the calendar.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_calendar_coupons",
    "display_name": "List Calendar Coupons",
    "category": "Coupons",
    "description": "List all coupons created for the calendar.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_calendar",
    "display_name": "Get Calendar",
    "category": "Calendar",
    "description": "Get calendar information/settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_calendar",
    "display_name": "Update Calendar",
    "category": "Calendar",
    "description": "Update a calendar's settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_calendar_admins",
    "display_name": "List Calendar Admins",
    "category": "Calendar",
    "description": "List all admins for the calendar.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": "List Contacts",
    "category": "Calendar",
    "description": "List calendar contacts (cursor-paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "import_contacts",
    "display_name": "Import Contacts",
    "category": "Calendar",
    "description": "Import contacts to the calendar so they can be invited to events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_event_tag",
    "display_name": "Create Event Tag",
    "category": "Calendar",
    "description": "Create an event tag on the calendar.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhooks",
    "display_name": "List Webhooks",
    "category": "Webhooks",
    "description": "List all webhook endpoints registered for the calendar.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webhook",
    "display_name": "Create Webhook",
    "category": "Webhooks",
    "description": "Register a webhook endpoint to receive event notifications.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_luma_event",
    "display_name": "On Luma Event",
    "category": null,
    "description": "Fire the workflow when a Luma event, guest, or ticket changes.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "luma_api_key",
+    "luma_mcp"
+   ]
   }
  ],
  "agent_tool_provider": true,

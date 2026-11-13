@@ -31,511 +31,604 @@
    "display_name": "List Projects",
    "category": "Projects",
    "description": "Returns a list of projects",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": "Get Project",
    "category": "Projects",
    "description": "Returns a project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project_summary",
    "display_name": "Get Project Summary",
    "category": "Projects",
    "description": "Get project summary dashboard",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_updates",
    "display_name": "List Project Updates",
    "category": "Projects",
    "description": "Get all updates from a specific project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_people",
    "display_name": "List Project People",
    "category": "Projects",
    "description": "Returns a list of people on a project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_project_person",
    "display_name": "Add Project Person",
    "category": "Projects",
    "description": "Add people to a project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": "Create Project",
    "category": "Projects",
    "description": "Create Project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project",
    "display_name": "Update Project",
    "category": "Projects",
    "description": "Update Project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_project",
    "display_name": "Delete Project",
    "category": "Projects",
    "description": "Delete Project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "star_project",
    "display_name": "Star Project",
    "category": "Projects",
    "description": "Star a Project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unstar_project",
    "display_name": "Unstar Project",
    "category": "Projects",
    "description": "Un-star a Project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tasklists",
    "display_name": "List Tasklists",
    "category": "Task Lists",
    "description": "Get all tasklists",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tasklist",
    "display_name": "Get Tasklist",
    "category": "Task Lists",
    "description": "Get specific tasklist",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_tasklists",
    "display_name": "List Project Tasklists",
    "category": "Task Lists",
    "description": "Get tasklists in a project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tasklist",
    "display_name": "Create Tasklist",
    "category": "Task Lists",
    "description": "Create Task List",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tasklist",
    "display_name": "Update Tasklist",
    "category": "Task Lists",
    "description": "Update Task List",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tasklist",
    "display_name": "Delete Tasklist",
    "category": "Task Lists",
    "description": "Delete a Task List",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tasks",
    "display_name": "List Tasks",
    "category": "Tasks",
    "description": "Get all tasks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_tasks",
    "display_name": "List Project Tasks",
    "category": "Tasks",
    "description": "Get a specific project's tasks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tasklist_tasks",
    "display_name": "List Tasklist Tasks",
    "category": "Tasks",
    "description": "Get a specific tasklist's tasks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task",
    "display_name": "Get Task",
    "category": "Tasks",
    "description": "Get a specific task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task",
    "display_name": "Create Task",
    "category": "Tasks",
    "description": "Creates a task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task",
    "display_name": "Update Task",
    "category": "Tasks",
    "description": "Update an existing task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task",
    "display_name": "Delete Task",
    "category": "Tasks",
    "description": "Delete an existing task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_subtasks",
    "display_name": "List Subtasks",
    "category": "Tasks",
    "description": "Get all subtasks for a specific task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_subtask",
    "display_name": "Create Subtask",
    "category": "Tasks",
    "description": "Creates a subtask",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_task_comments",
    "display_name": "List Task Comments",
    "category": "Tasks",
    "description": "Get a list of comments for a task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task_comment",
    "display_name": "Create Task Comment",
    "category": "Tasks",
    "description": "Create a comment on a task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task_time_total",
    "display_name": "Get Task Time Total",
    "category": "Tasks",
    "description": "Get timelog totals for a specific task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "complete_task",
    "display_name": "Complete Task",
    "category": "Tasks",
    "description": "Mark a Task complete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "uncomplete_task",
    "display_name": "Uncomplete Task",
    "category": "Tasks",
    "description": "Mark a Task uncomplete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_milestones",
    "display_name": "List Milestones",
    "category": "Milestones",
    "description": "Get all milestones",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_milestones",
    "display_name": "List Project Milestones",
    "category": "Milestones",
    "description": "Get milestones in a project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_milestone",
    "display_name": "Get Milestone",
    "category": "Milestones",
    "description": "Get a milestone by id",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_milestone",
    "display_name": "Create Milestone",
    "category": "Milestones",
    "description": "Create a Single Milestone",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_milestone",
    "display_name": "Update Milestone",
    "category": "Milestones",
    "description": "Update a Single Milestone",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_milestone",
    "display_name": "Delete Milestone",
    "category": "Milestones",
    "description": "Delete a Milestone",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "complete_milestone",
    "display_name": "Complete Milestone",
    "category": "Milestones",
    "description": "Complete a Milestone",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "uncomplete_milestone",
    "display_name": "Uncomplete Milestone",
    "category": "Milestones",
    "description": "Un-complete a Milestone",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_people",
    "display_name": "List People",
    "category": "People",
    "description": "Returns a list of people",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_person",
    "display_name": "Get Person",
    "category": "People",
    "description": "Returns a person",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_people_details",
    "display_name": "List Project People Details",
    "category": "People",
    "description": "Returns a person on a project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_user",
    "display_name": "Get Current User",
    "category": "People",
    "description": "Get Current User Details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_companies",
    "display_name": "List Companies",
    "category": "Companies",
    "description": "Get all companies",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company",
    "display_name": "Get Company",
    "category": "Companies",
    "description": "Get a specific company",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_company",
    "display_name": "Create Company",
    "category": "Companies",
    "description": "Create a company",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_company",
    "display_name": "Update Company",
    "category": "Companies",
    "description": "Update an existing company",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_company",
    "display_name": "Delete Company",
    "category": "Companies",
    "description": "Delete an existing company",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": "List Tags",
    "category": "Tags",
    "description": "Get all tags",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tag",
    "display_name": "Get Tag",
    "category": "Tags",
    "description": "Get details of an individual tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tag",
    "display_name": "Create Tag",
    "category": "Tags",
    "description": "Create a single tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tag",
    "display_name": "Update Tag",
    "category": "Tags",
    "description": "Update a single tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tag",
    "display_name": "Delete Tag",
    "category": "Tags",
    "description": "Deletes a tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_time",
    "display_name": "List Project Time",
    "category": "Time",
    "description": "Get time entries for a specific project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_task_time",
    "display_name": "List Task Time",
    "category": "Time",
    "description": "Get time entries for a specific task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "log_project_time",
    "display_name": "Log Project Time",
    "category": "Time",
    "description": "Create a time entry in a specific project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "log_task_time",
    "display_name": "Log Task Time",
    "category": "Time",
    "description": "Create a time entry linked to a specific task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project_time_total",
    "display_name": "Get Project Time Total",
    "category": "Time",
    "description": "Get timelog totals for a specific project",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_my_timers",
    "display_name": "List My Timers",
    "category": "Time",
    "description": "Get all your running timers",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_timer",
    "display_name": "Create Timer",
    "category": "Time",
    "description": "Create a new timer",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_timer",
    "display_name": "Pause Timer",
    "category": "Time",
    "description": "Pause a timer by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_timer",
    "display_name": "Resume Timer",
    "category": "Time",
    "description": "Resume a timer by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "complete_timer",
    "display_name": "Complete Timer",
    "category": "Time",
    "description": "Complete a timer by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_timer",
    "display_name": "Delete Timer",
    "category": "Time",
    "description": "Delete a timer by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_comments",
    "display_name": "List Comments",
    "category": "Comments",
    "description": "Get a list of comments",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_comment",
    "display_name": "Get Comment",
    "category": "Comments",
    "description": "Retrieve a specific comment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_comment",
    "display_name": "Create Comment",
    "category": "Comments",
    "description": "Create a comment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search",
    "display_name": "Search",
    "category": "Search",
    "description": "Search items in the installation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_project_created",
    "display_name": "New Project",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "teamwork_oauth",
+    "teamwork_api_key"
+   ]
   },
   {
    "name": "on_tasklist_created",
    "display_name": "New Task List",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "teamwork_oauth",
+    "teamwork_api_key"
+   ]
   },
   {
    "name": "on_tasklist_updated",
    "display_name": "Updated Task List",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "teamwork_oauth",
+    "teamwork_api_key"
+   ]
   },
   {
    "name": "on_time_created",
    "display_name": "New Time Entry",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "teamwork_oauth",
+    "teamwork_api_key"
+   ]
   },
   {
    "name": "on_time_updated",
    "display_name": "Updated Time Entry",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "teamwork_oauth",
+    "teamwork_api_key"
+   ]
   }
  ],
  "agent_tool_provider": true,

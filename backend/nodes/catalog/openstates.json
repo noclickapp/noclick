@@ -28,84 +28,96 @@
    "display_name": "Search Bills",
    "category": "Bills",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bill_by_id",
    "display_name": "Get Bill by Open States ID",
    "category": "Bills",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bill",
    "display_name": "Get Bill by Jurisdiction and Session",
    "category": "Bills",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_people",
    "display_name": "Search People",
    "category": "People",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_legislators",
    "display_name": "Find Legislators by Location",
    "category": "People",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_jurisdictions",
    "display_name": "List Jurisdictions",
    "category": "Jurisdictions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_jurisdiction",
    "display_name": "Get Jurisdiction",
    "category": "Jurisdictions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_committees",
    "display_name": "List Committees",
    "category": "Committees",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_committee",
    "display_name": "Get Committee",
    "category": "Committees",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": "List Legislative Events",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": "Get Legislative Event",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_bill_updated",
    "display_name": "On New or Updated Bill",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

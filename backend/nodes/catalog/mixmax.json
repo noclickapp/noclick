@@ -34,154 +34,176 @@
    "display_name": null,
    "category": null,
    "description": "Get current user; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sequences",
    "display_name": null,
    "category": null,
    "description": "List sequences; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sequence_recipients",
    "display_name": null,
    "category": null,
    "description": "List sequence recipients; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_sequence_recipients",
    "display_name": null,
    "category": null,
    "description": "Add sequence recipients; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_sequence_recipients",
    "display_name": null,
    "category": null,
    "description": "Cancel sequence recipients; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sequence_folders",
    "display_name": null,
    "category": null,
    "description": "List sequence folders; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_sequence_folder",
    "display_name": null,
    "category": null,
    "description": "Create sequence folder; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sequence_folder",
    "display_name": null,
    "category": null,
    "description": "Get sequence folder; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_sequence_folder",
    "display_name": null,
    "category": null,
    "description": "Update sequence folder; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_sequence_folder",
    "display_name": null,
    "category": null,
    "description": "Delete sequence folder; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": null,
    "category": null,
    "description": "List templates; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template",
    "display_name": null,
    "category": null,
    "description": "Get template; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_template",
    "display_name": null,
    "category": null,
    "description": "Update template; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_messages",
    "display_name": null,
    "category": null,
    "description": "List messages; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message",
    "display_name": null,
    "category": null,
    "description": "Get message; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_draft",
    "display_name": null,
    "category": null,
    "description": "Create draft; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_message",
    "display_name": null,
    "category": null,
    "description": "Update message; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_draft",
    "display_name": null,
    "category": null,
    "description": "Send draft; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_unsubscribes",
    "display_name": null,
    "category": null,
    "description": "List unsubscribes; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_unsubscribe",
    "display_name": null,
    "category": null,
    "description": "Add unsubscribe; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_unsubscribe",
    "display_name": null,
    "category": null,
    "description": "Remove unsubscribe; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_meeting_invites",
    "display_name": null,
    "category": null,
    "description": "List meeting invites; performs one API request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

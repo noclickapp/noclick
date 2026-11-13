@@ -22,280 +22,329 @@
    "display_name": "List Joined Teams",
    "category": "Teams",
    "description": "List teams the signed-in user is a member of.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team",
    "display_name": "Get Team",
    "category": "Teams",
    "description": "Retrieve a team's properties and settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_team",
    "display_name": "Create Team",
    "category": "Teams",
    "description": "Create a new team (async; returns an operation location).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channels",
    "display_name": "List Channels",
    "category": "Channels",
    "description": "List channels in a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_channel",
    "display_name": "Get Channel",
    "category": "Channels",
    "description": "Retrieve a single channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_channel",
    "display_name": "Create Channel",
    "category": "Channels",
    "description": "Create a standard / private / shared channel in a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_channel",
    "display_name": "Delete Channel",
    "category": "Channels",
    "description": "Soft-delete a channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channel_messages",
    "display_name": "List Channel Messages",
    "category": "Channel Messages",
    "description": "List top-level messages in a channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_channel_message",
    "display_name": "Get Channel Message",
    "category": "Channel Messages",
    "description": "Retrieve a single channel message.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_channel_message",
    "display_name": "Send Channel Message",
    "category": "Channel Messages",
    "description": "Post a message to a channel (delegated ChannelMessage.Send).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reply_channel_message",
    "display_name": "Reply to Channel Message",
    "category": "Channel Messages",
    "description": "Reply within a channel message thread.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channel_message_replies",
    "display_name": "List Channel Message Replies",
    "category": "Channel Messages",
    "description": "List replies in a channel message thread.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_chats",
    "display_name": "List Chats",
    "category": "Chats",
    "description": "List the signed-in user's 1:1 / group / meeting chats.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat",
    "display_name": "Get Chat",
    "category": "Chats",
    "description": "Retrieve a single chat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_chat",
    "display_name": "Create Chat",
    "category": "Chats",
    "description": "Create a new 1:1 or group chat with members.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_chat_messages",
    "display_name": "List Chat Messages",
    "category": "Chats",
    "description": "List messages in a chat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_chat_message",
    "display_name": "Send Chat Message",
    "category": "Chats",
    "description": "Post a message to an existing chat (delegated ChatMessage.Send).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_team_members",
    "display_name": "List Team Members",
    "category": "Members",
    "description": "List members and their roles in a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_team_member",
    "display_name": "Add Team Member",
    "category": "Members",
    "description": "Add a member to a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_team_member",
    "display_name": "Remove Team Member",
    "category": "Members",
    "description": "Remove a member from a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_installed_apps",
    "display_name": "List Installed Apps",
    "category": "Apps & Tabs",
    "description": "List apps installed in a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "install_app",
    "display_name": "Install App",
    "category": "Apps & Tabs",
    "description": "Install an app from the catalog into a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channel_tabs",
    "display_name": "List Channel Tabs",
    "category": "Apps & Tabs",
    "description": "List tabs pinned to a channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_channel_tab",
    "display_name": "Add Channel Tab",
    "category": "Apps & Tabs",
    "description": "Pin a configured tab to a channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_online_meeting",
    "display_name": "Create Online Meeting",
    "category": "Meetings",
    "description": "Create a Teams online meeting and get the join URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_online_meeting",
    "display_name": "Get Online Meeting",
    "category": "Meetings",
    "description": "Retrieve an online meeting's details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_presence",
    "display_name": "Get User Presence",
    "category": "Presence",
    "description": "Get a user's availability / activity (e.g. Available, Busy).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_team",
    "display_name": "Update Team",
    "category": "Teams",
    "description": "Update a team's properties (PATCH).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_team",
    "display_name": "Archive Team",
    "category": "Teams",
    "description": "Archive a team (read-only for members; POST /archive).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unarchive_team",
    "display_name": "Unarchive Team",
    "category": "Teams",
    "description": "Restore an archived team (POST /unarchive).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_channel",
    "display_name": "Update Channel",
    "category": "Channels",
    "description": "Update a channel's properties (PATCH).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channel_members",
    "display_name": "List Channel Members",
    "category": "Channels",
    "description": "List the members of a channel (private/shared channels).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat_message",
    "display_name": "Get Chat Message",
    "category": "Chats",
    "description": "Fetch a single chat message.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_chat_members",
    "display_name": "List Chat Members",
    "category": "Chats",
    "description": "List the members of a chat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_channel_tab",
    "display_name": "Delete Channel Tab",
    "category": "Tabs",
    "description": "Remove a tab from a channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "uninstall_app",
    "display_name": "Uninstall App",
    "category": "Apps",
    "description": "Uninstall an app from a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_my_presence",
    "display_name": "Get My Presence",
    "category": "Presence",
    "description": "Get the signed-in user's presence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_channel_message",
    "display_name": "On Channel Message",
    "category": null,
    "description": "Fire when a message is posted in a specific channel (like Slack's\n    \"on channel message\"). Subscribes to that channel's messages resource.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "microsoft_teams_oauth"
+   ]
   },
   {
    "name": "on_chat_message",
    "display_name": "On Chat Message",
    "category": null,
    "description": "Fire when a message is posted in a specific chat (1:1 or group DM).\n    Subscribes to that chat's messages resource.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "microsoft_teams_oauth"
+   ]
   },
   {
    "name": "on_change_notification",
    "display_name": "On Change Notification (Advanced)",
    "category": null,
    "description": "Advanced: subscribe to any Microsoft Graph change-notification resource\n    (e.g. team/channel/membership lifecycle, presence) by pasting the resource.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "microsoft_teams_oauth"
+   ]
   }
  ],
  "agent_tool_provider": true,

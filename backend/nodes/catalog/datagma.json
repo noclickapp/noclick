@@ -27,70 +27,80 @@
    "display_name": null,
    "category": null,
    "description": "Get the connected account's credit balance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_work_email",
    "display_name": null,
    "category": null,
    "description": "Find a verified work email from a name and company name, domain or company LinkedIn URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich",
    "display_name": null,
    "category": null,
    "description": "Enrich a person or company; optional enrichments can cost additional credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "detect_job_change",
    "display_name": null,
    "category": null,
    "description": "Check whether a person still works at their last known company.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_people",
    "display_name": null,
    "category": null,
    "description": "Find up to ten people by job title and company; successful searches cost ten credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_phone_numbers",
    "display_name": null,
    "category": null,
    "description": "Find mobile phone numbers using an email and/or social profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reverse_phone_lookup",
    "display_name": null,
    "category": null,
    "description": "Look up a person from a phone number.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reverse_email_lookup",
    "display_name": null,
    "category": null,
    "description": "Look up a personal email outside the EU; use enrich for work emails.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_twitter_by_username",
    "display_name": null,
    "category": null,
    "description": "Get a Twitter profile from a case-sensitive username or LinkedIn URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_twitter_by_email",
    "display_name": null,
    "category": null,
    "description": "Get a Twitter profile from an email address.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

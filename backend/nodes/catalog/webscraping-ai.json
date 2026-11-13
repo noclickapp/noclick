@@ -34,70 +34,80 @@
    "display_name": null,
    "category": null,
    "description": "Ask an LLM a question about one page; returns the answer text.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_fields",
    "display_name": null,
    "category": null,
    "description": "Extract named fields and descriptions using an LLM; missing values are null.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_html",
    "display_name": null,
    "category": null,
    "description": "Retrieve page HTML or the result of a supplied JavaScript expression.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_text",
    "display_name": null,
    "category": null,
    "description": "Retrieve clean Markdown, optionally wrapped as JSON or XML.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_selected_html",
    "display_name": null,
    "category": null,
    "description": "Retrieve the HTML of the first matching CSS selector.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_multiple_selected_html",
    "display_name": null,
    "category": null,
    "description": "Retrieve one array of matched HTML fragments per CSS selector, in order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search",
    "display_name": null,
    "category": null,
    "description": "Search Google; choose explicit pages and use pagination.next for another call.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_search_locations",
    "display_name": null,
    "category": null,
    "description": "Look up supported SERP locations; this static catalogue is not account evidence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_structured_data",
    "display_name": null,
    "category": null,
    "description": "Parse structured page data; parse_failed and not_found are charged responses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": null,
    "category": null,
    "description": "Read this key's account email (when returned), credit quota and concurrency.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,35 +22,40 @@
    "display_name": null,
    "category": null,
    "description": "Search news by keywords, boolean query, date range and source filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_latest_news",
    "display_name": null,
    "category": null,
    "description": "Get recent headlines with language, country, category and source filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_languages",
    "display_name": null,
    "category": null,
    "description": "List language names and query codes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_regions",
    "display_name": null,
    "category": null,
    "description": "List region names and country query codes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_categories",
    "display_name": null,
    "category": null,
    "description": "List the legacy v1 category codes in source-count order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

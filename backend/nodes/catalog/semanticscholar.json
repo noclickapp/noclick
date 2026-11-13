@@ -22,98 +22,112 @@
    "display_name": null,
    "category": null,
    "description": "Search papers by relevance; one page of at most 100 results.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_papers_bulk",
    "display_name": null,
    "category": null,
    "description": "Retrieve a bulk search page; copy its token for the next page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "match_paper",
    "display_name": null,
    "category": null,
    "description": "Find the best paper title match.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "autocomplete_papers",
    "display_name": null,
    "category": null,
    "description": "Suggest paper completions for a partial query.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_paper",
    "display_name": null,
    "category": null,
    "description": "Retrieve a paper by Semantic Scholar ID, DOI, arXiv ID or other supported ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_paper_authors",
    "display_name": null,
    "category": null,
    "description": "Retrieve one page of a paper's authors.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_paper_citations",
    "display_name": null,
    "category": null,
    "description": "Retrieve one page of papers citing this paper.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_paper_references",
    "display_name": null,
    "category": null,
    "description": "Retrieve one page of papers referenced by this paper.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "batch_get_papers",
    "display_name": null,
    "category": null,
    "description": "Retrieve up to 500 papers in one POST read; missing papers may be null.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_authors",
    "display_name": null,
    "category": null,
    "description": "Search authors by name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_author",
    "display_name": null,
    "category": null,
    "description": "Retrieve an author's profile and requested research metrics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_author_papers",
    "display_name": null,
    "category": null,
    "description": "Retrieve one page of an author's papers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "batch_get_authors",
    "display_name": null,
    "category": null,
    "description": "Retrieve up to 1000 author profiles in one POST read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_matching_paper",
    "display_name": "On New Matching Paper",
    "category": "Triggers",
    "description": "Watch the newest 1,000 matching papers by publication date.\n\n    Existing matches form the baseline when armed. New IDs in this window fire\n    afterwards; use a focused query/filter and poll often enough to avoid gaps.\n    This detects newly observed papers, not edits or all newly indexed papers.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,84 +22,96 @@
    "display_name": "List Purchase Orders",
    "category": "Purchase Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_purchase_order_stats",
    "display_name": "Get Purchase Order Totals",
    "category": "Purchase Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_supplier_purchase_orders",
    "display_name": "List Supplier Open Purchase Orders",
    "category": "Purchase Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_purchase_order_statuses",
    "display_name": "List Purchase Order Statuses",
    "category": "Purchase Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_purchase_order_status",
    "display_name": "Create Purchase Order Status",
    "category": "Purchase Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_purchase_order_status",
    "display_name": "Update Purchase Order Status",
    "category": "Purchase Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_purchase_order_status",
    "display_name": "Delete Purchase Order Status",
    "category": "Purchase Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_purchase_order_settings",
    "display_name": "Get Purchase Order Settings",
    "category": "Purchase Orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_goods_received_notes",
    "display_name": "List Goods Received Notes",
    "category": "Goods Received Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_grn_metadata",
    "display_name": "List GRN Suppliers",
    "category": "Goods Received Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_purchase_order",
    "display_name": "On New or Updated Purchase Order",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_goods_received_note",
    "display_name": "On New or Updated Goods Received Note",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

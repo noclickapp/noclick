@@ -22,98 +22,112 @@
    "display_name": "Get Profile Field Metadata",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_profiles",
    "display_name": "List Profiles",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_profile",
    "display_name": "Get Profile",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_profile",
    "display_name": "Create Profile",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_profile",
    "display_name": "Update Profile Fields",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_profile",
    "display_name": "Delete Owned Profile",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_services",
    "display_name": "List Services",
    "category": "Services",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service",
    "display_name": "Get Service",
    "category": "Services",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service_metadata",
    "display_name": "Get Service Field Metadata",
    "category": "Services",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_extended_resource_types",
    "display_name": "List Profile-linked Resource Types",
    "category": "Custom Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_resource_types",
    "display_name": "List Unlinked Resource Types",
    "category": "Custom Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_custom_resource_metadata",
    "display_name": "Get Custom Resource Field Metadata",
    "category": "Custom Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_records",
    "display_name": "List Custom Records",
    "category": "Custom Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_custom_record",
    "display_name": "Get Custom Record",
    "category": "Custom Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,168 +22,192 @@
    "display_name": null,
    "category": null,
    "description": "List cases (first page only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_case",
    "display_name": null,
    "category": null,
    "description": "Get case.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_case",
    "display_name": null,
    "category": null,
    "description": "Create case.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_case",
    "display_name": null,
    "category": null,
    "description": "Update case.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_people",
    "display_name": null,
    "category": null,
    "description": "List people (first page only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_person",
    "display_name": null,
    "category": null,
    "description": "Get person.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_person",
    "display_name": null,
    "category": null,
    "description": "Create person.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_person",
    "display_name": null,
    "category": null,
    "description": "Update person.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_intake_reports",
    "display_name": null,
    "category": null,
    "description": "List intake reports (first page only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_intake_report",
    "display_name": null,
    "category": null,
    "description": "Get intake report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_intake_report",
    "display_name": null,
    "category": null,
    "description": "Create intake report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_intake_report",
    "display_name": null,
    "category": null,
    "description": "Update intake report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_notes",
    "display_name": null,
    "category": null,
    "description": "List notes (first page only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_note",
    "display_name": null,
    "category": null,
    "description": "Get note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_note",
    "display_name": null,
    "category": null,
    "description": "Create note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_note",
    "display_name": null,
    "category": null,
    "description": "Update note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_service_enrollments",
    "display_name": null,
    "category": null,
    "description": "List service enrollments (first page only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service_enrollment",
    "display_name": null,
    "category": null,
    "description": "Get service enrollment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_service_enrollment",
    "display_name": null,
    "category": null,
    "description": "Create service enrollment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_service_enrollment",
    "display_name": null,
    "category": null,
    "description": "Update service enrollment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_case_statuses",
    "display_name": null,
    "category": null,
    "description": "List case statuss (first page only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_case_types",
    "display_name": null,
    "category": null,
    "description": "List case types (first page only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_service_offerings",
    "display_name": null,
    "category": null,
    "description": "List service offerings (first page only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_providers",
    "display_name": null,
    "category": null,
    "description": "List providers (first page only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

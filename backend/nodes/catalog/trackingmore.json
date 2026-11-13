@@ -22,35 +22,40 @@
    "display_name": "List Supported Couriers",
    "category": "Couriers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "detect_couriers",
    "display_name": "Detect Possible Couriers",
    "category": "Couriers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tracking_result",
    "display_name": "Get One Existing Shipment Result",
    "category": "Existing Shipments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tracking_results",
    "display_name": "Get Selected Existing Shipment Results",
    "category": "Existing Shipments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_shipment",
    "display_name": "On New or Updated Shipment",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

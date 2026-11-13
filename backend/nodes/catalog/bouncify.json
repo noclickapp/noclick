@@ -22,49 +22,56 @@
    "display_name": null,
    "category": null,
    "description": "Verify one address; this can consume verification credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_bulk_job",
    "display_name": null,
    "category": null,
    "description": "Upload an array of email objects; auto verification can consume credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bulk_job",
    "display_name": null,
    "category": null,
    "description": "Read preparation/verification status and result counts for one list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_bulk_job",
    "display_name": null,
    "category": null,
    "description": "Start a ready list once; verification cannot be paused or restarted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_bulk_job",
    "display_name": null,
    "category": null,
    "description": "Request list deletion. The acknowledgement does not prove completed deletion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "download_bulk_results",
    "display_name": null,
    "category": null,
    "description": "Download a completed list as CSV, optionally selecting result types.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credit_balance",
    "display_name": null,
    "category": null,
    "description": "Read the authenticated account's remaining verification credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

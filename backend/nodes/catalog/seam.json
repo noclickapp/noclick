@@ -22,119 +22,136 @@
    "display_name": null,
    "category": null,
    "description": "Read the workspace associated with your API key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_devices",
    "display_name": null,
    "category": null,
    "description": "Return one page of devices, with optional account and text filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_device",
    "display_name": null,
    "category": null,
    "description": "Read a device by its Seam device ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_device",
    "display_name": null,
    "category": null,
    "description": "Change the name of a device.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_locks",
    "display_name": null,
    "category": null,
    "description": "List locks, optionally restricted to a connected account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lock",
    "display_name": null,
    "category": null,
    "description": "Read the current properties of one lock.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lock_door",
    "display_name": null,
    "category": null,
    "description": "Request that a lock close; inspect the returned action attempt for completion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unlock_door",
    "display_name": null,
    "category": null,
    "description": "Request that a lock open; inspect the returned action attempt for completion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_access_codes",
    "display_name": null,
    "category": null,
    "description": "Return one page of access codes, optionally restricted to a device.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_access_code",
    "display_name": null,
    "category": null,
    "description": "Read an access code by its Seam access code ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_access_code",
    "display_name": null,
    "category": null,
    "description": "Create an ongoing or scheduled access code for a device.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_access_code",
    "display_name": null,
    "category": null,
    "description": "Change an access code name, code, or schedule.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_access_code",
    "display_name": null,
    "category": null,
    "description": "Request removal of an access code and return its action attempt.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_connected_accounts",
    "display_name": null,
    "category": null,
    "description": "Return one page of connected device-provider accounts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_connected_account",
    "display_name": null,
    "category": null,
    "description": "Read a connected device-provider account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "sync_connected_account",
    "display_name": null,
    "category": null,
    "description": "Request synchronization of a connected device-provider account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_action_attempt",
    "display_name": null,
    "category": null,
    "description": "Read an action attempt to check whether a device action completed or failed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

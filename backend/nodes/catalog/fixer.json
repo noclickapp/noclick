@@ -27,70 +27,80 @@
    "display_name": null,
    "category": null,
    "description": "List supported currency codes and names; also checks key reachability.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_latest_rates",
    "display_name": null,
    "category": null,
    "description": "Get the latest exchange rates for all or selected currencies.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_latest_quotes",
    "display_name": null,
    "category": null,
    "description": "Get latest mid rates with available bid/ask quotes (Professional or higher).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_historical_rates",
    "display_name": null,
    "category": null,
    "description": "Get exchange rates for a historical date.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_historical_quotes",
    "display_name": null,
    "category": null,
    "description": "Get historical mid rates and available bid/ask quotes after September 24, 2026.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "convert_currency",
    "display_name": null,
    "category": null,
    "description": "Convert an amount using the latest available exchange rate.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "convert_historical_currency",
    "display_name": null,
    "category": null,
    "description": "Convert an amount using a specified historical date.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_time_series",
    "display_name": null,
    "category": null,
    "description": "Get daily exchange rates between two dates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_time_series_quotes",
    "display_name": null,
    "category": null,
    "description": "Get daily rates and available bid/ask quotes (Professional or higher).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_fluctuations",
    "display_name": null,
    "category": null,
    "description": "Get currency change and percentage change between two dates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

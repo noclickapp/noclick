@@ -34,273 +34,316 @@
    "display_name": "Send Text Message",
    "category": "Message",
    "description": "Send a text message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_template_message",
    "display_name": "Send Template Message",
    "category": "Template",
    "description": "Send a pre-approved template message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_image_message",
    "display_name": "Send Image Message",
    "category": "Message",
    "description": "Send an image message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_video_message",
    "display_name": "Send Video Message",
    "category": "Message",
    "description": "Send a video message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_document_message",
    "display_name": "Send Document Message",
    "category": "Message",
    "description": "Send a document message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_audio_message",
    "display_name": "Send Audio Message",
    "category": "Message",
    "description": "Send an audio message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_location_message",
    "display_name": "Send Location Message",
    "category": "Message",
    "description": "Send a location message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_contact_card",
    "display_name": "Send Contact Card",
    "category": "Message",
    "description": "Send a contact card message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_interactive_buttons",
    "display_name": "Send Interactive Buttons",
    "category": "Message",
    "description": "Send an interactive message with quick reply buttons",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_interactive_list",
    "display_name": "Send Interactive List",
    "category": "Message",
    "description": "Send an interactive list message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_reaction_emoji",
    "display_name": "Send Reaction Emoji",
    "category": "Message",
    "description": "Send a reaction (emoji) to a message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_message_read",
    "display_name": "Mark Message Read",
    "category": "Message",
    "description": "Mark a message as read",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_media",
    "display_name": "Upload Media",
    "category": "Media",
    "description": "Upload media to WhatsApp",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_media_url",
    "display_name": "Get Media Url",
    "category": "Media",
    "description": "Retrieve media URL from media ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "download_media",
    "display_name": "Download Media",
    "category": "Media",
    "description": "Download media file (returns binary data)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_media",
    "display_name": "Delete Media",
    "category": "Media",
    "description": "Delete media from WhatsApp servers",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_business_profile",
    "display_name": "Get Business Profile",
    "category": "Profile",
    "description": "Get business profile information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_business_profile",
    "display_name": "Update Business Profile",
    "category": "Profile",
    "description": "Update business profile information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "register_phone_number",
    "display_name": "Register Phone Number",
    "category": "Phone",
    "description": "Register a phone number with WhatsApp Business",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "request_verification_code",
    "display_name": "Request Verification Code",
    "category": "Phone",
    "description": "Request verification code via SMS or voice",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_phone_number_info",
    "display_name": "Get Phone Number Info",
    "category": "Phone",
    "description": "Get phone number information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_message_templates",
    "display_name": "List Message Templates",
    "category": "Template",
    "description": "List all message templates",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message_template",
    "display_name": "Get Message Template",
    "category": "Template",
    "description": "Get a specific message template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_message_template",
    "display_name": "Create Message Template",
    "category": "Template",
    "description": "Create a new message template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_message_template",
    "display_name": "Delete Message Template",
    "category": "Template",
    "description": "Delete a message template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_catalog_message",
    "display_name": "Send Catalog Message",
    "category": "Message",
    "description": "Send catalog message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_product_message",
    "display_name": "Send Product Message",
    "category": "Message",
    "description": "Send a single product message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_multi_product_message",
    "display_name": "Send Multi Product Message",
    "category": "Message",
    "description": "Send multiple products message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account_info",
    "display_name": "Get Account Info",
    "category": "Account",
    "description": "Get WhatsApp Business Account information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_account_phone_numbers",
    "display_name": "List Account Phone Numbers",
    "category": "Phone",
    "description": "List all phone numbers in the account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_recent_chats",
    "display_name": "List Recent Chats",
    "category": "Chats",
    "description": "List recent WhatsApp conversations",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat_messages",
    "display_name": "Get Chat Messages",
    "category": "Chats",
    "description": "Read message history from a chat (QR credentials)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "read_recent_messages",
    "display_name": "Read Recent Messages",
    "category": "Chats",
    "description": "Read every chat's messages from the last few hours in one call, compactly: per chat, one line per message (\"<UTC time> <sender>: <text>\", your own as You, media as [image] or [voice note] with its caption), oldest first, with no ids or media data. The cheap read for a digest or summary across chats (QR credentials)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": "List Contacts",
    "category": "Chats",
    "description": "List the connected account's WhatsApp contacts (QR credentials)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_message",
    "display_name": "Edit Message",
    "category": "Message",
    "description": "Edit a previously sent message (QR credentials)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_chat_read",
    "display_name": "Mark Chat Read",
    "category": "Chats",
    "description": "Mark a chat's messages as read (QR credentials)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account_profile",
    "display_name": "Get Account Profile",
    "category": "Profile",
    "description": "Get the connected WhatsApp account profile info",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "receive_message",
    "display_name": "Receive Message",
    "category": null,
    "description": "Receive incoming messages via webhook. Works with both QR scan and Cloud API credentials.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "whatsapp_qr"
+   ]
   },
   {
    "name": "receive_status_update",
    "display_name": "Receive Status Update",
    "category": null,
    "description": "Receive message status updates via webhook",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   }
  ],
  "agent_tool_provider": true,

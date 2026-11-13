@@ -34,133 +34,152 @@
    "display_name": null,
    "category": null,
    "description": "Create a credential",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credentials",
    "display_name": null,
    "category": null,
    "description": "List credentials",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_issue_send_credential",
    "display_name": null,
    "category": null,
    "description": "Create, issue, and send a credential",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_credential",
    "display_name": null,
    "category": null,
    "description": "Delete a credential",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credential",
    "display_name": null,
    "category": null,
    "description": "Get a credential",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_credential",
    "display_name": null,
    "category": null,
    "description": "Update a credential",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credential_designs",
    "display_name": null,
    "category": null,
    "description": "Get credential design templates",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "issue_credential",
    "display_name": null,
    "category": null,
    "description": "Issue a credential",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_credentials",
    "display_name": null,
    "category": null,
    "description": "Search credentials",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_credential",
    "display_name": null,
    "category": null,
    "description": "Send a credential",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_credential_interaction",
    "display_name": null,
    "category": null,
    "description": "Create a credential interaction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credential_interactions",
    "display_name": null,
    "category": null,
    "description": "List credential interactions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_design",
    "display_name": null,
    "category": null,
    "description": "Get a design template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_designs",
    "display_name": null,
    "category": null,
    "description": "List design templates",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_group",
    "display_name": null,
    "category": null,
    "description": "Create a credential template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_groups",
    "display_name": null,
    "category": null,
    "description": "List credential templates",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_group",
    "display_name": null,
    "category": null,
    "description": "Delete a credential template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_group",
    "display_name": null,
    "category": null,
    "description": "Get a credential template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_group",
    "display_name": null,
    "category": null,
    "description": "Update a credential template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

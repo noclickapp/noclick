@@ -22,133 +22,152 @@
    "display_name": "On New Meeting",
    "category": null,
    "description": "Trigger: polls conferenceRecords.list on a schedule and fires for newly\n    ended meetings. Google Meet has no push webhooks, so this baselines on the\n    first poll and then emits each new conference record exactly once,\n    deduplicating on the record's resource name.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "create_space",
    "display_name": "Create Meeting Space",
    "category": "Spaces",
    "description": "Create a new meeting space; returns the shareable meeting URI and code.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_space",
    "display_name": "Get Meeting Space",
    "category": "Spaces",
    "description": "Get a meeting space by resource name (spaces/{space}) or meeting code.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_space",
    "display_name": "Update Meeting Space",
    "category": "Spaces",
    "description": "Update a meeting space's configuration (access type, moderation).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "end_active_conference",
    "display_name": "End Active Conference",
    "category": "Spaces",
    "description": "End the conference currently active in a space (removes all participants).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_conference_record",
    "display_name": "Get Conference Record",
    "category": "Conference Records",
    "description": "Get a single past-meeting conference record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_conference_records",
    "display_name": "List Conference Records",
    "category": "Conference Records",
    "description": "List past conference records; supports a filter and pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_participant",
    "display_name": "Get Participant",
    "category": "Participants",
    "description": "Get a single participant of a conference record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_participants",
    "display_name": "List Participants",
    "category": "Participants",
    "description": "List all participants for a conference record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_participant_session",
    "display_name": "Get Participant Session",
    "category": "Participant Sessions",
    "description": "Get one join/leave session for a participant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_participant_sessions",
    "display_name": "List Participant Sessions",
    "category": "Participant Sessions",
    "description": "List a participant's device-level join/leave sessions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_recording",
    "display_name": "Get Recording",
    "category": "Recordings",
    "description": "Get a recording's metadata and Drive file reference.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_recordings",
    "display_name": "List Recordings",
    "category": "Recordings",
    "description": "List recordings produced by a conference record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transcript",
    "display_name": "Get Transcript",
    "category": "Transcripts",
    "description": "Get a transcript's metadata and Google Docs reference.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transcripts",
    "display_name": "List Transcripts",
    "category": "Transcripts",
    "description": "List transcripts for a conference record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transcript_entry",
    "display_name": "Get Transcript Entry",
    "category": "Transcripts",
    "description": "Get a single spoken transcript entry (speaker, text, timing).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transcript_entries",
    "display_name": "List Transcript Entries",
    "category": "Transcripts",
    "description": "List the structured transcript entries for a transcript.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_smart_notes",
    "display_name": "Get Smart Notes",
    "category": "Smart Notes",
    "description": "Get a smart-notes (Gemini summary) artifact's metadata and Docs reference.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_smart_notes",
    "display_name": "List Smart Notes",
    "category": "Smart Notes",
    "description": "List the smart-notes (Gemini summary) artifacts for a conference record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

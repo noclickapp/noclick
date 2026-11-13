@@ -27,91 +27,104 @@
    "display_name": null,
    "category": null,
    "description": "Query catalog datasets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_catalog_export_formats",
    "display_name": null,
    "category": null,
    "description": "List export formats.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_catalog_facets",
    "display_name": null,
    "category": null,
    "description": "List facet values.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_records",
    "display_name": null,
    "category": null,
    "description": "Query dataset records.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dataset_export_formats",
    "display_name": null,
    "category": null,
    "description": "List export formats.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dataset",
    "display_name": null,
    "category": null,
    "description": "Show dataset information.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_record_facets",
    "display_name": null,
    "category": null,
    "description": "List dataset facets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_attachments",
    "display_name": null,
    "category": null,
    "description": "List dataset attachments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_record",
    "display_name": null,
    "category": null,
    "description": "Read a dataset record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_catalog_csv",
    "display_name": null,
    "category": null,
    "description": "Export a catalog in CSV.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_records_csv",
    "display_name": null,
    "category": null,
    "description": "Export a dataset in CSV.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_records_parquet",
    "display_name": null,
    "category": null,
    "description": "Export a dataset in Parquet.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_records_gpx",
    "display_name": null,
    "category": null,
    "description": "Export a dataset in GPX.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

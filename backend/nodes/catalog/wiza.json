@@ -39,91 +39,104 @@
    "display_name": null,
    "category": null,
    "description": "Read remaining email, phone, export and API credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list",
    "display_name": null,
    "category": null,
    "description": "Get list processing status and details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list_contacts",
    "display_name": null,
    "category": null,
    "description": "Get enriched contacts for a list and segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_individual_reveal",
    "display_name": null,
    "category": null,
    "description": "Get the status and results of an individual reveal.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_individual_reveal",
    "display_name": null,
    "category": null,
    "description": "Start a contact enrichment job; this may consume credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_list",
    "display_name": null,
    "category": null,
    "description": "Start bulk enrichment for up to 2500 contacts; this may consume credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_prospects",
    "display_name": null,
    "category": null,
    "description": "Search prospects using name, title, company, size or LinkedIn filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_prospect_list",
    "display_name": null,
    "category": null,
    "description": "Create an enrichment list from prospect search; this may consume credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "continue_prospect_search",
    "display_name": null,
    "category": null,
    "description": "Continue a previously created prospect list search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_companies",
    "display_name": null,
    "category": null,
    "description": "Search companies or fetch the next page; returned companies consume credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_locations",
    "display_name": null,
    "category": null,
    "description": "Find location names and boundaries accepted by Wiza filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_technologies",
    "display_name": null,
    "category": null,
    "description": "Find technology names and slugs for company searches.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich_company",
    "display_name": null,
    "category": null,
    "description": "Enrich a company immediately; successful results consume credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

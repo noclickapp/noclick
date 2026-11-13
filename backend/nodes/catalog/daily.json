@@ -27,119 +27,136 @@
    "display_name": null,
    "category": null,
    "description": "List rooms in your Daily domain, one page at a time.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_room",
    "display_name": null,
    "category": null,
    "description": "Get a room's configuration and URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_room",
    "display_name": null,
    "category": null,
    "description": "Create a room. Omit name to let Daily generate one.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_room",
    "display_name": null,
    "category": null,
    "description": "Update supplied room settings; omitted settings stay unchanged.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_room",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a room and its URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_room_presence",
    "display_name": null,
    "category": null,
    "description": "Read the current participants in a room, one bounded page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_meeting_token",
    "display_name": null,
    "category": null,
    "description": "Create an expiring token restricted to one room. Treat the result as a secret.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_meeting_token",
    "display_name": null,
    "category": null,
    "description": "Validate a meeting token and read its permissions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_recordings",
    "display_name": null,
    "category": null,
    "description": "List recording metadata, optionally filtered by room.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_recording",
    "display_name": null,
    "category": null,
    "description": "Get recording metadata, tracks and storage details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_recording",
    "display_name": null,
    "category": null,
    "description": "Delete a recording. Customer-managed storage may require separate file deletion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_recording_link",
    "display_name": null,
    "category": null,
    "description": "Get a temporary recording download link. Use Daily's returned expires timestamp.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_meetings",
    "display_name": null,
    "category": null,
    "description": "List meeting sessions and attendance with optional room and time filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_meeting",
    "display_name": null,
    "category": null,
    "description": "Get one meeting session's analytics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_meeting_participants",
    "display_name": null,
    "category": null,
    "description": "List attendance records for one meeting, using participant IDs as cursors.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_presence",
    "display_name": null,
    "category": null,
    "description": "Get a map of active participants across rooms in this domain.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain",
    "display_name": null,
    "category": null,
    "description": "Read the API key's Daily domain configuration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

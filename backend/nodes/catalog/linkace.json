@@ -28,28 +28,32 @@
    "display_name": "Read Accessible List Metadata",
    "category": "LinkAce Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list",
    "display_name": "Get Current List Metadata",
    "category": "LinkAce Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": "Read Accessible Tag Metadata",
    "category": "LinkAce Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tag",
    "display_name": "Get Current Tag Metadata",
    "category": "LinkAce Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

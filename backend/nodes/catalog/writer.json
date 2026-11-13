@@ -26,175 +26,200 @@
    "display_name": "Chat",
    "category": null,
    "description": "POST /v1/chat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_text",
    "display_name": "Generate Text",
    "category": null,
    "description": "POST /v1/completions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_models",
    "display_name": "List Models",
    "category": null,
    "description": "GET /v1/models.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_graphs",
    "display_name": "List Graphs",
    "category": null,
    "description": "GET /v1/graphs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_graph",
    "display_name": "Create Graph",
    "category": null,
    "description": "POST /v1/graphs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_graph",
    "display_name": "Get Graph",
    "category": null,
    "description": "GET /v1/graphs/{graph_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_graph",
    "display_name": "Update Graph",
    "category": null,
    "description": "PUT /v1/graphs/{graph_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_graph",
    "display_name": "Delete Graph",
    "category": null,
    "description": "DELETE /v1/graphs/{graph_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ask_graph",
    "display_name": "Ask Graph",
    "category": null,
    "description": "POST /v1/graphs/question.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_file_to_graph",
    "display_name": "Add File To Graph",
    "category": null,
    "description": "POST /v1/graphs/{graph_id}/file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_file_from_graph",
    "display_name": "Remove File From Graph",
    "category": null,
    "description": "DELETE /v1/graphs/{graph_id}/file/{file_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_files",
    "display_name": "List Files",
    "category": null,
    "description": "GET /v1/files.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file",
    "display_name": "Get File",
    "category": null,
    "description": "GET /v1/files/{file_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_file",
    "display_name": "Delete File",
    "category": null,
    "description": "DELETE /v1/files/{file_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retry_files",
    "display_name": "Retry Files",
    "category": null,
    "description": "POST /v1/files/retry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_applications",
    "display_name": "List Applications",
    "category": null,
    "description": "GET /v1/applications.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_application",
    "display_name": "Get Application",
    "category": null,
    "description": "GET /v1/applications/{application_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_application",
    "display_name": "Generate Application",
    "category": null,
    "description": "POST /v1/applications/{application_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_jobs",
    "display_name": "List Jobs",
    "category": null,
    "description": "GET /v1/applications/{application_id}/jobs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_job",
    "display_name": "Create Job",
    "category": null,
    "description": "POST /v1/applications/{application_id}/jobs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_job",
    "display_name": "Get Job",
    "category": null,
    "description": "GET /v1/applications/jobs/{job_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retry_job",
    "display_name": "Retry Job",
    "category": null,
    "description": "POST /v1/applications/jobs/{job_id}/retry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_application_graphs",
    "display_name": "List Application Graphs",
    "category": null,
    "description": "GET /v1/applications/{application_id}/graphs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "associate_application_graphs",
    "display_name": "Associate Application Graphs",
    "category": null,
    "description": "PUT /v1/applications/{application_id}/graphs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "parse_pdf",
    "display_name": "Parse PDF",
    "category": null,
    "description": "POST /v1/tools/pdf-parser/{file_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

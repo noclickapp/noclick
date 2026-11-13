@@ -22,77 +22,88 @@
    "display_name": null,
    "category": null,
    "description": "Geocode an address or place to coordinates and annotations (GET /json).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reverse_geocode",
    "display_name": null,
    "category": null,
    "description": "Convert coordinates to an address and annotations (GET /json).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "geocode_in_bounds",
    "display_name": null,
    "category": null,
    "description": "Restrict a forward search to a bounding box (GET /json).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "geocode_in_country",
    "display_name": null,
    "category": null,
    "description": "Restrict a forward search to countries (GET /json).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "geocode_near",
    "display_name": null,
    "category": null,
    "description": "Bias a forward search toward coordinates (GET /json).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reverse_address",
    "display_name": null,
    "category": null,
    "description": "Get address-only formatting without point-of-interest names (GET /json).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reverse_road",
    "display_name": null,
    "category": null,
    "description": "Find the nearest road and available road information (GET /json).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "geocode_geojson",
    "display_name": null,
    "category": null,
    "description": "Geocode a place into a GeoJSON FeatureCollection (GET /geojson).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reverse_geojson",
    "display_name": null,
    "category": null,
    "description": "Reverse geocode coordinates into GeoJSON (GET /geojson).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_connection",
    "display_name": null,
    "category": null,
    "description": "Check API-key acceptance with one geocoding query (GET /json).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_health",
    "display_name": null,
    "category": null,
    "description": "Read unauthenticated health; does not validate the key (GET /ping).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

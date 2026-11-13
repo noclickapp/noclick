@@ -34,175 +34,200 @@
    "display_name": null,
    "category": null,
    "description": "Queue a performance test. This spends GTmetrix API credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tests",
    "display_name": null,
    "category": null,
    "description": "Read one page of tests.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_test",
    "display_name": null,
    "category": null,
    "description": "Read a test state and its report link.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_report",
    "display_name": null,
    "category": null,
    "description": "Read a performance report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_report",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retest_report",
    "display_name": null,
    "category": null,
    "description": "Queue a new test using report settings; spends API credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pages",
    "display_name": null,
    "category": null,
    "description": "Read one page of account pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_page",
    "display_name": null,
    "category": null,
    "description": "Read a page and monitoring settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_page",
    "display_name": null,
    "category": null,
    "description": "Delete a page and its associated reports.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retest_page",
    "display_name": null,
    "category": null,
    "description": "Queue a page retest; spends API credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_page_monitoring",
    "display_name": null,
    "category": null,
    "description": "Enable, change or disable recurring performance monitoring.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_page_reports",
    "display_name": null,
    "category": null,
    "description": "Read one page of reports belonging to a page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_latest_page_report",
    "display_name": null,
    "category": null,
    "description": "Read the latest performance report for a page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_page_alert_events",
    "display_name": null,
    "category": null,
    "description": "Read one page of performance alert events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": null,
    "category": null,
    "description": "List account page tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tag",
    "display_name": null,
    "category": null,
    "description": "Create a page tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tag",
    "display_name": null,
    "category": null,
    "description": "Read a page tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tag",
    "display_name": null,
    "category": null,
    "description": "Update supplied tag attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tag",
    "display_name": null,
    "category": null,
    "description": "Delete a page tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "attach_tag_pages",
    "display_name": null,
    "category": null,
    "description": "Attach pages to a tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "detach_tag_pages",
    "display_name": null,
    "category": null,
    "description": "Detach pages from a tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_locations",
    "display_name": null,
    "category": null,
    "description": "List available test locations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_browsers",
    "display_name": null,
    "category": null,
    "description": "List available test browsers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_simulated_devices",
    "display_name": null,
    "category": null,
    "description": "List simulated device presets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account_status",
    "display_name": null,
    "category": null,
    "description": "Read API credits and plan access; the API-key ID is omitted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

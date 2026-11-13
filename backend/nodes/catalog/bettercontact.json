@@ -27,70 +27,80 @@
    "display_name": null,
    "category": null,
    "description": "Read the account email and remaining credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_enrichment",
    "display_name": null,
    "category": null,
    "description": "Start email, phone or LinkedIn profile enrichment for 1–100 leads. Consumes credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_enrichment",
    "display_name": null,
    "category": null,
    "description": "Read one enrichment job. Only status terminated means processing is finished.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_lead_finder_search",
    "display_name": null,
    "category": null,
    "description": "Start a lead search; paginate by keeping limit fixed and increasing offset. May consume credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lead_finder_search",
    "display_name": null,
    "category": null,
    "description": "Read a lead search job; on_hold needs more credits, processing needs another read later.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_company_finder_search",
    "display_name": null,
    "category": null,
    "description": "Start a company search; paginate with limit and offset. Consumes search credits; no webhooks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company_finder_search",
    "display_name": null,
    "category": null,
    "description": "Read a company search job; terminated can have an empty companies array.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich_company",
    "display_name": null,
    "category": null,
    "description": "Look up a company profile synchronously by domain or LinkedIn URL; consumes no credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich_lead_by_linkedin",
    "display_name": null,
    "category": null,
    "description": "Look up a lead profile by LinkedIn URL; costs 0.1 credit when found. No email or phone is returned.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich_lead_by_name",
    "display_name": null,
    "category": null,
    "description": "Look up a lead profile by name and company domain; costs 0.1 credit when found.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

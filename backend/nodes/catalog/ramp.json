@@ -22,140 +22,160 @@
    "display_name": "Get Business",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_physical_cards",
    "display_name": "List Physical Cards",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_physical_card",
    "display_name": "Get Physical Card",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_physical_card",
    "display_name": "Create Physical Card",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_physical_card",
    "display_name": "Update Physical Card",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "suspend_physical_card",
    "display_name": "Suspend Physical Card",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unsuspend_physical_card",
    "display_name": "Unsuspend Physical Card",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_virtual_cards",
    "display_name": "List Virtual Cards",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_virtual_card",
    "display_name": "Get Virtual Card",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transactions",
    "display_name": "List Transactions",
    "category": "Transactions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transaction",
    "display_name": "Get Transaction",
    "category": "Transactions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_transaction",
    "display_name": "Update Transaction",
    "category": "Transactions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_reimbursements",
    "display_name": "List Reimbursements",
    "category": "Reimbursements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_reimbursement",
    "display_name": "Get Reimbursement",
    "category": "Reimbursements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_mileage_reimbursement",
    "display_name": "Create Mileage Reimbursement",
    "category": "Reimbursements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_bills",
    "display_name": "List Bills",
    "category": "Bills",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bill",
    "display_name": "Get Bill",
    "category": "Bills",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_bill",
    "display_name": "Create Bill",
    "category": "Bills",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_bill",
    "display_name": "Update Bill",
    "category": "Bills",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_bill",
    "display_name": "Delete Bill",
    "category": "Bills",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -29,112 +29,128 @@
    "display_name": "List Employees (Persons)",
    "category": "Employees",
    "description": "List Personio persons (v2), including employee profile fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_employee",
    "display_name": "Get Employee",
    "category": "Employees",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_employee",
    "display_name": "Create Employee",
    "category": "Employees",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_employee",
    "display_name": "Update Employee",
    "category": "Employees",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_absence_balance",
    "display_name": "Get Absence Balance",
    "category": "Time Off",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_employee_attributes",
    "display_name": "List Employee Attributes",
    "category": "Employees",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_time_off_types",
    "display_name": "List Time-Off Types",
    "category": "Time Off",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_time_offs",
    "display_name": "List Time-Offs",
    "category": "Time Off",
    "description": "List v2 absence periods, including day and hour absences.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_time_off",
    "display_name": "Get Time-Off",
    "category": "Time Off",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_time_off",
    "display_name": "Create Time-Off",
    "category": "Time Off",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_time_off",
    "display_name": "Delete Time-Off",
    "category": "Time Off",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_attendance_periods",
    "display_name": "List Attendance Periods",
    "category": "Attendance",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_attendance_period",
    "display_name": "Get Attendance Period",
    "category": "Attendance",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_attendance_period",
    "display_name": "Create Attendance Period",
    "category": "Attendance",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_attendance_period",
    "display_name": "Update Attendance Period",
    "category": "Attendance",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_attendance_period",
    "display_name": "Delete Attendance Period",
    "category": "Attendance",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

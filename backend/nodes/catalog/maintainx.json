@@ -29,182 +29,211 @@
    "display_name": "On MaintainX Event",
    "category": "Triggers",
    "description": "Start a workflow or agent when a selected MaintainX event occurs.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "maintainx_api_key"
+   ]
   },
   {
    "name": "list_organizations",
    "display_name": null,
    "category": null,
    "description": "List organizations accessible to the API key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_work_orders",
    "display_name": null,
    "category": null,
    "description": "List one page of work orders with optional filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_work_order",
    "display_name": null,
    "category": null,
    "description": "Read a work order by its global ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_work_order",
    "display_name": null,
    "category": null,
    "description": "Create a work order; returns its new ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_work_order",
    "display_name": null,
    "category": null,
    "description": "Update supplied work order fields; assignees replace the assignment list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_work_order_status",
    "display_name": null,
    "category": null,
    "description": "Change the work order status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_work_order_comment",
    "display_name": null,
    "category": null,
    "description": "Add a comment to a work order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_work_order_comments",
    "display_name": null,
    "category": null,
    "description": "List one page of work order comments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_assets",
    "display_name": null,
    "category": null,
    "description": "List one page of assets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_asset",
    "display_name": null,
    "category": null,
    "description": "Read a asset by its global ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_asset",
    "display_name": null,
    "category": null,
    "description": "Create a asset; returns its new ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_asset",
    "display_name": null,
    "category": null,
    "description": "Update a asset, sending only supplied fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_locations",
    "display_name": null,
    "category": null,
    "description": "List one page of locations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_location",
    "display_name": null,
    "category": null,
    "description": "Read a location by its global ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_location",
    "display_name": null,
    "category": null,
    "description": "Create a location; returns its new ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_location",
    "display_name": null,
    "category": null,
    "description": "Update a location, sending only supplied fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_parts",
    "display_name": null,
    "category": null,
    "description": "List one page of parts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_part",
    "display_name": null,
    "category": null,
    "description": "Read a part by its global ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_part",
    "display_name": null,
    "category": null,
    "description": "Create a part; returns its new ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_part",
    "display_name": null,
    "category": null,
    "description": "Update a part, sending only supplied fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_work_requests",
    "display_name": null,
    "category": null,
    "description": "List one page of work requests.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_work_request",
    "display_name": null,
    "category": null,
    "description": "Read a work request by its global ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_work_request",
    "display_name": null,
    "category": null,
    "description": "Submit a work request; returns its new ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": null,
    "category": null,
    "description": "List one page of users.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_teams",
    "display_name": null,
    "category": null,
    "description": "List one page of teams.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

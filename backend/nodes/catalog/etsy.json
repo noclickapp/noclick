@@ -28,140 +28,160 @@
    "display_name": "Get Me",
    "category": "Shop",
    "description": "getMe — GET /v3/application/users/me.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_shop",
    "display_name": "Get Shop",
    "category": "Shop",
    "description": "getShop — GET /v3/application/shops/{shop_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_shop",
    "display_name": "Update Shop",
    "category": "Shop",
    "description": "updateShop — PUT /v3/application/shops/{shop_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_shop_sections",
    "display_name": "List Shop Sections",
    "category": "Shop",
    "description": "getShopSections — GET /v3/application/shops/{shop_id}/sections.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_shop_section",
    "display_name": "Create Shop Section",
    "category": "Shop",
    "description": "createShopSection — POST /v3/application/shops/{shop_id}/sections.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_shop_section",
    "display_name": "Update Shop Section",
    "category": "Shop",
    "description": "updateShopSection — PUT /v3/application/shops/{shop_id}/sections/{shop_section_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_shipping_profiles",
    "display_name": "List Shipping Profiles",
    "category": "Shop",
    "description": "getShopShippingProfiles — GET /v3/application/shops/{shop_id}/shipping-profiles.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_listings",
    "display_name": "List Listings",
    "category": "Listings",
    "description": "getListingsByShop — GET /v3/application/shops/{shop_id}/listings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_listing",
    "display_name": "Get Listing",
    "category": "Listings",
    "description": "getListing — GET /v3/application/listings/{listing_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_draft_listing",
    "display_name": "Create Draft Listing",
    "category": "Listings",
    "description": "createDraftListing — POST /v3/application/shops/{shop_id}/listings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_listing",
    "display_name": "Update Listing",
    "category": "Listings",
    "description": "updateListing — PATCH /v3/application/shops/{shop_id}/listings/{listing_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_listing",
    "display_name": "Delete Listing",
    "category": "Listings",
    "description": "deleteListing — DELETE /v3/application/listings/{listing_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_listing_inventory",
    "display_name": "Get Listing Inventory",
    "category": "Listings",
    "description": "getListingInventory — GET /v3/application/listings/{listing_id}/inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_listing_inventory",
    "display_name": "Update Listing Inventory",
    "category": "Listings",
    "description": "updateListingInventory — PUT /v3/application/listings/{listing_id}/inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_listing_images",
    "display_name": "List Listing Images",
    "category": "Listings",
    "description": "getListingImages — GET /v3/application/listings/{listing_id}/images.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_orders",
    "display_name": "List Orders",
    "category": "Orders",
    "description": "getShopReceipts — GET /v3/application/shops/{shop_id}/receipts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_order",
    "display_name": "Get Order",
    "category": "Orders",
    "description": "getShopReceipt — GET /v3/application/shops/{shop_id}/receipts/{receipt_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_order",
    "display_name": "Update Order",
    "category": "Orders",
    "description": "updateShopReceipt — PUT /v3/application/shops/{shop_id}/receipts/{receipt_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_shipment",
    "display_name": "Create Shipment",
    "category": "Orders",
    "description": "createReceiptShipment — POST /v3/application/shops/{shop_id}/receipts/{receipt_id}/tracking.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_order_transactions",
    "display_name": "List Order Transactions",
    "category": "Orders",
    "description": "getShopReceiptTransactionsByReceipt — GET /v3/application/shops/{shop_id}/receipts/{receipt_id}/transactions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

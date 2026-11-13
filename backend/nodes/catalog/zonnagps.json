@@ -28,133 +28,155 @@
    "display_name": "List Assets",
    "category": "Assets",
    "description": "List Assets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_asset",
    "display_name": "Get Asset",
    "category": "Assets",
    "description": "Get Asset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_latest_position",
    "display_name": "Get Latest Position",
    "category": "Assets",
    "description": "Get Latest Position.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_positions",
    "display_name": "List Positions",
    "category": "Assets",
    "description": "List Positions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_alarms",
    "display_name": "List Alarms",
    "category": "Alarms",
    "description": "List Alarms.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_drivers",
    "display_name": "List Drivers",
    "category": "Drivers",
    "description": "List Drivers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_driver",
    "display_name": "Create Driver",
    "category": "Drivers",
    "description": "Create Driver.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_driver",
    "display_name": "Update Driver",
    "category": "Drivers",
    "description": "Update Driver.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deactivate_driver",
    "display_name": "Deactivate Driver",
    "category": "Drivers",
    "description": "Deactivate Driver.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_place",
    "display_name": "Create Place",
    "category": "Places",
    "description": "Create Place.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_place",
    "display_name": "Update Place",
    "category": "Places",
    "description": "Update Place.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deactivate_place",
    "display_name": "Deactivate Place",
    "category": "Places",
    "description": "Deactivate Place.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_geofence",
    "display_name": "Create Geofence",
    "category": "Geofences",
    "description": "Create Geofence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_geofence",
    "display_name": "Update Geofence",
    "category": "Geofences",
    "description": "Update Geofence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deactivate_geofence",
    "display_name": "Deactivate Geofence",
    "category": "Geofences",
    "description": "Deactivate Geofence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "assign_driver",
    "display_name": "Assign Driver",
    "category": "Assets",
    "description": "Assign Driver.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhooks",
    "display_name": "List Webhooks",
    "category": "Webhooks",
    "description": "List Webhooks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_report",
    "display_name": "Get Report",
    "category": "Reports",
    "description": "Get Report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_event",
    "display_name": "On Fleet Event",
    "category": "Triggers",
    "description": "Receive selected fleet events through an automatically registered webhook.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "zonnagps_api_token"
+   ]
   }
  ],
  "agent_tool_provider": true,

@@ -22,161 +22,184 @@
    "display_name": null,
    "category": null,
    "description": "Get full or filtered list of all chats in the Workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat",
    "display_name": null,
    "category": null,
    "description": "Get details of a chat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_chat",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_chat_messages",
    "display_name": null,
    "category": null,
    "description": "Get filtered chat history (messages only) of the chat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_chat_message",
    "display_name": null,
    "category": null,
    "description": "Send message in existing chat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_chat_labels",
    "display_name": null,
    "category": null,
    "description": "List labels for the specified chat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_chat_labels",
    "display_name": null,
    "category": null,
    "description": "Replaces labels for the chat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_chat_labels",
    "display_name": null,
    "category": null,
    "description": "Adds labels for the chat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_chat_note",
    "display_name": null,
    "category": null,
    "description": "Add a note to existing chat.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message",
    "display_name": null,
    "category": null,
    "description": "Get the details of a message specified by the message's UID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message_status_history",
    "display_name": null,
    "category": null,
    "description": "Get the sending history of a message, specified by the message's UID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_message_to_phone",
    "display_name": null,
    "category": null,
    "description": "Send message to phone number.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_files",
    "display_name": null,
    "category": null,
    "description": "List files uploaded in your TimelinesAI workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_file_from_url",
    "display_name": null,
    "category": null,
    "description": "Upload a file using a publicly accessible URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file",
    "display_name": null,
    "category": null,
    "description": "Get details and temporary download URL for a specified uploaded file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_file",
    "display_name": null,
    "category": null,
    "description": "Delete the specified uploaded file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_whatsapp_accounts",
    "display_name": null,
    "category": null,
    "description": "List WhatsApp accounts connected in your TimelinesAI workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workspace",
    "display_name": null,
    "category": null,
    "description": "Workspace info and all current quotas and utilization stats.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_teammates",
    "display_name": null,
    "category": null,
    "description": "List all teammates in the workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_teammate",
    "display_name": null,
    "category": null,
    "description": "Info about current teammate in the workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": null,
    "category": null,
    "description": "List templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_template",
    "display_name": null,
    "category": null,
    "description": "Create template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template",
    "display_name": null,
    "category": null,
    "description": "Get template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

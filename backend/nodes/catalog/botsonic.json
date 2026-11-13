@@ -22,126 +22,144 @@
    "display_name": null,
    "category": null,
    "description": "Generation endpoint supporting synchronous response.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_faqs",
    "display_name": null,
    "category": null,
    "description": "Get all FAQs for a bot in paginated format.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_faq",
    "display_name": null,
    "category": null,
    "description": "Create bot faq.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_faq",
    "display_name": null,
    "category": null,
    "description": "Delete bot faq.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_training_data",
    "display_name": null,
    "category": null,
    "description": "Get all Bot Data in a paginated format.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_conversations",
    "display_name": null,
    "category": null,
    "description": "Get all conversations in paginated format.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_conversations_with_source",
    "display_name": null,
    "category": null,
    "description": "Get All Conversations With Source.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_conversation",
    "display_name": null,
    "category": null,
    "description": "Get specific conversation by chat_id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "end_chat",
    "display_name": null,
    "category": null,
    "description": "End a chat conversation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_training_data",
    "display_name": null,
    "category": null,
    "description": "Delete particluar bot data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_urls",
    "display_name": null,
    "category": null,
    "description": "Upsert multiple URL's ( with validation ) from a bot.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_file",
    "display_name": null,
    "category": null,
    "description": "Upsert multiple URL's ( with validation ) from a bot.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_text",
    "display_name": null,
    "category": null,
    "description": "Upload Text.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_starter_questions",
    "display_name": null,
    "category": null,
    "description": "Get all Starter questions for a bot in paginated format.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_starter_question",
    "display_name": null,
    "category": null,
    "description": "Create starter question.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_starter_question",
    "display_name": null,
    "category": null,
    "description": "Delete starter question.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_starter_question",
    "display_name": null,
    "category": null,
    "description": "Update starter question.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_starter_presets",
    "display_name": null,
    "category": null,
    "description": "Get All Starter Presets By Bot Id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

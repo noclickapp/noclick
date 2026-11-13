@@ -16,7 +16,7 @@ ad-hoc agent-initiated call.
 import asyncio
 import logging
 from contextlib import asynccontextmanager
-from typing import Any, AsyncIterator, Dict, List, Optional
+from typing import Any, AsyncIterator, Dict, List, Mapping, Optional
 
 from billing.exceptions import InsufficientBalanceError, OwnerResolutionError
 from nodes.core.registry import NODE_REGISTRY, NodeFactory
@@ -47,6 +47,16 @@ async def credential_place(credential_id: Optional[str]) -> AsyncIterator[None]:
         place[1] -= 1
         if not place[1]:
             del _places[credential_id]
+
+
+def declares_no_account(schema: Mapping[str, Any]) -> bool:
+    """Whether an operation's ``schema`` says it runs with no credential where NoClick holds the platform key it
+    names: marked credential-optional, or a platform scraper's, which a user's key can't fund (``byok`` False).
+    ``needs_credential_hint`` with no config reads the same, then asks whether this installation holds the key."""
+    from nodes.core.platform_billing import platform_key_of
+
+    marker = platform_key_of(schema)
+    return schema.get("x-credentials-optional") is True or bool(marker and marker.get("byok") is False)
 
 
 def needs_credential_hint(node_type: str, operation: Optional[str], config=None) -> bool:

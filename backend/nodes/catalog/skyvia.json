@@ -22,70 +22,80 @@
    "display_name": "List Allowed Accessible Workspaces",
    "category": "Workspaces",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workspace",
    "display_name": "Get Workspace Metadata",
    "category": "Workspaces",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_connections",
    "display_name": "List Connection Metadata",
    "category": "Connections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_connection",
    "display_name": "Get Connection Metadata",
    "category": "Connections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_integrations",
    "display_name": "List Integration Metadata",
    "category": "Integrations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_integration",
    "display_name": "Get Integration Metadata",
    "category": "Integrations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_backups",
    "display_name": "List Backup Metadata",
    "category": "Backups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_backup",
    "display_name": "Get Backup Metadata",
    "category": "Backups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_automations",
    "display_name": "List Automation Metadata",
    "category": "Automations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_automation",
    "display_name": "Get Automation Metadata",
    "category": "Automations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

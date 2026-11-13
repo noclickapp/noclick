@@ -28,154 +28,176 @@
    "display_name": null,
    "category": null,
    "description": "Read the authenticated account's profile and balance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_instances",
    "display_name": null,
    "category": null,
    "description": "Read one page of your instances; pass data.next_token as after_token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_instance",
    "display_name": null,
    "category": null,
    "description": "Read one instance by contract ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_instance",
    "display_name": null,
    "category": null,
    "description": "Accept an offer and create a paid instance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "manage_instance",
    "display_name": null,
    "category": null,
    "description": "Start, stop or relabel an instance; state changes are asynchronous.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "destroy_instance",
    "display_name": null,
    "category": null,
    "description": "Destroy an instance and its local data permanently.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reboot_instance",
    "display_name": null,
    "category": null,
    "description": "Request an instance reboot.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "recycle_instance",
    "display_name": null,
    "category": null,
    "description": "Request recycling of an instance container.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "change_bid",
    "display_name": null,
    "category": null,
    "description": "Change an interruptible instance's hourly bid price.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "request_logs",
    "display_name": null,
    "category": null,
    "description": "Request a log download URL without downloading the external file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_offers",
    "display_name": null,
    "category": null,
    "description": "Search a bounded set of GPU offers with documented comparison filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_volumes",
    "display_name": null,
    "category": null,
    "description": "List your rented persistent volumes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_volumes",
    "display_name": null,
    "category": null,
    "description": "Search one bounded set of volume offers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rent_volume",
    "display_name": null,
    "category": null,
    "description": "Rent a paid persistent volume from a volume offer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_volume",
    "display_name": null,
    "category": null,
    "description": "Delete a rented volume and its stored data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invoices",
    "display_name": null,
    "category": null,
    "description": "Read one page of billing transactions within a date range.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_charges",
    "display_name": null,
    "category": null,
    "description": "Read one page of per-contract charges within a date range.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ssh_keys",
    "display_name": null,
    "category": null,
    "description": "List the public SSH keys belonging to your account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ssh_key",
    "display_name": null,
    "category": null,
    "description": "Add an account SSH key; Vast.ai also adds it to current instances.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ssh_key",
    "display_name": null,
    "category": null,
    "description": "Delete a public SSH key from your account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "attach_ssh_key",
    "display_name": null,
    "category": null,
    "description": "Attach a public SSH key to one instance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "detach_ssh_key",
    "display_name": null,
    "category": null,
    "description": "Detach a public SSH key from one instance by key ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

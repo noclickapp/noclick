@@ -22,147 +22,168 @@
    "display_name": null,
    "category": null,
    "description": "List one page of the account's QR codes, including scan counts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_scan_events",
    "display_name": null,
    "category": null,
    "description": "List one page of geographic and device scan events, optionally filtered.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": null,
    "category": null,
    "description": "Get the authenticated account's root folders and direct subfolders.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder",
    "display_name": null,
    "category": null,
    "description": "Create a folder or a named subfolder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_analytics",
    "display_name": null,
    "category": null,
    "description": "Get analytics for one QR code.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_entries",
    "display_name": null,
    "category": null,
    "description": "Soft delete the specified owned QR codes or short links.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_link_qr",
    "display_name": null,
    "category": null,
    "description": "Create a link QR code; return JSON metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_link_qr",
    "display_name": null,
    "category": null,
    "description": "Update a link QR code; return JSON metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_link_qr",
    "display_name": null,
    "category": null,
    "description": "Get a link QR code; return JSON metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_text_qr",
    "display_name": null,
    "category": null,
    "description": "Create a text QR code; return JSON metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_text_qr",
    "display_name": null,
    "category": null,
    "description": "Update a text QR code; return JSON metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_text_qr",
    "display_name": null,
    "category": null,
    "description": "Get a text QR code; return JSON metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_email_qr",
    "display_name": null,
    "category": null,
    "description": "Create a email QR code; return JSON metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_email_qr",
    "display_name": null,
    "category": null,
    "description": "Update a email QR code; return JSON metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email_qr",
    "display_name": null,
    "category": null,
    "description": "Get a email QR code; return JSON metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_wifi_qr",
    "display_name": null,
    "category": null,
    "description": "Create a wifi QR code; return JSON metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_wifi_qr",
    "display_name": null,
    "category": null,
    "description": "Update a wifi QR code; return JSON metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_wifi_qr",
    "display_name": null,
    "category": null,
    "description": "Get a wifi QR code; return JSON metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_short_link",
    "display_name": null,
    "category": null,
    "description": "Create a short link and return its metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_short_link",
    "display_name": null,
    "category": null,
    "description": "Update a short link and return its metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_short_link",
    "display_name": null,
    "category": null,
    "description": "Get a short link and return its metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

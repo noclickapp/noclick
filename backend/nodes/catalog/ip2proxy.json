@@ -30,77 +30,88 @@
    "display_name": null,
    "category": null,
    "description": "Proxy status and country, including lower-package data; 1 credit(s).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_proxy_type",
    "display_name": null,
    "category": null,
    "description": "Proxy type, including lower-package data; 2 credit(s).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_proxy_location",
    "display_name": null,
    "category": null,
    "description": "Region and city, including lower-package data; 3 credit(s).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_proxy_isp",
    "display_name": null,
    "category": null,
    "description": "Internet service provider, including lower-package data; 4 credit(s).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_proxy_domain",
    "display_name": null,
    "category": null,
    "description": "Domain, including lower-package data; 5 credit(s).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_proxy_usage",
    "display_name": null,
    "category": null,
    "description": "Usage classification, including lower-package data; 6 credit(s).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_proxy_asn",
    "display_name": null,
    "category": null,
    "description": "Autonomous system, including lower-package data; 7 credit(s).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_proxy_last_seen",
    "display_name": null,
    "category": null,
    "description": "Last seen, including lower-package data; 8 credit(s).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_proxy_threat",
    "display_name": null,
    "category": null,
    "description": "Threat, including lower-package data; 9 credit(s).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_residential_proxy",
    "display_name": null,
    "category": null,
    "description": "Residential proxy detection, including lower-package data; 10 credit(s).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_proxy_provider",
    "display_name": null,
    "category": null,
    "description": "VPN provider, including lower-package data; 11 credit(s).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

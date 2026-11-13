@@ -22,35 +22,40 @@
    "display_name": "List Authoritative Server Metadata",
    "category": "DNS Metadata",
    "description": "Verify the selected authoritative daemon, then project its accessible authoritative server catalog. No configuration URLs or Recursor parity.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_server",
    "display_name": "Get Selected Server Metadata",
    "category": "DNS Metadata",
    "description": "Verify the selected catalog witness and independently read its exact server detail.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_zones",
    "display_name": "List Zone Metadata",
    "category": "DNS Metadata",
    "description": "Read the selected server's zone catalog with dnssec=false. Zone IDs and names are internal unless explicitly opted in.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_zone",
    "display_name": "Get Zone Metadata",
    "category": "DNS Metadata",
    "description": "Verify current server/catalog ancestry, then request rrsets=false and project the published direct zone object.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rrsets",
    "display_name": "List RRset Metadata",
    "category": "DNS Metadata",
    "description": "Request rrsets=true only after current catalog ancestry. Return bounded type/TTL metadata and optional names, never records/RDATA/comments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

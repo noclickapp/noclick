@@ -22,77 +22,88 @@
    "display_name": "List Contacts",
    "category": "Contact",
    "description": "List all contacts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": "Get Contact",
    "category": "Contact",
    "description": "Get a specific contact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact",
    "display_name": "Create Contact",
    "category": "Contact",
    "description": "Create a new contact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact",
    "display_name": "Update Contact",
    "category": "Contact",
    "description": "Update a contact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact",
    "display_name": "Delete Contact",
    "category": "Contact",
    "description": "Delete a contact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_contacts",
    "display_name": "Search Contacts",
    "category": "Contact",
    "description": "Search contacts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contact_groups",
    "display_name": "List Contact Groups",
    "category": "Contact Group",
    "description": "List all contact groups",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact_group",
    "display_name": "Get Contact Group",
    "category": "Contact Group",
    "description": "Get a specific contact group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact_group",
    "display_name": "Create Contact Group",
    "category": "Contact Group",
    "description": "Create a new contact group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact_group",
    "display_name": "Update Contact Group",
    "category": "Contact Group",
    "description": "Update a contact group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact_group",
    "display_name": "Delete Contact Group",
    "category": "Contact Group",
    "description": "Delete a contact group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

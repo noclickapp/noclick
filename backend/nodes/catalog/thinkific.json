@@ -34,196 +34,248 @@
    "display_name": "List Students",
    "category": "Students",
    "description": "List Users: GET /users.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_student",
    "display_name": "Get Student",
    "category": "Students",
    "description": "List Users by ID: GET /users/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_student",
    "display_name": "Create Student",
    "category": "Students",
    "description": "Create user: POST /users.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_student",
    "display_name": "Update Student",
    "category": "Students",
    "description": "Update user by ID: PUT /users/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_courses",
    "display_name": "List Courses",
    "category": "Courses",
    "description": "Get Courses: GET /courses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_course",
    "display_name": "Get Course",
    "category": "Courses",
    "description": "Get courses by ID: GET /courses/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_enrollments",
    "display_name": "List Enrollments",
    "category": "Enrollments",
    "description": "Get Enrollments: GET /enrollments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_enrollment",
    "display_name": "Get Enrollment",
    "category": "Enrollments",
    "description": "Get enrollments by ID: GET /enrollments/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_enrollment",
    "display_name": "Create Enrollment",
    "category": "Enrollments",
    "description": "Create enrollment: POST /enrollments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_enrollment",
    "display_name": "Update Enrollment",
    "category": "Enrollments",
    "description": "Update enrollment: PUT /enrollments/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bundle",
    "display_name": "Get Bundle",
    "category": "Bundles",
    "description": "List a bundle: GET /bundles/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_bundle_courses",
    "display_name": "List Bundle Courses",
    "category": "Bundles",
    "description": "List Courses by bundle ID: GET /bundles/{id}/courses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_bundle_enrollments",
    "display_name": "List Bundle Enrollments",
    "category": "Bundles",
    "description": "List a enrollments in a bundle: GET /bundles/{id}/enrollments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enroll_in_bundle",
    "display_name": "Enroll In Bundle",
    "category": "Bundles",
    "description": "Create an Enrollment in a Bundle of Courses: POST /bundles/{id}/enrollments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_orders",
    "display_name": "List Orders",
    "category": "Orders",
    "description": "Get Orders: GET /orders.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_order",
    "display_name": "Get Order",
    "category": "Orders",
    "description": "Get orders by ID: GET /orders/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_products",
    "display_name": "List Products",
    "category": "Products",
    "description": "List products: GET /products.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product",
    "display_name": "Get Product",
    "category": "Products",
    "description": "Get product by ID: GET /products/{id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_external_order",
    "display_name": "Create External Order",
    "category": "Orders",
    "description": "Record an external order. These records do not appear in Thinkific orders reports or the dashboard.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "record_purchase",
    "display_name": "Record Purchase",
    "category": "Orders",
    "description": "purchase transaction: POST /external_orders/{id}/transactions/purchase.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_student_signup",
    "display_name": "New Student",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "thinkific_api_token"
+   ]
   },
   {
    "name": "on_student_updated",
    "display_name": "Student Updated",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "thinkific_api_token"
+   ]
   },
   {
    "name": "on_enrollment_created",
    "display_name": "New Enrollment",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "thinkific_api_token"
+   ]
   },
   {
    "name": "on_enrollment_trial",
    "display_name": "New Trial Enrollment",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "thinkific_api_token"
+   ]
   },
   {
    "name": "on_enrollment_completed",
    "display_name": "Course Completed",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "thinkific_api_token"
+   ]
   },
   {
    "name": "on_enrollment_progress",
    "display_name": "Course Progress Updated",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "thinkific_api_token"
+   ]
   },
   {
    "name": "on_order_created",
    "display_name": "New Order",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "thinkific_api_token"
+   ]
   },
   {
    "name": "on_lesson_completed",
    "display_name": "Lesson Completed",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "thinkific_api_token"
+   ]
   }
  ],
  "agent_tool_provider": true,

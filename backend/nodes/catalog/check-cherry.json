@@ -27,168 +27,192 @@
    "display_name": null,
    "category": null,
    "description": "Fetch all leads",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lead",
    "display_name": null,
    "category": null,
    "description": "Fetch lead by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_lead",
    "display_name": null,
    "category": null,
    "description": "Add a lead to the database",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_lead",
    "display_name": null,
    "category": null,
    "description": "Update a lead",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_lead",
    "display_name": null,
    "category": null,
    "description": "Archive a lead",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unarchive_lead",
    "display_name": null,
    "category": null,
    "description": "Unarchive a lead",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_lead_note",
    "display_name": null,
    "category": null,
    "description": "Add a note to a lead",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": null,
    "category": null,
    "description": "Fetch all events",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": null,
    "category": null,
    "description": "Fetch event by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_event",
    "display_name": null,
    "category": null,
    "description": "Update an event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_event",
    "display_name": null,
    "category": null,
    "description": "Cancel an event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "uncancel_event",
    "display_name": null,
    "category": null,
    "description": "Uncancel an event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_event_note",
    "display_name": null,
    "category": null,
    "description": "Add a note to a booking",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_booking",
    "display_name": null,
    "category": null,
    "description": "Create a booking",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_proposal",
    "display_name": null,
    "category": null,
    "description": "Create a proposal",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_appointments",
    "display_name": null,
    "category": null,
    "description": "Fetch all appointments",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_appointment",
    "display_name": null,
    "category": null,
    "description": "Fetch an appointment by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_appointment",
    "display_name": null,
    "category": null,
    "description": "Create an appointment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_appointment",
    "display_name": null,
    "category": null,
    "description": "Update an appointment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_appointment",
    "display_name": null,
    "category": null,
    "description": "Cancel an appointment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payments",
    "display_name": null,
    "category": null,
    "description": "Fetch all payments",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_payment",
    "display_name": null,
    "category": null,
    "description": "Fetch payment by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_packages",
    "display_name": null,
    "category": null,
    "description": "Fetch all packages",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_package",
    "display_name": null,
    "category": null,
    "description": "Fetch a package by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,126 +22,144 @@
    "display_name": null,
    "category": null,
    "description": "List users in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": null,
    "category": null,
    "description": "Get user in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_user",
    "display_name": null,
    "category": null,
    "description": "Create user in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_user",
    "display_name": null,
    "category": null,
    "description": "Update user in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_user",
    "display_name": null,
    "category": null,
    "description": "Permanently delete this user from the application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_group_channels",
    "display_name": null,
    "category": null,
    "description": "List group channels in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_group_channel",
    "display_name": null,
    "category": null,
    "description": "Get group channel in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_group_channel",
    "display_name": null,
    "category": null,
    "description": "Create group channel in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_group_channel",
    "display_name": null,
    "category": null,
    "description": "Update group channel in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_group_channel",
    "display_name": null,
    "category": null,
    "description": "Delete this channel and its messages permanently.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_members",
    "display_name": null,
    "category": null,
    "description": "List members in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invite_members",
    "display_name": null,
    "category": null,
    "description": "Invite members in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_message",
    "display_name": null,
    "category": null,
    "description": "Send as an existing user; Sendbird push-notification settings apply.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message",
    "display_name": null,
    "category": null,
    "description": "Get message in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_message",
    "display_name": null,
    "category": null,
    "description": "Update message in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_message",
    "display_name": null,
    "category": null,
    "description": "Delete message in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_open_channels",
    "display_name": null,
    "category": null,
    "description": "List open channels in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_open_channel",
    "display_name": null,
    "category": null,
    "description": "Get open channel in the connected Sendbird application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

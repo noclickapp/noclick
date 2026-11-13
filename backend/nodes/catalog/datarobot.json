@@ -22,161 +22,184 @@
    "display_name": null,
    "category": null,
    "description": "List projects.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": null,
    "category": null,
    "description": "Get project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": null,
    "category": null,
    "description": "Create project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project",
    "display_name": null,
    "category": null,
    "description": "Update project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_project",
    "display_name": null,
    "category": null,
    "description": "Delete the selected project and its models. This cannot be undone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project_status",
    "display_name": null,
    "category": null,
    "description": "Get project status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_models",
    "display_name": null,
    "category": null,
    "description": "List models.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_model",
    "display_name": null,
    "category": null,
    "description": "Get model.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_model",
    "display_name": null,
    "category": null,
    "description": "Update model.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_model",
    "display_name": null,
    "category": null,
    "description": "Delete model.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_features",
    "display_name": null,
    "category": null,
    "description": "List features.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_datasets",
    "display_name": null,
    "category": null,
    "description": "List datasets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dataset",
    "display_name": null,
    "category": null,
    "description": "Get dataset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_dataset",
    "display_name": null,
    "category": null,
    "description": "Update dataset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dataset",
    "display_name": null,
    "category": null,
    "description": "Delete dataset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_deployments",
    "display_name": null,
    "category": null,
    "description": "List deployments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deployment",
    "display_name": null,
    "category": null,
    "description": "Get deployment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_deployment",
    "display_name": null,
    "category": null,
    "description": "Update deployment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_use_cases",
    "display_name": null,
    "category": null,
    "description": "List use cases.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_use_case",
    "display_name": null,
    "category": null,
    "description": "Get use case.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_use_case",
    "display_name": null,
    "category": null,
    "description": "Create use case.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_use_case",
    "display_name": null,
    "category": null,
    "description": "Update use case.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_use_case",
    "display_name": null,
    "category": null,
    "description": "Delete use case.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

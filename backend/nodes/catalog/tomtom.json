@@ -22,70 +22,80 @@
    "display_name": null,
    "category": null,
    "description": "Read legacy whole-world copyrights (withdrawn by TomTom).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_copyright_caption",
    "display_name": null,
    "category": null,
    "description": "Read the legacy copyright caption (withdrawn by TomTom).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_area_copyrights",
    "display_name": null,
    "category": null,
    "description": "Read legacy bounding-box copyrights (withdrawn by TomTom).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tile_copyrights",
    "display_name": null,
    "category": null,
    "description": "Read legacy tile copyrights (withdrawn by TomTom).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_static_image",
    "display_name": null,
    "category": null,
    "description": "Render a static map centered on longitude,latitude.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_vector_tile",
    "display_name": null,
    "category": null,
    "description": "Download a protobuf vector map tile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_raster_tile",
    "display_name": null,
    "category": null,
    "description": "Download a PNG or JPEG raster map tile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_wms_map",
    "display_name": null,
    "category": null,
    "description": "Render a WMS 1.1.1 map for a bounding box.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_wms_capabilities",
    "display_name": null,
    "category": null,
    "description": "Read WMS service capabilities as XML.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_wmts_capabilities",
    "display_name": null,
    "category": null,
    "description": "Read WMTS 1.0.0 service capabilities as XML.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

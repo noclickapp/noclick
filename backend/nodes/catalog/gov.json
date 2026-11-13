@@ -28,133 +28,152 @@
    "display_name": "List Tags",
    "category": "Catalogue",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_status",
    "display_name": "Get Site Status",
    "category": "Catalogue",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "package_list",
    "display_name": "List Datasets",
    "category": "Datasets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "package_search",
    "display_name": "Search Datasets",
    "category": "Datasets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "package_show",
    "display_name": "Get Dataset",
    "category": "Datasets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "package_activity_list",
    "display_name": "List Dataset Activity",
    "category": "Datasets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "package_autocomplete",
    "display_name": "Autocomplete Datasets",
    "category": "Datasets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "package_relationships_list",
    "display_name": "List Dataset Relationships",
    "category": "Datasets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "organization_activity_list",
    "display_name": "List Organization Activity",
    "category": "Catalogue",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "organization_follower_count",
    "display_name": "Get Organization Follower Count",
    "category": "Catalogue",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "organization_follower_list",
    "display_name": "List Organization Followers",
    "category": "Catalogue",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_my_organizations",
    "display_name": "List My Organizations",
    "category": "Catalogue",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "organization_show",
    "display_name": "Get Organization",
    "category": "Catalogue",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "organization_list",
    "display_name": "List Organizations",
    "category": "Catalogue",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "organization_autocomplete",
    "display_name": "Autocomplete Organizations",
    "category": "Catalogue",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resource_search",
    "display_name": "Search Resources",
    "category": "Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resource_show",
    "display_name": "Get Resource",
    "category": "Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "related_list",
    "display_name": "List Related Items",
    "category": "Datasets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_dataset",
    "display_name": "On New or Updated Dataset",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

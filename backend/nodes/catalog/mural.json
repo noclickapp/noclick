@@ -22,210 +22,240 @@
    "display_name": "Get Me",
    "category": "Users",
    "description": "Get the connected Mural user's profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workspaces",
    "display_name": "List Workspaces",
    "category": "Workspaces",
    "description": "List workspaces available to the connected user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rooms",
    "display_name": "List Rooms",
    "category": "Rooms",
    "description": "List rooms in a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_room",
    "display_name": "Get Room",
    "category": "Rooms",
    "description": "Get details of a room.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_room",
    "display_name": "Create Room",
    "category": "Rooms",
    "description": "Create an open or private room in a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_room",
    "display_name": "Update Room",
    "category": "Rooms",
    "description": "Change a room's name, description or privacy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_room",
    "display_name": "Delete Room",
    "category": "Rooms",
    "description": "Permanently delete a room owned by the user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": "List Folders",
    "category": "Rooms",
    "description": "List folders in a room.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder",
    "display_name": "Create Folder",
    "category": "Rooms",
    "description": "Create a folder in a room.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_room_murals",
    "display_name": "List Room Murals",
    "category": "Murals",
    "description": "List murals in a room.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workspace_murals",
    "display_name": "List Workspace Murals",
    "category": "Murals",
    "description": "List murals in a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_mural",
    "display_name": "Get Mural",
    "category": "Murals",
    "description": "Get a mural's details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_mural",
    "display_name": "Create Mural",
    "category": "Murals",
    "description": "Create a blank mural in a room.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "duplicate_mural",
    "display_name": "Duplicate Mural",
    "category": "Murals",
    "description": "Copy a mural to a room.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_mural",
    "display_name": "Update Mural",
    "category": "Murals",
    "description": "Rename, archive, restore or move a mural.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_mural",
    "display_name": "Delete Mural",
    "category": "Murals",
    "description": "Permanently delete a mural owned by the user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_murals",
    "display_name": "Search Murals",
    "category": "Search",
    "description": "Search mural titles in a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_widgets",
    "display_name": "List Widgets",
    "category": "Widgets",
    "description": "List widgets on a mural, with pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_widget",
    "display_name": "Get Widget",
    "category": "Widgets",
    "description": "Get one widget from a mural.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_sticky_note",
    "display_name": "Create Sticky Note",
    "category": "Widgets",
    "description": "Add a sticky note at a position on a mural.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_sticky_notes",
    "display_name": "Create Sticky Notes",
    "category": "Widgets",
    "description": "Add up to 1,000 sticky notes in one request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_sticky_note",
    "display_name": "Update Sticky Note",
    "category": "Widgets",
    "description": "Change a sticky note's text or position.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_widget",
    "display_name": "Delete Widget",
    "category": "Widgets",
    "description": "Delete a widget and its content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_comment",
    "display_name": "Create Comment",
    "category": "Widgets",
    "description": "Add a comment to a mural or widget.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": "List Templates",
    "category": "Templates",
    "description": "List Mural's default templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workspace_templates",
    "display_name": "List Workspace Templates",
    "category": "Templates",
    "description": "List default and custom templates for a workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_mural_from_template",
    "display_name": "Create Mural From Template",
    "category": "Templates",
    "description": "Create a mural from a template in a room.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_template",
    "display_name": "Create Template",
    "category": "Templates",
    "description": "Publish a custom template from an existing mural.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_template",
    "display_name": "Delete Template",
    "category": "Templates",
    "description": "Delete a custom template owned by the user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_room_users",
    "display_name": "List Room Users",
    "category": "Users",
    "description": "List the members and guests of a room.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

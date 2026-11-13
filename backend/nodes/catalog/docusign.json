@@ -22,84 +22,99 @@
    "display_name": "Get Account",
    "category": "Account",
    "description": "Read the connected eSignature account settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": "List Templates",
    "category": "Templates",
    "description": "List reusable templates in the connected account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template",
    "display_name": "Get Template",
    "category": "Templates",
    "description": "Get a template's details and recipient roles.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_from_template",
    "display_name": "Send From Template",
    "category": "Envelopes",
    "description": "Create a draft or send an envelope from a reusable template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_document",
    "display_name": "Send Document for Signature",
    "category": "Envelopes",
    "description": "Create a draft or send a PDF with an anchor-positioned signature field.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_envelope",
    "display_name": "Get Envelope",
    "category": "Envelopes",
    "description": "Read the current envelope status and details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_envelopes",
    "display_name": "List Recent Envelopes",
    "category": "Envelopes",
    "description": "List envelopes changed since an ISO 8601 timestamp.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_recipients",
    "display_name": "List Recipients",
    "category": "Envelopes",
    "description": "Read signer and recipient status for an envelope.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_documents",
    "display_name": "List Envelope Documents",
    "category": "Documents",
    "description": "List documents and certificates attached to an envelope.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "download_document",
    "display_name": "Download Signed Document",
    "category": "Documents",
    "description": "Download a signed PDF as a file for downstream workflow steps.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "void_envelope",
    "display_name": "Void Envelope",
    "category": "Envelopes",
    "description": "Void an in-progress envelope and notify its recipients of the reason.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_event",
    "display_name": "On Envelope or Recipient Event",
    "category": "Triggers",
    "description": "Start a workflow for envelope or recipient activity across the connected account.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "docusign_oauth"
+   ]
   }
  ],
  "agent_tool_provider": true,

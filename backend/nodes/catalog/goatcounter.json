@@ -27,35 +27,40 @@
    "display_name": "Check Protected Site Catalog and Origin Witness",
    "category": "Connection",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sites",
    "display_name": "List Accessible Site Metadata",
    "category": "Sites",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site",
    "display_name": "Read Selected Site Metadata",
    "category": "Sites",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_total_counts",
    "display_name": "Read Aggregated Visitor Totals",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_hits_counts",
    "display_name": "Read One Page of Path Count Metadata",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

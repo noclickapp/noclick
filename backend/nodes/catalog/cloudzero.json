@@ -22,42 +22,48 @@
    "display_name": "Check Dimensions Read Access",
    "category": "Connection",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dimensions",
    "display_name": "List Available Dimensions",
    "category": "Dimensions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dimension",
    "display_name": "Read One Dimension Metadata",
    "category": "Dimensions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_costs",
    "display_name": "Read One Cost or Usage Page",
    "category": "Costs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_views",
    "display_name": "List Saved View Metadata",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_view",
    "display_name": "Read Saved View Metadata",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

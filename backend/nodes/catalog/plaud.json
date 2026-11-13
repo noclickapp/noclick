@@ -49,91 +49,104 @@
    "display_name": null,
    "category": null,
    "description": "Read the workspace belonging to the supplied US workspace token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_members",
    "display_name": null,
    "category": null,
    "description": "Read one page of members, including inactive members.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_file_changes",
    "display_name": null,
    "category": null,
    "description": "Read one page of changed recordings; retain next_checkpoint to resume.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file",
    "display_name": null,
    "category": null,
    "description": "Read recording metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file_transcript",
    "display_name": null,
    "category": null,
    "description": "Read the recording's speaker-labelled transcript.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file_summaries",
    "display_name": null,
    "category": null,
    "description": "Read all generated summaries for a recording.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file_audio",
    "display_name": null,
    "category": null,
    "description": "Get the expiring audio URL, without downloading the audio.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_device_binding",
    "display_name": null,
    "category": null,
    "description": "Read remote device binding and app history; this does not prove ownership.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bind_device",
    "display_name": null,
    "category": null,
    "description": "Register a device/owner association in the Plaud cloud registry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unbind_device",
    "display_name": null,
    "category": null,
    "description": "Remove the cloud binding. Also call depair(clear: true) in the device SDK to clear the local BLE binding.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_presigned_urls",
    "display_name": null,
    "category": null,
    "description": "Generate multipart upload URLs. Upload the raw chunks separately and keep each ETag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "complete_upload",
    "display_name": null,
    "category": null,
    "description": "Finalize previously uploaded parts. The returned download URL lasts 24 hours.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_recording",
    "display_name": "On New or Updated Recording",
    "category": "Triggers",
    "description": "Watch the workspace change feed; existing recordings are baselined when armed.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

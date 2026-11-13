@@ -25,168 +25,198 @@
    "display_name": "On Order Event",
    "category": "Triggers",
    "description": "Start a workflow when an inspection order is created, updated or reaches a milestone.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "isn_api_key"
+   ]
   },
   {
    "name": "on_order_status_changed",
    "display_name": "On Order Status Changed",
    "category": "Triggers",
    "description": "Start a workflow when an order changes status or is rescheduled.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "isn_api_key"
+   ]
   },
   {
    "name": "get_current_user",
    "display_name": null,
    "category": null,
    "description": "Read the current user for this ISN account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_orders",
    "display_name": null,
    "category": null,
    "description": "List inspection orders within the requested date range.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_order",
    "display_name": null,
    "category": null,
    "description": "Read one inspection order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_order",
    "display_name": null,
    "category": null,
    "description": "Create an inspection order; scheduling and configured account automations may run.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_order",
    "display_name": null,
    "category": null,
    "description": "Update selected order fields; omitted fields are not sent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_order",
    "display_name": null,
    "category": null,
    "description": "Cancel an inspection order; account cancellation automations may run.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_order_notes",
    "display_name": null,
    "category": null,
    "description": "List notes for an inspection order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_order_types",
    "display_name": null,
    "category": null,
    "description": "List inspection types.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_clients",
    "display_name": null,
    "category": null,
    "description": "List account clients.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_client",
    "display_name": null,
    "category": null,
    "description": "Read a client.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_agents",
    "display_name": null,
    "category": null,
    "description": "List real estate agents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_agent",
    "display_name": null,
    "category": null,
    "description": "Read a real estate agent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": null,
    "category": null,
    "description": "List account contacts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": null,
    "category": null,
    "description": "Read a contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_services",
    "display_name": null,
    "category": null,
    "description": "List inspection services.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service",
    "display_name": null,
    "category": null,
    "description": "Read an inspection service.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_service",
    "display_name": null,
    "category": null,
    "description": "Create an inspection service.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_service",
    "display_name": null,
    "category": null,
    "description": "Update selected service fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_service",
    "display_name": null,
    "category": null,
    "description": "Delete a service; provider acknowledgment does not independently verify absence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_calendar_events",
    "display_name": null,
    "category": null,
    "description": "List calendar events within a date range.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": null,
    "category": null,
    "description": "List users in the office.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_packages",
    "display_name": null,
    "category": null,
    "description": "List service packages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

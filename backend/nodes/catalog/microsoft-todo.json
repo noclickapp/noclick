@@ -22,70 +22,80 @@
    "display_name": "List Task Lists",
    "category": "Task List",
    "description": "List all task lists",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task_list",
    "display_name": "Create Task List",
    "category": "Task List",
    "description": "Create a new task list",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task_list",
    "display_name": "Get Task List",
    "category": "Task List",
    "description": "Get a specific task list",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task_list",
    "display_name": "Update Task List",
    "category": "Task List",
    "description": "Update a task list",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task_list",
    "display_name": "Delete Task List",
    "category": "Task List",
    "description": "Delete a task list",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tasks",
    "display_name": "List Tasks",
    "category": "Task",
    "description": "List tasks in a task list",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task",
    "display_name": "Create Task",
    "category": "Task",
    "description": "Create a new task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task",
    "display_name": "Get Task",
    "category": "Task",
    "description": "Get a specific task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task",
    "display_name": "Update Task",
    "category": "Task",
    "description": "Update a task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task",
    "display_name": "Delete Task",
    "category": "Task",
    "description": "Delete a task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

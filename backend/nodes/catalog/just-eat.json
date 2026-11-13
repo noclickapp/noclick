@@ -29,84 +29,99 @@
    "display_name": "Estimate Delivery",
    "category": "Delivery",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_delivery",
    "display_name": "Create Delivery",
    "category": "Delivery",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_delivery_status",
    "display_name": "Get Delivery Status",
    "category": "Delivery",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_delivery",
    "display_name": "Cancel Delivery",
    "category": "Delivery",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_collect_points",
    "display_name": "List Collection Points",
    "category": "Delivery",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "request_assistance",
    "display_name": "Request Delivery Assistance",
    "category": "Delivery",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_notification_config",
    "display_name": "Get Notification Configuration",
    "category": "Delivery",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_notification_config",
    "display_name": "Create Notification Configuration",
    "category": "Delivery",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_notification_config",
    "display_name": "Update Notification Configuration",
    "category": "Delivery",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_notification_config",
    "display_name": "Delete Notification Configuration",
    "category": "Delivery",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "simulate_delivery",
    "display_name": "Simulate Delivery",
    "category": "Delivery",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_delivery_event",
    "display_name": "On Delivery Event",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "just_eat_token"
+   ]
   }
  ],
  "agent_tool_provider": true,

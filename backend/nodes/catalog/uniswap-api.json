@@ -22,70 +22,80 @@
    "display_name": null,
    "category": null,
    "description": "Check swap approvals",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_permissions",
    "display_name": null,
    "category": null,
    "description": "Check token KYC permissions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_quote",
    "display_name": null,
    "category": null,
    "description": "Get a quote",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_order",
    "display_name": null,
    "category": null,
    "description": "Create a gasless order",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_orders",
    "display_name": null,
    "category": null,
    "description": "Get gasless order status",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_swap",
    "display_name": null,
    "category": null,
    "description": "Create swap calldata",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_swaps",
    "display_name": null,
    "category": null,
    "description": "Get swap status",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_swappable_tokens",
    "display_name": null,
    "category": null,
    "description": "Get bridgable tokens",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_supported_chains",
    "display_name": null,
    "category": null,
    "description": "Get supported chains",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tokens",
    "display_name": null,
    "category": null,
    "description": "Get tokens",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

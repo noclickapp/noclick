@@ -27,28 +27,32 @@
    "display_name": null,
    "category": null,
    "description": "Discover accepted inputs and the subset required to start this crew.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_execution",
    "display_name": null,
    "category": null,
    "description": "Start one crew execution and return its kickoff ID for later polling.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_status",
    "display_name": null,
    "category": null,
    "description": "Read running, completed or error status and available execution results.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_execution",
    "display_name": null,
    "category": null,
    "description": "Resume a paused task with approval or revision feedback.\n\n    Send the original webhook URLs again: CrewAI does not carry them over.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

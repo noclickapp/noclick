@@ -22,679 +22,800 @@
    "display_name": "Send Email Message",
    "category": "Email Message",
    "description": "Send an email",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "read_inbox_emails",
    "display_name": "Read Inbox Emails",
    "category": "Email Message",
    "description": "Read emails from inbox",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reply_to_email_message",
    "display_name": "Reply to Email Message",
    "category": "Email Message",
    "description": "Reply to an email",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "forward_email_message",
    "display_name": "Forward Email Message",
    "category": "Email Message",
    "description": "Forward an email",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email_message",
    "display_name": "Get Email Message",
    "category": "Email Message",
    "description": "Get a specific email by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_email_as_read_unread",
    "display_name": "Mark Email As Read Unread",
    "category": "Email Message",
    "description": "Mark an email as read or unread",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_email_message",
    "display_name": "Delete Email Message",
    "category": "Email Message",
    "description": "Delete an email",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_email_to_folder",
    "display_name": "Move Email to Folder",
    "category": "Email Message",
    "description": "Move an email to a different folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_email_draft",
    "display_name": "Create Email Draft",
    "category": "Email Message",
    "description": "Create an email draft",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_mail_folders",
    "display_name": "List Mail Folders",
    "category": "Mail Folder",
    "description": "List all mail folders",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_mail_folder",
    "display_name": "Create Mail Folder",
    "category": "Mail Folder",
    "description": "Create a new mail folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email_attachments",
    "display_name": "Get Email Attachments",
    "category": "Email Message",
    "description": "Get attachments from an email",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_mailbox_settings",
    "display_name": "Get Mailbox Settings",
    "category": "Mailbox",
    "description": "Get mailbox settings (auto-reply, timezone, etc.)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_auto_reply_settings",
    "display_name": "Update Auto Reply Settings",
    "category": "Mailbox",
    "description": "Update auto-reply (out of office) settings",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_message_to_folder",
    "display_name": "Copy Message to Folder",
    "category": "Email Message",
    "description": "Configuration for copying a message to another folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_email_message_properties",
    "display_name": "Update Email Message Properties",
    "category": "Email Message",
    "description": "Configuration for updating message properties",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_email_draft",
    "display_name": "Send Email Draft",
    "category": "Email Message",
    "description": "Configuration for sending an existing draft",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_reply_draft",
    "display_name": "Create Reply Draft",
    "category": "Email Message",
    "description": "Configuration for creating a reply draft",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_reply_all_draft",
    "display_name": "Create Reply All Draft",
    "category": "Email Message",
    "description": "Configuration for creating a reply-all draft",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_forward_draft",
    "display_name": "Create Forward Draft",
    "category": "Email Message",
    "description": "Configuration for creating a forward draft",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_attachment_to_message",
    "display_name": "Add Attachment to Message",
    "category": "Email Message",
    "description": "Configuration for adding an attachment to a message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_attachment_from_message",
    "display_name": "Delete Attachment from Message",
    "category": "Email Message",
    "description": "Configuration for deleting an attachment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_mail_folder",
    "display_name": "Update Mail Folder",
    "category": "Mail Folder",
    "description": "Configuration for updating a folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_mail_folder",
    "display_name": "Delete Mail Folder",
    "category": "Mail Folder",
    "description": "Configuration for deleting a folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_mail_folder",
    "display_name": "Move Mail Folder",
    "category": "Mail Folder",
    "description": "Configuration for moving a folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_mail_folder",
    "display_name": "Copy Mail Folder",
    "category": "Mail Folder",
    "description": "Configuration for copying a folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_inbox_rules",
    "display_name": "List Inbox Rules",
    "category": "Inbox Rule",
    "description": "Configuration for listing inbox rules",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_inbox_rule",
    "display_name": "Get Inbox Rule",
    "category": "Inbox Rule",
    "description": "Configuration for getting a specific rule",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_inbox_rule",
    "display_name": "Create Inbox Rule",
    "category": "Inbox Rule",
    "description": "Configuration for creating an inbox rule",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_inbox_rule",
    "display_name": "Update Inbox Rule",
    "category": "Inbox Rule",
    "description": "Configuration for updating an inbox rule",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_inbox_rule",
    "display_name": "Delete Inbox Rule",
    "category": "Inbox Rule",
    "description": "Configuration for deleting an inbox rule",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_message_categories",
    "display_name": "List Message Categories",
    "category": "Message Category",
    "description": "Configuration for listing master categories",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message_category",
    "display_name": "Get Message Category",
    "category": "Message Category",
    "description": "Configuration for getting a specific category",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_message_category",
    "display_name": "Create Message Category",
    "category": "Message Category",
    "description": "Configuration for creating a category",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_message_category",
    "display_name": "Update Message Category",
    "category": "Message Category",
    "description": "Configuration for updating a category",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_message_category",
    "display_name": "Delete Message Category",
    "category": "Message Category",
    "description": "Configuration for deleting a category",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_email_mime_content",
    "display_name": "Get Email Mime Content",
    "category": "Email Message",
    "description": "Configuration for getting MIME content",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_mime_message",
    "display_name": "Send Mime Message",
    "category": "Email Message",
    "description": "Configuration for sending MIME message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_calendar_events",
    "display_name": "List Calendar Events",
    "category": "Calendar Event",
    "description": "Configuration for listing calendar events",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_calendar_event",
    "display_name": "Create Calendar Event",
    "category": "Calendar Event",
    "description": "Configuration for creating a calendar event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_calendar_event",
    "display_name": "Get Calendar Event",
    "category": "Calendar Event",
    "description": "Configuration for getting a calendar event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_calendar_event",
    "display_name": "Update Calendar Event",
    "category": "Calendar Event",
    "description": "Configuration for updating a calendar event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_calendar_event",
    "display_name": "Delete Calendar Event",
    "category": "Calendar Event",
    "description": "Configuration for deleting a calendar event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_calendar_event",
    "display_name": "Cancel Calendar Event",
    "category": "Calendar Event",
    "description": "Configuration for canceling a calendar event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "accept_calendar_event_invitation",
    "display_name": "Accept Calendar Event Invitation",
    "category": "Calendar Event",
    "description": "Configuration for accepting an event invitation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "decline_calendar_event_invitation",
    "display_name": "Decline Calendar Event Invitation",
    "category": "Calendar Event",
    "description": "Configuration for declining an event invitation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tentatively_accept_calendar_event_invitation",
    "display_name": "Tentatively Accept Calendar Event Invitation",
    "category": "Calendar Event",
    "description": "Configuration for tentatively accepting an event invitation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "dismiss_event_reminder",
    "display_name": "Dismiss Event Reminder",
    "category": "Calendar Event",
    "description": "Configuration for dismissing an event reminder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "snooze_event_reminder",
    "display_name": "Snooze Event Reminder",
    "category": "Calendar Event",
    "description": "Configuration for snoozing an event reminder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_available_meeting_times",
    "display_name": "Find Available Meeting Times",
    "category": "Calendar Event",
    "description": "Configuration for finding available meeting times",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_free_busy_schedule",
    "display_name": "Get Free Busy Schedule",
    "category": "Calendar Event",
    "description": "Configuration for getting free/busy schedule",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_recurring_event_instances",
    "display_name": "List Recurring Event Instances",
    "category": "Calendar Event",
    "description": "Configuration for listing recurring event instances",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_calendars",
    "display_name": "List Calendars",
    "category": "Calendar",
    "description": "Configuration for listing calendars",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_calendar_groups",
    "display_name": "List Calendar Groups",
    "category": "Calendar",
    "description": "Configuration for listing calendar groups",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_available_room_lists",
    "display_name": "Get Available Room Lists",
    "category": "Room",
    "description": "Configuration for getting room lists",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": "List Contacts",
    "category": "Contact",
    "description": "Configuration for listing contacts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact_person",
    "display_name": "Create Contact Person",
    "category": "Contact",
    "description": "Configuration for creating a contact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact_person",
    "display_name": "Get Contact Person",
    "category": "Contact",
    "description": "Configuration for getting a contact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact_person",
    "display_name": "Update Contact Person",
    "category": "Contact",
    "description": "Configuration for updating a contact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact_person",
    "display_name": "Delete Contact Person",
    "category": "Contact",
    "description": "Configuration for deleting a contact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contact_folders",
    "display_name": "List Contact Folders",
    "category": "Contact Folder",
    "description": "Configuration for listing contact folders",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact_folder",
    "display_name": "Create Contact Folder",
    "category": "Contact Folder",
    "description": "Configuration for creating a contact folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact_folder",
    "display_name": "Get Contact Folder",
    "category": "Contact Folder",
    "description": "Configuration for getting a contact folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact_folder",
    "display_name": "Update Contact Folder",
    "category": "Contact Folder",
    "description": "Configuration for updating a contact folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact_folder",
    "display_name": "Delete Contact Folder",
    "category": "Contact Folder",
    "description": "Configuration for deleting a contact folder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_calendar",
    "display_name": "Get Calendar",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_calendar",
    "display_name": "Create Calendar",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_calendar",
    "display_name": "Update Calendar",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_calendar",
    "display_name": "Delete Calendar",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_calendar_view",
    "display_name": "Get Calendar View",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "forward_calendar_event",
    "display_name": "Forward Calendar Event",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_event_attachments",
    "display_name": "List Event Attachments",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_event_attachment",
    "display_name": "Add Event Attachment",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event_attachment",
    "display_name": "Get Event Attachment",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_event_attachment",
    "display_name": "Delete Event Attachment",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_calendar_view_delta",
    "display_name": "Get Calendar View Delta",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_calendar_group",
    "display_name": "Create Calendar Group",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_calendar_group",
    "display_name": "Get Calendar Group",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_calendar_group",
    "display_name": "Update Calendar Group",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_calendar_group",
    "display_name": "Delete Calendar Group",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_calendars_in_group",
    "display_name": "List Calendars In Group",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_calendar_in_group",
    "display_name": "Create Calendar In Group",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_calendar_permissions",
    "display_name": "List Calendar Permissions",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_calendar_permission",
    "display_name": "Get Calendar Permission",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_calendar_permission",
    "display_name": "Create Calendar Permission",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_calendar_permission",
    "display_name": "Update Calendar Permission",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_calendar_permission",
    "display_name": "Delete Calendar Permission",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "allowed_calendar_sharing_roles",
    "display_name": "Allowed Calendar Sharing Roles",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reminder_view",
    "display_name": "Reminder View",
    "category": "Calendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_calendar_event_created",
    "display_name": "On Calendar Event Created",
    "category": null,
    "description": "Fire when a calendar event is created.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "microsoft_outlook_oauth"
+   ]
   },
   {
    "name": "on_calendar_event_updated",
    "display_name": "On Calendar Event Updated",
    "category": null,
    "description": "Fire when a calendar event is updated.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "microsoft_outlook_oauth"
+   ]
   },
   {
    "name": "on_calendar_event_deleted",
    "display_name": "On Calendar Event Deleted",
    "category": null,
    "description": "Fire when a calendar event is deleted.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "microsoft_outlook_oauth"
+   ]
   },
   {
    "name": "on_calendar_event_change",
    "display_name": "On Calendar Event Change (Any)",
    "category": null,
    "description": "Fire on any calendar event change (created / updated / deleted).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "microsoft_outlook_oauth"
+   ]
   },
   {
    "name": "on_email_received",
    "display_name": "On Email Received",
    "category": null,
    "description": "Fire when a new email arrives in the watched folder.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "microsoft_outlook_oauth"
+   ]
   },
   {
    "name": "on_email_updated",
    "display_name": "On Email Updated",
    "category": null,
    "description": "Fire when an email is updated (read/unread, flag, category, etc.).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "microsoft_outlook_oauth"
+   ]
   },
   {
    "name": "on_email_deleted",
    "display_name": "On Email Deleted",
    "category": null,
    "description": "Fire when an email is deleted or moved to Deleted Items.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "microsoft_outlook_oauth"
+   ]
   },
   {
    "name": "on_email_change",
    "display_name": "On Email Change (Any)",
    "category": null,
    "description": "Fire on any email change in the watched folder (received / updated / deleted).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "microsoft_outlook_oauth"
+   ]
   }
  ],
  "agent_tool_provider": true,

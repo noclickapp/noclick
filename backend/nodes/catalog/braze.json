@@ -22,1050 +22,1200 @@
    "display_name": "Delete catalog",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_catalogs",
    "display_name": "List catalogs",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_create_catalog",
    "display_name": "Create catalog",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_delete_multiple_catalog_items",
    "display_name": "Delete multiple catalog items",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_edit_multiple_catalog_items",
    "display_name": "Edit multiple catalog items",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_create_multiple_catalog_items",
    "display_name": "Create multiple catalog items",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_replace_catalog_items",
    "display_name": "Replace catalog items",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_delete_a_catalog_item",
    "display_name": "Delete a catalog item",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_list_catalog_item_details",
    "display_name": "List catalog item details",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_list_multiple_catalog_item_details",
    "display_name": "List multiple catalog item details",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_edit_catalog_item",
    "display_name": "Edit catalog item",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_create_catalog_item",
    "display_name": "Create catalog item",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_replace_catalog_item",
    "display_name": "Replace catalog item",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_delete_catalog_field",
    "display_name": "Delete catalog field",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_create_catalog_fields",
    "display_name": "Create catalog fields",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_delete_catalog_selection",
    "display_name": "Delete catalog selection",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "catalogs_create_catalog_selection",
    "display_name": "Create catalog selection",
    "category": "Catalogs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "apps_update_push_credentials",
    "display_name": "Update push credentials",
    "category": "Apps",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_integrations",
    "display_name": "List integrations",
    "category": "Cdi",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cdi_list_job_sync_status",
    "display_name": "List job sync status",
    "category": "Cdi",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cdi_trigger_a_sync",
    "display_name": "Trigger a sync",
    "category": "Cdi",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_query_hard_bounced_emails",
    "display_name": "Query hard bounced emails",
    "category": "Email",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_query_list_of_unsubscribed_email_addresses",
    "display_name": "Query list of unsubscribed email addresses",
    "category": "Email",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_change_email_subscription_status",
    "display_name": "Change email subscription status",
    "category": "Email",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_remove_hard_bounced_emails",
    "display_name": "Remove hard bounced emails",
    "category": "Email",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_remove_email_addresses_from_spam_list",
    "display_name": "Remove email addresses from spam list",
    "category": "Email",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_blocklist_emails",
    "display_name": "Blocklist emails",
    "category": "Email",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_blacklist_emails",
    "display_name": "Blacklist emails",
    "category": "Email",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_campaign_analytics",
    "display_name": "Export campaign analytics",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_campaign_details",
    "display_name": "Export campaign details",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_campaigns",
    "display_name": "Export campaigns list",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_send_analytics",
    "display_name": "Export send analytics",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_canvas_data_series_analytics",
    "display_name": "Export Canvas data series analytics",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_canvas_data_summary_analytics",
    "display_name": "Export Canvas data summary analytics",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_canvas_details",
    "display_name": "Export Canvas details",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_canvases",
    "display_name": "Export Canvas list",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_custom_events",
    "display_name": "Export custom events",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_custom_events_analytics",
    "display_name": "Export custom events analytics",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_custom_events_list",
    "display_name": "Export custom events list",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_daily_active_users_by_date",
    "display_name": "Export daily active users by date",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_daily_new_users_by_date",
    "display_name": "Export daily new users by date",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_kpis_for_daily_app_uninstalls_by_date",
    "display_name": "Export KPIs for daily app uninstalls by date",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_monthly_active_users_for_last_30_days",
    "display_name": "Export monthly active users for last 30 days",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_product_ids",
    "display_name": "Export product IDs",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_revenue_data_by_time",
    "display_name": "Export revenue data by time",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_number_of_purchases",
    "display_name": "Export number of purchases",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_segment_list",
    "display_name": "Export segment list",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_segment_details",
    "display_name": "Export segment details",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_segment_analytics",
    "display_name": "Export segment analytics",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_cancel_exports_by_segment",
    "display_name": "Cancel exports by segment",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_app_session_by_time",
    "display_name": "Export app session by time",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_user_profile_by_identifier",
    "display_name": "Export user profile by identifier",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_user_profile_by_segment",
    "display_name": "Export user profile by segment",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_user_profile_by_global_control_group",
    "display_name": "Export user profile by Global Control Group",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_export_custom_attributes",
    "display_name": "Export custom attributes",
    "category": "Export",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "media_library_upload_an_asset_to_the_media_library",
    "display_name": "Upload an asset to the media library",
    "category": "Media Library",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "media_library_replace_an_asset_in_the_media_library",
    "display_name": "Replace an asset in the media library",
    "category": "Media Library",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_duplicate_campaigns_using_the_api",
    "display_name": "Duplicate campaigns using the API",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_duplicate_canvases_using_the_api",
    "display_name": "Duplicate Canvases using the API",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_start_live_activity",
    "display_name": "Start Live Activity",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_update_live_activity",
    "display_name": "Update Live Activity",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_list_upcoming_scheduled_campaigns_and_canvases",
    "display_name": "List upcoming scheduled campaigns and Canvases",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_create_scheduled_messages",
    "display_name": "Create scheduled messages",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_delete_scheduled_api_triggered_campaigns",
    "display_name": "Delete scheduled API-triggered campaigns",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_delete_scheduled_api_triggered_canvases",
    "display_name": "Delete scheduled API-triggered Canvases",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_delete_scheduled_messages",
    "display_name": "Delete scheduled messages",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_schedule_api_triggered_campaigns",
    "display_name": "Schedule API-triggered campaigns",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_schedule_api_triggered_canvases",
    "display_name": "Schedule API-triggered Canvases",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_update_scheduled_api_triggered_campaigns",
    "display_name": "Update scheduled API-triggered campaigns",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_update_scheduled_api_triggered_canvases",
    "display_name": "Update scheduled API-triggered Canvases",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_update_scheduled_messages",
    "display_name": "Update scheduled messages",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_create_send_ids",
    "display_name": "Create send IDs",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_send_campaign_messages_using_api_triggered_delivery",
    "display_name": "Send campaign messages using API-triggered delivery",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_send_canvas_messages_using_api_triggered_delivery",
    "display_name": "Send Canvas messages using API-triggered delivery",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_send_messages_immediately_using_the_api_only",
    "display_name": "Send messages immediately using the API only",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "messaging_send_transactional_emails_using_api_triggered_delivery",
    "display_name": "Send transactional emails using API-triggered delivery",
    "category": "Messaging",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "preference_center_generate_preference_center_url",
    "display_name": "Generate preference center URL",
    "category": "Preference Center",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "preference_center_list_preference_centers",
    "display_name": "List preference centers",
    "category": "Preference Center",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "preference_center_view_details_for_preference_center",
    "display_name": "View details for preference center",
    "category": "Preference Center",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "preference_center_create_preference_center",
    "display_name": "Create preference center",
    "category": "Preference Center",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "preference_center_update_preference_center",
    "display_name": "Update preference center",
    "category": "Preference Center",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scim_remove_dashboard_user_account",
    "display_name": "Remove dashboard user account",
    "category": "Scim",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scim_look_up_an_existing_dashboard_user_account_by_resource_id",
    "display_name": "Look up an existing dashboard user account by resource ID",
    "category": "Scim",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scim_create_new_dashboard_user_account",
    "display_name": "Create new dashboard user account",
    "category": "Scim",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scim_update_dashboard_user_account",
    "display_name": "Update dashboard user account",
    "category": "Scim",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "sdk_authentication_create_sdk_authentication_key",
    "display_name": "Create SDK Authentication key",
    "category": "Sdk Authentication",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "sdk_authentication_list_sdk_authentication_keys",
    "display_name": "List SDK Authentication keys",
    "category": "Sdk Authentication",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "sdk_authentication_set_primary_sdk_authentication_key",
    "display_name": "Set primary SDK Authentication key",
    "category": "Sdk Authentication",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "sdk_authentication_delete_sdk_authentication_key",
    "display_name": "Delete SDK Authentication key",
    "category": "Sdk Authentication",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "sms_query_invalid_phone_numbers",
    "display_name": "Query invalid phone numbers",
    "category": "Sms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "sms_remove_invalid_phone_numbers",
    "display_name": "Remove invalid phone numbers",
    "category": "Sms",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "subscription_groups_list_users_subscription_groups",
    "display_name": "List user’s subscription groups",
    "category": "Subscription Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "subscription_groups_list_users_subscription_group_status",
    "display_name": "List user’s subscription group status",
    "category": "Subscription Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "subscription_groups_update_users_subscription_group_status",
    "display_name": "Update user’s subscription group status",
    "category": "Subscription Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "subscription_groups_update_users_subscription_group_status_v2",
    "display_name": "Update user’s subscription group status (V2)",
    "category": "Subscription Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "templates_list_available_content_blocks",
    "display_name": "List available Content Blocks",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "templates_see_content_block_information",
    "display_name": "See Content Block information",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "templates_create_content_block",
    "display_name": "Create Content Block",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "templates_update_content_block",
    "display_name": "Update Content Block",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_email_templates",
    "display_name": "List available email templates",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "templates_see_email_template_information",
    "display_name": "See email template information",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "templates_create_email_template",
    "display_name": "Create email template",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "templates_update_existing_email_templates",
    "display_name": "Update existing email templates",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_view_all_translations_for_a_campaign",
    "display_name": "View all translations for a campaign",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_update_translation_in_a_campaign",
    "display_name": "Update translation in a campaign",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_view_default_source_values_for_a_campaigns_translation_tags",
    "display_name": "View default source values for a campaign’s translation tags",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_view_default_source_values_for_a_content_blocks_translation_tags",
    "display_name": "View default source values for a Content Block’s translation tags",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_view_all_translations_for_a_content_block",
    "display_name": "View all translations for a Content Block",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_update_translation_in_a_content_block",
    "display_name": "Update translation in a Content Block",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_view_translation_for_a_canvas",
    "display_name": "View translation for a Canvas",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_update_translation_in_a_canvas",
    "display_name": "Update translation in a Canvas",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_view_default_source_values_for_a_canvass_translation_tags",
    "display_name": "View default source values for a canvas’s translation tags",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_view_the_source_translations_for_an_email_template",
    "display_name": "View the source translations for an email template",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_view_a_specific_translation_and_locale_for_email_template_endpoint",
    "display_name": "View a specific translation and locale for email template endpoint",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_view_all_translations_and_locales_for_an_email_template",
    "display_name": "View all translations and locales for an email template",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_update_translations_for_an_email_template",
    "display_name": "Update translations for an email template",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_view_source_translations_for_a_webhook_template",
    "display_name": "View source translations for a webhook template",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_view_translations_for_a_webhook_template",
    "display_name": "View translations for a webhook template",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translations_update_translations_for_a_webhook_template",
    "display_name": "Update translations for a webhook template",
    "category": "Translations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_data_create_new_user_alias",
    "display_name": "Create new user alias",
    "category": "User Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_data_update_user_alias",
    "display_name": "Update user alias",
    "category": "User Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_data_identify_users",
    "display_name": "Identify users",
    "category": "User Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "track_users",
    "display_name": "Create and update users",
    "category": "User Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_data_create_and_update_users_bulk",
    "display_name": "Create and update users (bulk)",
    "category": "User Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_data_create_and_update_users_synchronous",
    "display_name": "Create and update users (synchronous)",
    "category": "User Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_data_look_up_request_processing_status",
    "display_name": "Look up request processing status",
    "category": "User Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_data_delete_users",
    "display_name": "Delete users",
    "category": "User Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_data_merge_users",
    "display_name": "Merge users",
    "category": "User Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_data_rename_external_id",
    "display_name": "Rename external ID",
    "category": "User Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "user_data_remove_external_id",
    "display_name": "Remove external ID",
    "category": "User Data",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_list_data_object_types",
    "display_name": "List data object types",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_get_data_object_type",
    "display_name": "Get data object type",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_list_user_relationship_types",
    "display_name": "List user relationship types",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_list_object_relationship_types",
    "display_name": "List object relationship types",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_list_data_objects",
    "display_name": "List data objects",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_get_data_object",
    "display_name": "Get data object",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_create_data_object",
    "display_name": "Create data object",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_replace_data_object",
    "display_name": "Replace data object",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_update_data_object",
    "display_name": "Update data object",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_delete_data_object",
    "display_name": "Delete data object",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_list_object_relationships",
    "display_name": "List object relationships",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_create_object_relationship",
    "display_name": "Create object relationship",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_replace_object_relationship",
    "display_name": "Replace object relationship",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_update_object_relationship",
    "display_name": "Update object relationship",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_delete_object_relationship",
    "display_name": "Delete object relationship",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_list_user_relationships",
    "display_name": "List user relationships",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_create_user_relationship",
    "display_name": "Create user relationship",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_replace_user_relationship",
    "display_name": "Replace user relationship",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_update_user_relationship",
    "display_name": "Update user relationship",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_objects_delete_user_relationship",
    "display_name": "Delete user relationship",
    "category": "Data Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

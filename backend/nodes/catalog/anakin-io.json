@@ -34,175 +34,200 @@
    "display_name": null,
    "category": null,
    "description": "Submit a URL to scrape. Returns a job ID — poll GET /url-scraper/{jobId} (with a delay in between) to fetch the completed markdown/JSON.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scrape_url_sync",
    "display_name": null,
    "category": null,
    "description": "Scrapes a single URL and returns the result in the same response, so no polling is needed. Takes the same body as POST /url-scraper. If the scrape takes longer than about 90 seconds, the response is a 202 with an `id` and a non-terminal `status`; fetch the result later with GET /url-scraper/{jobId}. A failed scrape also returns 200 with `status: \"failed\"`, so check `status`. Limited to 20 requests per minute.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_scrape_result",
    "display_name": null,
    "category": null,
    "description": "Fetch the status and results of a scrape job started by Extract Website Data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search",
    "display_name": null,
    "category": null,
    "description": "AI-powered web search with citations. Synchronous — returns immediately, no polling needed. Costs 3 credits per call.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_research",
    "display_name": null,
    "category": null,
    "description": "Start a multi-stage AI research pipeline: search, scrape citations, extract structured data. Returns a job ID — poll GET /agentic-search/{jobId} (with a delay in between, this can take minutes) to fetch the report. Costs 10 credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_research_result",
    "display_name": null,
    "category": null,
    "description": "Fetch the status and results of an agentic search job started by Start Agentic Search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "map_site",
    "display_name": null,
    "category": null,
    "description": "Discover all reachable URLs under a given site — internal links, external links, and counts. Submit a URL to map. Returns a job ID — poll GET /map/{jobId} (with a delay in between) to fetch the completed link list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_map_result",
    "display_name": null,
    "category": null,
    "description": "Fetch the status and results of a map job started by Map a Site's URLs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "crawl_site",
    "display_name": null,
    "category": null,
    "description": "Bulk-fetch markdown across a site — catalog ingestion, site-wide RAG corpora. Submit a URL to crawl. Returns a job ID — poll GET /crawl/{jobId} (with a delay in between) to fetch the completed pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_crawl_result",
    "display_name": null,
    "category": null,
    "description": "Fetch the status and results of a crawl job started by Crawl a Site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "discover_wire_actions",
    "display_name": null,
    "category": null,
    "description": "Find Wire actions for a task from a natural-language intent. Wire is a catalog of pre-built automation actions across hundreds of websites (Amazon, Walmart, LinkedIn, Airbnb, Zillow, and others) — read actions extract data, write actions perform interactions. Many read actions need no authentication. Returns ranked candidate actions, each with its action_id, type (read/write), required/optional params, credit cost, and whether auth is needed. Run a returned action with Run a Wire Action.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_wire_catalogs",
    "display_name": null,
    "category": null,
    "description": "List every website supported by Wire and its action count.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_wire_catalog",
    "display_name": null,
    "category": null,
    "description": "Get one catalog's full action list with exact parameter schemas, each action's type (read/write), auth mode (none/optional/required), and credit cost — plus the login fields for credentials-mode sites.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_wire_action",
    "display_name": null,
    "category": null,
    "description": "Run a Wire action by its action_id — either a READ action that extracts data (search listings, fetch a product's price/specs/reviews, read a profile) or a WRITE action that performs a state-changing interaction (submit a form, add to cart). The action's type, reported by Discover Wire Actions and Get a Wire Catalog, determines which kind it is. params must match that action's parameter schema; omit for actions that take none. Some actions complete synchronously and return their data inline in this same response; others return {status, job_id} — poll GET /wire/jobs/{jobId} for those. Does not execute payments or transfer funds; such actions are refused.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_wire_job",
    "display_name": null,
    "category": null,
    "description": "Fetch the status and result of an asynchronous Wire action job started by Run a Wire Action.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_wire_identities",
    "display_name": null,
    "category": null,
    "description": "List your saved Wire identities and their credentials. An identity is a named account on a site; each credential's id is the credential_id passed to Run a Wire Action for actions whose auth_mode is \"required\". Optionally filter by catalog_id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "build_wire_action",
    "display_name": null,
    "category": null,
    "description": "Request a brand-new Wire action for a website that isn't in the catalog yet. Describe the site (website_url) and what the action should do or extract (goal); Wire generates and auto-tests a scraper, then publishes it. Asynchronous (returns status \"pending\") and charges credits, refunded automatically if the build fails.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_monitor",
    "display_name": null,
    "category": null,
    "description": "Create a scheduled website monitor that checks a URL every intervalMinutes (min 15) and records a change when the content differs — optionally alerting a webhook or email. scope \"page\" (default) watches one URL; \"site\" crawls the site each run and tracks pages added/removed/changed; \"wire\" runs a Wire action each check and diffs its JSON. watchMode \"full_page\" (2 credits/check) compares the whole page; \"specific_data\" (3 credits/check) extracts only the fields in outputSchema with AI — ideal for price/stock/status tracking. aiMode (+1 credit/check) filters out trivial noise and summarizes real changes. Active-monitor caps per plan: Free 5, Pro 20, Scale 100.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_monitors",
    "display_name": null,
    "category": null,
    "description": "List your website monitors.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitor",
    "display_name": null,
    "category": null,
    "description": "Fetch one monitor's full configuration and status (next/last check time, active state, per-check credit cost, alert settings).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_monitor",
    "display_name": null,
    "category": null,
    "description": "Permanently remove a monitor and its change history. Irreversible.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitor_changes",
    "display_name": null,
    "category": null,
    "description": "Get the detected changes for a monitor — each entry records when the watched content differed from the previous check, with a diff/summary (and the AI change summary when aiMode is on).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_monitor",
    "display_name": null,
    "category": null,
    "description": "Stop scheduled checks for a monitor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_monitor",
    "display_name": null,
    "category": null,
    "description": "Restart scheduled checks for a paused monitor. May hit the plan's active-monitor cap.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_monitor",
    "display_name": null,
    "category": null,
    "description": "Trigger an immediate out-of-schedule check. Billed like a normal check.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

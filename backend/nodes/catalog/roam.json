@@ -22,140 +22,160 @@
    "display_name": null,
    "category": null,
    "description": "Inspect the connected principal, workspace and token grant; needs no scope.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_chats",
    "display_name": null,
    "category": null,
    "description": "List one page of accessible chats. Requires chat:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_message",
    "display_name": null,
    "category": null,
    "description": "Send a text message to one chat, group or set of DM recipients. Requires chat:send_message.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_message",
    "display_name": null,
    "category": null,
    "description": "Replace a message's text. Requires chat:send_message and edit access.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_message",
    "display_name": null,
    "category": null,
    "description": "Delete a message the connected principal can delete. Requires chat:send_message.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat_history",
    "display_name": null,
    "category": null,
    "description": "Read one page of messages in a chat. Requires chat:history.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_messages",
    "display_name": null,
    "category": null,
    "description": "Search one page of accessible messages. Requires chat:history.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_reaction",
    "display_name": null,
    "category": null,
    "description": "Add a message reaction. Requires chat:send_message and chat membership.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_reaction",
    "display_name": null,
    "category": null,
    "description": "Remove a message reaction. Requires chat:send_message.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": null,
    "category": null,
    "description": "List one page of workspace members. Requires user:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": null,
    "category": null,
    "description": "Get a principal by ID. Requires user:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_groups",
    "display_name": null,
    "category": null,
    "description": "List one page of visible groups. Requires group:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_group",
    "display_name": null,
    "category": null,
    "description": "Read a visible group's details. Requires group:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_group",
    "display_name": null,
    "category": null,
    "description": "Create a group with explicit initial members. Requires group:write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "join_group",
    "display_name": null,
    "category": null,
    "description": "Join a public group as the token owner. Requires group:write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_meetings",
    "display_name": null,
    "category": null,
    "description": "Search meeting transcripts and summaries using a personal token. Requires meetings:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_meetings",
    "display_name": null,
    "category": null,
    "description": "List one page of meetings available to this token. Requires meetings:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_meeting",
    "display_name": null,
    "category": null,
    "description": "Read a meeting, its summary and action items. Requires meetings:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_meeting_transcript",
    "display_name": null,
    "category": null,
    "description": "Read the structured JSON transcript. Requires meetings:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_meeting_share_link",
    "display_name": null,
    "category": null,
    "description": "Get or create a shareable meeting link. Requires meetings:read.shareLink.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

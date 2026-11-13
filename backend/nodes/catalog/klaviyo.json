@@ -31,749 +31,988 @@
    "display_name": "Get Profile",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_profiles",
    "display_name": "List Profiles",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_profile",
    "display_name": "Create Profile",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_profile",
    "display_name": "Update Profile",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_profile",
    "display_name": "Create or Update Profile",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_profiles",
    "display_name": "Merge Profiles",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_profile_lists",
    "display_name": "Get Profile's Lists",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_profile_segments",
    "display_name": "Get Profile's Segments",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "suppress_profiles",
    "display_name": "Suppress Profiles",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unsuppress_profiles",
    "display_name": "Unsuppress Profiles",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "subscribe_profiles",
    "display_name": "Subscribe Profiles",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unsubscribe_profiles",
    "display_name": "Unsubscribe Profiles",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lists",
    "display_name": "Get Lists",
    "category": "Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list",
    "display_name": "Get List",
    "category": "Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_list",
    "display_name": "Create List",
    "category": "Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_list",
    "display_name": "Update List",
    "category": "Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_list",
    "display_name": "Delete List",
    "category": "Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list_profiles",
    "display_name": "Get List Profiles",
    "category": "Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_profiles_to_list",
    "display_name": "Add Profiles to List",
    "category": "Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_profiles_from_list",
    "display_name": "Remove Profiles from List",
    "category": "Lists",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_segments",
    "display_name": "Get Segments",
    "category": "Segments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segment",
    "display_name": "Get Segment",
    "category": "Segments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_segment",
    "display_name": "Create Segment",
    "category": "Segments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_segment",
    "display_name": "Update Segment",
    "category": "Segments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_segment",
    "display_name": "Delete Segment",
    "category": "Segments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segment_profiles",
    "display_name": "Get Segment Profiles",
    "category": "Segments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": "Get Events",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": "Get Event",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_event",
    "display_name": "Track Event",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_metrics",
    "display_name": "Get Metrics",
    "category": "Metrics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metric",
    "display_name": "Get Metric",
    "category": "Metrics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_metric_aggregates",
    "display_name": "Query Metric Aggregates",
    "category": "Metrics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_campaigns",
    "display_name": "Get Campaigns",
    "category": "Campaigns",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign",
    "display_name": "Get Campaign",
    "category": "Campaigns",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_campaign",
    "display_name": "Create Campaign",
    "category": "Campaigns",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_campaign",
    "display_name": "Update Campaign",
    "category": "Campaigns",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_campaign",
    "display_name": "Delete Campaign",
    "category": "Campaigns",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_campaign",
    "display_name": "Send Campaign",
    "category": "Campaigns",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clone_campaign",
    "display_name": "Clone Campaign",
    "category": "Campaigns",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign_messages",
    "display_name": "Get Campaign Messages",
    "category": "Campaigns",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_flows",
    "display_name": "Get Flows",
    "category": "Flows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_flow",
    "display_name": "Get Flow",
    "category": "Flows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_flow_status",
    "display_name": "Update Flow Status",
    "category": "Flows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_flow_actions",
    "display_name": "Get Flow Actions",
    "category": "Flows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_flow_messages",
    "display_name": "Get Flow Messages",
    "category": "Flows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": "Get Templates",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template",
    "display_name": "Get Template",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_template",
    "display_name": "Create Template",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_template",
    "display_name": "Update Template",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_template",
    "display_name": "Delete Template",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "render_template",
    "display_name": "Render Template",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clone_template",
    "display_name": "Clone Template",
    "category": "Templates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_catalog_items",
    "display_name": "Get Catalog Items",
    "category": "Catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_catalog_item",
    "display_name": "Get Catalog Item",
    "category": "Catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_catalog_item",
    "display_name": "Create Catalog Item",
    "category": "Catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_catalog_item",
    "display_name": "Update Catalog Item",
    "category": "Catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_catalog_item",
    "display_name": "Delete Catalog Item",
    "category": "Catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_coupons",
    "display_name": "Get Coupons",
    "category": "Coupons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_coupon",
    "display_name": "Create Coupon",
    "category": "Coupons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_coupon_codes",
    "display_name": "Get Coupon Codes",
    "category": "Coupons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_coupon_code",
    "display_name": "Create Coupon Code",
    "category": "Coupons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": "Get Tags",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tag",
    "display_name": "Create Tag",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tag_groups",
    "display_name": "Get Tag Groups",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_images",
    "display_name": "Get Images",
    "category": "Images",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_image_from_url",
    "display_name": "Upload Image from URL",
    "category": "Images",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": "Get Account",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "request_profile_deletion",
    "display_name": "Request Profile Deletion",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhooks",
    "display_name": "Get Webhooks",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webhook",
    "display_name": "Get Webhook",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webhook",
    "display_name": "Create Webhook",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_webhook",
    "display_name": "Update Webhook",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook",
    "display_name": "Delete Webhook",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhook_topics",
    "display_name": "Get Webhook Topics",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_event",
    "display_name": "On Event (custom topic)",
    "category": "Triggers",
    "description": "Fire on a custom / account-specific Klaviyo topic (choose from the live list).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_email_opened",
    "display_name": "Email Opened",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_email_clicked",
    "display_name": "Email Clicked",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_email_clicked_to_unsubscribe",
    "display_name": "Email Clicked to Unsubscribe",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_email_received",
    "display_name": "Email Received",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_email_bounced",
    "display_name": "Email Bounced",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_email_dropped",
    "display_name": "Email Dropped",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_email_marked_spam",
    "display_name": "Email Marked as Spam",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_sms_received",
    "display_name": "SMS Received",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_sms_sent",
    "display_name": "SMS Sent",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_sms_clicked",
    "display_name": "SMS Clicked",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_sms_failed",
    "display_name": "SMS Failed to Deliver",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_sms_auto_response_received",
    "display_name": "SMS Automated Response Received",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_sms_auto_response_failed",
    "display_name": "SMS Automated Response Failed",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_push_opened",
    "display_name": "Push Opened",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_push_received",
    "display_name": "Push Received",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_push_bounced",
    "display_name": "Push Bounced",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_subscribed_email",
    "display_name": "Subscribed to Email Marketing",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_unsubscribed_email",
    "display_name": "Unsubscribed from Email Marketing",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_subscribed_sms",
    "display_name": "Subscribed to SMS Marketing",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_unsubscribed_sms",
    "display_name": "Unsubscribed from SMS Marketing",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_subscribed_to_list",
    "display_name": "Subscribed to List",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_updated_email_preferences",
    "display_name": "Updated Email Preferences",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_manually_suppressed_email",
    "display_name": "Manually Suppressed from Email Marketing",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_manually_unsuppressed_email",
    "display_name": "Manually Unsuppressed from Email Marketing",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_ready_to_review",
    "display_name": "Ready to Review",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_submitted_review",
    "display_name": "Submitted Review",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_submitted_rating",
    "display_name": "Submitted Rating",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_social_comment",
    "display_name": "Social Comment",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_social_dm",
    "display_name": "Social DM",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_social_ugc",
    "display_name": "Social UGC",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_profile_merged",
    "display_name": "Profile Merged",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   },
   {
    "name": "on_skipped_send",
    "display_name": "Skipped Send",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "klaviyo_oauth",
+    "klaviyo_api_key"
+   ]
   }
  ],
  "agent_tool_provider": true,

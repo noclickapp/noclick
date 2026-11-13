@@ -22,154 +22,176 @@
    "display_name": null,
    "category": null,
    "description": "Live WHOIS Lookup. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_whois",
    "display_name": null,
    "category": null,
    "description": "Bulk WHOIS Lookup. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_live_dns",
    "display_name": null,
    "category": null,
    "description": "Live DNS Lookup. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_historical_dns",
    "display_name": null,
    "category": null,
    "description": "Historical DNS Lookup. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_reverse_dns",
    "display_name": null,
    "category": null,
    "description": "Reverse DNS Lookup. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_dns",
    "display_name": null,
    "category": null,
    "description": "Bulk DNS Lookup. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain_availability",
    "display_name": null,
    "category": null,
    "description": "Domain Availability Check with Suggestions. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_domain_availability",
    "display_name": null,
    "category": null,
    "description": "Bulk Domain Availability Check. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain_typos",
    "display_name": null,
    "category": null,
    "description": "Typosquatting Lookup. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ssl_certificate",
    "display_name": null,
    "category": null,
    "description": "SSL Certificate Lookup. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ip_geolocation",
    "display_name": null,
    "category": null,
    "description": "IP Geolocation Lookup. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_ip_geolocation",
    "display_name": null,
    "category": null,
    "description": "Bulk IP Geolocation. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subdomains",
    "display_name": null,
    "category": null,
    "description": "Subdomains Lookup. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ip_reputation",
    "display_name": null,
    "category": null,
    "description": "IP Reputation Lookup. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_ip_reputation",
    "display_name": null,
    "category": null,
    "description": "Bulk IP Reputation. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain_reputation",
    "display_name": null,
    "category": null,
    "description": "Domain Reputation Lookup. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_asn_whois",
    "display_name": null,
    "category": null,
    "description": "ASN WHOIS Lookup. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ip_whois",
    "display_name": null,
    "category": null,
    "description": "IP WHOIS Lookup. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rotate_api_key",
    "display_name": null,
    "category": null,
    "description": "Generate a secondary API key. WhoisFreaks must first enable rotation for your account. The result contains a secret; store it securely. Does not update your saved NoClick credential.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account_usage",
    "display_name": null,
    "category": null,
    "description": "Account Usage. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_historical_whois",
    "display_name": null,
    "category": null,
    "description": "Historical WHOIS records for a domain. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_reverse_whois",
    "display_name": null,
    "category": null,
    "description": "Reverse WHOIS lookup by keyword. Returns one response; use provider pagination fields for subsequent pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

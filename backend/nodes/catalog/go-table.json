@@ -27,161 +27,184 @@
    "display_name": null,
    "category": null,
    "description": "Retrieve a list of accessible restaurants.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_restaurant",
    "display_name": null,
    "category": null,
    "description": "Find a restaurant by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_accounts",
    "display_name": null,
    "category": null,
    "description": "Retrieve a paginated list of accounts that have access to the restaurant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_reservations",
    "display_name": null,
    "category": null,
    "description": "Retrieve a paginated list of reservations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_reservation",
    "display_name": null,
    "category": null,
    "description": "Find a reservation by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guests",
    "display_name": null,
    "category": null,
    "description": "Retrieve a paginated list of guests.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_guest",
    "display_name": null,
    "category": null,
    "description": "Find a guest by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_offers",
    "display_name": null,
    "category": null,
    "description": "Retrieve a paginated list of a restaurant's offers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_offer",
    "display_name": null,
    "category": null,
    "description": "Retrieve the information about a specific restaurant's offer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tables",
    "display_name": null,
    "category": null,
    "description": "Retrieve a paginated list of a restaurant's tables.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_table",
    "display_name": null,
    "category": null,
    "description": "Find a table by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_combinations",
    "display_name": null,
    "category": null,
    "description": "Retrieve a paginated list of a restaurant's table combinations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_combination",
    "display_name": null,
    "category": null,
    "description": "Find a table combination by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_reviews",
    "display_name": null,
    "category": null,
    "description": "Retrieve a paginated list of a restaurant's reviews.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_guest",
    "display_name": null,
    "category": null,
    "description": "Create a guest.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_guest",
    "display_name": null,
    "category": null,
    "description": "Update a guest.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_reservation",
    "display_name": null,
    "category": null,
    "description": "Create a new reservation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_reservation",
    "display_name": null,
    "category": null,
    "description": "Update a reservation's details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_reservation",
    "display_name": null,
    "category": null,
    "description": "Cancel a reservation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_reservation_notes",
    "display_name": null,
    "category": null,
    "description": "Retrieve a list of reservation notes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_reservation_note",
    "display_name": null,
    "category": null,
    "description": "Create a new reservation note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_restaurant_availability",
    "display_name": null,
    "category": null,
    "description": "Retrieve availability for the given restaurant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_offer_availability",
    "display_name": null,
    "category": null,
    "description": "Retrieve availability for the given offer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

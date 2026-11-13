@@ -34,154 +34,176 @@
    "display_name": null,
    "category": null,
    "description": "Get user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_organizations",
    "display_name": null,
    "category": null,
    "description": "List organizations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workspaces",
    "display_name": null,
    "category": null,
    "description": "List workspaces.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pipelines",
    "display_name": null,
    "category": null,
    "description": "List pipelines.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pipeline",
    "display_name": null,
    "category": null,
    "description": "Get pipeline.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pipeline_launch",
    "display_name": null,
    "category": null,
    "description": "Get pipeline launch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_pipeline",
    "display_name": null,
    "category": null,
    "description": "Create pipeline.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_pipeline",
    "display_name": null,
    "category": null,
    "description": "Update pipeline.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_pipeline",
    "display_name": null,
    "category": null,
    "description": "Delete pipeline.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "launch_workflow",
    "display_name": null,
    "category": null,
    "description": "Launch workflow.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workflows",
    "display_name": null,
    "category": null,
    "description": "List workflows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workflow",
    "display_name": null,
    "category": null,
    "description": "Get workflow.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_workflow",
    "display_name": null,
    "category": null,
    "description": "Cancel workflow.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workflow_progress",
    "display_name": null,
    "category": null,
    "description": "Get workflow progress.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workflow_tasks",
    "display_name": null,
    "category": null,
    "description": "List workflow tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_compute_environments",
    "display_name": null,
    "category": null,
    "description": "List compute environments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_compute_environment",
    "display_name": null,
    "category": null,
    "description": "Get compute environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_datasets",
    "display_name": null,
    "category": null,
    "description": "List datasets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_dataset",
    "display_name": null,
    "category": null,
    "description": "Create dataset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dataset",
    "display_name": null,
    "category": null,
    "description": "Delete dataset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_labels",
    "display_name": null,
    "category": null,
    "description": "List labels.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_label",
    "display_name": null,
    "category": null,
    "description": "Create label.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

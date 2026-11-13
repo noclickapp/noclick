@@ -34,70 +34,80 @@
    "display_name": "Check App Profile Access",
    "category": "Connection",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_profile",
    "display_name": "Get Profile",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_profile",
    "display_name": "Create Profile",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_profile",
    "display_name": "Update Profile",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_profile",
    "display_name": "Delete Profile",
    "category": "Profiles",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_access_levels",
    "display_name": "List Profile Access Levels",
    "category": "Access Levels",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_access_level",
    "display_name": "Get Profile Access Level",
    "category": "Access Levels",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_access_level",
    "display_name": "Check Profile Access Level",
    "category": "Access Levels",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "grant_access_level",
    "display_name": "Grant Access Level",
    "category": "Access Management",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "revoke_access_level",
    "display_name": "Revoke Access Level",
    "category": "Access Management",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

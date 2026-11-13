@@ -22,84 +22,96 @@
    "display_name": null,
    "category": null,
    "description": "Fetch the sessions for an organisation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_session",
    "display_name": null,
    "category": null,
    "description": "Fetch a session with the given UUID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_session",
    "display_name": null,
    "category": null,
    "description": "Update a session's name or recording access policy for the given UUID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_session_recordings",
    "display_name": null,
    "category": null,
    "description": "Irreversible: Delete all recording data associated with a specific session, including AV, events and transcriptions.\n\nThis cannot be undone. If the space stores recordings in a customer-owned (custom) bucket, the request is rejected and nothing is deleted unless `force_delete_custom_buckets` is set. Basic session metadata such as name and participants is retained and stays visible in the sessions list. Related spaces are not affected by this deletion and can continue to be used for new sessions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_session_playback",
    "display_name": null,
    "category": null,
    "description": "Get Session Recording URL",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_session_transcript",
    "display_name": null,
    "category": null,
    "description": "Fetch the transcription for a given session. The transcription must have been scheduled on the session beforehand.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_spaces",
    "display_name": null,
    "category": null,
    "description": "Get Organisation Space List",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_space_recordings",
    "display_name": null,
    "category": null,
    "description": "Irreversible: Delete all recording data for every session that has happened inside a space, including AV, events and transcriptions. The space itself is not deleted and remains usable.\n\nThis cannot be undone. If the space stores recordings in a customer-owned (custom) bucket, the request is rejected and nothing is deleted unless `force_delete_custom_buckets` is set. Basic session metadata such as name and participants is retained and stays visible in the sessions list. Related spaces are not affected by this deletion and can continue to be used for new sessions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": null,
    "category": null,
    "description": "Get Organisation User List",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_user",
    "display_name": null,
    "category": null,
    "description": "Irreversible: Delete User from Organisation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "launch_space",
    "display_name": null,
    "category": null,
    "description": "Create Unified Space",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_space_sessions",
    "display_name": null,
    "category": null,
    "description": "Fetch the sessions for a specific space.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

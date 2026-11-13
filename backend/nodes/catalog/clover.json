@@ -31,434 +31,496 @@
    "display_name": "Get all cash events",
    "category": "Cash",
    "description": "Retrieve all cash events for this merchant. Cash events can also be consumed by registering a Webhook callback. See https://docs.clover.com/build/webhooks/",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "category_create_category",
    "display_name": "Create an item category",
    "category": "Inventory",
    "description": "Create an item category",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "category_get_categories",
    "display_name": "Get all categories",
    "category": "Inventory",
    "description": "Retrieves all categories. Items display on the Register app within categories in the order in which they are added to a category. Items may be associated with one or more categories or may not be associated with any category. Categories display in the Register app based on the sort order value for each category.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "category_get_category",
    "display_name": "Get a category",
    "category": "Inventory",
    "description": "Get a category",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "category_get_category_items",
    "display_name": "Get all items in a single category",
    "category": "Inventory",
    "description": "Retrieves all items in a category.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "category_get_item_categories",
    "display_name": "Get all categories of a single item",
    "category": "Inventory",
    "description": "Retrieves all categories of an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "category_update_category",
    "display_name": "Update a category",
    "category": "Inventory",
    "description": "Update a category",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customers_create_customer",
    "display_name": "Create a customer",
    "category": "Customers",
    "description": "Creates customer record for a merchant. Note that the request body cannot be null.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customers_delete_customer",
    "display_name": "Delete a customer",
    "category": "Customers",
    "description": "Deletes a single customer from a merchant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customers_get_customer",
    "display_name": "Get a single customer",
    "category": "Customers",
    "description": "Returns information for a single customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customers_get_customers",
    "display_name": "Get a list of customers",
    "category": "Customers",
    "description": "Gives information for every customer of a merchant by default.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "customers_update_customer",
    "display_name": "Update a customer",
    "category": "Customers",
    "description": "Updates information for a single customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "employee_get_employee",
    "display_name": "Get a single employee",
    "category": "Employees",
    "description": "Returns information for a single employee. Accepts optional expand query parameters",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "employee_get_employee_shifts",
    "display_name": "Get all shifts for an employee",
    "category": "Employees",
    "description": "Get all shifts for an employee",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "employee_get_employees",
    "display_name": "Get all employees",
    "category": "Employees",
    "description": "Retrieves information about employees associated with a merchant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_create_discount",
    "display_name": "Create a discount",
    "category": "Inventory",
    "description": "Create a discount",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_create_item",
    "display_name": "Create an inventory item",
    "category": "Inventory",
    "description": "Creates an inventory item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_create_item_group",
    "display_name": "Create an item group",
    "category": "Inventory",
    "description": "Create an item group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_create_item_stock",
    "display_name": "Create item stock",
    "category": "Inventory",
    "description": "Create a stock count for a single item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_delete_item",
    "display_name": "Delete an inventory item",
    "category": "Inventory",
    "description": "Delete an inventory item",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_get_discount",
    "display_name": "Get a single discount",
    "category": "Inventory",
    "description": "Get a single discount",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_get_discounts",
    "display_name": "Get all discounts",
    "category": "Inventory",
    "description": "Retrieves all discounts associated with an inventory item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_get_item",
    "display_name": "Get a single inventory item",
    "category": "Inventory",
    "description": "Retrieves an existing inventory item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_get_item_group",
    "display_name": "Get a single item group",
    "category": "Inventory",
    "description": "Get a single item group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_get_item_groups",
    "display_name": "Get all item groups",
    "category": "Inventory",
    "description": "Retrieves item groups that allow merchants to create and manage large groups of related items, also known as **Item with variants**. `For example:` A merchant sells a T-shirt that is available in various sizes and colors. Each of the T-shirt variations is an item within the T-shirt item group. When an item group is created, it appears in the Regist",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_get_item_stock",
    "display_name": "Get the stock of an inventory item",
    "category": "Inventory",
    "description": "Get the stock of an inventory item",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_get_item_stocks",
    "display_name": "Get the stock of all inventory items",
    "category": "Inventory",
    "description": "Get the stock of all inventory items",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_get_items",
    "display_name": "Get all inventory items",
    "category": "Inventory",
    "description": "Displays line items for each category in the inventory for an order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_update_item",
    "display_name": "Update an existing inventory item",
    "category": "Inventory",
    "description": "Updates an existing inventory item. Use the POST HTTP method to create an inventory item.<br><br><b>Note:</b> This endpoint cannot be used to update an item's stock quantity. To create or update stock for an item, you must use the <a href='https://docs.clover.com/dev/reference/inventoryupdateitemstock'>Update item stock</a> endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_update_item_group",
    "display_name": "Update an item group",
    "category": "Inventory",
    "description": "Update an item group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inventory_update_item_stock",
    "display_name": "Update the stock of an inventory item",
    "category": "Inventory",
    "description": "Update the stock of an inventory item",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merchant_get_all_shifts",
    "display_name": "Get all shifts",
    "category": "Employees",
    "description": "Get all shifts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_merchant",
    "display_name": "Get a single merchant",
    "category": "Merchants",
    "description": "Get a single merchant",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merchant_get_merchant_address",
    "display_name": "Get a merchant's address",
    "category": "Merchants",
    "description": "Get a merchant's address",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merchant_get_merchant_properties",
    "display_name": "Get a merchant's properties",
    "category": "Merchants",
    "description": "Get a merchant's properties",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merchant_get_order_types",
    "display_name": "Get all order types for a merchant",
    "category": "Merchants",
    "description": "Retrieves all order types for a merchant. Merchants can create custom order types using the [Clover Setup App](https://www.clover.com/setupapp). These custom order types can be associated with a system order type. See [Return a list of system order types](https://docs.clover.com/reference/merchantgetsystemordertypes). Custom order types can support",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "modifier_get_modifier_groups",
    "display_name": "Get all modifier groups",
    "category": "Inventory",
    "description": "Retrieves all modifier groups. Modifier groupings are the categories to which different modifiers belong. Modifier groups can be made available for specific inventory Items by creating an item to a modifier group association.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "modifier_get_modifiers",
    "display_name": "Get all modifiers",
    "category": "Inventory",
    "description": "Retrieves all modifiers from all modifier groups.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "order_create_line_item",
    "display_name": "Create a new line item",
    "category": "Orders",
    "description": "Creates a new line item for an order. Requests must include either a `price` or an `item` object with an inventory item `id`. **Note:** To ensure platform stability, an order is limited to a maximum of 3,000 line items. If this call would cause the order to exceed this limit, the request will fail with a `400 Bad Request` error.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "order_create_order",
    "display_name": "Create custom orders",
    "category": "Orders",
    "description": "**Description:** Creates or updates orders with a non-Clover inventory and dynamically calculates taxes. Valid fields are: taxRemoved, note, title, state, testMode, manualTransaction, groupLineItems, and orderType. Use separate API calls to add line items. <br> **Tip:** Use the [create an atomic order](https://docs.clover.com/dev/reference/ordercre",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "order_delete_order",
    "display_name": "Delete an order",
    "category": "Orders",
    "description": "Deletes a single order. See https://docs.clover.com/build/working-with-orders/ for more details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "order_get_order",
    "display_name": "Get a single order",
    "category": "Orders",
    "description": "Returns a single order. See https://docs.clover.com/build/working-with-orders/ for more details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "order_get_order_line_item",
    "display_name": "Get a line item",
    "category": "Orders",
    "description": "Returns a line item for an order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "order_get_order_line_items",
    "display_name": "Get all line items for an order",
    "category": "Orders",
    "description": "Returns all line items for an order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "order_get_orders",
    "display_name": "Gets a list of orders",
    "category": "Orders",
    "description": "Displays a list of orders. See [Manage orders data](https://docs.clover.com/build/working-with-orders/) for more details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "order_update_order",
    "display_name": "Update an order",
    "category": "Orders",
    "description": "Updates a single order. See [working-with-orders](https://docs.clover.com/build/working-with-orders/) for more details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "order_update_order_line_item",
    "display_name": "Update a line item",
    "category": "Orders",
    "description": "Updates a line item for an order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pay_get_merchant_tenders",
    "display_name": "Get all tenders for a merchant",
    "category": "Merchants",
    "description": "Retrieves all tenders for a merchant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pay_get_order_payments",
    "display_name": "Get all payments for an order",
    "category": "Payments",
    "description": "Displays payment information, including the total amount, tip amount, tax amount, and result status for an `order`.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pay_get_payment",
    "display_name": "Get a single payment",
    "category": "Payments",
    "description": "Retrieve a single payment information, including the total amount, tip amount, tax amount, and result status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pay_get_payments",
    "display_name": "Get all payments",
    "category": "Payments",
    "description": "Retrieves payment information, including the total amount, tip amount, tax amount, and result status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pay_get_refund",
    "display_name": "Get a single refund",
    "category": "Payments",
    "description": "Displays a single refund associated with a payment, including taxes and tips.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pay_get_refunds",
    "display_name": "Get all refunds for a merchant",
    "category": "Payments",
    "description": "Retrieves refunds for a merchant, including associated taxes and tips. **Data Retrieval Rules:** * **90-Day Limit:** This endpoint returns a maximum of 90 days of refund data. * **Automatic Time-Filter Adjustment:** If a query's time-based filter (e.g., `createdTime` or `clientCreatedTime`) spans more than 90 days, the server automatically adjusts ",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "role_get_roles",
    "display_name": "Get all roles for a merchant",
    "category": "Merchants",
    "description": "Retrieves all system and employee roles for a merchant's business.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tag_create_tag",
    "display_name": "Create a tag",
    "category": "Inventory",
    "description": "Create a tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tag_get_tag",
    "display_name": "Get a single tag",
    "category": "Inventory",
    "description": "Get a single tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tag_get_tags",
    "display_name": "Get all tags",
    "category": "Inventory",
    "description": "Retrieves all tags for an order. `Note:` In the REST API, a merchant uses two types of tags: 1. Tags, also known as item labels, are used to keep track of these items in reports. 2. Tags associated with the printer work as a printer label. `Example:` If a tag is associated with both an item and a printer, when the order is printed, the tagged items",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tag_update_tag",
    "display_name": "Update a single tag",
    "category": "Inventory",
    "description": "Update a single tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "taxrate_get_tax_rate",
    "display_name": "Get a single tax rate",
    "category": "Inventory",
    "description": "Get a single tax rate",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "taxrate_get_tax_rates",
    "display_name": "Get all tax rates",
    "category": "Inventory",
    "description": "Retrieves all tax rates applicable on an order. A tax rate is a percentage or a flat fee at which an item is taxed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_order",
    "display_name": "On New or Updated Orders",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_or_updated_item",
    "display_name": "On New or Updated Inventory Items",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

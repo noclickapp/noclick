@@ -30,42 +30,48 @@
    "display_name": "List Instance Metadata",
    "category": "Cloud Metadata",
    "description": "Read zone-local instance IDs, states, creation times and instance-type capacity. No query filters or global inventory are assumed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_instance",
    "display_name": "Get Instance Metadata",
    "category": "Cloud Metadata",
    "description": "Verify exact instance UUID against the selected zone's protected catalog, then read its metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_instance_types",
    "display_name": "List Instance-Type Capacity",
    "category": "Cloud Metadata",
    "description": "Read the published instance-type catalog and capacity metadata. This static catalog is not account identity or permission evidence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_instance_type",
    "display_name": "Get Instance-Type Capacity",
    "category": "Cloud Metadata",
    "description": "Verify exact UUID against the selected endpoint's instance-type catalog, then read capacity metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_anti_affinity_groups",
    "display_name": "List Anti-Affinity Metadata",
    "category": "Cloud Metadata",
    "description": "Read protected group IDs and associated instance IDs with conservative metadata. No descriptions or configuration are returned.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_anti_affinity_group",
    "display_name": "Get Anti-Affinity Metadata",
    "category": "Cloud Metadata",
    "description": "Verify group UUID against the zone-local protected catalog, then read group and associated instance metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -28,161 +28,184 @@
    "display_name": null,
    "category": null,
    "description": "Search entities matching a name, email, reference or process.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_entity",
    "display_name": null,
    "category": null,
    "description": "Read an entity profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_entity",
    "display_name": null,
    "category": null,
    "description": "Create an individual profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_entity_summary",
    "display_name": null,
    "category": null,
    "description": "Read the verification results summary.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_active_checks",
    "display_name": null,
    "category": null,
    "description": "Read current data checks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_idv_entries",
    "display_name": null,
    "category": null,
    "description": "List identity verification entries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_idv_entry",
    "display_name": null,
    "category": null,
    "description": "Read an identity verification entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_entity_evidence",
    "display_name": null,
    "category": null,
    "description": "List evidence attached to an entity.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_documents",
    "display_name": null,
    "category": null,
    "description": "List electronic signature documents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_journeys",
    "display_name": null,
    "category": null,
    "description": "List journeys available to this account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_journey",
    "display_name": null,
    "category": null,
    "description": "Read journey configuration and actor IDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_process",
    "display_name": null,
    "category": null,
    "description": "Start a verification journey; invitations may be sent and checks may be chargeable.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_process",
    "display_name": null,
    "category": null,
    "description": "Read process status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_process_details",
    "display_name": null,
    "category": null,
    "description": "Read detailed process results.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_latest_process",
    "display_name": null,
    "category": null,
    "description": "Read the latest process for an entity.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lock_process",
    "display_name": null,
    "category": null,
    "description": "Lock a process.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unlock_process",
    "display_name": null,
    "category": null,
    "description": "Unlock a process.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_entity",
    "display_name": null,
    "category": null,
    "description": "Set approval status to approved.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reject_entity",
    "display_name": null,
    "category": null,
    "description": "Set approval status to rejected.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_entity_approval",
    "display_name": null,
    "category": null,
    "description": "Reset an entity approval status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "expire_invite",
    "display_name": null,
    "category": null,
    "description": "Expire an entity invitation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "new_invite",
    "display_name": null,
    "category": null,
    "description": "Create a new invitation and select email or SMS delivery.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resend_invite",
    "display_name": null,
    "category": null,
    "description": "Resend an entity invitation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

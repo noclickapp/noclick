@@ -26,84 +26,96 @@
    "display_name": null,
    "category": null,
    "description": "List properties.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_property",
    "display_name": null,
    "category": null,
    "description": "Get a property.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_similar_properties",
    "display_name": null,
    "category": null,
    "description": "List similar properties.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_price_per_meter",
    "display_name": null,
    "category": null,
    "description": "Price per meter evolution.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_points_of_interest",
    "display_name": null,
    "category": null,
    "description": "Points of interest.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_locations",
    "display_name": null,
    "category": null,
    "description": "Location autocomplete.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_cities",
    "display_name": null,
    "category": null,
    "description": "List cities.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_searches",
    "display_name": null,
    "category": null,
    "description": "List searches.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_search",
    "display_name": null,
    "category": null,
    "description": "Get a search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_search",
    "display_name": null,
    "category": null,
    "description": "Create a search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_search",
    "display_name": null,
    "category": null,
    "description": "Update a search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_search",
    "display_name": null,
    "category": null,
    "description": "Delete a search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

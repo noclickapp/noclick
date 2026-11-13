@@ -28,28 +28,32 @@
    "display_name": "Read Accessible Domain Catalog",
    "category": "DNSimple Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain",
    "display_name": "Get Current Domain Metadata",
    "category": "DNSimple Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_zones",
    "display_name": "Read Accessible Zone Catalog",
    "category": "DNSimple Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_zone",
    "display_name": "Get Current Zone Metadata",
    "category": "DNSimple Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

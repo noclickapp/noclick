@@ -22,210 +22,240 @@
    "display_name": "Site Explorer Overview",
    "category": "Site Explorer",
    "description": "Domain/URL overview: DR, backlinks, referring domains, traffic and value.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "domain_rating",
    "display_name": "Domain Rating",
    "category": "Site Explorer",
    "description": "Domain Rating (DR) for a target.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "backlinks",
    "display_name": "Backlinks",
    "category": "Site Explorer",
    "description": "List of backlinks pointing to a target (anchor, DR, traffic, link type).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "broken_backlinks",
    "display_name": "Broken Backlinks",
    "category": "Site Explorer",
    "description": "Backlinks pointing to dead/404 pages on the target.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refdomains",
    "display_name": "Referring Domains",
    "category": "Site Explorer",
    "description": "Domains linking to the target.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "anchors",
    "display_name": "Anchors",
    "category": "Site Explorer",
    "description": "Anchor-text distribution of backlinks to the target.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "organic_keywords",
    "display_name": "Organic Keywords",
    "category": "Site Explorer",
    "description": "Keywords the target ranks for in organic search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "organic_competitors",
    "display_name": "Organic Competitors",
    "category": "Site Explorer",
    "description": "Domains competing for the target's organic keywords.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "top_pages",
    "display_name": "Top Pages",
    "category": "Site Explorer",
    "description": "Best-performing pages of the target by organic traffic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "paid_pages",
    "display_name": "Paid Pages",
    "category": "Site Explorer",
    "description": "Pages of the target running paid (PPC) ads.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "best_by_external_links",
    "display_name": "Best by External Links",
    "category": "Site Explorer",
    "description": "Target's pages ranked by number of external backlinks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "linked_domains",
    "display_name": "Linked Domains",
    "category": "Site Explorer",
    "description": "Outbound domains the target links to.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "metrics_history",
    "display_name": "Metrics History",
    "category": "Site Explorer",
    "description": "Historical organic traffic / keyword / value metrics over time.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "keywords_overview",
    "display_name": "Keywords Explorer Overview",
    "category": "Keywords Explorer",
    "description": "Metrics for one or many keywords: volume, KD, CPC, clicks, traffic potential.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "volume_history",
    "display_name": "Volume History",
    "category": "Keywords Explorer",
    "description": "Monthly search-volume history for a keyword.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "volume_by_country",
    "display_name": "Volume by Country",
    "category": "Keywords Explorer",
    "description": "Search volume of a keyword broken down by country.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "matching_terms",
    "display_name": "Matching Terms",
    "category": "Keywords Explorer",
    "description": "Keyword ideas containing/related to a seed keyword.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "related_terms",
    "display_name": "Related Terms",
    "category": "Keywords Explorer",
    "description": "Related keyword ideas ('also rank for').",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_suggestions",
    "display_name": "Search Suggestions",
    "category": "Keywords Explorer",
    "description": "Autocomplete-style keyword suggestions for a seed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "serp_overview",
    "display_name": "SERP Overview",
    "category": "SERP",
    "description": "Top ~100 organic results for a keyword with per-position SEO metrics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "batch_analysis",
    "display_name": "Batch Analysis",
    "category": "Batch",
    "description": "Core metrics (DR, traffic, refdomains, etc.) for up to 100 targets in one call.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "site_audit_projects",
    "display_name": "Site Audit Projects",
    "category": "Site Audit",
    "description": "List the user's Site Audit projects.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "site_audit_page_explorer",
    "display_name": "Site Audit Page Explorer",
    "category": "Site Audit",
    "description": "Crawled-page data + issues for a Site Audit project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rank_tracker_overview",
    "display_name": "Rank Tracker Overview",
    "category": "Rank Tracker",
    "description": "Ranking overview (tracked keyword positions/visibility) for a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Projects",
    "category": "Management",
    "description": "List Rank Tracker projects in the workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_keywords",
    "display_name": "Add Keywords",
    "category": "Management",
    "description": "Add tracked keywords to a Rank Tracker project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_competitors",
    "display_name": "Add Competitors",
    "category": "Management",
    "description": "Add competitors to a Rank Tracker project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "limits_and_usage",
    "display_name": "Limits & Usage",
    "category": "Subscription",
    "description": "Current API unit limits, consumed units, and remaining quota.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_limits_and_usage",
    "display_name": "Get Limits & Usage",
    "category": "Subscription",
    "description": "Read-only probe alias; retain limits_and_usage for saved workflows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "crawler_ip_ranges",
    "display_name": "Crawler IP Ranges",
    "category": "Public",
    "description": "Ahrefs (AhrefsBot) crawler IP addresses / ranges (no units).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

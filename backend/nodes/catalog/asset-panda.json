@@ -22,63 +22,72 @@
    "display_name": "Verify Selected Account Membership",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": "Get Selected Account ID",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_modules",
    "display_name": "List Account Module IDs",
    "category": "Modules",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_module",
    "display_name": "Get Account Module ID",
    "category": "Modules",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_collections",
    "display_name": "List Module Collections",
    "category": "Collections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_collection",
    "display_name": "Get Collection Metadata",
    "category": "Collections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_collection_columns",
    "display_name": "List Collection Column Metadata",
    "category": "Columns",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_collection_records",
    "display_name": "Search Collection Record IDs",
    "category": "Records",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_collection_record",
    "display_name": "Get Collection Record ID",
    "category": "Records",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

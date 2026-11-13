@@ -27,147 +27,168 @@
    "display_name": null,
    "category": null,
    "description": "Read one page of registrants; use next_cursor for the next page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_registrants",
    "display_name": null,
    "category": null,
    "description": "Search one page of registrants by name, email, phone or external ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_registrant",
    "display_name": null,
    "category": null,
    "description": "Retrieve full registrant data; history bodies require their separate API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_registrant",
    "display_name": null,
    "category": null,
    "description": "Submit a new registrant; HTTP 202 acknowledges acceptance, not completed processing.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_registrant",
    "display_name": null,
    "category": null,
    "description": "Update registrant personal data; first and last names are required by Lasso.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact_information",
    "display_name": null,
    "category": null,
    "description": "Read email, phone and address collections.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_rating",
    "display_name": null,
    "category": null,
    "description": "Set a registrant rating, creating that rating if absent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_email",
    "display_name": null,
    "category": null,
    "description": "Add one email to a registrant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_phone",
    "display_name": null,
    "category": null,
    "description": "Add one phone to a registrant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_note",
    "display_name": null,
    "category": null,
    "description": "Append a free-form note to a registrant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_activities",
    "display_name": null,
    "category": null,
    "description": "Retrieve up to 150 activities, newest first; Lasso caps this endpoint at 150.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_activity",
    "display_name": null,
    "category": null,
    "description": "Book a follow-up activity. Completed activities without completedBy are attributed to Lasso Autobot.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_activity",
    "display_name": null,
    "category": null,
    "description": "Retrieve one registrant activity.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_appointments",
    "display_name": null,
    "category": null,
    "description": "Retrieve a registrant appointment list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_appointment",
    "display_name": null,
    "category": null,
    "description": "Create an appointment using UTC-offset times. Does not request email confirmations or SMS reminders.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_appointment",
    "display_name": null,
    "category": null,
    "description": "Retrieve one registrant appointment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project_settings",
    "display_name": null,
    "category": null,
    "description": "Read settings, sales reps, ratings, source types and follow-up processes for this API key project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_activity_types",
    "display_name": null,
    "category": null,
    "description": "List available activity types for creating follow-up activities.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_inventory",
    "display_name": null,
    "category": null,
    "description": "List project inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_inventory",
    "display_name": null,
    "category": null,
    "description": "Retrieve full details for one inventory item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_appointments",
    "display_name": null,
    "category": null,
    "description": "Read one page of appointments for the project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

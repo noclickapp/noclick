@@ -22,105 +22,120 @@
    "display_name": "List Pipelines",
    "category": "Pipelines",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pipeline",
    "display_name": "Get Pipeline Metadata",
    "category": "Pipelines",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pipeline_source",
    "display_name": "Get Pipeline Source Metadata",
    "category": "Pipelines",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pipeline_schedule",
    "display_name": "Get Pipeline Schedule",
    "category": "Pipelines",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_pipeline_schedule",
    "display_name": "Update Pipeline Frequency",
    "category": "Pipelines",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_pipeline_state",
    "display_name": "Set Pipeline Activity",
    "category": "Pipelines",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_pipeline_priority",
    "display_name": "Update Pipeline Priority",
    "category": "Pipelines",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pipeline_objects",
    "display_name": "List Pipeline Objects",
    "category": "Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pipeline_object",
    "display_name": "Get Pipeline Object",
    "category": "Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pipeline_object_stats",
    "display_name": "Get Object Stage Counts",
    "category": "Objects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_destinations",
    "display_name": "List Destination Metadata",
    "category": "Destinations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_destination",
    "display_name": "Get Destination Metadata",
    "category": "Destinations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_destination_table_stats",
    "display_name": "Get Destination Table Counts",
    "category": "Destinations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workflows",
    "display_name": "List Workflow Status",
    "category": "Workflows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workflow",
    "display_name": "Get Workflow Status",
    "category": "Workflows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

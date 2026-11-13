@@ -34,140 +34,160 @@
    "display_name": null,
    "category": null,
    "description": "Retrieve account identity without exposing the API key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_usage",
    "display_name": null,
    "category": null,
    "description": "Read account usage and optional charts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ingest_document",
    "display_name": null,
    "category": null,
    "description": "Submit a public document URL for asynchronous Grill ingestion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search",
    "display_name": null,
    "category": null,
    "description": "Search the selected Grill project for RAG context.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_document",
    "display_name": null,
    "category": null,
    "description": "Search within one document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_attributes",
    "display_name": null,
    "category": null,
    "description": "List typed attribute names in the Grill namespace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_documents",
    "display_name": null,
    "category": null,
    "description": "Read one page of document metadata; pass next_cursor to continue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_document",
    "display_name": null,
    "category": null,
    "description": "Retrieve document metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_document_attributes",
    "display_name": null,
    "category": null,
    "description": "Set or remove attributes; null removes a value, omitted names stay unchanged.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_document",
    "display_name": null,
    "category": null,
    "description": "Delete document vectors and storage from the selected namespace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_document_assets",
    "display_name": null,
    "category": null,
    "description": "List image and table metadata, including coverage and completeness.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": null,
    "category": null,
    "description": "List projects visible to the account key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": null,
    "category": null,
    "description": "Retrieve a project by UUID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_project",
    "display_name": null,
    "category": null,
    "description": "Rename a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project_usage",
    "display_name": null,
    "category": null,
    "description": "Read project usage and optional charts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_active_jobs",
    "display_name": null,
    "category": null,
    "description": "List pending and processing jobs; each status is capped independently.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_job",
    "display_name": null,
    "category": null,
    "description": "Retrieve a processing job by UUID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_job_status",
    "display_name": null,
    "category": null,
    "description": "Poll a job, including indexing, failure and blocked states.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_job_results",
    "display_name": null,
    "category": null,
    "description": "Read processed chunks and chunksets as JSON.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_job",
    "display_name": null,
    "category": null,
    "description": "Request best-effort cancellation and removal; acceptance does not guarantee deletion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

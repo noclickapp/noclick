@@ -28,42 +28,48 @@
    "display_name": null,
    "category": null,
    "description": "Get the city, state and coordinates for a postal code.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_postal_code",
    "display_name": null,
    "category": null,
    "description": "Check whether a postal code exists; valid=false is a successful response.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_bulk_postal_codes",
    "display_name": null,
    "category": null,
    "description": "Validate 1–1,000 records in input order, including mixed countries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_by_city",
    "display_name": null,
    "category": null,
    "description": "Find postal codes by city; US queries require state or ST.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_postal_code_metadata",
    "display_name": null,
    "category": null,
    "description": "Get all country-specific metadata using the recommended metacode endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_postal_code_metadata_legacy",
    "display_name": null,
    "category": null,
    "description": "Query the deprecated metazip alias; prefer Get Postal Code Metadata for new workflows.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

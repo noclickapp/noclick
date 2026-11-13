@@ -10,6 +10,11 @@ Each registered type has a generated file, ``nodes/catalog/<type without "automa
   the type's owner (``borrowed_credential_types``);
 - its operations, as ``coder.workflow.operation_catalog.get_operations_for_node_type``
   lists them: ``name``, ``display_name``, ``category``, ``description``, ``is_trigger``;
+  ``needs_account``, false where it runs with no credential (the node takes none, or its schema
+  says so: ``run_op.declares_no_account``, on NoClick's keys); and on each push trigger its schema
+  offers (an app event, not a poll), ``registered_with``: the node's credential types NoClick
+  registers it with by itself (``WebhookManager.registers_itself``), none where its provider is
+  pointed at a URL by hand;
 - ``agent_tool_provider`` (``node_op_tools.node_supports_op_tools``), ``credentialed`` (its config
   takes a credential), ``output_handles``, ``registers`` (a step can hold a webhook, subscription or
   schedule registration) and its ``app_event_provider``;
@@ -41,14 +46,14 @@ def catalog_path(node_type: str, directory: Path = CATALOG_DIR) -> Path:
     return directory / f"{node_type.removeprefix('automation-')}.json"
 
 
-# The keys ``class_facts`` gives: a file without one of them predates it.
+# The keys ``class_facts`` gives, and each of its operations has: a file without one of them predates it.
 CLASS_FACTS = frozenset({"credentials", "operations", "agent_tool_provider", "credentialed", "output_handles",
                          "registers", "app_event_provider", "summary", "retired"})
+OPERATION_FACTS = frozenset({"name", "display_name", "category", "description", "is_trigger", "needs_account"})
 
 
 def class_facts(node_type: str, node_class: Any) -> Dict[str, Any]:
     """The facts ``node_class`` itself gives: credential methods, operations, tool-provider flag."""
-    from coder.workflow.operation_catalog import get_operations_for_node_type
     from nodes.agent.node_op_tools import node_supports_op_tools
     from nodes.core.credential_connect import credential_classes_for_node, credential_type_of
     from nodes.core.schedule_registration import CronScheduleTriggerMixin
@@ -83,16 +88,7 @@ def class_facts(node_type: str, node_class: Any) -> Dict[str, Any]:
         credentials.append(credential)
     return {
         "credentials": credentials,
-        "operations": [
-            {
-                "name": op.name,
-                "display_name": op.display_name,
-                "category": op.category,
-                "description": op.description,
-                "is_trigger": op.is_trigger,
-            }
-            for op in get_operations_for_node_type(node_type)
-        ],
+        "operations": _operation_facts(node_type, node_class, [credential["type"] for credential in credentials]),
         "agent_tool_provider": node_supports_op_tools(node_type),
         "credentialed": bool(isinstance(credentials_property, dict)
                              and (credentials_property.get("$ref") or credentials_property.get("anyOf"))),
@@ -106,6 +102,39 @@ def class_facts(node_type: str, node_class: Any) -> Dict[str, Any]:
         "summary": _summary(node_class),
         "retired": node_class.retired.as_json() if node_class.retired else None,
     }
+
+
+def _operation_facts(node_type: str, node_class: Any, credential_types: List[str]) -> List[Dict[str, Any]]:
+    """Each operation's facts (the module's docstring), in ``get_operations_for_node_type``'s order."""
+    from coder.workflow.operation_catalog import get_operations_for_node_type
+    from nodes.agent.node_op_tools import _iter_operation_defs
+    from nodes.core.credential_connect import credential_classes_for_node
+    from nodes.core.run_op import declares_no_account
+    from nodes.core.schedule_registration import CronScheduleTriggerMixin
+    from utils.webhook_manager import WebhookManager
+
+    takes_account = bool(credential_classes_for_node(node_class))
+    # Each operation's member of the node's schema, which carries its markers; one with no operation const has none.
+    members = {entry["operation"]: entry["member"] for entry in _iter_operation_defs(node_class)}
+    # A trigger the schema leaves out (Google Calendar's legacy one, kept runnable for saved steps) is no event.
+    triggers = {entry["operation"]: entry["member"] for entry in _iter_operation_defs(node_class, triggers=True)}
+    polls = node_class if issubclass(node_class, CronScheduleTriggerMixin) else None
+    out = []
+    for op in get_operations_for_node_type(node_type):
+        facts = {
+            "name": op.name,
+            "display_name": op.display_name,
+            "category": op.category,
+            "description": op.description,
+            "is_trigger": op.is_trigger,
+            "needs_account": takes_account and not declares_no_account(
+                members.get(op.name) or triggers.get(op.name) or op.config_class.model_json_schema()),
+        }
+        if op.name in triggers and not (polls and polls._is_schedule_operation(op.name)):
+            facts["registered_with"] = [t for t in credential_types
+                                        if WebhookManager.registers_itself(node_type, op.name, t)]
+        out.append(facts)
+    return out
 
 
 def _summary(node_class: Any) -> str:
@@ -122,7 +151,8 @@ def _read(node_type: str) -> Optional[Dict[str, Any]]:
         facts = json.loads(catalog_path(node_type).read_text())
     except FileNotFoundError:
         return None
-    return facts if CLASS_FACTS <= facts.keys() else None
+    current = CLASS_FACTS <= facts.keys() and all(OPERATION_FACTS <= op.keys() for op in facts["operations"])
+    return facts if current else None
 
 
 @lru_cache(maxsize=None)

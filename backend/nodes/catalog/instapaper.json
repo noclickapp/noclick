@@ -22,70 +22,80 @@
    "display_name": null,
    "category": null,
    "description": "Read one page of account bookmarks, optionally changed since a timestamp.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_bookmark",
    "display_name": null,
    "category": null,
    "description": "Save a URL or supplied private article content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_bookmark",
    "display_name": null,
    "category": null,
    "description": "Update title, description or timestamped reading progress.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_bookmark",
    "display_name": null,
    "category": null,
    "description": "Permanently delete the selected bookmark.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_bookmark",
    "display_name": null,
    "category": null,
    "description": "Move to home, archive, or a folder ID written as a string.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "like_bookmark",
    "display_name": null,
    "category": null,
    "description": "Like the selected bookmark.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unlike_bookmark",
    "display_name": null,
    "category": null,
    "description": "Remove the selected bookmark's like.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_bookmark_tags",
    "display_name": null,
    "category": null,
    "description": "Add tags by ID or name and remove tags by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bookmark_content",
    "display_name": null,
    "category": null,
    "description": "Retrieve parsed article HTML and metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "parse_bookmark_content",
    "display_name": null,
    "category": null,
    "description": "Parse a bookmark, optionally using supplied article HTML.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -34,77 +34,88 @@
    "display_name": "List Accessible Tables",
    "category": "Tables",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_fields",
    "display_name": "List Table Fields",
    "category": "Tables",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rows",
    "display_name": "List Rows",
    "category": "Rows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_row",
    "display_name": "Get Row",
    "category": "Rows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_row",
    "display_name": "Create Row",
    "category": "Rows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_row",
    "display_name": "Update Row",
    "category": "Rows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_row",
    "display_name": "Move Row",
    "category": "Rows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_row",
    "display_name": "Delete Row",
    "category": "Rows",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "batch_create_rows",
    "display_name": "Batch Create Rows",
    "category": "Batch",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "batch_update_rows",
    "display_name": "Batch Update Rows",
    "category": "Batch",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "batch_delete_rows",
    "display_name": "Batch Delete Rows",
    "category": "Batch",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

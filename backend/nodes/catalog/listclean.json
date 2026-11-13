@@ -22,91 +22,104 @@
    "display_name": null,
    "category": null,
    "description": "Verify single email address at a time.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "verify_batch",
    "display_name": null,
    "category": null,
    "description": "Verify batch of emails (max 3000 emails).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_logs",
    "display_name": null,
    "category": null,
    "description": "Get logs for all the single email verified.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_uploads",
    "display_name": null,
    "category": null,
    "description": "Get the list of uploads (csv upload).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_upload",
    "display_name": null,
    "category": null,
    "description": "Start the Upload (csv upload).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_chunk",
    "display_name": null,
    "category": null,
    "description": "Upload a Chunk [CHUNKS] (csv upload).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_upload",
    "display_name": null,
    "category": null,
    "description": "Get status of a Upload.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lists",
    "display_name": null,
    "category": null,
    "description": "Get the all list info.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list",
    "display_name": null,
    "category": null,
    "description": "Get the single list info.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_list",
    "display_name": null,
    "category": null,
    "description": "Delete the single list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "download_csv",
    "display_name": null,
    "category": null,
    "description": "Download lists results as a csv file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "download_json",
    "display_name": null,
    "category": null,
    "description": "Download lists results as a json.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credits",
    "display_name": null,
    "category": null,
    "description": "Get credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

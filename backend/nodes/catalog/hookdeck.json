@@ -22,175 +22,200 @@
    "display_name": "List Sources",
    "category": "Sources",
    "description": "List webhook sources with pagination and an optional name filter.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_source",
    "display_name": "Get Source",
    "category": "Sources",
    "description": "Read a webhook source by ID, including its inbound URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_source",
    "display_name": "Create Source",
    "category": "Sources",
    "description": "Create a webhook source for inbound events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_source",
    "display_name": "Update Source",
    "category": "Sources",
    "description": "Rename or describe an existing source.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_source",
    "display_name": "Delete Source",
    "category": "Sources",
    "description": "Delete a webhook source by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_destinations",
    "display_name": "List Destinations",
    "category": "Destinations",
    "description": "List HTTP and mock destinations in the project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_destination",
    "display_name": "Get Destination",
    "category": "Destinations",
    "description": "Read a destination by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_destination",
    "display_name": "Create Destination",
    "category": "Destinations",
    "description": "Create an HTTP endpoint or mock destination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_destination",
    "display_name": "Update Destination",
    "category": "Destinations",
    "description": "Change a destination name, description, or HTTP URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_destination",
    "display_name": "Delete Destination",
    "category": "Destinations",
    "description": "Delete a destination by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_connections",
    "display_name": "List Connections",
    "category": "Connections",
    "description": "List source-to-destination routes, optionally filtered by either end.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_connection",
    "display_name": "Get Connection",
    "category": "Connections",
    "description": "Read a connection and its routing details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_connection",
    "display_name": "Create Connection",
    "category": "Connections",
    "description": "Connect an existing source to an existing destination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_connection",
    "display_name": "Update Connection",
    "category": "Connections",
    "description": "Rename or describe an existing connection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_connection",
    "display_name": "Delete Connection",
    "category": "Connections",
    "description": "Delete a connection by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_connection",
    "display_name": "Pause Connection",
    "category": "Connections",
    "description": "Pause delivery on a connection without deleting it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unpause_connection",
    "display_name": "Unpause Connection",
    "category": "Connections",
    "description": "Resume delivery on a paused connection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": "List Events",
    "category": "Events",
    "description": "List events and delivery status for a source or destination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": "Get Event",
    "category": "Events",
    "description": "Read an event and its delivery attempts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retry_event",
    "display_name": "Retry Event",
    "category": "Events",
    "description": "Retry delivery of a failed event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_event",
    "display_name": "Cancel Event",
    "category": "Events",
    "description": "Cancel pending delivery of an event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_requests",
    "display_name": "List Requests",
    "category": "Requests",
    "description": "List incoming webhook requests and ingestion status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_request",
    "display_name": "Get Request",
    "category": "Requests",
    "description": "Read a specific incoming webhook request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issues",
    "display_name": "List Issues",
    "category": "Issues",
    "description": "List Hookdeck delivery and ingestion issues.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue",
    "display_name": "Get Issue",
    "category": "Issues",
    "description": "Read one delivery or ingestion issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

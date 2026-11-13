@@ -39,147 +39,168 @@
    "display_name": null,
    "category": null,
    "description": "Scrape one URL into selected formats. Format errors remain in the output.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract",
    "display_name": null,
    "category": null,
    "description": "Extract structured JSON from exactly one URL, HTML or Markdown source.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search",
    "display_name": null,
    "category": null,
    "description": "Search and scrape a bounded number of results.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_history",
    "display_name": null,
    "category": null,
    "description": "Read one page of this account's request history.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_history",
    "display_name": null,
    "category": null,
    "description": "Read a single request, including its stored parameters and result.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_monitor",
    "display_name": null,
    "category": null,
    "description": "Create a recurring scrape. The provider bills scheduled runs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_monitors",
    "display_name": null,
    "category": null,
    "description": "List this account's monitors (the API returns an unpaginated array).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitor",
    "display_name": null,
    "category": null,
    "description": "Read one monitor and its schedule configuration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_monitor",
    "display_name": null,
    "category": null,
    "description": "Change a monitor name, interval, output formats or notification destination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_monitor",
    "display_name": null,
    "category": null,
    "description": "Delete a monitor and stop its future scheduled runs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitor_activity",
    "display_name": null,
    "category": null,
    "description": "Read one page of monitor ticks; pass nextCursor to the next call.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_monitor",
    "display_name": null,
    "category": null,
    "description": "Pause future monitor ticks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_monitor",
    "display_name": null,
    "category": null,
    "description": "Resume a paused monitor's scheduled ticks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_crawl",
    "display_name": null,
    "category": null,
    "description": "Start a bounded asynchronous crawl; poll get_crawl for progress.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_crawl",
    "display_name": null,
    "category": null,
    "description": "Read crawl status and the provider's current page summary.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_crawl",
    "display_name": null,
    "category": null,
    "description": "Delete the selected crawl.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_crawl_pages",
    "display_name": null,
    "category": null,
    "description": "Read one page of crawl results using the provider's numeric cursor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_crawl",
    "display_name": null,
    "category": null,
    "description": "Request a running crawl to stop; this is an acknowledgement.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_crawl",
    "display_name": null,
    "category": null,
    "description": "Request a paused crawl to resume; poll get_crawl for progress.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credits",
    "display_name": null,
    "category": null,
    "description": "Read remaining and used credits and crawl/monitor job limits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": null,
    "category": null,
    "description": "Validate the key and read its account email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

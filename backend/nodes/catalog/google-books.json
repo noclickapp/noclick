@@ -36,154 +36,176 @@
    "display_name": "Search Volumes",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_volume",
    "display_name": "Get Volume",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_my_bookshelves",
    "display_name": "List My Bookshelves",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_my_bookshelf",
    "display_name": "Get My Bookshelf",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_my_bookshelf_volumes",
    "display_name": "List My Bookshelf Volumes",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_volume",
    "display_name": "Add Volume",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_volume",
    "display_name": "Remove Volume",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_volume",
    "display_name": "Move Volume",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_bookshelf",
    "display_name": "Clear Bookshelf",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_public_bookshelves",
    "display_name": "List Public Bookshelves",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_public_bookshelf",
    "display_name": "Get Public Bookshelf",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_public_bookshelf_volumes",
    "display_name": "List Public Bookshelf Volumes",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_annotations",
    "display_name": "List Annotations",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_annotation",
    "display_name": "Create Annotation",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_annotation",
    "display_name": "Update Annotation",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_annotation",
    "display_name": "Delete Annotation",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_reading_position",
    "display_name": "Get Reading Position",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_reading_position",
    "display_name": "Set Reading Position",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_my_books",
    "display_name": "List My Books",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_recommended_volumes",
    "display_name": "List Recommended Volumes",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rate_recommended_volume",
    "display_name": "Rate Recommended Volume",
    "category": "Google Books",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_annotation_updated",
    "display_name": "On New or Updated Annotation",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

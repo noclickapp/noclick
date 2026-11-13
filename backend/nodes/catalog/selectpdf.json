@@ -29,84 +29,96 @@
    "display_name": "Convert URL to PDF",
    "category": null,
    "description": "Convert a web page to PDF bytes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "convert_html",
    "display_name": "Convert HTML to PDF",
    "category": null,
    "description": "Convert inline HTML to PDF bytes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_url_conversion",
    "display_name": null,
    "category": null,
    "description": "Submit a web page conversion and return its asynchronous job ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_html_conversion",
    "display_name": null,
    "category": null,
    "description": "Submit an HTML conversion and return its asynchronous job ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_pdfs",
    "display_name": "Merge PDFs",
    "category": null,
    "description": "Merge two or more PDF URLs and return PDF bytes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_pdf_merge",
    "display_name": null,
    "category": null,
    "description": "Submit a PDF merge asynchronously.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_pdf_text",
    "display_name": "Extract PDF text",
    "category": null,
    "description": "Extract PDF text in original or reading order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_pdf",
    "display_name": "Search PDF",
    "category": null,
    "description": "Find text and return matching page coordinates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_pdf_text_extraction",
    "display_name": null,
    "category": null,
    "description": "Submit PDF text extraction asynchronously.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_async_job",
    "display_name": null,
    "category": null,
    "description": "Read an async job once: processing, or its PDF/text/JSON result.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_web_elements",
    "display_name": null,
    "category": null,
    "description": "Read matched web elements from a completed async HTML conversion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_usage",
    "display_name": null,
    "category": null,
    "description": "Read subscription and remaining credits, optionally with monthly history.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

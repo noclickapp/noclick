@@ -22,154 +22,179 @@
    "display_name": "On Class Registration",
    "category": "Triggers",
    "description": "Start when a customer registers for a class, including waitlist promotions.\n\n    Deliveries are unsigned notifications. Fetch the customer and event through\n    TeamUp before acting: https://docs.goteamup.com/guides/webhooks",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "teamup_m2m_token"
+   ]
   },
   {
    "name": "list_providers",
    "display_name": null,
    "category": null,
    "description": "Read one page of providers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_provider",
    "display_name": null,
    "category": null,
    "description": "Read one provider.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customers",
    "display_name": null,
    "category": null,
    "description": "Read one page of customers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer",
    "display_name": null,
    "category": null,
    "description": "Read one customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": null,
    "category": null,
    "description": "Read one page of events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": null,
    "category": null,
    "description": "Read one event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_attendances",
    "display_name": null,
    "category": null,
    "description": "Read one page of attendances.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_attendance",
    "display_name": null,
    "category": null,
    "description": "Read one attendance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_memberships",
    "display_name": null,
    "category": null,
    "description": "Read one page of memberships.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_membership",
    "display_name": null,
    "category": null,
    "description": "Read one membership.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_memberships",
    "display_name": null,
    "category": null,
    "description": "Read one page of customer memberships.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer_membership",
    "display_name": null,
    "category": null,
    "description": "Read one customer membership.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_venues",
    "display_name": null,
    "category": null,
    "description": "Read one page of venues.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_venue",
    "display_name": null,
    "category": null,
    "description": "Read one venue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer",
    "display_name": null,
    "category": null,
    "description": "Create a customer; an invitation is sent only when explicitly enabled.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "register_customer",
    "display_name": null,
    "category": null,
    "description": "Register a customer for a class, consuming membership usage unless comped.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unregister_customer",
    "display_name": null,
    "category": null,
    "description": "Remove a registration; late cancellation can incur provider-configured penalties.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "confirm_attendance",
    "display_name": null,
    "category": null,
    "description": "Mark a customer as attended.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_no_show",
    "display_name": null,
    "category": null,
    "description": "Mark a registered customer as a no-show; provider-configured penalties may apply.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer_membership",
    "display_name": null,
    "category": null,
    "description": "Assign a membership to a customer; TeamUp applies its configured billing rules.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_customer_membership",
    "display_name": null,
    "category": null,
    "description": "Cancel a customer membership; provider cancellation and billing rules apply.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

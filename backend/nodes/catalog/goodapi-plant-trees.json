@@ -22,112 +22,128 @@
    "display_name": null,
    "category": null,
    "description": "Plant trees.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_planted_trees",
    "display_name": null,
    "category": null,
    "description": "List planted trees.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refund_trees",
    "display_name": null,
    "category": null,
    "description": "Refund a tree registration in the current billing cycle with a Stripe usage record. Omit count for a full refund.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tree_projects",
    "display_name": null,
    "category": null,
    "description": "List tree planting projects.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tree_project",
    "display_name": null,
    "category": null,
    "description": "Get tree planting project by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rescue_plastic_bottles",
    "display_name": null,
    "category": null,
    "description": "Rescue ocean-bound plastic bottles.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rescued_bottles",
    "display_name": null,
    "category": null,
    "description": "List rescued bottles.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refund_plastic_bottles",
    "display_name": null,
    "category": null,
    "description": "Refund a plastic bottle registration in the current billing cycle with a Stripe usage record. Omit count for a full refund.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_evidence",
    "display_name": null,
    "category": null,
    "description": "Read global planting evidence cached for 30 days; it is not filtered to your organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tree_evidence",
    "display_name": null,
    "category": null,
    "description": "Get tree planting timeline and evidence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_charities",
    "display_name": null,
    "category": null,
    "description": "Search charities.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_donation",
    "display_name": null,
    "category": null,
    "description": "Record a USD donation (early access). Activate donation billing first; use an idempotency key for retries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_donations",
    "display_name": null,
    "category": null,
    "description": "List donations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "subscribe_donations",
    "display_name": null,
    "category": null,
    "description": "Activate donation billing items once before making live donations (early access).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refund_donation",
    "display_name": null,
    "category": null,
    "description": "Mark a donation refunded (early access). This does not automatically reverse Stripe usage.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dashboard_url",
    "display_name": null,
    "category": null,
    "description": "Get the public impact dashboard URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

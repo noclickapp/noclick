@@ -28,168 +28,192 @@
    "display_name": "Get Company Settings",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customers",
    "display_name": "List Customers",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer",
    "display_name": "Get Customer",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer",
    "display_name": "Create Customer",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer",
    "display_name": "Update Customer",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_articles",
    "display_name": "List Articles",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_article",
    "display_name": "Get Article",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_article",
    "display_name": "Create Article",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_article",
    "display_name": "Update Article",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_suppliers",
    "display_name": "List Suppliers",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_supplier",
    "display_name": "Get Supplier",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_supplier",
    "display_name": "Create Supplier",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_supplier",
    "display_name": "Update Supplier",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_invoices",
    "display_name": "List Customer Invoices",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer_invoice",
    "display_name": "Get Customer Invoice",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer_invoice",
    "display_name": "Create Customer Invoice",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_invoice_drafts",
    "display_name": "List Customer Invoice Drafts",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer_invoice_draft",
    "display_name": "Get Customer Invoice Draft",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer_invoice_draft",
    "display_name": "Create Customer Invoice Draft",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer_invoice_draft",
    "display_name": "Update Customer Invoice Draft",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_customer_invoice_draft",
    "display_name": "Delete Customer Invoice Draft",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_terms_of_payment",
    "display_name": "List Terms Of Payment",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_units",
    "display_name": "List Units",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_article_account_codings",
    "display_name": "List Article Account Codings",
    "category": "Accounting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

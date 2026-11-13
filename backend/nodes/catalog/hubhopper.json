@@ -27,70 +27,80 @@
    "display_name": "List Categories",
    "category": "Categories",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_category",
    "display_name": "Get Category",
    "category": "Categories",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_category_podcasts",
    "display_name": "List Category Podcasts",
    "category": "Podcasts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_podcasts",
    "display_name": "List Podcasts",
    "category": "Podcasts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_podcast",
    "display_name": "Get Podcast",
    "category": "Podcasts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_episodes",
    "display_name": "List Podcast Episodes",
    "category": "Episodes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_languages",
    "display_name": "List Languages",
    "category": "Languages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_podcast",
    "display_name": "On New Podcast",
    "category": "Triggers",
    "description": "Monitor the newest 100 podcasts; shorten the schedule for busy catalogs.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_category_podcast",
    "display_name": "On New Category Podcast",
    "category": "Triggers",
    "description": "Monitor the newest 100 podcasts in this category between polls.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_episode",
    "display_name": "On New Podcast Episode",
    "category": "Triggers",
    "description": "Monitor the newest 100 episodes in this podcast between polls.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

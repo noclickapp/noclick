@@ -26,175 +26,200 @@
    "display_name": null,
    "category": null,
    "description": "GET /zapier/validateAPIKey.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_lead",
    "display_name": null,
    "category": null,
    "description": "POST /zapier/leads.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_lead",
    "display_name": null,
    "category": null,
    "description": "PUT /zapier/leads/{leadIdOrEmailOrPhone}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_lead",
    "display_name": null,
    "category": null,
    "description": "PUT /zapier/findLead/{leadIdOrEmail}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task",
    "display_name": null,
    "category": null,
    "description": "POST /zapier/leads/{leadIdOrEmail}/createTask.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_note",
    "display_name": null,
    "category": null,
    "description": "POST /zapier/leads/{leadIdOrEmail}/note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "save_listing",
    "display_name": null,
    "category": null,
    "description": "POST /zapier/savedListings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "request_information",
    "display_name": null,
    "category": null,
    "description": "POST /zapier/requestInfo.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "schedule_showing",
    "display_name": null,
    "category": null,
    "description": "POST /zapier/scheduleShowing.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "apply_traditional_action_plan",
    "display_name": null,
    "category": null,
    "description": "PUT /zapier/applyTraditionalActionPlan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "apply_automated_action_plan",
    "display_name": null,
    "category": null,
    "description": "PUT /zapier/applyFullyAutomatedActionPlan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_traditional_action_plan",
    "display_name": null,
    "category": null,
    "description": "PUT /zapier/stopTraditionalActionPlan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_automated_action_plan",
    "display_name": null,
    "category": null,
    "description": "PUT /zapier/v2/stopFullyAutomatedActionPlan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_agents",
    "display_name": null,
    "category": null,
    "description": "GET /zapier/agents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sites",
    "display_name": null,
    "category": null,
    "description": "GET /zapier/sites.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lead_sources",
    "display_name": null,
    "category": null,
    "description": "GET /zapier/leadSource.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lead_statuses",
    "display_name": null,
    "category": null,
    "description": "GET /zapier/leadStatus.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_email_statuses",
    "display_name": null,
    "category": null,
    "description": "GET /zapier/emailStatus.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_phone_statuses",
    "display_name": null,
    "category": null,
    "description": "GET /zapier/phoneStatus.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_task_types",
    "display_name": null,
    "category": null,
    "description": "GET /zapier/taskType.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_mls_regions",
    "display_name": null,
    "category": null,
    "description": "GET /zapier/mlsRegion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lead_types",
    "display_name": null,
    "category": null,
    "description": "GET /zapier/leadTypes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": null,
    "category": null,
    "description": "GET /zapier/tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_traditional_action_plans",
    "display_name": null,
    "category": null,
    "description": "GET /zapier/traditionalActionPlans.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_automated_action_plans",
    "display_name": null,
    "category": null,
    "description": "GET /zapier/fullyAutomatedActionPlans.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

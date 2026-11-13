@@ -34,28 +34,32 @@
    "display_name": "List Domain Metadata",
    "category": "Domain Metadata",
    "description": "Read one protected domain catalog page. Its count describes this page, not the account. Completion remains unknown.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain",
    "display_name": "Get Domain Metadata",
    "category": "Domain Metadata",
    "description": "Read the current catalog-bound domain's status, TLD and documented date strings. No privacy, security, renewal or delegation settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dns_records",
    "display_name": "List DNS Record Metadata",
    "category": "Domain Metadata",
    "description": "Read editable records for the protected domain; SOA and Porkbun default NS are excluded by this API. No DNS pagination is invented. RDATA is never emitted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dns_record",
    "display_name": "Get DNS Record Metadata",
    "category": "Domain Metadata",
    "description": "Bind a record to the current domain's record catalog and verify the independently returned records array contains exactly that record. No record values or changes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

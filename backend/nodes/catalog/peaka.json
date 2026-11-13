@@ -34,119 +34,136 @@
    "display_name": null,
    "category": null,
    "description": "List catalogs in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_catalog",
    "display_name": null,
    "category": null,
    "description": "Create catalog in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_catalog",
    "display_name": null,
    "category": null,
    "description": "Get catalog in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_catalog",
    "display_name": null,
    "category": null,
    "description": "Delete catalog in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_schemas",
    "display_name": null,
    "category": null,
    "description": "List schemas in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tables",
    "display_name": null,
    "category": null,
    "description": "List tables in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_columns",
    "display_name": null,
    "category": null,
    "description": "List columns in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_internal_tables",
    "display_name": null,
    "category": null,
    "description": "List internal tables in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_internal_table",
    "display_name": null,
    "category": null,
    "description": "Create internal table in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_internal_table",
    "display_name": null,
    "category": null,
    "description": "Delete internal table in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_internal_columns",
    "display_name": null,
    "category": null,
    "description": "List internal columns in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_queries",
    "display_name": null,
    "category": null,
    "description": "List queries in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_query",
    "display_name": null,
    "category": null,
    "description": "Create query in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_query",
    "display_name": null,
    "category": null,
    "description": "Get query in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_query",
    "display_name": null,
    "category": null,
    "description": "Update query in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_query",
    "display_name": null,
    "category": null,
    "description": "Delete query in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "execute_query",
    "display_name": null,
    "category": null,
    "description": "Execute query in the connected project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -33,126 +33,144 @@
    "display_name": "Query / Search",
    "category": "Points",
    "description": "Find the most similar points to a query vector (similarity search).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert",
    "display_name": "Upsert Points",
    "category": "Points",
    "description": "Insert or overwrite points in a collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve",
    "display_name": "Retrieve Points",
    "category": "Points",
    "description": "Retrieve points by their IDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete",
    "display_name": "Delete Points",
    "category": "Points",
    "description": "Delete points by ID or by filter.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scroll",
    "display_name": "Scroll Points",
    "category": "Points",
    "description": "Scroll through all points in a collection with optional filter and cursor-based pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "count",
    "display_name": "Count Points",
    "category": "Points",
    "description": "Count points in a collection, with optional filter.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "recommend",
    "display_name": "Recommend Points",
    "category": "Points",
    "description": "Find points similar to positive examples and dissimilar from negative examples.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_collections",
    "display_name": "List Collections",
    "category": "Collection",
    "description": "List all collections.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_collection",
    "display_name": "Get Collection Info",
    "category": "Collection",
    "description": "Get detailed info and stats for a single collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_collection",
    "display_name": "Create Collection",
    "category": "Collection",
    "description": "Create a new collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_collection",
    "display_name": "Update Collection",
    "category": "Collection",
    "description": "Update collection parameters (optimizers, HNSW, quantization).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_collection",
    "display_name": "Delete Collection",
    "category": "Collection",
    "description": "Delete a collection and all its points permanently.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_payload",
    "display_name": "Set Payload",
    "category": "Payload",
    "description": "Set (merge) payload fields on points selected by IDs or filter.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_payload",
    "display_name": "Delete Payload Keys",
    "category": "Payload",
    "description": "Delete specific payload keys from points.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_payload",
    "display_name": "Clear Payload",
    "category": "Payload",
    "description": "Remove all payload from points selected by IDs or filter.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_payload_index",
    "display_name": "Create Payload Index",
    "category": "Index",
    "description": "Create a payload field index to speed up filtered searches.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_payload_index",
    "display_name": "Delete Payload Index",
    "category": "Index",
    "description": "Delete a payload field index.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_and_index",
    "display_name": "Upload & Index Document",
    "category": "Points",
    "description": "Upload a document file, chunk + embed it, and upsert the points.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,84 +22,96 @@
    "display_name": null,
    "category": null,
    "description": "Check the chosen mode/resource permission without claiming identity.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_supporters",
    "display_name": null,
    "category": null,
    "description": "List supporter IDs and creation metadata; contact data is opt-in.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_supporter",
    "display_name": null,
    "category": null,
    "description": "Read an account-fenced supporter, optionally including basic contact fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_campaigns",
    "display_name": null,
    "category": null,
    "description": "List base campaign metadata in live mode.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign",
    "display_name": null,
    "category": null,
    "description": "Read base campaign name/status without modifying assignments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_fundraisers",
    "display_name": null,
    "category": null,
    "description": "Read fundraiser metadata; verify each campaign's account before output.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_fundraiser",
    "display_name": null,
    "category": null,
    "description": "Read a fundraiser with its campaign's current account fence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_designations",
    "display_name": null,
    "category": null,
    "description": "List allocation metadata, including inherited entries only if they match the saved account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_designation",
    "display_name": null,
    "category": null,
    "description": "Read a designation's account, name, code and default status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_designation",
    "display_name": null,
    "category": null,
    "description": "Create ordinary allocation metadata in the API key's account, with no campaign assignment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_designation",
    "display_name": null,
    "category": null,
    "description": "POST a partial name/code update; omitted fields retain their current values.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_designation",
    "display_name": null,
    "category": null,
    "description": "Delete a non-default designation after checking its current account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

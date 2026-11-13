@@ -28,56 +28,64 @@
    "display_name": "Get Classification Metadata",
    "category": "Classification",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_registered_fields",
    "display_name": "List Registered Field IDs",
    "category": "Schema",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_field_definition",
    "display_name": "Get Registered Field Definition",
    "category": "Schema",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_registered_field_groups",
    "display_name": "List Registered Field Group IDs",
    "category": "Schema",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_field_group",
    "display_name": "Get Registered Field Group Metadata",
    "category": "Schema",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_records",
    "display_name": "List Classified Record Metadata",
    "category": "Record",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_records",
    "display_name": "Search Classified Record Metadata",
    "category": "Record",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_record",
    "display_name": "Get Classified Record Metadata",
    "category": "Record",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -43,448 +43,522 @@
    "display_name": "List Organizations",
    "category": "Organizations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization",
    "display_name": "Get Organization",
    "category": "Organizations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Projects",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": "Get Project",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": "Create Project",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project",
    "display_name": "Update Project",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_project",
    "display_name": "Delete Project",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_keys",
    "display_name": "List Client Keys (DSNs)",
    "category": "Projects",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_teams",
    "display_name": "List Teams",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team",
    "display_name": "Get Team",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_team",
    "display_name": "Create Team",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_team",
    "display_name": "Delete Team",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_team_projects",
    "display_name": "List Team Projects",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_project_to_team",
    "display_name": "Add Project to Team",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_project_from_team",
    "display_name": "Remove Project from Team",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issues",
    "display_name": "List Issues",
    "category": "Issues",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue",
    "display_name": "Get Issue",
    "category": "Issues",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issue",
    "display_name": "Update Issue",
    "category": "Issues",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_issue",
    "display_name": "Delete Issue",
    "category": "Issues",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_events",
    "display_name": "List Issue Events",
    "category": "Issues",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_latest_event",
    "display_name": "Get Latest Event",
    "category": "Issues",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_events",
    "display_name": "List Project Events",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": "Get Event",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_releases",
    "display_name": "List Releases",
    "category": "Releases",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_release",
    "display_name": "Create Release",
    "category": "Releases",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_release",
    "display_name": "Get Release",
    "category": "Releases",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_release",
    "display_name": "Update Release",
    "category": "Releases",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_release",
    "display_name": "Delete Release",
    "category": "Releases",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_deploys",
    "display_name": "List Deploys",
    "category": "Releases",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_deploy",
    "display_name": "Create Deploy",
    "category": "Releases",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_members",
    "display_name": "List Members",
    "category": "Members",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invite_member",
    "display_name": "Invite Member",
    "category": "Members",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_member",
    "display_name": "Get Member",
    "category": "Members",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_member",
    "display_name": "Update Member",
    "category": "Members",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_member",
    "display_name": "Remove Member",
    "category": "Members",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issue_alerts",
    "display_name": "List Issue Alert Rules",
    "category": "Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_issue_alert",
    "display_name": "Create Issue Alert Rule",
    "category": "Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue_alert",
    "display_name": "Get Issue Alert Rule",
    "category": "Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issue_alert",
    "display_name": "Update Issue Alert Rule",
    "category": "Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_issue_alert",
    "display_name": "Delete Issue Alert Rule",
    "category": "Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_metric_alerts",
    "display_name": "List Metric Alert Rules",
    "category": "Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_metric_alert",
    "display_name": "Create Metric Alert Rule",
    "category": "Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metric_alert",
    "display_name": "Get Metric Alert Rule",
    "category": "Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_metric_alert",
    "display_name": "Update Metric Alert Rule",
    "category": "Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_metric_alert",
    "display_name": "Delete Metric Alert Rule",
    "category": "Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_monitors",
    "display_name": "List Monitors",
    "category": "Crons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_monitor",
    "display_name": "Create Monitor",
    "category": "Crons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitor",
    "display_name": "Get Monitor",
    "category": "Crons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_monitor",
    "display_name": "Update Monitor",
    "category": "Crons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_monitor",
    "display_name": "Delete Monitor",
    "category": "Crons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_checkins",
    "display_name": "List Monitor Check-ins",
    "category": "Crons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dashboards",
    "display_name": "List Dashboards",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_dashboard",
    "display_name": "Create Dashboard",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dashboard",
    "display_name": "Get Dashboard",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dashboard",
    "display_name": "Delete Dashboard",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_discover",
    "display_name": "Query Events (Discover)",
    "category": "Discover",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "events_stats",
    "display_name": "Events Time Series (Stats)",
    "category": "Discover",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sessions",
    "display_name": "Release Health (Sessions)",
    "category": "Discover",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_service_hooks",
    "display_name": "List Service Hooks",
    "category": "Service Hooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service_hook",
    "display_name": "Get Service Hook",
    "category": "Service Hooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_service_hook",
    "display_name": "Delete Service Hook",
    "category": "Service Hooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "raw_request",
    "display_name": "Custom Request",
    "category": "Advanced",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_error",
    "display_name": "On Error Event",
    "category": "Triggers",
    "description": "Fires on every new error event in the project (service-hook event.created).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "sentry_auth_token",
+    "sentry_oauth",
+    "sentry_mcp"
+   ]
   },
   {
    "name": "on_alert",
    "display_name": "On Alert",
    "category": "Triggers",
    "description": "Fires when a project alert rule triggers (service-hook event.alert).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "sentry_auth_token",
+    "sentry_oauth",
+    "sentry_mcp"
+   ]
   }
  ],
  "agent_tool_provider": true,

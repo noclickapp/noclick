@@ -22,70 +22,80 @@
    "display_name": "Get Authenticated Profile",
    "category": "Profile",
    "description": "Get the authenticated user's profile information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_text_post",
    "display_name": "Create Text Post",
    "category": "Post",
    "description": "Create a text post on LinkedIn",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_article_post",
    "display_name": "Create Article Post",
    "category": "Post",
    "description": "Create an article/link post on LinkedIn",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_post",
    "display_name": "Delete Post",
    "category": "Post",
    "description": "Delete a LinkedIn post",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scrape_user_profiles",
    "display_name": "Scrape User Profiles",
    "category": "Profile",
    "description": "Scrape LinkedIn profiles by URL/handle/ID via Apify (harvestapi).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "search_companies",
    "display_name": "Search Companies",
    "category": "Company",
    "description": "Search LinkedIn companies via Apify (harvestapi/linkedin-company-search).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "search_job_listings",
    "display_name": "Search Job Listings",
    "category": "Job",
    "description": "Search LinkedIn job listings via Apify (harvestapi/linkedin-job-search).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "search_user_profiles",
    "display_name": "Search User Profiles",
    "category": "Profile",
    "description": "Search LinkedIn profiles via Apify (harvestapi/linkedin-profile-search).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "scrape_company_employees",
    "display_name": "Scrape Company Employees",
    "category": "Company",
    "description": "Scrape employees of a LinkedIn company via Apify (harvestapi/linkedin-company-employees).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "search_posts",
    "display_name": "Search Posts",
    "category": "Post",
    "description": "Search LinkedIn posts via Apify (harvestapi/linkedin-post-search). $2 per 1k posts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   }
  ],
  "agent_tool_provider": true,

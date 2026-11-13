@@ -22,140 +22,160 @@
    "display_name": null,
    "category": null,
    "description": "Get the news items. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_news",
    "display_name": null,
    "category": null,
    "description": "Returns a single news item by node ID. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_removed_news",
    "display_name": null,
    "category": null,
    "description": "Returns the removed news data. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_earnings",
    "display_name": null,
    "category": null,
    "description": "Returns the earnings data. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dividends",
    "display_name": null,
    "category": null,
    "description": "Dividends Events. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ratings",
    "display_name": null,
    "category": null,
    "description": "Returns analyst ratings data. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_splits",
    "display_name": null,
    "category": null,
    "description": "Returns the splits calendar data. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ipos",
    "display_name": null,
    "category": null,
    "description": "IPOs V2.1. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_economics",
    "display_name": null,
    "category": null,
    "description": "Returns the economic calendar data. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_guidance",
    "display_name": null,
    "category": null,
    "description": "Returns guidance data. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_offerings",
    "display_name": null,
    "category": null,
    "description": "Returns Secondary Offering data. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_conference_calls",
    "display_name": null,
    "category": null,
    "description": "Returns Conference call data. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_market_movers",
    "display_name": null,
    "category": null,
    "description": "Market Movers. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_delayed_quotes",
    "display_name": null,
    "category": null,
    "description": "Get delayed quotes V2. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_short_interest",
    "display_name": null,
    "category": null,
    "description": "Short Interest Data. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company_profile",
    "display_name": null,
    "category": null,
    "description": "Company Profile Information V2.1. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bars",
    "display_name": null,
    "category": null,
    "description": "Historical Price Bars. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_balance_sheet",
    "display_name": null,
    "category": null,
    "description": "Get Balance Sheet V3. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_cash_flow",
    "display_name": null,
    "category": null,
    "description": "Get Cash Flow V3. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_income_statement",
    "display_name": null,
    "category": null,
    "description": "Income Statement Data V3. Returns one response page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -27,161 +27,193 @@
    "display_name": "On Bill Event",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "bill_session"
+   ]
   },
   {
    "name": "on_payment_event",
    "display_name": "On Payment Event",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "bill_session"
+   ]
   },
   {
    "name": "on_vendor_event",
    "display_name": "On Vendor Event",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "bill_session"
+   ]
   },
   {
    "name": "list_vendors",
    "display_name": null,
    "category": "Vendors",
    "description": "Get list of vendors.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_vendor",
    "display_name": null,
    "category": "Vendors",
    "description": "Create a vendor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_vendor",
    "display_name": null,
    "category": "Vendors",
    "description": "Get vendor details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_vendor",
    "display_name": null,
    "category": "Vendors",
    "description": "Update a vendor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_bills",
    "display_name": null,
    "category": "Bills",
    "description": "Get list of bills.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_bill",
    "display_name": null,
    "category": "Bills",
    "description": "Create a bill.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bill",
    "display_name": null,
    "category": "Bills",
    "description": "Get bill details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_bill",
    "display_name": null,
    "category": "Bills",
    "description": "Update a bill.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customers",
    "display_name": null,
    "category": "Customers",
    "description": "Get list of customers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer",
    "display_name": null,
    "category": "Customers",
    "description": "Create a customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer",
    "display_name": null,
    "category": "Customers",
    "description": "Get customer details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer",
    "display_name": null,
    "category": "Customers",
    "description": "Update a customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pending_approvals",
    "display_name": null,
    "category": "Approvals",
    "description": "Get list of bills pending approval.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_approval_policies",
    "display_name": null,
    "category": "Approvals",
    "description": "Get list of bill approval policies.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_approval_policy",
    "display_name": null,
    "category": "Approvals",
    "description": "Create a bill approval policy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_or_deny_bills",
    "display_name": null,
    "category": "Approvals",
    "description": "Approve or deny a bill.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payments",
    "display_name": null,
    "category": "Payments",
    "description": "Get list of payments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_payment",
    "display_name": null,
    "category": "Payments",
    "description": "Get payment details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "schedule_payment",
    "display_name": null,
    "category": "Payments",
    "description": "Create a payment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "record_payment",
    "display_name": null,
    "category": "Payments",
    "description": "Record AP payment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

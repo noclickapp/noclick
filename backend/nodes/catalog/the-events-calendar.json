@@ -27,140 +27,160 @@
    "display_name": null,
    "category": null,
    "description": "List events on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": null,
    "category": null,
    "description": "Get event on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_event",
    "display_name": null,
    "category": null,
    "description": "Update event on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_event",
    "display_name": null,
    "category": null,
    "description": "Delete event on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_venues",
    "display_name": null,
    "category": null,
    "description": "List venues on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_venue",
    "display_name": null,
    "category": null,
    "description": "Get venue on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_venue",
    "display_name": null,
    "category": null,
    "description": "Update venue on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_venue",
    "display_name": null,
    "category": null,
    "description": "Delete venue on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_organizers",
    "display_name": null,
    "category": null,
    "description": "List organizers on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organizer",
    "display_name": null,
    "category": null,
    "description": "Get organizer on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_organizer",
    "display_name": null,
    "category": null,
    "description": "Update organizer on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_organizer",
    "display_name": null,
    "category": null,
    "description": "Delete organizer on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_categories",
    "display_name": null,
    "category": null,
    "description": "List categories on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_category",
    "display_name": null,
    "category": null,
    "description": "Get category on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_category",
    "display_name": null,
    "category": null,
    "description": "Update category on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_category",
    "display_name": null,
    "category": null,
    "description": "Delete category on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": null,
    "category": null,
    "description": "List tags on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tag",
    "display_name": null,
    "category": null,
    "description": "Get tag on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tag",
    "display_name": null,
    "category": null,
    "description": "Update tag on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tag",
    "display_name": null,
    "category": null,
    "description": "Delete tag on the connected site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -34,126 +34,144 @@
    "display_name": null,
    "category": "Notes",
    "description": "List notes",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_note",
    "display_name": null,
    "category": "Notes",
    "description": "Get note",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transcript",
    "display_name": null,
    "category": "Notes",
    "description": "Get transcript",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": null,
    "category": "Notes",
    "description": "List folders",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_spaces",
    "display_name": null,
    "category": "Notes",
    "description": "List spaces",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_audit_events",
    "display_name": null,
    "category": "Notes",
    "description": "List audit events",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webhook_endpoint",
    "display_name": null,
    "category": "Webhooks",
    "description": "Create webhook endpoint",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhook_endpoints",
    "display_name": null,
    "category": "Webhooks",
    "description": "List webhook endpoints",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_webhook_endpoint",
    "display_name": null,
    "category": "Webhooks",
    "description": "Update webhook endpoint",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook_endpoint",
    "display_name": null,
    "category": "Webhooks",
    "description": "Delete webhook endpoint",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_legal_hold",
    "display_name": null,
    "category": "Legal Holds",
    "description": "Create legal hold",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_legal_holds",
    "display_name": null,
    "category": "Legal Holds",
    "description": "List legal holds",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_legal_hold",
    "display_name": null,
    "category": "Legal Holds",
    "description": "Get legal hold",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_legal_hold",
    "display_name": null,
    "category": "Legal Holds",
    "description": "Update legal hold",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "release_legal_hold",
    "display_name": null,
    "category": "Legal Holds",
    "description": "Release legal hold",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_legal_hold_custodians",
    "display_name": null,
    "category": "Legal Holds",
    "description": "Add legal hold custodians",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_legal_hold_custodians",
    "display_name": null,
    "category": "Legal Holds",
    "description": "List legal hold custodians",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_legal_hold_custodian",
    "display_name": null,
    "category": "Legal Holds",
    "description": "Remove legal hold custodian",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

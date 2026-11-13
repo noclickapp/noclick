@@ -34,574 +34,656 @@
    "display_name": "List Actors",
    "category": "Actor",
    "description": "List Actors available to the user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_actor",
    "display_name": "Get Actor",
    "category": "Actor",
    "description": "Get information about a specific Actor",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_actor_asynchronously",
    "display_name": "Run Actor Asynchronously",
    "category": "Actor",
    "description": "Run an Actor asynchronously",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_actor_synchronously",
    "display_name": "Run Actor Synchronously",
    "category": "Actor",
    "description": "Run an Actor synchronously and wait for results (max 300 seconds)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_actor_sync_and_get_dataset_items",
    "display_name": "Run Actor Sync and Get Dataset Items",
    "category": "Actor",
    "description": "Run an Actor synchronously and get dataset items directly",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_actor",
    "display_name": "Create Actor",
    "category": "Actor",
    "description": "Create a new Actor",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_actor",
    "display_name": "Update Actor",
    "category": "Actor",
    "description": "Update an existing Actor",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_actor",
    "display_name": "Delete Actor",
    "category": "Actor",
    "description": "Delete an Actor",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_actor_builds",
    "display_name": "List Actor Builds",
    "category": "Actor",
    "description": "List builds for an Actor",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_actor_build",
    "display_name": "Start Actor Build",
    "category": "Actor",
    "description": "Start a new Actor build",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_actor_build",
    "display_name": "Get Actor Build",
    "category": "Actor",
    "description": "Get details of a specific Actor build",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "abort_actor_build",
    "display_name": "Abort Actor Build",
    "category": "Actor",
    "description": "Abort a running Actor build",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_actor_versions",
    "display_name": "List Actor Versions",
    "category": "Actor Version",
    "description": "List versions of an Actor",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_actor_version",
    "display_name": "Get Actor Version",
    "category": "Actor Version",
    "description": "Get a specific Actor version",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_actor_version",
    "display_name": "Create Actor Version",
    "category": "Actor Version",
    "description": "Create a new Actor version",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_actor_version",
    "display_name": "Update Actor Version",
    "category": "Actor Version",
    "description": "Update an existing Actor version",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_actor_version",
    "display_name": "Delete Actor Version",
    "category": "Actor Version",
    "description": "Delete an Actor version",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_environment_variables",
    "display_name": "List Environment Variables",
    "category": "Environment Variable",
    "description": "List environment variables for an Actor version",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_environment_variable",
    "display_name": "Get Environment Variable",
    "category": "Environment Variable",
    "description": "Get a specific environment variable",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_environment_variable",
    "display_name": "Create Environment Variable",
    "category": "Environment Variable",
    "description": "Create a new environment variable",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_environment_variable",
    "display_name": "Update Environment Variable",
    "category": "Environment Variable",
    "description": "Update an environment variable",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_environment_variable",
    "display_name": "Delete Environment Variable",
    "category": "Environment Variable",
    "description": "Delete an environment variable",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_actor_runs",
    "display_name": "List Actor Runs",
    "category": "Actor",
    "description": "List runs for a specific Actor",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_actor_run",
    "display_name": "Get Actor Run",
    "category": "Actor",
    "description": "Get details of a specific Actor run",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_actor_last_run",
    "display_name": "Get Actor Last Run",
    "category": "Actor",
    "description": "Get the last run of an Actor",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "abort_actor_run",
    "display_name": "Abort Actor Run",
    "category": "Actor",
    "description": "Abort a running Actor",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resurrect_actor_run",
    "display_name": "Resurrect Actor Run",
    "category": "Actor",
    "description": "Resurrect a finished Actor run",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_actor_run_log",
    "display_name": "Get Actor Run Log",
    "category": "Actor",
    "description": "Get the log of an Actor run",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "metamorphose_actor_run",
    "display_name": "Metamorphose Actor Run",
    "category": "Actor",
    "description": "Metamorphose (transform) an Actor run into another Actor",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reboot_actor_run",
    "display_name": "Reboot Actor Run",
    "category": "Actor",
    "description": "Reboot an Actor run",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_actor_tasks",
    "display_name": "List Actor Tasks",
    "category": "Task",
    "description": "List Actor Tasks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_actor_task",
    "display_name": "Get Actor Task",
    "category": "Task",
    "description": "Get details of a specific Actor Task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_actor_task_asynchronously",
    "display_name": "Run Actor Task Asynchronously",
    "category": "Task",
    "description": "Run an Actor Task asynchronously",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_actor_task_synchronously",
    "display_name": "Run Actor Task Synchronously",
    "category": "Task",
    "description": "Run an Actor Task synchronously and wait for results",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_task_runs",
    "display_name": "List Task Runs",
    "category": "Task",
    "description": "List runs for a specific Task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task_last_run",
    "display_name": "Get Task Last Run",
    "category": "Task",
    "description": "Get the last run of a Task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_actor_task",
    "display_name": "Create Actor Task",
    "category": "Task",
    "description": "Create a new Actor Task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_actor_task",
    "display_name": "Update Actor Task",
    "category": "Task",
    "description": "Update an existing Actor Task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_actor_task",
    "display_name": "Delete Actor Task",
    "category": "Task",
    "description": "Delete an Actor Task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_datasets",
    "display_name": "List Datasets",
    "category": "Dataset",
    "description": "List datasets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dataset",
    "display_name": "Get Dataset",
    "category": "Dataset",
    "description": "Get dataset metadata",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dataset_items",
    "display_name": "Get Dataset Items",
    "category": "Dataset",
    "description": "Get items from a dataset",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_dataset",
    "display_name": "Create Dataset",
    "category": "Dataset",
    "description": "Create a named dataset",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "push_items_to_dataset",
    "display_name": "Push Items to Dataset",
    "category": "Dataset",
    "description": "Push items to a dataset",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dataset",
    "display_name": "Delete Dataset",
    "category": "Dataset",
    "description": "Delete a dataset",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_key_value_stores",
    "display_name": "List Key Value Stores",
    "category": "Key-Value Store",
    "description": "List key-value stores",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_key_value_store",
    "display_name": "Get Key Value Store",
    "category": "Key-Value Store",
    "description": "Get key-value store metadata",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_key_value_store_keys",
    "display_name": "List Key Value Store Keys",
    "category": "Key-Value Store",
    "description": "List keys in a key-value store",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_key_value_record",
    "display_name": "Get Key Value Record",
    "category": "Key-Value Store",
    "description": "Get a record from a key-value store",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_key_value_record",
    "display_name": "Put Key Value Record",
    "category": "Key-Value Store",
    "description": "Put a record in a key-value store",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_key_value_record",
    "display_name": "Delete Key Value Record",
    "category": "Key-Value Store",
    "description": "Delete a record from a key-value store",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_key_value_store",
    "display_name": "Create Key Value Store",
    "category": "Key-Value Store",
    "description": "Create a named key-value store",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_key_value_store",
    "display_name": "Delete Key Value Store",
    "category": "Key-Value Store",
    "description": "Delete a key-value store",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_schedules",
    "display_name": "List Schedules",
    "category": "Schedule",
    "description": "List schedules",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_schedule",
    "display_name": "Get Schedule",
    "category": "Schedule",
    "description": "Get schedule details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_schedule",
    "display_name": "Create Schedule",
    "category": "Schedule",
    "description": "Create a new schedule",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_schedule",
    "display_name": "Update Schedule",
    "category": "Schedule",
    "description": "Update an existing schedule",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_schedule",
    "display_name": "Delete Schedule",
    "category": "Schedule",
    "description": "Delete a schedule",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhooks",
    "display_name": "List Webhooks",
    "category": "Webhook",
    "description": "List webhooks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webhook",
    "display_name": "Get Webhook",
    "category": "Webhook",
    "description": "Get webhook details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webhook",
    "display_name": "Create Webhook",
    "category": "Webhook",
    "description": "Create a new webhook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_webhook",
    "display_name": "Update Webhook",
    "category": "Webhook",
    "description": "Update an existing webhook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook",
    "display_name": "Delete Webhook",
    "category": "Webhook",
    "description": "Delete a webhook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "test_webhook",
    "display_name": "Test Webhook",
    "category": "Webhook",
    "description": "Test a webhook by sending a sample request",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhook_dispatches",
    "display_name": "List Webhook Dispatches",
    "category": "Webhook",
    "description": "List webhook dispatch history",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webhook_dispatch",
    "display_name": "Get Webhook Dispatch",
    "category": "Webhook",
    "description": "Get details of a specific webhook dispatch",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_user",
    "display_name": "Get Current User",
    "category": "User",
    "description": "Get current user information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_public_user_info",
    "display_name": "Get Public User Info",
    "category": "User",
    "description": "Get public information about a user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account_limits_and_usage",
    "display_name": "Get Account Limits and Usage",
    "category": "User",
    "description": "Get account limits and current usage",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_account_limits",
    "display_name": "Update Account Limits",
    "category": "User",
    "description": "Update account limits",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monthly_usage_stats",
    "display_name": "Get Monthly Usage Stats",
    "category": "Account",
    "description": "Get monthly usage statistics",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dataset_statistics",
    "display_name": "Get Dataset Statistics",
    "category": "Dataset",
    "description": "Get dataset statistics",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_actor_build_log",
    "display_name": "Get Actor Build Log",
    "category": "Actor",
    "description": "Get Actor build log",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_request_queues",
    "display_name": "List Request Queues",
    "category": "Request Queue",
    "description": "List request queues",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_request_queue",
    "display_name": "Get Request Queue",
    "category": "Request Queue",
    "description": "Get request queue metadata",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_request_queue",
    "display_name": "Create Request Queue",
    "category": "Request Queue",
    "description": "Create a named request queue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_request_queue",
    "display_name": "Delete Request Queue",
    "category": "Request Queue",
    "description": "Delete a request queue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_queue_requests",
    "display_name": "List Queue Requests",
    "category": "Request Queue",
    "description": "List requests in a queue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_request_to_queue",
    "display_name": "Add Request to Queue",
    "category": "Request Queue",
    "description": "Add a request to a queue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_request_from_queue",
    "display_name": "Get Request from Queue",
    "category": "Request Queue",
    "description": "Get a specific request from a queue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_request_in_queue",
    "display_name": "Update Request in Queue",
    "category": "Request Queue",
    "description": "Update a request in a queue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_request_from_queue",
    "display_name": "Delete Request from Queue",
    "category": "Request Queue",
    "description": "Delete a request from a queue",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

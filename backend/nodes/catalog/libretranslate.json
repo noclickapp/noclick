@@ -26,98 +26,112 @@
    "display_name": null,
    "category": null,
    "description": "Translate plain text with a chosen source language.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translate_html",
    "display_name": null,
    "category": null,
    "description": "Translate HTML while preserving markup.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translate_auto_text",
    "display_name": null,
    "category": null,
    "description": "Detect the source language and translate plain text.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translate_auto_html",
    "display_name": null,
    "category": null,
    "description": "Detect the source language and translate HTML.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translate_batch_text",
    "display_name": null,
    "category": null,
    "description": "Translate a list of plain text strings in one request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translate_batch_html",
    "display_name": null,
    "category": null,
    "description": "Translate a list of HTML fragments in one request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translate_alternatives",
    "display_name": null,
    "category": null,
    "description": "Request preferred alternative translations for plain text.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "detect_language",
    "display_name": null,
    "category": null,
    "description": "Detect candidate languages and their confidence scores.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translate_file",
    "display_name": null,
    "category": null,
    "description": "Upload an inline file and return the provider's translated-file URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "suggest_translation",
    "display_name": null,
    "category": null,
    "description": "Submit a translation correction when suggestions are enabled.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_languages",
    "display_name": null,
    "category": null,
    "description": "List supported source languages and translation targets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_frontend_settings",
    "display_name": null,
    "category": null,
    "description": "Read server limits, file formats and enabled capabilities.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_health",
    "display_name": null,
    "category": null,
    "description": "Read the translation server's health status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_connection",
    "display_name": null,
    "category": null,
    "description": "Check key access with a read-only language detection sample.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

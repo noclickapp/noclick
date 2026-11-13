@@ -22,112 +22,128 @@
    "display_name": "Check Team Access",
    "category": "Infrastructure Metadata",
    "description": "Verify the token's protected bound team; public health is not credential evidence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_team",
    "display_name": "Get Current Team",
    "category": "Infrastructure Metadata",
    "description": "Read the token-bound team's ID and name, excluding members, billing and security settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Projects",
    "category": "Infrastructure Metadata",
    "description": "Read a bounded current-team project inventory and return one local slice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": "Get Project",
    "category": "Infrastructure Metadata",
    "description": "Verify current-team membership and project identity; return environment metadata without variables.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": "Create Empty Project",
    "category": "Infrastructure Metadata",
    "description": "Create project name/description in the bound team, including Coolify's default production environment. No resources are deployed. Verify an independent GET; do not retry an ambiguous write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project",
    "display_name": "Update Project Metadata",
    "category": "Infrastructure Metadata",
    "description": "PATCH only supplied name/description. Provider returns 201 for an update; verify an independent GET. No resource changes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_environments",
    "display_name": "List Project Environments",
    "category": "Infrastructure Metadata",
    "description": "Read environment UUIDs under the selected current-team project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_environment",
    "display_name": "Get Environment",
    "category": "Infrastructure Metadata",
    "description": "GET the documented project/UUID route. Validate numeric project parent and discard nested configuration and secrets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_environment",
    "display_name": "Create Empty Environment",
    "category": "Infrastructure Metadata",
    "description": "Create an empty named environment under the selected project. Does not create variables or resources. Verify by UUID and project ID; a duplicate name returns 409.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_environment",
    "display_name": "Update Environment Metadata",
    "category": "Infrastructure Metadata",
    "description": "PATCH only supplied name/description. Retain stable UUID through rename; verify independent parent-bound GET. No environment-variable changes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_applications",
    "display_name": "List Environment Applications",
    "category": "Infrastructure Metadata",
    "description": "Read the current-team application inventory, validate each environment ID, and return only this environment's metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_application",
    "display_name": "Get Application Metadata",
    "category": "Infrastructure Metadata",
    "description": "Read identity/status and verify the exact environment; discard commands, Compose, credentials, network URLs and settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_services",
    "display_name": "List Environment Services",
    "category": "Infrastructure Metadata",
    "description": "Read the team service inventory and return only this environment's identity metadata, excluding Compose and nested credentials.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service",
    "display_name": "Get Service Metadata",
    "category": "Infrastructure Metadata",
    "description": "Validate service environment and return ID/name/timestamps without nested applications, databases or secrets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_deployments",
    "display_name": "List Application Deployments",
    "category": "Infrastructure Metadata",
    "description": "One provider skip/take history page for the exact application. Return status/IDs/timestamps without logs, snapshots or server URLs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deployment",
    "display_name": "Get Deployment Status",
    "category": "Infrastructure Metadata",
    "description": "Read a deployment and verify its numeric application parent; does not start, cancel or change it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

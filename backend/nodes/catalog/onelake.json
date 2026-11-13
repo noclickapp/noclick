@@ -22,238 +22,272 @@
    "display_name": "List Paths",
    "category": "Filesystem",
    "description": "List files and folders under a workspace or item path (DFS filesystem).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_directory",
    "display_name": "Create Directory",
    "category": "Filesystem",
    "description": "Create a folder inside a managed item (e.g. a lakehouse Files folder).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_file",
    "display_name": "Create File",
    "category": "Filesystem",
    "description": "Create a new (empty) file resource to append to.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "append_file",
    "display_name": "Append to File",
    "category": "Filesystem",
    "description": "Upload bytes into a created file at a given offset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "flush_file",
    "display_name": "Flush File",
    "category": "Filesystem",
    "description": "Commit appended bytes, finalizing the upload.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "read_file",
    "display_name": "Read File",
    "category": "Filesystem",
    "description": "Download file content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_properties",
    "display_name": "Get Properties",
    "category": "Filesystem",
    "description": "Return metadata (size, ETag, last-modified) for a file or directory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_access_control",
    "display_name": "Get Access Control",
    "category": "Filesystem",
    "description": "Read the Fabric permissions mapped to a POSIX x-ms-acl for a path.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_access",
    "display_name": "Check Access",
    "category": "Filesystem",
    "description": "Check whether the caller has r/w/x access to a path (no data read).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lease_path",
    "display_name": "Lease Path",
    "category": "Filesystem",
    "description": "Acquire, renew, change, release, or break a lease on a file (concurrency).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_properties",
    "display_name": "Set Properties",
    "category": "Filesystem",
    "description": "Update user-defined x-ms-properties metadata on a path.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_path",
    "display_name": "Rename / Move Path",
    "category": "Filesystem",
    "description": "Move or rename a user-created file or folder within allowed paths.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_path",
    "display_name": "Delete Path",
    "category": "Filesystem",
    "description": "Delete a user-created file or folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_blobs",
    "display_name": "List Blobs",
    "category": "Filesystem",
    "description": "List blobs under a workspace container via the Blob endpoint (flat/prefix).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_file",
    "display_name": "On New File",
    "category": null,
    "description": "Trigger when a new file appears under a OneLake path",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "get_iceberg_config",
    "display_name": "Get Iceberg Config",
    "category": "Tables",
    "description": "Get the Iceberg REST Catalog config for an item (returns the prefix).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_iceberg_namespaces",
    "display_name": "List Iceberg Namespaces",
    "category": "Tables",
    "description": "List schemas (namespaces) in an item via the Iceberg REST Catalog.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_iceberg_namespace",
    "display_name": "Get Iceberg Namespace",
    "category": "Tables",
    "description": "Load metadata (location, properties) for an Iceberg namespace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_iceberg_tables",
    "display_name": "List Iceberg Tables",
    "category": "Tables",
    "description": "List tables within a schema via the Iceberg REST Catalog.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_iceberg_table",
    "display_name": "Get Iceberg Table",
    "category": "Tables",
    "description": "Load Iceberg table metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_delta_schemas",
    "display_name": "List Delta Schemas",
    "category": "Tables",
    "description": "List schemas via the Unity Catalog-compatible Delta API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_delta_tables",
    "display_name": "List Delta Tables",
    "category": "Tables",
    "description": "List Delta tables in a schema (Unity Catalog API).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_delta_table",
    "display_name": "Get Delta Table",
    "category": "Tables",
    "description": "Get Delta table metadata details (Unity Catalog API).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_shortcut",
    "display_name": "Create Shortcut",
    "category": "Shortcuts",
    "description": "Create a shortcut to OneLake, ADLS Gen2, S3, GCS, Blob, Dataverse, etc.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_shortcuts_bulk",
    "display_name": "Create Shortcuts (Bulk)",
    "category": "Shortcuts",
    "description": "Create many shortcuts in one call (Fabric Core bulk shortcut API).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_shortcut",
    "display_name": "Get Shortcut",
    "category": "Shortcuts",
    "description": "Retrieve a single shortcut definition.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_shortcuts",
    "display_name": "List Shortcuts",
    "category": "Shortcuts",
    "description": "List all shortcuts in an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_shortcut",
    "display_name": "Delete Shortcut",
    "category": "Shortcuts",
    "description": "Delete a shortcut (does not delete the target data).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_shortcut_cache",
    "display_name": "Reset Shortcut Cache",
    "category": "Shortcuts",
    "description": "Clear cached files for shortcuts in the workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_settings",
    "display_name": "Get OneLake Settings",
    "category": "Settings",
    "description": "Read workspace-level OneLake settings (Fabric Core).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_data_access_roles",
    "display_name": "List Data Access Roles",
    "category": "Data Access",
    "description": "List OneLake data access (RBAC) roles for an item — the only API to read them.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_data_access_role",
    "display_name": "Get Data Access Role",
    "category": "Data Access",
    "description": "Get a single OneLake data access role's rules and members.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_or_update_data_access_role",
    "display_name": "Create/Update Data Access Role",
    "category": "Data Access",
    "description": "Create or update a single OneLake data access role (the only API to set OneLake perms).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_data_access_role",
    "display_name": "Delete Data Access Role",
    "category": "Data Access",
    "description": "Delete a OneLake data access role.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

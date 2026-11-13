@@ -22,126 +22,144 @@
    "display_name": null,
    "category": null,
    "description": "Get current user details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_eod_prices",
    "display_name": null,
    "category": null,
    "description": "Retrieve end-of-day historical price data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_live_prices",
    "display_name": null,
    "category": null,
    "description": "Retrieve delayed real-time stock prices.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_intraday_prices",
    "display_name": null,
    "category": null,
    "description": "Retrieve intraday historical price data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_fundamentals",
    "display_name": null,
    "category": null,
    "description": "Retrieve filtered fundamental data for a specific symbol.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_symbols",
    "display_name": null,
    "category": null,
    "description": "Search stocks, companies, and ISINs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_exchanges",
    "display_name": null,
    "category": null,
    "description": "List supported exchanges.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_exchange_symbols",
    "display_name": null,
    "category": null,
    "description": "Retrieve the list of tickers for a specific exchange..",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_exchange_details",
    "display_name": null,
    "category": null,
    "description": "Retrieve details for a specific exchange.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_news",
    "display_name": null,
    "category": null,
    "description": "Retrieve financial news articles.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sentiment",
    "display_name": null,
    "category": null,
    "description": "Retrieve market news sentiment data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dividends",
    "display_name": null,
    "category": null,
    "description": "Retrieve historical dividend data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_splits",
    "display_name": null,
    "category": null,
    "description": "Retrieve historical split data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_earnings_calendar",
    "display_name": null,
    "category": null,
    "description": "Retrieve upcoming earnings data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ipo_calendar",
    "display_name": null,
    "category": null,
    "description": "Retrieve upcoming IPO data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_splits_calendar",
    "display_name": null,
    "category": null,
    "description": "Retrieve upcoming and historical stock splits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dividends_calendar",
    "display_name": null,
    "category": null,
    "description": "Retrieve upcoming dividends calendar.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_technical_indicator",
    "display_name": null,
    "category": null,
    "description": "Retrieve technical indicator data for a specified symbol..",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

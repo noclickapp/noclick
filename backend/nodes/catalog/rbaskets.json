@@ -28,77 +28,88 @@
    "display_name": null,
    "category": null,
    "description": "Read the service version and source commit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_statistics",
    "display_name": null,
    "category": null,
    "description": "Read basket and request statistics (requires a master token).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_baskets",
    "display_name": null,
    "category": null,
    "description": "List one page of basket names (requires a master token).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_basket",
    "display_name": null,
    "category": null,
    "description": "Create a basket and return its generated management token. Save that token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_basket",
    "display_name": null,
    "category": null,
    "description": "Read protected basket configuration; also verifies the connection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_basket",
    "display_name": null,
    "category": null,
    "description": "Update basket capacity and request forwarding settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_basket",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a basket and all its collected requests.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_response",
    "display_name": null,
    "category": null,
    "description": "Read the response configured for an incoming HTTP method.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_response",
    "display_name": null,
    "category": null,
    "description": "Configure the response returned to requests with the selected HTTP method.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_requests",
    "display_name": null,
    "category": null,
    "description": "Read one page of collected requests, optionally searching body, query or headers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_requests",
    "display_name": null,
    "category": null,
    "description": "Delete all requests collected by a basket, keeping the basket itself.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

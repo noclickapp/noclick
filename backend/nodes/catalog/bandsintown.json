@@ -28,21 +28,24 @@
    "display_name": null,
    "category": null,
    "description": "Get the artist's profile, follower count, images and upcoming-event count.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_artist_events",
    "display_name": null,
    "category": null,
    "description": "List tour dates with venues, ticket offers, lineups and descriptions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_artist_by_id",
    "display_name": null,
    "category": null,
    "description": "Get an artist profile using its confirmed Bandsintown ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

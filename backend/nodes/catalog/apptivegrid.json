@@ -22,140 +22,160 @@
    "display_name": "Get User",
    "category": null,
    "description": "Get user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_spaces",
    "display_name": "List Spaces",
    "category": null,
    "description": "List spaces.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_space",
    "display_name": "Create Space",
    "category": null,
    "description": "Create space.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_space",
    "display_name": "Get Space",
    "category": null,
    "description": "Get space.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_space",
    "display_name": "Rename Space",
    "category": null,
    "description": "Rename space.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_space",
    "display_name": "Delete Space",
    "category": null,
    "description": "Delete a space and its contents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_grids",
    "display_name": "List Grids",
    "category": null,
    "description": "List grids.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_grid",
    "display_name": "Create Grid",
    "category": null,
    "description": "Create grid.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_grid",
    "display_name": "Get Grid",
    "category": null,
    "description": "Get grid.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_grid",
    "display_name": "Rename Grid",
    "category": null,
    "description": "Rename grid.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_grid",
    "display_name": "Delete Grid",
    "category": null,
    "description": "Delete a grid and its contents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_grid_schema",
    "display_name": "Get Grid Schema",
    "category": null,
    "description": "Get grid schema.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_entries",
    "display_name": "List Entries",
    "category": null,
    "description": "List entries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_entry",
    "display_name": "Create Entry",
    "category": null,
    "description": "Create entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_entry",
    "display_name": "Get Entry",
    "category": null,
    "description": "Get entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_entry",
    "display_name": "Update Entry",
    "category": null,
    "description": "Update supplied fields; omitted fields are preserved in keyed layouts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "partial_update_entry",
    "display_name": "Partial Update Entry",
    "category": null,
    "description": "Update fields by ID or key (the provider always uses keyAndField layout).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_entry",
    "display_name": "Delete Entry",
    "category": null,
    "description": "Delete entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_views",
    "display_name": "List Views",
    "category": null,
    "description": "List views.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_forms",
    "display_name": "List Forms",
    "category": null,
    "description": "List forms.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

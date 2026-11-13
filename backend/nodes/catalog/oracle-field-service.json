@@ -31,119 +31,136 @@
    "display_name": "List Resource Metadata",
    "category": "Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_resource",
    "display_name": "Get Resource Metadata",
    "category": "Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_resource_children",
    "display_name": "List Child Resource Metadata",
    "category": "Resources",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_activities",
    "display_name": "List Activity Metadata",
    "category": "Activities",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_activity",
    "display_name": "Get Activity Metadata",
    "category": "Activities",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_nonscheduled_activity",
    "display_name": "Create Non-Scheduled Bucket Activity",
    "category": "Activities",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_activity_reference",
    "display_name": "Update Bucket Activity Reference",
    "category": "Activities",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_nonscheduled_activity",
    "display_name": "Delete Non-Scheduled Bucket Activity",
    "category": "Activities",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_activity_types",
    "display_name": "List Activity Types",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_activity_type",
    "display_name": "Get Activity Type",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_resource_types",
    "display_name": "List Resource Types",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_properties",
    "display_name": "List Property Definitions",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_property",
    "display_name": "Get Property Definition",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_property_enumerations",
    "display_name": "List Property Enumeration Values",
    "category": "Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_capacity_areas",
    "display_name": "List Capacity Area Metadata",
    "category": "Capacity",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_capacity_categories",
    "display_name": "List Capacity Categories",
    "category": "Capacity",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_available_capacity",
    "display_name": "Get Available Capacity",
    "category": "Capacity",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

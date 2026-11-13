@@ -22,175 +22,200 @@
    "display_name": "Fetch all live streams",
    "category": null,
    "description": "Fetch all live streams.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_live_stream",
    "display_name": "Fetch a live stream",
    "category": null,
    "description": "Fetch a live stream.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_live_stream",
    "display_name": "Create a live stream",
    "category": null,
    "description": "Create a live stream.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_live_stream",
    "display_name": "Update a live stream",
    "category": null,
    "description": "Update a live stream.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_live_stream",
    "display_name": "Delete a live stream",
    "category": null,
    "description": "Delete a live stream.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_live_stream",
    "display_name": "Start a live stream",
    "category": null,
    "description": "Start a live stream.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_live_stream",
    "display_name": "Stop a live stream",
    "category": null,
    "description": "Stop a live stream.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_live_stream",
    "display_name": "Reset a live stream",
    "category": null,
    "description": "Reset a live stream.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_live_stream_state",
    "display_name": "Fetch the state of a live stream",
    "category": null,
    "description": "Fetch the state of a live stream.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transcoders",
    "display_name": "Fetch all transcoders",
    "category": null,
    "description": "Fetch all transcoders.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transcoder",
    "display_name": "Fetch a transcoder",
    "category": null,
    "description": "Fetch a transcoder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_transcoder",
    "display_name": "Start a transcoder",
    "category": null,
    "description": "Start a transcoder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_transcoder",
    "display_name": "Stop a transcoder",
    "category": null,
    "description": "Stop a transcoder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_recording",
    "display_name": "Start recording",
    "category": null,
    "description": "Start recording.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_recording",
    "display_name": "Stop recording",
    "category": null,
    "description": "Stop recording.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transcoder_state",
    "display_name": "Fetch the state and uptime ID of a transcoder",
    "category": null,
    "description": "Fetch the state and uptime ID of a transcoder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_videos",
    "display_name": "Fetch all videos",
    "category": null,
    "description": "Fetch all videos.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_video",
    "display_name": "Fetch a video",
    "category": null,
    "description": "Fetch a video.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_video",
    "display_name": "Update a video's metadata",
    "category": null,
    "description": "Update a video's metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_video",
    "display_name": "Delete a video",
    "category": null,
    "description": "Delete a video.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_schedules",
    "display_name": "Fetch all schedules",
    "category": null,
    "description": "Fetch all schedules.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_schedule",
    "display_name": "Fetch a schedule",
    "category": null,
    "description": "Fetch a schedule.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_schedule",
    "display_name": "Enable a schedule",
    "category": null,
    "description": "Enable a schedule.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_schedule",
    "display_name": "Disable a schedule",
    "category": null,
    "description": "Disable a schedule.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_video",
    "display_name": "On New Video",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

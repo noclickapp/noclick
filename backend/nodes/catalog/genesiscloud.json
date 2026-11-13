@@ -29,14 +29,16 @@
    "display_name": null,
    "category": null,
    "description": "Read one documented existing-instance page, excluding network and credential details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_instance",
    "display_name": null,
    "category": null,
    "description": "Read one protected existing instance by its exact selected UUID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

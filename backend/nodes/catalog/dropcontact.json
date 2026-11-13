@@ -34,42 +34,48 @@
    "display_name": "Check Key with Free Credit Probe",
    "category": "Connection",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credits",
    "display_name": "Get Remaining Credits",
    "category": "Connection",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich_contact",
    "display_name": "Submit Owned B2B Contact",
    "category": "Enrichment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich_batch",
    "display_name": "Submit Owned B2B Batch",
    "category": "Enrichment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_status",
    "display_name": "Read Existing Enrichment Status Once",
    "category": "Results",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_results",
    "display_name": "Read Existing Enrichment Results Once",
    "category": "Results",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

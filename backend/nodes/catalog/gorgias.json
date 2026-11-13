@@ -43,777 +43,888 @@
    "display_name": "Create a setting",
    "category": "Account",
    "description": "Create a setting for the current account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": "Retrieve your account",
    "category": "Account",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_account_settings",
    "display_name": "List settings",
    "category": "Account",
    "description": "List account settings matching the given parameters, paginated.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_account_setting",
    "display_name": "Update a setting",
    "category": "Account",
    "description": "Update a setting for the current account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_custom_field",
    "display_name": "Create a custom field",
    "category": "Custom Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_custom_field",
    "display_name": "Retrieve a custom field",
    "category": "Custom Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_fields",
    "display_name": "List custom fields",
    "category": "Custom Fields",
    "description": "List custom fields matching the given parameters, paginated, and ordered.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_custom_field",
    "display_name": "Update a custom field",
    "category": "Custom Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_custom_fields",
    "display_name": "Bulk update a list of custom fields",
    "category": "Custom Fields",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer",
    "display_name": "Create a customer",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_customer",
    "display_name": "Delete a customer",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_customer_custom_field_value",
    "display_name": "Delete customer field value",
    "category": "Customers",
    "description": "Delete a customer's custom field value.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_customers",
    "display_name": "Delete customers",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer",
    "display_name": "Retrieve a customer",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_custom_fields_values",
    "display_name": "List customer field values",
    "category": "Customers",
    "description": "List all custom fields for a customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customers",
    "display_name": "List customers",
    "category": "Customers",
    "description": "List customers, paginated, and ordered by their name (alphabetical order).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_customers",
    "display_name": "Merge two customers",
    "category": "Customers",
    "description": "Merge two customers according to the data sent in the payload. The data of the source customer will be merged into the target customer and then deleted.\nIn case both customers have data for the same integration a conflict will occur with the API returning an error.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer",
    "display_name": "Update a customer",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer_custom_field_value",
    "display_name": "Update customer field value",
    "category": "Customers",
    "description": "Update a customer's custom field value.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer_custom_field_values",
    "display_name": "Update customer fields values",
    "category": "Customers",
    "description": "Update a customer's custom fields values.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer_data",
    "display_name": "Set customer data",
    "category": "Customers",
    "description": "Set a customer's data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": "Retrieve an event",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": "List events",
    "category": "Events",
    "description": "List events, paginated, and ordered by their creation date, with the most recently created first.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "download_file",
    "display_name": "Download a file",
    "category": "Files",
    "description": "Download a private file given its resource identifier. The identifier can be extracted from the URL of an attachment by removing the domain part and keeping the rest.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_api_upload",
    "display_name": "Upload files",
    "category": "Files",
    "description": "You can upload several files at a time by adding parameters to the root of the request body. The name of each parameter will be used as the label of the file once uploaded. E.g:\n  - parameter name: `package-damaged.png`\n  - parameter value: Content of the file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_integration",
    "display_name": "Create an integration",
    "category": "Integrations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_integration",
    "display_name": "Delete an integration",
    "category": "Integrations",
    "description": "Delete an integration. Any views that use this integration will be deactivated. Integrations currently used in rules and/or other integrations cannot be deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_integration",
    "display_name": "Retrieve an integration",
    "category": "Integrations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_integrations",
    "display_name": "List integrations",
    "category": "Integrations",
    "description": "List integrations matching the given parameters, paginated.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_integration",
    "display_name": "Update an integration",
    "category": "Integrations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_job",
    "display_name": "Cancel a job",
    "category": "Jobs",
    "description": "Jobs can be canceled at any time but be aware that if a job already started, changes done by this one won't be reverted. For example, if you created a job to close 10k tickets and you cancel it at some point, these closed tickets won't be reopened.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_job",
    "display_name": "Create a job",
    "category": "Jobs",
    "description": "Create a job and schedule its execution. Jobs are processed asynchronously, meaning that once a job is created, it will run in background on Gorgias's servers. According to the type and size of the task, a job can take a few minutes or several hours to be executed. You can use our API to check the status of the job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_job",
    "display_name": "Retrieve a job",
    "category": "Jobs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_jobs",
    "display_name": "List jobs",
    "category": "Jobs",
    "description": "List jobs, paginated and ordered by their creation date, with the most recent ones first.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_job",
    "display_name": "Update a job",
    "category": "Jobs",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_archive_macros",
    "display_name": "Archive macros",
    "category": "Macros",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_unarchive_macros",
    "display_name": "Unarchive macros",
    "category": "Macros",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_macro",
    "display_name": "Create a macro",
    "category": "Macros",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_macro",
    "display_name": "Delete a macro",
    "category": "Macros",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_macro",
    "display_name": "Retrieve a macro",
    "category": "Macros",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_macros",
    "display_name": "List macros",
    "category": "Macros",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_macro",
    "display_name": "Update a macro",
    "category": "Macros",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_metric_card_feedback",
    "display_name": "Submit feedback on a metric card definition",
    "category": "Metric Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metric_card",
    "display_name": "Retrieve a metric card by slug",
    "category": "Metric Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_metric_cards",
    "display_name": "Search metric cards",
    "category": "Metric Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_statistic",
    "display_name": "Retrieve a statistic",
    "category": "Reporting Statistics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_rule",
    "display_name": "Create a rule",
    "category": "Rules",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_rule",
    "display_name": "Delete a rule",
    "category": "Rules",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_rule",
    "display_name": "Retrieve a rule",
    "category": "Rules",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rules",
    "display_name": "List rules",
    "category": "Rules",
    "description": "List rules, paginated.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_rule",
    "display_name": "Update a rule",
    "category": "Rules",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_rules_priorities",
    "display_name": "Update rules' priorities",
    "category": "Rules",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_satisfaction_survey",
    "display_name": "Create a survey",
    "category": "Satisfaction Surveys",
    "description": "Create a new satisfaction survey. If you don't want the satisfaction survey to be sent by Gorgias set `should_send_datetime` parameter to `null`.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_satisfaction_survey",
    "display_name": "Retrieve a survey",
    "category": "Satisfaction Surveys",
    "description": "Retrieve a survey",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_satisfaction_surveys",
    "display_name": "List surveys",
    "category": "Satisfaction Surveys",
    "description": "List surveys, paginated and ordered by their creation date, with the most recently created  first.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_satisfaction_survey",
    "display_name": "Update a survey",
    "category": "Satisfaction Surveys",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search",
    "display_name": "Search for resources",
    "category": "Search",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "download_legacy_statistic",
    "display_name": "Download a statistic",
    "category": "Statistics",
    "description": "Download CSV-formatted data of a statistic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_legacy_statistic",
    "display_name": "Retrieve a statistic",
    "category": "Statistics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tag",
    "display_name": "Create a tag",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tag",
    "display_name": "Delete a tag",
    "category": "Tags",
    "description": "Delete a tag. Any views that use this tag will be deactivated. Tags currently used in macros and/or rules cannot be deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tags",
    "display_name": "Delete tags",
    "category": "Tags",
    "description": "Delete a list of tags. Any views that use this tag will be deactivated. Tags currently used in macros and/or rules cannot be deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tag",
    "display_name": "Retrieve a tag",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": "List tags",
    "category": "Tags",
    "description": "List tags matching the given parameters, paginated, and ordered.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_tags",
    "display_name": "Merge tags",
    "category": "Tags",
    "description": "Merge one or more tags into another tag. Source tags will be merged into the destination tag and then deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tag",
    "display_name": "Update a tag",
    "category": "Tags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_team",
    "display_name": "Create a team",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_team",
    "display_name": "Delete a team",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team",
    "display_name": "Retrieve a team",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_teams",
    "display_name": "List teams",
    "category": "Teams",
    "description": "List teams matching the given parameters, paginated, and ordered.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_team",
    "display_name": "Update a team",
    "category": "Teams",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ticket_message",
    "display_name": "Create a message",
    "category": "Ticket Messages",
    "description": "Create a message and either:\n  - not send it if the attribute `sent_datetime` is filled.\n  If you import a message that was already sent, make sure to set this value.\n  - send it to the recipients if the attribute `sent_datetime` is empty.\n  - add it to the ticket as an internal note if you specified this channel.\n  Internal notes are not sent to your customers.\n\nWhen a message is created, it does not mean that this one has been sent because the creation and sending process are decoupled. Messages are basically sent asynchronously. Once a message has been sent, Gorgias will automatically updat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ticket_message",
    "display_name": "Delete a message",
    "category": "Ticket Messages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ticket_message",
    "display_name": "Retrieve a message",
    "category": "Ticket Messages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_messages",
    "display_name": "List messages",
    "category": "Ticket Messages",
    "description": "List messages matching the given parameters, paginated.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ticket_messages",
    "display_name": "List messages of a ticket",
    "category": "Ticket Messages",
    "description": "List all messages of a ticket, ordered by their sending date, with the oldest messages first. This endpoint has been deprecated. Use [list messages](/reference/list-messages) endpoint instead.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ticket_message",
    "display_name": "Update a message",
    "category": "Ticket Messages",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ticket_tags",
    "display_name": "Add ticket tags",
    "category": "Tickets",
    "description": "Add tags to a ticket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ticket",
    "display_name": "Delete a ticket",
    "category": "Tickets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ticket_custom_field",
    "display_name": "Delete ticket field value",
    "category": "Tickets",
    "description": "Delete a custom field value from a ticket.\n\nSystem-managed fields (e.g. *AI Agent Outcome*, *AI Intent*) can\nonly be deleted by Gorgias internal apps.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ticket_tags",
    "display_name": "Remove ticket tags",
    "category": "Tickets",
    "description": "Remove tags from a ticket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ticket_custom_fields",
    "display_name": "List ticket field values",
    "category": "Tickets",
    "description": "List all custom fields for a ticket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ticket_tags",
    "display_name": "List ticket tags",
    "category": "Tickets",
    "description": "List all tags for a ticket.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tickets",
    "display_name": "List tickets",
    "category": "Tickets",
    "description": "List tickets, paginated and ordered by the attribute of the given view.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ticket_custom_field",
    "display_name": "Update ticket field value",
    "category": "Tickets",
    "description": "Update a ticket's custom field value.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ticket_custom_fields",
    "display_name": "Update ticket fields values",
    "category": "Tickets",
    "description": "Replace the custom field values for a ticket.\n\n**Important — replace-all semantics:** The request body must contain\n*all* custom field values you want the ticket to have. Any field that\ncurrently has a value on the ticket but is **not included** in the\nrequest body will be deleted.\n\nSome system-managed fields (e.g. *AI Agent Outcome*, *AI Intent*)\ncan only be deleted by Gorgias internal apps.\n\n**Safe pattern:** fetch the current values with\n`GET /api/tickets/{ticket_id}/custom-fields`, merge your changes, and\nsend the full list back.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ticket_tags",
    "display_name": "Set ticket tags",
    "category": "Tickets",
    "description": "Set a ticket's tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_user",
    "display_name": "Create a user",
    "category": "Users",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_user",
    "display_name": "Delete a user",
    "category": "Users",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": "Retrieve a user",
    "category": "Users",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": "List users",
    "category": "Users",
    "description": "List users, paginated and ordered by their name (alphabetical order).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_user",
    "display_name": "Update a user",
    "category": "Users",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_view",
    "display_name": "Create a view",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_view",
    "display_name": "Delete a view",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_view",
    "display_name": "Retrieve a view",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_view_items",
    "display_name": "List view's items",
    "category": "Views",
    "description": "List view's items, paginated, and ordered by the attribute specified in the data of view.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_views",
    "display_name": "List views",
    "category": "Views",
    "description": "List all views ordered by their `id` attribute. Current user variables (`{{current_user...}}`) present in views' filters will be replaced with the information of the user listing views.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_view",
    "display_name": "Update a view",
    "category": "Views",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_view_items",
    "display_name": "Search for view's items",
    "category": "Views",
    "description": "List view's items, paginated, and ordered by the attribute specified in the data of view.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_voice_call_event",
    "display_name": "Retrieve a voice call event",
    "category": "Voice Call Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_voice_call_events",
    "display_name": "List voice call events",
    "category": "Voice Call Events",
    "description": "List voice call events matching the given parameters, paginated, and ordered.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_voice_call_recording",
    "display_name": "Delete a voice call recording",
    "category": "Voice Call Recordings",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_voice_call_recording",
    "display_name": "Retrieve a voice call recording",
    "category": "Voice Call Recordings",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_voice_call_recordings",
    "display_name": "List voice call recordings",
    "category": "Voice Call Recordings",
    "description": "List voice call recordings matching the given parameters, paginated, and ordered.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_voice_call",
    "display_name": "Retrieve a voice call",
    "category": "Voice Calls",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_voice_calls",
    "display_name": "List voice calls",
    "category": "Voice Calls",
    "description": "List voice calls matching the given parameters, paginated, and ordered.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_widget",
    "display_name": "Create a widget",
    "category": "Widgets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_widget",
    "display_name": "Delete a widget",
    "category": "Widgets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_widget",
    "display_name": "Retrieve a widget",
    "category": "Widgets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_widgets",
    "display_name": "List widgets",
    "category": "Widgets",
    "description": "List all widgets for the account, ordered.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_widget",
    "display_name": "Update a widget",
    "category": "Widgets",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

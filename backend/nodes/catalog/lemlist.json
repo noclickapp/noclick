@@ -34,1232 +34,1408 @@
    "display_name": "Create Lead in Campaign",
    "category": "Leads",
    "description": "Creates a new lead and adds it to a specific campaign. Never updates an existing lead. (POST /campaigns/{campaignId}/leads/).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich_data",
    "display_name": "Enrich Data",
    "category": "Enrich",
    "description": "Enriches data by finding emails, phone numbers, or LinkedIn information from various inputs. (POST /enrich).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_people_database",
    "display_name": "Search People database",
    "category": "People Database",
    "description": "Searches the people database using filters, keywords, and pagination. (POST /database/people).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_webhook",
    "display_name": "Add Webhook",
    "category": "Webhooks",
    "description": "Creates a webhook that receives real-time POST callbacks for selected events. (POST /hooks).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lead_by_email",
    "display_name": "Get Lead by Email",
    "category": "Leads",
    "description": "Retrieves a specific lead by their email address. (GET /leads/{email}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team",
    "display_name": "Get Team",
    "category": "Team",
    "description": "Retrieves information about your team. (GET /team).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team_senders",
    "display_name": "Get Team Senders",
    "category": "Team",
    "description": "Retrieves a list of all team members and their associated campaigns. (GET /team/senders).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team_credits",
    "display_name": "Get Team Credits",
    "category": "Team",
    "description": "Retrieves the remaining credits balance for your team's account. (GET /team/credits).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": "Get User",
    "category": "Users",
    "description": "Retrieves all information for a specific user by their ID. (GET /users/{userId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_channels",
    "display_name": "Get User Channels",
    "category": "Users",
    "description": "Retrieves the connected channels (email, LinkedIn, WhatsApp) and their availability for the authenticated user. (GET /user/channels).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "connect_email_account",
    "display_name": "Connect Email Account",
    "category": "Email Accounts",
    "description": "Connects a new SMTP/IMAP email account to your team. (POST /user/email-accounts).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disconnect_email_account",
    "display_name": "Disconnect Email Account",
    "category": "Email Accounts",
    "description": "Disconnects an email account from your team. (DELETE /user/email-accounts/{emailAccountId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "test_email_account",
    "display_name": "Test Email Account",
    "category": "Email Accounts",
    "description": "Tests the SMTP and IMAP connection of an email account. (POST /user/email-accounts/{emailAccountId}/test).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_campaign",
    "display_name": "Create Campaign",
    "category": "Campaigns",
    "description": "Creates a new campaign with auto-generated sequence and schedule. (POST /campaigns).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign",
    "display_name": "Get Campaign",
    "category": "Campaigns",
    "description": "Retrieves detailed information about a specific campaign by ID. (GET /campaigns/{campaignId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_many_campaigns",
    "display_name": "Get Many Campaigns",
    "category": "Campaigns",
    "description": "Retrieves a paginated list of all campaigns in your team. (GET /campaigns).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_campaign",
    "display_name": "Update Campaign",
    "category": "Campaigns",
    "description": "Updates the settings and configuration of an existing campaign. (PATCH /campaigns/{campaignId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign_statutes",
    "display_name": "Get Campaign Statutes",
    "category": "Campaigns",
    "description": "Retrieves validation statutes for a campaign, including errors that block launching and warnings about daily limits, DNS issues, etc. (GET /campaigns/{campaignId}/statutes).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_campaign",
    "display_name": "Start Campaign",
    "category": "Campaigns",
    "description": "Starts or resumes a paused campaign. (POST /campaigns/{campaignId}/start).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_campaign",
    "display_name": "Pause Campaign",
    "category": "Campaigns",
    "description": "Pauses a running campaign without affecting scheduled leads. (POST /campaigns/{campaignId}/pause).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "skip_step_for_everyone",
    "display_name": "Skip Step for Everyone",
    "category": "Campaigns",
    "description": "Skips one step of a running campaign for every lead. (POST /campaigns/{campaignId}/steps/{stepId}/skip).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "duplicate_campaign",
    "display_name": "Duplicate Campaign",
    "category": "Campaigns",
    "description": "Duplicates an existing campaign with all its sequences, schedules, and templates. (POST /campaigns/{campaignId}/duplicate).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign_stats",
    "display_name": "Get Campaign Stats",
    "category": "Campaigns",
    "description": "Retrieves performance statistics for a specific campaign. (GET /v2/campaigns/{campaignId}/stats).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_batch_campaign_stats",
    "display_name": "Get Batch Campaign Stats",
    "category": "Campaigns",
    "description": "Retrieves performance statistics for multiple campaigns in a single request. (POST /v2/campaigns/stats/batch).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_campaign_stats_export",
    "display_name": "Start Campaign Stats Export",
    "category": "Campaigns",
    "description": "Initiates an asynchronous export of campaign statistics to a CSV file. (GET /campaigns/{campaignId}/export/start).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign_export_status",
    "display_name": "Get Campaign Export Status",
    "category": "Campaigns",
    "description": "Checks the status of an asynchronous campaign export. (GET /campaigns/{campaignId}/export/{exportId}/status).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_email_for_campaign_export_notification",
    "display_name": "Set Email for Campaign Export Notification",
    "category": "Campaigns",
    "description": "Configures email notification delivery when a campaign export completes. (PUT /campaigns/{campaignId}/export/{exportId}/email/{email}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_campaign_leads",
    "display_name": "Export Campaign Leads",
    "category": "Campaigns",
    "description": "Exports leads from a campaign with flexible filtering and format options. (GET /v2/campaigns/{campaignId}/export/leads).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_campaign_leads_legacy",
    "display_name": "Export Campaign Leads (legacy)",
    "category": "Campaigns",
    "description": "Exports leads from a campaign with flexible filtering and format options. (GET /campaigns/{campaignId}/export/leads).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign_reports",
    "display_name": "Get Campaign Reports",
    "category": "Campaigns",
    "description": "Retrieves aggregated reports and statistics for one or multiple campaigns. (GET /campaigns/reports).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign_sequences",
    "display_name": "Get Campaign Sequences",
    "category": "Sequences",
    "description": "Retrieves all sequences and their steps for a specific campaign. (GET /campaigns/{campaignId}/sequences).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_step_to_sequence",
    "display_name": "Add Step to Sequence",
    "category": "Sequences",
    "description": "Creates a step or condition within a campaign sequence. (POST /sequences/{sequenceId}/steps).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_sequence_step",
    "display_name": "Update Sequence Step",
    "category": "Sequences",
    "description": "Updates an existing step within a sequence. (PATCH /sequences/{sequenceId}/steps/{stepId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_sequence_step",
    "display_name": "Delete Sequence Step",
    "category": "Sequences",
    "description": "Deletes a specific step from a sequence. (DELETE /sequences/{sequenceId}/steps/{stepId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_condition_branches",
    "display_name": "List Condition Branches",
    "category": "Sequences",
    "description": "Lists the branches of a condition step, in execution order. (GET /sequences/{sequenceId}/steps/{stepId}/branches).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_condition_branch",
    "display_name": "Add Condition Branch",
    "category": "Sequences",
    "description": "Adds a branch to a condition step and returns it. (POST /sequences/{sequenceId}/steps/{stepId}/branches).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reorder_condition_branches",
    "display_name": "Reorder Condition Branches",
    "category": "Sequences",
    "description": "Rewrites the execution priority of a condition step's branches. (PATCH /sequences/{sequenceId}/steps/{stepId}/branches).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_condition_branch",
    "display_name": "Update Condition Branch",
    "category": "Sequences",
    "description": "Renames a branch and/or changes what it tests. (PATCH /sequences/{sequenceId}/steps/{stepId}/branches/{branchSequenceId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_condition_branch",
    "display_name": "Delete Condition Branch",
    "category": "Sequences",
    "description": "Removes a branch and the sub-tree behind it. (DELETE /sequences/{sequenceId}/steps/{stepId}/branches/{branchSequenceId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_a_b_test_variant",
    "display_name": "Create A/B Test Variant",
    "category": "Sequences",
    "description": "Creates variant B of an A/B test on a step, prefilled from variant A. (POST /sequences/{sequenceId}/steps/{stepId}/ab-test).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_a_b_test_variant",
    "display_name": "Get A/B Test Variant",
    "category": "Sequences",
    "description": "Returns variant B (subject, content, config) of the A/B test on a step. (GET /sequences/{sequenceId}/steps/{stepId}/ab-test).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_a_b_test_variant",
    "display_name": "Update A/B Test Variant",
    "category": "Sequences",
    "description": "Edits variant B content and config of the A/B test on a step. (PATCH /sequences/{sequenceId}/steps/{stepId}/ab-test).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_a_b_test_variant",
    "display_name": "Delete A/B Test Variant",
    "category": "Sequences",
    "description": "Deletes a variant of the A/B test and ends the test. (DELETE /sequences/{sequenceId}/steps/{stepId}/ab-test).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "select_a_b_test_winner",
    "display_name": "Select A/B Test Winner",
    "category": "Sequences",
    "description": "Selects the winning A/B test variant, applied to all remaining leads. (POST /sequences/{sequenceId}/steps/{stepId}/ab-test/winner).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_message_templates",
    "display_name": "List Message Templates",
    "category": "Message templates",
    "description": "Lists the team's library message templates, newest first. (GET /message-templates).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_message_template_tags",
    "display_name": "List Message Template Tags",
    "category": "Message templates",
    "description": "Lists the distinct tags of the team's library message templates, alphabetically. (GET /message-templates/tags).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message_template",
    "display_name": "Get Message Template",
    "category": "Message templates",
    "description": "Returns one library message template with its body. (GET /message-templates/{templateId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_snippets",
    "display_name": "List Snippets",
    "category": "Snippets",
    "description": "Lists the team's snippets by name. (GET /snippets).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_snippet",
    "display_name": "Get Snippet",
    "category": "Snippets",
    "description": "Returns one snippet with its content. (GET /snippets/{snippetId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_schedule",
    "display_name": "Create Schedule",
    "category": "Schedules",
    "description": "Creates a new schedule with customizable timing and timezone settings. (POST /schedules).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_schedule",
    "display_name": "Get Schedule",
    "category": "Schedules",
    "description": "Retrieves details of a specific schedule. (GET /schedules/{scheduleId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_many_schedules",
    "display_name": "Get Many Schedules",
    "category": "Schedules",
    "description": "Retrieves all schedules for your team. (GET /schedules).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_schedule",
    "display_name": "Update Schedule",
    "category": "Schedules",
    "description": "Updates an existing schedule's parameters. (PATCH /schedules/{scheduleId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_schedule",
    "display_name": "Delete Schedule",
    "category": "Schedules",
    "description": "Deletes a specific schedule. (DELETE /schedules/{scheduleId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign_schedules",
    "display_name": "Get Campaign Schedules",
    "category": "Schedules",
    "description": "Retrieves all schedules associated with a specific campaign. (GET /campaigns/{campaignId}/schedules/).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "associate_schedule_with_campaign",
    "display_name": "Associate Schedule with Campaign",
    "category": "Schedules",
    "description": "Associates a schedule with a campaign. (POST /campaigns/{campaignId}/schedules/{scheduleId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign_leads",
    "display_name": "Get Campaign Leads",
    "category": "Leads",
    "description": "Retrieves leads from a specific campaign, optionally filtered by state. (GET /campaigns/{campaignId}/leads/).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lead_by_email_or_id",
    "display_name": "Get Lead by Email or ID",
    "category": "Leads",
    "description": "Retrieves a lead using their email address or lead ID. (GET /leads).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_lead_in_a_campaign",
    "display_name": "Update Lead in a Campaign",
    "category": "Leads",
    "description": "Updates an existing lead's information in a specific campaign. (PATCH /campaigns/{campaignId}/leads/{leadId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_or_unsubscribe_lead",
    "display_name": "Delete or Unsubscribe Lead",
    "category": "Leads",
    "description": "Removes a lead from a campaign or unsubscribes it permanently. (DELETE /campaigns/{campaignId}/leads/{leadId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_custom_variables_on_leads",
    "display_name": "Add Custom Variables on Leads",
    "category": "Leads",
    "description": "Adds new custom variables to a lead. (POST /leads/{leadId}/variables).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_values_of_custom_variables_of_a_lead",
    "display_name": "Update Values of Custom Variables of a Lead",
    "category": "Leads",
    "description": "Updates the values of custom variables on a lead. (PATCH /leads/{leadId}/variables).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "erase_values_of_custom_variables_on_a_lead",
    "display_name": "Erase Values of Custom Variables on a Lead",
    "category": "Leads",
    "description": "Erases the values of custom variables on a lead. (DELETE /leads/{leadId}/variables).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unsubscribe_lead_from_campaign",
    "display_name": "Unsubscribe Lead from Campaign",
    "category": "Leads",
    "description": "Unsubscribes a lead from a lemlist campaign. (DELETE /campaigns/{campaignId}/leads/{email}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_lead",
    "display_name": "Pause Lead",
    "category": "Leads",
    "description": "Pauses a lead's activity in all campaigns or a specific campaign. (POST /leads/pause/{leadId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_paused_lead",
    "display_name": "Resume Paused Lead",
    "category": "Leads",
    "description": "Resumes a paused lead in all campaigns or a specific campaign. (POST /leads/start/{leadId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "launch_lead",
    "display_name": "Launch Lead",
    "category": "Leads",
    "description": "Manually launches (reviews) a single lead in its campaign. (POST /leads/review/{leadId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_lead_as_interested",
    "display_name": "Mark Lead as Interested",
    "category": "Leads",
    "description": "Marks a lead as interested across all campaigns. (POST /leads/interested/{leadIdOrEmail}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_lead_as_not_interested",
    "display_name": "Mark Lead as Not Interested",
    "category": "Leads",
    "description": "Marks a lead as not interested across all campaigns. (POST /leads/notinterested/{leadIdOrEmail}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_lead_as_interested_in_campaign",
    "display_name": "Mark Lead as Interested in Campaign",
    "category": "Leads",
    "description": "Marks a lead as interested in a specific campaign. (POST /campaigns/{campaignId}/leads/{leadIdOrEmail}/interested).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_lead_as_not_interested_in_campaign",
    "display_name": "Mark Lead as Not Interested in Campaign",
    "category": "Leads",
    "description": "Marks a lead as not interested in a specific campaign. (POST /campaigns/{campaignId}/leads/{leadIdOrEmail}/notinterested).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "skip_step_for_lead",
    "display_name": "Skip Step for Lead",
    "category": "Leads",
    "description": "Skips one step of a running campaign for a single lead. (POST /campaigns/{campaignId}/leads/{leadIdOrEmail}/steps/{stepId}/skip).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "personalize_step_for_lead",
    "display_name": "Personalize Step for Lead",
    "category": "Leads",
    "description": "Personalizes the message of one campaign step for a single lead. (PUT /campaigns/{campaignId}/leads/{leadIdOrEmail}/steps/{stepId}/personalization).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_step_personalization_for_lead",
    "display_name": "Reset Step Personalization for Lead",
    "category": "Leads",
    "description": "Removes a lead's personalization of one campaign step. (DELETE /campaigns/{campaignId}/leads/{leadIdOrEmail}/steps/{stepId}/personalization).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "import_leads_from_crm",
    "display_name": "Import Leads from CRM",
    "category": "Leads",
    "description": "Links a campaign to a filter of your connected CRM and imports its records as leads, now and as the filter picks up new ones. (POST /campaigns/{campaignId}/leads/import).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_audio_for_voice_message_step",
    "display_name": "Upload Audio for Voice Message Step",
    "category": "Leads",
    "description": "Uploads an audio file for voice message steps in campaign sequences. (POST /leads/audio).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_and_update_company",
    "display_name": "Add and update company",
    "category": "Companies",
    "description": "Creates a new company or updates an existing one based on domain or LinkedIn URL. (POST /companies).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_many_companies",
    "display_name": "Get Many Companies",
    "category": "Companies",
    "description": "Retrieves companies from your CRM. Use `idsOrDomains` to fetch specific companies by ID or domain in a single request (max 100), or omit it to get a paginated list of all companies. (GET /companies).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_company",
    "display_name": "Delete Company",
    "category": "Companies",
    "description": "Deletes a lemlist company. Use `force=true` to detach attached contacts before deletion. (DELETE /companies/{companyId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_companies",
    "display_name": "Merge Companies",
    "category": "Companies",
    "description": "Merges up to 10 lemlist companies into one survivor, moving everything attached to the deleted companies onto it. (POST /companies/merge).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company_lists",
    "display_name": "Get Company Lists",
    "category": "Companies",
    "description": "Retrieves all company lists for the team, with optional name filtering. (GET /companies/lists).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_company_list",
    "display_name": "Create Company List",
    "category": "Companies",
    "description": "Creates a new static company list. (POST /companies/lists).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_or_remove_companies_in_a_list",
    "display_name": "Add or Remove Companies in a List",
    "category": "Companies",
    "description": "Add companies to a static company list, or remove them with ?action=remove. (POST /companies/lists/{listId}/entities).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_company_note",
    "display_name": "Create Company Note",
    "category": "Companies",
    "description": "Creates a new note attached to a specific company. (POST /companies/{companyId}/notes).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company_notes",
    "display_name": "Get Company Notes",
    "category": "Companies",
    "description": "Retrieves all notes associated with a specific company. (GET /companies/{companyId}/notes).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_and_update_contact",
    "display_name": "Add and update contact",
    "category": "Contacts",
    "description": "Creates a new contact or updates an existing one based on email or LinkedIn URL. (POST /contacts).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": "Get Contact",
    "category": "Contacts",
    "description": "Retrieves a specific contact by their ID or email address. (GET /contacts/{idOrEmail}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_many_contacts",
    "display_name": "Get Many Contacts",
    "category": "Contacts",
    "description": "Retrieves contacts from your CRM. Use `idsOrEmails` to fetch specific contacts by ID or email in a single request (max 100), or omit it to search/list contacts by name, email, contact list, or campaign membership. (GET /contacts).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact",
    "display_name": "Delete Contact",
    "category": "Contacts",
    "description": "Deletes a lemlist contact by id or email. Cascades to leads, opportunities, lists, inbox and activities. (DELETE /contacts/{idOrEmail}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_contacts",
    "display_name": "Merge Contacts",
    "category": "Contacts",
    "description": "Merges up to 10 lemlist contacts into one survivor, moving everything attached to the deleted contacts onto it. (POST /contacts/merge).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact_lists",
    "display_name": "Get Contact Lists",
    "category": "Contacts",
    "description": "Retrieves all contact lists for the team, with optional name filtering. (GET /contacts/lists).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact_list",
    "display_name": "Create Contact List",
    "category": "Contacts",
    "description": "Creates a new static contact list. (POST /contacts/lists).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_or_remove_contacts_in_a_list",
    "display_name": "Add or Remove Contacts in a List",
    "category": "Contacts",
    "description": "Add contacts to a static contact list, or remove them with ?action=remove. (POST /contacts/lists/{listId}/entities).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_contact_list",
    "display_name": "Export Contact List",
    "category": "Contacts",
    "description": "Exports contacts or companies from a CRM list as a CSV file. (GET /contacts/export).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_many_inboxes",
    "display_name": "Get Many Inboxes",
    "category": "Inbox",
    "description": "Retrieves all inbox conversations for your team. (GET /inbox).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact_messages",
    "display_name": "Get Contact Messages",
    "category": "Inbox",
    "description": "Retrieves all messages exchanged with a specific contact. (GET /inbox/{contactId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_email",
    "display_name": "Send Email",
    "category": "Inbox",
    "description": "Sends an email to a contact through the lemlist inbox. Set replyToActivityId to reply within an existing thread (reuses the thread's subject and CC). (POST /inbox/email).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_linkedin_message",
    "display_name": "Send LinkedIn Message",
    "category": "Inbox",
    "description": "Sends a LinkedIn message to a contact through the lemlist inbox. (POST /inbox/linkedin).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_whatsapp_message",
    "display_name": "Send WhatsApp Message",
    "category": "Inbox",
    "description": "Sends a WhatsApp message to a contact through the lemlist inbox. (POST /inbox/whatsapp).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_sms_message",
    "display_name": "Send SMS Message",
    "category": "Inbox",
    "description": "Sends an SMS message to a contact through the lemlist inbox. (POST /inbox/sms).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_many_labels",
    "display_name": "Get Many Labels",
    "category": "Inbox",
    "description": "List all labels available to your team. (GET /inbox/labels).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_label",
    "display_name": "Get Label",
    "category": "Inbox",
    "description": "Get info of a specific label. (GET /inbox/labels/{labelId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_label",
    "display_name": "Create Label",
    "category": "Inbox",
    "description": "Creates a new label available to the team. (POST /inbox/labels).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "attach_labels_to_conversations",
    "display_name": "Attach Labels to Conversations",
    "category": "Inbox",
    "description": "Attaches one or more labels to one or more conversations. (POST /inbox/conversations/labels/{contactId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_labels_from_conversation",
    "display_name": "Remove Labels from Conversation",
    "category": "Inbox",
    "description": "Removes one or more labels from one conversation. (DELETE /inbox/conversations/labels/{contactId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_drafts",
    "display_name": "List Drafts",
    "category": "Inbox",
    "description": "Lists all non-deleted drafts for a specific contact. (GET /inbox/{contactId}/drafts).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_draft",
    "display_name": "Get Draft",
    "category": "Inbox",
    "description": "Retrieves a single draft with its full content, including attachments. (GET /inbox/{contactId}/drafts/{draftId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_draft",
    "display_name": "Create Draft",
    "category": "Inbox",
    "description": "Creates a new draft for a specific contact. The source is automatically set to \"api\". (POST /inbox/{contactId}/drafts).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_draft",
    "display_name": "Update Draft",
    "category": "Inbox",
    "description": "Partially updates an existing draft. Only the provided fields will be updated. (PATCH /inbox/{contactId}/drafts/{draftId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_draft",
    "display_name": "Delete Draft",
    "category": "Inbox",
    "description": "Soft-deletes a draft by setting its deletedAt timestamp. (DELETE /inbox/{contactId}/drafts/{draftId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task",
    "display_name": "Create Task",
    "category": "Tasks",
    "description": "Create a manual task (opportunity) associated with a contact/company or lead. (POST /tasks).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_tasks",
    "display_name": "Search Tasks",
    "category": "Tasks",
    "description": "Searches your team's tasks with the filters of the Tasks page, and returns every status. (GET /v2/tasks).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_task_filters",
    "display_name": "List Task Filters",
    "category": "Tasks",
    "description": "Lists every field you can use in the advancedFilters tree of Search Tasks. (GET /v2/tasks/filters).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_many_tasks",
    "display_name": "Get Many Tasks",
    "category": "Tasks",
    "description": "Retrieves all pending tasks assigned to your team members. (GET /tasks).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task",
    "display_name": "Update Task",
    "category": "Tasks",
    "description": "Modifies aspects of an existing task including assignment, scheduling, and status. (PATCH /tasks).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ignore_tasks",
    "display_name": "Ignore Tasks",
    "category": "Tasks",
    "description": "Marks one or more tasks as ignored. (POST /tasks/ignore).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_many_activities",
    "display_name": "Get Many Activities",
    "category": "Activities",
    "description": "Retrieves the history of all campaign activities and steps performed (optionally filtered by activity type and campaign). (GET /activities).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_activity_recording_transcript",
    "display_name": "Delete Activity Recording & Transcript",
    "category": "Activities",
    "description": "Deletes the call recording and transcript associated with an activity. (DELETE /activities/{activityId}/recording-transcript).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team_crm_users",
    "display_name": "Get Team CRM Users",
    "category": "Team",
    "description": "Retrieves the team members whose CRM account is connected to lemlist. (GET /team/crmUsers).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_crm_filters",
    "display_name": "Get CRM Filters",
    "category": "Leads",
    "description": "Retrieves the filters of your team's connected CRM that leads can be imported from. (GET /crm/filters).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_unsubscribed_variables",
    "display_name": "List Unsubscribed Variables",
    "category": "Unsubscribes",
    "description": "Retrieves a paginated list of all unsubscribed variables (emails, domains, LinkedIn URLs, phone numbers). (GET /v2/unsubscribes/variables).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_unsubscribed_variable",
    "display_name": "Get Unsubscribed Variable",
    "category": "Unsubscribes",
    "description": "Retrieves a specific unsubscribed variable by its value. (GET /v2/unsubscribes/variables/{value}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unsubscribe_variable",
    "display_name": "Unsubscribe Variable",
    "category": "Unsubscribes",
    "description": "Unsubscribes a single variable. Idempotent — returns the existing record if already unsubscribed. (POST /v2/unsubscribes/variables/{value}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_unsubscribe_variables",
    "display_name": "Bulk Unsubscribe Variables",
    "category": "Unsubscribes",
    "description": "Unsubscribes up to 10,000 variables in a single request. (POST /v2/unsubscribes/variables).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "re_subscribe_variable",
    "display_name": "Re-subscribe Variable",
    "category": "Unsubscribes",
    "description": "Re-subscribes a variable, removing it from the unsubscribe list. (DELETE /v2/unsubscribes/variables/{value}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_unsubscribed_variables",
    "display_name": "Export Unsubscribed Variables",
    "category": "Unsubscribes",
    "description": "Exports all unsubscribed variables as CSV (default) or JSON. (GET /v2/unsubscribes/exports/variables).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact_subscription_status",
    "display_name": "Get Contact Subscription Status",
    "category": "Unsubscribes",
    "description": "Checks whether a contact is unsubscribed (do-not-contact). (GET /v2/unsubscribes/contacts/{contactId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unsubscribe_contact",
    "display_name": "Unsubscribe Contact",
    "category": "Unsubscribes",
    "description": "Marks a contact as unsubscribed (do-not-contact). (POST /v2/unsubscribes/contacts/{contactId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "re_subscribe_contact",
    "display_name": "Re-subscribe Contact",
    "category": "Unsubscribes",
    "description": "Re-subscribes a contact, removing the do-not-contact flag. (DELETE /v2/unsubscribes/contacts/{contactId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_unsubscribed_contacts",
    "display_name": "Export Unsubscribed Contacts",
    "category": "Unsubscribes",
    "description": "Exports all contacts with their subscription status as CSV (default) or JSON. (GET /v2/unsubscribes/exports/contacts).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_unsubscribe_email_or_domain",
    "display_name": "Add Unsubscribe Email or Domain",
    "category": "Unsubscribes",
    "description": "Adds an email address or domain to your unsubscribe list. (POST /unsubscribes/{email}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_unsubscribe_by_email",
    "display_name": "Get Unsubscribe by Email",
    "category": "Unsubscribes",
    "description": "Retrieves unsubscribe information for a specific email address. (GET /unsubscribes/{email}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_many_unsubscribes",
    "display_name": "Get Many Unsubscribes",
    "category": "Unsubscribes",
    "description": "Retrieves a list of all unsubscribed emails and domains. (GET /unsubscribes).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_unsubscribe_email",
    "display_name": "Delete Unsubscribe Email",
    "category": "Unsubscribes",
    "description": "Removes an email address from your unsubscribe list. (DELETE /unsubscribes/{email}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_unsubscribes",
    "display_name": "Export Unsubscribes",
    "category": "Unsubscribes",
    "description": "Exports all unsubscribed emails and domains to a CSV file. (GET /unsubs/export).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook",
    "display_name": "Delete Webhook",
    "category": "Webhooks",
    "description": "Deletes a specific webhook. (DELETE /hooks/{hookId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_many_webhooks",
    "display_name": "Get Many Webhooks",
    "category": "Webhooks",
    "description": "Retrieves all webhooks configured for your team. (GET /hooks).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_companies_database",
    "display_name": "Search Companies Database",
    "category": "People Database",
    "description": "Searches the companies database using filters, keywords, and pagination. (POST /database/companies).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_database_filters",
    "display_name": "Get Database Filters",
    "category": "People Database",
    "description": "Retrieves available filters for searching the people and companies database. (GET /database/filters).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_personas",
    "display_name": "List Personas",
    "category": "People Database",
    "description": "Retrieves the People Database personas saved by your team. (GET /database/personas).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_persona",
    "display_name": "Create Persona",
    "category": "People Database",
    "description": "Creates a People Database persona for your team. (POST /database/personas).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_persona",
    "display_name": "Delete Persona",
    "category": "People Database",
    "description": "Deletes a People Database persona. (DELETE /database/personas/{personaId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_contact_sourcing",
    "display_name": "Run Contact Sourcing",
    "category": "Contact sourcing",
    "description": "Starts an AI contact-sourcing run for one or more accounts. (POST /contact-sourcing).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact_sourcing_run",
    "display_name": "Get Contact Sourcing Run",
    "category": "Contact sourcing",
    "description": "Reads a contact-sourcing run by ID, or the latest run of an account. (GET /contact-sourcing).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_a_sourced_contact",
    "display_name": "Add a Sourced Contact",
    "category": "Contact sourcing",
    "description": "Turns one contact-sourcing recommendation into a lemlist contact. (POST /contact-sourcing/contacts).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_enrich_data",
    "display_name": "Bulk Enrich Data",
    "category": "Enrich",
    "description": "Performs batch enrichment for up to 500 entities to find emails, phone numbers, or LinkedIn data. (POST /v2/enrichments/bulk).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich_lead",
    "display_name": "Enrich Lead",
    "category": "Enrich",
    "description": "Enriches an existing lead in lemlist with additional data. (POST /leads/{leadId}/enrich).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_enrichment_result",
    "display_name": "Get Enrichment Result",
    "category": "Enrich",
    "description": "Retrieves the results of a completed enrichment request. (GET /enrich/{enrichId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_enrichment_providers",
    "display_name": "List Enrichment Providers",
    "category": "Enrichment Providers",
    "description": "Lists the enrichment providers your team can place in a waterfall, for one enrichment type. (GET /v2/enrichments/providers).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "connect_provider",
    "display_name": "Connect Provider",
    "category": "Enrichment Providers",
    "description": "Saves your own API key for an external enrichment provider, connecting it for your waterfalls. (PUT /v2/enrichments/providers/{providerId}/connection).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disconnect_provider",
    "display_name": "Disconnect Provider",
    "category": "Enrichment Providers",
    "description": "Removes the API key of an external enrichment provider; lemlist stops calling it on your account. (DELETE /v2/enrichments/providers/{providerId}/connection).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_enrichment_waterfalls",
    "display_name": "List Enrichment Waterfalls",
    "category": "Enrichment Waterfalls",
    "description": "Lists your team's enrichment waterfalls — the default waterfall of each type, plus every custom waterfall. (GET /v2/enrichments/waterfalls).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_enrichment_waterfall",
    "display_name": "Get Enrichment Waterfall",
    "category": "Enrichment Waterfalls",
    "description": "Returns one enrichment waterfall of your team, default or custom. (GET /v2/enrichments/waterfalls/{waterfallId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_enrichment_waterfall",
    "display_name": "Update Enrichment Waterfall",
    "category": "Enrichment Waterfalls",
    "description": "Updates the name or provider order of an enrichment waterfall. (PATCH /v2/enrichments/waterfalls/{waterfallId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_enrichment_waterfall",
    "display_name": "Reset Enrichment Waterfall",
    "category": "Enrichment Waterfalls",
    "description": "Hands a default enrichment waterfall back to lemlist, restoring its random provider order. (PUT /v2/enrichments/waterfalls/{waterfallId}/reset).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_lemwarm",
    "display_name": "Start lemwarm",
    "category": "lemwarm",
    "description": "Starts lemwarm email deliverability improvement for a specific user mailbox. (POST /lemwarm/{userMailboxId}/start).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_lemwarm",
    "display_name": "Pause lemwarm",
    "category": "lemwarm",
    "description": "Pauses lemwarm email deliverability improvement for a specific user mailbox. (POST /lemwarm/{userMailboxId}/pause).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lemwarm_settings",
    "display_name": "Get lemwarm Settings",
    "category": "lemwarm",
    "description": "Retrieves lemwarm email deliverability settings for a specific user mailbox. (GET /lemwarm/{userMailboxId}/settings).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_lemwarm_settings",
    "display_name": "Update lemwarm Settings",
    "category": "lemwarm",
    "description": "Updates lemwarm email deliverability settings for a specific user mailbox. (PATCH /lemwarm/{userMailboxId}/settings).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_signal_agents",
    "display_name": "List Signal Agents",
    "category": "Signal Agents",
    "description": "Retrieves your Signal Agents (watch lists) with pagination and optional filtering by signal type and status. (GET /watchlist).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_signal_agent",
    "display_name": "Create Signal Agent",
    "category": "Signal Agents",
    "description": "Creates a new Signal Agent (watch list). (POST /watchlist).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_signal_agent",
    "display_name": "Update Signal Agent",
    "category": "Signal Agents",
    "description": "Updates an existing Signal Agent (watch list). (PATCH /watchlist).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_signal_agent",
    "display_name": "Delete Signal Agent",
    "category": "Signal Agents",
    "description": "Deletes a Signal Agent (watch list). (DELETE /watchlist).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_signal_agent_configuration_history",
    "display_name": "Get Signal Agent configuration history",
    "category": "Signal Agents",
    "description": "Retrieves the configuration history of a Signal Agent — each past config version with its active period and stats. (GET /watchlist/history).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_signal_agent_signals",
    "display_name": "Get Signal Agent signals",
    "category": "Signal Agents",
    "description": "Retrieves paginated signals detected by your Signal Agents with filtering and sorting capabilities. (GET /watchlist/signals).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_signals_handled_or_ignored",
    "display_name": "Mark signals handled or ignored",
    "category": "Signal Agents",
    "description": "Marks one or several signals as handled or ignored. (PUT /watchlist/signals).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "push_external_signals",
    "display_name": "Push external signals",
    "category": "Signal Agents",
    "description": "Pushes a contact- or company-level external signal into a Signal Agent. (POST /watchlist/{watchListId}/external-signals).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_available_signal_types",
    "display_name": "List available signal types",
    "category": "Signal Agents",
    "description": "Lists the signal types available to your team, each with a title and description. (GET /watchlist/library).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_allowed_filters_per_signal_type",
    "display_name": "List allowed filters per signal type",
    "category": "Signal Agents",
    "description": "Lists, per signal type, the filters you can set on a Signal Agent. (GET /watchlist/filters).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "autocomplete_filter_values",
    "display_name": "Autocomplete filter values",
    "category": "Signal Agents",
    "description": "Autocompletes allowed values for a Signal Agent filter (job titles, industries, locations, company sizes, and more). (GET /watchlist/filter-values).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_deliverability_alerts",
    "display_name": "List Deliverability Alerts",
    "category": "Deliverability alerts",
    "description": "Lists all deliverability alert configurations for your team. (GET /deliverability/alerts).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_deliverability_alert",
    "display_name": "Create Deliverability Alert",
    "category": "Deliverability alerts",
    "description": "Creates a new deliverability alert that monitors a warm-up or outreach metric and notifies you through the configured channels when the threshold is breached. (POST /deliverability/alerts).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deliverability_alert",
    "display_name": "Get Deliverability Alert",
    "category": "Deliverability alerts",
    "description": "Retrieves a single deliverability alert configuration by its ID. (GET /deliverability/alerts/{alertId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_deliverability_alert",
    "display_name": "Update Deliverability Alert",
    "category": "Deliverability alerts",
    "description": "Updates a deliverability alert's threshold, evaluation window, notification channels, scope filter, or enabled state. (PATCH /deliverability/alerts/{alertId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_deliverability_alert",
    "display_name": "Delete Deliverability Alert",
    "category": "Deliverability alerts",
    "description": "Permanently deletes a deliverability alert configuration. The historical alert occurrences this configuration produced are not removed. (DELETE /deliverability/alerts/{alertId}).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_fields",
    "display_name": "List Fields",
    "category": "Fields",
    "description": "Lists all available fields for contacts and companies. (GET /fields).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

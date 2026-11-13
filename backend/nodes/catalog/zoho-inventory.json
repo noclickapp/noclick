@@ -22,4088 +22,4672 @@
    "display_name": "Bulk delete batches",
    "category": "Batches",
    "description": "Delete multiple batches in a single request. Batches with associated transactions cannot be deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_a_batch",
    "display_name": "Create a batch",
    "category": "Batches",
    "description": "Create a new batch for an item that has batch tracking enabled.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_a_batch",
    "display_name": "Delete a batch",
    "category": "Batches",
    "description": "Delete a single batch. The batch must not have any associated transactions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_batches",
    "display_name": "List all batches",
    "category": "Batches",
    "description": "List all batches available for a given item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_batch_as_active",
    "display_name": "Mark a batch as active",
    "category": "Batches",
    "description": "Mark a specific batch as active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_batch_as_inactive",
    "display_name": "Mark a batch as inactive",
    "category": "Batches",
    "description": "Mark a specific batch as inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_batches_as_active",
    "display_name": "Mark batches as active",
    "category": "Batches",
    "description": "Mark multiple batches as active in a single request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_batches_as_inactive",
    "display_name": "Mark batches as inactive",
    "category": "Batches",
    "description": "Mark multiple batches as inactive in a single request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_a_batch",
    "display_name": "Retrieve a batch",
    "category": "Batches",
    "description": "Fetch the details of a specific batch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_a_batch",
    "display_name": "Update a batch",
    "category": "Batches",
    "description": "Update the details of an existing batch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_bill",
    "display_name": "Approve a bill",
    "category": "Bills",
    "description": "Approve a submitted bill.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_bill_final",
    "display_name": "Final approval of a bill",
    "category": "Bills",
    "description": "Perform the final approval of a bill (admin only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_approve_bills",
    "display_name": "Bulk approve bills",
    "category": "Bills",
    "description": "Approve multiple submitted bills at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_submit_bills",
    "display_name": "Bulk submit bills for approval",
    "category": "Bills",
    "description": "Submit multiple bills for approval workflow at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_bill",
    "display_name": "Create a Bill",
    "category": "Bills",
    "description": "Creates a Bill in Zoho Inventory. Description about the extra parameter attachment Allowed extensions are gif, png, jpeg, jpg, bmp and pdf. To bill against received items, pass receive_line_items inside each line_items entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_bill",
    "display_name": "Delete a Bill.",
    "category": "Bills",
    "description": "Deletes a Bill from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bill",
    "display_name": "Retrieve a Bill",
    "category": "Bills",
    "description": "Fetches the details of a Bill.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_bills",
    "display_name": "List all Bills.",
    "category": "Bills",
    "description": "Lists all the Bills in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_bill_as_open",
    "display_name": "Mark as Open",
    "category": "Bills",
    "description": "Marks a Bill as Open.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_bill_as_void",
    "display_name": "Mark as Void",
    "category": "Bills",
    "description": "Marks a Bill as Void.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reject_bill",
    "display_name": "Reject a bill",
    "category": "Bills",
    "description": "Reject a submitted bill.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_bill",
    "display_name": "Submit a bill for approval",
    "category": "Bills",
    "description": "Submit a bill for approval workflow.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_bill",
    "display_name": "Update a Bill",
    "category": "Bills",
    "description": "Updates the details of an existing Bill.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_custom_field_in_bill",
    "display_name": "Update custom field in existing bills",
    "category": "Bills",
    "description": "Update the value of the custom field in existing bills.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_delete_storage_locations",
    "display_name": "Bulk Delete Bins",
    "category": "Bin Locations",
    "description": "Delete multiple bin locations in bulk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "configure_composite_item_default_storage",
    "display_name": "Configure Composite Item Default Bin",
    "category": "Bin Locations",
    "description": "Configure the default bin per location for a specific composite item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "configure_item_default_storage_location",
    "display_name": "Configure Item Default Bin",
    "category": "Bin Locations",
    "description": "Configure the default bin per location for a specific item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_storage_location",
    "display_name": "Create a Bin",
    "category": "Bin Locations",
    "description": "Create a bin within a zone so goods can be stored and tracked to the smallest unit space.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_storage_zone",
    "display_name": "Create a Zone",
    "category": "Bin Locations",
    "description": "Creates a zone for a specific location or warehouse.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_storage_location",
    "display_name": "Delete a Bin",
    "category": "Bin Locations",
    "description": "Delete a specific bin location when it is no longer needed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_storage_zone",
    "display_name": "Delete a Zone",
    "category": "Bin Locations",
    "description": "Delete a specific zone when it is no longer needed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_storage_locations_for_location",
    "display_name": "Disable Bin Locations for a Location",
    "category": "Bin Locations",
    "description": "Disable bin locations for a specific location.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_storage_locations_for_warehouse",
    "display_name": "Disable Bin Locations for a Warehouse",
    "category": "Bin Locations",
    "description": "Disable bin locations for a specific warehouse.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_storage_locations_for_location",
    "display_name": "Enable Bin Locations for a Location",
    "category": "Bin Locations",
    "description": "Enable bin locations for a specific location so goods can be tracked.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_storage_locations_for_warehouse",
    "display_name": "Enables bin locations for a specific warehouse",
    "category": "Bin Locations",
    "description": "Enable bin locations for a specific warehouse so goods can be tracked.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_composite_item_default_storage_location",
    "display_name": "Get Composite Item Default Bin",
    "category": "Bin Locations",
    "description": "Retrieve the default bin mapping for a specific composite item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_item_default_storage_location",
    "display_name": "Get Item Default Bin",
    "category": "Bin Locations",
    "description": "Retrieve the default bin mapping for a specific item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_item_storage_location_mappings",
    "display_name": "Get Item Bin Mappings",
    "category": "Bin Locations",
    "description": "Retrieve the bins mapped to a specific item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_storage_location",
    "display_name": "Get a Bin",
    "category": "Bin Locations",
    "description": "Retrieve the details of a specific bin location.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_storage_zone",
    "display_name": "Get a Zone",
    "category": "Bin Locations",
    "description": "Retrieve the details of a specific zone and its bin hierarchy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_storage_locations",
    "display_name": "List all Bins",
    "category": "Bin Locations",
    "description": "List all bin locations available in your Zoho Inventory organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_storage_zones",
    "display_name": "List all Zones",
    "category": "Bin Locations",
    "description": "List all zones configured for warehouses and locations in your Zoho Inventory organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_storage_locations_as_active",
    "display_name": "Mark Bins as Active",
    "category": "Bin Locations",
    "description": "Mark multiple bin locations as active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_storage_locations_as_inactive",
    "display_name": "Mark Bins as Inactive",
    "category": "Bin Locations",
    "description": "Mark multiple bin locations as inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_storage_zones_as_active",
    "display_name": "Mark Zones as Active",
    "category": "Bin Locations",
    "description": "Bulk mark zones as active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_storage_zones_as_inactive",
    "display_name": "Mark Zones as Inactive",
    "category": "Bin Locations",
    "description": "Bulk mark zones as inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_item_storage_location_mappings",
    "display_name": "Update Item Bin Mappings",
    "category": "Bin Locations",
    "description": "Update the bin mappings for a specific item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_storage_location",
    "display_name": "Update a Bin",
    "category": "Bin Locations",
    "description": "Update the details of an existing bin location.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_storage_zone",
    "display_name": "Update a Zone",
    "category": "Bin Locations",
    "description": "Update and manage an existing zone and the hierarchy used to create bins within it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_category",
    "display_name": "Create a category",
    "category": "Categories",
    "description": "Creates a new category.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_category",
    "display_name": "Delete a category",
    "category": "Categories",
    "description": "Deletes an existing category from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_category",
    "display_name": "Retrieve a category",
    "category": "Categories",
    "description": "Fetches the details of an existing category, including ancestors, children, and related metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_categories",
    "display_name": "List all categories",
    "category": "Categories",
    "description": "Lists all categories in the organization. Supports filtering by parent, name, status filters, and pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_category",
    "display_name": "Update a category",
    "category": "Categories",
    "description": "Updates an existing category.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_assemblies",
    "display_name": "Create Assemblies",
    "category": "Composite Items",
    "description": "Assemblies is the technique of putting together different components in desired quantities to produce a single commodity. These components could be goods, services and other non-inventory items of your choice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_composite_item",
    "display_name": "Creating a Composite Item",
    "category": "Composite Items",
    "description": "A new composite item can be created after creating items that we want to associcate with composite item. User can attach image for composite item by calling Different API 'https://www.zohoapis.com/inventory/v1/compositeitems/{composite_item_id}/image', passing form-data parameter image i.e. -F image=bag_s.jpg",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_assembly",
    "display_name": "Delete Assemblies",
    "category": "Composite Items",
    "description": "Deletes an existing Assemblies from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_composite_item",
    "display_name": "Deleting a Composite Item",
    "category": "Composite Items",
    "description": "Deleting an existing Composite Item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_composite_item_image",
    "display_name": "Delete Composite Item Image",
    "category": "Composite Items",
    "description": "Deletes the images associated with a composite item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_assembly",
    "display_name": "Retrieve Assemblies",
    "category": "Composite Items",
    "description": "Fetches the details for an existing Assemblies.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_composite_item",
    "display_name": "Retrieving a Composite Item",
    "category": "Composite Items",
    "description": "Retrieving details of an existing compostie item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_assemblies",
    "display_name": "Assemblies History",
    "category": "Composite Items",
    "description": "List of all Assemblies of a given composite item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_composite_items",
    "display_name": "List All Composite Items",
    "category": "Composite Items",
    "description": "List of all composite items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_assembly_as_built",
    "display_name": "Mark Assembly as Assembled",
    "category": "Composite Items",
    "description": "Marks an existing assembly as built, indicating that the composite item has been assembled from its components.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_assembly_as_confirmed",
    "display_name": "Mark Assembly as Confirmed",
    "category": "Composite Items",
    "description": "Marks an existing assembly as confirmed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_composite_item_active",
    "display_name": "Mark as Active",
    "category": "Composite Items",
    "description": "Changing status of an existing composite item to active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_composite_item_inactive",
    "display_name": "Mark as Inactive",
    "category": "Composite Items",
    "description": "Changing status of an existing composite item to inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_assembly",
    "display_name": "Update an Assembly",
    "category": "Composite Items",
    "description": "Updates the details of an existing assembly.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_composite_item",
    "display_name": "Updating a composite item",
    "category": "Composite Items",
    "description": "Updating details of an existing composite item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_composite_item_image",
    "display_name": "Upload Composite Item Images",
    "category": "Composite Items",
    "description": "Uploads an image for a composite item. Accepted image formats: gif, png, jpeg, jpg, bmp, webp. Maximum file size is 7 MB.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact_person",
    "display_name": "Create a contact person",
    "category": "Contact Persons",
    "description": "Create a contact person for contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact_person",
    "display_name": "Delete a contact person",
    "category": "Contact Persons",
    "description": "Delete an existing contact person.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact_person",
    "display_name": "Get a contact person",
    "category": "Contact Persons",
    "description": "Get the details of a contact person.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contact_persons",
    "display_name": "List contact persons",
    "category": "Contact Persons",
    "description": "List all contacts with pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_contact_person_as_primary",
    "display_name": "Mark as primary contact person",
    "category": "Contact Persons",
    "description": "Mark a contact person as primary for contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact_person",
    "display_name": "Update a contact person",
    "category": "Contact Persons",
    "description": "Update details of an existing contact person.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact",
    "display_name": "Create a Contact",
    "category": "Contacts",
    "description": "Create a contact with given information.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_contact",
    "display_name": "Delete a contact",
    "category": "Contacts",
    "description": "Delete an existing contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_contact",
    "display_name": "Email contact",
    "category": "Contacts",
    "description": "Send email to contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_statement",
    "display_name": "Email statement",
    "category": "Contacts",
    "description": "Email statement to the contact. If JSONString is not inputted, mail will be sent with the default mail content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": "Get contact",
    "category": "Contacts",
    "description": "Get details of a contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact_address",
    "display_name": "Get contact address",
    "category": "Contacts",
    "description": "Get the billing and shipping address of an existing contact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_statement_mail_content",
    "display_name": "Get Statement mail content",
    "category": "Contacts",
    "description": "Get the mail content of a contacts billing statement.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contact_comments",
    "display_name": "List Comments",
    "category": "Contacts",
    "description": "List recent activities of a contact.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": "List contacts",
    "category": "Contacts",
    "description": "List all contacts with pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_contact_as_active",
    "display_name": "Mark as active",
    "category": "Contacts",
    "description": "Mark a contact as active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_contact_as_inactive",
    "display_name": "Mark as Inactive",
    "category": "Contacts",
    "description": "Mark a contact as inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_contact",
    "display_name": "Update a contact",
    "category": "Contacts",
    "description": "Update an existing contact. To delete a contact person remove it from the contact_persons list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_attachment_to_credit_note",
    "display_name": "Add attachment to a credit note",
    "category": "Credit Notes",
    "description": "Attach a file to an existing credit note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "apply_credits_to_invoices",
    "display_name": "Apply credits to invoices",
    "category": "Credit Notes",
    "description": "Apply credit note to existing invoices.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_credit_note",
    "display_name": "Approve a credit note.",
    "category": "Credit Notes",
    "description": "Approve a credit note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_credit_note",
    "display_name": "Create a credit note",
    "category": "Credit Notes",
    "description": "To create a credit note for a customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_credit_note_comment",
    "display_name": "Add a comment",
    "category": "Credit Notes",
    "description": "Add a comment to an existing credit note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_credit_note_refund",
    "display_name": "Refund credit note",
    "category": "Credit Notes",
    "description": "Refund credit note amount.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_credit_note",
    "display_name": "Delete a credit note",
    "category": "Credit Notes",
    "description": "Delete an existing credit note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_credit_note_attachment",
    "display_name": "Delete an attachment",
    "category": "Credit Notes",
    "description": "Delete a file attached to a credit note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_credit_note_comment",
    "display_name": "Delete a Comment",
    "category": "Credit Notes",
    "description": "Delete a credit note comment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_credit_note_refund",
    "display_name": "Delete credit note refund",
    "category": "Credit Notes",
    "description": "Delete a credit note refund.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_credits_applied_to_invoice",
    "display_name": "Delete credits applied to an invoice",
    "category": "Credit Notes",
    "description": "Delete the credits applied to an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_credit_note",
    "display_name": "Email a credit note",
    "category": "Credit Notes",
    "description": "Email a credit note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credit_note",
    "display_name": "Get a credit note",
    "category": "Credit Notes",
    "description": "Fetch the details of an existing creditnote.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credit_note_email_content",
    "display_name": "Get email content",
    "category": "Credit Notes",
    "description": "Get email content of a credit note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credit_note_email_history",
    "display_name": "Email history",
    "category": "Credit Notes",
    "description": "Get email history of a credit code.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credit_note_refund",
    "display_name": "Get credit note refund",
    "category": "Credit Notes",
    "description": "Fetch the refund of a particular credit note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credit_note_comments",
    "display_name": "List credit note comments & history",
    "category": "Credit Notes",
    "description": "Get history and comments of a credit note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credit_note_refunds_of_a_credit_notes",
    "display_name": "List refunds of a credit note",
    "category": "Credit Notes",
    "description": "List all refunds of an existing credit note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credit_note_refunds_of_all_credit_notes",
    "display_name": "List credit note refunds",
    "category": "Credit Notes",
    "description": "List all refunds with pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credit_note_templates",
    "display_name": "List the credit note templates",
    "category": "Credit Notes",
    "description": "Get all credit note pdf templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credit_notes",
    "display_name": "List all Credit Notes",
    "category": "Credit Notes",
    "description": "List all the Credit Notes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invoices_credited",
    "display_name": "List invoices credited",
    "category": "Credit Notes",
    "description": "List invoices to which the credit note is applied.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_credit_note_as_draft",
    "display_name": "Convert Credit Note to Draft",
    "category": "Credit Notes",
    "description": "Convert a voided credit note to draft status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_credit_note_as_open",
    "display_name": "Convert credit note to Open",
    "category": "Credit Notes",
    "description": "Convert a credit note in Draft status to Open.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_credit_note_as_void",
    "display_name": "Void a Credit Note",
    "category": "Credit Notes",
    "description": "Mark the credit note as Void.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reject_credit_note",
    "display_name": "Reject a credit note",
    "category": "Credit Notes",
    "description": "Reject a credit note submitted for approval.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_credit_note",
    "display_name": "Submit a credit note for approval",
    "category": "Credit Notes",
    "description": "Submit a credit note for approval.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_credit_note",
    "display_name": "Update a credit note",
    "category": "Credit Notes",
    "description": "To update the details of an existing creditnote.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_credit_note_billing_address",
    "display_name": "Update billing address",
    "category": "Credit Notes",
    "description": "Updates the billing address for an existing credit note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_credit_note_refund",
    "display_name": "Update credit note refund",
    "category": "Credit Notes",
    "description": "Update the refunded transaction.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_credit_note_shipping_address",
    "display_name": "Update Shipping address",
    "category": "Credit Notes",
    "description": "Updates the shipping address for an existing credit note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_credit_note_template",
    "display_name": "Update a credit note template",
    "category": "Credit Notes",
    "description": "Update the pdf template associated with the credit note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_currency",
    "display_name": "Create a Currency",
    "category": "Currency",
    "description": "Create a currency for transaction.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_currency",
    "display_name": "Delete a currency",
    "category": "Currency",
    "description": "Delete a currency. Currency that is associated to any transaction cannot be deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_currency",
    "display_name": "Get a Currency",
    "category": "Currency",
    "description": "Get the details of a currency.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_currencies",
    "display_name": "List Currency",
    "category": "Currency",
    "description": "Get list of currencies configured.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_currency",
    "display_name": "Update a Currency",
    "category": "Currency",
    "description": "Update the details of a currency.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer_payment",
    "display_name": "Create a payment",
    "category": "Customer Payments",
    "description": "Create a new payment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_customer_payment",
    "display_name": "Delete a payment",
    "category": "Customer Payments",
    "description": "Delete an existing payment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_payments",
    "display_name": "List Customer Payments",
    "category": "Customer Payments",
    "description": "List all the payments made by your customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_customer_payment",
    "display_name": "Retrieve a payment",
    "category": "Customer Payments",
    "description": "Details of an existing payment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_custom_field_in_customer_payment",
    "display_name": "Update custom field in existing customerpayments",
    "category": "Customer Payments",
    "description": "Update the value of the custom field in existing customerpayments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer_payment",
    "display_name": "Update a payment",
    "category": "Customer Payments",
    "description": "Update an existing payment information.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_attachment_to_delivery_challan",
    "display_name": "Add attachment to a delivery challan",
    "category": "Delivery Challans",
    "description": "Attach a file to an existing delivery challan. Maximum 20 files, 10 MB each.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_delivery_challan",
    "display_name": "Create a delivery challan",
    "category": "Delivery Challans",
    "description": "Create a new delivery challan for a customer. The customer ID is required.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_delivery_challan",
    "display_name": "Delete a delivery challan",
    "category": "Delivery Challans",
    "description": "Delete an existing delivery challan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_delivery_challan_attachment",
    "display_name": "Delete a delivery challan attachment",
    "category": "Delivery Challans",
    "description": "Delete an attachment from a delivery challan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_delivery_challan",
    "display_name": "Retrieve a delivery challan",
    "category": "Delivery Challans",
    "description": "Retrieve the details of an existing delivery challan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_delivery_challan_attachment",
    "display_name": "Get a delivery challan attachment",
    "category": "Delivery Challans",
    "description": "Download or view an attachment of a delivery challan. Returns the file content directly.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_delivery_challan_templates",
    "display_name": "List delivery challan templates",
    "category": "Delivery Challans",
    "description": "Retrieve a list of available templates for delivery challans.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_delivery_challans",
    "display_name": "List delivery challans",
    "category": "Delivery Challans",
    "description": "Retrieve a list of delivery challans with pagination. Filter by status, customer, date, and more.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_delivery_challan_as_delivered",
    "display_name": "Mark a delivery challan as delivered",
    "category": "Delivery Challans",
    "description": "Change the status of a delivery challan to delivered.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_delivery_challan_as_open",
    "display_name": "Mark a delivery challan as open",
    "category": "Delivery Challans",
    "description": "Change the status of a delivery challan to open.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_delivery_challan_as_returned",
    "display_name": "Mark a delivery challan as returned",
    "category": "Delivery Challans",
    "description": "Change the status of a delivery challan to returned.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_delivery_challan_as_undelivered",
    "display_name": "Mark a delivery challan as undelivered",
    "category": "Delivery Challans",
    "description": "Change the status of a delivery challan to undelivered.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "return_delivery_challans",
    "display_name": "Return delivery challans",
    "category": "Delivery Challans",
    "description": "Partially return one or more delivery challans by specifying the line items and quantities to return.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "undo_return_delivery_challans",
    "display_name": "Undo return of delivery challans",
    "category": "Delivery Challans",
    "description": "Undo a previously applied return for one or more delivery challans.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_delivery_challan",
    "display_name": "Update a delivery challan",
    "category": "Delivery Challans",
    "description": "Update an existing delivery challan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_delivery_challan_shipping_address",
    "display_name": "Update shipping address",
    "category": "Delivery Challans",
    "description": "Update the shipping address of an existing delivery challan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_delivery_challan_template",
    "display_name": "Update a delivery challan template",
    "category": "Delivery Challans",
    "description": "Assign a different template to an existing delivery challan.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_inventory_adjustment_final",
    "display_name": "Final approval of an inventory adjustment",
    "category": "Inventory Adjustments",
    "description": "Perform the final approval of an inventory adjustment (admin only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_inventoryadjustment",
    "display_name": "Approve an inventory adjustment",
    "category": "Inventory Adjustments",
    "description": "Approve a submitted inventory adjustment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_inventory_adjustment",
    "display_name": "Create an inventory adjustment",
    "category": "Inventory Adjustments",
    "description": "Creates a new inventory adjustment in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_inventory_adjustment",
    "display_name": "Delete an inventory adjustment",
    "category": "Inventory Adjustments",
    "description": "Deletes an existing inventory adjustment from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_inventory_adjustment",
    "display_name": "Retrieve an inventory adjustment",
    "category": "Inventory Adjustments",
    "description": "Fetches the details for an existing inventory adjustment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_inventory_adjustments",
    "display_name": "List all the inventory adjustments",
    "category": "Inventory Adjustments",
    "description": "Lists all the inventory adjustments present in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reject_inventoryadjustment",
    "display_name": "Reject an inventory adjustment",
    "category": "Inventory Adjustments",
    "description": "Reject a submitted inventory adjustment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_inventoryadjustment",
    "display_name": "Submit an inventory adjustment for approval",
    "category": "Inventory Adjustments",
    "description": "Submit an inventory adjustment for approval workflow.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_inventory_adjustment",
    "display_name": "Update an inventory adjustment",
    "category": "Inventory Adjustments",
    "description": "Update the details of an existing inventory adjustment by quantity.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_attachment_to_invoice",
    "display_name": "Add attachment to an invoice",
    "category": "Invoices",
    "description": "Attach a file to an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "apply_credits_to_invoice",
    "display_name": "Apply credits",
    "category": "Invoices",
    "description": "Apply the customer credits either from credit notes or excess customer payments to an invoice. Multiple credits can be applied at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_invoice",
    "display_name": "Approve an invoice",
    "category": "Invoices",
    "description": "Approve a submitted invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_invoice_final",
    "display_name": "Final approval of an invoice",
    "category": "Invoices",
    "description": "Perform the final approval of an invoice (admin only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_approve_invoices",
    "display_name": "Bulk approve invoices",
    "category": "Invoices",
    "description": "Approve multiple submitted invoices at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_export_invoices",
    "display_name": "Bulk export Invoices",
    "category": "Invoices",
    "description": "Maximum of 25 invoices can be exported in a single pdf.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_print_invoices",
    "display_name": "Bulk print invoices",
    "category": "Invoices",
    "description": "Export invoices as pdf and print them. Maximum of 25 invoices can be printed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_submit_invoices",
    "display_name": "Bulk submit invoices for approval",
    "category": "Invoices",
    "description": "Submit multiple invoices for approval workflow at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_write_off_invoice",
    "display_name": "Cancel write off",
    "category": "Invoices",
    "description": "Cancel the write off amount of an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_invoice",
    "display_name": "Create an invoice",
    "category": "Invoices",
    "description": "Create an invoice for your customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_invoice_comment",
    "display_name": "Add comment",
    "category": "Invoices",
    "description": "Add a comment for an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_applied_credit_to_invoice",
    "display_name": "Delete  applied credit",
    "category": "Invoices",
    "description": "Delete a particular credit applied to an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_invoice",
    "display_name": "Delete an invoice",
    "category": "Invoices",
    "description": "Delete an existing invoice. Invoices which have payment or credits note applied cannot be deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_invoice_attachment",
    "display_name": "Delete an attachment",
    "category": "Invoices",
    "description": "Delete the file attached to the invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_invoice_comment",
    "display_name": "Delete a comment",
    "category": "Invoices",
    "description": "Delete an invoice comment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_invoice_payment",
    "display_name": "Delete a payment",
    "category": "Invoices",
    "description": "Delete a payment made to an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_invoice_payment_reminder",
    "display_name": "Disable payment reminder",
    "category": "Invoices",
    "description": "Disable automated payment reminders for an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_invoice",
    "display_name": "Email an invoice",
    "category": "Invoices",
    "description": "Email an invoice to the customer. Input json string is not mandatory. If input json string is empty, mail will be send with default mail content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_invoices",
    "display_name": "Email invoices",
    "category": "Invoices",
    "description": "Send invoices to your customers by email. Maximum of 10 invoices can be sent at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_invoice_payment_reminder",
    "display_name": "Enable payment reminder",
    "category": "Invoices",
    "description": "Enable automated payment reminders for an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_invoice",
    "display_name": "Get an invoice",
    "category": "Invoices",
    "description": "Get the details of an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_invoice_attachment",
    "display_name": "Get an invoice attachment",
    "category": "Invoices",
    "description": "Returns the file attached to the invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_invoice_email_content",
    "display_name": "Get invoice email content",
    "category": "Invoices",
    "description": "Get the email content of an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_invoice_reminder_mail_content",
    "display_name": "Get payment reminder mail content",
    "category": "Invoices",
    "description": "Get the mail content of the payment reminder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credits_applied",
    "display_name": "List credits applied",
    "category": "Invoices",
    "description": "Get the list of credits applied for an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invoice_comments",
    "display_name": "List invoice comments & history",
    "category": "Invoices",
    "description": "Get the complete history and comments of an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invoice_payments",
    "display_name": "List invoice payments",
    "category": "Invoices",
    "description": "Get the list of payments made for an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invoice_templates",
    "display_name": "List invoice templates",
    "category": "Invoices",
    "description": "Get all invoice pdf templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invoices",
    "display_name": "List invoices",
    "category": "Invoices",
    "description": "List all invoices with pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_invoice_as_draft",
    "display_name": "Mark as draft",
    "category": "Invoices",
    "description": "Mark a voided invoice as draft.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_invoice_as_sent",
    "display_name": "Mark an invoice as sent",
    "category": "Invoices",
    "description": "Mark a draft invoice as sent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_invoice_as_void",
    "display_name": "Void an invoice",
    "category": "Invoices",
    "description": "Mark an invoice status as void. Upon voiding, the payments and credits associated with the invoices will be unassociated and will be under customer credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reject_invoice",
    "display_name": "Reject an invoice",
    "category": "Invoices",
    "description": "Reject a submitted invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_invoice",
    "display_name": "Submit an invoice for approval",
    "category": "Invoices",
    "description": "Submit an invoice for approval workflow.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_custom_field_in_invoice",
    "display_name": "Update custom field in existing invoices",
    "category": "Invoices",
    "description": "Update the value of the custom field in existing invoices.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_invoice",
    "display_name": "Update an invoice",
    "category": "Invoices",
    "description": "Update an existing invoice. To delete a line item just remove it from the line_items list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_invoice_attachment",
    "display_name": "Update attachment preference",
    "category": "Invoices",
    "description": "Set whether you want to send the attached file while emailing the invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_invoice_billing_address",
    "display_name": "Update billing address",
    "category": "Invoices",
    "description": "Updates the billing address for this invoice alone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_invoice_comment",
    "display_name": "Update comment",
    "category": "Invoices",
    "description": "Update an existing comment of an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_invoice_shipping_address",
    "display_name": "Update shipping address",
    "category": "Invoices",
    "description": "Updates the shipping address for this invoice alone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_invoice_template",
    "display_name": "Update invoice template",
    "category": "Invoices",
    "description": "Update the pdf template associated with the invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "write_off_invoice",
    "display_name": "Write off invoice",
    "category": "Invoices",
    "description": "Write off the invoice balance amount of an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_item_group",
    "display_name": "Create an Item Group",
    "category": "Item Groups",
    "description": "A new Item Group can a be created. While creating items, user can attach image for product group by passing form-data parameter image i.e., -F image=bag_s.jpg.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_item_group",
    "display_name": "Delete an Item Group",
    "category": "Item Groups",
    "description": "Deletes an existing Item Group from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_item_group",
    "display_name": "Retrieve an Item Group",
    "category": "Item Groups",
    "description": "Fetches the details for an existing Item Group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_groups",
    "display_name": "List all Item Groups",
    "category": "Item Groups",
    "description": "Lists all the Item Groups that are present in the Zoho Inventory organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_item_group_active",
    "display_name": "Mark as Active",
    "category": "Item Groups",
    "description": "Marks an Item group as Active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_item_group_inactive",
    "display_name": "Mark as Inactive.",
    "category": "Item Groups",
    "description": "Marks as Item Group as Inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_item_group",
    "display_name": "Update an Item Group",
    "category": "Item Groups",
    "description": "Updates the details of an existing Item Group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_delete_item_variants",
    "display_name": "Bulk delete item variants",
    "category": "Items",
    "description": "Deletes multiple item variants.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_delete_items",
    "display_name": "Delete multiple items",
    "category": "Items",
    "description": "Deletes multiple items from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_mark_item_masters_active",
    "display_name": "Bulk mark items as active",
    "category": "Items",
    "description": "Changes the status of multiple items to active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_mark_item_masters_inactive",
    "display_name": "Bulk mark items as inactive",
    "category": "Items",
    "description": "Changes the status of multiple items to inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_mark_item_variants_active",
    "display_name": "Bulk mark item variants as active",
    "category": "Items",
    "description": "Changes the status of multiple item variants to active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_mark_item_variants_inactive",
    "display_name": "Bulk mark item variants as inactive",
    "category": "Items",
    "description": "Changes the status of multiple item variants to inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_mark_items_active",
    "display_name": "Bulk mark items as active",
    "category": "Items",
    "description": "Changes the status of multiple items to active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_mark_items_inactive",
    "display_name": "Bulk mark items as inactive",
    "category": "Items",
    "description": "Changes the status of multiple items to inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_update_item_location_permissions",
    "display_name": "Bulk update item location permissions",
    "category": "Items",
    "description": "Updates location access permissions for multiple items at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_item",
    "display_name": "Create an item",
    "category": "Items",
    "description": "Creates a new item in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_item_master",
    "display_name": "Create an item",
    "category": "Items",
    "description": "Creates a new item in Zoho Inventory. You can attach an image by passing the form-data parameter image.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_item_variant",
    "display_name": "Create an item variant",
    "category": "Items",
    "description": "Creates a new item variant in Zoho Inventory. You can attach an image by passing the form-data parameter image.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_item",
    "display_name": "Delete an item",
    "category": "Items",
    "description": "Deletes an existing item from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_item_back_image",
    "display_name": "Delete an item back image",
    "category": "Items",
    "description": "Deletes the back image associated with an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_item_image",
    "display_name": "Delete an item image",
    "category": "Items",
    "description": "Deletes the image associated for an item in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_item_images",
    "display_name": "Delete multiple item images",
    "category": "Items",
    "description": "Deletes multiple images associated with an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_item_master",
    "display_name": "Delete an item",
    "category": "Items",
    "description": "Deletes an existing item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_item_variant",
    "display_name": "Delete an item variant",
    "category": "Items",
    "description": "Deletes an existing item variant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_storage_location",
    "display_name": "Disable storage location for items",
    "category": "Items",
    "description": "Disables storage location tracking for the specified items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_storage_location",
    "display_name": "Enable storage location for items",
    "category": "Items",
    "description": "Enables storage location tracking for the specified items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_item",
    "display_name": "Retrieve an item",
    "category": "Items",
    "description": "Fetches the details for an existing item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_item_image",
    "display_name": "Retrieve an item image",
    "category": "Items",
    "description": "Retrieves the image associated with an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_item_master",
    "display_name": "Retrieve an item",
    "category": "Items",
    "description": "Fetches the details of an existing item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_item_variant",
    "display_name": "Retrieve an item variant",
    "category": "Items",
    "description": "Fetches the details of an existing item variant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_variant_opening_stock",
    "display_name": "Retrieve variant opening stock",
    "category": "Items",
    "description": "Fetches the opening stock details of a variant, including batches, serial numbers, and warehouse details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "group_items",
    "display_name": "Group items",
    "category": "Items",
    "description": "Groups items together as variants under a single item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_delivery_challans",
    "display_name": "List delivery challans for an item",
    "category": "Items",
    "description": "Lists all delivery challans associated with a particular item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_details",
    "display_name": "Bulk fetch item details",
    "category": "Items",
    "description": "Fetch item details for the mentioned item IDs",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_invoices",
    "display_name": "List invoices for an item",
    "category": "Items",
    "description": "Lists all invoices associated with a particular item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_masters",
    "display_name": "List items",
    "category": "Items",
    "description": "Lists all items in the organization. Supports filters, search, and pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_move_orders",
    "display_name": "List move orders for an item",
    "category": "Items",
    "description": "Lists all move orders associated with a particular item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_purchase_orders",
    "display_name": "List purchase orders for an item",
    "category": "Items",
    "description": "Lists all purchase orders associated with a particular item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_putaways",
    "display_name": "List putaways for an item",
    "category": "Items",
    "description": "Lists all putaways associated with a particular item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_sales_orders",
    "display_name": "List sales orders for an item",
    "category": "Items",
    "description": "Lists all sales orders associated with a particular item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_sales_receipts",
    "display_name": "List sales receipts for an item",
    "category": "Items",
    "description": "Lists all sales receipts associated with a particular item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_variants",
    "display_name": "List item variants",
    "category": "Items",
    "description": "Lists all item variants in the organization. Supports filters, search, and pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_items",
    "display_name": "List all the items",
    "category": "Items",
    "description": "Lists all the items present in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_image_as_back_image",
    "display_name": "Mark an image as back image",
    "category": "Items",
    "description": "Marks an existing item image as the rear/back image.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_item_as_active",
    "display_name": "Mark as active",
    "category": "Items",
    "description": "Changes the status of an item to active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_item_as_inactive",
    "display_name": "Mark as inactive",
    "category": "Items",
    "description": "Mark an item as inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_item_master_as_active",
    "display_name": "Mark an item as active",
    "category": "Items",
    "description": "Changes the status of an item to active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_item_master_as_inactive",
    "display_name": "Mark an item as inactive",
    "category": "Items",
    "description": "Changes the status of an item to inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_item_variant_as_active",
    "display_name": "Mark an item variant as active",
    "category": "Items",
    "description": "Changes the status of an item variant to active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_item_variant_as_inactive",
    "display_name": "Mark an item variant as inactive",
    "category": "Items",
    "description": "Changes the status of an item variant to inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_item",
    "display_name": "Move an item",
    "category": "Items",
    "description": "Moves an item to a different group or location.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "move_item_variant",
    "display_name": "Move an item variant",
    "category": "Items",
    "description": "Moves an item variant to another item. The request body follows the item variant create or update structure and must include the target grouping fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reorder_item_images",
    "display_name": "Reorder item images",
    "category": "Items",
    "description": "Reorders the images associated with an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ungroup_item_variants",
    "display_name": "Mark item variants as single items",
    "category": "Items",
    "description": "Marks the specified item variants as single items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ungroup_items",
    "display_name": "Ungroup items",
    "category": "Items",
    "description": "Ungroups the specified items from their variant grouping.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_custom_field_in_item",
    "display_name": "Update custom field in existing items",
    "category": "Items",
    "description": "Update the value of the custom field in existing items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_item",
    "display_name": "Update an item",
    "category": "Items",
    "description": "Update the details of an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_item_location_permissions",
    "display_name": "Update item location permissions",
    "category": "Items",
    "description": "Updates the location access permissions for an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_item_master",
    "display_name": "Update an item",
    "category": "Items",
    "description": "Updates the details of an existing item. You can attach or replace an image by passing the form-data parameter image.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_item_variant",
    "display_name": "Update an item variant",
    "category": "Items",
    "description": "Updates the details of an existing item variant. You can attach or replace an image by passing the form-data parameter image.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_variant_opening_stock",
    "display_name": "Update variant opening stock",
    "category": "Items",
    "description": "Updates the opening stock details of a variant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_item_back_image",
    "display_name": "Upload an item back image",
    "category": "Items",
    "description": "Uploads a back image for an item. Allowed formats: gif, png, jpeg, jpg, bmp, webp. Maximum size: 7 MB.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_item_image",
    "display_name": "Upload an item image",
    "category": "Items",
    "description": "Uploads an image for an item in Zoho Inventory. Allowed formats: gif, png, jpeg, jpg, bmp, webp. Maximum size: 7 MB.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_item_images",
    "display_name": "Upload multiple item images",
    "category": "Items",
    "description": "Uploads multiple images for an item. Allowed formats: gif, png, jpeg, jpg, bmp, webp. Maximum size: 7 MB per image.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_and_map_serial_numbers",
    "display_name": "Validate and map serial numbers",
    "category": "Items",
    "description": "Validates serial number availability and maps them with bin locations for outgoing transactions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_serial_numbers",
    "display_name": "Validate serial numbers",
    "category": "Items",
    "description": "Checks serial number availability for outgoing transactions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_bulk_landed_costs",
    "display_name": "Create bulk landed costs",
    "category": "Landed Costs",
    "description": "Create a landed cost from a single source transaction (such as a bill, bill of entry, or self-billed invoice) and allocate it across multiple bills in one call. Use this when a single charge, for example a freight invoice, needs to be distributed across more than one downstream bill.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_landed_cost_for_bill",
    "display_name": "Creates a landed cost for a bill.",
    "category": "Landed Costs",
    "description": "Create a landed cost for a bill. Use this to record additional charges such as shipping, customs, or handling against a bill, and allocate those charges across the line items of the bill using the chosen allocation method.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_landed_cost_for_bill",
    "display_name": "Deletes a landed cost from a bill.",
    "category": "Landed Costs",
    "description": "Delete a landed cost from a bill. The allocated amounts are removed from the bill line items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bill_details_for_bulk_landed_cost",
    "display_name": "Get bill details for bulk landed cost",
    "category": "Landed Costs",
    "description": "Retrieve the bill and line item details for one or more bills. Use this before calling the bulk landed cost endpoint to fetch the bill items that the landed cost can be allocated against.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_landed_cost_for_bill",
    "display_name": "Retrieves the details of a specific landed cost",
    "category": "Landed Costs",
    "description": "Retrieve the details of a specific landed cost recorded against a bill, including the cost allocations across the bill line items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_landed_cost_for_bill",
    "display_name": "Updates an existing landed cost on a bill.",
    "category": "Landed Costs",
    "description": "Update an existing landed cost on a bill. The full landed cost record, including its allocations across the bill line items, is replaced with the values provided in the request body.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_location",
    "display_name": "Create a location",
    "category": "Locations",
    "description": "Create a location.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_location",
    "display_name": "Delete a location",
    "category": "Locations",
    "description": "Delete a location.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_locations",
    "display_name": "Enable Locations",
    "category": "Locations",
    "description": "Enable Locations for an organisation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_location",
    "display_name": "Get a location",
    "category": "Locations",
    "description": "Get the details of a location.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_locations",
    "display_name": "List all locations",
    "category": "Locations",
    "description": "List all the available locations in your zoho inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users_of_a_location",
    "display_name": "List users of a location",
    "category": "Locations",
    "description": "List the users associated with a location.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_location_as_active",
    "display_name": "Mark as Active",
    "category": "Locations",
    "description": "Mark location as Active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_location_as_inactive",
    "display_name": "Mark as Inactive",
    "category": "Locations",
    "description": "Mark location as Inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_location_as_primary",
    "display_name": "Mark as Primary",
    "category": "Locations",
    "description": "Mark location as primary.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_location",
    "display_name": "Update location",
    "category": "Locations",
    "description": "Update location",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_move_order_attachment",
    "display_name": "Attach files to a move order",
    "category": "Move Orders",
    "description": "Uploads one or more files and associates them with the move order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_move_order",
    "display_name": "Create a move order",
    "category": "Move Orders",
    "description": "Creates a new move order in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_move_order",
    "display_name": "Delete a move order",
    "category": "Move Orders",
    "description": "Deletes a single move order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_move_order_document",
    "display_name": "Remove an attachment from a move order",
    "category": "Move Orders",
    "description": "Deletes or unlinks a document from the specified move order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_move_orders",
    "display_name": "Delete move orders",
    "category": "Move Orders",
    "description": "Deletes move orders.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_move_order",
    "display_name": "Retrieve a move order",
    "category": "Move Orders",
    "description": "Fetches details of an existing move order, including line items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_move_order_document",
    "display_name": "Download a move order document",
    "category": "Move Orders",
    "description": "Returns the binary content of an attached document (image or PDF).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_move_order_settings",
    "display_name": "Get move order auto number generation settings",
    "category": "Move Orders",
    "description": "Returns auto number generation preferences for move orders.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_move_order_comments",
    "display_name": "List comments for a move order",
    "category": "Move Orders",
    "description": "Returns all comments recorded on a move order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_move_orders",
    "display_name": "List all move orders",
    "category": "Move Orders",
    "description": "Lists move orders with optional filters, search options, and pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_move_order_as_completed",
    "display_name": "Mark move order as completed",
    "category": "Move Orders",
    "description": "Updates the move order status to completed. A completion date is required.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_move_order_as_confirmed",
    "display_name": "Mark move order as confirmed",
    "category": "Move Orders",
    "description": "Updates the move order status to confirmed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_move_order_as_in_progress",
    "display_name": "Mark move order as in progress",
    "category": "Move Orders",
    "description": "Updates the move order status to in progress.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_move_order",
    "display_name": "Update a move order",
    "category": "Move Orders",
    "description": "Updates an existing move order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_organization",
    "display_name": "Create an organization",
    "category": "Organizations",
    "description": "Create an organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization",
    "display_name": "Get an organization",
    "category": "Organizations",
    "description": "Get the details of an organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_organizations",
    "display_name": "List organizations",
    "category": "Organizations",
    "description": "Get the list of organizations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_organization",
    "display_name": "Update an organization",
    "category": "Organizations",
    "description": "Update the details of an organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_print_packages",
    "display_name": "Bulk print packages",
    "category": "Packages",
    "description": "Print package slips.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_package",
    "display_name": "Creating a package",
    "category": "Packages",
    "description": "Create a new package for a sales order. Pass salesorder_id as a query parameter. To create a package from a picklist, include both so_line_item_id and picklist_item_id on each line item (along with quantity). You can also create a package directly from sales order line items using so_line_item_id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_package",
    "display_name": "Deleting a package",
    "category": "Packages",
    "description": "Deleting an existing package.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_package",
    "display_name": "Retrieving a package",
    "category": "Packages",
    "description": "Retrieving details of existing package.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_packages",
    "display_name": "List all packages",
    "category": "Packages",
    "description": "List all existing packages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_package",
    "display_name": "Updating a package",
    "category": "Packages",
    "description": "Updating details of existing package.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_comment_to_picklist",
    "display_name": "Add a Comment to a Picklist",
    "category": "Picklists",
    "description": "Add a comment or note to an existing picklist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_delete_picklists",
    "display_name": "Bulk Delete Picklists",
    "category": "Picklists",
    "description": "Delete multiple picklists at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_set_picklist_status",
    "display_name": "Bulk Set Status of Picklists",
    "category": "Picklists",
    "description": "Update the status of multiple picklists at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_picklist",
    "display_name": "Create a Picklist",
    "category": "Picklists",
    "description": "Create a new picklist for picking items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_picklist",
    "display_name": "Delete a Picklist",
    "category": "Picklists",
    "description": "Delete an existing picklist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_picklist_comment",
    "display_name": "Delete a Comment on a Picklist",
    "category": "Picklists",
    "description": "Delete a comment from an existing picklist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_picklist",
    "display_name": "Get a Picklist",
    "category": "Picklists",
    "description": "Retrieve the details of an existing picklist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_picklist_advanced_tracking_details",
    "display_name": "Get Advanced Tracking Details for a Picklist",
    "category": "Picklists",
    "description": "Retrieve the serial number and batch tracking details for a picklist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_picklists",
    "display_name": "List Picklists",
    "category": "Picklists",
    "description": "Retrieve the list of all picklists in the organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_pr_line_items_for_picklist",
    "display_name": "Search Purchase Return Line Items",
    "category": "Picklists",
    "description": "Search for purchase return line items that can be added to a picklist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_sales_orders_for_picklist",
    "display_name": "Search Sales Orders",
    "category": "Picklists",
    "description": "Search for sales orders that can be used when creating a picklist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_so_line_items_for_picklist",
    "display_name": "Search Sales Order Line Items",
    "category": "Picklists",
    "description": "Search for sales order line items that can be added to a picklist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_picklist_status",
    "display_name": "Set Status of a Picklist",
    "category": "Picklists",
    "description": "Update the status of a specific picklist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_picklist",
    "display_name": "Update a Picklist",
    "category": "Picklists",
    "description": "Update the details of an existing picklist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_picklist_advanced_tracking_details",
    "display_name": "Update Advanced Tracking Details for a Picklist",
    "category": "Picklists",
    "description": "Update serial number and batch tracking details for items in a picklist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_pricebook",
    "display_name": "Create a pricebook",
    "category": "Price Lists",
    "description": "create a new pricebook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_pricebook",
    "display_name": "Delete the pricebook",
    "category": "Price Lists",
    "description": "Delete the pricebook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pricebooks",
    "display_name": "List all pricebooks",
    "category": "Price Lists",
    "description": "List all the available pricebooks in your zoho inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_pricebook_active",
    "display_name": "Mark as Active",
    "category": "Price Lists",
    "description": "Mark the pricebook as Active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_pricebook_inactive",
    "display_name": "Mark as Inactive",
    "category": "Price Lists",
    "description": "Mark the pricebook as Inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_pricebook",
    "display_name": "Update pricebook",
    "category": "Price Lists",
    "description": "update existing pricebook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_purchaseorder",
    "display_name": "Approve a purchase order",
    "category": "Purchase Orders",
    "description": "Approve a submitted purchase order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_approve_purchaseorders",
    "display_name": "Bulk approve purchase orders",
    "category": "Purchase Orders",
    "description": "Approve multiple submitted purchase orders at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_submit_purchaseorders",
    "display_name": "Bulk submit purchase orders for approval",
    "category": "Purchase Orders",
    "description": "Submit multiple purchase orders for approval workflow at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_purchase_order",
    "display_name": "Create a Purchase Order",
    "category": "Purchase Orders",
    "description": "Creates a new Purchase Order in Zoho Inventory. Description about extra parameter ignore_auto_number_generation - Ignore auto purchase order number generation for this Purchase order. This mandates the Purchase Order number to be entered. Allowed Values true and false.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_purchase_order",
    "display_name": "Delete a Purchase Order",
    "category": "Purchase Orders",
    "description": "Deletes a Purchase Order from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "final_approve_purchaseorder",
    "display_name": "Final-approve a purchase order",
    "category": "Purchase Orders",
    "description": "Mark a submitted purchase order as final approved, bypassing the remaining approval sequence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_purchase_order",
    "display_name": "Retrieve a Purchase Order",
    "category": "Purchase Orders",
    "description": "Retrieves the details for an existing Purchase Order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_purchase_orders",
    "display_name": "List all Purchase Orders",
    "category": "Purchase Orders",
    "description": "Lists all the Purchase Orders present in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_purchase_order_as_cancelled",
    "display_name": "Mark as Cancelled",
    "category": "Purchase Orders",
    "description": "Marks a Purchase Order as Cancelled.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_purchase_order_as_issued",
    "display_name": "Mark as Issued",
    "category": "Purchase Orders",
    "description": "Marks a Purchase Order as Issued.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reject_purchaseorder",
    "display_name": "Reject a purchase order",
    "category": "Purchase Orders",
    "description": "Reject a submitted purchase order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_purchaseorder",
    "display_name": "Submit a purchase order for approval",
    "category": "Purchase Orders",
    "description": "Submit a purchase order for approval workflow.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_purchase_order",
    "display_name": "Update a Purchase Order",
    "category": "Purchase Orders",
    "description": "Updates a new Purchase Order in Zoho Inventory. Description about extra parameter ignore_auto_number_generation - Ignore auto Purchase order number generation for this Purchase Order. This mandates the Purchase Order number to be entered. Allowed Values true and false.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_attachment_to_purchase_receive",
    "display_name": "Add an attachment to a purchase receive",
    "category": "Purchase Receives",
    "description": "Attach a file to an existing purchase receive. Maximum file size is 10 MB. Up to 20 files can be attached.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_comment_to_purchase_receive",
    "display_name": "Add a comment to a purchase receive",
    "category": "Purchase Receives",
    "description": "Add a comment to an existing purchase receive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_purchase_receive",
    "display_name": "Approve a purchase receive",
    "category": "Purchase Receives",
    "description": "Approve a purchase receive that has been submitted for approval.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_delete_purchase_receives",
    "display_name": "Delete purchase receives in bulk",
    "category": "Purchase Receives",
    "description": "Delete multiple purchase receives at once. A maximum of 25 purchase receives can be deleted in a single request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_mark_purchase_receives_as_in_transit",
    "display_name": "Mark purchase receives as in transit in bulk",
    "category": "Purchase Receives",
    "description": "Mark multiple purchase receives as in transit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_mark_purchase_receives_as_received",
    "display_name": "Mark purchase receives as received in bulk",
    "category": "Purchase Receives",
    "description": "Mark multiple purchase receives as received.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_purchase_receive",
    "display_name": "Create a purchase receive",
    "category": "Purchase Receives",
    "description": "Create a purchase receive for a purchase order. Pass purchaseorder_id as a query parameter. To receive against billed items, include bill_line_items (with bill_item_id and quantity) to map one or more bill line items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_purchase_receive",
    "display_name": "Delete a purchase receive",
    "category": "Purchase Receives",
    "description": "Delete a purchase receive from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_purchase_receive_attachment",
    "display_name": "Delete a purchase receive attachment",
    "category": "Purchase Receives",
    "description": "Delete an attachment from a purchase receive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_purchase_receive_comment",
    "display_name": "Delete a purchase receive comment",
    "category": "Purchase Receives",
    "description": "Delete a comment from a purchase receive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_purchase_receive",
    "display_name": "Retrieve a purchase receive",
    "category": "Purchase Receives",
    "description": "Retrieve a purchase receive from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_purchase_receive_attachment",
    "display_name": "Get a purchase receive attachment",
    "category": "Purchase Receives",
    "description": "Retrieve or download an attachment from a purchase receive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_purchase_receives",
    "display_name": "List all purchase receives",
    "category": "Purchase Receives",
    "description": "List all purchase receives, with options to filter by status, vendor, date range, and other criteria.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_purchase_receive_as_in_transit",
    "display_name": "Mark a purchase receive as in transit",
    "category": "Purchase Receives",
    "description": "Mark a purchase receive as in transit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_purchase_receive_as_received",
    "display_name": "Mark a purchase receive as received",
    "category": "Purchase Receives",
    "description": "Mark a purchase receive as received.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reject_purchase_receive",
    "display_name": "Reject a purchase receive",
    "category": "Purchase Receives",
    "description": "Reject a purchase receive that has been submitted for approval.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_purchase_receive",
    "display_name": "Submit a purchase receive for approval",
    "category": "Purchase Receives",
    "description": "Submit a purchase receive for approval.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_purchase_receive",
    "display_name": "Update a purchase receive",
    "category": "Purchase Receives",
    "description": "Update an existing purchase receive in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_attachment_to_purchase_return",
    "display_name": "Add Attachment to a Purchase Return",
    "category": "Purchase Returns",
    "description": "Attach a file to a purchase return. The file must be multipart/form-data. Allowed extensions: gif, png, jpeg, jpg, bmp, pdf, xls, xlsx, doc, docx, xml, csv, txt, tif, tiff, msg, eml, dwg. Maximum file size is 10 MB.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "close_purchase_return",
    "display_name": "Close a Purchase Return",
    "category": "Purchase Returns",
    "description": "Mark one or more purchase returns as closed. Closing a purchase return cancels the remaining unfulfilled quantities.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "confirm_purchase_return",
    "display_name": "Confirm a Purchase Return",
    "category": "Purchase Returns",
    "description": "Change the status of a draft purchase return to confirmed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_purchase_return",
    "display_name": "Create a Purchase Return",
    "category": "Purchase Returns",
    "description": "Create a new purchase return in Zoho Inventory. A purchase return can be created standalone or from a purchase order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_purchase_return",
    "display_name": "Delete a Purchase Return",
    "category": "Purchase Returns",
    "description": "Delete an existing purchase return from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_purchase_return_attachment",
    "display_name": "Delete an Attachment",
    "category": "Purchase Returns",
    "description": "Delete a file attached to a purchase return.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_purchase_return",
    "display_name": "Email a Purchase Return",
    "category": "Purchase Returns",
    "description": "Send a purchase return via email to the vendor or specified recipients.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "fulfill_purchase_return",
    "display_name": "Fulfill a Purchase Return",
    "category": "Purchase Returns",
    "description": "Mark the items in a purchase return as fulfilled (shipped back to the vendor).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_purchase_return",
    "display_name": "Retrieve a Purchase Return",
    "category": "Purchase Returns",
    "description": "Retrieve the details of an existing purchase return.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_purchase_returns",
    "display_name": "List all Purchase Returns",
    "category": "Purchase Returns",
    "description": "List all purchase returns in Zoho Inventory. Use query parameters to filter by status, vendor, date range, and other criteria.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reopen_purchase_return",
    "display_name": "Reopen a Purchase Return",
    "category": "Purchase Returns",
    "description": "Reopen one or more closed purchase returns.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unfulfill_purchase_return",
    "display_name": "Unfulfill a Purchase Return",
    "category": "Purchase Returns",
    "description": "Reverse the fulfillment of items in a purchase return.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_purchase_return",
    "display_name": "Update a Purchase Return",
    "category": "Purchase Returns",
    "description": "Update an existing purchase return in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_purchase_return_billing_address",
    "display_name": "Update Billing Address",
    "category": "Purchase Returns",
    "description": "Update the billing address of a purchase return.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_purchase_return_shipping_address",
    "display_name": "Update Shipping Address",
    "category": "Purchase Returns",
    "description": "Update the shipping address of a purchase return.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "void_purchase_return",
    "display_name": "Void a Purchase Return",
    "category": "Purchase Returns",
    "description": "Mark an existing purchase return as void.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_putaway_attachment",
    "display_name": "Attach files to a putaway",
    "category": "Putaways",
    "description": "Uploads one or more files and associates them with the putaway.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_putaway",
    "display_name": "Create a putaway",
    "category": "Putaways",
    "description": "Creates a new putaway transaction in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_putaway",
    "display_name": "Delete a putaway",
    "category": "Putaways",
    "description": "Deletes an existing putaway transaction.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_putaway_document",
    "display_name": "Remove an attachment from a putaway",
    "category": "Putaways",
    "description": "Deletes or unlinks a document from the putaway.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_putaway",
    "display_name": "Retrieve a putaway",
    "category": "Putaways",
    "description": "Fetches details of an existing putaway, including line items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_putaway_document",
    "display_name": "Download a putaway document",
    "category": "Putaways",
    "description": "Returns the binary content of an attached document (image or PDF).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_putaway_settings",
    "display_name": "Get putaway auto number generation settings",
    "category": "Putaways",
    "description": "Returns auto number generation preferences for putaways.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_putaway_comments",
    "display_name": "List comments for a putaway",
    "category": "Putaways",
    "description": "Returns all comments recorded on a putaway.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_putaways",
    "display_name": "List all putaways",
    "category": "Putaways",
    "description": "Lists putaway transactions with optional filters and pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_putaway",
    "display_name": "Update a putaway",
    "category": "Putaways",
    "description": "Updates an existing putaway transaction.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_dismiss_replenishment_tasks",
    "display_name": "Bulk dismiss replenishment tasks",
    "category": "Replenishment",
    "description": "Dismisses the specified replenishment tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_generate_replenishment_tasks",
    "display_name": "Bulk generate replenishment tasks",
    "category": "Replenishment",
    "description": "Generates replenishment tasks for the specified items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_pause_replenishments",
    "display_name": "Bulk pause replenishment configurations",
    "category": "Replenishment",
    "description": "Pauses replenishment configurations for the specified item and location combinations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_resume_replenishments",
    "display_name": "Bulk resume replenishment configurations",
    "category": "Replenishment",
    "description": "Resumes paused replenishment configurations for the specified item and location combinations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_update_replenishments",
    "display_name": "Bulk update replenishment configurations",
    "category": "Replenishment",
    "description": "Updates replenishment configurations for the specified item and location combinations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_replenishment_configuration",
    "display_name": "Create a replenishment configuration",
    "category": "Replenishment",
    "description": "Creates a replenishment configuration for an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "dismiss_replenishment_task",
    "display_name": "Dismiss a replenishment task",
    "category": "Replenishment",
    "description": "Dismisses a replenishment task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_replenishment_task",
    "display_name": "Generate a replenishment task",
    "category": "Replenishment",
    "description": "Generates a replenishment task for a replenishment configuration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_replenishment_configuration",
    "display_name": "Retrieve a replenishment configuration",
    "category": "Replenishment",
    "description": "Fetches the details of a replenishment configuration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_replenishment_order_details",
    "display_name": "Retrieve replenishment order details",
    "category": "Replenishment",
    "description": "Fetches the order details for a replenishment configuration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_replenishment_task",
    "display_name": "Retrieve a replenishment task",
    "category": "Replenishment",
    "description": "Fetches the details of a replenishment task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_replenishment_task_for_item",
    "display_name": "Retrieve replenishment task details for an item",
    "category": "Replenishment",
    "description": "Fetches the replenishment task details for the specified item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_replenishment_tasks_report",
    "display_name": "Retrieve replenishment task details report",
    "category": "Replenishment",
    "description": "Fetches the replenishment task details report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_location_replenishments",
    "display_name": "Retrieve replenishment configurations for associated locations",
    "category": "Replenishment",
    "description": "Fetches the replenishment configurations of the associated locations for an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_item_warehouse_replenishments",
    "display_name": "Retrieve replenishment configurations for associated warehouses",
    "category": "Replenishment",
    "description": "Fetches the replenishment configurations of the associated warehouses for an item. Applicable only when multi-warehouse is enabled for the organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_replenishment_tasks",
    "display_name": "List all replenishment tasks",
    "category": "Replenishment",
    "description": "Lists replenishment tasks in your organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_replenishment_configuration",
    "display_name": "Pause a replenishment configuration",
    "category": "Replenishment",
    "description": "Pauses a replenishment configuration until the specified date.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_replenishment_configuration",
    "display_name": "Resume a replenishment configuration",
    "category": "Replenishment",
    "description": "Resumes a paused replenishment configuration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_replenishment_configuration",
    "display_name": "Update a replenishment configuration",
    "category": "Replenishment",
    "description": "Updates an existing replenishment configuration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "active_tag",
    "display_name": "Mark Reporting Tag as active",
    "category": "Reporting Tags",
    "description": "Mark a reporting tag as active so that you can use it on entities which you allowed.  A newly created tag will be in draft state. Use this to mark that tag as ready.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tag",
    "display_name": "Create Reporting Tag",
    "category": "Reporting Tags",
    "description": "Create a reporting tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tag",
    "display_name": "Delete a reporting tag",
    "category": "Reporting Tags",
    "description": "Delete a reporting tag. If there are any usages of the reporting tag in transactions,  custom views or workflows, you will not be able to delete the tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_all_tag_options",
    "display_name": "Get Reporting Tags Options Detail Page",
    "category": "Reporting Tags",
    "description": "Get the options and its criteria details of a reporting tag. For each page, you can retrieve only 200 options.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tags",
    "display_name": "List of all Reporting Tags",
    "category": "Reporting Tags",
    "description": "Get a list of all reporting tags in the preferred order that you can set.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "inactive_tag",
    "display_name": "Mark Reporting Tag as inactive",
    "category": "Reporting Tags",
    "description": "Mark a reporting tag as inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_default_option",
    "display_name": "Mark an option as default for a reporting tag",
    "category": "Reporting Tags",
    "description": "Mark an option as the default option or clear default option for a reporting tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reorder_tags",
    "display_name": "Reorder Reporting Tags",
    "category": "Reporting Tags",
    "description": "Reorder the reporting tags in your organization. The order of tags will be followed in transactions and reports.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tag",
    "display_name": "Update Reporting Tag",
    "category": "Reporting Tags",
    "description": "Update a reporting tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tag_criteria",
    "display_name": "Update Reporting Tag - Visibility Conditions",
    "category": "Reporting Tags",
    "description": "Update the visibility conditions (or filter in some places) of a reporting tag. You can set other tags or location as filters for a tag. Check our help document to know about the requirements of a tag to be associated as a filter to another tag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tag_options",
    "display_name": "Update Reporting Tag Options",
    "category": "Reporting Tags",
    "description": "Create, update or delete the options of a reporting tag. Reorder and arrange them in an hierarchical structure as per your organization requirements. NOTE:  An option cannot be a child option beyond five hierarchical level. The overall children of an option cannot exceed 500 options.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_attachment_to_retainer_invoice",
    "display_name": "Add attachment to a retainer invoice",
    "category": "Retainer Invoices",
    "description": "Attach a file to an invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_retainer_invoice",
    "display_name": "Approve a retainer invoice.",
    "category": "Retainer Invoices",
    "description": "Approve a retainer invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_retainer_invoice",
    "display_name": "Create a retainerinvoice",
    "category": "Retainer Invoices",
    "description": "Create a retainer invoice for your customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_retainer_invoice_comment",
    "display_name": "Add comment",
    "category": "Retainer Invoices",
    "description": "Add a comment for a retainer invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_retainer_invoice",
    "display_name": "Delete a retainer invoice",
    "category": "Retainer Invoices",
    "description": "Delete an existing retainer invoice. Invoices which have payment or credits note applied cannot be deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_retainer_invoice_attachment",
    "display_name": "Delete an attachment",
    "category": "Retainer Invoices",
    "description": "Delete the file attached to the retainer invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_retainer_invoice_comment",
    "display_name": "Delete a comment",
    "category": "Retainer Invoices",
    "description": "Delete a retainer invoice comment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_retainer_invoice",
    "display_name": "Email a retainer invoice",
    "category": "Retainer Invoices",
    "description": "Email a retainer invoice to the customer. Input json string is not mandatory. If input json string is empty, mail will be send with default mail content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_retainer_invoice",
    "display_name": "Get a retainer invoice",
    "category": "Retainer Invoices",
    "description": "Get the details of a retainer invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_retainer_invoice_attachment",
    "display_name": "Get a retainer invoice attachment",
    "category": "Retainer Invoices",
    "description": "Returns the file attached to the retainer invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_retainer_invoice_email_content",
    "display_name": "Get retainer invoice email content",
    "category": "Retainer Invoices",
    "description": "Get the email content of a retainer invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_retainer_invoice_comments",
    "display_name": "List retainer invoice comments & history",
    "category": "Retainer Invoices",
    "description": "Get the complete history and comments of a retainer invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_retainer_invoice_templates",
    "display_name": "List retainer invoice templates",
    "category": "Retainer Invoices",
    "description": "Get all retainer invoice pdf templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_retainer_invoices",
    "display_name": "List a retainer invoices",
    "category": "Retainer Invoices",
    "description": "List all retainer invoices with pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_retainer_invoice_as_draft",
    "display_name": "Mark as draft",
    "category": "Retainer Invoices",
    "description": "Mark a voided retainer invoice as draft.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_retainer_invoice_as_sent",
    "display_name": "Mark a retainer invoice as sent",
    "category": "Retainer Invoices",
    "description": "Mark a draft retainer invoice as sent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_retainer_invoice_as_void",
    "display_name": "Void a retainer invoice",
    "category": "Retainer Invoices",
    "description": "Mark an invoice status as void. Upon voiding, the payments and credits associated with the retainer invoices will be unassociated and will be under customer credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_retainer_invoice",
    "display_name": "Submit a retainer invoice for approval",
    "category": "Retainer Invoices",
    "description": "Submit a retainer invoice for approval.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_retainer_invoice",
    "display_name": "update a retainerinvoice",
    "category": "Retainer Invoices",
    "description": "Update an existing invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_retainer_invoice_billing_address",
    "display_name": "Update billing address",
    "category": "Retainer Invoices",
    "description": "Updates the billing address for this retainer invoice alone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_retainer_invoice_comment",
    "display_name": "Update comment",
    "category": "Retainer Invoices",
    "description": "Update an existing comment of a retainer invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_retainer_invoice_template",
    "display_name": "Update retainer invoice template",
    "category": "Retainer Invoices",
    "description": "Update the pdf template associated with the retainer invoice.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_salesorder",
    "display_name": "Approve a sales order",
    "category": "Sales Orders",
    "description": "Approve a submitted sales order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_salesorder_final",
    "display_name": "Final approval of a sales order",
    "category": "Sales Orders",
    "description": "Perform the final approval of a sales order (admin only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_approve_salesorders",
    "display_name": "Bulk approve sales orders",
    "category": "Sales Orders",
    "description": "Approve multiple submitted sales orders at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_confirm_sales_orders",
    "display_name": "Bulk confirm Sales Orders",
    "category": "Sales Orders",
    "description": "Mark existing Sales Orders as confirmed in Zoho Inventory",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_delete_sales_orders",
    "display_name": "Bulk delete Sales Orders",
    "category": "Sales Orders",
    "description": "Bulk delete the selected Sales Orders.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_submit_salesorders",
    "display_name": "Bulk submit sales orders for approval",
    "category": "Sales Orders",
    "description": "Submit multiple sales orders for approval workflow at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_sales_order",
    "display_name": "Create a Sales Order",
    "category": "Sales Orders",
    "description": "Creates a new Sales Order in Zoho Inventory. Description about extra parameter ignore_auto_number_generation - Ignore auto sales order number generation for this sales order. This mandates the Sales Order number to be entered. Allowed Values true and false.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_sales_order",
    "display_name": "Delete a Sales Order",
    "category": "Sales Orders",
    "description": "Deletes an existing Sales Order from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sales_order",
    "display_name": "Retrieve a Sales Order",
    "category": "Sales Orders",
    "description": "Retrieves the details for an existing Sales Order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sales_orders",
    "display_name": "List all Sales Orders",
    "category": "Sales Orders",
    "description": "Lists all the available Sales Orders in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_sales_order_as_confirmed",
    "display_name": "Mark as Confirmed",
    "category": "Sales Orders",
    "description": "Changes the status of a Sales Order to Confirmed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_sales_order_as_void",
    "display_name": "Mark as Void",
    "category": "Sales Orders",
    "description": "Changes the status of a Sales Order to Void.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reject_salesorder",
    "display_name": "Reject a sales order",
    "category": "Sales Orders",
    "description": "Reject a submitted sales order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_salesorder",
    "display_name": "Submit a sales order for approval",
    "category": "Sales Orders",
    "description": "Submit a sales order for approval workflow.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_sales_order",
    "display_name": "Update a Sales Order",
    "category": "Sales Orders",
    "description": "Updates a new Sales Order in Zoho Inventory. Description about extra parameter ignore_auto_number_generation - Ignore auto sales order number generation for this sales order. This mandates the Sales Order number to be entered. Allowed Values true and false.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_sales_return",
    "display_name": "Create a Sales Return",
    "category": "Sales Returns",
    "description": "Creation of Sales Return. Sales return can be created for all the shipped units of the items in a sales order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_sales_return_receive",
    "display_name": "Create a Sales Return Receive",
    "category": "Sales Returns",
    "description": "Creating a sales return receive to mark the receivable goods as received.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_sales_return",
    "display_name": "Delete a Sales Return",
    "category": "Sales Returns",
    "description": "Deletes a Sales Return from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_sales_return_receive",
    "display_name": "Delete a Sales Return Receive",
    "category": "Sales Returns",
    "description": "Deletes the sales return receive of a sales return.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sales_return",
    "display_name": "Retrieve a Sales Return",
    "category": "Sales Returns",
    "description": "Retrieves the details for an existing Sales Return.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sales_returns",
    "display_name": "List all Sales Returns",
    "category": "Sales Returns",
    "description": "Lists all the Sales Returns present in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_sales_return",
    "display_name": "Update a Sales Return",
    "category": "Sales Returns",
    "description": "Updation of Sales Return.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_serial_numbers",
    "display_name": "List all serial numbers",
    "category": "Serial Numbers",
    "description": "List all serial numbers available for a given item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_a_serial_number",
    "display_name": "Retrieve a serial number",
    "category": "Serial Numbers",
    "description": "Fetch the details of a specific serial number.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_shipment_order",
    "display_name": "Create a Shipment Order",
    "category": "Shipment Orders",
    "description": "A new shipment order can a be created. To create shipment, URL parameter's package_ids and salesorder_id are mandatory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_shipment_order",
    "display_name": "Delete a Shipment Order",
    "category": "Shipment Orders",
    "description": "Deletes an existing Shipment Order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_shipment_order",
    "display_name": "Retrieve a Shipment Order",
    "category": "Shipment Orders",
    "description": "Retrieves details for an existing Shipment Orders.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_shipment_order_as_delivered",
    "display_name": "Mark as Delivered",
    "category": "Shipment Orders",
    "description": "Change the status of the Shipment to delivered.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_shipment_order",
    "display_name": "Update a Shipment Order",
    "category": "Shipment Orders",
    "description": "Update details of an existing Shipment Order in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "activate_recurring_inventory_count",
    "display_name": "Mark a recurring stock count profile as active",
    "category": "Stock Counts",
    "description": "Changes the status of a recurring stock count profile to active. Active profiles will continue generating counts on schedule.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_inventory_count",
    "display_name": "Approve or reject line items in a stock count",
    "category": "Stock Counts",
    "description": "Approves or rejects individual line items in a count that is in submitted (pending approval) status. Each line item must specify an item_id and an approval_status of either approved or rejected. Approved items with quantity differences trigger inventory adjustments. Rejected items can be recounted. If approval is scheduled in background, the response message indicates it is in progress.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "autocomplete_inventory_count_items",
    "display_name": "Search items in in-progress stock counts",
    "category": "Stock Counts",
    "description": "Returns a list of stock count line items from in-progress counts, suitable for autocomplete/search UI. Supports filtering by item ID, storage location, warehouse, category, manufacturer, and item type (bin-tracked vs non-bin-tracked). Use the filter_by parameter to filter by item status (e.g., Items.Uncounted) or type (e.g., ItemType.BinTracked, ItemType.NonBinTracked). Use the group_by parameter to group results.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "autocomplete_inventory_count_storages",
    "display_name": "Search storage locations in in-progress stock counts",
    "category": "Stock Counts",
    "description": "Returns a list of storage locations (bins) from in-progress stock counts, suitable for autocomplete/search UI. Supports filtering by storage location, warehouse/location, item ID, and counted status. Use filter_by=Storages.Uncounted to return only storage locations that have uncounted items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_delete_inventory_counts",
    "display_name": "Bulk delete stock counts",
    "category": "Stock Counts",
    "description": "Deletes multiple stock counts in a single request. Counts with associated inventory adjustments cannot be deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_inventory_count",
    "display_name": "Cancel a stock count",
    "category": "Stock Counts",
    "description": "Cancels a stock count that is in yet_to_start or counting status. Cancelled counts cannot be restarted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_inventory_count",
    "display_name": "Create a stock count",
    "category": "Stock Counts",
    "description": "Creates a new stock count (stock take) in Zoho Inventory. The count starts in yet_to_start status. You must specify the warehouse/location and the line items (products) to count. Duplicate products in line items are not allowed. A maximum of 1000 line items per count.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_recurring_inventory_count",
    "display_name": "Create a recurring stock count profile",
    "category": "Stock Counts",
    "description": "Creates a recurring stock count profile that automatically generates stock counts on a schedule. Two schedule types are supported: auto (system-generated schedule based on recurrence frequency) and manual (user-specified count dates). For auto schedules, provide start_date, recurrence_frequency, repeat_every, and optionally end_date or no_of_cycles. For manual schedules, provide count_dates. Maximum 1000 line items (5000 if extended limit is enab",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deactivate_recurring_inventory_count",
    "display_name": "Mark a recurring stock count profile as inactive",
    "category": "Stock Counts",
    "description": "Changes the status of a recurring stock count profile to inactive. Inactive profiles will not generate new counts until reactivated.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_inventory_count",
    "display_name": "Delete a stock count",
    "category": "Stock Counts",
    "description": "Deletes an existing stock count. Counts with associated inventory adjustments cannot be deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_recurring_inventory_count",
    "display_name": "Delete a recurring stock count profile",
    "category": "Stock Counts",
    "description": "Permanently deletes an existing recurring stock count profile. Stock counts already generated by this profile are not affected.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_inventory_count",
    "display_name": "Retrieve a stock count",
    "category": "Stock Counts",
    "description": "Fetches the complete details of an existing stock count including its header information, line items, status, assignee details, and any associated inventory adjustments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_recurring_inventory_count",
    "display_name": "Retrieve a recurring stock count profile",
    "category": "Stock Counts",
    "description": "Fetches the details of an existing recurring stock count profile including its schedule configuration, line items, and status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_inventory_count_item_storages",
    "display_name": "List storage details for a count item",
    "category": "Stock Counts",
    "description": "Retrieves all storage location (bin) details for a specific product (item) that has been added to a stock count. This is used for items that are tracked by storage/bin location. Returns basic storage info when the count is in yet_to_start status; returns system quantities, counted quantities, variances, and serial/batch tracking details once counting has started.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_inventory_count_item_tracking_details",
    "display_name": "List serial/batch tracking details for a count line item",
    "category": "Stock Counts",
    "description": "Returns a paginated list of serial number or batch tracking entries for a specific stock count line item. Use filter_by to show all, missing, or newly-added tracking entries relative to the system records.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_inventory_counts",
    "display_name": "List all stock counts",
    "category": "Stock Counts",
    "description": "Returns a paginated list of all stock counts in the organization. Supports filtering by status or assignee, searching by count number or description, and sorting by various columns. Default sort is by created_time descending.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_recurring_inventory_counts",
    "display_name": "List all recurring stock count profiles",
    "category": "Stock Counts",
    "description": "Returns a paginated list of all recurring stock count profiles in the organization. Supports filtering by status, schedule frequency, assignee, warehouse/location, and date ranges.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_inventory_count",
    "display_name": "Start a stock count",
    "category": "Stock Counts",
    "description": "Initiates the counting process for a stock count that is in yet_to_start status. This captures the system quantities for each line item at the time of start and moves the count to counting status. Only the assigned user can start the count. If start is scheduled in background, the response message indicates it is in progress.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_inventory_count",
    "display_name": "Submit a stock count for approval",
    "category": "Stock Counts",
    "description": "Submits a count that is in counting status for review and approval. Moves the count to submitted (pending approval) status. Pass set_uncounted_as_zero=true as a query parameter to treat any uncounted items as having a counted quantity of zero before submission. If submission is scheduled in background, the response message indicates it is in progress.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_counted_quantities",
    "display_name": "Update counted quantities",
    "category": "Stock Counts",
    "description": "Records or updates the physical counted quantities for line items in a count that is in counting status. Only the assigned user can enter counted quantities. Pass next_action: \"submit\" to automatically submit the count after recording quantities. If next_action is submit and no line items are provided, only the submission is triggered. Counted quantity can be set to null to mark a line item as uncounted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_inventory_count",
    "display_name": "Update a stock count",
    "category": "Stock Counts",
    "description": "Updates the details of an existing stock count that is in yet_to_start status. You can update the assignee, notes, and line items. Warehouse/location cannot be changed once child counts exist.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_inventory_count_settings",
    "display_name": "Update stock count auto-numbering settings",
    "category": "Stock Counts",
    "description": "Updates the auto-numbering configuration for stock counts, such as the prefix string and the next number in the sequence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_inventory_counting_preferences",
    "display_name": "Update stock counts preferences",
    "category": "Stock Counts",
    "description": "Updates global preferences for the stock counts feature, including the default adjustment reason and the default adjustment account used when creating inventory adjustments from count discrepancies.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_recurring_inventory_count",
    "display_name": "Update a recurring stock count profile",
    "category": "Stock Counts",
    "description": "Updates an existing recurring stock count profile. For auto schedules, start_date cannot be changed once the profile has executed at least once. The next count date cannot be set to today if an active count already exists for this profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_task",
    "display_name": "Add a task",
    "category": "Tasks",
    "description": "Add a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_task_attachment",
    "display_name": "Add attachment to task",
    "category": "Tasks",
    "description": "Add attachment to a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_task_comment",
    "display_name": "Add comment to task",
    "category": "Tasks",
    "description": "Add comment to a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task",
    "display_name": "Delete a tasks",
    "category": "Tasks",
    "description": "Delete a tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task_comment",
    "display_name": "Delete comment of task",
    "category": "Tasks",
    "description": "Delete a comment of a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task_document",
    "display_name": "Delete document of task",
    "category": "Tasks",
    "description": "Delete a document of a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tasks",
    "display_name": "Delete tasks",
    "category": "Tasks",
    "description": "Delete tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task",
    "display_name": "Get a task",
    "category": "Tasks",
    "description": "Get a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task_document",
    "display_name": "Get document of task",
    "category": "Tasks",
    "description": "Get a document of a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_task_comments",
    "display_name": "List comments of task",
    "category": "Tasks",
    "description": "List comments of a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tasks",
    "display_name": "List tasks",
    "category": "Tasks",
    "description": "List a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_task_as_completed",
    "display_name": "Mark task as completed",
    "category": "Tasks",
    "description": "Mark a task as completed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_task_as_ongoing",
    "display_name": "Mark task as ongoing",
    "category": "Tasks",
    "description": "Mark a task as ongoing.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_task_as_open",
    "display_name": "Mark task as open",
    "category": "Tasks",
    "description": "Mark a task as open.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_a_task",
    "display_name": "Update a tasks",
    "category": "Tasks",
    "description": "Update a tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_percentage_task",
    "display_name": "Update completed percentage",
    "category": "Tasks",
    "description": "Update completed percentage of a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tasks",
    "display_name": "Update tasks",
    "category": "Tasks",
    "description": "Update tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tax",
    "display_name": "Create a tax",
    "category": "Taxes",
    "description": "Create a tax which can be associated with an item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tax_authority",
    "display_name": "Create a tax authority [US and CA Edition only]",
    "category": "Taxes",
    "description": "Create a tax authority.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tax_exemption",
    "display_name": "Create a tax exemption [US Edition only]",
    "category": "Taxes",
    "description": "Create a tax exemption.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tax_group",
    "display_name": "Create a tax group",
    "category": "Taxes",
    "description": "Create a tax group associating multiple taxes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tax",
    "display_name": "Delete a tax",
    "category": "Taxes",
    "description": "Delete a simple or compound tax.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tax_authority",
    "display_name": "Delete a tax authority [US and CA Edition only]",
    "category": "Taxes",
    "description": "Delete a tax authority.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tax_exemption",
    "display_name": "Delete a tax exemption [US Edition only]",
    "category": "Taxes",
    "description": "Delete a tax exemption.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tax_group",
    "display_name": "Delete a tax group",
    "category": "Taxes",
    "description": "Delete a tax group. Tax group that is associated to transactions cannot be deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tax",
    "display_name": "Get a tax",
    "category": "Taxes",
    "description": "Get the details of a simple or compound tax.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tax_authority",
    "display_name": "Get a tax authority [US and CA Edition only]",
    "category": "Taxes",
    "description": "Get the details of a tax authority.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tax_exemption",
    "display_name": "Get a tax exemption [US Edition only]",
    "category": "Taxes",
    "description": "Get the details of a tax exemption.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tax_group",
    "display_name": "Get a tax group",
    "category": "Taxes",
    "description": "Get the details of a tax group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tax_authorities",
    "display_name": "List tax authorities [US Edition only]",
    "category": "Taxes",
    "description": "List of tax authorities.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tax_exemptions",
    "display_name": "List tax exemptions [US Edition only]",
    "category": "Taxes",
    "description": "List of tax exemptions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_taxes",
    "display_name": "List taxes",
    "category": "Taxes",
    "description": "List of simple and compound taxes with pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tax",
    "display_name": "Update a tax",
    "category": "Taxes",
    "description": "Update the details of a simple or compound tax.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tax_authority",
    "display_name": "Update a tax authority [US and CA Edition only]",
    "category": "Taxes",
    "description": "Update the details of a tax authority.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tax_exemption",
    "display_name": "Update a tax exemption [US Edition only]",
    "category": "Taxes",
    "description": "Update the details of a tax exemption.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tax_group",
    "display_name": "Update a tax group",
    "category": "Taxes",
    "description": "Update the details of the tax group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_transfer_order_final",
    "display_name": "Final approval of a transfer order",
    "category": "Transfer Orders",
    "description": "Perform the final approval of a transfer order (admin only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_transferorder",
    "display_name": "Approve a transfer order",
    "category": "Transfer Orders",
    "description": "Approve a submitted transfer order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_delete_transfer_orders",
    "display_name": "Bulk delete transfer orders",
    "category": "Transfer Orders",
    "description": "Deletes up to 25 transfer orders in one request. Pass comma-separated transfer order IDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_transfer_order",
    "display_name": "Create a transfer order",
    "category": "Transfer Orders",
    "description": "Creates a new transfer order in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_transfer_order",
    "display_name": "Delete a transfer order",
    "category": "Transfer Orders",
    "description": "Deletes an existing transfer order from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transfer_order",
    "display_name": "Retrieve a transfer order",
    "category": "Transfer Orders",
    "description": "Fetches the details for an existing transfer order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transfer_orders",
    "display_name": "List all the transfer orders",
    "category": "Transfer Orders",
    "description": "Lists transfer orders in the Organization. Supports pagination, sort, quick search, custom view, and filters such as status, date range, warehouse or location, item, and transfer order number.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_transfer_order_as_received",
    "display_name": "Mark as Received",
    "category": "Transfer Orders",
    "description": "Marks the transfer order as transferred for the Organization. You must pass the transferred date.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_transfer_order_in_transit",
    "display_name": "Mark transfer order as in transit",
    "category": "Transfer Orders",
    "description": "Marks the transfer order as in transit. Optionally specify whether prices are tax inclusive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reject_transferorder",
    "display_name": "Reject a transfer order",
    "category": "Transfer Orders",
    "description": "Reject a submitted transfer order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_transferorder",
    "display_name": "Submit a transfer order for approval",
    "category": "Transfer Orders",
    "description": "Submit a transfer order for approval workflow.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_transfer_order",
    "display_name": "Update a transfer order",
    "category": "Transfer Orders",
    "description": "Update an existing transfer order from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_unit",
    "display_name": "Create a unit",
    "category": "Units of Measurement",
    "description": "Creates a new unit in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_unit_conversion",
    "display_name": "Create a unit conversion",
    "category": "Units of Measurement",
    "description": "Creates a new unit conversion for a unit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_unit_group",
    "display_name": "Create a unit group",
    "category": "Units of Measurement",
    "description": "Creates a new unit group in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_unit",
    "display_name": "Delete a unit",
    "category": "Units of Measurement",
    "description": "Deletes an existing unit from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_unit_conversion",
    "display_name": "Delete a unit conversion",
    "category": "Units of Measurement",
    "description": "Deletes an existing unit conversion from a unit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_unit_group",
    "display_name": "Delete a unit group",
    "category": "Units of Measurement",
    "description": "Deletes an existing unit group from Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_unit_group",
    "display_name": "Retrieve a unit group",
    "category": "Units of Measurement",
    "description": "Fetches the details of an existing unit group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_unit_conversions",
    "display_name": "List unit conversions",
    "category": "Units of Measurement",
    "description": "Lists all the unit conversions for a unit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_unit_groups",
    "display_name": "List all unit groups",
    "category": "Units of Measurement",
    "description": "Lists all the unit groups configured in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_units",
    "display_name": "List all units",
    "category": "Units of Measurement",
    "description": "Lists all the units configured in Zoho Inventory.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_unit",
    "display_name": "Update a unit",
    "category": "Units of Measurement",
    "description": "Updates the details of an existing unit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_unit_conversion",
    "display_name": "Update a unit conversion",
    "category": "Units of Measurement",
    "description": "Updates an existing unit conversion for a unit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_unit_group",
    "display_name": "Update a unit group",
    "category": "Units of Measurement",
    "description": "Updates the details of an existing unit group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_user",
    "display_name": "Create a user",
    "category": "Users",
    "description": "Create a user for your organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_user",
    "display_name": "Delete a user",
    "category": "Users",
    "description": "Delete a user associated to the organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_user",
    "display_name": "Get current user",
    "category": "Users",
    "description": "Get the details of the current user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": "Get a user",
    "category": "Users",
    "description": "Get the details of a user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invite_user",
    "display_name": "Invite a user",
    "category": "Users",
    "description": "Send invitation email to a person, you wish to add as a user to your organisation. For example- an accountant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": "List Users",
    "category": "Users",
    "description": "Get the list of all users in the organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_user_as_active",
    "display_name": "Mark user as active",
    "category": "Users",
    "description": "Mark an inactive user as active.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_user_as_inactive",
    "display_name": "Mark user as inactive",
    "category": "Users",
    "description": "Mark an active user as inactive.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_user",
    "display_name": "Update a user",
    "category": "Users",
    "description": "Update the details of a user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_vendor_credit_comment",
    "display_name": "Add a comment",
    "category": "Vendor Credits",
    "description": "Add a comment to an existing vendor credit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "apply_vendor_credit_to_bill",
    "display_name": "Apply credits to a bill",
    "category": "Vendor Credits",
    "description": "Apply vendor credit to existing bills.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_vendor_credit",
    "display_name": "Approve a Vendor credit",
    "category": "Vendor Credits",
    "description": "Approve a Vendor credit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_vendor_credit",
    "display_name": "Create a vendor credit",
    "category": "Vendor Credits",
    "description": "Create a vendor credit for a vendor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_vendor_credit",
    "display_name": "Delete vendor credit",
    "category": "Vendor Credits",
    "description": "Delete a vendor credit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_vendor_credit_comment",
    "display_name": "Delete a comment",
    "category": "Vendor Credits",
    "description": "Delete a vendor credit comment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_vendor_credit_refund",
    "display_name": "Delete vendor credit refund",
    "category": "Vendor Credits",
    "description": "Delete a vendor credit refund.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_vendor_credited_bill",
    "display_name": "Delete bills credited",
    "category": "Vendor Credits",
    "description": "Delete the credits applied to a bill.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_vendor_credit",
    "display_name": "Get vendor credit",
    "category": "Vendor Credits",
    "description": "Get details of a vendor credit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_vendor_credit_refund",
    "display_name": "Get vendor credit refund",
    "category": "Vendor Credits",
    "description": "Get refund of a particular vendor credit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_refunds_of_a_vendor_credit",
    "display_name": "List refunds of a vendor credit",
    "category": "Vendor Credits",
    "description": "List all refunds of an existing vendor credit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_refunds_of_all_vendor_credits",
    "display_name": "List vendor credit refunds",
    "category": "Vendor Credits",
    "description": "List all refunds with pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_vendor_credit_comments",
    "display_name": "List vendor credit comments & history",
    "category": "Vendor Credits",
    "description": "Get history and comments of a vendor credit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_vendor_credited_bills",
    "display_name": "List bills credited",
    "category": "Vendor Credits",
    "description": "List bills to which the vendor credit is applied.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_vendor_credits",
    "display_name": "List vendor credits",
    "category": "Vendor Credits",
    "description": "List vendor credits with pagination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_vendor_credit_as_open",
    "display_name": "Convert to open",
    "category": "Vendor Credits",
    "description": "Change an existing vendor credit status to open.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_vendor_credit_as_void",
    "display_name": "Void vendor credit",
    "category": "Vendor Credits",
    "description": "Mark an existing vendor credit as void.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refund_vendor_credit",
    "display_name": "Refund a vendor credit",
    "category": "Vendor Credits",
    "description": "Refund vendor credit amount.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_vendor_credit",
    "display_name": "Submit a Vendor credit for approval",
    "category": "Vendor Credits",
    "description": "Submit a Vendor credit for approval.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_vendor_credit",
    "display_name": "Update vendor credit",
    "category": "Vendor Credits",
    "description": "Update an existing vendor credit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_vendor_credit_refund",
    "display_name": "Update vendor credit refund",
    "category": "Vendor Credits",
    "description": "Update the refunded transaction.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_item_created_or_updated",
    "display_name": "On New or Updated Items",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_sales_order_created_or_updated",
    "display_name": "On New or Updated Sales Orders",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_purchase_order_created_or_updated",
    "display_name": "On New or Updated Purchase Orders",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_invoice_created_or_updated",
    "display_name": "On New or Updated Invoices",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

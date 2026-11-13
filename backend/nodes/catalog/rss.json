@@ -58,329 +58,376 @@
    "display_name": "Parse Rss Atom Feed",
    "category": "Generic Feed",
    "description": "Parse an RSS or Atom feed from a URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "discover_rss_feeds_from_website",
    "display_name": "Discover Rss Feeds from Website",
    "category": "Miniflux Feed",
    "description": "Discover RSS feeds from a website URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_miniflux_feed_subscription",
    "display_name": "Create Miniflux Feed Subscription",
    "category": "Miniflux Feed",
    "description": "Create a new feed subscription in Miniflux.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_miniflux_feeds",
    "display_name": "Get Miniflux Feeds",
    "category": "Miniflux Feed",
    "description": "Get all feeds from Miniflux.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_miniflux_feed",
    "display_name": "Get Miniflux Feed",
    "category": "Miniflux Feed",
    "description": "Get a specific feed by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_miniflux_feed_settings",
    "display_name": "Update Miniflux Feed Settings",
    "category": "Miniflux Feed",
    "description": "Update feed settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_miniflux_feed_subscription",
    "display_name": "Delete Miniflux Feed Subscription",
    "category": "Miniflux Feed",
    "description": "Delete a feed subscription.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refresh_miniflux_feed",
    "display_name": "Refresh Miniflux Feed",
    "category": "Miniflux Feed",
    "description": "Refresh a specific feed to fetch new entries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refresh_all_miniflux_feeds",
    "display_name": "Refresh All Miniflux Feeds",
    "category": "Miniflux Account",
    "description": "Refresh all feeds to fetch new entries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_miniflux_entries",
    "display_name": "Get Miniflux Entries",
    "category": "Miniflux Entry",
    "description": "Get entries with filtering options.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_miniflux_feed_entries",
    "display_name": "Get Miniflux Feed Entries",
    "category": "Miniflux Feed",
    "description": "Get entries from a specific feed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_miniflux_entry",
    "display_name": "Get Miniflux Entry",
    "category": "Miniflux Entry",
    "description": "Get a specific entry by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "toggle_miniflux_entry_bookmark",
    "display_name": "Toggle Miniflux Entry Bookmark",
    "category": "Miniflux Entry",
    "description": "Toggle bookmark/starred status of an entry.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_miniflux_entries_read",
    "display_name": "Mark Miniflux Entries Read",
    "category": "Miniflux Entry",
    "description": "Mark specific entries as read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_all_miniflux_entries_read",
    "display_name": "Mark All Miniflux Entries Read",
    "category": "Miniflux Entry",
    "description": "Mark all entries as read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_miniflux_category",
    "display_name": "Create Miniflux Category",
    "category": "Miniflux Category",
    "description": "Create a new category.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_miniflux_categories",
    "display_name": "Get Miniflux Categories",
    "category": "Miniflux Category",
    "description": "Get all categories.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_miniflux_category",
    "display_name": "Update Miniflux Category",
    "category": "Miniflux Category",
    "description": "Update a category.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_miniflux_category",
    "display_name": "Delete Miniflux Category",
    "category": "Miniflux Category",
    "description": "Delete a category.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_miniflux_subscriptions_as_opml",
    "display_name": "Export Miniflux Subscriptions As Opml",
    "category": "Miniflux Account",
    "description": "Export all subscriptions as OPML.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "import_miniflux_subscriptions_from_opml",
    "display_name": "Import Miniflux Subscriptions from Opml",
    "category": "Miniflux Account",
    "description": "Import subscriptions from OPML file content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_miniflux_current_user",
    "display_name": "Get Miniflux Current User",
    "category": "Miniflux Account",
    "description": "Get current user information.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_miniflux_api_key",
    "display_name": "Create Miniflux Api Key",
    "category": "Miniflux Account",
    "description": "Create a new API key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_feedly_stream_articles",
    "display_name": "Get Feedly Stream Articles",
    "category": "Feedly Feed and Subscription",
    "description": "Get articles from a Feedly stream.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_feedly_feeds",
    "display_name": "Search Feedly Feeds",
    "category": "Feedly Feed and Subscription",
    "description": "Search for feeds by query.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_feedly_subscriptions",
    "display_name": "Get Feedly Subscriptions",
    "category": "Feedly Feed and Subscription",
    "description": "Get all feed subscriptions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "subscribe_to_feedly_feed",
    "display_name": "Subscribe to Feedly Feed",
    "category": "Feedly Feed and Subscription",
    "description": "Subscribe to a feed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unsubscribe_from_feedly_feed",
    "display_name": "Unsubscribe from Feedly Feed",
    "category": "Feedly Feed and Subscription",
    "description": "Unsubscribe from a feed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_feedly_article",
    "display_name": "Get Feedly Article",
    "category": "Feedly Article",
    "description": "Get a specific article by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_feedly_articles_read",
    "display_name": "Mark Feedly Articles Read",
    "category": "Feedly Feed and Subscription",
    "description": "Mark articles as read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_feedly_user_profile",
    "display_name": "Get Feedly User Profile",
    "category": "Feedly User",
    "description": "Get user profile information.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_feedly_user_tags",
    "display_name": "Get Feedly User Tags",
    "category": "Feedly User",
    "description": "Get all user tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_tags_to_feedly_article",
    "display_name": "Add Tags to Feedly Article",
    "category": "Feedly Article",
    "description": "Add tags to an article.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_feedly_articles",
    "display_name": "Search Feedly Articles",
    "category": "Feedly Article",
    "description": "Search articles in Feedly.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_freshrss_subscriptions",
    "display_name": "Get Freshrss Subscriptions",
    "category": "FreshRSS Subscription",
    "description": "Get all feed subscriptions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "subscribe_to_freshrss_feed",
    "display_name": "Subscribe to Freshrss Feed",
    "category": "FreshRSS Subscription",
    "description": "Subscribe to a feed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unsubscribe_from_freshrss_feed",
    "display_name": "Unsubscribe from Freshrss Feed",
    "category": "FreshRSS Subscription",
    "description": "Unsubscribe from a feed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_freshrss_unread_counts",
    "display_name": "Get Freshrss Unread Counts",
    "category": "FreshRSS Article",
    "description": "Get unread article counts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_freshrss_stream_articles",
    "display_name": "Get Freshrss Stream Articles",
    "category": "FreshRSS Article",
    "description": "Get articles from a stream.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_freshrss_articles_read",
    "display_name": "Mark Freshrss Articles Read",
    "category": "FreshRSS Article",
    "description": "Mark articles as read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_freshrss_tags",
    "display_name": "Get Freshrss Tags",
    "category": "FreshRSS Tag",
    "description": "Get all tags/labels.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_rssapp_feed",
    "display_name": "Create Rssapp Feed",
    "category": "RSSApp Feed",
    "description": "Create a new RSS feed from a URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_rssapp_feed",
    "display_name": "Get Rssapp Feed",
    "category": "RSSApp Feed",
    "description": "Get a specific feed by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rssapp_feeds",
    "display_name": "List Rssapp Feeds",
    "category": "RSSApp Feed",
    "description": "List all feeds.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_rssapp_feed",
    "display_name": "Update Rssapp Feed",
    "category": "RSSApp Feed",
    "description": "Update a feed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_rssapp_feed",
    "display_name": "Delete Rssapp Feed",
    "category": "RSSApp Feed",
    "description": "Delete a feed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_rssapp_feed_items",
    "display_name": "Get Rssapp Feed Items",
    "category": "RSSApp Feed",
    "description": "Get items from a feed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,105 +22,121 @@
    "display_name": "Get Brand by Domain",
    "category": "Brand",
    "description": "Fetch the full brand record for a domain (logos, colors, fonts, social links).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_brand_by_ticker",
    "display_name": "Get Brand by Ticker",
    "category": "Brand",
    "description": "Look up a brand by stock/ETF ticker symbol (e.g. NKE).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_brand_by_isin",
    "display_name": "Get Brand by ISIN",
    "category": "Brand",
    "description": "Look up a brand by ISIN code (e.g. US6541061031).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_brand_by_crypto",
    "display_name": "Get Brand by Crypto",
    "category": "Brand",
    "description": "Look up a brand by cryptocurrency symbol (e.g. BTC).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_brand",
    "display_name": "Get Brand (Auto-detect)",
    "category": "Brand",
    "description": "Auto-detect lookup: resolves identifier in order domain -> ticker -> ISIN -> crypto.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_context_json",
    "display_name": "Get Brand Context (JSON)",
    "category": "Context",
    "description": "Get AI/LLM-oriented structured brand intelligence as JSON.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_context_markdown",
    "display_name": "Get Brand Context (Markdown)",
    "category": "Context",
    "description": "Get AI/LLM-ready brand intelligence as Markdown to drop into a prompt.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_brands",
    "display_name": "Search Brands",
    "category": "Search",
    "description": "Autocomplete-style brand search by name (requires the public Client ID).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "identify_transaction",
    "display_name": "Identify Brand from Transaction",
    "category": "Transaction",
    "description": "Map a raw bank/card statement descriptor to a merchant brand.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "logo_by_domain",
    "display_name": "Fetch Logo by Domain",
    "category": "Logo",
    "description": "Build a Logo CDN URL for a domain (requires the public Client ID).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "logo_by_ticker",
    "display_name": "Fetch Logo by Ticker",
    "category": "Logo",
    "description": "Build a Logo CDN URL for a stock ticker (requires the public Client ID).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "logo_by_crypto",
    "display_name": "Fetch Logo by Crypto",
    "category": "Logo",
    "description": "Build a Logo CDN URL for a crypto symbol (requires the public Client ID).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "logo_by_isin",
    "display_name": "Fetch Logo by ISIN",
    "category": "Logo",
    "description": "Build a Logo CDN URL for an ISIN (requires the public Client ID).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "logo_themed",
    "display_name": "Fetch Themed/Sized Logo",
    "category": "Logo",
    "description": "Build a transformed Logo CDN URL with theme, size, format, and fallback options.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "receive_webhook",
    "display_name": "Receive Brand Change Events",
    "category": null,
    "description": "Receive brand-change events from Brandfetch (brand.updated, brand.company.updated).\n\n    Brandfetch webhooks are Enterprise-plan only and registered from the\n    Brandfetch dashboard (no self-serve subscription API), so this trigger\n    simply provisions an inbound URL the user pastes into their dashboard.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   }
  ],
  "agent_tool_provider": true,

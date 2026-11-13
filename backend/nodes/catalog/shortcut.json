@@ -22,1001 +22,1144 @@
    "display_name": "Create Category",
    "category": "Categories",
    "description": "Create Category allows you to create a new Category in Shortcut.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_doc",
    "display_name": "Create Doc",
    "category": "Documents",
    "description": "Creates a new Doc. Supports markdown or HTML input via content_format parameter. WARNING: if content_format is not supplied, `content` input defaults to html.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_entity_template",
    "display_name": "Create Entity Template",
    "category": "Entity Templates",
    "description": "Create a new entity template for the Workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_epic",
    "display_name": "Create Epic",
    "category": "Epics",
    "description": "Create Epic allows you to create a new Epic in Shortcut.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_epic_comment",
    "display_name": "Create Epic Comment",
    "category": "Epics",
    "description": "This endpoint allows you to create a threaded Comment on an Epic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_epic_comment_comment",
    "display_name": "Create Epic Comment Comment",
    "category": "Epics",
    "description": "This endpoint allows you to create a nested Comment reply to an existing Epic Comment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_epic_health",
    "display_name": "Create Epic Health",
    "category": "Epics",
    "description": "Create a new health status for the specified Epic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_generic_integration",
    "display_name": "Create Generic Integration",
    "category": "Integrations",
    "description": "Create Generic Integration using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_group",
    "display_name": "Create Group",
    "category": "Groups",
    "description": "Create Group using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_iteration",
    "display_name": "Create Iteration",
    "category": "Iterations",
    "description": "Create Iteration using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_label",
    "display_name": "Create Label",
    "category": "Labels",
    "description": "Create Label allows you to create a new Label in Shortcut.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_linked_file",
    "display_name": "Create Linked File",
    "category": "Linked Files",
    "description": "Create Linked File allows you to create a new Linked File in Shortcut.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_milestone",
    "display_name": "Create Milestone",
    "category": "Milestones",
    "description": "(Deprecated: Use 'Create Objective') Create Milestone allows you to create a new Milestone in Shortcut.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_multiple_stories",
    "display_name": "Create Multiple Stories",
    "category": "Stories",
    "description": "Create Multiple Stories allows you to create multiple stories in a single request using the same syntax as [Create Story](https://developer.shortcut.com/api/rest/v3#create-story).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_objective",
    "display_name": "Create Objective",
    "category": "Objectives",
    "description": "Create Objective allows you to create a new Objective in Shortcut.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_objective_health",
    "display_name": "Create Objective Health",
    "category": "Objectives",
    "description": "Create a new health status for the specified Objective.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": "Create Project",
    "category": "Projects",
    "description": "Create Project is used to create a new Shortcut Project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_story",
    "display_name": "Create Story",
    "category": "Stories",
    "description": "Create Story is used to add a new story to your Shortcut Workspace.\n    This endpoint requires that either **workflow_state_id** or **project_id** be provided, but will reject the request if both or neither are specified. The workflow_state_id has been marked as required and is the recommended field",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_story_comment",
    "display_name": "Create Story Comment",
    "category": "Stories",
    "description": "Create Comment allows you to create a Comment on any Story.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_story_from_template",
    "display_name": "Create Story From Template",
    "category": "Stories",
    "description": "Create Story From Template is used to add a new story derived from a template to your Shortcut Workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_story_link",
    "display_name": "Create Story Link",
    "category": "Story Links",
    "description": "Story Links (called Story Relationships in the UI) allow you create semantic relationships between two stories. The parameters read like an active voice grammatical sentence:  subject -> verb -> object.\n\nThe subject story acts on the object Story; the object story is the direct object of the sentenc",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_story_reaction",
    "display_name": "Create Story Reaction",
    "category": "Stories",
    "description": "Create a reaction to a story comment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_task",
    "display_name": "Create Task",
    "category": "Stories",
    "description": "Create Task is used to create a new task in a Story.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_category",
    "display_name": "Delete Category",
    "category": "Categories",
    "description": "Delete Category can be used to delete any Category.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_custom_field",
    "display_name": "Delete Custom Field",
    "category": "Custom Fields",
    "description": "Delete Custom Field using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_doc",
    "display_name": "Delete Doc",
    "category": "Documents",
    "description": "Permanently deletes a Doc and its associated data. Requires admin access to the doc. When a document is deleted, connected clients will be notified via SSE events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_entity_template",
    "display_name": "Delete Entity Template",
    "category": "Entity Templates",
    "description": "Delete Entity Template using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_epic",
    "display_name": "Delete Epic",
    "category": "Epics",
    "description": "Delete Epic can be used to delete the Epic. The only required parameter is Epic ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_epic_comment",
    "display_name": "Delete Epic Comment",
    "category": "Epics",
    "description": "This endpoint allows you to delete a Comment from an Epic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_file",
    "display_name": "Delete File",
    "category": "Files",
    "description": "Delete File deletes a previously uploaded file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_generic_integration",
    "display_name": "Delete Generic Integration",
    "category": "Integrations",
    "description": "Delete Generic Integration using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_iteration",
    "display_name": "Delete Iteration",
    "category": "Iterations",
    "description": "Delete Iteration using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_label",
    "display_name": "Delete Label",
    "category": "Labels",
    "description": "Delete Label can be used to delete any Label.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_linked_file",
    "display_name": "Delete Linked File",
    "category": "Linked Files",
    "description": "Delete Linked File can be used to delete any previously attached Linked-File.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_milestone",
    "display_name": "Delete Milestone",
    "category": "Milestones",
    "description": "(Deprecated: Use 'Delete Objective') Delete Milestone can be used to delete any Milestone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_multiple_stories",
    "display_name": "Delete Multiple Stories",
    "category": "Stories",
    "description": "Delete Multiple Stories allows you to delete multiple archived stories at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_objective",
    "display_name": "Delete Objective",
    "category": "Objectives",
    "description": "Delete Objective can be used to delete any Objective.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_project",
    "display_name": "Delete Project",
    "category": "Projects",
    "description": "Delete Project can be used to delete a Project. Projects can only be deleted if all associated Stories are moved or deleted. In the case that the Project cannot be deleted, you will receive a 422 response.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_story",
    "display_name": "Delete Story",
    "category": "Stories",
    "description": "Delete Story can be used to delete any Story.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_story_comment",
    "display_name": "Delete Story Comment",
    "category": "Stories",
    "description": "Delete a Comment from any story.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_story_link",
    "display_name": "Delete Story Link",
    "category": "Story Links",
    "description": "Removes the relationship between the stories for the given Story Link.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_story_reaction",
    "display_name": "Delete Story Reaction",
    "category": "Stories",
    "description": "Delete a reaction from any story comment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_task",
    "display_name": "Delete Task",
    "category": "Stories",
    "description": "Delete Task can be used to delete any previously created Task on a Story.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_iterations",
    "display_name": "Disable Iterations",
    "category": "Iterations",
    "description": "Disables Iterations for the current workspace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_story_templates",
    "display_name": "Disable Story Templates",
    "category": "Entity Templates",
    "description": "Disables the Story Template feature for the Workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_iterations",
    "display_name": "Enable Iterations",
    "category": "Iterations",
    "description": "Enables Iterations for the current workspace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_story_templates",
    "display_name": "Enable Story Templates",
    "category": "Entity Templates",
    "description": "Enables the Story Template feature for the Workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_category",
    "display_name": "Get Category",
    "category": "Categories",
    "description": "Get Category returns information about the selected Category.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_member_info",
    "display_name": "Get Current Member Info",
    "category": "Member",
    "description": "Returns information about the authenticated member.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_custom_field",
    "display_name": "Get Custom Field",
    "category": "Custom Fields",
    "description": "Get Custom Field using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_doc",
    "display_name": "Get Doc",
    "category": "Documents",
    "description": "Get a Doc by its public ID with content. Use content_format=html query parameter to include HTML content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_entity_template",
    "display_name": "Get Entity Template",
    "category": "Entity Templates",
    "description": "Get Entity Template returns information about a given entity template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_epic",
    "display_name": "Get Epic",
    "category": "Epics",
    "description": "Get Epic returns information about the selected Epic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_epic_comment",
    "display_name": "Get Epic Comment",
    "category": "Epics",
    "description": "This endpoint returns information about the selected Epic Comment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_epic_health",
    "display_name": "Get Epic Health",
    "category": "Epics",
    "description": "Get the current health for the specified Epic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_epic_workflow",
    "display_name": "Get Epic Workflow",
    "category": "Epic Workflow",
    "description": "Returns the Epic Workflow for the Workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_external_link_stories",
    "display_name": "Get External Link Stories",
    "category": "External Link",
    "description": "Get Stories which have a given External Link associated with them.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file",
    "display_name": "Get File",
    "category": "Files",
    "description": "Get File returns information about the selected UploadedFile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_generic_integration",
    "display_name": "Get Generic Integration",
    "category": "Integrations",
    "description": "Get Generic Integration using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_group",
    "display_name": "Get Group",
    "category": "Groups",
    "description": "Get Group using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_iteration",
    "display_name": "Get Iteration",
    "category": "Iterations",
    "description": "Get Iteration using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_key_result",
    "display_name": "Get Key Result",
    "category": "Key Results",
    "description": "Get Key Result returns information about a chosen Key Result.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_label",
    "display_name": "Get Label",
    "category": "Labels",
    "description": "Get Label returns information about the selected Label.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_linked_file",
    "display_name": "Get Linked File",
    "category": "Linked Files",
    "description": "Get File returns information about the selected Linked File.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_member",
    "display_name": "Get Member",
    "category": "Members",
    "description": "Returns information about a Member.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_milestone",
    "display_name": "Get Milestone",
    "category": "Milestones",
    "description": "(Deprecated: Use 'Get Objective') Get Milestone returns information about a chosen Milestone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_objective",
    "display_name": "Get Objective",
    "category": "Objectives",
    "description": "Get Objective returns information about a chosen Objective.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_objective_health",
    "display_name": "Get Objective Health",
    "category": "Objectives",
    "description": "Get the current health for the specified Objective.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": "Get Project",
    "category": "Projects",
    "description": "Get Project returns information about the selected Project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_repository",
    "display_name": "Get Repository",
    "category": "Repositories",
    "description": "Get Repository returns information about the selected Repository.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_story",
    "display_name": "Get Story",
    "category": "Stories",
    "description": "Get Story returns information about a chosen Story.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_story_comment",
    "display_name": "Get Story Comment",
    "category": "Stories",
    "description": "Get Comment is used to get Comment information.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_story_link",
    "display_name": "Get Story Link",
    "category": "Story Links",
    "description": "Returns the stories and their relationship for the given Story Link.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task",
    "display_name": "Get Task",
    "category": "Stories",
    "description": "Returns information about a chosen Task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workflow",
    "display_name": "Get Workflow",
    "category": "Workflows",
    "description": "Get Workflow returns information about a chosen Workflow.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "link_document_to_epic",
    "display_name": "Link Document to Epic",
    "category": "Documents",
    "description": "Create a relationship between a Document and an Epic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_categories",
    "display_name": "List Categories",
    "category": "Categories",
    "description": "List Categories returns a list of all Categories and their attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_category_milestones",
    "display_name": "List Category Milestones",
    "category": "Categories",
    "description": "List Category Milestones returns a list of all Milestones with the Category.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_category_objectives",
    "display_name": "List Category Objectives",
    "category": "Categories",
    "description": "Returns a list of all Objectives with the Category.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_fields",
    "display_name": "List Custom Fields",
    "category": "Custom Fields",
    "description": "List Custom Fields using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_docs",
    "display_name": "List Docs",
    "category": "Documents",
    "description": "List Docs returns a list of Doc that the current user can read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_document_epics",
    "display_name": "List Document Epics",
    "category": "Documents",
    "description": "Get a list of all Epics related to this Document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_entity_templates",
    "display_name": "List Entity Templates",
    "category": "Entity Templates",
    "description": "List all the entity templates for the Workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_epic_comments",
    "display_name": "List Epic Comments",
    "category": "Epics",
    "description": "Get a list of all Comments on an Epic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_epic_documents",
    "display_name": "List Epic Documents",
    "category": "Epics",
    "description": "Get a list of all Documents related to this Epic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_epic_healths",
    "display_name": "List Epic Healths",
    "category": "Epics",
    "description": "List the history of health statuses for the specified Epic, most recent first.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_epic_stories",
    "display_name": "List Epic Stories",
    "category": "Epics",
    "description": "Get a list of all Stories in an Epic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_epics",
    "display_name": "List Epics",
    "category": "Epics",
    "description": "List Epics returns a list of all Epics and their attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_epics_paginated",
    "display_name": "List Epics Paginated",
    "category": "Epics",
    "description": "List Epics with pagination returns a paginated list of Epics and their attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_files",
    "display_name": "List Files",
    "category": "Files",
    "description": "List Files returns a list of all UploadedFiles in the workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_group_stories",
    "display_name": "List Group Stories",
    "category": "Groups",
    "description": "List the Stories assigned to the Group. (By default, limited to 1,000).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_groups",
    "display_name": "List Groups",
    "category": "Groups",
    "description": "A group in our API maps to a \"Team\" within the Shortcut Product. A Team is a collection of Users that can be associated to Stories, Epics, and Iterations within Shortcut.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_iteration_stories",
    "display_name": "List Iteration Stories",
    "category": "Iterations",
    "description": "Get a list of all Stories in an Iteration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_iterations",
    "display_name": "List Iterations",
    "category": "Iterations",
    "description": "List Iterations using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_label_epics",
    "display_name": "List Label Epics",
    "category": "Labels",
    "description": "List all of the Epics with the Label.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_label_stories",
    "display_name": "List Label Stories",
    "category": "Labels",
    "description": "List all of the Stories with the Label.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_labels",
    "display_name": "List Labels",
    "category": "Labels",
    "description": "List Labels returns a list of all Labels and their attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_linked_files",
    "display_name": "List Linked Files",
    "category": "Linked Files",
    "description": "List Linked Files returns a list of all Linked-Files and their attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_members",
    "display_name": "List Members",
    "category": "Members",
    "description": "Returns information about members of the Workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_milestone_epics",
    "display_name": "List Milestone Epics",
    "category": "Milestones",
    "description": "(Deprecated: Use 'List Objective Epics') List all of the Epics within the Milestone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_milestones",
    "display_name": "List Milestones",
    "category": "Milestones",
    "description": "(Deprecated: Use 'List Objectives') List Milestones returns a list of all Milestones and their attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_objective_epics",
    "display_name": "List Objective Epics",
    "category": "Objectives",
    "description": "List all of the Epics within the Objective.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_objective_healths",
    "display_name": "List Objective Healths",
    "category": "Objectives",
    "description": "List the history of health statuses for the specified Objective, most recent first.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_objectives",
    "display_name": "List Objectives",
    "category": "Objectives",
    "description": "List Objectives returns a list of all Objectives and their attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Projects",
    "category": "Projects",
    "description": "List Projects returns a list of all Projects and their attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_repositories",
    "display_name": "List Repositories",
    "category": "Repositories",
    "description": "List Repositories returns a list of all Repositories and their attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_stories",
    "display_name": "List Stories",
    "category": "Projects",
    "description": "List Stories returns a list of all Stories in a selected Project and their attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_story_comment",
    "display_name": "List Story Comment",
    "category": "Stories",
    "description": "Lists Comments associated with a Story",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_story_sub_tasks",
    "display_name": "List Story Sub tasks",
    "category": "Stories",
    "description": "List Story Sub tasks returns a list of all Sub-task Stories for a given parent Story.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workflows",
    "display_name": "List Workflows",
    "category": "Workflows",
    "description": "Returns a list of all Workflows in the Workspace.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_stories",
    "display_name": "Query Stories",
    "category": "Stories",
    "description": "Search Stories lets you search Stories based on desired parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search",
    "display_name": "Search",
    "category": "Search",
    "description": "Search lets you search Epics and Stories based on desired parameters. Since ordering of the results can change over time (due to search ranking decay, new Epics and Stories being created), the `next` value from the previous response can be used as the path and query string for the next page to ensur",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_documents",
    "display_name": "Search Documents",
    "category": "Search",
    "description": "Search Documents lets you search Documents based on desired parameters.\n                          Supports structured filters: title, archived, created_by_me, followed_by_me.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_epics",
    "display_name": "Search Epics",
    "category": "Search",
    "description": "Search Epics lets you search Epics based on desired parameters. Since ordering of stories can change over time (due to search ranking decay, new Epics being created), the `next` value from the previous response can be used as the path and query string for the next page to ensure stable ordering.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_iterations",
    "display_name": "Search Iterations",
    "category": "Search",
    "description": "Search Iterations lets you search Iterations based on desired parameters. Since ordering of results can change over time (due to search ranking decay, new Iterations being created), the `next` value from the previous response can be used as the path and query string for the next page to ensure stabl",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_milestones",
    "display_name": "Search Milestones",
    "category": "Search",
    "description": "Search Milestones lets you search Milestones based on desired parameters. Since ordering of results can change over time (due to search ranking decay, new Milestones being created), the `next` value from the previous response can be used as the path and query string for the next page to ensure stabl",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_objectives",
    "display_name": "Search Objectives",
    "category": "Search",
    "description": "Search Objectives lets you search Objectives based on desired parameters. Since ordering of results can change over time (due to search ranking decay, new Objectives being created), the `next` value from the previous response can be used as the path and query string for the next page to ensure stabl",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_stories",
    "display_name": "Search Stories",
    "category": "Search",
    "description": "Search Stories lets you search Stories based on desired parameters. Since ordering of stories can change over time (due to search ranking decay, new stories being created), the `next` value from the previous response can be used as the path and query string for the next page to ensure stable orderin",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "story_history",
    "display_name": "Story History",
    "category": "Stories",
    "description": "Story History using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unlink_comment_thread_from_slack",
    "display_name": "Unlink Comment thread from Slack",
    "category": "Stories",
    "description": "Unlinks a Comment from its linked Slack thread (Comment replies and Slack replies will no longer be synced)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unlink_document_from_epic",
    "display_name": "Unlink Document from Epic",
    "category": "Documents",
    "description": "Remove a relationship between a Document and an Epic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_category",
    "display_name": "Update Category",
    "category": "Categories",
    "description": "Update Category allows you to replace a Category name with another name. If you try to name a Category something that already exists, you will receive a 422 response.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_custom_field",
    "display_name": "Update Custom Field",
    "category": "Custom Fields",
    "description": "Update Custom Field can be used to update the definition of a Custom Field. The order of items in the 'values' collection is interpreted to be their ascending sort order.To delete an existing enum value, simply omit it from the 'values' collection. New enum values may be created inline by including",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_doc",
    "display_name": "Update Doc",
    "category": "Documents",
    "description": "Updates an existing Doc's title and/or content. Supports markdown or HTML input via content_format parameter. WARNING: if content_format is not supplied, `content` input defaults to html. When a document is updated: (1) For Tiptap-migrated docs, SSE events notify connected Tiptap clients to refresh.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_entity_template",
    "display_name": "Update Entity Template",
    "category": "Entity Templates",
    "description": "Update an entity template's name or its contents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_epic",
    "display_name": "Update Epic",
    "category": "Epics",
    "description": "Update Epic can be used to update numerous fields in the Epic. The only required parameter is Epic ID, which can be found in the Shortcut UI.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_epic_comment",
    "display_name": "Update Epic Comment",
    "category": "Epics",
    "description": "This endpoint allows you to update a threaded Comment on an Epic.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_file",
    "display_name": "Update File",
    "category": "Files",
    "description": "Update File updates the properties of an UploadedFile (but not its content).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_group",
    "display_name": "Update Group",
    "category": "Groups",
    "description": "Update Group using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_health",
    "display_name": "Update Health",
    "category": "Health",
    "description": "Update an existing health status by its ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_iteration",
    "display_name": "Update Iteration",
    "category": "Iterations",
    "description": "Update Iteration using the Shortcut REST API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_key_result",
    "display_name": "Update Key Result",
    "category": "Key Results",
    "description": "Update Key Result allows updating a Key Result's name or initial, observed, or target values.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_label",
    "display_name": "Update Label",
    "category": "Labels",
    "description": "Update Label allows you to replace a Label name with another name. If you try to name a Label something that already exists, you will receive a 422 response.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_linked_file",
    "display_name": "Update Linked File",
    "category": "Linked Files",
    "description": "Updated Linked File allows you to update properties of a previously attached Linked-File.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_milestone",
    "display_name": "Update Milestone",
    "category": "Milestones",
    "description": "(Deprecated: Use 'Update Objective') Update Milestone can be used to update Milestone properties.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_multiple_stories",
    "display_name": "Update Multiple Stories",
    "category": "Stories",
    "description": "Update Multiple Stories allows you to make changes to numerous stories at once.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_objective",
    "display_name": "Update Objective",
    "category": "Objectives",
    "description": "Update Objective can be used to update Objective properties.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project",
    "display_name": "Update Project",
    "category": "Projects",
    "description": "Update Project can be used to change properties of a Project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_story",
    "display_name": "Update Story",
    "category": "Stories",
    "description": "Update Story can be used to update Story properties.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_story_comment",
    "display_name": "Update Story Comment",
    "category": "Stories",
    "description": "Update Comment replaces the text of the existing Comment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_story_link",
    "display_name": "Update Story Link",
    "category": "Story Links",
    "description": "Updates the stories and/or the relationship for the given Story Link.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_task",
    "display_name": "Update Task",
    "category": "Stories",
    "description": "Update Task can be used to update Task properties.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_files",
    "display_name": "Upload Files",
    "category": "Files",
    "description": "Upload Files uploads one or many files and optionally associates them with a story.\n   Use the multipart/form-data content-type to upload.\n   Each `file` key should contain a separate file.\n   Each UploadedFile's name comes from the Content-Disposition header \"filename\" directive for that field.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

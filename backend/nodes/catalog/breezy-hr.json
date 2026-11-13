@@ -34,140 +34,160 @@
    "display_name": null,
    "category": null,
    "description": "Get user in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_companies",
    "display_name": null,
    "category": null,
    "description": "List companies in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company",
    "display_name": null,
    "category": null,
    "description": "Get company in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_departments",
    "display_name": null,
    "category": null,
    "description": "List departments in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pipelines",
    "display_name": null,
    "category": null,
    "description": "List pipelines in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pipeline",
    "display_name": null,
    "category": null,
    "description": "Get pipeline in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_positions",
    "display_name": null,
    "category": null,
    "description": "List positions in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_position",
    "display_name": null,
    "category": null,
    "description": "Get position in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_position",
    "display_name": null,
    "category": null,
    "description": "Create position in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_position",
    "display_name": null,
    "category": null,
    "description": "Update position in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_position_state",
    "display_name": null,
    "category": null,
    "description": "Set position state in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_position_team",
    "display_name": null,
    "category": null,
    "description": "Get position team in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_candidates",
    "display_name": null,
    "category": null,
    "description": "Search candidates in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_candidates",
    "display_name": null,
    "category": null,
    "description": "List candidates in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_candidate",
    "display_name": null,
    "category": null,
    "description": "Add candidate in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_candidate",
    "display_name": null,
    "category": null,
    "description": "Get candidate in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_candidate",
    "display_name": null,
    "category": null,
    "description": "Update candidate in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_candidate_stage",
    "display_name": null,
    "category": null,
    "description": "Set candidate stage in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_candidate_stream",
    "display_name": null,
    "category": null,
    "description": "Get candidate stream in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_candidate_note",
    "display_name": null,
    "category": null,
    "description": "Post candidate note in Breezy HR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

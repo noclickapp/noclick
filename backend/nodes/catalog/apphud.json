@@ -34,35 +34,40 @@
    "display_name": "List App Charts",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chart_options",
    "display_name": "Get Chart Options",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_filter_values",
    "display_name": "Discover Filter Values",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_line_chart",
    "display_name": "Query Line Chart",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "query_column_chart",
    "display_name": "Query Column Chart",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -27,70 +27,80 @@
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_widget",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "prepare_upload",
    "display_name": null,
    "category": null,
    "description": "Returns an upload ID and S3 form. Send the form fields and file to upload.url separately, then use the ID in a Widget input.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_widget",
    "display_name": null,
    "category": null,
    "description": "Starts a paid run and holds for its ending. A busy API or an hour's hold can return queued/running; inspect status and read again.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_widget",
    "display_name": null,
    "category": null,
    "description": "Starts a paid run with wait=false and returns immediately. Use Get Run or Wait for Run afterwards.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_runs",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_run",
    "display_name": null,
    "category": null,
    "description": "Read the current status, result and fresh signed file URLs without waiting.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "wait_for_run",
    "display_name": null,
    "category": null,
    "description": "Read with wait=true. A busy API or an hour's hold can return before completion; inspect status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "wake_run",
    "display_name": null,
    "category": null,
    "description": "Restore files from deep storage within 12 hours. AbyssHub emails you when ready. Already awake runs are unchanged.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_run",
    "display_name": "On New Run",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

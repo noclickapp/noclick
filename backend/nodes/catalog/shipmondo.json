@@ -28,161 +28,187 @@
    "display_name": "Retrieve account information",
    "category": "Account and catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_balance",
    "display_name": "Retrieve balance",
    "category": "Account and catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_carriers",
    "display_name": "List available carriers",
    "category": "Account and catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_products",
    "display_name": "List all products",
    "category": "Account and catalog",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_shipment_templates",
    "display_name": "List all shipment templates",
    "category": "Shipments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_shipments",
    "display_name": "List all shipments",
    "category": "Shipments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_shipment",
    "display_name": "Retrieve a shipment",
    "category": "Shipments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_shipment",
    "display_name": "Create a shipment",
    "category": "Shipments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_shipment",
    "display_name": "Cancel a shipment",
    "category": "Shipments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_shipment_labels",
    "display_name": "Retrieve labels of a shipment",
    "category": "Shipments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sales_orders",
    "display_name": "List all sales orders",
    "category": "Sales orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sales_order",
    "display_name": "Retrieve a sales order",
    "category": "Sales orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_sales_order",
    "display_name": "Create a sales order",
    "category": "Sales orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_sales_order",
    "display_name": "Update a sales order",
    "category": "Sales orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_sales_order_note",
    "display_name": "Update a sales order note",
    "category": "Sales orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "hold_sales_order",
    "display_name": "Hold a sales order",
    "category": "Sales orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_sales_order",
    "display_name": "Resume a sales order",
    "category": "Sales orders",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_sales_order_shipment",
    "display_name": "Create a shipment",
    "category": "Shipments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_items",
    "display_name": "List all items",
    "category": "Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_item",
    "display_name": "Retrieve an item",
    "category": "Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_item",
    "display_name": "Create an item",
    "category": "Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_item",
    "display_name": "Update an item",
    "category": "Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_event",
    "display_name": "On Shipmondo Event",
    "category": "Triggers",
    "description": "Receive shipment, order, draft or tracking changes in real time.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "shipmondo_api_key"
+   ]
   }
  ],
  "agent_tool_provider": true,

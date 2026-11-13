@@ -29,133 +29,152 @@
    "display_name": null,
    "category": null,
    "description": "Balance and email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lookup_phone",
    "display_name": null,
    "category": null,
    "description": "Spam score + HLR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ported_date",
    "display_name": null,
    "category": null,
    "description": "Ported date.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_porting_history",
    "display_name": null,
    "category": null,
    "description": "Porting history.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_online_presence",
    "display_name": null,
    "category": null,
    "description": "Online presence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "scan_transcript",
    "display_name": null,
    "category": null,
    "description": "Score a transcript or a recording.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_voice_sessions",
    "display_name": null,
    "category": null,
    "description": "List your recent sessions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_voice_session",
    "display_name": null,
    "category": null,
    "description": "Get one session with verdict and intel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_numbers",
    "display_name": null,
    "category": null,
    "description": "Submit numbers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_numbers",
    "display_name": null,
    "category": null,
    "description": "List number status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_number",
    "display_name": null,
    "category": null,
    "description": "Read one number.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_number",
    "display_name": null,
    "category": null,
    "description": "Remove a number.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_schedule",
    "display_name": null,
    "category": null,
    "description": "Read the check schedule.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_schedule",
    "display_name": null,
    "category": null,
    "description": "Set the check schedule.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "save_webhook",
    "display_name": null,
    "category": null,
    "description": "Save the webhook URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webhook",
    "display_name": null,
    "category": null,
    "description": "Read the webhook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook",
    "display_name": null,
    "category": null,
    "description": "Delete the webhook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "test_webhook",
    "display_name": null,
    "category": null,
    "description": "Send a test event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rotate_webhook_secret",
    "display_name": null,
    "category": null,
    "description": "Rotate the webhook secret.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

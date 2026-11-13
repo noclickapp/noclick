@@ -22,175 +22,200 @@
    "display_name": null,
    "category": null,
    "description": "Get Teams.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": null,
    "category": null,
    "description": "List Users in your company.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_todos",
    "display_name": null,
    "category": null,
    "description": "List company To-Dos.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_todo",
    "display_name": null,
    "category": null,
    "description": "Get a To-Do by Id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_todo",
    "display_name": null,
    "category": null,
    "description": "Create a To-Do.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_todo",
    "display_name": null,
    "category": null,
    "description": "Update a To-Do.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_todo",
    "display_name": null,
    "category": null,
    "description": "Delete a To-Do.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "comment_todo",
    "display_name": null,
    "category": null,
    "description": "Add a comment to a To-Do.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issues",
    "display_name": null,
    "category": null,
    "description": "List company Issues.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_issue",
    "display_name": null,
    "category": null,
    "description": "Get an Issue by Id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_issue",
    "display_name": null,
    "category": null,
    "description": "Create an Issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issue",
    "display_name": null,
    "category": null,
    "description": "Update an Issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_issue",
    "display_name": null,
    "category": null,
    "description": "Delete an Issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "comment_issue",
    "display_name": null,
    "category": null,
    "description": "Add a comment to an Issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rocks",
    "display_name": null,
    "category": null,
    "description": "List company Rocks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_rock",
    "display_name": null,
    "category": null,
    "description": "Get a Rock by Id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_rock",
    "display_name": null,
    "category": null,
    "description": "Create a Rock.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_rock",
    "display_name": null,
    "category": null,
    "description": "Update a Rock.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_milestone",
    "display_name": null,
    "category": null,
    "description": "Get a Milestone by Id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_milestone",
    "display_name": null,
    "category": null,
    "description": "Create a Milestone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_milestone",
    "display_name": null,
    "category": null,
    "description": "Update a Milestone.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_measurables",
    "display_name": null,
    "category": null,
    "description": "List company Measurables.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_score",
    "display_name": null,
    "category": null,
    "description": "Create or update a Measurable score.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_note",
    "display_name": null,
    "category": null,
    "description": "Create or update a Measurable note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_headline",
    "display_name": null,
    "category": null,
    "description": "Create a Headline.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

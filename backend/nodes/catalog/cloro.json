@@ -34,119 +34,136 @@
    "display_name": null,
    "category": null,
    "description": "Monitor ChatGPT Responses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "monitor_gemini",
    "display_name": null,
    "category": null,
    "description": "Monitor Gemini Responses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "monitor_google",
    "display_name": null,
    "category": null,
    "description": "Monitor Google Search Results.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_google_product",
    "display_name": null,
    "category": null,
    "description": "Get a Google shopping card product.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resolve_google_goto",
    "display_name": null,
    "category": null,
    "description": "Resolve a Google redirect link.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "monitor_google_news",
    "display_name": null,
    "category": null,
    "description": "Monitor Google News Results.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "monitor_perplexity",
    "display_name": null,
    "category": null,
    "description": "Monitor Perplexity Responses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "monitor_ai_mode",
    "display_name": null,
    "category": null,
    "description": "Monitor AI Mode Responses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "monitor_bing_ai_mode",
    "display_name": null,
    "category": null,
    "description": "Monitor Bing AI Mode Responses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_countries",
    "display_name": null,
    "category": null,
    "description": "List of countries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_async_task",
    "display_name": null,
    "category": null,
    "description": "Create async task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_batch_async_tasks",
    "display_name": null,
    "category": null,
    "description": "Create batch async tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_task_status",
    "display_name": null,
    "category": null,
    "description": "Get async task status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_async_status",
    "display_name": null,
    "category": null,
    "description": "Get async queue status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_async_queue",
    "display_name": null,
    "category": null,
    "description": "Clear queued async tasks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credits",
    "display_name": null,
    "category": null,
    "description": "Get credit balance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_states",
    "display_name": null,
    "category": null,
    "description": "List of states.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

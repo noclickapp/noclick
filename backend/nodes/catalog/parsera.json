@@ -22,133 +22,152 @@
    "display_name": null,
    "category": null,
    "description": "Extract structured fields from a webpage synchronously.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "parse",
    "display_name": null,
    "category": null,
    "description": "Extract structured fields from supplied text or HTML.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_markdown",
    "display_name": null,
    "category": null,
    "description": "Fetch webpage content as Markdown.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_async",
    "display_name": null,
    "category": null,
    "description": "Start an asynchronous structured extraction; poll its task separately.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_extraction_status",
    "display_name": null,
    "category": null,
    "description": "Get extraction status using the published Parsera endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_classic_scraper",
    "display_name": null,
    "category": null,
    "description": "Create classic scraper using the published Parsera endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_classic_scraper",
    "display_name": null,
    "category": null,
    "description": "Get classic scraper using the published Parsera endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_classic_scraper",
    "display_name": null,
    "category": null,
    "description": "Delete classic scraper using the published Parsera endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "agent_extract",
    "display_name": null,
    "category": null,
    "description": "Start one-shot agent extraction without creating a reusable scraper.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_agent_extraction_status",
    "display_name": null,
    "category": null,
    "description": "Get agent extraction status using the published Parsera endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_agent_extraction",
    "display_name": null,
    "category": null,
    "description": "Stop agent extraction using the published Parsera endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_agent_scraper",
    "display_name": null,
    "category": null,
    "description": "Create agent scraper using the published Parsera endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_agent_scraper",
    "display_name": null,
    "category": null,
    "description": "Build a reusable agentic scraper, optionally using an existing template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_agent_scraper",
    "display_name": null,
    "category": null,
    "description": "Get agent scraper using the published Parsera endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_agent_scraper",
    "display_name": null,
    "category": null,
    "description": "Delete agent scraper using the published Parsera endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_scrapers",
    "display_name": null,
    "category": null,
    "description": "List scrapers using the published Parsera endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_scraper",
    "display_name": null,
    "category": null,
    "description": "Run a reusable scraper and wait for its result in this API call.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_scraper_async",
    "display_name": null,
    "category": null,
    "description": "Start a reusable scraper run and return immediately with its run ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_scraper_run_status",
    "display_name": null,
    "category": null,
    "description": "Get scraper run status using the published Parsera endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

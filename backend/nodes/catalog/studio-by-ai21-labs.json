@@ -27,70 +27,80 @@
    "display_name": null,
    "category": null,
    "description": "List one page of workspace files, optionally filtered by metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file",
    "display_name": null,
    "category": null,
    "description": "Read metadata for one library file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_file",
    "display_name": null,
    "category": null,
    "description": "Replace file labels or the public URL metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_file",
    "display_name": null,
    "category": null,
    "description": "Delete a file from the workspace library.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file_download_link",
    "display_name": null,
    "category": null,
    "description": "Get a signed file download link without following it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_file",
    "display_name": null,
    "category": null,
    "description": "Upload a UTF-8 text or HTML document with optional library metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_batch_status",
    "display_name": null,
    "category": null,
    "description": "Read document ingestion counts for a library batch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_chat_completion",
    "display_name": null,
    "category": null,
    "description": "Generate a non-streaming Jamba chat response.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_maestro_run",
    "display_name": null,
    "category": null,
    "description": "Start one Maestro run; use Get Maestro Run to retrieve its later status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_maestro_run",
    "display_name": null,
    "category": null,
    "description": "Retrieve a Maestro run's status, result and requirement scores.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

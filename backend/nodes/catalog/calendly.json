@@ -43,280 +43,360 @@
    "display_name": "Get Current User",
    "category": "Users",
    "description": "Get the authenticated user (/users/me).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": "Get User",
    "category": "Users",
    "description": "Get a user by URI or UUID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_event_types",
    "display_name": "List Event Types",
    "category": "Event Types",
    "description": "List event types for a user or organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event_type",
    "display_name": "Get Event Type",
    "category": "Event Types",
    "description": "Get a single event type.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_event_type_available_times",
    "display_name": "List Available Times",
    "category": "Event Types",
    "description": "List bookable time slots for an event type (window must be future, <=7 days).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_scheduled_events",
    "display_name": "List Scheduled Events",
    "category": "Scheduled Events",
    "description": "List scheduled events (meetings).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_scheduled_event",
    "display_name": "Get Scheduled Event",
    "category": "Scheduled Events",
    "description": "Get a single scheduled event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_scheduled_event",
    "display_name": "Cancel Scheduled Event",
    "category": "Scheduled Events",
    "description": "Cancel a scheduled event (fires invitee.canceled).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_event_invitees",
    "display_name": "List Event Invitees",
    "category": "Scheduled Events",
    "description": "List invitees of a scheduled event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event_invitee",
    "display_name": "Get Event Invitee",
    "category": "Scheduled Events",
    "description": "Get a single invitee of a scheduled event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_no_show",
    "display_name": "Mark No-Show",
    "category": "No-Shows",
    "description": "Mark an invitee as a no-show.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_no_show",
    "display_name": "Get No-Show",
    "category": "No-Shows",
    "description": "Get a no-show record.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_no_show",
    "display_name": "Undo No-Show",
    "category": "No-Shows",
    "description": "Undo a no-show marking.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization",
    "display_name": "Get Organization",
    "category": "Organization",
    "description": "Get an organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_organization_memberships",
    "display_name": "List Memberships",
    "category": "Organization",
    "description": "List organization memberships (members).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization_membership",
    "display_name": "Get Membership",
    "category": "Organization",
    "description": "Get an organization membership.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_organization_membership",
    "display_name": "Remove Member",
    "category": "Organization",
    "description": "Remove a user from the organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_organization_invitations",
    "display_name": "List Invitations",
    "category": "Organization",
    "description": "List organization invitations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_organization_invitation",
    "display_name": "Invite User",
    "category": "Organization",
    "description": "Invite a user to the organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "revoke_organization_invitation",
    "display_name": "Revoke Invitation",
    "category": "Organization",
    "description": "Revoke a pending organization invitation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_scheduling_link",
    "display_name": "Create Scheduling Link",
    "category": "Scheduling",
    "description": "Create a single-use scheduling link for an event type.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_share",
    "display_name": "Create Share",
    "category": "Scheduling",
    "description": "Create a shareable, customization-limited copy of an event type.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_availability_schedules",
    "display_name": "List Availability Schedules",
    "category": "Availability",
    "description": "List a user's availability schedules.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_busy_times",
    "display_name": "List Busy Times",
    "category": "Availability",
    "description": "List a user's busy times (window must be future, <=7 days).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_routing_forms",
    "display_name": "List Routing Forms",
    "category": "Routing",
    "description": "List routing forms (Teams+).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_routing_form_submissions",
    "display_name": "List Routing Form Submissions",
    "category": "Routing",
    "description": "List routing form submissions (Teams+).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_groups",
    "display_name": "List Groups",
    "category": "Groups",
    "description": "List groups (Teams/Enterprise).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_group_relationships",
    "display_name": "List Group Relationships",
    "category": "Groups",
    "description": "List group relationships (group membership is exposed only here).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_activity_log",
    "display_name": "List Activity Log",
    "category": "Enterprise",
    "description": "List organization activity log entries (Enterprise).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_invitee_data",
    "display_name": "Delete Invitee Data",
    "category": "Enterprise",
    "description": "GDPR-delete invitee data by email (Enterprise).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_event_data",
    "display_name": "Delete Event Data",
    "category": "Enterprise",
    "description": "Delete scheduled-event data by time range (Enterprise).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "custom_request",
    "display_name": "Custom Request",
    "category": "Advanced",
    "description": "Call any authenticated Calendly REST endpoint (covers the long tail:\n    contacts, outgoing communications, analytics, and anything new).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_invitee_created",
    "display_name": "On Invitee Created",
    "category": "Triggers",
    "description": "Fires when someone books a meeting (invitee.created).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "calendly_oauth",
+    "calendly_pat",
+    "calendly_mcp"
+   ]
   },
   {
    "name": "on_invitee_canceled",
    "display_name": "On Invitee Canceled",
    "category": "Triggers",
    "description": "Fires when a booking is canceled (invitee.canceled).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "calendly_oauth",
+    "calendly_pat",
+    "calendly_mcp"
+   ]
   },
   {
    "name": "on_invitee_no_show_created",
    "display_name": "On No-Show Marked",
    "category": "Triggers",
    "description": "Fires when an invitee is marked a no-show.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "calendly_oauth",
+    "calendly_pat",
+    "calendly_mcp"
+   ]
   },
   {
    "name": "on_invitee_no_show_deleted",
    "display_name": "On No-Show Undone",
    "category": "Triggers",
    "description": "Fires when a no-show marking is removed.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "calendly_oauth",
+    "calendly_pat",
+    "calendly_mcp"
+   ]
   },
   {
    "name": "on_routing_form_submission_created",
    "display_name": "On Routing Form Submission",
    "category": "Triggers",
    "description": "Fires when a routing form is submitted (organization scope only).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "calendly_oauth",
+    "calendly_pat",
+    "calendly_mcp"
+   ]
   },
   {
    "name": "on_contact_created",
    "display_name": "On Contact Created",
    "category": "Triggers",
    "description": "Fires when a CRM contact is created.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "calendly_oauth",
+    "calendly_pat",
+    "calendly_mcp"
+   ]
   },
   {
    "name": "on_contact_updated",
    "display_name": "On Contact Updated",
    "category": "Triggers",
    "description": "Fires when a CRM contact is updated.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "calendly_oauth",
+    "calendly_pat",
+    "calendly_mcp"
+   ]
   },
   {
    "name": "on_contact_deleted",
    "display_name": "On Contact Deleted",
    "category": "Triggers",
    "description": "Fires when a CRM contact is deleted.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "calendly_oauth",
+    "calendly_pat",
+    "calendly_mcp"
+   ]
   }
  ],
  "agent_tool_provider": true,

@@ -34,168 +34,192 @@
    "display_name": null,
    "category": null,
    "description": "Identify the token owner with the authenticated user's email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": null,
    "category": null,
    "description": "List one page of scheduled events (events:read or events:write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": null,
    "category": null,
    "description": "Get one scheduled event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_event",
    "display_name": null,
    "category": null,
    "description": "Cancel an event, notifying its invitees (events:write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reschedule_event",
    "display_name": null,
    "category": null,
    "description": "Move a booking to an available time (events:write); check availability first.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_invitee",
    "display_name": null,
    "category": null,
    "description": "Cancel just one invitee (events:write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_no_show",
    "display_name": null,
    "category": null,
    "description": "Mark an invitee as a no-show (events:write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "undo_no_show",
    "display_name": null,
    "category": null,
    "description": "Withdraw a no-show marking (events:write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_scheduling_pages",
    "display_name": null,
    "category": null,
    "description": "List scheduling pages (event_types:read or event_types:write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_scheduling_page",
    "display_name": null,
    "category": null,
    "description": "Get scheduling-page details and booking requirements.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "duplicate_scheduling_page",
    "display_name": null,
    "category": null,
    "description": "Create a new inactive copy; every execution creates another copy (event_types:write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "toggle_scheduling_page",
    "display_name": null,
    "category": null,
    "description": "Toggle active/inactive status; each execution reverses it (event_types:write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_questions",
    "display_name": null,
    "category": null,
    "description": "Read booking-form questions, including required question IDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_availability",
    "display_name": null,
    "category": null,
    "description": "Read available booking slots (timetable scope and a paid Zeeg plan).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_booking",
    "display_name": null,
    "category": null,
    "description": "Book a scheduling page (booking scope, paid plan). Check availability and required questions first; each execution creates a booking.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_schedules",
    "display_name": null,
    "category": null,
    "description": "List a user's availability schedules (schedules:read or schedules:write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_default_schedule",
    "display_name": null,
    "category": null,
    "description": "Get a user's default availability schedule.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_notes",
    "display_name": null,
    "category": null,
    "description": "List internal notes attached to an event (notes:read or notes:write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_note",
    "display_name": null,
    "category": null,
    "description": "Read one internal note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_note",
    "display_name": null,
    "category": null,
    "description": "Attach an internal note to an event (notes:write); each execution creates a note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_note",
    "display_name": null,
    "category": null,
    "description": "Replace an internal note's content (notes:write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_note",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a note (notes:write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_scheduling_page",
    "display_name": null,
    "category": null,
    "description": "Create a one-on-one page with Zeeg's default 30-minute duration (event_types:write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_scheduling_page",
    "display_name": null,
    "category": null,
    "description": "Edit page title, description or language (event_types:write). Omitted fields retain their values.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -40,175 +40,200 @@
    "display_name": null,
    "category": null,
    "description": "Get company facts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_income_statements",
    "display_name": null,
    "category": null,
    "description": "Get income statements.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_balance_sheets",
    "display_name": null,
    "category": null,
    "description": "Get balance sheets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_cash_flow_statements",
    "display_name": null,
    "category": null,
    "description": "Get cash flow statements.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_all_financials",
    "display_name": null,
    "category": null,
    "description": "Get all financial statements.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_financial_metrics",
    "display_name": null,
    "category": null,
    "description": "Get financial metrics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metrics_snapshot",
    "display_name": null,
    "category": null,
    "description": "Financial Metrics Snapshot (Real-Time).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_prices",
    "display_name": null,
    "category": null,
    "description": "Get historical stock price data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_price_snapshot",
    "display_name": null,
    "category": null,
    "description": "Price Snapshot (Real-Time).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_earnings",
    "display_name": null,
    "category": null,
    "description": "Get earnings snapshot.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_filings",
    "display_name": null,
    "category": null,
    "description": "Get SEC filings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_news",
    "display_name": null,
    "category": null,
    "description": "Get news articles.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_insider_trades",
    "display_name": null,
    "category": null,
    "description": "Get insider trades.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_insider_ownership",
    "display_name": null,
    "category": null,
    "description": "Get insider ownership.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_institutional_holdings",
    "display_name": null,
    "category": null,
    "description": "Get 13F institutional holdings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_beneficial_ownership",
    "display_name": null,
    "category": null,
    "description": "Get beneficial ownership.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_activist_ownership",
    "display_name": null,
    "category": null,
    "description": "Get activist stakes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_index_funds",
    "display_name": null,
    "category": null,
    "description": "Get ETF / index-fund holdings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ipos",
    "display_name": null,
    "category": null,
    "description": "Get IPO filings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_interest_rates_snapshot",
    "display_name": null,
    "category": null,
    "description": "Interest Rates (Snapshot).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_yield_curve_snapshot",
    "display_name": null,
    "category": null,
    "description": "Treasury Yields (Snapshot).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_inflation_snapshot",
    "display_name": null,
    "category": null,
    "description": "Inflation (Snapshot).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_labor_snapshot",
    "display_name": null,
    "category": null,
    "description": "Labor Market (Snapshot).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_financials",
    "display_name": null,
    "category": null,
    "description": "Search financial statements.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_line_items",
    "display_name": null,
    "category": null,
    "description": "Search specific financial metrics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

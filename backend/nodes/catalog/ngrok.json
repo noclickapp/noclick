@@ -34,1778 +34,2032 @@
    "display_name": "Create Abuse Reports",
    "category": "Abuse Reports",
    "description": "Creates a new abuse report which will be reviewed by our system and abuse response team. This API is only available to authorized accounts. Contact abuse@ngrok.com to request access",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_abuse_reports",
    "display_name": "Get Abuse Reports",
    "category": "Abuse Reports",
    "description": "Get the detailed status of abuse report by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_agent_ingresses",
    "display_name": "List Agent Ingresses",
    "category": "Agent Ingresses",
    "description": "List all Agent Ingresses owned by this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_agent_ingresses",
    "display_name": "Create Agent Ingresses",
    "category": "Agent Ingresses",
    "description": "Create a new Agent Ingress. The ngrok agent can be configured to connect to ngrok via the new set of addresses on the returned Agent Ingress.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_agent_ingresses",
    "display_name": "Delete Agent Ingresses",
    "category": "Agent Ingresses",
    "description": "Delete an Agent Ingress by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_agent_ingresses",
    "display_name": "Get Agent Ingresses",
    "category": "Agent Ingresses",
    "description": "Get the details of an Agent Ingress by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_agent_ingresses",
    "display_name": "Update Agent Ingresses",
    "category": "Agent Ingresses",
    "description": "Update attributes of an Agent Ingress by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ai_gateway_api_keys",
    "display_name": "List AI Gateway API Keys",
    "category": "AI Gateway API Keys",
    "description": "List all AI Gateway API Keys owned by account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ai_gateway_api_keys",
    "display_name": "Create AI Gateway API Keys",
    "category": "AI Gateway API Keys",
    "description": "Create a new AI Gateway API Key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ai_gateway_api_keys",
    "display_name": "Delete AI Gateway API Keys",
    "category": "AI Gateway API Keys",
    "description": "Delete an AI Gateway API Key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ai_gateway_api_keys",
    "display_name": "Get AI Gateway API Keys",
    "category": "AI Gateway API Keys",
    "description": "Get an AI Gateway API Key by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ai_gateway_api_keys",
    "display_name": "Update AI Gateway API Keys",
    "category": "AI Gateway API Keys",
    "description": "Update an existing AI Gateway API Key by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ai_gateway_provider_keys",
    "display_name": "List AI Gateway Provider Keys",
    "category": "AI Gateway Provider Keys",
    "description": "List AI Gateway Provider Keys",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ai_gateway_provider_keys",
    "display_name": "Create AI Gateway Provider Keys",
    "category": "AI Gateway Provider Keys",
    "description": "Create a new AI Gateway Provider Key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ai_gateway_provider_keys",
    "display_name": "Delete AI Gateway Provider Keys",
    "category": "AI Gateway Provider Keys",
    "description": "Delete an AI Gateway Provider Key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ai_gateway_provider_keys",
    "display_name": "Get AI Gateway Provider Keys",
    "category": "AI Gateway Provider Keys",
    "description": "Get an AI Gateway Provider Key by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ai_gateway_provider_keys",
    "display_name": "Update AI Gateway Provider Keys",
    "category": "AI Gateway Provider Keys",
    "description": "Update an existing AI Gateway Provider Key by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_api_keys",
    "display_name": "List API Keys",
    "category": "API Keys",
    "description": "List all API keys owned by this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_api_keys",
    "display_name": "Create API Keys",
    "category": "API Keys",
    "description": "Create a new API key. The generated API key can be used to authenticate to the ngrok API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_api_keys",
    "display_name": "Delete API Keys",
    "category": "API Keys",
    "description": "Delete an API key by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_api_keys",
    "display_name": "Get API Keys",
    "category": "API Keys",
    "description": "Get the details of an API key by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_api_keys",
    "display_name": "Update API Keys",
    "category": "API Keys",
    "description": "Update attributes of an API key by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_application_sessions",
    "display_name": "List Application Sessions",
    "category": "Application Sessions",
    "description": "List all application sessions for this account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_application_sessions",
    "display_name": "Delete Application Sessions",
    "category": "Application Sessions",
    "description": "Delete an application session by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_application_sessions",
    "display_name": "Get Application Sessions",
    "category": "Application Sessions",
    "description": "Get an application session by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_application_users",
    "display_name": "List Application Users",
    "category": "Application Users",
    "description": "List all application users for this account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_application_users",
    "display_name": "Delete Application Users",
    "category": "Application Users",
    "description": "Delete an application user by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_application_users",
    "display_name": "Get Application Users",
    "category": "Application Users",
    "description": "Get an application user by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_failover_backends",
    "display_name": "List Failover Backends",
    "category": "Failover Backends",
    "description": "List all Failover backends on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_failover_backends",
    "display_name": "Create Failover Backends",
    "category": "Failover Backends",
    "description": "Create a new Failover backend",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_failover_backends",
    "display_name": "Delete Failover Backends",
    "category": "Failover Backends",
    "description": "Delete a Failover backend by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_failover_backends",
    "display_name": "Get Failover Backends",
    "category": "Failover Backends",
    "description": "Get detailed information about a Failover backend by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_failover_backends",
    "display_name": "Update Failover Backends",
    "category": "Failover Backends",
    "description": "Update Failover backend by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_http_response_backends",
    "display_name": "List HTTP Response Backends",
    "category": "HTTP Response Backends",
    "description": "List",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_http_response_backends",
    "display_name": "Create HTTP Response Backends",
    "category": "HTTP Response Backends",
    "description": "Create",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_http_response_backends",
    "display_name": "Delete HTTP Response Backends",
    "category": "HTTP Response Backends",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_http_response_backends",
    "display_name": "Get HTTP Response Backends",
    "category": "HTTP Response Backends",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_http_response_backends",
    "display_name": "Update HTTP Response Backends",
    "category": "HTTP Response Backends",
    "description": "Update",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_static_backends",
    "display_name": "List Static Backends",
    "category": "Static Backends",
    "description": "List all static backends on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_static_backends",
    "display_name": "Create Static Backends",
    "category": "Static Backends",
    "description": "Create a new static backend",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_static_backends",
    "display_name": "Delete Static Backends",
    "category": "Static Backends",
    "description": "Delete a static backend by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_static_backends",
    "display_name": "Get Static Backends",
    "category": "Static Backends",
    "description": "Get detailed information about a static backend by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_static_backends",
    "display_name": "Update Static Backends",
    "category": "Static Backends",
    "description": "Update static backend by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tunnel_group_backends",
    "display_name": "List Tunnel Group Backends",
    "category": "Tunnel Group Backends",
    "description": "List all TunnelGroup backends on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tunnel_group_backends",
    "display_name": "Create Tunnel Group Backends",
    "category": "Tunnel Group Backends",
    "description": "Create a new TunnelGroup backend",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tunnel_group_backends",
    "display_name": "Delete Tunnel Group Backends",
    "category": "Tunnel Group Backends",
    "description": "Delete a TunnelGroup backend by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tunnel_group_backends",
    "display_name": "Get Tunnel Group Backends",
    "category": "Tunnel Group Backends",
    "description": "Get detailed information about a TunnelGroup backend by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tunnel_group_backends",
    "display_name": "Update Tunnel Group Backends",
    "category": "Tunnel Group Backends",
    "description": "Update TunnelGroup backend by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_weighted_backends",
    "display_name": "List Weighted Backends",
    "category": "Weighted Backends",
    "description": "List all Weighted backends on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_weighted_backends",
    "display_name": "Create Weighted Backends",
    "category": "Weighted Backends",
    "description": "Create a new Weighted backend",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_weighted_backends",
    "display_name": "Delete Weighted Backends",
    "category": "Weighted Backends",
    "description": "Delete a Weighted backend by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_weighted_backends",
    "display_name": "Get Weighted Backends",
    "category": "Weighted Backends",
    "description": "Get detailed information about a Weighted backend by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_weighted_backends",
    "display_name": "Update Weighted Backends",
    "category": "Weighted Backends",
    "description": "Update Weighted backend by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_bot_users",
    "display_name": "List Bot Users",
    "category": "Bot Users",
    "description": "List all bot users in this account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_bot_users",
    "display_name": "Create Bot Users",
    "category": "Bot Users",
    "description": "Create a new bot user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_bot_users",
    "display_name": "Delete Bot Users",
    "category": "Bot Users",
    "description": "Delete a bot user by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bot_users",
    "display_name": "Get Bot Users",
    "category": "Bot Users",
    "description": "Get the details of a Bot User by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_bot_users",
    "display_name": "Update Bot Users",
    "category": "Bot Users",
    "description": "Update attributes of a bot user by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_certificate_authorities",
    "display_name": "List Certificate Authorities",
    "category": "Certificate Authorities",
    "description": "List all Certificate Authority on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_certificate_authorities",
    "display_name": "Create Certificate Authorities",
    "category": "Certificate Authorities",
    "description": "Upload a new Certificate Authority",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_certificate_authorities",
    "display_name": "Delete Certificate Authorities",
    "category": "Certificate Authorities",
    "description": "Delete a Certificate Authority",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_certificate_authorities",
    "display_name": "Get Certificate Authorities",
    "category": "Certificate Authorities",
    "description": "Get detailed information about a certificate authority",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_certificate_authorities",
    "display_name": "Update Certificate Authorities",
    "category": "Certificate Authorities",
    "description": "Update attributes of a Certificate Authority by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credentials",
    "display_name": "List Credentials",
    "category": "Credentials",
    "description": "List all tunnel authtoken credentials on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_credentials",
    "display_name": "Create Credentials",
    "category": "Credentials",
    "description": "Create a new tunnel authtoken credential. This authtoken credential can be used to start a new tunnel session. The response to this API call is the only time the generated token is available. If you need it for future use, you must save it securely yourself.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_credentials",
    "display_name": "Delete Credentials",
    "category": "Credentials",
    "description": "Delete a tunnel authtoken credential by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credentials",
    "display_name": "Get Credentials",
    "category": "Credentials",
    "description": "Get detailed information about a tunnel authtoken credential",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_credentials",
    "display_name": "Update Credentials",
    "category": "Credentials",
    "description": "Update attributes of an tunnel authtoken credential by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_edges_https",
    "display_name": "List Edges HTTPS",
    "category": "Edges HTTPS",
    "description": "Returns a list of all HTTPS Edges on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_edges_https",
    "display_name": "Create Edges HTTPS",
    "category": "Edges HTTPS",
    "description": "Create an HTTPS Edge",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_edges_https_routes",
    "display_name": "Create Edges HTTPS Routes",
    "category": "Edges HTTPS Routes",
    "description": "Create an HTTPS Edge Route",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edges_https_routes",
    "display_name": "Delete Edges HTTPS Routes",
    "category": "Edges HTTPS Routes",
    "description": "Delete an HTTPS Edge Route by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edges_https_routes",
    "display_name": "Get Edges HTTPS Routes",
    "category": "Edges HTTPS Routes",
    "description": "Get an HTTPS Edge Route by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_edges_https_routes",
    "display_name": "Update Edges HTTPS Routes",
    "category": "Edges HTTPS Routes",
    "description": "Updates an HTTPS Edge Route by ID. If a module is not specified in the update, it will not be modified. However, each module configuration that is specified will completely replace the existing value. There is no way to delete an existing module via this API, instead use the delete module API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edge_route_backend_module",
    "display_name": "Delete Edge Route Backend Module",
    "category": "Edge Route Backend Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edge_route_backend_module",
    "display_name": "Get Edge Route Backend Module",
    "category": "Edge Route Backend Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_edge_route_backend_module",
    "display_name": "Replace Edge Route Backend Module",
    "category": "Edge Route Backend Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edge_route_circuit_breaker_module",
    "display_name": "Delete Edge Route Circuit Breaker Module",
    "category": "Edge Route Circuit Breaker Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edge_route_circuit_breaker_module",
    "display_name": "Get Edge Route Circuit Breaker Module",
    "category": "Edge Route Circuit Breaker Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_edge_route_circuit_breaker_module",
    "display_name": "Replace Edge Route Circuit Breaker Module",
    "category": "Edge Route Circuit Breaker Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edge_route_compression_module",
    "display_name": "Delete Edge Route Compression Module",
    "category": "Edge Route Compression Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edge_route_compression_module",
    "display_name": "Get Edge Route Compression Module",
    "category": "Edge Route Compression Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_edge_route_compression_module",
    "display_name": "Replace Edge Route Compression Module",
    "category": "Edge Route Compression Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edge_route_ip_restriction_module",
    "display_name": "Delete Edge Route IP Restriction Module",
    "category": "Edge Route IP Restriction Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edge_route_ip_restriction_module",
    "display_name": "Get Edge Route IP Restriction Module",
    "category": "Edge Route IP Restriction Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_edge_route_ip_restriction_module",
    "display_name": "Replace Edge Route IP Restriction Module",
    "category": "Edge Route IP Restriction Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edge_route_o_auth_module",
    "display_name": "Delete Edge Route O Auth Module",
    "category": "Edge Route O Auth Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edge_route_o_auth_module",
    "display_name": "Get Edge Route O Auth Module",
    "category": "Edge Route O Auth Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_edge_route_o_auth_module",
    "display_name": "Replace Edge Route O Auth Module",
    "category": "Edge Route O Auth Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edge_route_oidc_module",
    "display_name": "Delete Edge Route OIDC Module",
    "category": "Edge Route OIDC Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edge_route_oidc_module",
    "display_name": "Get Edge Route OIDC Module",
    "category": "Edge Route OIDC Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_edge_route_oidc_module",
    "display_name": "Replace Edge Route OIDC Module",
    "category": "Edge Route OIDC Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edge_route_request_headers_module",
    "display_name": "Delete Edge Route Request Headers Module",
    "category": "Edge Route Request Headers Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edge_route_request_headers_module",
    "display_name": "Get Edge Route Request Headers Module",
    "category": "Edge Route Request Headers Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_edge_route_request_headers_module",
    "display_name": "Replace Edge Route Request Headers Module",
    "category": "Edge Route Request Headers Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edge_route_response_headers_module",
    "display_name": "Delete Edge Route Response Headers Module",
    "category": "Edge Route Response Headers Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edge_route_response_headers_module",
    "display_name": "Get Edge Route Response Headers Module",
    "category": "Edge Route Response Headers Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_edge_route_response_headers_module",
    "display_name": "Replace Edge Route Response Headers Module",
    "category": "Edge Route Response Headers Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edge_route_saml_module",
    "display_name": "Delete Edge Route SAML Module",
    "category": "Edge Route SAML Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edge_route_saml_module",
    "display_name": "Get Edge Route SAML Module",
    "category": "Edge Route SAML Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_edge_route_saml_module",
    "display_name": "Replace Edge Route SAML Module",
    "category": "Edge Route SAML Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edge_route_traffic_policy_module",
    "display_name": "Delete Edge Route Traffic Policy Module",
    "category": "Edge Route Traffic Policy Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edge_route_traffic_policy_module",
    "display_name": "Get Edge Route Traffic Policy Module",
    "category": "Edge Route Traffic Policy Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_edge_route_traffic_policy_module",
    "display_name": "Replace Edge Route Traffic Policy Module",
    "category": "Edge Route Traffic Policy Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edge_route_user_agent_filter_module",
    "display_name": "Delete Edge Route User Agent Filter Module",
    "category": "Edge Route User Agent Filter Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edge_route_user_agent_filter_module",
    "display_name": "Get Edge Route User Agent Filter Module",
    "category": "Edge Route User Agent Filter Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_edge_route_user_agent_filter_module",
    "display_name": "Replace Edge Route User Agent Filter Module",
    "category": "Edge Route User Agent Filter Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edge_route_webhook_verification_module",
    "display_name": "Delete Edge Route Webhook Verification Module",
    "category": "Edge Route Webhook Verification Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edge_route_webhook_verification_module",
    "display_name": "Get Edge Route Webhook Verification Module",
    "category": "Edge Route Webhook Verification Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_edge_route_webhook_verification_module",
    "display_name": "Replace Edge Route Webhook Verification Module",
    "category": "Edge Route Webhook Verification Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edge_route_websocket_tcp_converter_module",
    "display_name": "Delete Edge Route Websocket TCP Converter Module",
    "category": "Edge Route Websocket TCP Converter Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edge_route_websocket_tcp_converter_module",
    "display_name": "Get Edge Route Websocket TCP Converter Module",
    "category": "Edge Route Websocket TCP Converter Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_edge_route_websocket_tcp_converter_module",
    "display_name": "Replace Edge Route Websocket TCP Converter Module",
    "category": "Edge Route Websocket TCP Converter Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edges_https",
    "display_name": "Delete Edges HTTPS",
    "category": "Edges HTTPS",
    "description": "Delete an HTTPS Edge by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edges_https",
    "display_name": "Get Edges HTTPS",
    "category": "Edges HTTPS",
    "description": "Get an HTTPS Edge by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_edges_https",
    "display_name": "Update Edges HTTPS",
    "category": "Edges HTTPS",
    "description": "Updates an HTTPS Edge by ID. If a module is not specified in the update, it will not be modified. However, each module configuration that is specified will completely replace the existing value. There is no way to delete an existing module via this API, instead use the delete module API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_https_edge_mutual_tls_module",
    "display_name": "Delete HTTPS Edge Mutual TLS Module",
    "category": "HTTPS Edge Mutual TLS Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_https_edge_mutual_tls_module",
    "display_name": "Get HTTPS Edge Mutual TLS Module",
    "category": "HTTPS Edge Mutual TLS Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_https_edge_mutual_tls_module",
    "display_name": "Replace HTTPS Edge Mutual TLS Module",
    "category": "HTTPS Edge Mutual TLS Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_https_edge_tls_termination_module",
    "display_name": "Delete HTTPS Edge TLS Termination Module",
    "category": "HTTPS Edge TLS Termination Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_https_edge_tls_termination_module",
    "display_name": "Get HTTPS Edge TLS Termination Module",
    "category": "HTTPS Edge TLS Termination Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_https_edge_tls_termination_module",
    "display_name": "Replace HTTPS Edge TLS Termination Module",
    "category": "HTTPS Edge TLS Termination Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_edges_tcp",
    "display_name": "List Edges TCP",
    "category": "Edges TCP",
    "description": "Returns a list of all TCP Edges on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_edges_tcp",
    "display_name": "Create Edges TCP",
    "category": "Edges TCP",
    "description": "Create a TCP Edge",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edges_tcp",
    "display_name": "Delete Edges TCP",
    "category": "Edges TCP",
    "description": "Delete a TCP Edge by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edges_tcp",
    "display_name": "Get Edges TCP",
    "category": "Edges TCP",
    "description": "Get a TCP Edge by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_edges_tcp",
    "display_name": "Update Edges TCP",
    "category": "Edges TCP",
    "description": "Updates a TCP Edge by ID. If a module is not specified in the update, it will not be modified. However, each module configuration that is specified will completely replace the existing value. There is no way to delete an existing module via this API, instead use the delete module API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tcp_edge_backend_module",
    "display_name": "Delete TCP Edge Backend Module",
    "category": "TCP Edge Backend Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tcp_edge_backend_module",
    "display_name": "Get TCP Edge Backend Module",
    "category": "TCP Edge Backend Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_tcp_edge_backend_module",
    "display_name": "Replace TCP Edge Backend Module",
    "category": "TCP Edge Backend Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tcp_edge_ip_restriction_module",
    "display_name": "Delete TCP Edge IP Restriction Module",
    "category": "TCP Edge IP Restriction Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tcp_edge_ip_restriction_module",
    "display_name": "Get TCP Edge IP Restriction Module",
    "category": "TCP Edge IP Restriction Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_tcp_edge_ip_restriction_module",
    "display_name": "Replace TCP Edge IP Restriction Module",
    "category": "TCP Edge IP Restriction Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tcp_edge_traffic_policy_module",
    "display_name": "Delete TCP Edge Traffic Policy Module",
    "category": "TCP Edge Traffic Policy Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tcp_edge_traffic_policy_module",
    "display_name": "Get TCP Edge Traffic Policy Module",
    "category": "TCP Edge Traffic Policy Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_tcp_edge_traffic_policy_module",
    "display_name": "Replace TCP Edge Traffic Policy Module",
    "category": "TCP Edge Traffic Policy Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_edges_tls",
    "display_name": "List Edges TLS",
    "category": "Edges TLS",
    "description": "Returns a list of all TLS Edges on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_edges_tls",
    "display_name": "Create Edges TLS",
    "category": "Edges TLS",
    "description": "Create a TLS Edge",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_edges_tls",
    "display_name": "Delete Edges TLS",
    "category": "Edges TLS",
    "description": "Delete a TLS Edge by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_edges_tls",
    "display_name": "Get Edges TLS",
    "category": "Edges TLS",
    "description": "Get a TLS Edge by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_edges_tls",
    "display_name": "Update Edges TLS",
    "category": "Edges TLS",
    "description": "Updates a TLS Edge by ID. If a module is not specified in the update, it will not be modified. However, each module configuration that is specified will completely replace the existing value. There is no way to delete an existing module via this API, instead use the delete module API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tls_edge_backend_module",
    "display_name": "Delete TLS Edge Backend Module",
    "category": "TLS Edge Backend Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tls_edge_backend_module",
    "display_name": "Get TLS Edge Backend Module",
    "category": "TLS Edge Backend Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_tls_edge_backend_module",
    "display_name": "Replace TLS Edge Backend Module",
    "category": "TLS Edge Backend Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tls_edge_ip_restriction_module",
    "display_name": "Delete TLS Edge IP Restriction Module",
    "category": "TLS Edge IP Restriction Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tls_edge_ip_restriction_module",
    "display_name": "Get TLS Edge IP Restriction Module",
    "category": "TLS Edge IP Restriction Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_tls_edge_ip_restriction_module",
    "display_name": "Replace TLS Edge IP Restriction Module",
    "category": "TLS Edge IP Restriction Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tls_edge_mutual_tls_module",
    "display_name": "Delete TLS Edge Mutual TLS Module",
    "category": "TLS Edge Mutual TLS Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tls_edge_mutual_tls_module",
    "display_name": "Get TLS Edge Mutual TLS Module",
    "category": "TLS Edge Mutual TLS Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_tls_edge_mutual_tls_module",
    "display_name": "Replace TLS Edge Mutual TLS Module",
    "category": "TLS Edge Mutual TLS Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tls_edge_tls_termination_module",
    "display_name": "Delete TLS Edge TLS Termination Module",
    "category": "TLS Edge TLS Termination Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tls_edge_tls_termination_module",
    "display_name": "Get TLS Edge TLS Termination Module",
    "category": "TLS Edge TLS Termination Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_tls_edge_tls_termination_module",
    "display_name": "Replace TLS Edge TLS Termination Module",
    "category": "TLS Edge TLS Termination Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tls_edge_traffic_policy_module",
    "display_name": "Delete TLS Edge Traffic Policy Module",
    "category": "TLS Edge Traffic Policy Module",
    "description": "Delete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tls_edge_traffic_policy_module",
    "display_name": "Get TLS Edge Traffic Policy Module",
    "category": "TLS Edge Traffic Policy Module",
    "description": "Get",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_tls_edge_traffic_policy_module",
    "display_name": "Replace TLS Edge Traffic Policy Module",
    "category": "TLS Edge Traffic Policy Module",
    "description": "Replace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_endpoints",
    "display_name": "List Endpoints",
    "category": "Endpoints",
    "description": "List all active endpoints on the account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_endpoints",
    "display_name": "Create Endpoints",
    "category": "Endpoints",
    "description": "Create an endpoint, currently available only for cloud endpoints",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_endpoints",
    "display_name": "Delete Endpoints",
    "category": "Endpoints",
    "description": "Delete an Endpoint by ID, currently available only for cloud endpoints",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_endpoints",
    "display_name": "Get Endpoints",
    "category": "Endpoints",
    "description": "Get the status of an endpoint by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_endpoints",
    "display_name": "Update Endpoints",
    "category": "Endpoints",
    "description": "Update an Endpoint by ID, currently available only for cloud endpoints",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_event_destinations",
    "display_name": "List Event Destinations",
    "category": "Event Destinations",
    "description": "List all Event Destinations on this account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_event_destinations",
    "display_name": "Create Event Destinations",
    "category": "Event Destinations",
    "description": "Create a new Event Destination. It will not apply to anything until it is associated with an Event Subscription.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_event_destinations",
    "display_name": "Delete Event Destinations",
    "category": "Event Destinations",
    "description": "Delete an Event Destination. If the Event Destination is still referenced by an Event Subscription.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event_destinations",
    "display_name": "Get Event Destinations",
    "category": "Event Destinations",
    "description": "Get detailed information about an Event Destination by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_event_destinations",
    "display_name": "Update Event Destinations",
    "category": "Event Destinations",
    "description": "Update attributes of an Event Destination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_event_subscriptions",
    "display_name": "List Event Subscriptions",
    "category": "Event Subscriptions",
    "description": "List this Account's Event Subscriptions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_event_subscriptions",
    "display_name": "Create Event Subscriptions",
    "category": "Event Subscriptions",
    "description": "Create an Event Subscription.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_event_subscriptions",
    "display_name": "Delete Event Subscriptions",
    "category": "Event Subscriptions",
    "description": "Delete an Event Subscription.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event_subscriptions",
    "display_name": "Get Event Subscriptions",
    "category": "Event Subscriptions",
    "description": "Get an Event Subscription by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_event_subscriptions",
    "display_name": "Update Event Subscriptions",
    "category": "Event Subscriptions",
    "description": "Update an Event Subscription.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_event_sources",
    "display_name": "List Event Sources",
    "category": "Event Sources",
    "description": "List the types for which this event subscription will trigger",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_event_sources",
    "display_name": "Create Event Sources",
    "category": "Event Sources",
    "description": "Add an additional type for which this event subscription will trigger",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_event_sources",
    "display_name": "Delete Event Sources",
    "category": "Event Sources",
    "description": "Remove a type for which this event subscription will trigger",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event_sources",
    "display_name": "Get Event Sources",
    "category": "Event Sources",
    "description": "Get the details for a given type that triggers for the given event subscription",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_event_sources",
    "display_name": "Update Event Sources",
    "category": "Event Sources",
    "description": "Update the type for which this event subscription will trigger",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ip_policies",
    "display_name": "List IP Policies",
    "category": "IP Policies",
    "description": "List all IP policies on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ip_policies",
    "display_name": "Create IP Policies",
    "category": "IP Policies",
    "description": "Create a new IP policy. It will not apply to any traffic until you associate to a traffic source via an endpoint configuration or IP restriction.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ip_policies",
    "display_name": "Delete IP Policies",
    "category": "IP Policies",
    "description": "Delete an IP policy. If the IP policy is referenced by another object for the purposes of traffic restriction it will be treated as if the IP policy remains but has zero rules.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ip_policies",
    "display_name": "Get IP Policies",
    "category": "IP Policies",
    "description": "Get detailed information about an IP policy by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ip_policies",
    "display_name": "Update IP Policies",
    "category": "IP Policies",
    "description": "Update attributes of an IP policy by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ip_policy_rules",
    "display_name": "List IP Policy Rules",
    "category": "IP Policy Rules",
    "description": "List all IP policy rules on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ip_policy_rules",
    "display_name": "Create IP Policy Rules",
    "category": "IP Policy Rules",
    "description": "Create a new IP policy rule attached to an IP Policy.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ip_policy_rules",
    "display_name": "Delete IP Policy Rules",
    "category": "IP Policy Rules",
    "description": "Delete an IP policy rule.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ip_policy_rules",
    "display_name": "Get IP Policy Rules",
    "category": "IP Policy Rules",
    "description": "Get detailed information about an IP policy rule by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ip_policy_rules",
    "display_name": "Update IP Policy Rules",
    "category": "IP Policy Rules",
    "description": "Update attributes of an IP policy rule by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ip_restrictions",
    "display_name": "List IP Restrictions",
    "category": "IP Restrictions",
    "description": "List all IP restrictions on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ip_restrictions",
    "display_name": "Create IP Restrictions",
    "category": "IP Restrictions",
    "description": "Create a new IP restriction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ip_restrictions",
    "display_name": "Delete IP Restrictions",
    "category": "IP Restrictions",
    "description": "Delete an IP restriction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ip_restrictions",
    "display_name": "Get IP Restrictions",
    "category": "IP Restrictions",
    "description": "Get detailed information about an IP restriction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ip_restrictions",
    "display_name": "Update IP Restrictions",
    "category": "IP Restrictions",
    "description": "Update attributes of an IP restriction by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_reserved_addrs",
    "display_name": "List Reserved Addrs",
    "category": "Reserved Addrs",
    "description": "List all reserved addresses on this account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_reserved_addrs",
    "display_name": "Create Reserved Addrs",
    "category": "Reserved Addrs",
    "description": "Create a new reserved address.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_reserved_addrs",
    "display_name": "Delete Reserved Addrs",
    "category": "Reserved Addrs",
    "description": "Delete a reserved address.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_reserved_addrs",
    "display_name": "Get Reserved Addrs",
    "category": "Reserved Addrs",
    "description": "Get the details of a reserved address.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_reserved_addrs",
    "display_name": "Update Reserved Addrs",
    "category": "Reserved Addrs",
    "description": "Update the attributes of a reserved address.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_reserved_domains",
    "display_name": "List Reserved Domains",
    "category": "Reserved Domains",
    "description": "List all reserved domains on this account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_reserved_domains",
    "display_name": "Create Reserved Domains",
    "category": "Reserved Domains",
    "description": "Create a new reserved domain.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_reserved_domains",
    "display_name": "Delete Reserved Domains",
    "category": "Reserved Domains",
    "description": "Delete a reserved domain.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_reserved_domains",
    "display_name": "Get Reserved Domains",
    "category": "Reserved Domains",
    "description": "Get the details of a reserved domain.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_reserved_domains",
    "display_name": "Update Reserved Domains",
    "category": "Reserved Domains",
    "description": "Update the attributes of a reserved domain.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reserved_domains_delete_certificate",
    "display_name": "Reserved Domains Delete Certificate",
    "category": "Reserved Domains",
    "description": "Detach the certificate attached to a reserved domain.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reserved_domains_delete_certificate_management_policy",
    "display_name": "Reserved Domains Delete Certificate Management Policy",
    "category": "Reserved Domains",
    "description": "Detach the certificate management policy attached to a reserved domain.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_service_users",
    "display_name": "List Service Users",
    "category": "Service Users",
    "description": "List all service users in this account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_service_users",
    "display_name": "Create Service Users",
    "category": "Service Users",
    "description": "Create a new service user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_service_users",
    "display_name": "Delete Service Users",
    "category": "Service Users",
    "description": "Delete a service user by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service_users",
    "display_name": "Get Service Users",
    "category": "Service Users",
    "description": "Get the details of a Bot User by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_service_users",
    "display_name": "Update Service Users",
    "category": "Service Users",
    "description": "Update attributes of a service user by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ssh_certificate_authorities",
    "display_name": "List SSH Certificate Authorities",
    "category": "SSH Certificate Authorities",
    "description": "List all SSH Certificate Authorities on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ssh_certificate_authorities",
    "display_name": "Create SSH Certificate Authorities",
    "category": "SSH Certificate Authorities",
    "description": "Create a new SSH Certificate Authority",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ssh_certificate_authorities",
    "display_name": "Delete SSH Certificate Authorities",
    "category": "SSH Certificate Authorities",
    "description": "Delete an SSH Certificate Authority",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ssh_certificate_authorities",
    "display_name": "Get SSH Certificate Authorities",
    "category": "SSH Certificate Authorities",
    "description": "Get detailed information about an SSH Certificate Authority",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ssh_certificate_authorities",
    "display_name": "Update SSH Certificate Authorities",
    "category": "SSH Certificate Authorities",
    "description": "Update an SSH Certificate Authority",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ssh_credentials",
    "display_name": "List SSH Credentials",
    "category": "SSH Credentials",
    "description": "List all ssh credentials on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ssh_credentials",
    "display_name": "Create SSH Credentials",
    "category": "SSH Credentials",
    "description": "Create a new ssh_credential from an uploaded public SSH key. This ssh credential can be used to start new tunnels via ngrok's SSH gateway.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ssh_credentials",
    "display_name": "Delete SSH Credentials",
    "category": "SSH Credentials",
    "description": "Delete an ssh_credential by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ssh_credentials",
    "display_name": "Get SSH Credentials",
    "category": "SSH Credentials",
    "description": "Get detailed information about an ssh_credential",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ssh_credentials",
    "display_name": "Update SSH Credentials",
    "category": "SSH Credentials",
    "description": "Update attributes of an ssh_credential by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ssh_host_certificates",
    "display_name": "List SSH Host Certificates",
    "category": "SSH Host Certificates",
    "description": "List all SSH Host Certificates issued on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ssh_host_certificates",
    "display_name": "Create SSH Host Certificates",
    "category": "SSH Host Certificates",
    "description": "Create a new SSH Host Certificate",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ssh_host_certificates",
    "display_name": "Delete SSH Host Certificates",
    "category": "SSH Host Certificates",
    "description": "Delete an SSH Host Certificate",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ssh_host_certificates",
    "display_name": "Get SSH Host Certificates",
    "category": "SSH Host Certificates",
    "description": "Get detailed information about an SSH Host Certificate",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ssh_host_certificates",
    "display_name": "Update SSH Host Certificates",
    "category": "SSH Host Certificates",
    "description": "Update an SSH Host Certificate",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ssh_user_certificates",
    "display_name": "List SSH User Certificates",
    "category": "SSH User Certificates",
    "description": "List all SSH User Certificates issued on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_ssh_user_certificates",
    "display_name": "Create SSH User Certificates",
    "category": "SSH User Certificates",
    "description": "Create a new SSH User Certificate",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_ssh_user_certificates",
    "display_name": "Delete SSH User Certificates",
    "category": "SSH User Certificates",
    "description": "Delete an SSH User Certificate",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ssh_user_certificates",
    "display_name": "Get SSH User Certificates",
    "category": "SSH User Certificates",
    "description": "Get detailed information about an SSH User Certificate",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_ssh_user_certificates",
    "display_name": "Update SSH User Certificates",
    "category": "SSH User Certificates",
    "description": "Update an SSH User Certificate",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tls_certificates",
    "display_name": "List TLS Certificates",
    "category": "TLS Certificates",
    "description": "List all TLS certificates on this account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tls_certificates",
    "display_name": "Create TLS Certificates",
    "category": "TLS Certificates",
    "description": "Upload a new TLS certificate",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tls_certificates",
    "display_name": "Delete TLS Certificates",
    "category": "TLS Certificates",
    "description": "Delete a TLS certificate",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tls_certificates",
    "display_name": "Get TLS Certificates",
    "category": "TLS Certificates",
    "description": "Get detailed information about a TLS certificate",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tls_certificates",
    "display_name": "Update TLS Certificates",
    "category": "TLS Certificates",
    "description": "Update attributes of a TLS Certificate by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tunnel_sessions",
    "display_name": "List Tunnel Sessions",
    "category": "Tunnel Sessions",
    "description": "List all online tunnel sessions running on this account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tunnel_sessions",
    "display_name": "Get Tunnel Sessions",
    "category": "Tunnel Sessions",
    "description": "Get the detailed status of a tunnel session by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restart_tunnel_sessions",
    "display_name": "Restart Tunnel Sessions",
    "category": "Tunnel Sessions",
    "description": "Issues a command instructing the ngrok agent to restart. The agent restarts itself by calling exec() on platforms that support it. This operation is notably not supported on Windows. When an agent restarts, it reconnects with a new tunnel session ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_tunnel_sessions",
    "display_name": "Stop Tunnel Sessions",
    "category": "Tunnel Sessions",
    "description": "Issues a command instructing the ngrok agent that started this tunnel session to exit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tunnel_sessions",
    "display_name": "Update Tunnel Sessions",
    "category": "Tunnel Sessions",
    "description": "Issues a command instructing the ngrok agent to update itself to the latest version. After this call completes successfully, the ngrok agent will be in the update process. A caller should wait some amount of time to allow the update to complete (at least 10 seconds) before making a call to the Restart endpoint to request that the agent restart itself to start using the new code. This call will never update an ngrok agent to a new major version which could cause breaking compatibility issues. If you wish to update to a new major version, that must be done manually. Still, please be aware that updating your ngrok agent could break your integration. This call will fail in any of the following circumstances: there is no update available the ngrok agent's configuration disabled update checks the agent is currently in process of updating the agent has already successfully updated but has not yet been restarted",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tunnels",
    "display_name": "List Tunnels",
    "category": "Tunnels",
    "description": "List all online tunnels currently running on the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tunnels",
    "display_name": "Get Tunnels",
    "category": "Tunnels",
    "description": "Get the status of a tunnel by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_secrets",
    "display_name": "List Secrets",
    "category": "Secrets",
    "description": "List all Secrets owned by account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_secrets",
    "display_name": "Create Secrets",
    "category": "Secrets",
    "description": "Create a new Secret",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_secrets",
    "display_name": "Delete Secrets",
    "category": "Secrets",
    "description": "Delete a Secret",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_secrets",
    "display_name": "Get Secrets",
    "category": "Secrets",
    "description": "Get a Secret by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_secrets",
    "display_name": "Update Secrets",
    "category": "Secrets",
    "description": "Update an existing Secret by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_vaults",
    "display_name": "List Vaults",
    "category": "Vaults",
    "description": "List all Vaults owned by account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_vaults",
    "display_name": "Create Vaults",
    "category": "Vaults",
    "description": "Create a new Vault",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_vaults",
    "display_name": "Delete Vaults",
    "category": "Vaults",
    "description": "Delete a Vault",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_vaults",
    "display_name": "Get Vaults",
    "category": "Vaults",
    "description": "Get a Vault by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_vaults",
    "display_name": "Update Vaults",
    "category": "Vaults",
    "description": "Update an existing Vault by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "vaults_get_secrets_by_vault",
    "display_name": "Vaults Get Secrets By Vault",
    "category": "Vaults",
    "description": "Get Secrets by Vault ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_endpoint",
    "display_name": "New Endpoint",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_tunnel_session",
    "display_name": "New Tunnel Session",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_reserved_domain",
    "display_name": "New Reserved Domain",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,119 +22,136 @@
    "display_name": null,
    "category": null,
    "description": "Generate PDF from template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_image",
    "display_name": null,
    "category": null,
    "description": "Generate image from template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_pdf_async",
    "display_name": null,
    "category": null,
    "description": "Generate PDF asynchronously",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pdf_job",
    "display_name": null,
    "category": null,
    "description": "Get PDF job status",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pdf_jobs",
    "display_name": null,
    "category": null,
    "description": "List PDF jobs",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "merge_pdf",
    "display_name": null,
    "category": null,
    "description": "Merge PDFs",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_pdf_pages",
    "display_name": null,
    "category": null,
    "description": "Extract pages from a PDF",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rotate_pdf",
    "display_name": null,
    "category": null,
    "description": "Rotate pages of a PDF",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": null,
    "category": null,
    "description": "List templates",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template_fields",
    "display_name": null,
    "category": null,
    "description": "Get template fields",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template_layers",
    "display_name": null,
    "category": null,
    "description": "Get template layers",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_template_versions",
    "display_name": null,
    "category": null,
    "description": "List template versions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_template_version",
    "display_name": null,
    "category": null,
    "description": "Create a version snapshot",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_template_version",
    "display_name": null,
    "category": null,
    "description": "Delete a version",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_template_version",
    "display_name": null,
    "category": null,
    "description": "Update a version",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": null,
    "category": null,
    "description": "Get account info",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transactions",
    "display_name": null,
    "category": null,
    "description": "List transactions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

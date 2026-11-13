@@ -40,161 +40,184 @@
    "display_name": null,
    "category": null,
    "description": "Get your user profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pages",
    "display_name": null,
    "category": null,
    "description": "Get your status pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_components",
    "display_name": null,
    "category": null,
    "description": "Get all your status page components.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_component",
    "display_name": null,
    "category": null,
    "description": "Get a component.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_component",
    "display_name": null,
    "category": null,
    "description": "Create a component.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_component",
    "display_name": null,
    "category": null,
    "description": "Update a component.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_component",
    "display_name": null,
    "category": null,
    "description": "Delete a component.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_incidents",
    "display_name": null,
    "category": null,
    "description": "Get all page incidents.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_incident",
    "display_name": null,
    "category": null,
    "description": "Get an incident.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_incident",
    "display_name": null,
    "category": null,
    "description": "Add an incident.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_incident",
    "display_name": null,
    "category": null,
    "description": "Update incident.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_incident",
    "display_name": null,
    "category": null,
    "description": "Delete incident.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_maintenances",
    "display_name": null,
    "category": null,
    "description": "Get all page maintenances.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_maintenance",
    "display_name": null,
    "category": null,
    "description": "Get a maintenance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_maintenance",
    "display_name": null,
    "category": null,
    "description": "Add a maintenance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_maintenance",
    "display_name": null,
    "category": null,
    "description": "Update maintenance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_maintenance",
    "display_name": null,
    "category": null,
    "description": "Delete maintenance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_incident_update",
    "display_name": null,
    "category": null,
    "description": "Add an incident update.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_subscribers",
    "display_name": null,
    "category": null,
    "description": "Get subscribers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_subscriber",
    "display_name": null,
    "category": null,
    "description": "Add a subscriber.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_subscriber",
    "display_name": null,
    "category": null,
    "description": "Remove a subscriber.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_templates",
    "display_name": null,
    "category": null,
    "description": "Get all page templates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template",
    "display_name": null,
    "category": null,
    "description": "Get a template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

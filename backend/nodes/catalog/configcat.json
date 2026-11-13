@@ -27,826 +27,944 @@
    "display_name": "List Audit log items for Product",
    "category": "Audit logs",
    "description": "List Audit log items for Product",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_auditlogs_v2",
    "display_name": "List Audit log items for Product (V2)",
    "category": "Audit logs",
    "description": "List Audit log items for Product (V2)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deleted_settings",
    "display_name": "List Deleted Settings",
    "category": "Audit logs",
    "description": "List Deleted Settings",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization_auditlogs",
    "display_name": "List Audit log items for Organization",
    "category": "Audit logs",
    "description": "List Audit log items for Organization",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization_auditlogs_v2",
    "display_name": "List Audit log items for Organization (V2)",
    "category": "Audit logs",
    "description": "List Audit log items for Organization (V2)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_change_request_comment",
    "display_name": "Add Comment",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Add Comment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "apply_change_request",
    "display_name": "Apply Change Request",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Apply Change Request",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_change_request",
    "display_name": "Approve Change Request",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Approve Change Request",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "claim_change_request_ownership",
    "display_name": "Claim Ownership",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Claim Ownership",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "close_change_request",
    "display_name": "Close Change Request",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Close Change Request",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_change_request",
    "display_name": "Create Change Request",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Create Change Request",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_change_request_comment",
    "display_name": "Delete Comment",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Delete Comment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_change_request_proposed_change",
    "display_name": "Delete Setting from Change Request",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Delete Setting from Change Request",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_change_request",
    "display_name": "Get Change Request",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Get Change Request",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_change_request_proposed_changes",
    "display_name": "Get Settings included in Change Request",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Get Settings included in Change Request",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_change_requests",
    "display_name": "List Change Requests",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "List Change Requests",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_change_request_approval",
    "display_name": "Remove Approval",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Remove Approval",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resolve_change_request_setting_conflicts",
    "display_name": "Resolve Setting Conflicts",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Resolve Setting Conflicts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_change_request",
    "display_name": "Update Change Request",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Update Change Request",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_change_request_comment",
    "display_name": "Update Comment",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Update Comment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_change_request_proposed_changes",
    "display_name": "Update Settings included in Change Request",
    "category": "Change Requests (Approval flow & Scheduled changes)",
    "description": "Update Settings included in Change Request",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_get_references_for_feature_flag_or_setting",
    "display_name": "Get References for Feature Flag or Setting",
    "category": "Code References",
    "description": "Get References for Feature Flag or Setting",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_delete_reference_reports",
    "display_name": "Delete Reference reports",
    "category": "Code References",
    "description": "Delete Reference reports",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_upload_references",
    "display_name": "Upload References",
    "category": "Code References",
    "description": "Upload References",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_config",
    "display_name": "Create Config",
    "category": "Configs",
    "description": "Create Config",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_config",
    "display_name": "Delete Config",
    "category": "Configs",
    "description": "Delete Config",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_config",
    "display_name": "Get Config",
    "category": "Configs",
    "description": "Get Config",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_configs",
    "display_name": "List Configs",
    "category": "Configs",
    "description": "List Configs",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_config",
    "display_name": "Update Config",
    "category": "Configs",
    "description": "Update Config",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_environment",
    "display_name": "Create Environment",
    "category": "Environments",
    "description": "Create Environment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_environment",
    "display_name": "Delete Environment",
    "category": "Environments",
    "description": "Delete Environment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_environment",
    "display_name": "Get Environment",
    "category": "Environments",
    "description": "Get Environment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_environments",
    "display_name": "List Environments",
    "category": "Environments",
    "description": "List Environments",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_environment",
    "display_name": "Update Environment",
    "category": "Environments",
    "description": "Update Environment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_setting_value",
    "display_name": "Get value",
    "category": "Feature Flag & Setting values",
    "description": "Get value",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_setting_values",
    "display_name": "Get values",
    "category": "Feature Flag & Setting values",
    "description": "Get values",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_setting_values",
    "display_name": "Post values",
    "category": "Feature Flag & Setting values",
    "description": "Post values",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_setting_value",
    "display_name": "Replace value",
    "category": "Feature Flag & Setting values",
    "description": "Replace value",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_setting_value",
    "display_name": "Update value",
    "category": "Feature Flag & Setting values",
    "description": "Update value",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_setting_value_v2",
    "display_name": "Get value",
    "category": "Feature Flag & Setting values V2",
    "description": "Get value",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_setting_values_v2",
    "display_name": "Get values",
    "category": "Feature Flag & Setting values V2",
    "description": "Get values",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_setting_values_v2",
    "display_name": "Post values",
    "category": "Feature Flag & Setting values V2",
    "description": "Post values",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_setting_value_v2",
    "display_name": "Replace value",
    "category": "Feature Flag & Setting values V2",
    "description": "Replace value",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_setting_value_v2",
    "display_name": "Update value",
    "category": "Feature Flag & Setting values V2",
    "description": "Update value",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_setting",
    "display_name": "Create Flag",
    "category": "Feature Flags & Settings",
    "description": "Create Flag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_setting",
    "display_name": "Delete Flag",
    "category": "Feature Flags & Settings",
    "description": "Delete Flag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_predefined_variations",
    "display_name": "Get predefined variations",
    "category": "Feature Flags & Settings",
    "description": "Get predefined variations",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_setting",
    "display_name": "Get Flag",
    "category": "Feature Flags & Settings",
    "description": "Get Flag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_settings",
    "display_name": "List Flags",
    "category": "Feature Flags & Settings",
    "description": "List Flags",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_setting",
    "display_name": "Replace Flag",
    "category": "Feature Flags & Settings",
    "description": "Replace Flag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_predefined_variations",
    "display_name": "Update predefined variations",
    "category": "Feature Flags & Settings",
    "description": "Update predefined variations",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_setting",
    "display_name": "Update Flag",
    "category": "Feature Flags & Settings",
    "description": "Update Flag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_or_update_integration_link",
    "display_name": "Add or update Integration link",
    "category": "Integration links",
    "description": "Add or update Integration link",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_integration_link",
    "display_name": "Delete Integration link",
    "category": "Integration links",
    "description": "Delete Integration link",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_integration_link_details",
    "display_name": "Get Integration link",
    "category": "Integration links",
    "description": "Get Integration link",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "jira_add_or_update_integration_link",
    "display_name": "Jira Add Or Update Integration Link",
    "category": "Integration links",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "jira_connect",
    "display_name": "Jira Connect",
    "category": "Integration links",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_integration",
    "display_name": "Create Integration",
    "category": "Integrations",
    "description": "Create Integration",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_integration",
    "display_name": "Delete Integration",
    "category": "Integrations",
    "description": "Delete Integration",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_integration",
    "display_name": "Get Integration",
    "category": "Integrations",
    "description": "Get Integration",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_integrations",
    "display_name": "List Integrations",
    "category": "Integrations",
    "description": "List Integrations",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_integration",
    "display_name": "Update Integration",
    "category": "Integrations",
    "description": "Update Integration",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_me",
    "display_name": "Get authenticated user details",
    "category": "Me",
    "description": "Get authenticated user details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_member_to_group",
    "display_name": "Update Member Permissions",
    "category": "Members",
    "description": "Update Member Permissions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_invitation",
    "display_name": "Delete Invitation",
    "category": "Members",
    "description": "Delete Invitation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_organization_member",
    "display_name": "Delete Member from Organization",
    "category": "Members",
    "description": "Delete Member from Organization",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_product_member",
    "display_name": "Delete Member from Product",
    "category": "Members",
    "description": "Delete Member from Product",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization_members",
    "display_name": "List Organization Members",
    "category": "Members",
    "description": "List Organization Members",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization_members_v2",
    "display_name": "List Organization Members",
    "category": "Members",
    "description": "List Organization Members",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pending_invitations",
    "display_name": "List Pending Invitations in Product",
    "category": "Members",
    "description": "List Pending Invitations in Product",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pending_invitations_org",
    "display_name": "List Pending Invitations in Organization",
    "category": "Members",
    "description": "List Pending Invitations in Organization",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product_members",
    "display_name": "List Product Members",
    "category": "Members",
    "description": "List Product Members",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invite_member",
    "display_name": "Invite Member",
    "category": "Members",
    "description": "Invite Member",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization_limitations",
    "display_name": "Get Organization limitations",
    "category": "Organizations",
    "description": "Get Organization limitations",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organizations",
    "display_name": "List Organizations",
    "category": "Organizations",
    "description": "List Organizations",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_permission_group",
    "display_name": "Create Permission Group",
    "category": "Permission Groups",
    "description": "Create Permission Group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_permission_group",
    "display_name": "Delete Permission Group",
    "category": "Permission Groups",
    "description": "Delete Permission Group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_permission_group",
    "display_name": "Get Permission Group",
    "category": "Permission Groups",
    "description": "Get Permission Group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_permission_groups",
    "display_name": "List Permission Groups",
    "category": "Permission Groups",
    "description": "List Permission Groups",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_permission_group",
    "display_name": "Update Permission Group",
    "category": "Permission Groups",
    "description": "Update Permission Group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_product",
    "display_name": "Create Product",
    "category": "Products",
    "description": "Create Product",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_product",
    "display_name": "Delete Product",
    "category": "Products",
    "description": "Delete Product",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product",
    "display_name": "Get Product",
    "category": "Products",
    "description": "Get Product",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product_preferences",
    "display_name": "Get Product Preferences",
    "category": "Products",
    "description": "Get Product Preferences",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_products",
    "display_name": "List Products",
    "category": "Products",
    "description": "List Products",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_product",
    "display_name": "Update Product",
    "category": "Products",
    "description": "Update Product",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_product_preferences",
    "display_name": "Update Product Preferences",
    "category": "Products",
    "description": "Update Product Preferences",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_proxy_profile",
    "display_name": "Create Proxy Profile",
    "category": "Proxy Profiles",
    "description": "Create Proxy Profile",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_proxy_profile",
    "display_name": "Delete Proxy Profile",
    "category": "Proxy Profiles",
    "description": "Delete Proxy Profile",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deselect_proxy_profile_sdk_keys",
    "display_name": "Deselect SDK keys",
    "category": "Proxy Profiles",
    "description": "Deselect SDK keys",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_proxy_profile_secret",
    "display_name": "Generate Secret",
    "category": "Proxy Profiles",
    "description": "Generate Secret",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_proxy_profile",
    "display_name": "Get Proxy Profile",
    "category": "Proxy Profiles",
    "description": "Get Proxy Profile",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_proxy_profile_sdk_keys",
    "display_name": "Get selected SDK keys",
    "category": "Proxy Profiles",
    "description": "Get selected SDK keys",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_proxy_profiles",
    "display_name": "List Proxy Profiles",
    "category": "Proxy Profiles",
    "description": "List Proxy Profiles",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_proxy_profile",
    "display_name": "Replace Proxy Profile",
    "category": "Proxy Profiles",
    "description": "Replace Proxy Profile",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "select_proxy_profile_sdk_keys",
    "display_name": "Select SDK keys",
    "category": "Proxy Profiles",
    "description": "Select SDK keys",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_proxy_profile",
    "display_name": "Update Proxy Profile",
    "category": "Proxy Profiles",
    "description": "Update Proxy Profile",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sdk_keys",
    "display_name": "Get SDK Key",
    "category": "SDK Keys",
    "description": "Get SDK Key",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_segment",
    "display_name": "Create Segment",
    "category": "Segments",
    "description": "Create Segment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_segment",
    "display_name": "Delete Segment",
    "category": "Segments",
    "description": "Delete Segment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segment",
    "display_name": "Get Segment",
    "category": "Segments",
    "description": "Get Segment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segments",
    "display_name": "List Segments",
    "category": "Segments",
    "description": "List Segments",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_segment",
    "display_name": "Update Segment",
    "category": "Segments",
    "description": "Update Segment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tag",
    "display_name": "Create Tag",
    "category": "Tags",
    "description": "Create Tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tag",
    "display_name": "Delete Tag",
    "category": "Tags",
    "description": "Delete Tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_settings_by_tag",
    "display_name": "List Settings by Tag",
    "category": "Tags",
    "description": "List Settings by Tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tag",
    "display_name": "Get Tag",
    "category": "Tags",
    "description": "Get Tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tags",
    "display_name": "List Tags",
    "category": "Tags",
    "description": "List Tags",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tag",
    "display_name": "Update Tag",
    "category": "Tags",
    "description": "Update Tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization_usage_and_quota",
    "display_name": "Get usage and quota",
    "category": "Usage&Quota",
    "description": "Get usage and quota",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webhook",
    "display_name": "Create Webhook",
    "category": "Webhooks",
    "description": "Create Webhook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook",
    "display_name": "Delete Webhook",
    "category": "Webhooks",
    "description": "Delete Webhook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webhook",
    "display_name": "Get Webhook",
    "category": "Webhooks",
    "description": "Get Webhook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webhook_signing_keys",
    "display_name": "Get Webhook Signing Keys",
    "category": "Webhooks",
    "description": "Get Webhook Signing Keys",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webhooks",
    "display_name": "List Webhooks",
    "category": "Webhooks",
    "description": "List Webhooks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replace_webhook",
    "display_name": "Replace Webhook",
    "category": "Webhooks",
    "description": "Replace Webhook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_webhook",
    "display_name": "Update Webhook",
    "category": "Webhooks",
    "description": "Update Webhook",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_staleflags",
    "display_name": "List Zombie (stale) flags for Product",
    "category": "Zombie (stale) flags",
    "description": "List Zombie (stale) flags for Product",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

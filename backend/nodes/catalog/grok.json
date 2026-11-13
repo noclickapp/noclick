@@ -24,147 +24,168 @@
    "display_name": null,
    "category": null,
    "description": "Read the authenticated user's ID, team and zero data retention status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_models",
    "display_name": null,
    "category": null,
    "description": "List the models available to this key, including pricing metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_language_models",
    "display_name": null,
    "category": null,
    "description": "List chat and image-understanding model modalities and aliases.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_model",
    "display_name": null,
    "category": null,
    "description": "Retrieve a model's information and pricing.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_chat_completion",
    "display_name": null,
    "category": null,
    "description": "Generate a non-streaming chat completion from text messages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_response",
    "display_name": null,
    "category": null,
    "description": "Generate a stored text response, optionally continuing an existing response.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_response",
    "display_name": null,
    "category": null,
    "description": "Retrieve a response created with storage enabled.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_response",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a stored response.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_response_inputs",
    "display_name": null,
    "category": null,
    "description": "Read one page of a stored response's input items; use last_id as after.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_embeddings",
    "display_name": null,
    "category": null,
    "description": "Embed one or more texts, returning numeric vectors.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_image",
    "display_name": null,
    "category": null,
    "description": "Generate images as URLs. Enable deferred to obtain a request ID to poll.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_image_result",
    "display_name": null,
    "category": null,
    "description": "Poll one deferred image job; HTTP 202 means it is still pending.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_video",
    "display_name": null,
    "category": null,
    "description": "Start text-to-video generation; poll the returned request_id separately.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_video_result",
    "display_name": null,
    "category": null,
    "description": "Poll one video job; surface pending and failed jobs without retrying.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tokenize_text",
    "display_name": null,
    "category": null,
    "description": "Count and inspect a model's tokens for text.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_files",
    "display_name": null,
    "category": null,
    "description": "Read one team file page. A full page may have more; pass pagination_token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file",
    "display_name": null,
    "category": null,
    "description": "Retrieve metadata for one team file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_file",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a team file and its attachment availability.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_file_public_url",
    "display_name": null,
    "category": null,
    "description": "Publish an unauthenticated URL for a file; anyone with it can read it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "revoke_file_public_url",
    "display_name": null,
    "category": null,
    "description": "Revoke the file's public URL while retaining its authenticated content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_file",
    "display_name": "On New File",
    "category": "Triggers",
    "description": "Watch team files created after activation; existing files form a baseline.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -27,21 +27,24 @@
    "display_name": "Read Protected Managed Domain Catalog",
    "category": "DNS Made Easy Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain",
    "display_name": "Get Managed Domain Metadata",
    "category": "DNS Made Easy Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_records",
    "display_name": "Read Domain DNS Record Metadata",
    "category": "DNS Made Easy Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

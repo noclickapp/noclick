@@ -34,91 +34,104 @@
    "display_name": "List Accessible Brands",
    "category": "Brands",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_default_brand",
    "display_name": "Get Default Brand Metadata",
    "category": "Brands",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_social_timeline",
    "display_name": "Get Social Post Timeline",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_instagram_posts",
    "display_name": "List Instagram Post Analytics",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_facebook_posts",
    "display_name": "List Facebook Post Analytics",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_linkedin_posts",
    "display_name": "List LinkedIn Post Analytics",
    "category": "Analytics",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_scheduler_posts",
    "display_name": "List Scheduler Post Metadata",
    "category": "Scheduler",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_scheduler_post",
    "display_name": "Get Scoped Scheduler Post",
    "category": "Scheduler",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_scheduler_counters",
    "display_name": "Get Publishing Counters",
    "category": "Scheduler",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_library_states",
    "display_name": "List Library Workflow States",
    "category": "Scheduler",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_draft",
    "display_name": "Create Unpublished Facebook Draft",
    "category": "Drafts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_draft",
    "display_name": "Update Unpublished Draft Text",
    "category": "Drafts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_draft",
    "display_name": "Delete Unpublished Draft",
    "category": "Drafts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

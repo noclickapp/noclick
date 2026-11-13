@@ -22,112 +22,128 @@
    "display_name": null,
    "category": null,
    "description": "Return definitions for a word.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_examples",
    "display_name": null,
    "category": null,
    "description": "Returns examples for a word.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_related_words",
    "display_name": null,
    "category": null,
    "description": "Given a word as a string, returns relationships from the Word Graph.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_word_of_the_day",
    "display_name": null,
    "category": null,
    "description": "Returns a specific WordOfTheDay.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_words",
    "display_name": null,
    "category": null,
    "description": "Searches words.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reverse_dictionary",
    "display_name": null,
    "category": null,
    "description": "Reverse dictionary search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_random_word",
    "display_name": null,
    "category": null,
    "description": "Returns a single random WordObject.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_random_words",
    "display_name": null,
    "category": null,
    "description": "Returns an array of random WordObjects.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_text_pronunciations",
    "display_name": null,
    "category": null,
    "description": "Returns text pronunciations for a given word.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_audio",
    "display_name": null,
    "category": null,
    "description": "Fetches audio metadata for a word..",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_etymologies",
    "display_name": null,
    "category": null,
    "description": "Fetches etymology data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_hyphenation",
    "display_name": null,
    "category": null,
    "description": "Returns syllable information for a word.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_word_frequency",
    "display_name": null,
    "category": null,
    "description": "Returns word usage over time.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_phrases",
    "display_name": null,
    "category": null,
    "description": "Fetches bi-gram phrases for a word.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_top_example",
    "display_name": null,
    "category": null,
    "description": "Returns a top example for a word.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_scrabble_score",
    "display_name": null,
    "category": null,
    "description": "Returns the Scrabble score for a word.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

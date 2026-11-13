@@ -34,693 +34,792 @@
    "display_name": "List addresses for a customer",
    "category": "Addresses",
    "description": "Returns a paginated list of addresses for a customer. Use the query parameters to page through results. By default, Paddle returns addresses that are `active`. Use the `status` query parameter to return addresses that are archived. Required API key permission: address.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_address",
    "display_name": "Create an address for a customer",
    "category": "Addresses",
    "description": "Creates a new address for a customer. For tax calculation, fraud prevention, and compliance purposes, you must include a `postal_code` when creating addresses for some countries. For example, ZIP codes in the USA and postcodes in the UK. See: [Supported countries](https://developer.paddle.com/concep Required API key permission: address.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_address",
    "display_name": "Get an address for a customer",
    "category": "Addresses",
    "description": "Returns an address for a customer using its ID and related customer ID. Required API key permission: address.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_address",
    "display_name": "Update an address for a customer",
    "category": "Addresses",
    "description": "Updates an address for a customer using its ID and related customer ID. If successful, your response includes a copy of the updated address entity. Required API key permission: address.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_adjustments",
    "display_name": "List adjustments",
    "category": "Adjustments",
    "description": "Returns a paginated list of adjustments. Use the query parameters to page through results. Required API key permission: adjustment.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_adjustment",
    "display_name": "Create an adjustment",
    "category": "Adjustments",
    "description": "Creates an adjustment for one or more transaction items. You can create adjustments to refund or credit all or part of a transaction and its items: * Refunds return an amount to a customer's original payment method. You can create refund adjustments for transactions that are `completed`. * Credits r Required API key permission: adjustment.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_adjustment_credit_note",
    "display_name": "Get a PDF credit note for an adjustment",
    "category": "Adjustments",
    "description": "Returns a link to a credit note PDF for an adjustment. Credit note PDFs are created for refunds and credits as a record of an adjustment. The link returned is not a permanent link. It expires after an hour. Required API key permission: adjustment.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_businesses",
    "display_name": "List businesses for a customer",
    "category": "Businesses",
    "description": "Returns a paginated list of businesses for a customer. Use the query parameters to page through results. By default, Paddle returns businesses that are `active`. Use the `status` query parameter to return businesses that are archived. Required API key permission: business.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_business",
    "display_name": "Create a business for a customer",
    "category": "Businesses",
    "description": "Creates a new business for a customer. If successful, your response includes a copy of the new business entity. Required API key permission: business.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_business",
    "display_name": "Get a business for a customer",
    "category": "Businesses",
    "description": "Returns a business for a customer using its ID and related customer ID. Required API key permission: business.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_business",
    "display_name": "Update a business for a customer",
    "category": "Businesses",
    "description": "Updates a business for a customer using its ID and related customer ID. If successful, your response includes a copy of the updated business entity. Required API key permission: business.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_checkout_domains",
    "display_name": "List checkout domains",
    "category": "Checkout domains",
    "description": "Returns a paginated list of checkout domains submitted for your account. Use the query parameters to page through results. Required API key permission: checkout_domain.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_checkout_domain",
    "display_name": "Get a checkout domain",
    "category": "Checkout domains",
    "description": "Returns a checkout domain using its ID. The response includes the domain's approval status and payment method verification details. Required API key permission: checkout_domain.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_checkout_domain",
    "display_name": "Delete a checkout domain",
    "category": "Checkout domains",
    "description": "Deletes a checkout domain using its ID. Deleted checkout domains are no longer able to be used to load checkouts for your account. Required API key permission: checkout_domain.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "verify_checkout_domain_payment_method",
    "display_name": "Verify a payment method for a checkout domain",
    "category": "Checkout domains",
    "description": "Triggers payment method verification for a checkout domain. Currently supports Apple Pay only. Before verifying, the checkout domain must be in `approved` status and the domain association file must be correctly hosted. Required API key permission: checkout_domain.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_client_tokens",
    "display_name": "List client-side tokens",
    "category": "Client tokens",
    "description": "Returns a paginated list of client-side tokens. Use the query parameters to [page through results](https://developer.paddle.com/api-reference/about/pagination). Required API key permission: client_token.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_client_token",
    "display_name": "Create a client-side token",
    "category": "Client tokens",
    "description": "Creates a new client-side token. If successful, your response includes a copy of the new client-side token entity. Required API key permission: client_token.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_client_token",
    "display_name": "Get a client-side token",
    "category": "Client tokens",
    "description": "Returns a client-side token using its ID. Required API key permission: client_token.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_client_token",
    "display_name": "Update a client-side token",
    "category": "Client tokens",
    "description": "Updates a client-side token using its ID. You can revoke a client-side token by changing its `status` to `revoked`. Client-side tokens that are revoked can't be updated to `active`. If successful, your response includes a copy of the updated client-side token entity. Required API key permission: client_token.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customers",
    "display_name": "List customers",
    "category": "Customers",
    "description": "Returns a paginated list of customers. Use the query parameters to page through results. By default, Paddle returns customers that are `active`. Use the `status` query parameter to return customers that are archived. Required API key permission: customer.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer",
    "display_name": "Create a customer",
    "category": "Customers",
    "description": "Creates a new customer. If successful, your response includes a copy of the new customer entity. Required API key permission: customer.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer",
    "display_name": "Get a customer",
    "category": "Customers",
    "description": "Returns a customer using its ID. Required API key permission: customer.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer",
    "display_name": "Update a customer",
    "category": "Customers",
    "description": "Updates a customer using its ID. If successful, your response includes a copy of the updated customer entity. Required API key permission: customer.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credit_balances",
    "display_name": "List credit balances for a customer",
    "category": "Customers",
    "description": "Returns a list of credit balances for each currency for a customer. Each balance has three totals: * `available`: total available to use. * `reserved`: total temporarily reserved for billed transactions. * `used`: total amount of credit used. Credit is added to the `available` total initially. When  Required API key permission: customer.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_customer_authentication_token",
    "display_name": "Generate an authentication token for a customer",
    "category": "Customers",
    "description": "Generates an authentication token for a customer. You can pass a generated authentication token to Paddle.js when opening a checkout to let customers work with saved payment methods. Authentication tokens are temporary and shouldn't be cached. They're valid until the `expires_at` date returned in th Required API key permission: customer_auth_token.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer_portal_session",
    "display_name": "Create a customer portal session",
    "category": "Customer portals",
    "description": "Creates a customer portal session for a customer. The [customer portal](https://developer.paddle.com/concepts/customer-portal) is a secure, Paddle-hosted site that allows customers to manage their own subscriptions, payments, and account information without you having to build custom billing screens Required API key permission: customer_portal_session.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_discount_groups",
    "display_name": "List discount groups",
    "category": "Discount groups",
    "description": "Returns a paginated list of discount groups. Use the query parameters to page through results. Required API key permission: discount.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_discount_group",
    "display_name": "Create a discount group",
    "category": "Discount groups",
    "description": "Creates a new discount group. If successful, your response includes a copy of the new discount group entity. Required API key permission: discount.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_discount_group",
    "display_name": "Get a discount group",
    "category": "Discount groups",
    "description": "Returns a discount group using its ID. Required API key permission: discount.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_discount_group",
    "display_name": "Update a discount group",
    "category": "Discount groups",
    "description": "Updates a discount group using its ID. If successful, your response includes a copy of the updated discount group entity. Required API key permission: discount.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_discounts",
    "display_name": "List discounts",
    "category": "Discounts",
    "description": "Returns a paginated list of discounts. Use the query parameters to page through results. By default, Paddle returns discounts that are `active`. Use the `status` query parameter to return discounts that are archived or expired. Required API key permission: discount.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_discount",
    "display_name": "Create a discount",
    "category": "Discounts",
    "description": "Creates a new discount. If successful, your response includes a copy of the new discount entity. Required API key permission: discount.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_discount",
    "display_name": "Get a discount",
    "category": "Discounts",
    "description": "Returns a discount using its ID. Required API key permission: discount.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_discount",
    "display_name": "Update a discount",
    "category": "Discounts",
    "description": "Updates a discount using its ID. If successful, your response includes a copy of the updated discount entity. To update a checkout recovery discount, configure your checkout recovery settings in the dashboard. Required API key permission: discount.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_event_types",
    "display_name": "List events types",
    "category": "Event types",
    "description": "Returns a list of event types. The response is not paginated.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": "List events",
    "category": "Events",
    "description": "Returns a paginated list of events that have occurred in the last 90 days. Use the query parameters to page through results. Events older than 90 days aren't retained. This is sometimes referred to as \"the event stream.\" Required API key permission: notification.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ip_addresses",
    "display_name": "Get Paddle IP addresses",
    "category": "IP addresses",
    "description": "Returns Paddle IP addresses. You can add these IP addresses to your allowlist. IP addresses returned are for the environment that you're making the request in. For example, making the request to the production base URL returns all production IP addresses.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metrics_monthly_recurring_revenue",
    "display_name": "Get MRR (monthly recurring revenue) metrics",
    "category": "Metrics",
    "description": "Returns timeseries data for monthly recurring revenue in a given date range. Trends have a daily granularity. Current monthly recurring revenue total. Includes new subscriptions, upgrades, downgrades and churn. Does not include one-time payments or deductions for Paddle fees. When `to` and `from` ar Required API key permission: metrics.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metrics_active_subscribers",
    "display_name": "Get active subscribers metrics",
    "category": "Metrics",
    "description": "Returns timeseries data for active subscriber counts in a given date range. Trends have a daily granularity. Current number of paying users with active subscriptions (does not include trialling users). When `to` and `from` are the same, returns an empty timeseries. Required API key permission: metrics.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metrics_monthly_recurring_revenue_change",
    "display_name": "Get MRR change (monthly recurring revenue change) metrics",
    "category": "Metrics",
    "description": "Returns timeseries data for monthly recurring revenue change in a given date range. Trends have a daily granularity. Monthly recurring revenue (MRR) change compared to the same time interval last month. When `to` and `from` are the same, returns an empty timeseries. Required API key permission: metrics.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metrics_revenue",
    "display_name": "Get net revenue metrics",
    "category": "Metrics",
    "description": "Returns timeseries data for revenue in a given date range. Trends have a daily granularity. Net revenue from completed payments (e.g. single purchase, subscription, B2B invoices) after tax & fees have been deducted, but before adjustments such as refunds or chargebacks. When `to` and `from` are the  Required API key permission: metrics.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metrics_refunds",
    "display_name": "Get refund metrics",
    "category": "Metrics",
    "description": "Returns timeseries data for refunds in a given date range. Trends have a daily granularity. The transaction subtotal (base cost minus discounts excluding taxes and fees) of refunded products returned to the customer. This does not include chargebacks. When `to` and `from` are the same, returns an em Required API key permission: metrics.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metrics_chargebacks",
    "display_name": "Get chargeback metrics",
    "category": "Metrics",
    "description": "Returns timeseries data for chargebacks in a given date range. Trends have a daily granularity. Total number of chargebacks received for the period. Does not include pre-chargeback alerts or chargeback reversals. When `to` and `from` are the same, returns an empty timeseries. Required API key permission: metrics.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metrics_checkout_conversion",
    "display_name": "Get checkout conversion metrics",
    "category": "Metrics",
    "description": "Returns timeseries data for checkout conversion in a given date range. Trends have a daily granularity. The conversion rate for checkouts in the period. A checkout is considered converted when a payment is successfully completed. When `to` and `from` are the same, returns an empty timeseries. Required API key permission: metrics.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_notification_settings",
    "display_name": "List notification settings",
    "category": "Notification settings",
    "description": "Returns a paginated list of notification settings (notification destinations). Required API key permission: notification_setting.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_notification_setting",
    "display_name": "Create a notification setting",
    "category": "Notification settings",
    "description": "Creates a new notification setting (notification destination). Pass an array of event type names to `subscribed_events` to say which events you'd like to subscribe to. Paddle responds with the full event type object for each event type. If successful, your response includes a copy of the new notific Required API key permission: notification_setting.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_notification_setting",
    "display_name": "Get a notification setting",
    "category": "Notification settings",
    "description": "Returns a notification setting (notification destination) using its ID. Required API key permission: notification_setting.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_notification_setting",
    "display_name": "Update a notification setting",
    "category": "Notification settings",
    "description": "Updates a notification setting (notification destination) using its ID. When updating subscribed events, send the complete list of event types that you'd like to subscribe to — including existing event types. If you omit event types, they're removed from the notification setting. You only need to pa Required API key permission: notification_setting.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_notification_setting",
    "display_name": "Delete a notification setting",
    "category": "Notification settings",
    "description": "Deletes a notification setting (notification destination) using its ID. When you delete a notification setting, it's permanently removed from your account. Paddle stops sending events to your destination, and you'll lose access to all the logs for this notification setting. There's no way to recover Required API key permission: notification_setting.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_notifications",
    "display_name": "List notifications",
    "category": "Notifications",
    "description": "Returns a paginated list of notifications created in the last 90 days. Use the query parameters to page through results. Notifications older than 90 days aren't retained. Required API key permission: notification.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_notification",
    "display_name": "Get a notification",
    "category": "Notifications",
    "description": "Returns a notification using its ID. Notifications older than 90 days aren't retained. If you try to get a notification that's no longer retained, Paddle returns an error. Required API key permission: notification.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_notification_logs",
    "display_name": "List logs for a notification",
    "category": "Notification logs",
    "description": "Returns a paginated list of notification logs for a notification. A log includes information about delivery attempts, including failures. Notifications older than 90 days aren't retained. If you try to list logs for a notification that's no longer retained, Paddle returns an error. Required API key permission: notification.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replay_notification",
    "display_name": "Replay a notification",
    "category": "Notifications",
    "description": "Attempts to resend a `delivered` or `failed` notification using its ID. Paddle creates a new notification entity for the replay, related to the same `event_id`. Your response includes the new `notification_id` of the created notification. Notifications older than 90 days aren't retained. If you try  Required API key permission: notification.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_payment_methods",
    "display_name": "List payment methods for a customer",
    "category": "Payment methods",
    "description": "Returns a paginated list of payment methods that a customer has saved. Use the query parameters to page through results. Customers can choose to save payment methods when purchasing one-time items and subscriptions by checking a box when completing checkout. You can present customers with their save Required API key permission: payment_method.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer_payment_method",
    "display_name": "Get a payment method for a customer",
    "category": "Payment methods",
    "description": "Returns a payment method for a customer using its ID and related customer ID. Required API key permission: payment_method.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_customer_payment_method",
    "display_name": "Delete a payment method for a customer",
    "category": "Payment methods",
    "description": "Deletes a customer payment method using its ID. Deleted payment methods are no longer saved and presented to the customer for future purchases. Saved payment methods can't be deleted if tied to an `active`, `trialing`, `paused`, or `past_due` subscription. Update the subscription's payment method fi Required API key permission: payment_method.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_prices",
    "display_name": "List prices",
    "category": "Prices",
    "description": "Returns a paginated list of prices. Use the query parameters to page through results. By default, Paddle returns prices that are `active`. Use the `status` query parameter to return prices that are archived. Use the `include` parameter to include the related product entity in the response. Required API key permission: price.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_price",
    "display_name": "Create a price",
    "category": "Prices",
    "description": "Creates a new price. Prices describe how you charge for products. You must include a `product_id` in your request to relate this price to a product. If you omit the `quantity` object, Paddle automatically sets a minimum of `1` and a maximum of `100` for you. This means the most units that a customer Required API key permission: price.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_price",
    "display_name": "Get a price",
    "category": "Prices",
    "description": "Returns a price using its ID. Use the `include` parameter to include the related product entity in the response. Required API key permission: price.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_price",
    "display_name": "Update a price",
    "category": "Prices",
    "description": "Updates a price using its ID. If successful, your response includes a copy of the updated price entity. Required API key permission: price.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "preview_prices",
    "display_name": "Preview prices",
    "category": "Pricing preview",
    "description": "Previews calculations for one or more prices. Typically used for building pricing pages. You can provide location information when previewing prices. You must provide this if you want Paddle to calculate tax or [automatically localize prices](https://developer.paddle.com/build/products/offer-localiz Required API key permission: transaction.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_products",
    "display_name": "List products",
    "category": "Products",
    "description": "Returns a paginated list of products. Use the query parameters to page through results. By default, Paddle returns products that are `active`. Use the `status` query parameter to return products that are archived. Use the `include` parameter to include related price entities in the response. Required API key permission: product.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_product",
    "display_name": "Create a product",
    "category": "Products",
    "description": "Creates a new product. Paddle does not upload product images to a CDN. For `image_url`, you should host images on an HTTPS server that's publicly accessible. We recommend using square images (`1:1` ratio). If successful, your response includes a copy of the new product entity. Required API key permission: product.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product",
    "display_name": "Get a product",
    "category": "Products",
    "description": "Returns a product using its ID. Use the `include` parameter to include related price entities in the response. Required API key permission: product.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_product",
    "display_name": "Update a product",
    "category": "Products",
    "description": "Updates a product using its ID. Paddle does not upload product images to a CDN. For `image_url`, you should host images on an HTTPS server that's publicly accessible. We recommend using square images (`1:1` ratio). If successful, your response includes a copy of the updated product entity. Required API key permission: product.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_reports",
    "display_name": "List reports",
    "category": "Reports",
    "description": "Returns a paginated list of reports. Use the query parameters to page through results. By default, Paddle returns reports that are `pending` or `ready`. Use the `status` query parameter to return reports that are `failed`, `expired`, or `deleted`. Required API key permission: report.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_report",
    "display_name": "Create a report",
    "category": "Reports",
    "description": "Creates a new report. Reports are created as `pending` initially while Paddle generates your report. They move to `ready` when they're ready to download. You can download a report when it's ready using the [get a CSV file for a report operation](https://developer.paddle.com/api-reference/reports/get Required API key permission: report.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_report",
    "display_name": "Get a report",
    "category": "Reports",
    "description": "Returns a report using its ID. Required API key permission: report.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_report_csv",
    "display_name": "Get a CSV file for a report",
    "category": "Reports",
    "description": "Returns a link to a CSV file for a report. Only returned for reports that are `ready`. This means Paddle has completed processing the report and it's ready to download. The link returned is not a permanent link. It expires after 3 minutes. Required API key permission: report.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_simulation_types",
    "display_name": "List simulation types",
    "category": "Simulation types",
    "description": "Returns a list of simulation types (events and scenarios) that you can choose from when creating simulations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_simulations",
    "display_name": "List simulations",
    "category": "Simulations",
    "description": "Returns a paginated list of simulations. Use the query parameters to [page through results](https://developer.paddle.com/api-reference/about/pagination). Required API key permission: notification_simulation.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_simulation",
    "display_name": "Create a simulation",
    "category": "Simulations",
    "description": "Creates a new simulation for a notification setting (notification destination). simulated webhook payloads with real data. The API key making the request needs read permissions: * For the entities you provided, or the request fails. * For related entities which aren't nested in the entities you prov Required API key permission: notification_simulation.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_simulation",
    "display_name": "Get a simulation",
    "category": "Simulations",
    "description": "Returns a simulation using its ID. Required API key permission: notification_simulation.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_simulation",
    "display_name": "Update a simulation",
    "category": "Simulations",
    "description": "Updates a simulation using its ID. For scenario simulations, you can optionally include a `config.entities` object in the request body with entity IDs to populate simulated webhook payloads with real data. The API key making the request needs read permissions: * For the entities you provided, or the Required API key permission: notification_simulation.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_simulation_runs",
    "display_name": "List runs for a simulation",
    "category": "Simulation runs",
    "description": "Returns a paginated list of simulation runs. Use the query parameters to [page through results](https://developer.paddle.com/api-reference/about/pagination). Use the `include` parameter to [include related entities](https://developer.paddle.com/api-reference/about/include-entities) in the response. Required API key permission: notification_simulation.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_simulation_run",
    "display_name": "Create a run for a simulation",
    "category": "Simulation runs",
    "description": "Creates a new simulation run for a simulation. If successful, your response includes a copy of the new simulation run entity. Required API key permission: notification_simulation.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_simulation_run",
    "display_name": "Get a run for a simulation",
    "category": "Simulation runs",
    "description": "Returns a simulation run using its ID. Use the `include` parameter to include related entities in the response. Required API key permission: notification_simulation.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_simulations_events",
    "display_name": "List events for a simulation run",
    "category": "Simulation run events",
    "description": "Returns a paginated list of simulations. Use the query parameters to [page through results](https://developer.paddle.com/api-reference/about/pagination). Required API key permission: notification_simulation.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_simulation_event",
    "display_name": "Get an event for a simulation run",
    "category": "Simulation run events",
    "description": "Returns a simulation event using its ID. Required API key permission: notification_simulation.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "replay_simulation_run_event",
    "display_name": "Replay an event for a simulation run",
    "category": "Simulation run events",
    "description": "Attempts to resend a simulation run log using its ID. Paddle creates a new simulation run log entity for the replay, related to the same simulation run. If successful, your response includes the new simulation run log entity. Required API key permission: notification_simulation.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_subscription_history",
    "display_name": "List history for a subscription",
    "category": "Subscription history",
    "description": "Returns a paginated list of history entries for a subscription. Use the query parameters to filter and page through results. Subscription history records the changes made to a subscription over its lifetime, so you can see what changed, when it happened, where it originated, and who made the change. Required API key permission: subscription_history.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_subscriptions",
    "display_name": "List subscriptions",
    "category": "Subscriptions",
    "description": "Returns a paginated list of subscriptions. Use the query parameters to page through results. Required API key permission: subscription.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscription",
    "display_name": "Get a subscription",
    "category": "Subscriptions",
    "description": "Returns a subscription using its ID. Use the `include` parameter to include transaction information in the response. Required API key permission: subscription.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_subscription",
    "display_name": "Update a subscription",
    "category": "Subscriptions",
    "description": "Updates a subscription using its ID. When making changes to items or the next billing date for a subscription, you must include the `proration_billing_mode` field to tell Paddle how to bill for those changes. Send the complete list of items that you'd like to be on a subscription — including existin Required API key permission: subscription.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_subscription",
    "display_name": "Cancel a subscription",
    "category": "Subscriptions",
    "description": "Cancels a subscription using its ID. By default, active subscriptions are canceled at the end of the billing period. When you send a request to cancel, Paddle creates a `scheduled_change` against the subscription entity to say that it should cancel at the end of the current billing period. Its `stat Required API key permission: subscription.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pause_subscription",
    "display_name": "Pause a subscription",
    "category": "Subscriptions",
    "description": "Pauses a subscription using its ID. By default, subscriptions are paused at the end of the billing period. When you send a request to pause, Paddle creates a `scheduled_change` against the subscription entity to say that it should pause at the end of the current billing period. Its `status` remains  Required API key permission: subscription.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_subscription",
    "display_name": "Resume a paused subscription",
    "category": "Subscriptions",
    "description": "Resumes a paused subscription using its ID. Only `paused` subscriptions can be resumed. If an `active` subscription has a scheduled change to pause in the future, use this operation to set or change the resume date. You can't resume a `canceled` subscription. On resume, Paddle bills for a subscripti Required API key permission: subscription.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "activate_subscription",
    "display_name": "Activate a trialing subscription",
    "category": "Subscriptions",
    "description": "Activates a trialing subscription using its ID. Only automatically-collected subscriptions where the status is `trialing` can be activated. On activation, Paddle bills for a subscription immediately. Subscription billing dates are recalculated based on the activation date (the time the activation re Required API key permission: subscription.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscription_update_payment_method_transaction",
    "display_name": "Get a transaction to update payment method",
    "category": "Subscriptions",
    "description": "Returns a transaction that you can pass to a checkout to let customers update their payment details. Only for subscriptions where `collection_mode` is `automatic`. The transaction returned depends on the status of the related subscription: * Where a subscription is `past_due`, it returns the most re Required API key permission: transaction.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "preview_subscription_update",
    "display_name": "Preview an update to a subscription",
    "category": "Subscriptions",
    "description": "Previews an update for a subscription without applying those changes. Typically used for previewing proration before making changes to a subscription. If successful, your response includes `immediate_transaction`, `next_transaction`, and `recurring_transaction_details` so you can see expected transa Required API key permission: subscription.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_subscription_charge",
    "display_name": "Create a one-time charge for a subscription",
    "category": "Subscriptions",
    "description": "Creates a new one-time charge for a subscription. Use to bill non-recurring items to a subscription. Non-recurring items are price entities where the `billing_cycle` is `null`. If successful, Paddle responds with the updated subscription entity. However, one-time charges aren't held against the subs Required API key permission: subscription.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "preview_subscription_charge",
    "display_name": "Preview a one-time charge for a subscription",
    "category": "Subscriptions",
    "description": "Previews creating a one-time charge for a subscription without billing that charge. Typically used for previewing calculations before making changes to a subscription. One-time charges are non-recurring items. These are price entities where the `billing_cycle` is `null`. If successful, your response Required API key permission: subscription.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transactions",
    "display_name": "List transactions",
    "category": "Transactions",
    "description": "Returns a paginated list of transactions. Use the query parameters to page through results. Use the `include` parameter to include related entities in the response. Required API key permission: transaction.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_transaction",
    "display_name": "Create a transaction",
    "category": "Transactions",
    "description": "Creates a new transaction. Transactions are typically created with the status of `draft` or `ready` initially: * Draft transactions have `items` against them, but don't have all of the required fields for billing. Paddle creates draft transactions automatically when a checkout is opened. * Paddle au Required API key permission: transaction.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transaction",
    "display_name": "Get a transaction",
    "category": "Transactions",
    "description": "Returns a transaction using its ID. Use the `include` parameter to include related entities in the response. Required API key permission: transaction.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_transaction",
    "display_name": "Update a transaction",
    "category": "Transactions",
    "description": "Updates a transaction using its ID. You can update transactions that are `draft` or `ready`. `billed` and `completed` transactions are considered records for tax and legal purposes, so they can't be changed. You can either: * Create [an adjustment](https://developer.paddle.com/api-reference/adjustme Required API key permission: transaction.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "preview_transaction_create",
    "display_name": "Preview a transaction",
    "category": "Transactions",
    "description": "Previews a transaction without creating a transaction entity. Typically used for creating more advanced, dynamic pricing pages where users can build their own plans. Consider using [the preview prices operation](https://developer.paddle.com/api-reference/pricing-preview/preview-prices) for simpler p Required API key permission: transaction.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "revise_transaction",
    "display_name": "Revise customer information on a billed or completed transaction",
    "category": "Transactions",
    "description": "Revises customer information for a billed or completed transaction. Revise a transaction to rectify incorrect customer, address, or business information on invoice documents generated by Paddle. You can revise transaction details that don't impact the tax rates on a transaction. This includes: * Cus Required API key permission: transaction.write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transaction_invoice",
    "display_name": "Get a PDF invoice for a transaction",
    "category": "Transactions",
    "description": "Returns a link to an invoice PDF for a transaction. Invoice PDFs are available for both automatically and manually-collected transactions: * The PDF for manually-collected transactions includes payment terms, purchase order number, and notes for your customer. It's a demand for payment from your cus Required API key permission: transaction.read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

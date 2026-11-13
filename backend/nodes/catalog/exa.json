@@ -34,175 +34,204 @@
    "display_name": "Search",
    "category": "Search",
    "description": "Search the web with Exa's neural/keyword/auto search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_contents",
    "display_name": "Get Contents",
    "category": "Search",
    "description": "Retrieve clean, LLM-ready parsed content for a list of URLs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "answer",
    "display_name": "Answer",
    "category": "Search",
    "description": "Get an LLM-generated answer grounded with citations from an Exa search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "find_similar",
    "display_name": "Find Similar",
    "category": "Search",
    "description": "Find pages semantically similar to a given URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "create_agent_run",
    "display_name": "Create Agent Run",
    "category": "Agent",
    "description": "Create an asynchronous Agent run for deep research, list-building, or enrichment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_agent_run",
    "display_name": "Get Agent Run",
    "category": "Agent",
    "description": "Retrieve an Agent run by ID (status, output, citations).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_agent_runs",
    "display_name": "List Agent Runs",
    "category": "Agent",
    "description": "Retrieve a paginated list of Agent runs for your team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_agent_run",
    "display_name": "Cancel Agent Run",
    "category": "Agent",
    "description": "Cancel a queued or running Agent run.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_monitor",
    "display_name": "Create Monitor",
    "category": "Monitors",
    "description": "Create a Monitor that runs a recurring Exa search and delivers results to a webhook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_monitors",
    "display_name": "List Monitors",
    "category": "Monitors",
    "description": "List all monitors for the authenticated team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_monitor",
    "display_name": "Get Monitor",
    "category": "Monitors",
    "description": "Retrieve a single monitor by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_monitor",
    "display_name": "Update Monitor",
    "category": "Monitors",
    "description": "Update an existing monitor (schedule, search config).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_monitor",
    "display_name": "Delete Monitor",
    "category": "Monitors",
    "description": "Delete a monitor (irreversible).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "trigger_monitor",
    "display_name": "Trigger Monitor",
    "category": "Monitors",
    "description": "Trigger a monitor run immediately regardless of schedule.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_monitor_runs",
    "display_name": "List Monitor Runs",
    "category": "Monitors",
    "description": "List runs for a monitor (reverse-chronological).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webset",
    "display_name": "Create Webset",
    "category": "Websets",
    "description": "Create a Webset (search + optional enrichment); begins processing automatically.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webset",
    "display_name": "Get Webset",
    "category": "Websets",
    "description": "Retrieve a Webset by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_websets",
    "display_name": "List Websets",
    "category": "Websets",
    "description": "List all Websets for the team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_webset",
    "display_name": "Update Webset",
    "category": "Websets",
    "description": "Update a Webset's metadata/configuration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webset",
    "display_name": "Delete Webset",
    "category": "Websets",
    "description": "Delete a Webset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webset_items",
    "display_name": "List Webset Items",
    "category": "Websets",
    "description": "List the verified/enriched result items in a Webset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webset_enrichment",
    "display_name": "Create Webset Enrichment",
    "category": "Websets",
    "description": "Add an enrichment column (extract/classify a field) to a Webset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webset_webhook",
    "display_name": "Create Webset Webhook",
    "category": "Websets",
    "description": "Register a webhook to receive Websets event notifications.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_websets_events",
    "display_name": "List Websets Events",
    "category": "Websets",
    "description": "List events that have occurred (webset/item/enrichment lifecycle).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_monitor_results",
    "display_name": "On Monitor Results",
    "category": null,
    "description": "Fire the workflow when an Exa Monitor delivers new search results.\n\n    A Monitor (recurring scheduled search) is created via the Exa API and\n    configured to POST results to this node's webhook URL.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "exa_api_key",
+    "exa_mcp"
+   ]
   }
  ],
  "agent_tool_provider": true,

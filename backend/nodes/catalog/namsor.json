@@ -28,175 +28,200 @@
    "display_name": null,
    "category": null,
    "description": "Read API Key info.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_api_usage",
    "display_name": null,
    "category": null,
    "description": "Print current API usage.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "classify_name_type",
    "display_name": null,
    "category": null,
    "description": "Infer the likely type of a proper noun (personal name, brand name, place name etc.)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "classify_gender",
    "display_name": null,
    "category": null,
    "description": "Infer the likely gender of a name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "classify_gender_geo",
    "display_name": null,
    "category": null,
    "description": "Infer the likely gender of a name, given a local context (ISO2 country code).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "classify_gender_full",
    "display_name": null,
    "category": null,
    "description": "Infer the likely gender of a full name, ex. John H. Smith",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "classify_gender_full_geo",
    "display_name": null,
    "category": null,
    "description": "Infer the likely gender of a full name, given a local context (ISO2 country code).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "parse_name",
    "display_name": null,
    "category": null,
    "description": "Infer the likely first/last name structure of a name, ex. John Smith or SMITH, John or SMITH; John.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "parse_name_geo",
    "display_name": null,
    "category": null,
    "description": "Infer the likely first/last name structure of a name, ex. John Smith or SMITH, John or SMITH; John. For better accuracy, provide a geographic context.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "parse_chinese_name",
    "display_name": null,
    "category": null,
    "description": "Infer the likely first/last name structure of a name, ex. 王晓明 -> 王(surname) 晓明(given name)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "romanize_chinese_name",
    "display_name": null,
    "category": null,
    "description": "Romanize the Chinese name to Pinyin, ex. 王晓明 -> Wang (surname) Xiaoming (given name)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "match_chinese_name",
    "display_name": null,
    "category": null,
    "description": "Return a score for matching Chinese name ex. 王晓明 with a romanized name ex. Wang Xiaoming",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "parse_japanese_name",
    "display_name": null,
    "category": null,
    "description": "Infer the likely first/last name structure of a name, ex. 山本 早苗 or Yamamoto Sanae",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "japanese_kanji_candidates",
    "display_name": null,
    "category": null,
    "description": "Identify japanese name candidates in KANJI, based on the romanized name ex. Yamamoto Sanae",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "japanese_latin_candidates",
    "display_name": null,
    "category": null,
    "description": "Romanize japanese name, based on the name in Kanji.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "match_japanese_name",
    "display_name": null,
    "category": null,
    "description": "Return a score for matching Japanese name in KANJI ex. 山本 早苗 with a romanized name ex. Yamamoto Sanae",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "parse_names_batch",
    "display_name": null,
    "category": null,
    "description": "Infer the likely first/last name structure of a name, ex. John Smith or SMITH, John or SMITH; John.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "parse_names_geo_batch",
    "display_name": null,
    "category": null,
    "description": "Infer the likely first/last name structure of a name, ex. John Smith or SMITH, John or SMITH; John. Giving a local context improves precision.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "parse_chinese_names_batch",
    "display_name": null,
    "category": null,
    "description": "Infer the likely first/last name structure of a name, ex. 王晓明 -> 王(surname) 晓明(given name).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "romanize_chinese_names_batch",
    "display_name": null,
    "category": null,
    "description": "Romanize a list of Chinese name to Pinyin, ex. 王晓明 -> Wang (surname) Xiaoming (given name).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "parse_japanese_names_batch",
    "display_name": null,
    "category": null,
    "description": "Infer the likely first/last name structure of a name, ex. 山本 早苗 or Yamamoto Sanae",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "classify_gender_batch",
    "display_name": null,
    "category": null,
    "description": "Infer the likely gender of up to 100 names, detecting automatically the cultural context.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "classify_gender_full_batch",
    "display_name": null,
    "category": null,
    "description": "Infer the likely gender of up to 100 full names, detecting automatically the cultural context.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_learning",
    "display_name": null,
    "category": null,
    "description": "Activate/deactivate learning from a source.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_anonymization",
    "display_name": null,
    "category": null,
    "description": "Activate/deactivate anonymization for a source.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

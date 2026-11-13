@@ -22,175 +22,200 @@
    "display_name": null,
    "category": null,
    "description": "Get paginated list of customers",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer",
    "display_name": null,
    "category": null,
    "description": "Invite a new customer",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_customer",
    "display_name": null,
    "category": null,
    "description": "Get a customer information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer",
    "display_name": null,
    "category": null,
    "description": "Update a customer information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_accesses",
    "display_name": null,
    "category": null,
    "description": "Get paginated list of accesses",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "grant_access",
    "display_name": null,
    "category": null,
    "description": "Grant access to a customer",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_access",
    "display_name": null,
    "category": null,
    "description": "Get access by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "revoke_access",
    "display_name": null,
    "category": null,
    "description": "Revoke access by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subscription",
    "display_name": null,
    "category": null,
    "description": "Get a customer's active subscription",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_subscription",
    "display_name": null,
    "category": null,
    "description": "Create a subscription for a customer",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_subscription",
    "display_name": null,
    "category": null,
    "description": "Cancel a customer's active subscription",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invoices",
    "display_name": null,
    "category": null,
    "description": "Get paginated list of Invoices",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_invoice",
    "display_name": null,
    "category": null,
    "description": "Get invoice by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_offers",
    "display_name": null,
    "category": null,
    "description": "Get paginated list of offers",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_offer",
    "display_name": null,
    "category": null,
    "description": "Get an offer information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contents",
    "display_name": null,
    "category": null,
    "description": "Get paginated list of contents (videos, collections and live events) (alias for /programs)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_content",
    "display_name": null,
    "category": null,
    "description": "Get content information (video, collection or live event) (alias for /programs/{id})",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_playlist_items",
    "display_name": null,
    "category": null,
    "description": "Get list of playlist items (formerly known as chapters) and file resources (alias for /programs/{program_id}/chapters)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_content",
    "display_name": null,
    "category": null,
    "description": "Publish a video, collection or live event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unpublish_content",
    "display_name": null,
    "category": null,
    "description": "Unpublish a video, collection or live event",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_groups",
    "display_name": null,
    "category": null,
    "description": "Get paginated list of groups",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_group_members",
    "display_name": null,
    "category": null,
    "description": "Get paginated list of group members",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_group_member",
    "display_name": null,
    "category": null,
    "description": "Add a member to a group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_video_views",
    "display_name": null,
    "category": null,
    "description": "Get details on video views for a specific user, video, video collection or live event. Optionally filter by date range (default: last 12 months). The effective range is echoed back in the `X-Range-From` and `X-Range-To` response headers",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_total_watch_time",
    "display_name": null,
    "category": null,
    "description": "Get the total video watch time for a specific user, video, video collection or live event. Optionally filter by date range (default: last 12 months)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

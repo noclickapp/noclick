@@ -28,140 +28,160 @@
    "display_name": "List Service Desks",
    "category": "Service Desks",
    "description": "GET /rest/servicedeskapi/servicedesk.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service_desk",
    "display_name": "Get Service Desk",
    "category": "Service Desks",
    "description": "GET /rest/servicedeskapi/servicedesk/{service_desk_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_request_types",
    "display_name": "List Request Types",
    "category": "Service Desks",
    "description": "GET /rest/servicedeskapi/servicedesk/{service_desk_id}/requesttype.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_request_type_fields",
    "display_name": "Get Request Type Fields",
    "category": "Service Desks",
    "description": "GET /rest/servicedeskapi/servicedesk/{service_desk_id}/requesttype/{request_type_id}/field.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_requests",
    "display_name": "List Requests",
    "category": "Requests",
    "description": "GET /rest/servicedeskapi/request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_request",
    "display_name": "Get Request",
    "category": "Requests",
    "description": "GET /rest/servicedeskapi/request/{issue_id_or_key}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_request",
    "display_name": "Create Request",
    "category": "Requests",
    "description": "POST /rest/servicedeskapi/request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_comments",
    "display_name": "List Comments",
    "category": "Requests",
    "description": "GET /rest/servicedeskapi/request/{issue_id_or_key}/comment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_comment",
    "display_name": "Add Comment",
    "category": "Requests",
    "description": "POST /rest/servicedeskapi/request/{issue_id_or_key}/comment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_participants",
    "display_name": "List Participants",
    "category": "Requests",
    "description": "GET /rest/servicedeskapi/request/{issue_id_or_key}/participant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_participants",
    "display_name": "Add Participants",
    "category": "Requests",
    "description": "POST /rest/servicedeskapi/request/{issue_id_or_key}/participant.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transitions",
    "display_name": "List Transitions",
    "category": "Requests",
    "description": "GET /rest/servicedeskapi/request/{issue_id_or_key}/transition.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "transition_request",
    "display_name": "Transition Request",
    "category": "Requests",
    "description": "POST /rest/servicedeskapi/request/{issue_id_or_key}/transition.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_slas",
    "display_name": "List SLAs",
    "category": "SLAs",
    "description": "GET /rest/servicedeskapi/request/{issue_id_or_key}/sla.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_sla",
    "display_name": "Get SLA",
    "category": "SLAs",
    "description": "GET /rest/servicedeskapi/request/{issue_id_or_key}/sla/{sla_metric_id}.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customers",
    "display_name": "List Customers",
    "category": "Customers",
    "description": "GET /rest/servicedeskapi/servicedesk/{service_desk_id}/customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer",
    "display_name": "Create Customer",
    "category": "Customers",
    "description": "POST /rest/servicedeskapi/customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_customers",
    "display_name": "Add Customers",
    "category": "Customers",
    "description": "POST /rest/servicedeskapi/servicedesk/{service_desk_id}/customer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_queues",
    "display_name": "List Queues",
    "category": "Queues",
    "description": "GET /rest/servicedeskapi/servicedesk/{service_desk_id}/queue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_queue_issues",
    "display_name": "List Queue Issues",
    "category": "Queues",
    "description": "GET /rest/servicedeskapi/servicedesk/{service_desk_id}/queue/{queue_id}/issue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

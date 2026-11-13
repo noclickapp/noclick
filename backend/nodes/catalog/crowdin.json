@@ -31,2359 +31,2696 @@
    "display_name": "List AI Custom Placeholders",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_prompts_completions_post",
    "display_name": "Generate AI Prompt Completion",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_prompts_fine_tuning_datasets_post",
    "display_name": "Generate AI Prompt Fine-Tuning Dataset",
    "category": "AI",
    "description": "**Required scopes:** `ai.fine-tuning` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_prompts_fine_tuning_jobs_events_get_many",
    "display_name": "List AI Prompt Fine-Tuning Events",
    "category": "AI",
    "description": "**Required scopes:** `ai.fine-tuning` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_prompts_fine_tuning_jobs_get_many",
    "display_name": "List AI Prompt Fine-Tuning Jobs",
    "category": "AI",
    "description": "**Required scopes:** `ai.fine-tuning` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_prompts_fine_tuning_jobs_post",
    "display_name": "Create AI Prompt Fine-Tuning Job",
    "category": "AI",
    "description": "**Required scopes:** `ai.fine-tuning` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_prompts_get_many",
    "display_name": "List AI Prompts",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_prompts_snippets_delete",
    "display_name": "Delete AI Snippet",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_prompts_snippets_get",
    "display_name": "Get AI Snippet",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_prompts_snippets_get_many",
    "display_name": "List AI Snippets",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_prompts_snippets_patch",
    "display_name": "Edit AI Snippet",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_prompts_snippets_post",
    "display_name": "Add AI Snippet",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_providers_gateway_crowdin_delete",
    "display_name": "AI Gateway DELETE",
    "category": "AI Gateway",
    "description": "**Required scopes:** `ai.proxy` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_providers_gateway_crowdin_get",
    "display_name": "AI Gateway GET",
    "category": "AI Gateway",
    "description": "**Required scopes:** `ai.proxy` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_providers_gateway_crowdin_patch",
    "display_name": "AI Gateway PATCH",
    "category": "AI Gateway",
    "description": "**Required scopes:** `ai.proxy` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_providers_gateway_crowdin_post",
    "display_name": "AI Gateway POST",
    "category": "AI Gateway",
    "description": "**Required scopes:** `ai.proxy` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_providers_gateway_crowdin_put",
    "display_name": "AI Gateway PUT",
    "category": "AI Gateway",
    "description": "**Required scopes:** `ai.proxy` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_providers_get_many",
    "display_name": "List AI Providers",
    "category": "AI",
    "description": "**Required scopes:** `ai.provider` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_providers_models_crowdin_get_many",
    "display_name": "List AI Provider Models",
    "category": "AI",
    "description": "**Required scopes:** `ai.provider` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_providers_models_get_many",
    "display_name": "List AI Provider Models",
    "category": "AI",
    "description": "**Required scopes:** `ai.provider` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_providers_supported_models_crowdin_get_many",
    "display_name": "List Supported AI Provider Models",
    "category": "AI",
    "description": "**Required scopes:** `ai.provider` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_request_logs_exports_download",
    "display_name": "Download AI Request Logs Export",
    "category": "AI",
    "description": "**Required scopes:** `ai.request-log` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_request_logs_exports_get",
    "display_name": "Check AI Request Logs Export Status",
    "category": "AI",
    "description": "**Required scopes:** `ai.request-log` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_request_logs_exports_post",
    "display_name": "Export AI Request Logs",
    "category": "AI",
    "description": "**Required scopes:** `ai.request-log` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_request_logs_get_many",
    "display_name": "List AI Request Logs",
    "category": "AI",
    "description": "**Required scopes:** `ai.request-log` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_usage_members_get",
    "display_name": "Get AI Usage Member",
    "category": "AI",
    "description": "**Required scopes:** `ai` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_ai_usage_members_get_many",
    "display_name": "List AI Usage Members",
    "category": "AI",
    "description": "**Required scopes:** `ai` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_branches_get_many",
    "display_name": "Search Branches",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_directories_get_many",
    "display_name": "Search Directories",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_files_get_many",
    "display_name": "Search Files",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_concepts_delete",
    "display_name": "Delete Concept",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_concepts_get",
    "display_name": "Get Concept",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_concepts_get_many",
    "display_name": "List Concepts",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_concepts_put",
    "display_name": "Update Concept",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_concordance_post",
    "display_name": "Concordance search in Glossaries",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_delete",
    "display_name": "Delete Glossary",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_exports_download_download",
    "display_name": "Download Glossary",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_exports_get",
    "display_name": "Check Glossary Export Status",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_exports_post",
    "display_name": "Export Glossary",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_get",
    "display_name": "Get Glossary",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_get_many",
    "display_name": "List Glossaries",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_imports_get",
    "display_name": "Check Glossary Import Status",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_imports_post",
    "display_name": "Import Glossary",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_patch",
    "display_name": "Edit Glossary",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_post",
    "display_name": "Add Glossary",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_terms_delete",
    "display_name": "Delete Term",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_terms_delete_many",
    "display_name": "Clear Glossary",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_terms_get",
    "display_name": "Get Term",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_terms_get_many",
    "display_name": "List Terms",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_terms_patch",
    "display_name": "Edit Term",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_glossaries_terms_post",
    "display_name": "Add Term",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_languages_delete",
    "display_name": "Delete Custom Language",
    "category": "Languages",
    "description": "**Required scopes:** `language` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_languages_get",
    "display_name": "Get Language",
    "category": "Languages",
    "description": "GET /languages/{languageId}",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_languages_get_many",
    "display_name": "List Supported Languages",
    "category": "Languages",
    "description": "GET /languages",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_languages_patch",
    "display_name": "Edit Custom Language",
    "category": "Languages",
    "description": "**Required scopes:** `language` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_languages_post",
    "display_name": "Add Custom Language",
    "category": "Languages",
    "description": "**Required scopes:** `language` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_mts_get",
    "display_name": "Get MT",
    "category": "Machine Translation Engines",
    "description": "**Required scopes:** `mt` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_mts_get_many",
    "display_name": "List MTs",
    "category": "Machine Translation Engines",
    "description": "**Required scopes:** `mt` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_mts_translations_post",
    "display_name": "Translate via MT",
    "category": "Machine Translation Engines",
    "description": "**Required scopes:** `mt` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_notify_post",
    "display_name": "Send Notification to Authenticated User",
    "category": "Notifications",
    "description": "**Required scopes:** `notification` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_advisors_checks_get",
    "display_name": "Get Advisor Check Status",
    "category": "Advisor",
    "description": "**Required scopes:** `project.advisor` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_advisors_checks_post",
    "display_name": "Create Advisor Check",
    "category": "Advisor",
    "description": "**Required scopes:** `project.advisor` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_advisors_insights_get_many",
    "display_name": "List Advisor Insights",
    "category": "Advisor",
    "description": "**Required scopes:** `project.advisor` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_advisors_insights_patch",
    "display_name": "Edit Advisor Insight",
    "category": "Advisor",
    "description": "**Required scopes:** `project.advisor` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_ai_settings_get",
    "display_name": "Get Project AI Settings",
    "category": "AI",
    "description": "**Required scopes:** `project` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_applications_modules_advisors_insights_put",
    "display_name": "Create or Update Application Advisor Insight",
    "category": "Advisor",
    "description": "**Required scopes:** `project.advisor` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_approvals_delete",
    "display_name": "Remove Approval",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_approvals_delete_many",
    "display_name": "Remove String/Asset Approvals",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_approvals_get",
    "display_name": "Get Approval",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_approvals_get_many",
    "display_name": "List Translation Approvals",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_approvals_patch",
    "display_name": "Approval Batch Operations",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_approvals_post",
    "display_name": "Add Approval",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_branches_delete",
    "display_name": "Delete Branch",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_branches_get",
    "display_name": "Get Branch",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_branches_get_many",
    "display_name": "List Branches",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_branches_jobs_get",
    "display_name": "Check Delete Branch Job Status",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_branches_languages_progress_get_many",
    "display_name": "Get Branch Progress",
    "category": "Translation Status",
    "description": "**Required scopes:** `project.status.progress` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_branches_patch",
    "display_name": "Edit Branch",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_branches_post",
    "display_name": "Add Branch",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_bundles_delete",
    "display_name": "Delete Bundle",
    "category": "Translations",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_bundles_exports_download_get",
    "display_name": "Download Bundle",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_bundles_exports_get",
    "display_name": "Check Bundle Export Status",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_bundles_exports_post",
    "display_name": "Export Bundle",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_bundles_files_get_many",
    "display_name": "Bundle List Files",
    "category": "Translations",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_bundles_get",
    "display_name": "Get Bundle",
    "category": "Translations",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_bundles_get_many",
    "display_name": "List Bundles",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_bundles_patch",
    "display_name": "Edit Bundle",
    "category": "Translations",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_bundles_post",
    "display_name": "Add Bundle",
    "category": "Translations",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_comments_attachments_delete",
    "display_name": "Delete Attachment from String/Asset Comment",
    "category": "String/Asset Comments",
    "description": "**Required scopes:** `project.source.string` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_comments_batch_patch",
    "display_name": "String/Asset Comment Batch Operations",
    "category": "String/Asset Comments",
    "description": "**Required scopes:** `project.source.string` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_comments_delete",
    "display_name": "Delete String/Asset Comment",
    "category": "String/Asset Comments",
    "description": "**Required scopes:** `project.source.string` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_comments_get",
    "display_name": "Get String/Asset Comment",
    "category": "String/Asset Comments",
    "description": "**Required scopes:** `project.source.string` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_comments_get_many",
    "display_name": "List String/Asset Comments",
    "category": "String/Asset Comments",
    "description": "**Required scopes:** `project.source.string` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_comments_patch",
    "display_name": "Edit String/Asset Comment",
    "category": "String/Asset Comments",
    "description": "**Required scopes:** `project.source.string` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_comments_post",
    "display_name": "Add String/Asset Comment",
    "category": "String/Asset Comments",
    "description": "**Required scopes:** `project.source.string` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_delete",
    "display_name": "Delete Project",
    "category": "Projects",
    "description": "**Required scopes:** `project` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_dictionaries_get_many",
    "display_name": "List Dictionaries",
    "category": "Dictionaries",
    "description": "**Required scopes:** `project.dictionary` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_dictionaries_patch",
    "display_name": "Edit Dictionary",
    "category": "Dictionaries",
    "description": "**Required scopes:** `project.dictionary` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_directories_delete",
    "display_name": "Delete Directory",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_directories_get",
    "display_name": "Get Directory",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_directories_get_many",
    "display_name": "List Directories",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_directories_jobs_get",
    "display_name": "Check Delete Directory Job Status",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_directories_languages_progress_get_many",
    "display_name": "Get Directory Progress",
    "category": "Translation Status",
    "description": "**Required scopes:** `project.status.progress` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_directories_patch",
    "display_name": "Edit Directory",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_directories_post",
    "display_name": "Add Directory",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_distributions_delete",
    "display_name": "Delete Distribution",
    "category": "Distributions",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_distributions_get",
    "display_name": "Get Distribution",
    "category": "Distributions",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_distributions_get_many",
    "display_name": "List Distributions",
    "category": "Distributions",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_distributions_patch",
    "display_name": "Edit Distribution",
    "category": "Distributions",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_distributions_post",
    "display_name": "Add Distribution",
    "category": "Distributions",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_distributions_release_get",
    "display_name": "Get Distribution Release",
    "category": "Distributions",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_distributions_release_post",
    "display_name": "Release Distribution",
    "category": "Distributions",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_file_format_settings_custom_segmentations_delete",
    "display_name": "Reset Project File Format Settings Custom Segmentation",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_file_format_settings_custom_segmentations_get",
    "display_name": "Download Project File Format Settings Custom Segmentation",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_file_format_settings_delete",
    "display_name": "Delete Project File Format Settings",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_file_format_settings_get",
    "display_name": "Get Project File Format Settings",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_file_format_settings_get_many",
    "display_name": "List Project File Format Settings",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_file_format_settings_patch",
    "display_name": "Edit Project File Format Settings",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_file_format_settings_post",
    "display_name": "Add Project File Format Settings",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_delete",
    "display_name": "Delete File",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_download_get",
    "display_name": "Download File",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_get",
    "display_name": "Get File",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_get_many",
    "display_name": "List Files",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_jobs_get",
    "display_name": "Check Delete File Job Status",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_languages_progress_get_many",
    "display_name": "Get File Progress",
    "category": "Translation Status",
    "description": "**Required scopes:** `project.status.progress` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_patch",
    "display_name": "Edit File",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_post",
    "display_name": "Add File",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_preview_get",
    "display_name": "Download File Preview",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_put",
    "display_name": "Update or Restore File",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_references_delete",
    "display_name": "Delete Asset Reference",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_references_get",
    "display_name": "Get Asset Reference",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_references_get_many",
    "display_name": "List Asset References",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_references_post",
    "display_name": "Add Asset Reference",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_revisions_get",
    "display_name": "Get File Revision",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_files_revisions_get_many",
    "display_name": "List File Revisions",
    "category": "Source Files",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_get",
    "display_name": "Get Project",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_get_many",
    "display_name": "List Projects",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_glossaries_concordance_post",
    "display_name": "Concordance search in project Glossaries",
    "category": "Glossaries",
    "description": "**Required scopes:** `glossary` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_issues_get_many",
    "display_name": "List Reported Issues.",
    "category": "Issues",
    "description": "**Required scopes:** `project.status.issue` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_issues_patch",
    "display_name": "Edit Issue",
    "category": "Issues",
    "description": "**Required scopes:** `project.status.issue` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_labels_delete",
    "display_name": "Delete Label",
    "category": "Labels",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_labels_get",
    "display_name": "Get Label",
    "category": "Labels",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_labels_get_many",
    "display_name": "List Labels",
    "category": "Labels",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_labels_patch",
    "display_name": "Edit Label",
    "category": "Labels",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_labels_post",
    "display_name": "Add Label",
    "category": "Labels",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_labels_screenshots_delete_many",
    "display_name": "Unassign Label from Screenshots",
    "category": "Labels",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_labels_screenshots_post",
    "display_name": "Assign Label to Screenshots",
    "category": "Labels",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_labels_strings_delete_many",
    "display_name": "Unassign Label from Strings",
    "category": "Labels",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_labels_strings_post",
    "display_name": "Assign Label to Strings",
    "category": "Labels",
    "description": "**Required scopes:** `project.source.file` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_languages_files_progress_get_many",
    "display_name": "Get Language Progress",
    "category": "Translation Status",
    "description": "**Required scopes:** `project.status.progress` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_languages_progress_get_many",
    "display_name": "Get Project Progress",
    "category": "Translation Status",
    "description": "**Required scopes:** `project.status.progress` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_languages_translations_get_many",
    "display_name": "List Language Translations",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_members_delete",
    "display_name": "Delete Member From Project",
    "category": "Users",
    "description": "**Required scopes:** `project.member` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_members_get",
    "display_name": "Get Member Info",
    "category": "Users",
    "description": "**Required scopes:** `project.member` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_members_get_many",
    "display_name": "List Project Members",
    "category": "Users",
    "description": "**Required scopes:** `project.member` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_members_post",
    "display_name": "Add Project Member",
    "category": "Users",
    "description": "**Required scopes:** `project.member` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_members_put",
    "display_name": "Replace Project Member Permissions",
    "category": "Users",
    "description": "**Required scopes:** `project.member` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_notify_post",
    "display_name": "Send Notification To Project Members",
    "category": "Notifications",
    "description": "**Required scopes:** `project` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_patch",
    "display_name": "Edit Project",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_post",
    "display_name": "Add Project",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_pre_translations_get",
    "display_name": "Auto-Translation Status",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_pre_translations_get_many",
    "display_name": "List Auto-Translations",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_pre_translations_patch",
    "display_name": "Edit Auto-Translation",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_pre_translations_patch_batch",
    "display_name": "Auto-Translation Batch Operations",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_pre_translations_post",
    "display_name": "Apply Auto-Translation",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_pre_translations_report_get_report",
    "display_name": "Auto-Translation Report",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_qa_checks_get_many",
    "display_name": "List QA Check Issues",
    "category": "Translation Status",
    "description": "**Required scopes:** `project.status.qa-check` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_qa_checks_revalidate_delete",
    "display_name": "Cancel QA Checks Revalidation",
    "category": "Translation Status",
    "description": "**Required scopes:** `project.status.qa-check` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_qa_checks_revalidate_get",
    "display_name": "QA Checks Revalidation Status",
    "category": "Translation Status",
    "description": "**Required scopes:** `project.status.qa-check` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_qa_checks_revalidate_post",
    "display_name": "Revalidate QA Checks",
    "category": "Translation Status",
    "description": "**Required scopes:** `project.status.qa-check` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_reports_download_download",
    "display_name": "Download Report",
    "category": "Reports",
    "description": "**Required scopes:** `project.report` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_reports_get",
    "display_name": "Check Report Generation Status",
    "category": "Reports",
    "description": "**Required scopes:** `project.report` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_reports_post",
    "display_name": "Generate Report",
    "category": "Reports",
    "description": "**Required scopes:** `project.report` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_reports_settings_templates_delete",
    "display_name": "Delete Report Settings Template",
    "category": "Reports",
    "description": "**Required scopes:** `project.report` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_reports_settings_templates_get",
    "display_name": "Get Report Settings Template",
    "category": "Reports",
    "description": "**Required scopes:** `project.report` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_reports_settings_templates_get_many",
    "display_name": "List Report Settings Templates",
    "category": "Reports",
    "description": "**Required scopes:** `project.report` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_reports_settings_templates_patch",
    "display_name": "Edit Report Settings Template",
    "category": "Reports",
    "description": "**Required scopes:** `project.report` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_reports_settings_templates_post",
    "display_name": "Add Report Settings Template",
    "category": "Reports",
    "description": "**Required scopes:** `project.report` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_screenshots_delete",
    "display_name": "Delete Screenshot",
    "category": "Screenshots",
    "description": "**Required scopes:** `project.screenshot` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_screenshots_get",
    "display_name": "Get Screenshot",
    "category": "Screenshots",
    "description": "**Required scopes:** `project.screenshot` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_screenshots_get_many",
    "display_name": "List Screenshots",
    "category": "Screenshots",
    "description": "**Required scopes:** `project.screenshot` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_screenshots_patch",
    "display_name": "Edit Screenshot",
    "category": "Screenshots",
    "description": "**Required scopes:** `project.screenshot` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_screenshots_post",
    "display_name": "Add Screenshot",
    "category": "Screenshots",
    "description": "**Required scopes:** `project.screenshot` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_screenshots_put",
    "display_name": "Update Screenshot",
    "category": "Screenshots",
    "description": "**Required scopes:** `project.screenshot` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_screenshots_tags_delete",
    "display_name": "Delete Tag",
    "category": "Screenshots",
    "description": "**Required scopes:** `project.screenshot` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_screenshots_tags_delete_many",
    "display_name": "Clear Tags",
    "category": "Screenshots",
    "description": "**Required scopes:** `project.screenshot` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_screenshots_tags_get",
    "display_name": "Get Tag",
    "category": "Screenshots",
    "description": "**Required scopes:** `project.screenshot` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_screenshots_tags_get_many",
    "display_name": "List Tags",
    "category": "Screenshots",
    "description": "**Required scopes:** `project.screenshot` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_screenshots_tags_patch",
    "display_name": "Edit Tag",
    "category": "Screenshots",
    "description": "**Required scopes:** `project.screenshot` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_screenshots_tags_post",
    "display_name": "Add Tag",
    "category": "Screenshots",
    "description": "**Required scopes:** `project.screenshot` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_screenshots_tags_put_many",
    "display_name": "Replace Tags (Auto Tag)",
    "category": "Screenshots",
    "description": "**Required scopes:** `project.screenshot` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_strings_batch_patch",
    "display_name": "String Batch Operations",
    "category": "Source Strings",
    "description": "**Required scopes:** `project.source.string` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_strings_delete",
    "display_name": "Delete String",
    "category": "Source Strings",
    "description": "**Required scopes:** `project.source.string` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_strings_exporter_settings_delete",
    "display_name": "Delete Project Strings Exporter Settings",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_strings_exporter_settings_get",
    "display_name": "Get Project Strings Exporter Settings",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_strings_exporter_settings_get_many",
    "display_name": "List Project Strings Exporter Settings",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_strings_exporter_settings_patch",
    "display_name": "Edit Project Strings Exporter Settings",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_strings_exporter_settings_post",
    "display_name": "Add Project Strings Exporter Settings",
    "category": "Projects",
    "description": "**Required scopes:** `project.settings` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_strings_get",
    "display_name": "Get String",
    "category": "Source Strings",
    "description": "**Required scopes:** `project.source.string` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_strings_get_many",
    "display_name": "List Strings",
    "category": "Source Strings",
    "description": "**Required scopes:** `project.source.string` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_strings_patch",
    "display_name": "Edit String",
    "category": "Source Strings",
    "description": "**Required scopes:** `project.source.string` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_strings_post",
    "display_name": "Add String",
    "category": "Source Strings",
    "description": "**Required scopes:** `project.source.string` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_system_placeholders_batch_patch",
    "display_name": "Project System Placeholder Batch Operations",
    "category": "Placeholders",
    "description": "**Required scopes:** `project.placeholder` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_system_placeholders_get_many",
    "display_name": "List Project System Placeholders",
    "category": "Placeholders",
    "description": "**Required scopes:** `project.placeholder` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_comments_delete",
    "display_name": "Delete Project Task Comment",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_comments_get",
    "display_name": "Get Project Task Comment",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_comments_get_many",
    "display_name": "List Project Task Comments",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_comments_patch",
    "display_name": "Edit Project Task Comment",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_comments_post",
    "display_name": "Add Project Task Comment",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_delete",
    "display_name": "Delete Project Task",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_exports_post",
    "display_name": "Export Project Task Strings",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_get",
    "display_name": "Get Project Task",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_get_many",
    "display_name": "List Project Tasks",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_patch",
    "display_name": "Edit Project Task",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_post",
    "display_name": "Add Project Task",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_settings_templates_delete",
    "display_name": "Delete Project Task Settings Template",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_settings_templates_get",
    "display_name": "Get Project Task Settings Template",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_settings_templates_get_many",
    "display_name": "List Project Task Settings Templates",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_settings_templates_patch",
    "display_name": "Edit Project Task Settings Template",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tasks_settings_templates_post",
    "display_name": "Add Project Task Settings Template",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_tms_concordance_post",
    "display_name": "Concordance search in project TMs",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_alignment_post",
    "display_name": "Translation Alignment",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_builds_delete",
    "display_name": "Cancel Build",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_builds_directories_post",
    "display_name": "Build Project Directory Translation",
    "category": "Translations",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_builds_download_download",
    "display_name": "Download Project Translations",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_builds_files_post",
    "display_name": "Build Project File Translation",
    "category": "Translations",
    "description": "**Required scopes:** `project.source.file` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_builds_get",
    "display_name": "Check Project Build Status",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_builds_get_many",
    "display_name": "List Project Builds",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_builds_post",
    "display_name": "Build Project Translation",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_delete",
    "display_name": "Delete Translation",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_delete_many",
    "display_name": "Delete String/Asset Translations",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_exports_post",
    "display_name": "Export Project Translation",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_get",
    "display_name": "Get Translation",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_get_many",
    "display_name": "List String/Asset Translations",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_imports",
    "display_name": "Import Translations",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_imports_get",
    "display_name": "Import Translations Status",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_imports_report_get",
    "display_name": "Import Translations Report",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_patch",
    "display_name": "Translation Batch Operations",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_post",
    "display_name": "Add Translation",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_post_on_language",
    "display_name": "Upload Translations",
    "category": "Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_put",
    "display_name": "Restore Translation",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_translations_validate_qa_checks_post",
    "display_name": "Validate text by QA Checks",
    "category": "Translations",
    "description": "POST /projects/{projectId}/translations/validate-qa-checks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_votes_delete",
    "display_name": "Cancel Vote",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_votes_get",
    "display_name": "Get Vote",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_votes_get_many",
    "display_name": "List Translation Votes",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_votes_post",
    "display_name": "Add Vote",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_webhooks_delete",
    "display_name": "Delete Webhook",
    "category": "Webhooks",
    "description": "**Required scopes:** `project.webhook` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_webhooks_get",
    "display_name": "Get Webhook",
    "category": "Webhooks",
    "description": "**Required scopes:** `project.webhook` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_webhooks_get_many",
    "display_name": "List Webhooks",
    "category": "Webhooks",
    "description": "**Required scopes:** `project.webhook` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_webhooks_patch",
    "display_name": "Edit Webhook",
    "category": "Webhooks",
    "description": "**Required scopes:** `project.webhook` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_projects_webhooks_post",
    "display_name": "Add Webhook",
    "category": "Webhooks",
    "description": "**Required scopes:** `project.webhook` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_reports_archives_exports_post",
    "display_name": "Export Report Archive",
    "category": "Reports",
    "description": "**Required scopes:** `project.report` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_reports_archives_get_many",
    "display_name": "List Report Archives",
    "category": "Reports",
    "description": "**Required scopes:** `project.report` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_storages_delete",
    "display_name": "Delete Storage",
    "category": "Storage",
    "description": "DELETE /storages/{storageId}",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_storages_get",
    "display_name": "Get Storage",
    "category": "Storage",
    "description": "GET /storages/{storageId}",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_storages_get_many",
    "display_name": "List Storages",
    "category": "Storage",
    "description": "GET /storages",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_storages_post",
    "display_name": "Add Storage",
    "category": "Storage",
    "description": "POST /storages",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_strings_get_many",
    "display_name": "Search Strings",
    "category": "Source Strings",
    "description": "**Required scopes:** `project.source.string` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_style_guides_delete",
    "display_name": "Delete Style Guide",
    "category": "Style Guides",
    "description": "**Required scopes:** `style-guide` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_style_guides_get",
    "display_name": "Get Style Guide",
    "category": "Style Guides",
    "description": "**Required scopes:** `style-guide` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_style_guides_get_many",
    "display_name": "List Style Guides",
    "category": "Style Guides",
    "description": "**Required scopes:** `style-guide` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_style_guides_patch",
    "display_name": "Edit Style Guide",
    "category": "Style Guides",
    "description": "**Required scopes:** `style-guide` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_style_guides_post",
    "display_name": "Create Style Guide",
    "category": "Style Guides",
    "description": "**Required scopes:** `style-guide` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_concordance_post",
    "display_name": "Concordance search in TMs",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_delete",
    "display_name": "Delete TM",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_exports_download_download",
    "display_name": "Download TM",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_exports_get",
    "display_name": "Check TM Export Status",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_exports_post",
    "display_name": "Export TM",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_get",
    "display_name": "Get TM",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_get_many",
    "display_name": "List TMs",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_imports_get",
    "display_name": "Check TM Import Status",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_imports_post",
    "display_name": "Import TM",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_patch",
    "display_name": "Edit TM",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_post",
    "display_name": "Add TM",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_segments_clear",
    "display_name": "Clear TM",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_segments_delete",
    "display_name": "Delete TM Segment",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_segments_get",
    "display_name": "Get TM Segment",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_segments_get_many",
    "display_name": "List TM Segments",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_segments_patch",
    "display_name": "Edit TM Segment",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_segments_patch_batch",
    "display_name": "TM Segment Batch Operations",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_segments_post",
    "display_name": "Create TM Segment",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_segments_records_delete",
    "display_name": "Delete TM Segment Record",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_segments_records_patch",
    "display_name": "Edit TM Segment Record",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_tms_segments_records_post",
    "display_name": "Create TM Segment Records",
    "category": "Translation Memory",
    "description": "**Required scopes:** `tm` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_translations_get_many",
    "display_name": "Search Translations",
    "category": "String/Asset Translations",
    "description": "**Required scopes:** `project.translation` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_user_patch",
    "display_name": "Edit Authenticated User",
    "category": "Users",
    "description": "PATCH /user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_user_tasks_get_many",
    "display_name": "List User Tasks",
    "category": "Tasks",
    "description": "GET /user/tasks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_user_tasks_patch",
    "display_name": "Edit Task Archived Status",
    "category": "Tasks",
    "description": "PATCH /user/tasks/{taskId}",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_file_translations_delete",
    "display_name": "Cancel File Translations",
    "category": "AI",
    "description": "**Required scopes:** `ai.translate` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_file_translations_download",
    "display_name": "Download Translated File",
    "category": "AI",
    "description": "**Required scopes:** `ai.translate` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_file_translations_download_strings",
    "display_name": "Download Translated File Strings",
    "category": "AI",
    "description": "**Required scopes:** `ai.translate` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_file_translations_get",
    "display_name": "Get File Translations Status",
    "category": "AI",
    "description": "**Required scopes:** `ai.translate` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_file_translations_post",
    "display_name": "AI File Translations",
    "category": "AI",
    "description": "**Required scopes:** `ai.translate` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_prompts_clones_post",
    "display_name": "Clone AI Prompt",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_prompts_completions_delete",
    "display_name": "Cancel AI Prompt Completion",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_prompts_completions_download_download",
    "display_name": "Download AI Prompt Completion",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_prompts_completions_get",
    "display_name": "Get AI Prompt Completion Status",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_prompts_delete",
    "display_name": "Delete AI Prompt",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_prompts_fine_tuning_datasets_download_get",
    "display_name": "Download AI Prompt Fine-Tuning Dataset",
    "category": "AI",
    "description": "**Required scopes:** `ai.fine-tuning` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_prompts_fine_tuning_datasets_get",
    "display_name": "Get AI Prompt Fine-Tuning Dataset Generation Status",
    "category": "AI",
    "description": "**Required scopes:** `ai.fine-tuning` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_prompts_fine_tuning_jobs_get",
    "display_name": "Get AI Prompt Fine-Tuning Job Status",
    "category": "AI",
    "description": "**Required scopes:** `ai.fine-tuning` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_prompts_get",
    "display_name": "Get AI Prompt",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_prompts_patch",
    "display_name": "Edit AI Prompt",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_prompts_post",
    "display_name": "Add AI Prompt",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_providers_chat_completions_post",
    "display_name": "Create AI Proxy Chat Completion",
    "category": "AI",
    "description": "**Required scopes:** `ai.proxy` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_providers_delete",
    "display_name": "Delete AI Provider",
    "category": "AI",
    "description": "**Required scopes:** `ai.provider` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_providers_get",
    "display_name": "Get AI Provider",
    "category": "AI",
    "description": "**Required scopes:** `ai.provider` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_providers_patch",
    "display_name": "Edit AI Provider",
    "category": "AI",
    "description": "**Required scopes:** `ai.provider` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_providers_post",
    "display_name": "Add AI Provider",
    "category": "AI",
    "description": "**Required scopes:** `ai.provider` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_reports_download_download",
    "display_name": "Download AI Report",
    "category": "AI",
    "description": "**Required scopes:** `ai.provider` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_reports_get",
    "display_name": "Check AI Report Generation Status",
    "category": "AI",
    "description": "**Required scopes:** `ai.provider` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_reports_post",
    "display_name": "Generate AI Report",
    "category": "AI",
    "description": "**Required scopes:** `ai.provider` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_settings_custom_placeholders_delete",
    "display_name": "Delete AI Custom Placeholder",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_settings_custom_placeholders_get",
    "display_name": "Get AI Custom Placeholder",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_settings_custom_placeholders_patch",
    "display_name": "Edit AI Custom Placeholder",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_settings_custom_placeholders_post",
    "display_name": "Add AI Custom Placeholder",
    "category": "AI",
    "description": "**Required scopes:** `ai.prompt` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_settings_get",
    "display_name": "Get AI Settings",
    "category": "AI",
    "description": "**Required scopes:** `ai` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_settings_patch",
    "display_name": "Edit AI Settings",
    "category": "AI",
    "description": "**Required scopes:** `ai` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_ai_translate_strings_post",
    "display_name": "AI Translate Strings",
    "category": "AI",
    "description": "**Required scopes:** `ai.translate` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_reports_archives_delete",
    "display_name": "Delete Report Archive",
    "category": "Reports",
    "description": "**Required scopes:** `project.report` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_reports_archives_exports_download_get",
    "display_name": "Download Report Archive",
    "category": "Reports",
    "description": "**Required scopes:** `project.report` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_reports_archives_exports_get",
    "display_name": "Check Report Archive Export Status",
    "category": "Reports",
    "description": "**Required scopes:** `project.report` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_reports_archives_get",
    "display_name": "Get Report Archive",
    "category": "Reports",
    "description": "**Required scopes:** `project.report` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_reports_settings_templates_delete",
    "display_name": "Delete User Report Settings Template",
    "category": "Reports",
    "description": "**Required scopes:** `user` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_reports_settings_templates_get",
    "display_name": "Get User Report Settings Template",
    "category": "Reports",
    "description": "**Required scopes:** `user` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_reports_settings_templates_get_many",
    "display_name": "List User Report Settings Templates",
    "category": "Reports",
    "description": "**Required scopes:** `user` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_reports_settings_templates_patch",
    "display_name": "Edit User Report Settings Template",
    "category": "Reports",
    "description": "**Required scopes:** `user` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_reports_settings_templates_post",
    "display_name": "Add User Report Settings Template",
    "category": "Reports",
    "description": "**Required scopes:** `user` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_security_logs_get",
    "display_name": "Get User Security Log",
    "category": "Security Logs",
    "description": "**Required scopes:** `security-log` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_security_logs_get_many",
    "display_name": "List User Security Logs",
    "category": "Security Logs",
    "description": "**Required scopes:** `security-log` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_users_tasks_get_many",
    "display_name": "List Tasks",
    "category": "Tasks",
    "description": "**Required scopes:** `project.task` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_webhooks_delete",
    "display_name": "Delete Webhook",
    "category": "Organization Webhooks",
    "description": "**Required scopes:** `webhook` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_webhooks_get",
    "display_name": "Get Webhook",
    "category": "Organization Webhooks",
    "description": "**Required scopes:** `webhook` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_webhooks_get_many",
    "display_name": "List Webhooks",
    "category": "Organization Webhooks",
    "description": "**Required scopes:** `webhook` (Read only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_webhooks_patch",
    "display_name": "Edit Webhook",
    "category": "Organization Webhooks",
    "description": "**Required scopes:** `webhook` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "api_webhooks_post",
    "display_name": "Add Webhook",
    "category": "Organization Webhooks",
    "description": "**Required scopes:** `webhook` (Read and Write).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_user",
    "display_name": "Get Authenticated User",
    "category": "Users",
    "description": "GET /user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

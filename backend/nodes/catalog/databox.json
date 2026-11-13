@@ -34,154 +34,176 @@
    "display_name": null,
    "category": null,
    "description": "Get profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_organization",
    "display_name": null,
    "category": null,
    "description": "Get organization.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_accounts",
    "display_name": null,
    "category": null,
    "description": "List accounts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dashboards",
    "display_name": null,
    "category": null,
    "description": "List dashboards.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_dashboard",
    "display_name": null,
    "category": null,
    "description": "Rename dashboard.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dashboard_metrics",
    "display_name": null,
    "category": null,
    "description": "Get dashboard metrics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_data_sources",
    "display_name": null,
    "category": null,
    "description": "List data sources.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_data_source",
    "display_name": null,
    "category": null,
    "description": "Get data source.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_data_source",
    "display_name": null,
    "category": null,
    "description": "Rename data source.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_datasets",
    "display_name": null,
    "category": null,
    "description": "List datasets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dataset",
    "display_name": null,
    "category": null,
    "description": "Get dataset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_dataset",
    "display_name": null,
    "category": null,
    "description": "Create dataset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_dataset",
    "display_name": null,
    "category": null,
    "description": "Rename dataset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dataset_data",
    "display_name": null,
    "category": null,
    "description": "Get dataset data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ingest_dataset_data",
    "display_name": null,
    "category": null,
    "description": "Ingest dataset data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dataset_schema",
    "display_name": null,
    "category": null,
    "description": "Get dataset schema.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dataset_ingestions",
    "display_name": null,
    "category": null,
    "description": "List dataset ingestions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dataset_ingestion",
    "display_name": null,
    "category": null,
    "description": "Get dataset ingestion.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_metrics",
    "display_name": null,
    "category": null,
    "description": "List metrics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metric",
    "display_name": null,
    "category": null,
    "description": "Get metric.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_metric",
    "display_name": null,
    "category": null,
    "description": "Rename metric.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metric_data",
    "display_name": null,
    "category": null,
    "description": "Get metric data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

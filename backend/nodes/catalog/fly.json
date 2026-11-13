@@ -34,154 +34,176 @@
    "display_name": null,
    "category": null,
    "description": "Get current token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_apps",
    "display_name": null,
    "category": null,
    "description": "List apps.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_app",
    "display_name": null,
    "category": null,
    "description": "Create app.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_app",
    "display_name": null,
    "category": null,
    "description": "Get app.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_app",
    "display_name": null,
    "category": null,
    "description": "Delete app.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_machines",
    "display_name": null,
    "category": null,
    "description": "List machines.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_machine",
    "display_name": null,
    "category": null,
    "description": "Create machine.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_machine",
    "display_name": null,
    "category": null,
    "description": "Update machine.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_machine",
    "display_name": null,
    "category": null,
    "description": "Get machine.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_machine",
    "display_name": null,
    "category": null,
    "description": "Delete machine.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "start_machine",
    "display_name": null,
    "category": null,
    "description": "Start machine.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_machine",
    "display_name": null,
    "category": null,
    "description": "Stop machine.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restart_machine",
    "display_name": null,
    "category": null,
    "description": "Restart machine.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "suspend_machine",
    "display_name": null,
    "category": null,
    "description": "Suspend machine.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_machine_events",
    "display_name": null,
    "category": null,
    "description": "List machine events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_volumes",
    "display_name": null,
    "category": null,
    "description": "List volumes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_volume",
    "display_name": null,
    "category": null,
    "description": "Create volume.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_volume",
    "display_name": null,
    "category": null,
    "description": "Get volume.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_volume",
    "display_name": null,
    "category": null,
    "description": "Delete volume.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extend_volume",
    "display_name": null,
    "category": null,
    "description": "Extend volume.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_volume_snapshots",
    "display_name": null,
    "category": null,
    "description": "List volume snapshots.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_volume_snapshot",
    "display_name": null,
    "category": null,
    "description": "Create volume snapshot.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

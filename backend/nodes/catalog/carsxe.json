@@ -34,154 +34,176 @@
    "display_name": null,
    "category": null,
    "description": "Vehicle Specifications (VIN decoder).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "decode_international_vin",
    "display_name": null,
    "category": null,
    "description": "International VIN Decoder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_recalls",
    "display_name": null,
    "category": null,
    "description": "Vehicle Recalls.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_recalls_by_ymm",
    "display_name": null,
    "category": null,
    "description": "Recalls by Year, Make & Model.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_recall_campaign",
    "display_name": null,
    "category": null,
    "description": "Recall Campaign.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_recalls_batch",
    "display_name": null,
    "category": null,
    "description": "Submit a bulk recalls batch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_recalls_batch_status",
    "display_name": null,
    "category": null,
    "description": "Get bulk recalls batch status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_recalls_batch_results",
    "display_name": null,
    "category": null,
    "description": "Get bulk recalls batch results.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "decode_plate",
    "display_name": null,
    "category": null,
    "description": "License Plate Decoder (v2).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "decode_us_plate",
    "display_name": null,
    "category": null,
    "description": "US Vehicle Plate Decoder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lien_theft",
    "display_name": null,
    "category": null,
    "description": "Lien & Theft records.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_images",
    "display_name": null,
    "category": null,
    "description": "Vehicle Images.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_market_value",
    "display_name": null,
    "category": null,
    "description": "Vehicle Market Value (v2).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_history",
    "display_name": null,
    "category": null,
    "description": "Vehicle History.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "recognize_plate",
    "display_name": null,
    "category": null,
    "description": "Plate Image Recognition.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "recognize_vin",
    "display_name": null,
    "category": null,
    "description": "VIN OCR.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_year_make_model",
    "display_name": null,
    "category": null,
    "description": "Year Make Model.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ymm_options",
    "display_name": null,
    "category": null,
    "description": "Year Make Model Options.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "decode_obd_code",
    "display_name": null,
    "category": null,
    "description": "OBD Codes Decoder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_collateral_score",
    "display_name": null,
    "category": null,
    "description": "Collateral Score.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_collateral_batch",
    "display_name": null,
    "category": null,
    "description": "Collateral Score Batch (submit).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_collateral_batch",
    "display_name": null,
    "category": null,
    "description": "Collateral Score Batch (status and results).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

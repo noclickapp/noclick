@@ -12,14 +12,16 @@
    "display_name": "Run Javascript Function",
    "category": "Runtime",
    "description": "For quick data transformations and simple logic without external dependencies",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "run_python_function",
    "display_name": "Run Python Function",
    "category": "Runtime",
    "description": "For computationally heavy tasks, GPU workloads, or when you need pip packages",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   }
  ],
  "agent_tool_provider": true,

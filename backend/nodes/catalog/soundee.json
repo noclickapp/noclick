@@ -22,70 +22,80 @@
    "display_name": null,
    "category": null,
    "description": "Read the account associated with this API key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_coupons",
    "display_name": null,
    "category": null,
    "description": "List or search coupon codes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_coupon",
    "display_name": null,
    "category": null,
    "description": "Get one coupon by its numeric ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_coupon",
    "display_name": null,
    "category": null,
    "description": "Create a coupon with Soundee's defaults; use Update Coupon to set its fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_coupon",
    "display_name": null,
    "category": null,
    "description": "Update only the supplied coupon fields; omitted fields are not sent.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_email_captures",
    "display_name": null,
    "category": null,
    "description": "List captured emails from downloads, transactions and store opt-ins.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_cart_abandonments",
    "display_name": null,
    "category": null,
    "description": "List abandoned carts by state or customer search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_cart_abandonment",
    "display_name": null,
    "category": null,
    "description": "Get an abandoned cart by ID or token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transactions",
    "display_name": null,
    "category": null,
    "description": "List sales or refunds and search transaction details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transaction",
    "display_name": null,
    "category": null,
    "description": "Get one transaction by its ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

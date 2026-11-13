@@ -27,84 +27,96 @@
    "display_name": null,
    "category": null,
    "description": "Search the public GIF catalogue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_trending_gifs",
    "display_name": null,
    "category": null,
    "description": "Read one page of trending GIFs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translate_gif",
    "display_name": null,
    "category": null,
    "description": "Translate a phrase into one GIF.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "random_gif",
    "display_name": null,
    "category": null,
    "description": "Get a random GIF, optionally filtered by tag and rating.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_gif",
    "display_name": null,
    "category": null,
    "description": "Get a GIF by its GIPHY ID (IDs are strings in current provider docs).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_gifs",
    "display_name": null,
    "category": null,
    "description": "Get several GIFs by comma-separated GIPHY IDs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_stickers",
    "display_name": null,
    "category": null,
    "description": "Search the public sticker catalogue.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_trending_stickers",
    "display_name": null,
    "category": null,
    "description": "Read one page of trending stickers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "translate_sticker",
    "display_name": null,
    "category": null,
    "description": "Translate a phrase into one sticker.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "random_sticker",
    "display_name": null,
    "category": null,
    "description": "Get a random sticker, optionally filtered by tag and rating.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_gif",
    "display_name": "On New GIF",
    "category": "Triggers",
    "description": "Watch recent GIF search results for new matches.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "on_new_sticker",
    "display_name": "On New Sticker",
    "category": "Triggers",
    "description": "Watch recent sticker search results for new matches.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

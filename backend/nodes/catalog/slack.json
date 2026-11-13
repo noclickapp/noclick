@@ -34,1491 +34,1728 @@
    "display_name": "On Channel Message",
    "category": null,
    "description": "Trigger: fires when a message is posted in a channel the bot is in.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "slack_oauth",
+    "slack_bot_token"
+   ]
   },
   {
    "name": "on_app_mention",
    "display_name": "On App Mention",
    "category": null,
    "description": "Trigger: fires when the bot is @-mentioned.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "slack_oauth",
+    "slack_bot_token"
+   ]
   },
   {
    "name": "on_reaction_added",
    "display_name": "On Reaction Added",
    "category": null,
    "description": "Trigger: fires when an emoji reaction is added to a message.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "slack_oauth",
+    "slack_bot_token"
+   ]
   },
   {
    "name": "on_channel_created",
    "display_name": "On Channel Created",
    "category": null,
    "description": "Trigger: fires when a new channel is created in the workspace.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "slack_oauth",
+    "slack_bot_token"
+   ]
   },
   {
    "name": "on_member_joined_channel",
    "display_name": "On Member Joined Channel",
    "category": null,
    "description": "Trigger: fires when a member joins a channel.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "slack_oauth",
+    "slack_bot_token"
+   ]
   },
   {
    "name": "on_file_shared",
    "display_name": "On File Shared",
    "category": null,
    "description": "Trigger: fires when a file is shared in a channel the bot is in.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "slack_oauth",
+    "slack_bot_token"
+   ]
   },
   {
    "name": "send_message_to_channel",
    "display_name": "Send Message to Channel",
    "category": "Message",
    "description": "Post a message to a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_existing_message",
    "display_name": "Update Existing Message",
    "category": "Message",
    "description": "Update an existing message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_message",
    "display_name": "Delete Message",
    "category": "Message",
    "description": "Delete a message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_ephemeral_message",
    "display_name": "Send Ephemeral Message",
    "category": "Message",
    "description": "Send an ephemeral message (only visible to one user)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "schedule_message_for_later",
    "display_name": "Schedule Message for Later",
    "category": "Message",
    "description": "Schedule a message for later",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message_permalink",
    "display_name": "Get Message Permalink",
    "category": "Message",
    "description": "Get a permalink URL for a message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channels_in_workspace",
    "display_name": "List Channels in Workspace",
    "category": "Channel",
    "description": "List channels in the workspace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_channel_information",
    "display_name": "Get Channel Information",
    "category": "Channel",
    "description": "Get information about a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_channel_messages",
    "display_name": "Get Channel Messages",
    "category": "Channel",
    "description": "Get messages from a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channel_members",
    "display_name": "List Channel Members",
    "category": "Channel",
    "description": "Get members of a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "join_public_channel",
    "display_name": "Join Public Channel",
    "category": "Channel",
    "description": "Join a public channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "leave_channel",
    "display_name": "Leave Channel",
    "category": "Channel",
    "description": "Leave a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_channel",
    "display_name": "Create Channel",
    "category": "Channel",
    "description": "Create a new channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_channel",
    "display_name": "Archive Channel",
    "category": "Channel",
    "description": "Archive a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unarchive_channel",
    "display_name": "Unarchive Channel",
    "category": "Channel",
    "description": "Unarchive a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invite_users_to_channel",
    "display_name": "Invite Users to Channel",
    "category": "Channel",
    "description": "Invite users to a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_user_from_channel",
    "display_name": "Remove User from Channel",
    "category": "Channel",
    "description": "Remove a user from a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_channel_topic",
    "display_name": "Set Channel Topic",
    "category": "Channel",
    "description": "Set the topic of a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_channel_purpose",
    "display_name": "Set Channel Purpose",
    "category": "Channel",
    "description": "Set the purpose of a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_channel",
    "display_name": "Rename Channel",
    "category": "Channel",
    "description": "Rename a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_thread_replies",
    "display_name": "Get Thread Replies",
    "category": "Message",
    "description": "Get thread replies",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "open_direct_message",
    "display_name": "Open Direct Message",
    "category": "Channel",
    "description": "Open or resume a direct message or multi-person DM",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "close_direct_message",
    "display_name": "Close Direct Message",
    "category": "Channel",
    "description": "Close a direct message or multi-person DM",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_channel_as_read",
    "display_name": "Mark Channel As Read",
    "category": "Channel",
    "description": "Mark a channel as read",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workspace_users",
    "display_name": "List Workspace Users",
    "category": "User",
    "description": "List all users in the workspace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_information",
    "display_name": "Get User Information",
    "category": "User",
    "description": "Get information about a user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_user_by_email",
    "display_name": "Find User by Email",
    "category": "User",
    "description": "Find a user by their email address",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_presence_status",
    "display_name": "Get User Presence Status",
    "category": "User",
    "description": "Get a user's presence status",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_accessible_conversations",
    "display_name": "List User Accessible Conversations",
    "category": "User",
    "description": "List conversations the calling user may access",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_bookmark_to_channel",
    "display_name": "Add Bookmark to Channel",
    "category": "Channel",
    "description": "Add a bookmark to a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_channel_bookmark",
    "display_name": "Edit Channel Bookmark",
    "category": "Channel",
    "description": "Edit an existing bookmark",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channel_bookmarks",
    "display_name": "List Channel Bookmarks",
    "category": "Channel",
    "description": "List bookmarks in a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_channel_bookmark",
    "display_name": "Remove Channel Bookmark",
    "category": "Channel",
    "description": "Remove a bookmark from a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workspace_user_groups",
    "display_name": "List Workspace User Groups",
    "category": "User Group",
    "description": "List user groups in the workspace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_user_group",
    "display_name": "Create User Group",
    "category": "User Group",
    "description": "Create a new user group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disable_user_group",
    "display_name": "Disable User Group",
    "category": "User Group",
    "description": "Disable an existing user group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enable_user_group",
    "display_name": "Enable User Group",
    "category": "User Group",
    "description": "Enable a disabled user group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_user_group",
    "display_name": "Update User Group",
    "category": "User Group",
    "description": "Update an existing user group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_usergroup_members",
    "display_name": "List Usergroup Members",
    "category": "User Group",
    "description": "List users in a user group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_usergroup_member_list",
    "display_name": "Update Usergroup Member List",
    "category": "User Group",
    "description": "Update the list of users in a user group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_do_not_disturb_snooze",
    "display_name": "Set Do Not Disturb Snooze",
    "category": "Do Not Disturb",
    "description": "Turn on Do Not Disturb for the current user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "end_snooze_mode",
    "display_name": "End Snooze Mode",
    "category": "Do Not Disturb",
    "description": "End the current user's snooze mode",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "end_do_not_disturb",
    "display_name": "End Do Not Disturb",
    "category": "Do Not Disturb",
    "description": "End the current user's Do Not Disturb session",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_do_not_disturb_status",
    "display_name": "Get Do Not Disturb Status",
    "category": "Do Not Disturb",
    "description": "Get Do Not Disturb status for a user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team_do_not_disturb_status",
    "display_name": "Get Team Do Not Disturb Status",
    "category": "Do Not Disturb",
    "description": "Get Do Not Disturb status for users on a team",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_emoji_in_workspace",
    "display_name": "List Custom Emoji in Workspace",
    "category": "Emoji",
    "description": "List custom emoji in the workspace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "star_message_or_file",
    "display_name": "Star Message or File",
    "category": "Reaction",
    "description": "Star a message, file, or channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unstar_item",
    "display_name": "Unstar Item",
    "category": "Reaction",
    "description": "Remove a star from an item",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_starred_items",
    "display_name": "List User Starred Items",
    "category": "Reaction",
    "description": "List starred items for the current user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bot_information",
    "display_name": "Get Bot Information",
    "category": "Bot",
    "description": "Get information about a bot",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_reminder",
    "display_name": "Create Reminder",
    "category": "Reminder",
    "description": "Create a reminder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_reminder_complete",
    "display_name": "Mark Reminder Complete",
    "category": "Reminder",
    "description": "Mark a reminder as complete",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_reminder",
    "display_name": "Delete Reminder",
    "category": "Reminder",
    "description": "Delete a reminder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_reminder_information",
    "display_name": "Get Reminder Information",
    "category": "Reminder",
    "description": "Get information about a reminder",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_reminders",
    "display_name": "List User Reminders",
    "category": "Reminder",
    "description": "List all reminders for the current user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_emoji_reaction_to_message",
    "display_name": "Add Emoji Reaction to Message",
    "category": "Message",
    "description": "Add an emoji reaction to a message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_emoji_reaction_from_message",
    "display_name": "Remove Emoji Reaction from Message",
    "category": "Message",
    "description": "Remove an emoji reaction from a message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_message_reactions",
    "display_name": "Get Message Reactions",
    "category": "Message",
    "description": "Get reactions on a message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pin_message_to_channel",
    "display_name": "Pin Message to Channel",
    "category": "Message",
    "description": "Pin a message to a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unpin_message_from_channel",
    "display_name": "Unpin Message from Channel",
    "category": "Message",
    "description": "Unpin a message from a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pinned_items_in_channel",
    "display_name": "List Pinned Items in Channel",
    "category": "Message",
    "description": "List pinned items in a channel",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workspace_files",
    "display_name": "List Workspace Files",
    "category": "File",
    "description": "List files in the workspace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file_information",
    "display_name": "Get File Information",
    "category": "File",
    "description": "Get information about a file",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_file",
    "display_name": "Delete File",
    "category": "File",
    "description": "Delete a file",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_file_to_slack",
    "display_name": "Upload File to Slack",
    "category": "File",
    "description": "Upload a file to Slack",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_file_public_url",
    "display_name": "Create File Public Url",
    "category": "File",
    "description": "Create a public URL for a file (files.sharedPublicURL)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "revoke_file_public_url",
    "display_name": "Revoke File Public Url",
    "category": "File",
    "description": "Revoke public URL for a file (files.revokePublicURL)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_workspace_messages",
    "display_name": "Search Workspace Messages",
    "category": "Search",
    "description": "Search for messages in the workspace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_workspace_files",
    "display_name": "Search Workspace Files",
    "category": "Search",
    "description": "Search for files in the workspace (search.files)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_messages_and_files",
    "display_name": "Search Messages and Files",
    "category": "Search",
    "description": "Search for messages and files (search.all)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_scheduled_message",
    "display_name": "Delete Scheduled Message",
    "category": "Message",
    "description": "Delete a scheduled message (chat.deleteScheduledMessage)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_scheduled_messages",
    "display_name": "List Scheduled Messages",
    "category": "Message",
    "description": "List scheduled messages (chat.scheduledMessages.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_me_message",
    "display_name": "Send Me Message",
    "category": "Message",
    "description": "Share a /me message into a channel (chat.meMessage)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "provide_custom_unfurl_behavior",
    "display_name": "Provide Custom Unfurl Behavior",
    "category": "Message",
    "description": "Provide custom unfurl behavior for URLs (chat.unfurl)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_profile_information",
    "display_name": "Get User Profile Information",
    "category": "User",
    "description": "Get a user's profile information (users.profile.get)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_user_presence_status",
    "display_name": "Set User Presence Status",
    "category": "User",
    "description": "Set user presence (users.setPresence)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "test_authentication",
    "display_name": "Test Authentication",
    "category": "Authentication",
    "description": "Test authentication and get info about the token",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workspace_information",
    "display_name": "Get Workspace Information",
    "category": "Team",
    "description": "Get information about the workspace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "test_api_connection",
    "display_name": "Test Api Connection",
    "category": "Authentication",
    "description": "Test the API connection (api.test)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "revoke_oauth_token",
    "display_name": "Revoke Oauth Token",
    "category": "Authentication",
    "description": "Revoke an OAuth token (auth.revoke)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "uninstall_app_from_workspace",
    "display_name": "Uninstall App from Workspace",
    "category": "App",
    "description": "Uninstall an app from a workspace (apps.uninstall)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team_billable_information",
    "display_name": "Get Team Billable Information",
    "category": "Team",
    "description": "Get billable info for team members (team.billableInfo)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workspace_access_logs",
    "display_name": "Get Workspace Access Logs",
    "category": "Team",
    "description": "Get access logs for the workspace (team.accessLogs)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workspace_integration_logs",
    "display_name": "Get Workspace Integration Logs",
    "category": "Team",
    "description": "Get integration logs for the workspace (team.integrationLogs)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "accept_shared_channel_invite",
    "display_name": "Accept Shared Channel Invite",
    "category": "Slack Connect",
    "description": "Accept a shared channel invite (conversations.acceptSharedInvite)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "decline_shared_channel_invite",
    "display_name": "Decline Shared Channel Invite",
    "category": "Slack Connect",
    "description": "Decline a shared channel invite (conversations.declineSharedInvite)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_slack_connect_invites",
    "display_name": "List Slack Connect Invites",
    "category": "Slack Connect",
    "description": "List Slack Connect invites (conversations.listConnectInvites)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_external_file_upload_url",
    "display_name": "Get External File Upload Url",
    "category": "File",
    "description": "Get URL for uploading a file externally (files.getUploadURLExternal)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "complete_external_file_upload",
    "display_name": "Complete External File Upload",
    "category": "File",
    "description": "Complete a file upload after uploading to external URL (files.completeUploadExternal)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_user_profile_fields",
    "display_name": "Set User Profile Fields",
    "category": "User",
    "description": "Set user profile fields (users.profile.set)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_slack_connect_channel_invite",
    "display_name": "Approve Slack Connect Channel Invite",
    "category": "Slack Connect",
    "description": "Approve an invitation to a Slack Connect channel (conversations.approveSharedInvite)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invite_user_to_slack_connect_channel",
    "display_name": "Invite User to Slack Connect Channel",
    "category": "Slack Connect",
    "description": "Invite a user to a Slack Connect channel (conversations.inviteShared)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_remote_file_to_workspace",
    "display_name": "Add Remote File to Workspace",
    "category": "File",
    "description": "Add a remote file (files.remote.add)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_remote_file",
    "display_name": "Remove Remote File",
    "category": "File",
    "description": "Remove a remote file (files.remote.remove)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "share_remote_file_to_channel",
    "display_name": "Share Remote File to Channel",
    "category": "File",
    "description": "Share a remote file to a channel (files.remote.share)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_remote_files",
    "display_name": "List Remote Files",
    "category": "File",
    "description": "List remote files (files.remote.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_reactions_for_item",
    "display_name": "List Reactions for Item",
    "category": "Message",
    "description": "List reactions for an item (reactions.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_remote_file_information",
    "display_name": "Get Remote File Information",
    "category": "File",
    "description": "Get information about a remote file (files.remote.info)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_remote_file",
    "display_name": "Update Remote File",
    "category": "File",
    "description": "Update a remote file (files.remote.update)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_file_comment",
    "display_name": "Delete File Comment",
    "category": "Message",
    "description": "Delete a file comment (files.comments.delete)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_user_profile_photo",
    "display_name": "Delete User Profile Photo",
    "category": "User",
    "description": "Delete the user's profile photo (users.deletePhoto)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_user_as_active",
    "display_name": "Set User As Active",
    "category": "User",
    "description": "Mark user as active (users.setActive) - Deprecated but still functional",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_canvas_in_channel",
    "display_name": "Create Canvas in Channel",
    "category": "Channel",
    "description": "Create a canvas in a channel (conversations.canvases.create)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_channel_external_invite_permissions",
    "display_name": "Set Channel External Invite Permissions",
    "category": "Channel",
    "description": "Set external invite permissions for a channel (conversations.externalInvitePermissions.set)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_slack_connect_invite_request",
    "display_name": "Approve Slack Connect Invite Request",
    "category": "Slack Connect",
    "description": "Approve a Slack Connect invite request (conversations.requestSharedInvite.approve)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deny_slack_connect_invite_request",
    "display_name": "Deny Slack Connect Invite Request",
    "category": "Slack Connect",
    "description": "Deny a Slack Connect invite request (conversations.requestSharedInvite.deny)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_slack_connect_invite_requests",
    "display_name": "List Slack Connect Invite Requests",
    "category": "Slack Connect",
    "description": "List Slack Connect invite requests (conversations.requestSharedInvite.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_analytics_file_for_date",
    "display_name": "Get Analytics File for Date",
    "category": "Analytics",
    "description": "Get analytics data for a given date (admin.analytics.getFile)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_app_activity_logs",
    "display_name": "List App Activity Logs",
    "category": "App",
    "description": "Get logs for app activities (admin.apps.activities.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_app_for_installation",
    "display_name": "Approve App for Installation",
    "category": "App",
    "description": "Approve an app for installation (admin.apps.approve)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_approved_apps",
    "display_name": "List Approved Apps",
    "category": "App",
    "description": "List approved apps (admin.apps.approved.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_app_resolution",
    "display_name": "Clear App Resolution",
    "category": "App",
    "description": "Clear app resolution (admin.apps.clearResolution)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lookup_app_configuration",
    "display_name": "Lookup App Configuration",
    "category": "App",
    "description": "Look up app config (admin.apps.config.lookup)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_app_configuration",
    "display_name": "Set App Configuration",
    "category": "App",
    "description": "Set app config (admin.apps.config.set)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_app_request",
    "display_name": "Cancel App Request",
    "category": "App",
    "description": "Cancel an app request (admin.apps.requests.cancel)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_app_requests",
    "display_name": "List App Requests",
    "category": "App",
    "description": "List app requests (admin.apps.requests.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restrict_app",
    "display_name": "Restrict App",
    "category": "App",
    "description": "Restrict an app (admin.apps.restrict)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_restricted_apps",
    "display_name": "List Restricted Apps",
    "category": "App",
    "description": "List restricted apps (admin.apps.restricted.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "uninstall_app",
    "display_name": "Uninstall App",
    "category": "App",
    "description": "Uninstall an app (admin.apps.uninstall)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_allowed_audit_anomaly_item",
    "display_name": "Get Allowed Audit Anomaly Item",
    "category": "Audit",
    "description": "Get allowed audit anomaly item (admin.audit.anomaly.allow.getItem)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_allowed_audit_anomaly_item",
    "display_name": "Update Allowed Audit Anomaly Item",
    "category": "Audit",
    "description": "Update allowed audit anomaly item (admin.audit.anomaly.allow.updateItem)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "assign_entities_to_auth_policy",
    "display_name": "Assign Entities to Auth Policy",
    "category": "Auth Policy",
    "description": "Assign entities to auth policy (admin.auth.policy.assignEntities)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_entities_for_auth_policy",
    "display_name": "Get Entities for Auth Policy",
    "category": "Auth Policy",
    "description": "Get entities for auth policy (admin.auth.policy.getEntities)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_entities_from_auth_policy",
    "display_name": "Remove Entities from Auth Policy",
    "category": "Auth Policy",
    "description": "Remove entities from auth policy (admin.auth.policy.removeEntities)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_information_barrier",
    "display_name": "Create Information Barrier",
    "category": "Barrier",
    "description": "Create an information barrier (admin.barriers.create)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_information_barrier",
    "display_name": "Delete Information Barrier",
    "category": "Barrier",
    "description": "Delete an information barrier (admin.barriers.delete)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_information_barriers",
    "display_name": "List Information Barriers",
    "category": "Barrier",
    "description": "List information barriers (admin.barriers.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_information_barrier",
    "display_name": "Update Information Barrier",
    "category": "Barrier",
    "description": "Update an information barrier (admin.barriers.update)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_conversation_as_admin",
    "display_name": "Archive Conversation As Admin",
    "category": "Channel",
    "description": "Archive a conversation (admin.conversations.archive)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_archive_conversations",
    "display_name": "Bulk Archive Conversations",
    "category": "Channel",
    "description": "Bulk archive conversations (admin.conversations.bulkArchive)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_delete_conversations",
    "display_name": "Bulk Delete Conversations",
    "category": "Channel",
    "description": "Bulk delete conversations (admin.conversations.bulkDelete)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_move_conversations_to_team",
    "display_name": "Bulk Move Conversations to Team",
    "category": "Channel",
    "description": "Bulk move conversations to a team (admin.conversations.bulkMove)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "convert_channel_to_private",
    "display_name": "Convert Channel to Private",
    "category": "Channel",
    "description": "Convert public channel to private (admin.conversations.convertToPrivate)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "convert_channel_to_public",
    "display_name": "Convert Channel to Public",
    "category": "Channel",
    "description": "Convert private channel to public (admin.conversations.convertToPublic)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_admin_conversation",
    "display_name": "Create Admin Conversation",
    "category": "Channel",
    "description": "Create a conversation (admin.conversations.create)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_conversation",
    "display_name": "Delete Conversation",
    "category": "Channel",
    "description": "Delete a conversation (admin.conversations.delete)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disconnect_shared_channel",
    "display_name": "Disconnect Shared Channel",
    "category": "Channel",
    "description": "Disconnect a shared channel (admin.conversations.disconnectShared)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_ekm_original_channel_info",
    "display_name": "List Ekm Original Channel Info",
    "category": "EKM",
    "description": "List original connected channel info for EKM (admin.conversations.ekm.listOriginalConnectedChannelInfo)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_conversation_preferences",
    "display_name": "Get Conversation Preferences",
    "category": "Channel",
    "description": "Get conversation preferences (admin.conversations.getConversationPrefs)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_channel_retention_settings",
    "display_name": "Get Channel Retention Settings",
    "category": "Channel",
    "description": "Get custom retention settings (admin.conversations.getCustomRetention)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_teams_for_conversation",
    "display_name": "List Teams for Conversation",
    "category": "Channel",
    "description": "Get teams for a conversation (admin.conversations.getTeams)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invite_users_to_conversation_as_admin",
    "display_name": "Invite Users to Conversation As Admin",
    "category": "Channel",
    "description": "Invite users to a conversation (admin.conversations.invite)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lookup_conversations",
    "display_name": "Lookup Conversations",
    "category": "Channel",
    "description": "Look up conversations (admin.conversations.lookup)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_channel_retention_settings",
    "display_name": "Remove Channel Retention Settings",
    "category": "Channel",
    "description": "Remove custom retention settings (admin.conversations.removeCustomRetention)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_conversation_as_admin",
    "display_name": "Rename Conversation As Admin",
    "category": "Channel",
    "description": "Rename a conversation (admin.conversations.rename)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_idp_group_to_channel",
    "display_name": "Add Idp Group to Channel",
    "category": "Channel",
    "description": "Add IDP group to channel (admin.conversations.restrictAccess.addGroup)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_idp_groups_for_channel",
    "display_name": "List Idp Groups for Channel",
    "category": "Channel",
    "description": "List IDP groups for channel (admin.conversations.restrictAccess.listGroups)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_idp_group_from_channel",
    "display_name": "Remove Idp Group from Channel",
    "category": "Channel",
    "description": "Remove IDP group from channel (admin.conversations.restrictAccess.removeGroup)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_conversations",
    "display_name": "Search Conversations",
    "category": "Channel",
    "description": "Search for conversations (admin.conversations.search)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_conversation_preferences",
    "display_name": "Set Conversation Preferences",
    "category": "Channel",
    "description": "Set conversation preferences (admin.conversations.setConversationPrefs)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_channel_retention_settings",
    "display_name": "Set Channel Retention Settings",
    "category": "Channel",
    "description": "Set custom retention settings (admin.conversations.setCustomRetention)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_teams_for_conversation",
    "display_name": "Set Teams for Conversation",
    "category": "Channel",
    "description": "Set teams for a conversation (admin.conversations.setTeams)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unarchive_conversation_as_admin",
    "display_name": "Unarchive Conversation As Admin",
    "category": "Channel",
    "description": "Unarchive a conversation (admin.conversations.unarchive)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_custom_emoji",
    "display_name": "Add Custom Emoji",
    "category": "Emoji",
    "description": "Add custom emoji (admin.emoji.add)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_emoji_alias",
    "display_name": "Add Emoji Alias",
    "category": "Emoji",
    "description": "Add emoji alias (admin.emoji.addAlias)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_custom_emoji",
    "display_name": "List Custom Emoji",
    "category": "Emoji",
    "description": "List custom emoji (admin.emoji.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_custom_emoji",
    "display_name": "Remove Custom Emoji",
    "category": "Emoji",
    "description": "Remove custom emoji (admin.emoji.remove)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_custom_emoji",
    "display_name": "Rename Custom Emoji",
    "category": "Emoji",
    "description": "Rename custom emoji (admin.emoji.rename)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_functions",
    "display_name": "List Functions",
    "category": "Function",
    "description": "List functions (admin.functions.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lookup_function_permissions",
    "display_name": "Lookup Function Permissions",
    "category": "Function",
    "description": "Look up function permissions (admin.functions.permissions.lookup)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_function_permissions",
    "display_name": "Set Function Permissions",
    "category": "Function",
    "description": "Set function permissions (admin.functions.permissions.set)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_invite_request",
    "display_name": "Approve Invite Request",
    "category": "Invite Request",
    "description": "Approve invite request (admin.inviteRequests.approve)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_approved_invite_requests",
    "display_name": "List Approved Invite Requests",
    "category": "Invite Request",
    "description": "List approved invite requests (admin.inviteRequests.approved.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_denied_invite_requests",
    "display_name": "List Denied Invite Requests",
    "category": "Invite Request",
    "description": "List denied invite requests (admin.inviteRequests.denied.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deny_invite_request",
    "display_name": "Deny Invite Request",
    "category": "Invite Request",
    "description": "Deny invite request (admin.inviteRequests.deny)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invite_requests",
    "display_name": "List Invite Requests",
    "category": "Invite Request",
    "description": "List invite requests (admin.inviteRequests.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_role_assignments",
    "display_name": "Add Role Assignments",
    "category": "Role",
    "description": "Add role assignments (admin.roles.addAssignments)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_role_assignments",
    "display_name": "List Role Assignments",
    "category": "Role",
    "description": "List role assignments (admin.roles.listAssignments)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_role_assignments",
    "display_name": "Remove Role Assignments",
    "category": "Role",
    "description": "Remove role assignments (admin.roles.removeAssignments)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_team_admins",
    "display_name": "List Team Admins",
    "category": "Team",
    "description": "List team admins (admin.teams.admins.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_team",
    "display_name": "Create Team",
    "category": "Team",
    "description": "Create a team (admin.teams.create)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_teams",
    "display_name": "List Teams",
    "category": "Team",
    "description": "List teams (admin.teams.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_team_owners",
    "display_name": "List Team Owners",
    "category": "Team",
    "description": "List team owners (admin.teams.owners.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team_settings",
    "display_name": "Get Team Settings",
    "category": "Team",
    "description": "Get team settings info (admin.teams.settings.info)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_default_channels_for_team",
    "display_name": "Set Default Channels for Team",
    "category": "Team",
    "description": "Set default channels for team (admin.teams.settings.setDefaultChannels)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_team_description",
    "display_name": "Set Team Description",
    "category": "Team",
    "description": "Set team description (admin.teams.settings.setDescription)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_team_discoverability",
    "display_name": "Set Team Discoverability",
    "category": "Team",
    "description": "Set team discoverability (admin.teams.settings.setDiscoverability)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_team_icon",
    "display_name": "Set Team Icon",
    "category": "Team",
    "description": "Set team icon (admin.teams.settings.setIcon)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_team_name",
    "display_name": "Set Team Name",
    "category": "Team",
    "description": "Set team name (admin.teams.settings.setName)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_channels_to_usergroup",
    "display_name": "Add Channels to Usergroup",
    "category": "User Group",
    "description": "Add channels to usergroup (admin.usergroups.addChannels)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_teams_to_usergroup",
    "display_name": "Add Teams to Usergroup",
    "category": "User Group",
    "description": "Add teams to usergroup (admin.usergroups.addTeams)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channels_in_usergroup",
    "display_name": "List Channels in Usergroup",
    "category": "User Group",
    "description": "List channels in usergroup (admin.usergroups.listChannels)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_channels_from_usergroup",
    "display_name": "Remove Channels from Usergroup",
    "category": "User Group",
    "description": "Remove channels from usergroup (admin.usergroups.removeChannels)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "assign_user_to_team",
    "display_name": "Assign User to Team",
    "category": "User",
    "description": "Assign a user to a team (admin.users.assign)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_expiration",
    "display_name": "Get User Expiration",
    "category": "User",
    "description": "Get expiration for a user (admin.users.getExpiration)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invite_user_to_team",
    "display_name": "Invite User to Team",
    "category": "User",
    "description": "Invite a user to a team (admin.users.invite)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users_in_team",
    "display_name": "List Users in Team",
    "category": "User",
    "description": "List users in a team (admin.users.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_user_from_team",
    "display_name": "Remove User from Team",
    "category": "User",
    "description": "Remove a user from a team (admin.users.remove)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "clear_user_session_settings",
    "display_name": "Clear User Session Settings",
    "category": "Session",
    "description": "Clear session settings (admin.users.session.clearSettings)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_session_settings",
    "display_name": "Get User Session Settings",
    "category": "Session",
    "description": "Get session settings (admin.users.session.getSettings)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invalidate_user_session",
    "display_name": "Invalidate User Session",
    "category": "Session",
    "description": "Invalidate user session (admin.users.session.invalidate)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_sessions",
    "display_name": "List User Sessions",
    "category": "Session",
    "description": "List user sessions (admin.users.session.list)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_user_session",
    "display_name": "Reset User Session",
    "category": "Session",
    "description": "Reset user session (admin.users.session.reset)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_reset_user_sessions",
    "display_name": "Bulk Reset User Sessions",
    "category": "Session",
    "description": "Bulk reset user sessions (admin.users.session.resetBulk)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_user_session_settings",
    "display_name": "Set User Session Settings",
    "category": "Session",
    "description": "Set session settings (admin.users.session.setSettings)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_user_as_admin",
    "display_name": "Set User As Admin",
    "category": "User",
    "description": "Set a user as admin (admin.users.setAdmin)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_user_expiration",
    "display_name": "Set User Expiration",
    "category": "User",
    "description": "Set expiration for a user (admin.users.setExpiration)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_user_as_owner",
    "display_name": "Set User As Owner",
    "category": "User",
    "description": "Set a user as owner (admin.users.setOwner)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_user_as_regular",
    "display_name": "Set User As Regular",
    "category": "User",
    "description": "Set a user as regular (admin.users.setRegular)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_unsupported_version_users",
    "display_name": "Export Unsupported Version Users",
    "category": "User",
    "description": "Export unsupported version users (admin.users.unsupportedVersions.export)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_workflow_collaborators",
    "display_name": "Add Workflow Collaborators",
    "category": "Workflow",
    "description": "Add workflow collaborators (admin.workflows.collaborators.add)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_workflow_collaborators",
    "display_name": "Remove Workflow Collaborators",
    "category": "Workflow",
    "description": "Remove workflow collaborators (admin.workflows.collaborators.remove)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lookup_workflow_permissions",
    "display_name": "Lookup Workflow Permissions",
    "category": "Workflow",
    "description": "Look up workflow permissions (admin.workflows.permissions.lookup)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_workflows",
    "display_name": "Search Workflows",
    "category": "Workflow",
    "description": "Search workflows (admin.workflows.search)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lookup_workflow_trigger_type_permissions",
    "display_name": "Lookup Workflow Trigger Type Permissions",
    "category": "Workflow",
    "description": "Look up workflow trigger type permissions (admin.workflows.triggers.types.permissions.lookup)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_workflow_trigger_type_permissions",
    "display_name": "Set Workflow Trigger Type Permissions",
    "category": "Workflow",
    "description": "Set workflow trigger type permissions (admin.workflows.triggers.types.permissions.set)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unpublish_workflow",
    "display_name": "Unpublish Workflow",
    "category": "Workflow",
    "description": "Unpublish a workflow (admin.workflows.unpublish)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

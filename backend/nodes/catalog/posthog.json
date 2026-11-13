@@ -52,714 +52,906 @@
    "display_name": "Capture Event",
    "category": "Ingestion",
    "description": "Capture a single event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "batch_capture",
    "display_name": "Batch Capture",
    "category": "Ingestion",
    "description": "Capture a batch of events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "identify",
    "display_name": "Identify Person",
    "category": "Ingestion",
    "description": "Identify a person and set their properties ($identify).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "group_identify",
    "display_name": "Group Identify",
    "category": "Ingestion",
    "description": "Set properties on a group ($groupidentify).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "evaluate_flags",
    "display_name": "Evaluate Feature Flags",
    "category": "Ingestion",
    "description": "Evaluate feature flags for a person.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "run_query",
    "display_name": "Run Query (HogQL)",
    "category": "Query",
    "description": "Run a HogQL / structured query via the Query API (the universal read primitive).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": "List Events",
    "category": "Events",
    "description": "List recent events.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_feature_flags",
    "display_name": "List Feature Flags",
    "category": "Feature Flags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_feature_flag",
    "display_name": "Get Feature Flag",
    "category": "Feature Flags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_feature_flag",
    "display_name": "Create Feature Flag",
    "category": "Feature Flags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_feature_flag",
    "display_name": "Update Feature Flag",
    "category": "Feature Flags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_feature_flag",
    "display_name": "Delete Feature Flag",
    "category": "Feature Flags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_persons",
    "display_name": "List Persons",
    "category": "Persons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_person",
    "display_name": "Get Person",
    "category": "Persons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_person",
    "display_name": "Update Person",
    "category": "Persons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_person",
    "display_name": "Delete Person",
    "category": "Persons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_cohorts",
    "display_name": "List Cohorts",
    "category": "Cohorts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_cohort",
    "display_name": "Get Cohort",
    "category": "Cohorts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_cohort",
    "display_name": "Create Cohort",
    "category": "Cohorts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_cohort",
    "display_name": "Update Cohort",
    "category": "Cohorts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_cohort",
    "display_name": "Delete Cohort",
    "category": "Cohorts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_cohort_persons",
    "display_name": "List Cohort Persons",
    "category": "Cohorts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_annotations",
    "display_name": "List Annotations",
    "category": "Annotations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_annotation",
    "display_name": "Create Annotation",
    "category": "Annotations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_annotation",
    "display_name": "Update Annotation",
    "category": "Annotations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_annotation",
    "display_name": "Delete Annotation",
    "category": "Annotations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_insights",
    "display_name": "List Insights",
    "category": "Insights",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_insight",
    "display_name": "Get Insight",
    "category": "Insights",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_insight",
    "display_name": "Create Insight",
    "category": "Insights",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_insight",
    "display_name": "Delete Insight",
    "category": "Insights",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_dashboards",
    "display_name": "List Dashboards",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dashboard",
    "display_name": "Get Dashboard",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_dashboard",
    "display_name": "Create Dashboard",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_dashboard",
    "display_name": "Delete Dashboard",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_actions",
    "display_name": "List Actions",
    "category": "Actions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_action",
    "display_name": "Get Action",
    "category": "Actions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_action",
    "display_name": "Create Action",
    "category": "Actions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_surveys",
    "display_name": "List Surveys",
    "category": "Surveys",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_survey",
    "display_name": "Get Survey",
    "category": "Surveys",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_session_recordings",
    "display_name": "List Session Recordings",
    "category": "Session Replay",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_session_recording",
    "display_name": "Get Session Recording",
    "category": "Session Replay",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_session_recording",
    "display_name": "Delete Session Recording",
    "category": "Session Replay",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_experiments",
    "display_name": "List Experiments",
    "category": "Experiments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_experiment",
    "display_name": "Get Experiment",
    "category": "Experiments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_event_definitions",
    "display_name": "List Event Definitions",
    "category": "Definitions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_property_definitions",
    "display_name": "List Property Definitions",
    "category": "Definitions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_insight",
    "display_name": "Update Insight",
    "category": "Insights",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_dashboard",
    "display_name": "Update Dashboard",
    "category": "Dashboards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "feature_flag_local_evaluation",
    "display_name": "Get Local Evaluation Payload",
    "category": "Feature Flags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_my_feature_flags",
    "display_name": "List My Feature Flags",
    "category": "Feature Flags",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "split_person",
    "display_name": "Split Person",
    "category": "Persons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_delete_persons",
    "display_name": "Bulk Delete Persons",
    "category": "Persons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_experiment",
    "display_name": "Create Experiment",
    "category": "Experiments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_experiment",
    "display_name": "Update Experiment",
    "category": "Experiments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "experiment_action",
    "display_name": "Experiment Action",
    "category": "Experiments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_survey",
    "display_name": "Create Survey",
    "category": "Surveys",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_survey",
    "display_name": "Update Survey",
    "category": "Surveys",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "survey_action",
    "display_name": "Survey Action",
    "category": "Surveys",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_survey_responses",
    "display_name": "Get Survey Responses",
    "category": "Surveys",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_survey_stats",
    "display_name": "Get Survey Stats",
    "category": "Surveys",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_group_types",
    "display_name": "List Group Types",
    "category": "Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_groups",
    "display_name": "List Groups",
    "category": "Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_group",
    "display_name": "Find Group",
    "category": "Groups",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_persons_to_cohort",
    "display_name": "Add Persons to Static Cohort",
    "category": "Cohorts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_notebooks",
    "display_name": "List Notebooks",
    "category": "Notebooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_notebook",
    "display_name": "Get Notebook",
    "category": "Notebooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_notebook",
    "display_name": "Create Notebook",
    "category": "Notebooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_early_access_features",
    "display_name": "List Early Access Features",
    "category": "Early Access",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_early_access_feature",
    "display_name": "Create Early Access Feature",
    "category": "Early Access",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_batch_exports",
    "display_name": "List Batch Exports",
    "category": "Batch Exports",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_batch_export",
    "display_name": "Get Batch Export",
    "category": "Batch Exports",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_destinations",
    "display_name": "List Destinations",
    "category": "Destinations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_destination",
    "display_name": "Get Destination",
    "category": "Destinations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_destination",
    "display_name": "Create Destination",
    "category": "Destinations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_destination",
    "display_name": "Update Destination",
    "category": "Destinations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_destination_enabled",
    "display_name": "Enable/Disable Destination",
    "category": "Destinations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_destination",
    "display_name": "Delete Destination",
    "category": "Destinations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_destination_templates",
    "display_name": "List Destination Templates",
    "category": "Destinations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_destination_logs",
    "display_name": "Get Destination Logs",
    "category": "Destinations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_destination_metrics",
    "display_name": "Get Destination Metrics",
    "category": "Destinations",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_activity_log",
    "display_name": "List Activity Log",
    "category": "Advanced",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_org_members",
    "display_name": "List Org Members",
    "category": "Organization",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_org_invites",
    "display_name": "List Org Invites",
    "category": "Organization",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_org_invite",
    "display_name": "Invite Org Member",
    "category": "Organization",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Projects",
    "category": "Organization",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_roles",
    "display_name": "List Roles",
    "category": "Organization",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "raw_request",
    "display_name": "Custom Request",
    "category": "Advanced",
    "description": "Call any authenticated PostHog REST endpoint (covers the huge long tail).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_pageview",
    "display_name": "On Pageview",
    "category": "Triggers",
    "description": "Fires on every pageview ($pageview).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   },
   {
    "name": "on_pageleave",
    "display_name": "On Page Leave",
    "category": "Triggers",
    "description": "Fires when a user leaves a page ($pageleave).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   },
   {
    "name": "on_autocapture",
    "display_name": "On Autocapture",
    "category": "Triggers",
    "description": "Fires on any autocaptured interaction ($autocapture).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   },
   {
    "name": "on_rageclick",
    "display_name": "On Rageclick",
    "category": "Triggers",
    "description": "Fires when PostHog detects a rageclick ($rageclick).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   },
   {
    "name": "on_identify",
    "display_name": "On Identify",
    "category": "Triggers",
    "description": "Fires when a person is identified ($identify).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   },
   {
    "name": "on_group_identify",
    "display_name": "On Group Identify",
    "category": "Triggers",
    "description": "Fires when a group is identified ($groupidentify).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   },
   {
    "name": "on_set_person_properties",
    "display_name": "On Set Person Properties",
    "category": "Triggers",
    "description": "Fires when person properties are set ($set).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   },
   {
    "name": "on_feature_flag_called",
    "display_name": "On Feature Flag Called",
    "category": "Triggers",
    "description": "Fires when a feature flag is evaluated ($feature_flag_called).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   },
   {
    "name": "on_survey_shown",
    "display_name": "On Survey Shown",
    "category": "Triggers",
    "description": "Fires when a survey is shown to a user (survey shown).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   },
   {
    "name": "on_survey_sent",
    "display_name": "On Survey Response",
    "category": "Triggers",
    "description": "Fires when a survey response is submitted (survey sent).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   },
   {
    "name": "on_survey_dismissed",
    "display_name": "On Survey Dismissed",
    "category": "Triggers",
    "description": "Fires when a survey is dismissed (survey dismissed).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   },
   {
    "name": "on_exception",
    "display_name": "On Exception",
    "category": "Triggers",
    "description": "Fires when an exception/error is captured ($exception).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   },
   {
    "name": "on_web_vitals",
    "display_name": "On Web Vitals",
    "category": "Triggers",
    "description": "Fires on a web-vitals measurement ($web_vitals).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   },
   {
    "name": "on_screen",
    "display_name": "On Screen View (Mobile)",
    "category": "Triggers",
    "description": "Fires on a mobile screen view ($screen).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   },
   {
    "name": "on_custom_event",
    "display_name": "On Custom Event",
    "category": "Triggers",
    "description": "Fires on a custom event you name (or every event with '*').",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "posthog_personal_api_key",
+    "posthog_project_api_key",
+    "posthog_oauth",
+    "posthog_mcp"
+   ]
   }
  ],
  "agent_tool_provider": true,

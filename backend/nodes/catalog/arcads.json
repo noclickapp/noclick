@@ -34,210 +34,241 @@
    "display_name": "List Products",
    "category": "Products",
    "description": "List products in your workspace (paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_product",
    "display_name": "Create Product",
    "category": "Products",
    "description": "Create a new product.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product",
    "display_name": "Get Product",
    "category": "Products",
    "description": "Fetch a single product by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_product",
    "display_name": "Update Product",
    "category": "Products",
    "description": "Update an existing product.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_product",
    "display_name": "Delete Product",
    "category": "Products",
    "description": "Delete a product by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_folders",
    "display_name": "List Folders",
    "category": "Folders & Scripts",
    "description": "List folders within a product (paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_folder",
    "display_name": "Create Folder",
    "category": "Folders & Scripts",
    "description": "Create a new folder within a product.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_scripts",
    "display_name": "List Scripts",
    "category": "Folders & Scripts",
    "description": "List scripts within a folder (paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": "Create Project",
    "category": "Folders & Scripts",
    "description": "Create a new project (alternative container to folders).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_script",
    "display_name": "Create Script",
    "category": "Folders & Scripts",
    "description": "Create a new script within a folder or project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_script",
    "display_name": "Get Script",
    "category": "Folders & Scripts",
    "description": "Fetch a script by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_script",
    "display_name": "Update Script",
    "category": "Folders & Scripts",
    "description": "Update a script (text, actor/situation selection, etc.).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_script_videos",
    "display_name": "Generate Videos for Script",
    "category": "Generation",
    "description": "Trigger AI-actor video generation for a script (async).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_video",
    "display_name": "Generate Video (v2)",
    "category": "Generation",
    "description": "Generic video generation entry point (v2, supports model selection).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_image",
    "display_name": "Generate Image (v2)",
    "category": "Generation",
    "description": "Trigger image generation (v2).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_talking_actor",
    "display_name": "Generate Talking Actor (v2)",
    "category": "Generation",
    "description": "Generate a talking-actor (lip-synced) video (v2).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_preset",
    "display_name": "Generate Preset (Camera Movement)",
    "category": "Generation",
    "description": "Trigger a camera-movement preset generation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_veo31",
    "display_name": "Veo 3.1 Text-to-Video",
    "category": "Generation",
    "description": "Trigger Veo 3.1 text-to-video generation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_omnihuman",
    "display_name": "Generate Omnihuman",
    "category": "Generation",
    "description": "Trigger Omnihuman avatar / talking-head generation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_script_videos",
    "display_name": "List Script Videos",
    "category": "Assets & Status",
    "description": "Get generated videos for a script -- poll this for status + download link.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_video",
    "display_name": "Get Video",
    "category": "Assets & Status",
    "description": "Fetch a single video by ID (status).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_video_watch",
    "display_name": "Get Video Watch Link",
    "category": "Assets & Status",
    "description": "Get a playable/downloadable watch URL for a video.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workflow_run",
    "display_name": "Get Workflow Run",
    "category": "Assets & Status",
    "description": "Check the status of a workflow run.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_presigned_url",
    "display_name": "Get Presigned Upload URL",
    "category": "Assets & Status",
    "description": "Get a presigned URL to upload a source file.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_actors",
    "display_name": "List Actors",
    "category": "Catalog",
    "description": "List AI actors with optional filters (paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_actor_situations",
    "display_name": "List Actor Situations",
    "category": "Catalog",
    "description": "List situations (scene contexts) available for a given actor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_situations",
    "display_name": "List Situations",
    "category": "Catalog",
    "description": "List situations with optional filters (paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_voices",
    "display_name": "List Voices",
    "category": "Catalog",
    "description": "List AI voices with optional filters (paginated).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_presets",
    "display_name": "List Presets",
    "category": "Catalog",
    "description": "List available preset types.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_generation_completed",
    "display_name": "On Generation Completed",
    "category": "Triggers",
    "description": "Trigger when a script's generated videos newly complete",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": []
   }
  ],
  "agent_tool_provider": true,

@@ -22,1393 +22,1592 @@
    "display_name": "Retrieves activities for the record",
    "category": "Activity",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_activities_count",
    "display_name": "Retrieves activities count for the record, account or user",
    "category": "Activity",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_activities_by_id",
    "display_name": "Retrieve activity",
    "category": "Activity",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_by_company_id_addrs",
    "display_name": "Retrieves all addrs of the company",
    "category": "Addr",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_companies_by_company_id_addrs",
    "display_name": "Creates a basic Addr (company)",
    "category": "Addr",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_by_company_id_addrs_by_id",
    "display_name": "Retrieves the addr (company)",
    "category": "Addr",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_companies_by_company_id_addrs_by_id",
    "display_name": "Update a addr (company)",
    "category": "Addr",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_companies_by_company_id_addrs_by_id",
    "display_name": "Destroy a addrs (company)",
    "category": "Addr",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_addrs",
    "display_name": "Retrieves all addrs of the person",
    "category": "Addr",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_people_by_person_id_addrs",
    "display_name": "Creates a basic Addr (person)",
    "category": "Addr",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_addrs_by_id",
    "display_name": "Retrieves the addr (person)",
    "category": "Addr",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_people_by_person_id_addrs_by_id",
    "display_name": "Update a addr (person)",
    "category": "Addr",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_people_by_person_id_addrs_by_id",
    "display_name": "Destroy a addrs (person)",
    "category": "Addr",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "check_connection",
    "display_name": "Check connection",
    "category": "Other",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_attachments",
    "display_name": "Retrieves all attachments (all records)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_attachments",
    "display_name": "Create attachment (all records)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_attachments_by_id",
    "display_name": "Retrieve attachment (all records)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_attachments_by_id",
    "display_name": "Delete attachment (all records)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_attachments_search",
    "display_name": "Retrieves attachments matching the search (all records)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_attachments_count",
    "display_name": "Retrieves total amount and total file size",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_avatars",
    "display_name": "Retrieves all avatars (all records)",
    "category": "Avatar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_avatars_by_id",
    "display_name": "Retrieve avatar (all records)",
    "category": "Avatar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_avatars_by_id",
    "display_name": "Delete avatar (all records)",
    "category": "Avatar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_avatars_count",
    "display_name": "Retrieves total amount and total file size",
    "category": "Avatar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_avatars",
    "display_name": "Retrieves all avatars (person)",
    "category": "Avatar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_people_by_person_id_avatars",
    "display_name": "Create avatar (person)",
    "category": "Avatar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_avatars_by_id",
    "display_name": "Retrieve avatar (person)",
    "category": "Avatar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_people_by_person_id_avatars_by_id",
    "display_name": "Delete avatar (person)",
    "category": "Avatar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_by_company_id_avatars",
    "display_name": "Retrieves all avatars (company)",
    "category": "Avatar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_companies_by_company_id_avatars",
    "display_name": "Create avatar (company)",
    "category": "Avatar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_by_company_id_avatars_by_id",
    "display_name": "Retrieve avatar (company)",
    "category": "Avatar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_companies_by_company_id_avatars_by_id",
    "display_name": "Delete avatar (company)",
    "category": "Avatar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_cal_events_by_cal_event_id_cal_event_attendees",
    "display_name": "Retrieves all cal event attendees",
    "category": "CalEventAttendee",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_cal_events_by_cal_event_id_cal_event_attendees",
    "display_name": "Creates a cal event attendee",
    "category": "CalEventAttendee",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_cal_events_by_cal_event_id_cal_event_attendees_by_id",
    "display_name": "Retrieves a cal event attendee",
    "category": "CalEventAttendee",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_cal_events_by_cal_event_id_cal_event_attendees_by_id",
    "display_name": "Update a cal event attendee",
    "category": "CalEventAttendee",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_cal_events_by_cal_event_id_cal_event_attendees_by_id",
    "display_name": "Destroy a cal event attendee",
    "category": "CalEventAttendee",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_cal_events",
    "display_name": "Retrieves all cal events of the account",
    "category": "CalEvent",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_cal_events",
    "display_name": "Creates a cal event",
    "category": "CalEvent",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_cal_events_by_id",
    "display_name": "Retrieves a cal event",
    "category": "CalEvent",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_cal_events_by_id",
    "display_name": "Update a cal event",
    "category": "CalEvent",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_cal_events_by_id",
    "display_name": "Destroy a cal event",
    "category": "CalEvent",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_comments",
    "display_name": "Retrieves all comments of the account",
    "category": "Comment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_comments",
    "display_name": "Creates a comment",
    "category": "Comment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_comments_by_id",
    "display_name": "Retrieves a comment",
    "category": "Comment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_comments_by_id",
    "display_name": "Update a comment",
    "category": "Comment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_comments_by_id",
    "display_name": "Destroy a comment",
    "category": "Comment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies",
    "display_name": "List companies",
    "category": "Company",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_companies",
    "display_name": "Create company",
    "category": "Company",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_by_id",
    "display_name": "Retrieves a company",
    "category": "Company",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_companies_by_id",
    "display_name": "Update a company",
    "category": "Company",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_companies_by_id",
    "display_name": "Destroy a company",
    "category": "Company",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_search",
    "display_name": "Retrieves companies matching the search",
    "category": "Company",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_companies_by_id_merge",
    "display_name": "Merge another company",
    "category": "Company",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_count",
    "display_name": "Retrieves total amount of companies",
    "category": "Company",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_stats",
    "display_name": "Retrieves key information of companies",
    "category": "Company",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_by_company_id_external_emails",
    "display_name": "Retrieves all external_emails (company)",
    "category": "ExternalEmail",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_by_company_id_external_emails_count",
    "display_name": "Retrieves total amount of external_emails (company)",
    "category": "ExternalEmail",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_by_company_id_protocols_by_protocol_id_attachments",
    "display_name": "Retrieves all attachments (company protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_companies_by_company_id_protocols_by_protocol_id_attachments",
    "display_name": "Create attachment (company protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_by_company_id_protocols_by_protocol_id_attachments_by_id",
    "display_name": "Retrieve attachment (company protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_companies_by_company_id_protocols_by_protocol_id_attachments_by_id",
    "display_name": "Delete attachment (company protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_by_company_id_protocols_by_protocol_id_attachments_search",
    "display_name": "Retrieves attachments matching the search (company protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_by_company_id_contact_details",
    "display_name": "Retrieves all contact_details of the company",
    "category": "ContactDetails",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_companies_by_company_id_contact_details",
    "display_name": "Creates a basic tel (company)",
    "category": "ContactDetails",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_companies_by_company_id_contact_details_by_id",
    "display_name": "Retrieves the tel (company)",
    "category": "ContactDetails",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_companies_by_company_id_contact_details_by_id",
    "display_name": "Update a contact_detail (company)",
    "category": "ContactDetails",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_companies_by_company_id_contact_details_by_id",
    "display_name": "Destroy a contact_detail (company)",
    "category": "ContactDetails",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_contact_details",
    "display_name": "Retrieves all contact_details of the person",
    "category": "ContactDetails",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_people_by_person_id_contact_details",
    "display_name": "Creates a basic tel (person)",
    "category": "ContactDetails",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_contact_details_by_id",
    "display_name": "Retrieves the tel (person)",
    "category": "ContactDetails",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_people_by_person_id_contact_details_by_id",
    "display_name": "Update a contact_detail (person)",
    "category": "ContactDetails",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_people_by_person_id_contact_details_by_id",
    "display_name": "Destroy a contact_detail (person)",
    "category": "ContactDetails",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact_details_search",
    "display_name": "Retrieves all records matching the contact_details search",
    "category": "ContactDetails",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_custom_fields",
    "display_name": "Retrieves all custom_fields of the person",
    "category": "CustomField",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_people_by_person_id_custom_fields",
    "display_name": "Creates a basic custom field",
    "category": "CustomField",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_custom_fields_by_id",
    "display_name": "Retrieves the custom field",
    "category": "CustomField",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_people_by_person_id_custom_fields_by_id",
    "display_name": "Update a custom_field",
    "category": "CustomField",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_people_by_person_id_custom_fields_by_id",
    "display_name": "Destroy a custom_field",
    "category": "CustomField",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_custom_fields_types",
    "display_name": "Retrieves all CustomFieldTypes of the account",
    "category": "CustomFieldType",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_custom_fields_types",
    "display_name": "Creates a custom field type",
    "category": "CustomFieldType",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_custom_fields_types_by_id",
    "display_name": "Retrieves a custom field type",
    "category": "CustomFieldType",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_custom_fields_types_by_id",
    "display_name": "Update a custom field type",
    "category": "CustomFieldType",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_custom_fields_types_by_id",
    "display_name": "Destroy a custom field type",
    "category": "CustomFieldType",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deal_types",
    "display_name": "Retrieves all deal types of the account",
    "category": "DealType",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deal_types_by_id",
    "display_name": "Retrieves a deal type with its stages",
    "category": "DealType",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deals_by_deal_id_external_emails",
    "display_name": "Retrieves all external_emails (deal)",
    "category": "ExternalEmail",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deals_by_deal_id_external_emails_count",
    "display_name": "Retrieves total amount of external_emails (deal)",
    "category": "ExternalEmail",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deals_by_deal_id_maildrop",
    "display_name": "Retrieves the maildrop (deal)",
    "category": "Maildrop",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deals",
    "display_name": "List opportunities",
    "category": "Deal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_deals",
    "display_name": "Create opportunity",
    "category": "Deal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deals_by_id",
    "display_name": "Retrieves a deal",
    "category": "Deal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_deals_by_id",
    "display_name": "Update a deal",
    "category": "Deal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_deals_by_id",
    "display_name": "Destroy a deal",
    "category": "Deal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deals_search",
    "display_name": "Retrieves deals matching the search",
    "category": "Deal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deals_count",
    "display_name": "Retrieves total amount of deals",
    "category": "Deal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deals_stats",
    "display_name": "Retrieves key information of deals",
    "category": "Deal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deals_by_deal_id_protocols_by_protocol_id_attachments",
    "display_name": "Retrieves all attachments (deal protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_deals_by_deal_id_protocols_by_protocol_id_attachments",
    "display_name": "Create attachment (deal protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deals_by_deal_id_protocols_by_protocol_id_attachments_by_id",
    "display_name": "Retrieve attachment (deal protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_deals_by_deal_id_protocols_by_protocol_id_attachments_by_id",
    "display_name": "Delete attachment (deal protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_deals_by_deal_id_protocols_by_protocol_id_attachments_search",
    "display_name": "Retrieves attachments matching the search (deal protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_external_emails_by_external_email_id_attachments",
    "display_name": "Retrieves all attachments (external email)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_external_emails_by_external_email_id_attachments",
    "display_name": "Create attachment (external email)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_external_emails_by_external_email_id_attachments_by_id",
    "display_name": "Retrieve attachment (external email)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_external_emails_by_external_email_id_attachments_by_id",
    "display_name": "Delete attachment (external email)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_external_emails",
    "display_name": "Retrieves all external_emails (all records)",
    "category": "ExternalEmail",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_external_emails_by_id",
    "display_name": "Retrieves a external_email",
    "category": "ExternalEmail",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_external_emails_count",
    "display_name": "Retrieves total amount of external_emails (all records)",
    "category": "ExternalEmail",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_filter_groups",
    "display_name": "Retrieves all filter_groups of the account",
    "category": "FilterGroup",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_filter_groups_by_id",
    "display_name": "Retrieves records matching the filter group",
    "category": "FilterGroup",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_filter_groups_by_id_ids",
    "display_name": "Retrieve ids of records matching the filter group",
    "category": "FilterGroup",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_filter_groups_by_id_count",
    "display_name": "Retrieves count of filter_groups matching records",
    "category": "FilterGroup",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_group_calendars",
    "display_name": "Retrieves all group calendars",
    "category": "GroupCalendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_group_calendars",
    "display_name": "Creates a group calendar",
    "category": "GroupCalendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_group_calendars_by_id",
    "display_name": "Retrieves a group calendar",
    "category": "GroupCalendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_group_calendars_by_id",
    "display_name": "Update a group calendar",
    "category": "GroupCalendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_group_calendars_by_id",
    "display_name": "Destroy a group calendar",
    "category": "GroupCalendar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_historic_events",
    "display_name": "Retrieves all historic_events of the account",
    "category": "HistoricEvent",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_hooks",
    "display_name": "Retrieves all hooks of the account",
    "category": "Hook",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_hooks",
    "display_name": "Creates a hook",
    "category": "Hook",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_hooks_by_id",
    "display_name": "Retrieves a hook",
    "category": "Hook",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_hooks_by_id",
    "display_name": "Destroy a hook",
    "category": "Hook",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_assis",
    "display_name": "Retrieves all assis of the person",
    "category": "Assi",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_people_by_person_id_assis",
    "display_name": "Creates an assi of the person",
    "category": "Assi",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_assis_by_id",
    "display_name": "Retrieves the assi",
    "category": "Assi",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_people_by_person_id_assis_by_id",
    "display_name": "Update a assi",
    "category": "Assi",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_people_by_person_id_assis_by_id",
    "display_name": "Destroy a assi",
    "category": "Assi",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people",
    "display_name": "List contacts",
    "category": "Person",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_people",
    "display_name": "Create contact",
    "category": "Person",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_id",
    "display_name": "Get contact",
    "category": "Person",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_people_by_id",
    "display_name": "Update contact",
    "category": "Person",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_people_by_id",
    "display_name": "Delete contact",
    "category": "Person",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_people_by_id_merge",
    "display_name": "Merge another person",
    "category": "Person",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_search",
    "display_name": "Retrieves people matching the search",
    "category": "Person",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_count",
    "display_name": "Retrieves total amount of people",
    "category": "Person",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_stats",
    "display_name": "Retrieves key information of people",
    "category": "Person",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_external_emails",
    "display_name": "Retrieves all external_emails (person)",
    "category": "ExternalEmail",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_external_emails_count",
    "display_name": "Retrieves total amount of external_emails (person)",
    "category": "ExternalEmail",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_historic_events",
    "display_name": "Retrieves all historic_events of the person",
    "category": "HistoricEvent",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_people_by_person_id_historic_events",
    "display_name": "Creates a basic historic_event",
    "category": "HistoricEvent",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_historic_events_by_id",
    "display_name": "Retrieves the historic_event",
    "category": "HistoricEvent",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_people_by_person_id_historic_events_by_id",
    "display_name": "Update a historic_event",
    "category": "HistoricEvent",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_people_by_person_id_historic_events_by_id",
    "display_name": "Destroy a historic_event",
    "category": "HistoricEvent",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_protocols_by_protocol_id_attachments",
    "display_name": "Retrieves all attachments (person protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_people_by_person_id_protocols_by_protocol_id_attachments",
    "display_name": "Create attachment (person protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_protocols_by_protocol_id_attachments_by_id",
    "display_name": "Retrieve attachment (person protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_people_by_person_id_protocols_by_protocol_id_attachments_by_id",
    "display_name": "Delete attachment (person protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_protocols_by_protocol_id_attachments_search",
    "display_name": "Retrieves attachments matching the search (person protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_positions",
    "display_name": "Retrieves all positions",
    "category": "Position",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_people_by_person_id_positions",
    "display_name": "Creates a basic position",
    "category": "Position",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_positions_by_id",
    "display_name": "Retrieves a position",
    "category": "Position",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_people_by_person_id_positions_by_id",
    "display_name": "Update a position",
    "category": "Position",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_people_by_person_id_positions_by_id",
    "display_name": "Destroy a position",
    "category": "Position",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_projects_by_project_id_external_emails",
    "display_name": "Retrieves all external_emails (project)",
    "category": "ExternalEmail",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_projects_by_project_id_external_emails_count",
    "display_name": "Retrieves total amount of external_emails (project)",
    "category": "ExternalEmail",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_projects_by_project_id_maildrop",
    "display_name": "Retrieves the maildrop (project)",
    "category": "Maildrop",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_projects",
    "display_name": "Retrieves all projects",
    "category": "Project",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_projects",
    "display_name": "Creates a basic project",
    "category": "Project",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_projects_by_id",
    "display_name": "Retrieves a project",
    "category": "Project",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_projects_by_id",
    "display_name": "Update a project",
    "category": "Project",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_projects_by_id",
    "display_name": "Destroy a project",
    "category": "Project",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_projects_search",
    "display_name": "Retrieves projects matching the search",
    "category": "Project",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_projects_count",
    "display_name": "Retrieves total amount of projects",
    "category": "Project",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_projects_stats",
    "display_name": "Retrieves key information of projects",
    "category": "Project",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_projects_by_project_id_protocols_by_protocol_id_attachments",
    "display_name": "Retrieves all attachments (project protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_projects_by_project_id_protocols_by_protocol_id_attachments",
    "display_name": "Create attachment (project protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_projects_by_project_id_protocols_by_protocol_id_attachments_by_id",
    "display_name": "Retrieve attachment (project protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_projects_by_project_id_protocols_by_protocol_id_attachments_by_id",
    "display_name": "Delete attachment (project protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_projects_by_project_id_protocols_by_protocol_id_attachments_search",
    "display_name": "Retrieves attachments matching the search (project protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_protocols_by_protocol_id_attachments",
    "display_name": "Retrieves all attachments (protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_protocols_by_protocol_id_attachments",
    "display_name": "Create attachment (protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_protocols_by_protocol_id_attachments_by_id",
    "display_name": "Retrieve attachment (protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_protocols_by_protocol_id_attachments_by_id",
    "display_name": "Delete attachment (protocol)",
    "category": "Attachment",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_protocols",
    "display_name": "Retrieves all protocols",
    "category": "Protocol",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_protocols",
    "display_name": "Creates a protocol",
    "category": "Protocol",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_protocols_by_id",
    "display_name": "Retrieves a protocol",
    "category": "Protocol",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_protocols_by_id",
    "display_name": "Update a protocol",
    "category": "Protocol",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_protocols_by_id",
    "display_name": "Destroy a protocol",
    "category": "Protocol",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_protocols_count",
    "display_name": "Retrieves total amount of protocols",
    "category": "Protocol",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_search",
    "display_name": "Retrieves search results",
    "category": "Search",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tags",
    "display_name": "Retrieves all tags (all records)",
    "category": "Tag",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_tags",
    "display_name": "Creates a basic tag (all records)",
    "category": "Tag",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tags_list",
    "display_name": "Retrieves all tags (all records list)",
    "category": "Tag",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_tags",
    "display_name": "Retrieves all tags (person)",
    "category": "Tag",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_people_by_person_id_tags",
    "display_name": "Creates a basic tag (person)",
    "category": "Tag",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_people_by_person_id_tags_by_id",
    "display_name": "Retrieves a tag",
    "category": "Tag",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_people_by_person_id_tags_by_id",
    "display_name": "Update a tag",
    "category": "Tag",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_people_by_person_id_tags_by_id",
    "display_name": "Destroy a tag",
    "category": "Tag",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tasks",
    "display_name": "List tasks",
    "category": "Task",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_tasks",
    "display_name": "Create task",
    "category": "Task",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tasks_by_id",
    "display_name": "Retrieves a task",
    "category": "Task",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "put_tasks_by_id",
    "display_name": "Update a task",
    "category": "Task",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tasks_by_id",
    "display_name": "Destroy a task",
    "category": "Task",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": "Retrieve the current API user details",
    "category": "Other",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_maildrop",
    "display_name": "Retrieve the current API user maildrop for people and companies",
    "category": "Other",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_users",
    "display_name": "Retrieves all users of the account",
    "category": "User",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_users_by_id",
    "display_name": "Retrieves a user",
    "category": "User",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_users_search",
    "display_name": "Retrieves users matching the search",
    "category": "User",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

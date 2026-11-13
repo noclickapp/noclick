@@ -29,28 +29,32 @@
    "display_name": "Read Accessible Domain Metadata",
    "category": "Shlink Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": "Read Accessible Tag Metadata",
    "category": "Shlink Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_short_urls",
    "display_name": "Read Selected Domain Short URL Metadata",
    "category": "Shlink Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_short_url",
    "display_name": "Get Current Short URL Metadata",
    "category": "Shlink Metadata",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

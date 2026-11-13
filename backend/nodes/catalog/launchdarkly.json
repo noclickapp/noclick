@@ -34,1456 +34,1668 @@
    "display_name": "List Feature Flags",
    "category": "Feature Flags",
    "description": "List all feature flags in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_flag",
    "display_name": "Get Feature Flag",
    "category": "Feature Flags",
    "description": "Get a single feature flag's configuration and targeting.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_flag",
    "display_name": "Create Feature Flag",
    "category": "Feature Flags",
    "description": "Create a new feature flag in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_flag",
    "display_name": "Toggle Feature Flag",
    "category": "Feature Flags",
    "description": "Toggle a feature flag on or off in an environment (semantic patch).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_flag",
    "display_name": "Delete Feature Flag",
    "category": "Feature Flags",
    "description": "Delete a feature flag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_flag",
    "display_name": "Copy Flag Settings",
    "category": "Feature Flags",
    "description": "Copy a flag's targeting config from a source environment to a target environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_flag_status",
    "display_name": "Get Flag Status",
    "category": "Feature Flags",
    "description": "Get a flag's status (new/active/launched/inactive) in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": "List Projects",
    "category": "Projects",
    "description": "List all projects in the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project",
    "display_name": "Get Project",
    "category": "Projects",
    "description": "Get a single project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project",
    "display_name": "Create Project",
    "category": "Projects",
    "description": "Create a new project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_project",
    "display_name": "Delete Project",
    "category": "Projects",
    "description": "Delete a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_environments",
    "display_name": "List Environments",
    "category": "Environments",
    "description": "List environments within a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_environment",
    "display_name": "Create Environment",
    "category": "Environments",
    "description": "Create an environment within a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_environment",
    "display_name": "Delete Environment",
    "category": "Environments",
    "description": "Delete an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_segments",
    "display_name": "List Segments",
    "category": "Segments",
    "description": "List segments in a project/environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_segment",
    "display_name": "Create Segment",
    "category": "Segments",
    "description": "Create a user/context segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_segment",
    "display_name": "Update Segment",
    "category": "Segments",
    "description": "Patch a segment's included/excluded targets (JSON patch array).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_segment",
    "display_name": "Delete Segment",
    "category": "Segments",
    "description": "Delete a segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhooks",
    "display_name": "List Webhooks",
    "category": "Webhooks",
    "description": "List all account webhooks.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webhook",
    "display_name": "Create Webhook",
    "category": "Webhooks",
    "description": "Create an account webhook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook",
    "display_name": "Delete Webhook",
    "category": "Webhooks",
    "description": "Delete an account webhook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_members",
    "display_name": "List Members",
    "category": "Members",
    "description": "List members of the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "invite_members",
    "display_name": "Invite Member",
    "category": "Members",
    "description": "Invite a new member to the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_audit_log",
    "display_name": "Get Audit Log",
    "category": "Account",
    "description": "Query the audit log.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_metrics",
    "display_name": "List Metrics",
    "category": "Account",
    "description": "List experimentation/release metrics in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_roles",
    "display_name": "List Custom Roles",
    "category": "Account",
    "description": "List custom roles defined in the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_teams",
    "display_name": "List Teams",
    "category": "Account",
    "description": "List teams in the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_approval_request",
    "display_name": "Create Approval Request",
    "category": "Account",
    "description": "Create an approval request for a flag change.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tokens",
    "display_name": "List Access Tokens",
    "category": "Account",
    "description": "List API access tokens for the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_account_activity",
    "display_name": "On Account Activity",
    "category": null,
    "description": "Fire the workflow when LaunchDarkly reports account activity.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "launchdarkly_token",
+    "launchdarkly_mcp"
+   ]
   },
   {
    "name": "evaluate_segment_memberships",
    "display_name": "List Segment Memberships For Context Instance",
    "category": "Segments",
    "description": "List segment memberships for a context instance in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segment",
    "display_name": "Get Segment",
    "category": "Segments",
    "description": "Get a single segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_big_segment_context_targets",
    "display_name": "Update Context Targets On Big Segment",
    "category": "Segments",
    "description": "Update context targets on a big segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segment_context_membership",
    "display_name": "Get Big Segment Membership For Context",
    "category": "Segments",
    "description": "Get big segment membership for a context.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_big_segment_export",
    "display_name": "Create Big Segment Export",
    "category": "Segments",
    "description": "Create a big segment export.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_big_segment_export",
    "display_name": "Get Big Segment Export",
    "category": "Segments",
    "description": "Get a big segment export.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_big_segment_import",
    "display_name": "Create Big Segment Import",
    "category": "Segments",
    "description": "Create a big segment import.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_big_segment_import",
    "display_name": "Get Big Segment Import",
    "category": "Segments",
    "description": "Get a big segment import.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_big_segment_user_targets",
    "display_name": "Update User Context Targets On Big Segment",
    "category": "Segments",
    "description": "Update user context targets on a big segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segment_user_membership",
    "display_name": "Get Big Segment Membership For User",
    "category": "Segments",
    "description": "Get big segment membership for a user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segment_expiring_targets",
    "display_name": "Get Expiring Targets For Segment",
    "category": "Segments",
    "description": "Get expiring targets for a segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_segment_expiring_targets",
    "display_name": "Update Expiring Targets For Segment",
    "category": "Segments",
    "description": "Update expiring targets for a segment via instructions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_segment_expiring_user_targets",
    "display_name": "Get Expiring User Targets For Segment",
    "category": "Segments",
    "description": "Get expiring user targets for a segment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_segment_expiring_user_targets",
    "display_name": "Update Expiring User Targets For Segment",
    "category": "Segments",
    "description": "Update expiring user targets for a segment via instructions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_flag_status_across_environments",
    "display_name": "Get Flag Status Across Environments",
    "category": "Feature flags",
    "description": "Get the status of a feature flag across all environments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_flag_statuses",
    "display_name": "List Feature Flag Statuses",
    "category": "Feature flags",
    "description": "List the statuses of all feature flags in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_expiring_context_targets",
    "display_name": "Get Expiring Context Targets",
    "category": "Feature flags",
    "description": "Get expiring context targets for a feature flag in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_expiring_context_targets",
    "display_name": "Update Expiring Context Targets",
    "category": "Feature flags",
    "description": "Update expiring context targets on a feature flag via semantic-patch instructions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_expiring_user_targets",
    "display_name": "Get Expiring User Targets",
    "category": "Feature flags",
    "description": "Get expiring user targets for a feature flag in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_expiring_user_targets",
    "display_name": "Update Expiring User Targets",
    "category": "Feature flags",
    "description": "Update expiring user targets on a feature flag via semantic-patch instructions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_migration_safety_issues",
    "display_name": "Get Migration Safety Issues",
    "category": "Feature flags",
    "description": "Get migration safety issues for a proposed set of semantic-patch instructions on a flag.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_approval_requests",
    "display_name": "List Approval Requests",
    "category": "Approvals",
    "description": "List approval requests in the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_approval_request",
    "display_name": "Get Approval Request",
    "category": "Approvals",
    "description": "Get a single approval request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_approval_request",
    "display_name": "Delete Approval Request",
    "category": "Approvals",
    "description": "Delete an approval request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "apply_approval_request",
    "display_name": "Apply Approval Request",
    "category": "Approvals",
    "description": "Apply an approved approval request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "review_approval_request",
    "display_name": "Review Approval Request",
    "category": "Approvals",
    "description": "Review (approve/decline) an approval request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_flag_approval_requests",
    "display_name": "List Flag Approval Requests",
    "category": "Approvals",
    "description": "List approval requests for a feature flag in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_flag_approval_request",
    "display_name": "Create Flag Approval Request",
    "category": "Approvals",
    "description": "Create an approval request for a feature flag in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_flag_copy_approval_request",
    "display_name": "Create Flag Copy Approval Request",
    "category": "Approvals",
    "description": "Create an approval request to copy flag configurations across environments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_flag_approval_request",
    "display_name": "Get Flag Approval Request",
    "category": "Approvals",
    "description": "Get a single approval request for a feature flag in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_flag_approval_request",
    "display_name": "Delete Flag Approval Request",
    "category": "Approvals",
    "description": "Delete an approval request for a feature flag in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "apply_flag_approval_request",
    "display_name": "Apply Flag Approval Request",
    "category": "Approvals",
    "description": "Apply an approved approval request for a feature flag in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "review_flag_approval_request",
    "display_name": "Review Flag Approval Request",
    "category": "Approvals",
    "description": "Review (approve/decline) an approval request for a feature flag in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_extinctions",
    "display_name": "List Extinctions",
    "category": "Code references",
    "description": "List extinctions (removed flag code references).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_repositories",
    "display_name": "List Repositories",
    "category": "Code references",
    "description": "List code reference repositories.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_repository",
    "display_name": "Create Repository",
    "category": "Code references",
    "description": "Create a code reference repository.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_repository",
    "display_name": "Get Repository",
    "category": "Code references",
    "description": "Get a code reference repository.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_repository",
    "display_name": "Update Repository",
    "category": "Code references",
    "description": "Update a code reference repository via JSON Patch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_repository",
    "display_name": "Delete Repository",
    "category": "Code references",
    "description": "Delete a code reference repository.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_branches",
    "display_name": "Delete Branches",
    "category": "Code references",
    "description": "Queue a task to delete branches from a repository.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_branches",
    "display_name": "List Branches",
    "category": "Code references",
    "description": "List branches for a code reference repository.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_branch",
    "display_name": "Get Branch",
    "category": "Code references",
    "description": "Get a branch for a code reference repository.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_branch",
    "display_name": "Upsert Branch",
    "category": "Code references",
    "description": "Create or update a branch and its code references.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_extinction",
    "display_name": "Create Extinction",
    "category": "Code references",
    "description": "Create extinction events for a branch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_code_refs_statistics",
    "display_name": "Get Code References Statistics (Root)",
    "category": "Code references",
    "description": "Get links to code reference repositories for each project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_project_code_refs_statistics",
    "display_name": "Get Project Code References Statistics",
    "category": "Code references",
    "description": "Get code references statistics for the flags in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_destinations",
    "display_name": "List Destinations",
    "category": "Data Export destinations",
    "description": "List all Data Export destinations across the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_warehouse_key_pair",
    "display_name": "Generate Snowflake Destination Key Pair",
    "category": "Data Export destinations",
    "description": "Generate a Snowflake Data Export destination key pair.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_destination_trust_policy",
    "display_name": "Generate Trust Policy",
    "category": "Data Export destinations",
    "description": "Generate a trust policy for a Data Export destination in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_environment_warehouse_key_pair",
    "display_name": "Generate Environment Snowflake Key Pair",
    "category": "Data Export destinations",
    "description": "Generate a Snowflake destination key pair for a specific project environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "complete_destination_setup",
    "display_name": "Complete Warehouse Destination Setup",
    "category": "Data Export destinations",
    "description": "Complete warehouse destination setup for a given destination kind.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "generate_destination_setup_script",
    "display_name": "Generate Warehouse Destination Setup Script",
    "category": "Data Export destinations",
    "description": "Generate a warehouse destination setup script for a given destination kind.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_destination",
    "display_name": "Create Data Export Destination",
    "category": "Data Export destinations",
    "description": "Create a Data Export destination in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_destination",
    "display_name": "Get Destination",
    "category": "Data Export destinations",
    "description": "Get a single Data Export destination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_destination",
    "display_name": "Update Data Export Destination",
    "category": "Data Export destinations",
    "description": "Update a Data Export destination via a JSON Patch document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_destination",
    "display_name": "Delete Data Export Destination",
    "category": "Data Export destinations",
    "description": "Delete a Data Export destination.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_context_kinds",
    "display_name": "Get Context Kinds",
    "category": "Contexts",
    "description": "Get all context kinds for a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_context_kind",
    "display_name": "Create or Update Context Kind",
    "category": "Contexts",
    "description": "Create or update a context kind.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_context_attribute_names",
    "display_name": "Get Context Attribute Names",
    "category": "Contexts",
    "description": "Get context attribute names for an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_context_attribute_values",
    "display_name": "Get Context Attribute Values",
    "category": "Contexts",
    "description": "Get context attribute values for a given attribute name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_context_instances",
    "display_name": "Search Context Instances",
    "category": "Contexts",
    "description": "Search for context instances in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_context_instance",
    "display_name": "Get Context Instances",
    "category": "Contexts",
    "description": "Get context instances by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_context_instance",
    "display_name": "Delete Context Instances",
    "category": "Contexts",
    "description": "Delete context instances by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_contexts",
    "display_name": "Search Contexts",
    "category": "Contexts",
    "description": "Search for contexts in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_context",
    "display_name": "Get Contexts",
    "category": "Contexts",
    "description": "Get contexts by kind and key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "evaluate_context_instance",
    "display_name": "Evaluate Flags For Context Instance",
    "category": "Contexts",
    "description": "Evaluate all flags for a given context instance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_project",
    "display_name": "Update Project",
    "category": "Projects",
    "description": "Update a project via a JSON Patch document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_flag_defaults",
    "display_name": "Get Flag Defaults",
    "category": "Projects",
    "description": "Get the flag defaults for a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_flag_defaults",
    "display_name": "Update Flag Defaults",
    "category": "Projects",
    "description": "Update the flag defaults for a project via a JSON Patch document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upsert_flag_defaults",
    "display_name": "Upsert Flag Defaults",
    "category": "Projects",
    "description": "Create or update (replace) the flag defaults for a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_experiments",
    "display_name": "List Experiments",
    "category": "Experiments",
    "description": "Get experiments in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_experiment",
    "display_name": "Create Experiment",
    "category": "Experiments",
    "description": "Create an experiment in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_experiment",
    "display_name": "Get Experiment",
    "category": "Experiments",
    "description": "Get a single experiment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_experiment",
    "display_name": "Update Experiment",
    "category": "Experiments",
    "description": "Update an experiment via semantic-patch instructions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_experiment_iteration",
    "display_name": "Create Experiment Iteration",
    "category": "Experiments",
    "description": "Create an iteration for an experiment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_experimentation_settings",
    "display_name": "Get Experimentation Settings",
    "category": "Experiments",
    "description": "Get experimentation settings for a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_experimentation_settings",
    "display_name": "Update Experimentation Settings",
    "category": "Experiments",
    "description": "Update experimentation (randomization) settings for a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_experiments",
    "display_name": "List Project Experiments",
    "category": "Experiments",
    "description": "Get experiments across all environments in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_team",
    "display_name": "Create Team",
    "category": "Teams",
    "description": "Create a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_team",
    "display_name": "Get Team",
    "category": "Teams",
    "description": "Get a single team by key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_team",
    "display_name": "Update Team",
    "category": "Teams",
    "description": "Update a team via semantic-patch instructions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_team",
    "display_name": "Delete Team",
    "category": "Teams",
    "description": "Delete a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_team_maintainers",
    "display_name": "List Team Maintainers",
    "category": "Teams",
    "description": "Get the maintainers of a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_team_members",
    "display_name": "Add Team Members",
    "category": "Teams",
    "description": "Add members to a team (semantic-patch addMembers instruction).\n\n    The raw /teams/{key}/members endpoint only accepts CSV/multipart uploads; a\n    semantic patch on the team is the JSON-friendly way to add members.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_team_roles",
    "display_name": "List Team Roles",
    "category": "Teams",
    "description": "Get the custom roles associated with a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_members",
    "display_name": "Modify Account Members",
    "category": "Account members",
    "description": "Modify multiple account members via semantic-patch instructions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_member",
    "display_name": "Get Account Member",
    "category": "Account members",
    "description": "Get a single account member by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_member",
    "display_name": "Modify Account Member",
    "category": "Account members",
    "description": "Modify a single account member via JSON Patch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_member",
    "display_name": "Delete Account Member",
    "category": "Account members",
    "description": "Delete an account member.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_member_teams",
    "display_name": "Add Member To Teams",
    "category": "Account members",
    "description": "Add an account member to one or more teams.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_environment",
    "display_name": "Get Environment",
    "category": "Environments",
    "description": "Get a single environment in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_environment",
    "display_name": "Update Environment",
    "category": "Environments",
    "description": "Update an environment via JSON Patch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_environment_sdk_key",
    "display_name": "Reset Environment SDK Key",
    "category": "Environments",
    "description": "Reset an environment's SDK key, optionally keeping the old key alive for a period.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_environment_mobile_key",
    "display_name": "Reset Environment Mobile Key",
    "category": "Environments",
    "description": "Reset an environment's mobile SDK key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_relay_proxy_configs",
    "display_name": "List Relay Proxy Configs",
    "category": "Relay Proxy configurations",
    "description": "List Relay Proxy configs in the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_relay_proxy_config",
    "display_name": "Create Relay Proxy Config",
    "category": "Relay Proxy configurations",
    "description": "Create a new Relay Proxy config.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_relay_proxy_config",
    "display_name": "Get Relay Proxy Config",
    "category": "Relay Proxy configurations",
    "description": "Get a single Relay Proxy config by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_relay_proxy_config",
    "display_name": "Update Relay Proxy Config",
    "category": "Relay Proxy configurations",
    "description": "Update a Relay Proxy config via a JSON patch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_relay_proxy_config",
    "display_name": "Delete Relay Proxy Config",
    "category": "Relay Proxy configurations",
    "description": "Delete a Relay Proxy config by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_relay_proxy_config",
    "display_name": "Reset Relay Proxy Config Key",
    "category": "Relay Proxy configurations",
    "description": "Reset a Relay Proxy configuration's secret key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_token",
    "display_name": "Create Access Token",
    "category": "Access tokens",
    "description": "Create an access token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_token",
    "display_name": "Get Access Token",
    "category": "Access tokens",
    "description": "Get a single access token by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_token",
    "display_name": "Update Access Token",
    "category": "Access tokens",
    "description": "Update an access token via JSON Patch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_token",
    "display_name": "Delete Access Token",
    "category": "Access tokens",
    "description": "Delete an access token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reset_token",
    "display_name": "Reset Access Token",
    "category": "Access tokens",
    "description": "Reset an access token's secret, optionally keeping the old one valid for a grace period.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_root",
    "display_name": "Get Root Resource",
    "category": "Other",
    "description": "Get the root resource of the LaunchDarkly API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_caller_identity",
    "display_name": "Get Caller Identity",
    "category": "Other",
    "description": "Identify the caller associated with the API access token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_openapi_spec",
    "display_name": "Get OpenAPI Spec",
    "category": "Other",
    "description": "Get the LaunchDarkly OpenAPI specification in JSON.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_public_ip_list",
    "display_name": "Get Public IP List",
    "category": "Other",
    "description": "Get the list of public IP addresses used by LaunchDarkly.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_versions",
    "display_name": "Get Versions",
    "category": "Other",
    "description": "Get LaunchDarkly API version information.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_flag_triggers",
    "display_name": "List Flag Triggers",
    "category": "Flag triggers",
    "description": "List all triggers for a feature flag in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_flag_trigger",
    "display_name": "Create Flag Trigger",
    "category": "Flag triggers",
    "description": "Create a trigger for a feature flag in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_flag_trigger",
    "display_name": "Get Flag Trigger",
    "category": "Flag triggers",
    "description": "Get a single flag trigger by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_flag_trigger",
    "display_name": "Update Flag Trigger",
    "category": "Flag triggers",
    "description": "Update a flag trigger via semantic-patch instructions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_flag_trigger",
    "display_name": "Delete Flag Trigger",
    "category": "Flag triggers",
    "description": "Delete a flag trigger by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_integration_subscriptions",
    "display_name": "List Integration Subscriptions",
    "category": "Integration audit log subscriptions",
    "description": "Get all audit log subscriptions for a given integration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_integration_subscription",
    "display_name": "Create Integration Subscription",
    "category": "Integration audit log subscriptions",
    "description": "Create an audit log subscription for an integration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_integration_subscription",
    "display_name": "Get Integration Subscription",
    "category": "Integration audit log subscriptions",
    "description": "Get an audit log subscription by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_integration_subscription",
    "display_name": "Update Integration Subscription",
    "category": "Integration audit log subscriptions",
    "description": "Update an audit log subscription via a JSON Patch array.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_integration_subscription",
    "display_name": "Delete Integration Subscription",
    "category": "Integration audit log subscriptions",
    "description": "Delete an audit log subscription.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_metric",
    "display_name": "Get Metric",
    "category": "Metrics",
    "description": "Get a single metric from a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_metric",
    "display_name": "Create Metric",
    "category": "Metrics",
    "description": "Create a metric in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_metric",
    "display_name": "Update Metric",
    "category": "Metrics",
    "description": "Update a metric via JSON Patch instructions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_metric",
    "display_name": "Delete Metric",
    "category": "Metrics",
    "description": "Delete a metric from a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_oauth_client",
    "display_name": "List OAuth Clients",
    "category": "OAuth2 Clients",
    "description": "Get all OAuth 2.0 clients registered in the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_oauth_client",
    "display_name": "Create OAuth Client",
    "category": "OAuth2 Clients",
    "description": "Create a LaunchDarkly OAuth 2.0 client.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_oauth_client",
    "display_name": "Get OAuth Client",
    "category": "OAuth2 Clients",
    "description": "Get a single OAuth 2.0 client by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "patch_oauth_client",
    "display_name": "Patch OAuth Client",
    "category": "OAuth2 Clients",
    "description": "Patch an OAuth 2.0 client by ID using JSON Patch instructions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_oauth_client",
    "display_name": "Delete OAuth Client",
    "category": "OAuth2 Clients",
    "description": "Delete an OAuth 2.0 client by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_holdouts",
    "display_name": "List Holdouts",
    "category": "Holdouts",
    "description": "Get all holdouts in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_holdout",
    "display_name": "Create Holdout",
    "category": "Holdouts",
    "description": "Create a holdout in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_holdout_by_id",
    "display_name": "Get Holdout by Id",
    "category": "Holdouts",
    "description": "Get a holdout by its id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_holdout",
    "display_name": "Get Holdout",
    "category": "Holdouts",
    "description": "Get a holdout by its key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_holdout",
    "display_name": "Update Holdout",
    "category": "Holdouts",
    "description": "Update a holdout via semantic-patch instructions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_scheduled_changes",
    "display_name": "List Scheduled Changes",
    "category": "Scheduled changes",
    "description": "List scheduled changes for a feature flag in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_scheduled_change",
    "display_name": "Create Scheduled Change",
    "category": "Scheduled changes",
    "description": "Create a scheduled changes workflow for a feature flag in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_scheduled_change",
    "display_name": "Get Scheduled Change",
    "category": "Scheduled changes",
    "description": "Get a single scheduled change by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_scheduled_change",
    "display_name": "Update Scheduled Change",
    "category": "Scheduled changes",
    "description": "Update a scheduled changes workflow via semantic-patch instructions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_scheduled_change",
    "display_name": "Delete Scheduled Change",
    "category": "Scheduled changes",
    "description": "Delete a scheduled changes workflow.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_role",
    "display_name": "Create Custom Role",
    "category": "Custom roles",
    "description": "Create a custom role.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_role",
    "display_name": "Get Custom Role",
    "category": "Custom roles",
    "description": "Get a custom role by key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_role",
    "display_name": "Update Custom Role",
    "category": "Custom roles",
    "description": "Update a custom role via JSON patch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_role",
    "display_name": "Delete Custom Role",
    "category": "Custom roles",
    "description": "Delete a custom role.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_user_flag_settings",
    "display_name": "List User Flag Settings",
    "category": "User settings",
    "description": "List flag settings for a user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_flag_setting",
    "display_name": "Get User Flag Setting",
    "category": "User settings",
    "description": "Get a single flag setting for a user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_user_flag_setting",
    "display_name": "Update User Flag Setting",
    "category": "User settings",
    "description": "Update a flag setting for a user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_expiring_user_target",
    "display_name": "Get Expiring User Target",
    "category": "User settings",
    "description": "Get expiring dates on flags for a user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_expiring_user_target",
    "display_name": "Update Expiring User Target",
    "category": "User settings",
    "description": "Update expiring user targets for flags via instructions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webhook",
    "display_name": "Get Webhook",
    "category": "Webhooks",
    "description": "Get a single webhook by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_webhook",
    "display_name": "Update Webhook",
    "category": "Webhooks",
    "description": "Update a webhook using a JSON Patch document.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_audit_log_entries",
    "display_name": "List Audit Log Entries",
    "category": "Audit log",
    "description": "List audit log entries in the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_audit_log_entries",
    "display_name": "Search Audit Log Entries",
    "category": "Audit log",
    "description": "Search audit log entries using a list of policy statements.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_audit_log_entry_counts",
    "display_name": "Get Audit Log Entry Counts",
    "category": "Audit log",
    "description": "Get counts of audit log entries bucketed over a time range.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_audit_log_entry",
    "display_name": "Get Audit Log Entry",
    "category": "Audit log",
    "description": "Get a single audit log entry by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_environment_followers",
    "display_name": "List Environment Flag Followers",
    "category": "Follow flags",
    "description": "Get followers of all flags in a given project and environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_flag_followers",
    "display_name": "List Flag Followers",
    "category": "Follow flags",
    "description": "Get followers of a flag in a project and environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_flag_follower",
    "display_name": "Add Flag Follower",
    "category": "Follow flags",
    "description": "Add a member as a follower of a flag in a project and environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_flag_follower",
    "display_name": "Remove Flag Follower",
    "category": "Follow flags",
    "description": "Remove a member as a follower of a flag in a project and environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workflows",
    "display_name": "List Workflows",
    "category": "Workflows",
    "description": "List workflows for a feature flag in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_workflow",
    "display_name": "Create Workflow",
    "category": "Workflows",
    "description": "Create a workflow for a feature flag in an environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_workflow",
    "display_name": "Get Workflow",
    "category": "Workflows",
    "description": "Get a custom workflow by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_workflow",
    "display_name": "Delete Workflow",
    "category": "Workflows",
    "description": "Delete a workflow by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_users",
    "display_name": "Find Users",
    "category": "Users",
    "description": "Find users in a project environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": "List Users",
    "category": "Users",
    "description": "List users in a project environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": "Get User",
    "category": "Users",
    "description": "Get a single user in a project environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_user",
    "display_name": "Delete User",
    "category": "Users",
    "description": "Delete a user from a project environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_announcements",
    "display_name": "Get Announcements",
    "category": "Announcements",
    "description": "List announcements in the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_announcement",
    "display_name": "Create Announcement",
    "category": "Announcements",
    "description": "Create an announcement.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_announcement",
    "display_name": "Update Announcement",
    "category": "Announcements",
    "description": "Update an announcement via JSON Patch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_announcement",
    "display_name": "Delete Announcement",
    "category": "Announcements",
    "description": "Delete an announcement.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_layers",
    "display_name": "List Layers",
    "category": "Layers",
    "description": "List layers in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_layer",
    "display_name": "Create Layer",
    "category": "Layers",
    "description": "Create a layer in a project.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_layer",
    "display_name": "Update Layer",
    "category": "Layers",
    "description": "Update a layer via semantic-patch instructions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workflow_templates",
    "display_name": "Get Workflow Templates",
    "category": "Workflow templates",
    "description": "Get workflow templates in the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_workflow_template",
    "display_name": "Create Workflow Template",
    "category": "Workflow templates",
    "description": "Create a workflow template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_workflow_template",
    "display_name": "Delete Workflow Template",
    "category": "Workflow templates",
    "description": "Delete a workflow template.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_context_flag_setting",
    "display_name": "Update Flag Settings For Context",
    "category": "Context settings",
    "description": "Update the flag setting for a specific context.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tags",
    "display_name": "List Tags",
    "category": "Tags",
    "description": "List all tags in the account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

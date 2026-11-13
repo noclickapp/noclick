@@ -26,119 +26,136 @@
    "display_name": null,
    "category": null,
    "description": "List the assets visible to the connected application, one page at a time.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_asset",
    "display_name": null,
    "category": null,
    "description": "Read an asset and its current attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_asset",
    "display_name": null,
    "category": null,
    "description": "Create an asset with provenance behaviours and application attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": null,
    "category": null,
    "description": "List events on one asset, or use '-' to list events across visible assets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": null,
    "category": null,
    "description": "Read one event under its asset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_event",
    "display_name": null,
    "category": null,
    "description": "Record evidence and optionally update asset attributes in the same event.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_asset_public_url",
    "display_name": null,
    "category": null,
    "description": "Get the provider's public-view URL without fetching that URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event_public_url",
    "display_name": null,
    "category": null,
    "description": "Get the provider's public-view event URL without following it.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_locations",
    "display_name": null,
    "category": null,
    "description": "List locations, optionally filtering their display name and description.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_location",
    "display_name": null,
    "category": null,
    "description": "Read a location by its UUID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_location",
    "display_name": null,
    "category": null,
    "description": "Create a named geographic location for assets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_location",
    "display_name": null,
    "category": null,
    "description": "Patch supplied location fields using an explicit field mask.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_location",
    "display_name": null,
    "category": null,
    "description": "Delete a location; the response acknowledges the request only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_location_permissions",
    "display_name": null,
    "category": null,
    "description": "Read the subjects allowed to use this location.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_access_policies",
    "display_name": null,
    "category": null,
    "description": "List tenant access policies without changing access grants.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_access_policy",
    "display_name": null,
    "category": null,
    "description": "Read one access policy by UUID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tenant",
    "display_name": null,
    "category": null,
    "description": "Read the current tenant's administrative details; requires tenant access.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

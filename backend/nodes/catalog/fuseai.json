@@ -22,161 +22,184 @@
    "display_name": null,
    "category": null,
    "description": "Get the token owner's identity.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_credits",
    "display_name": null,
    "category": null,
    "description": "Get the token owner's credit balance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lists",
    "display_name": null,
    "category": null,
    "description": "List the token owner's prospect lists.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_list",
    "display_name": null,
    "category": null,
    "description": "Create a prospect list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_list",
    "display_name": null,
    "category": null,
    "description": "Get one list's metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "rename_list",
    "display_name": null,
    "category": null,
    "description": "Rename a prospect list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_list",
    "display_name": null,
    "category": null,
    "description": "Delete a list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_rows",
    "display_name": null,
    "category": null,
    "description": "List a list's contacts (with ids and column values).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_members",
    "display_name": null,
    "category": null,
    "description": "Add existing contacts to a list (by id).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_members",
    "display_name": null,
    "category": null,
    "description": "Remove contacts from a list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_columns",
    "display_name": null,
    "category": null,
    "description": "List a list's custom column definitions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_column",
    "display_name": null,
    "category": null,
    "description": "Create a custom column on a list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_column",
    "display_name": null,
    "category": null,
    "description": "Delete a custom column (its values go with it).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_campaigns",
    "display_name": null,
    "category": null,
    "description": "List the token owner's campaigns with headline analytics.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_campaign",
    "display_name": null,
    "category": null,
    "description": "Get a campaign's status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_campaign",
    "display_name": null,
    "category": null,
    "description": "Stop an active campaign (approve re-activates it).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "duplicate_campaign",
    "display_name": null,
    "category": null,
    "description": "Copy a campaign as a fresh draft.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_campaign_steps",
    "display_name": null,
    "category": null,
    "description": "List a campaign's sequence steps.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_campaign_leads",
    "display_name": null,
    "category": null,
    "description": "The campaign's leads with their per-step state.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_job",
    "display_name": null,
    "category": null,
    "description": "Poll any async job.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_person_email",
    "display_name": null,
    "category": null,
    "description": "Find a person's email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "verify_email",
    "display_name": null,
    "category": null,
    "description": "Verify an email address.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resolve_company",
    "display_name": null,
    "category": null,
    "description": "Find a company's domain, LinkedIn page and logo (free).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

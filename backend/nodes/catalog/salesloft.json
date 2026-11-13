@@ -31,1400 +31,1600 @@
    "display_name": "List account stages",
    "category": "Accounts",
    "description": "Fetches multiple account stage records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "account_stages_show",
    "display_name": "Fetch an account stage",
    "category": "Accounts",
    "description": "Fetches an account stage, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "account_team_member_roles_index",
    "display_name": "List CRM Account Team Member Roles",
    "category": "Accounts",
    "description": "Fetches multiple CRM Account Team Member Role records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "account_tiers_index",
    "display_name": "List Account Tiers",
    "category": "Accounts",
    "description": "Fetches multiple account tier records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "account_tiers_show",
    "display_name": "Fetch an account tier",
    "category": "Accounts",
    "description": "Fetches an account tier, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "account_types_index",
    "display_name": "List distinct account types",
    "category": "Accounts",
    "description": "Fetches distinct account types for the team to be used in filter selections.\nReturns an array of unique account type values that exist in the team's companies.\nThis endpoint respects user permissions and only returns account types from\ncompanies the authenticated user has read access to. System requ",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "account_upserts_create",
    "display_name": "Upsert an account",
    "category": "Accounts",
    "description": "Upserts an account record. The upsert_key dictates how the upsert will be performed. The create and update behavior\nis exactly the same as the individual create and update endpoints.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "accounts_create",
    "display_name": "Create an account",
    "category": "Accounts",
    "description": "Creates an account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "accounts_destroy",
    "display_name": "Delete an account",
    "category": "Accounts",
    "description": "Deletes an account. This operation is not reversible without contacting support.\nThis operation can be called multiple times successfully.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "accounts_index",
    "display_name": "List accounts",
    "category": "Accounts",
    "description": "Fetches multiple account records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "accounts_show",
    "display_name": "Fetch an account",
    "category": "Accounts",
    "description": "Fetches an account, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "accounts_update",
    "display_name": "Update an existing Account",
    "category": "Accounts",
    "description": "Updates an account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "action_details_call_instructions_index",
    "display_name": "List call instructions",
    "category": "Calls & Conversations",
    "description": "Fetches multiple call instruction records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "action_details_call_instructions_show",
    "display_name": "Fetch a call instructions",
    "category": "Calls & Conversations",
    "description": "Fetches a call instruction, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "actions_index",
    "display_name": "List actions",
    "category": "Cadences",
    "description": "Fetches multiple action records. The records can be filtered, paged, and sorted according to\nthe respective parameters. Only actions that are currently \"in_progess\" will be returned by\nthis endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "actions_show",
    "display_name": "Fetch an action",
    "category": "Cadences",
    "description": "Fetches an action, by ID only.\nThis endpoint will only return actions that are in_progress or pending_activity.\nOnce an action is complete, the request for that action will return a 404 status code.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "activities_calls_create",
    "display_name": "Create a call",
    "category": "Calls & Conversations",
    "description": "Creates a call. The parameters of this endpoint can be used to create an action\nand ensure that the CRM Task is mapped correctly.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "activities_calls_index",
    "display_name": "List calls",
    "category": "Calls & Conversations",
    "description": "Fetches multiple call records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "activities_calls_show",
    "display_name": "Fetch a call",
    "category": "Calls & Conversations",
    "description": "Fetches a call, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "activities_create",
    "display_name": "Create an activity",
    "category": "Other",
    "description": "Creates an activity. An activity will mark the associated action as completed. Currently,\nonly certain action types can have an activity explicitly created for them.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "activities_emails_index",
    "display_name": "List emails",
    "category": "Email",
    "description": "Fetches multiple email records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "activities_emails_show",
    "display_name": "Fetch an email",
    "category": "Email",
    "description": "Fetches an email, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "activity_histories_index",
    "display_name": "List Past Activities",
    "category": "Other",
    "description": "Fetches all of the customer's past activities for your application. Returns all the Activities that are found on the Salesloft Activity Feed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "audit_reports_create",
    "display_name": "Create a new audit report",
    "category": "Other",
    "description": "Creates a request for a new audit report.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "audit_reports_index",
    "display_name": "List generated audit reports",
    "category": "Other",
    "description": "Returns all reports that have been requested by user's tenant_id, paged by 25 records",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "audit_reports_show",
    "display_name": "Fetch an audit report",
    "category": "Other",
    "description": "Fetch an audit report by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_jobs_create",
    "display_name": "Create a bulk job",
    "category": "Data Operations",
    "description": "Creates a bulk job. The type of the bulk job must be included when created.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_jobs_destroy",
    "display_name": "Cancel a bulk job",
    "category": "Data Operations",
    "description": "Cancels a bulk job and marks all pending records as cancelled. Cannot cancel jobs that are already completed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_jobs_index",
    "display_name": "List bulk jobs",
    "category": "Data Operations",
    "description": "Fetches multiple bulk job records. The records can be filtered, paged, and sorted according to the respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_jobs_job_data_create",
    "display_name": "Create job data for a bulk job",
    "category": "Data Operations",
    "description": "Upload job data for the specified bulk job. Upload an array of objects, where element contains the parameters necessary to execute the individual calls. Each call to this endpoint can handle up to 5,000 records at a time. There is no limit to how many times you can create job data for a given bulk j",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_jobs_job_data_index",
    "display_name": "List job data for a bulk job",
    "category": "Data Operations",
    "description": "Fetches multiple job data records for a given bulk job. Pagination is not supported, but cursor based polling is via use of the id[gt] filter. Pass the last id seen (i.e. id[gt]=1234 ) in order to get the next batch of records.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_jobs_results_index",
    "display_name": "List job data for a completed bulk job.",
    "category": "Data Operations",
    "description": "Fetches multiple job data records for a completed bulk job. Note that until a bulk job's state is set to done the returned data will be an empty array. Pagination is not supported, but cursor based polling is via use of the id[gt] filter. Pass the last id seen (i.e. id[gt]=1234 ) in order to get the",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_jobs_show",
    "display_name": "Fetch a bulk job",
    "category": "Data Operations",
    "description": "Fetches a bulk job, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_jobs_update",
    "display_name": "Update a bulk job",
    "category": "Data Operations",
    "description": "Updates a bulk job's name and / or marks a bulk job as 'ready_to_execute'.  May only be updated if the bulk job is still in an \"open\" state.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "bulk_reschedule_tasks_create",
    "display_name": "Reschedule many tasks at once",
    "category": "Tasks",
    "description": "Reschedule many tasks in batch.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadence_bulk_memberships_create",
    "display_name": "Create cadence memberships in bulk",
    "category": "Cadences",
    "description": "Adds multiple people to a cadence. The people are specified in the form of a listing filter. Any person record\nthat matches the specified filter must be allowed to be added to the cadence, otherwise, it will be ignored on the\nrequest execution.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadence_collection_export_downloads_create",
    "display_name": "Create a cadence collection export download",
    "category": "Cadences",
    "description": "Puts in a request to generate a cadence collection export download. The request will be processed asynchronously and the download will be sent to the user via email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadence_collection_exports_show",
    "display_name": "Export a cadence collection",
    "category": "Cadences",
    "description": "Exports a cadence collection as JSON.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadence_collection_imports_create",
    "display_name": "Import cadence collections from JSON",
    "category": "Cadences",
    "description": "New cadence collections can be created from JSON settings.\nThe import format mirrors the cadence collection export format.\nRequires team admin access.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadence_collections_index",
    "display_name": "List cadence collections",
    "category": "Cadences",
    "description": "Fetches multiple cadence collection records. The records can be filtered, sorted, and paged according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadence_collections_show",
    "display_name": "Fetch a cadence collection",
    "category": "Cadences",
    "description": "Fetches a single cadence collection by ID. This endpoint is useful for preselecting\na collection in cadence create and edit pages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadence_export_downloads_create",
    "display_name": "Create a cadence export download",
    "category": "Cadences",
    "description": "Puts in a request to generate a cadence export download. The request will be processed asynchronously and the download will be sent to the user via email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadence_exports_show",
    "display_name": "Export a cadence",
    "category": "Cadences",
    "description": "Exports a cadence as JSON.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadence_imports_create",
    "display_name": "Import cadences from JSON",
    "category": "Cadences",
    "description": "New cadences can be created or steps can be imported onto existing cadences which do not have steps. Visit here for more details .",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadence_memberships_create",
    "display_name": "Create a cadence membership",
    "category": "Cadences",
    "description": "Adds a person to a cadence. person_id and cadence_id are required, and must be visible to the authenticated user. user_id will\ndefault to the authenticated user, but can be set to any visible user on the authenticated team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadence_memberships_destroy",
    "display_name": "Delete a cadence membership",
    "category": "Cadences",
    "description": "Cadence Membership",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadence_memberships_index",
    "display_name": "List cadence memberships",
    "category": "Cadences",
    "description": "Fetches multiple cadence membership records. The records can be filtered, paged, and sorted according to\nthe respective parameters. A cadence membership is the association between a person and their current and\nhistorical time on a cadence. Cadence membership records are mutable and change over time",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadence_memberships_show",
    "display_name": "Fetch a cadence membership",
    "category": "Cadences",
    "description": "Fetches a cadence membership, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadence_stats_show",
    "display_name": "Fetch stats for a cadence",
    "category": "Cadences",
    "description": "Fetches stats for a cadence, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadences_activate_create",
    "display_name": "Activate a draft cadence",
    "category": "Other",
    "description": "Transitions a draft cadence to active. Returns an error if the team has the\ncadence approval flow setting enabled â use the request review endpoint instead.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadences_index",
    "display_name": "List cadences",
    "category": "Cadences",
    "description": "Fetches multiple cadence records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadences_show",
    "display_name": "Fetch a cadence",
    "category": "Cadences",
    "description": "Fetches a cadence, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadences_step_groups_index",
    "display_name": "List step groups",
    "category": "Cadences",
    "description": "Fetches the step groups of a cadence, ordered by day and then by their position\nwithin the day.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cadences_step_groups_show",
    "display_name": "Fetch a step group",
    "category": "Cadences",
    "description": "Fetches a single step group of a cadence.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "calendar_availabilities_index",
    "display_name": "Get calendar availabilities",
    "category": "Meetings",
    "description": "Fetches available time slots for a user's calendar within the specified date range.\nThis endpoint returns periods of free time that can be used for scheduling meetings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "calendar_events_create",
    "display_name": "Create a Meeting",
    "category": "Meetings",
    "description": "Creates a new Meeting in the user's calendar. This endpoint supports both external calendar synchronization\nand internal-only event creation for CRM tracking. You can create meetings with attendees, time slots, and\nadditional details, and optionally prevent syncing to external calendars.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "calendar_events_index",
    "display_name": "List calendar events",
    "category": "Meetings",
    "description": "Returns all calendar events, paginated and filtered by the date.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "calendar_events_update",
    "display_name": "Update a meeting",
    "category": "Meetings",
    "description": "Updates a meeting, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "calendar_events_upsert_create",
    "display_name": "Upsert a calendar event",
    "category": "Meetings",
    "description": "Upserts a calendar event object.\nUpsert key is a combination of id and i_cal_uid scoped to the given calendar_id .\nBulk operations:\nThis endpoint is used for bulk operations, see bulk jobs for integration instructions.\nUse calendar/events/upsert as an event type, and this spec as a data spec.\nThis e",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "calendar_events_with_recurring_index",
    "display_name": "List calendar events with recurring occurrences",
    "category": "Meetings",
    "description": "Returns all calendar events including expanded recurring event occurrences,\npaginated and filtered by date. This endpoint includes performance optimizations\nfor handling recurring events efficiently.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "call_data_records_create",
    "display_name": "Create a call data record",
    "category": "Calls & Conversations",
    "description": "Create a call data record",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "call_data_records_index",
    "display_name": "List call data records",
    "category": "Calls & Conversations",
    "description": "Fetches multiple call data records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "call_data_records_show",
    "display_name": "Fetch a call data record",
    "category": "Calls & Conversations",
    "description": "Fetches a call data record, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "call_data_records_update",
    "display_name": "Update a call data record",
    "category": "Calls & Conversations",
    "description": "Update a call data record",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "call_dispositions_index",
    "display_name": "List call dispositions",
    "category": "Calls & Conversations",
    "description": "Fetches multiple call disposition records. The records can be sorted according to\nthe respective parameters. Call dispositions must be configured in application. This will\nchange in the future, but please contact us if you have a pressing use case.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "call_dispositions_show",
    "display_name": "Fetch a call disposition",
    "category": "Calls & Conversations",
    "description": "Fetches a call disposition by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "call_sentiments_index",
    "display_name": "List call sentiments",
    "category": "Calls & Conversations",
    "description": "Fetches multiple call sentiment records. The records can be sorted according to\nthe respective parameters. Call sentiments must be configured in application. This will\nchange in the future, but please contact us if you have a pressing use case.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "call_sentiments_show",
    "display_name": "Fetch a call sentiment",
    "category": "Calls & Conversations",
    "description": "Fetches a call sentiment by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversations_calls_create",
    "display_name": "Create a new call",
    "category": "Calls & Conversations",
    "description": "Creates a dialer call",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversations_find_all",
    "display_name": "Fetch conversations",
    "category": "Calls & Conversations",
    "description": "Fetches multiple conversations. The conversations can be filtered, paged, and sorted according to the respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversations_find_one_conversation_recording",
    "display_name": "Fetch Conversation media",
    "category": "Calls & Conversations",
    "description": "Fetches an extended version of a Conversation including media",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversations_find_one_extensive",
    "display_name": "Fetch an extensive conversation",
    "category": "Calls & Conversations",
    "description": "Fetches an extended version of a Conversation, it will include AI generated features if they are available, such as, Summary, Actions Items and Key Moments",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversations_find_one",
    "display_name": "Fetch a conversation",
    "category": "Calls & Conversations",
    "description": "Fetches a single conversation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversations_transcriptions_find_all_transcripts",
    "display_name": "List Transcriptions",
    "category": "Calls & Conversations",
    "description": "List Conversation Transcriptions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversations_transcriptions_find_one_transcript_artifact",
    "display_name": "Fetch a Transcription Artifact",
    "category": "Calls & Conversations",
    "description": "Fetches a Conversation Transcription Artifact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversations_transcriptions_find_one_transcript_sentences",
    "display_name": "Fetch a Transcription's sentences",
    "category": "Calls & Conversations",
    "description": "Fetches a Conversation Transcription's sentence data",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "conversations_transcriptions_find_one_transcript",
    "display_name": "Fetch a Transcription",
    "category": "Calls & Conversations",
    "description": "Fetches a Conversation Transcription",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "crm_account_team_members_index",
    "display_name": "List CRM Account Team Members",
    "category": "CRM",
    "description": "Fetches multiple CRM Account Team Member records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "crm_activities_index",
    "display_name": "List crm activities",
    "category": "CRM",
    "description": "Fetches multiple crm activity records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "crm_activities_show",
    "display_name": "Fetch a crm activity",
    "category": "CRM",
    "description": "Fetches a crm activity, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "crm_activity_fields_index",
    "display_name": "List crm activity fields",
    "category": "CRM",
    "description": "Fetches multiple crm activity field records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "crm_team_members_with_roles_index",
    "display_name": "List CRM Account Team Members With Roles",
    "category": "CRM",
    "description": "Fetches multiple CRM Account Team Member records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "crm_users_index",
    "display_name": "List crm users",
    "category": "CRM",
    "description": "Crm Users",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "custom_fields_create",
    "display_name": "Create a custom field",
    "category": "Records",
    "description": "Creates a custom field.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "custom_fields_destroy",
    "display_name": "Delete a custom field",
    "category": "Records",
    "description": "Deletes a custom field.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "custom_fields_index",
    "display_name": "List custom fields",
    "category": "Records",
    "description": "Fetches multiple custom field records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "custom_fields_show",
    "display_name": "Fetch a custom field",
    "category": "Records",
    "description": "Fetches a custom field, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "custom_roles_index",
    "display_name": "List custom roles",
    "category": "Team",
    "description": "Fetches multiple custom role records. The records can be filtered, and sorted according to\nthe respective parameters. A custom role is any role that is not Admin or User.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "custom_roles_show",
    "display_name": "Fetch a custom role",
    "category": "Team",
    "description": "Fetches a custom role, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_control_account_and_people_redaction_create",
    "display_name": "Submit an account and people redaction  request",
    "category": "Accounts",
    "description": "Initiate a request to redact and delete all data regarding accounts and their related people.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_control_account_redaction_create",
    "display_name": "Execute an account redaction workflow",
    "category": "Accounts",
    "description": "Execute a workflow to affect data in all systems concerned with redacting a non-user account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_control_people_soft_deletion_create",
    "display_name": "Submit a people soft deletion request",
    "category": "People",
    "description": "This endpoint supports the ability to soft delete multiple People from\nSalesloft based on their Salesloft Person ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_control_requests_index",
    "display_name": "Retrieve a list of Requests",
    "category": "Other",
    "description": "Query Requests by some given filters",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_control_requests_show",
    "display_name": "Fetch a Request record",
    "category": "Other",
    "description": "Get the details for a given Request",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "data_control_right_to_be_forgotten_create",
    "display_name": "Submit a right to be forgotten request",
    "category": "Data Privacy",
    "description": "This endpoint supports soft deleting a Person from Salesloft based on their Salesloft Person ID and redacting all P.I.I. (Personally Identifiable Data) from the Person and related Activity records and notes. This includes hard deletion of call recordings related to that Person in Salesloft as well.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_missing_tags_create",
    "display_name": "Requests a check of the template for missed tags",
    "category": "Email",
    "description": "Requests a check of the template for missed tags. Returns a list of missed tags.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_template_attachments_index",
    "display_name": "List email template attachments",
    "category": "Email",
    "description": "Fetches multiple email template attachment records. The records can be filtered and paged according to\nthe respective parameters. Only attachments from email templates that the user has permission to view\nwill be returned, respecting template visibility and sharing settings.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_templates_create",
    "display_name": "Create Personal Email Template",
    "category": "Email",
    "description": "Create a new personal email template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_templates_index",
    "display_name": "List email templates",
    "category": "Email",
    "description": "Fetches multiple email template records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_templates_show",
    "display_name": "Fetch an email template",
    "category": "Email",
    "description": "Fetches an email template, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "email_templates_update",
    "display_name": "Update Personal Email Template",
    "category": "Email",
    "description": "Update a personal email template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "external_configurations_create",
    "display_name": "Create a configuration",
    "category": "CRM",
    "description": "Creates a configuration. Valid object types are: people, users, accounts, and opportunities. Learn more about External ID configurations here .",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "external_configurations_destroy",
    "display_name": "Delete a configuration",
    "category": "CRM",
    "description": "Delete a configuration, specified by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "external_configurations_index",
    "display_name": "List team configurations",
    "category": "CRM",
    "description": "Returns all configurations for a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "external_emails_create",
    "display_name": "Create an External Email",
    "category": "Email",
    "description": "Creates an external email object.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "external_mappings_create",
    "display_name": "Create a mapping",
    "category": "CRM",
    "description": "Creates a mapping. Valid object types are: people, users, accounts, and opportunities. Learn more about External ID mappings here .",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "external_mappings_destroy",
    "display_name": "Delete a mapping",
    "category": "CRM",
    "description": "Deletes a mapping, specified by id.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "external_mappings_index",
    "display_name": "List team mappings",
    "category": "CRM",
    "description": "Returns all mappings for a team, paginated and filtered by the date.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "groups_create",
    "display_name": "Create a group",
    "category": "Team",
    "description": "Creates a group.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "groups_destroy",
    "display_name": "Deletes a Group by ID",
    "category": "Team",
    "description": "Deletes a Group by ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "groups_index",
    "display_name": "List groups",
    "category": "Team",
    "description": "Fetches multiple group records. The records can be filtered, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "groups_show",
    "display_name": "Fetch a group",
    "category": "Team",
    "description": "Fetches a group, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "groups_update",
    "display_name": "Update a group",
    "category": "Team",
    "description": "Updates a group by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "imports_create",
    "display_name": "Create an import",
    "category": "Data Operations",
    "description": "Creates an import.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "imports_destroy",
    "display_name": "Delete an import",
    "category": "Data Operations",
    "description": "Deletes an import, by ID only. The associated people can be deleted as part of the deletion process.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "imports_index",
    "display_name": "List imports",
    "category": "Data Operations",
    "description": "Fetches multiple imports.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "imports_show",
    "display_name": "Fetch an import",
    "category": "Data Operations",
    "description": "Fetches an import, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "imports_update",
    "display_name": "Update an import",
    "category": "Data Operations",
    "description": "Updates an import, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_signals_registrations_create",
    "display_name": "Create a Signal Registration",
    "category": "Signals",
    "description": "Create a Signal Registration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_signals_registrations_destroy",
    "display_name": "Deletes a Signal Registration",
    "category": "Signals",
    "description": "Deletes a Signal Registration\nFor additional information on deleting a Signal Registration, visit the signals details page .\nPlease note that Signal Registrations that are globally install can not be deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_signals_registrations_index",
    "display_name": "List Signal Registrations",
    "category": "Signals",
    "description": "List all Signal Registrations for all Integrations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_signals_registrations_plays_create",
    "display_name": "Create a Play Registration",
    "category": "Signals",
    "description": "Create a Salesloft Play for a registered Signal and coinciding indicator. Plays are rulesets that turn Salesloft Signals into action when certain criteria are met. A Play cannot be registered without a coinciding Signal registration. The Play will be executed when indicator(s) of an incoming Signal ",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_signals_registrations_plays_destroy",
    "display_name": "Delete a Play Registration",
    "category": "Signals",
    "description": "Deletes a Play Registration. Please note that Play Registrations which have been enabled can not be deleted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_signals_registrations_plays_index",
    "display_name": "List Play Registrations",
    "category": "Signals",
    "description": "Fetches all Play Registrations created by owner of associated integration. The records can be filtered, paged, and sorted according to the respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_signals_registrations_plays_show",
    "display_name": "Fetch a Play Registration",
    "category": "Signals",
    "description": "Fetch a Play Registration by ID. Please note that deleted Play Registrations cannot be shown.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_signals_registrations_plays_update",
    "display_name": "Update a Play Registration",
    "category": "Signals",
    "description": "Salesloft Plays are rulesets that turn Salesloft Signals into action if and when certain criteria are met - when indicator(s) of an incoming Signal match indicator(s) of a previously configured Play registration. A Play registration must be associated to an existing Signal registration. Play registr",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_signals_registrations_show",
    "display_name": "Fetch a Signal Registration",
    "category": "Signals",
    "description": "Fetch a Signal Registration by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "integrations_signals_registrations_update",
    "display_name": "Update a Signal Registration",
    "category": "Signals",
    "description": "Update a Signal Registration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "live_website_tracking_parameters_create",
    "display_name": "Create an Live Website Tracking Parameter",
    "category": "Other",
    "description": "Creates a Live Website Tracking parameter to identify a person",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_me",
    "display_name": "Fetch current user",
    "category": "Team",
    "description": "Authenticated user information. This endpoint does not accept any parameters as it is\nrepresents your authenticated user. The \"Users\" resource provides user information\nfor other users on the team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "meetings_index",
    "display_name": "List meetings",
    "category": "Meetings",
    "description": "Fetches multiple meeting records. The records can be filtered, paged, and sorted according to the respective parameters.\nMeetings resource is responsible for events created via the Salesloft platform using calendaring features.\nThese events can relate to cadences, people, and accounts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "meetings_reschedule_links_show",
    "display_name": "Fetch a reschedule meeting link",
    "category": "Meetings",
    "description": "Fetches a reschedule meeting link using the 'reschedule_guid' as a parameter in the URL path.\nFor example, 'meetings/reschedule_links/a27659c0-058c-4732-928d-c3ad67670a99'.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "meetings_settings_searches_create",
    "display_name": "List meeting settings",
    "category": "Records",
    "description": "Fetches multiple meeting setting records. The records can be filtered, paged, and sorted according to the respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "meetings_settings_update",
    "display_name": "Update a meeting setting",
    "category": "Team",
    "description": "Updates a meeting setting, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "meetings_update",
    "display_name": "Update a meeting",
    "category": "Meetings",
    "description": "Updates a meeting, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mime_email_payloads_show",
    "display_name": "Fetch the MIME content for email",
    "category": "Email",
    "description": "Fetch the MIME content for email.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "notes_create",
    "display_name": "Create a note",
    "category": "Records",
    "description": "Creates a note.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "notes_destroy",
    "display_name": "Delete a note",
    "category": "Records",
    "description": "Deletes a note owned by authorized account.\nThis operation is not reversible without contacting support.\nThis operation can be called multiple times successfully.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "notes_index",
    "display_name": "List notes",
    "category": "Records",
    "description": "Fetches multiple note records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "notes_show",
    "display_name": "Fetch a note",
    "category": "Records",
    "description": "Fetches a note, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "notes_update",
    "display_name": "Update a note",
    "category": "Records",
    "description": "Updates a note. Any changes to the note or associated records will not reflect in your CRM.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ongoing_actions_create",
    "display_name": "Create an ongoing action",
    "category": "Cadences",
    "description": "Creates an ongoing action. An ongoing action is an action that is not yet completed,\nbut progress has been made towards the completion. The user should not need to do\nanything for an ongoing action to be completed. An ongoing action can be later completed\nby creating an activity.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "opportunities_index",
    "display_name": "List opportunities",
    "category": "Opportunities",
    "description": "Lists multiple Opportunity records. Returns Opportunity records synced from the CRM and created via API. The records can be filtered, paged, and sorted using the parameters below and external ID parameters. To Create, Update and Delete opportunities, refer to this External Mapping guide here .",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "opportunities_show",
    "display_name": "Fetch an Opportunity",
    "category": "Opportunities",
    "description": "Fetches a single Opportunity record. Returns Opportunity records synced from the CRM and created via API. To Create, Update and Delete opportunities, refer to this External Mapping guide here .",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "opportunity_people_create",
    "display_name": "Create an Opportunity and Person Association",
    "category": "Opportunities",
    "description": "Associates Salesloft people with opportunities. Use this endpoint to associate members of a buying group with opportunities.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "opportunity_people_destroy",
    "display_name": "Delete an Opportunity and Person Association",
    "category": "Opportunities",
    "description": "Deletes an Opportunity and Person Association.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "opportunity_people_index",
    "display_name": "List Opportunity and Person Associations",
    "category": "Opportunities",
    "description": "Lists associations between Salesloft people and opportunities that have been created by Salesloft or created via API.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "opportunity_stages_create",
    "display_name": "Create an Opportunity Stage",
    "category": "Opportunities",
    "description": "Creates an Opportunity Stage. Opportunities cannot be created without valid stages.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "opportunity_stages_destroy",
    "display_name": "Delete an Opportunity Stage",
    "category": "Opportunities",
    "description": "Deletes an Opportunity Stage",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "opportunity_stages_index",
    "display_name": "List Opportunity Stages",
    "category": "Opportunities",
    "description": "Lists Opportunity Stages synced from the CRM and created via API. The records can be filtered, paged, and sorted using the parameters below.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "opportunity_stages_show",
    "display_name": "Fetch an Opportunity Stage",
    "category": "Opportunities",
    "description": "Fetches a single Opportunity Stage.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "opportunity_stages_update",
    "display_name": "Update an Opportunity Stage",
    "category": "Opportunities",
    "description": "Updates an Opportunity Stage.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pending_emails_index",
    "display_name": "List pending emails",
    "category": "Email",
    "description": "Fetches a list of emails ready to be sent by an external email service. Only emails sent with an External Email Client will appear here.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pending_emails_update",
    "display_name": "Update a pending email",
    "category": "Email",
    "description": "Updates the status of an email sent by an External Email Client. Does not affect lofted emails.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "people_create",
    "display_name": "Create a person",
    "category": "People",
    "description": "Creates a person. Either email_address or phone/last_name must be provided as a unique lookup\non the team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "people_destroy",
    "display_name": "Delete a person",
    "category": "People",
    "description": "Deletes a person. This operation is not reversible without contacting support.\nThis operation can be called multiple times successfully.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "people_index",
    "display_name": "List people",
    "category": "People",
    "description": "Fetches multiple person records. The records can be filtered, paged, and\nsorted according to the respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "people_show",
    "display_name": "Fetch a person",
    "category": "People",
    "description": "Fetches a person, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "people_update",
    "display_name": "Update a person",
    "category": "People",
    "description": "Updates a person.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "person_stages_create",
    "display_name": "Create a person stage",
    "category": "People",
    "description": "Creates a person stage.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "person_stages_destroy",
    "display_name": "Delete an person stage",
    "category": "People",
    "description": "Deletes a person stage. This operation is not reversible without contacting support.\nThis operation can be called multiple times successfully.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "person_stages_index",
    "display_name": "List person stages",
    "category": "People",
    "description": "Fetches multiple person stage records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "person_stages_show",
    "display_name": "Fetch a person stage",
    "category": "People",
    "description": "Fetches a person stage, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "person_stages_update",
    "display_name": "Update a person stage",
    "category": "People",
    "description": "Updates a person stage.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "person_upserts_create",
    "display_name": "Upsert a person",
    "category": "People",
    "description": "Upserts a person record. The upsert_key dictates how the upsert will be performed. The create and update behavior\nis exactly the same as the individual create and update endpoints.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "phone_number_assignments_index",
    "display_name": "List phone number assignments",
    "category": "Other",
    "description": "Fetches multiple phone number assignment records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "phone_number_assignments_show",
    "display_name": "Fetch a phone number assignment",
    "category": "Other",
    "description": "Fetches a phone number assignment, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "phone_numbers_caller_ids_index",
    "display_name": "List caller ids",
    "category": "Calls & Conversations",
    "description": "Each entry is a possible caller ID match for the number. Multiple\nentries may be returned if the phone number is present on more than one\nperson in the system.  Phone number should be in E.164 format.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "phone_numbers_recording_settings_show",
    "display_name": "Fetch recording setting",
    "category": "Calls & Conversations",
    "description": "Fetches the recording status for a given phone number, based on Do Not Record and Recording Governance for your team.\nPhone number should be in E.164 format.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "saved_list_views_create",
    "display_name": "Create a saved list view",
    "category": "Records",
    "description": "Creates a saved list view.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "saved_list_views_destroy",
    "display_name": "Delete a saved list view",
    "category": "Records",
    "description": "Deletes a saved list view. This operation is not reversible without contacting support.\nThis operation can be called multiple times successfully.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "saved_list_views_index",
    "display_name": "List saved list views",
    "category": "Records",
    "description": "Fetches multiple saved list view records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "saved_list_views_show",
    "display_name": "Fetch a saved list view",
    "category": "Records",
    "description": "Fetches a saved list view, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "saved_list_views_update",
    "display_name": "Update a saved list view",
    "category": "Records",
    "description": "Updates a saved list view.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "signals_create",
    "display_name": "Create a Signal",
    "category": "Signals",
    "description": "Deliver a Signal to Salesloft. Signals must follow the structure defined on the Signal Registration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "steps_index",
    "display_name": "List steps",
    "category": "Cadences",
    "description": "Fetches multiple step records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "steps_show",
    "display_name": "Fetch a step",
    "category": "Cadences",
    "description": "Fetches a step, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "successes_index",
    "display_name": "List successes",
    "category": "Other",
    "description": "Fetches multiple success records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tags_index",
    "display_name": "List team tags",
    "category": "Records",
    "description": "Fetches a list of the tags used for a team. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tasks_counts_index",
    "display_name": "Fetch task counts",
    "category": "Tasks",
    "description": "Fetches task counts data grouped by the task type.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tasks_create",
    "display_name": "Create a Task",
    "category": "Tasks",
    "description": "Creates a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tasks_destroy",
    "display_name": "Delete a task",
    "category": "Tasks",
    "description": "Deletes a task. This operation is not reversible without contacting support.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tasks_index",
    "display_name": "List tasks",
    "category": "Tasks",
    "description": "Fetches multiple task records. The records can be filtered, paged, and sorted according to\nthe respective parameters. Tasks associated with cadence steps will not be returned in the response.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tasks_show",
    "display_name": "Fetch a task",
    "category": "Tasks",
    "description": "Fetches a task, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "tasks_update",
    "display_name": "Update a Task",
    "category": "Tasks",
    "description": "Updates a task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "team_index",
    "display_name": "Fetch current team",
    "category": "Team",
    "description": "Fetches the team of the authenticated user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "team_template_attachments_index",
    "display_name": "List team template attachments",
    "category": "Templates",
    "description": "Fetches multiple team template attachment records. The records can be filtered and paged according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "team_templates_create",
    "display_name": "Create Team Email Template",
    "category": "Templates",
    "description": "Create a new team email template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "team_templates_index",
    "display_name": "List team templates",
    "category": "Templates",
    "description": "Fetches multiple team template records. The records can be filtered, paged, and sorted according to\nthe respective parameters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "team_templates_show",
    "display_name": "Fetch a team template",
    "category": "Templates",
    "description": "Fetches a team template, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "team_templates_update",
    "display_name": "Update Team Email Template",
    "category": "Templates",
    "description": "Update a team email template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "third_party_live_feed_items_create",
    "display_name": "Create a live feed item",
    "category": "Other",
    "description": "Creates a live feed item that can be sent to users. May only be used by whitelisted Frontend Integrations with notifications :write , people :read , and accounts :read scopes. Reference the Salesloft App Directory and Frontend Integrations sections for additional details.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "users_index",
    "display_name": "List users",
    "category": "Team",
    "description": "Non Admin: Lists only your user, or all on team depending on group visibility policy\nTeam Admin: Lists users associated with your team",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "users_show",
    "display_name": "Fetch a user, by User ID or User GUID",
    "category": "Team",
    "description": "Fetches a user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "users_update",
    "display_name": "Update a user, by User ID or User GUID",
    "category": "Team",
    "description": "Updates a user.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "webhook_subscriptions_create",
    "display_name": "Create a webhook subscription",
    "category": "Webhooks",
    "description": "Creates a webhook subscription. Visit the webhooks page for additional details and a list of available webhooks.\nRequest must be made with a valid Oauth token or API key.\nScope requirements for this endpoint vary based on what 'event_type' you are requesting to subscribe to.\nVisit the webhook event ",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "webhook_subscriptions_destroy",
    "display_name": "Delete a webhook subscription",
    "category": "Webhooks",
    "description": "Deletes a webhook subscription. This operation is not reversible without contacting support. This operation can be called multiple times successfully.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "webhook_subscriptions_index",
    "display_name": "List webhook subscriptions",
    "category": "Webhooks",
    "description": "Fetches all of the customer's webhook subscriptions for your application.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "webhook_subscriptions_show",
    "display_name": "Fetch a webhook subscription",
    "category": "Webhooks",
    "description": "Fetches a webhook subscription, by ID only.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "webhook_subscriptions_update",
    "display_name": "Update a webhook subscription",
    "category": "Webhooks",
    "description": "Updates a webhook subscription.\nRequest must be made with a valid Oauth token or API key.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

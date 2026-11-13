@@ -28,133 +28,152 @@
    "display_name": null,
    "category": null,
    "description": "List the bots accessible to the connected account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_bot",
    "display_name": null,
    "category": null,
    "description": "Create a new bot with a name.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bot",
    "display_name": null,
    "category": null,
    "description": "Get a bot by ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_bot",
    "display_name": null,
    "category": null,
    "description": "Publish the selected bot's changes to live production.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_bot_attributes",
    "display_name": null,
    "category": null,
    "description": "List the selected bot's attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_bot_attribute",
    "display_name": null,
    "category": null,
    "description": "Delete an attribute from the selected bot environment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": null,
    "category": null,
    "description": "Get an audience user's profile and attributes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_user",
    "display_name": null,
    "category": null,
    "description": "Update the supplied audience profile fields, leaving omitted fields unchanged.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_user_attribute",
    "display_name": null,
    "category": null,
    "description": "Create a custom audience attribute definition.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_entities",
    "display_name": null,
    "category": null,
    "description": "List the selected bot's CMS entities.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_entity",
    "display_name": null,
    "category": null,
    "description": "Get a CMS entity and its field definitions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_entity",
    "display_name": null,
    "category": null,
    "description": "Rename a CMS entity.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_entity",
    "display_name": null,
    "category": null,
    "description": "Delete the selected CMS entity.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_entity_items",
    "display_name": null,
    "category": null,
    "description": "Read one page of CMS items, optionally filtered by name and status.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_entity_item",
    "display_name": null,
    "category": null,
    "description": "Get a single CMS item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_entity_item",
    "display_name": null,
    "category": null,
    "description": "Create a CMS item with values for the entity's custom fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_entity_item",
    "display_name": null,
    "category": null,
    "description": "Update the supplied CMS item fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_entity_item",
    "display_name": null,
    "category": null,
    "description": "Delete the selected CMS item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_message",
    "display_name": null,
    "category": null,
    "description": "Send a text message to a Facebook audience recipient, subject to Meta's messaging rules.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -30,140 +30,160 @@
    "display_name": "List Companies",
    "category": "Companies",
    "description": "List companies.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_workers",
    "display_name": "List Workers",
    "category": "Employees",
    "description": "List workers.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_worker",
    "display_name": "Get Worker",
    "category": "Employees",
    "description": "Retrieve a specific worker.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_departments",
    "display_name": "List Departments",
    "category": "Departments",
    "description": "List departments.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_department",
    "display_name": "Get Department",
    "category": "Departments",
    "description": "Retrieve a specific department.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_department",
    "display_name": "Create Department",
    "category": "Departments",
    "description": "Create a new department.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_department",
    "display_name": "Update Department",
    "category": "Departments",
    "description": "Update a department.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_leave_requests",
    "display_name": "List Leave Requests",
    "category": "Leave",
    "description": "List leave requests.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_leave_request",
    "display_name": "Get Leave Request",
    "category": "Leave",
    "description": "Retrieve a specific leave request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_leave_request",
    "display_name": "Create Leave Request",
    "category": "Leave",
    "description": "Create a new leave request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_leave_request",
    "display_name": "Update Leave Request",
    "category": "Leave",
    "description": "Update a leave request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_leave_types",
    "display_name": "List Leave Types",
    "category": "Leave",
    "description": "List leave types.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_leave_type",
    "display_name": "Get Leave Type",
    "category": "Leave",
    "description": "Retrieve a specific leave type.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_leave_balances",
    "display_name": "List Leave Balances",
    "category": "Leave",
    "description": "List leave balances.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_leave_balance",
    "display_name": "Get Leave Balance",
    "category": "Leave",
    "description": "Retrieve a specific leave balance.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_supergroups",
    "display_name": "List Supergroups",
    "category": "Groups",
    "description": "List supergroups.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_supergroup",
    "display_name": "Get Supergroup",
    "category": "Groups",
    "description": "Retrieve a specific supergroup.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_supergroup_members",
    "display_name": "List Supergroup Members",
    "category": "Groups",
    "description": "List supergroup members.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_inclusion_members",
    "display_name": "List Inclusion Members",
    "category": "Groups",
    "description": "List supergroup inclusion members.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_inclusion_members",
    "display_name": "Update Inclusion Members",
    "category": "Groups",
    "description": "Update supergroup inclusion members.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

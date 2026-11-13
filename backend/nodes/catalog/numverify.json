@@ -27,14 +27,16 @@
    "display_name": null,
    "category": null,
    "description": "Validate a phone number and look up its country, carrier and line type.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_supported_countries",
    "display_name": null,
    "category": null,
    "description": "List supported countries and their international dialling codes.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

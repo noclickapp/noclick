@@ -40,154 +40,184 @@
    "display_name": "On Expense Payment Updated",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "brex_api_token",
+    "brex_mcp"
+   ]
   },
   {
    "name": "on_transfer_processed",
    "display_name": "On Transfer Processed",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "brex_api_token",
+    "brex_mcp"
+   ]
   },
   {
    "name": "list_expenses",
    "display_name": "List Expenses",
    "category": "Expenses",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_expense",
    "display_name": "Get Expense",
    "category": "Expenses",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_expense",
    "display_name": "Update Expense",
    "category": "Expenses",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_cards",
    "display_name": "List Cards",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_card",
    "display_name": "Get Card",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unlock_card",
    "display_name": "Unlock Card",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_card",
    "display_name": "Create Card",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_card",
    "display_name": "Update Card",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "lock_card",
    "display_name": "Lock Card",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "terminate_card",
    "display_name": "Terminate Card",
    "category": "Cards",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_cash_accounts",
    "display_name": "List Cash Accounts",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_card_accounts",
    "display_name": "List Card Accounts",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company",
    "display_name": "Get Company",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_cash_account",
    "display_name": "Get Cash Account",
    "category": "Accounts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_card_transactions",
    "display_name": "List Card Transactions",
    "category": "Transactions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_cash_transactions",
    "display_name": "List Cash Transactions",
    "category": "Transactions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transfers",
    "display_name": "List Transfers",
    "category": "Transfers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transfer",
    "display_name": "Get Transfer",
    "category": "Transfers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_transfer",
    "display_name": "Create Transfer",
    "category": "Transfers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_vendors",
    "display_name": "List Vendors",
    "category": "Vendors",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

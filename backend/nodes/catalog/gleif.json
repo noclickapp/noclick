@@ -12,175 +12,200 @@
    "display_name": "LEI Record By ID (LEI)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_lei_records",
    "display_name": "All LEI Records",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_direct_parent_relationship",
    "display_name": "Direct Parent Relationship(s)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_direct_parent_reporting_exception",
    "display_name": "Direct Parent Reporting Exception(s)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_ultimate_parent_relationship",
    "display_name": "Ultimate Parent Relationship(s)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_ultimate_parent_reporting_exception",
    "display_name": "Ultimate Parent Reporting Exception(s)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_ultimate_parent",
    "display_name": "Ultimate Parent's LEI Record",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_direct_parent",
    "display_name": "Direct Parent's LEI Record",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_ultimate_child_relationships",
    "display_name": "Ultimate Child Relationship(s)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_direct_child_relationships",
    "display_name": "Direct Child Relationship(s)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_ultimate_children",
    "display_name": "Ultimate Child(ren)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_direct_children",
    "display_name": "Direct Child(ren)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_lei_issuer",
    "display_name": "LEI Issuer",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_associated_entity",
    "display_name": "Associated Entity (Fund Manager Legal Entity)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_successor_entity",
    "display_name": "Successor Entity (Legal Entity this Registration is Replaced By)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_managing_lou",
    "display_name": "Managing LOU (LEI Issuer)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_field_modifications",
    "display_name": "All LEI Record field modifications",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_lei_issuers",
    "display_name": "LEI Issuers",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_issuer",
    "display_name": "LEI Issuer By ID",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "search_fuzzy",
    "display_name": "Fuzzy Completions (Approximate Match)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "search_autocomplete",
    "display_name": "Auto-Completions (Suggested Search Terms)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_legal_forms",
    "display_name": "Entity Legal Forms (ELF Codes)",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_legal_form",
    "display_name": "Entity Legal Form Details By ID",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "list_registration_authorities",
    "display_name": "Registration Authorities",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   },
   {
    "name": "get_registration_authority",
    "display_name": "Registration Authority Details By ID",
    "category": "GLEIF",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   }
  ],
  "agent_tool_provider": true,

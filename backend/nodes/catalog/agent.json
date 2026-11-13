@@ -22,63 +22,72 @@
    "display_name": null,
    "category": null,
    "description": "Execute agent node",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "default",
    "display_name": null,
    "category": null,
    "description": "Execute agent node",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "default",
    "display_name": null,
    "category": null,
    "description": "Execute agent node",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "default",
    "display_name": null,
    "category": null,
    "description": "Execute agent node",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "default",
    "display_name": null,
    "category": null,
    "description": "Execute agent node",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "default",
    "display_name": null,
    "category": null,
    "description": "Execute agent node",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "default",
    "display_name": null,
    "category": null,
    "description": "Execute agent node",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "default",
    "display_name": null,
    "category": null,
    "description": "Execute agent node",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "default",
    "display_name": null,
    "category": null,
    "description": "Execute agent node",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": false,

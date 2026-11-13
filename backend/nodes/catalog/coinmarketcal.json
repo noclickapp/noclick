@@ -22,63 +22,72 @@
    "display_name": null,
    "category": null,
    "description": "Find crypto events. Use displayedDate for estimated event dates.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_event_cancellations",
    "display_name": null,
    "category": null,
    "description": "Poll permanent removals at least every 90 days.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_event",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "export_events_csv",
    "display_name": null,
    "category": null,
    "description": "Download an inclusive date range as a CSV file (Elite+).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_events_snapshot",
    "display_name": null,
    "category": null,
    "description": "Get a private daily CSV.gz link, valid for 15 minutes (Elite+).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_categories",
    "display_name": null,
    "category": null,
    "description": "Read the unpaginated taxonomy and tier-windowed counts (Standard+).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_coins",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_coin",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_usage",
    "display_name": null,
    "category": null,
    "description": "Read the authenticated key's monthly quota and consumption.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

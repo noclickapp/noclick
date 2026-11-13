@@ -22,182 +22,211 @@
    "display_name": "New Public Channel Message",
    "category": "Triggers",
    "description": "Start a workflow when someone posts in a public channel.\n\n    Outgoing webhooks must be enabled and the token owner needs manage_webhooks.\n    Private channels and direct messages do not support outgoing webhooks.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "mattermost_token"
+   ]
   },
   {
    "name": "get_current_user",
    "display_name": null,
    "category": null,
    "description": "Read the authenticated account to verify the connection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": null,
    "category": null,
    "description": "Read a user profile.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user_by_username",
    "display_name": null,
    "category": null,
    "description": "Find a user by their exact username.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_my_teams",
    "display_name": null,
    "category": null,
    "description": "List teams the authenticated user belongs to.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_public_channels",
    "display_name": null,
    "category": null,
    "description": "Read one page of public channels in a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_my_channels",
    "display_name": null,
    "category": null,
    "description": "List the authenticated user’s channels in a team.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_channel",
    "display_name": null,
    "category": null,
    "description": "Read a channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_channel",
    "display_name": null,
    "category": null,
    "description": "Create a public or private channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_channel",
    "display_name": null,
    "category": null,
    "description": "Update only the supplied channel fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_direct_channel",
    "display_name": null,
    "category": null,
    "description": "Create or retrieve the direct channel between two users.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_channel_members",
    "display_name": null,
    "category": null,
    "description": "Read one page of channel memberships.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_channel_member",
    "display_name": null,
    "category": null,
    "description": "Add one user to a channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_channel_member",
    "display_name": null,
    "category": null,
    "description": "Remove a user from a channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_posts",
    "display_name": null,
    "category": null,
    "description": "Read one page of messages in a channel, newest first.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_post",
    "display_name": null,
    "category": null,
    "description": "Send a Markdown message or reply in a channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_post",
    "display_name": null,
    "category": null,
    "description": "Read one message.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_post",
    "display_name": null,
    "category": null,
    "description": "Patch the message text while preserving other fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_post",
    "display_name": null,
    "category": null,
    "description": "Delete a message (the server may retain it for compliance).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_thread",
    "display_name": null,
    "category": null,
    "description": "Read a thread in one API response, with an optional continuation post.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_posts",
    "display_name": null,
    "category": null,
    "description": "Search team messages; page controls require Elasticsearch on the server.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_reaction",
    "display_name": null,
    "category": null,
    "description": "React to a post as the supplied authenticated user ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_reaction",
    "display_name": null,
    "category": null,
    "description": "Remove the supplied user’s reaction (permissions apply).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_reactions",
    "display_name": null,
    "category": null,
    "description": "List reactions on a post.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pin_post",
    "display_name": null,
    "category": null,
    "description": "Pin a message to its channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unpin_post",
    "display_name": null,
    "category": null,
    "description": "Unpin a message from its channel.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

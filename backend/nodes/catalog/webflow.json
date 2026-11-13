@@ -43,665 +43,830 @@
    "display_name": "List Sites",
    "category": "Sites",
    "description": "List all sites the token can access.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site",
    "display_name": "Get Site",
    "category": "Sites",
    "description": "Get details and metadata for a single site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_site",
    "display_name": "Publish Site",
    "category": "Sites",
    "description": "Publish a site to its domains (max 1 successful publish/min).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pages",
    "display_name": "List Pages",
    "category": "Pages",
    "description": "List all static pages on a site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_page_content",
    "display_name": "Get Page Content",
    "category": "Pages",
    "description": "Get a page's static (DOM) text content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_page_content",
    "display_name": "Update Page Content",
    "category": "Pages",
    "description": "Update a page's static text content (DOM nodes).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_collections",
    "display_name": "List Collections",
    "category": "Collections",
    "description": "List CMS collections on a site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_collection",
    "display_name": "Get Collection Details",
    "category": "Collections",
    "description": "Get a CMS collection's schema and fields.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_collection",
    "display_name": "Create Collection",
    "category": "Collections",
    "description": "Create a new CMS collection on a site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_collection_field",
    "display_name": "Create Collection Field",
    "category": "Collections",
    "description": "Add a field to a CMS collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_items",
    "display_name": "List Collection Items",
    "category": "CMS Items",
    "description": "List (staged) items in a CMS collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_item",
    "display_name": "Get Collection Item",
    "category": "CMS Items",
    "description": "Get a single CMS item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_item",
    "display_name": "Create Collection Item",
    "category": "CMS Items",
    "description": "Create one or more staged CMS items.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_live_item",
    "display_name": "Create Live Item",
    "category": "CMS Items",
    "description": "Create CMS item(s) directly on the live site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_item",
    "display_name": "Update Collection Item",
    "category": "CMS Items",
    "description": "Update a staged CMS item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_item",
    "display_name": "Delete Collection Item",
    "category": "CMS Items",
    "description": "Delete a staged CMS item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "publish_items",
    "display_name": "Publish Collection Items",
    "category": "CMS Items",
    "description": "Publish staged CMS items to the live site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_forms",
    "display_name": "List Forms",
    "category": "Forms",
    "description": "List forms on a site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_form",
    "display_name": "Get Form Schema",
    "category": "Forms",
    "description": "Get a form's field schema.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_form_submissions",
    "display_name": "List Form Submissions",
    "category": "Forms",
    "description": "List submissions for a form.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_form_submission",
    "display_name": "Get Form Submission",
    "category": "Forms",
    "description": "Get a single form submission.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_assets",
    "display_name": "List Assets",
    "category": "Assets",
    "description": "List a site's assets.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_products",
    "display_name": "List Products & SKUs",
    "category": "Ecommerce",
    "description": "List ecommerce products and SKUs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_product",
    "display_name": "Create Product & SKU",
    "category": "Ecommerce",
    "description": "Create an ecommerce product and its default SKU.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_orders",
    "display_name": "List Orders",
    "category": "Ecommerce",
    "description": "List ecommerce orders.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_order",
    "display_name": "Get Order",
    "category": "Ecommerce",
    "description": "Get a single ecommerce order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "fulfill_order",
    "display_name": "Fulfill Order",
    "category": "Ecommerce",
    "description": "Mark an ecommerce order as fulfilled.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_inventory",
    "display_name": "List Inventory",
    "category": "Ecommerce",
    "description": "Get inventory for a SKU.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_comment_threads",
    "display_name": "List Comment Threads",
    "category": "Comments",
    "description": "List page-design comment threads.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhooks",
    "display_name": "List Webhooks",
    "category": "Webhooks",
    "description": "List registered webhooks for a site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webhook",
    "display_name": "Create Webhook",
    "category": "Webhooks",
    "description": "Register a webhook (triggerType + url) for a site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_webhook",
    "display_name": "Remove Webhook",
    "category": "Webhooks",
    "description": "Delete a registered webhook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_authorized_user",
    "display_name": "Get Authorized User",
    "category": "Token",
    "description": "Get info about the user who authorized the token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_custom_domains",
    "display_name": "Get Custom Domains",
    "category": "Sites",
    "description": "List a site's custom domains (IDs used when publishing).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_page_metadata",
    "display_name": "Get Page Metadata",
    "category": "Pages",
    "description": "Get a page's metadata (SEO, Open Graph, slug, draft state).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_page_metadata",
    "display_name": "Update Page Metadata",
    "category": "Pages",
    "description": "Update a page's metadata (title, slug, SEO, Open Graph).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_components",
    "display_name": "List Components",
    "category": "Components",
    "description": "List a site's components.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_component_content",
    "display_name": "Get Component Content",
    "category": "Components",
    "description": "Get a component's content (DOM node tree).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_component_content",
    "display_name": "Update Component Content",
    "category": "Components",
    "description": "Update a component's static content (DOM nodes).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_component_properties",
    "display_name": "Get Component Properties",
    "category": "Components",
    "description": "Get a component's properties.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_component_properties",
    "display_name": "Update Component Properties",
    "category": "Components",
    "description": "Update a component's properties.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_collection",
    "display_name": "Delete Collection",
    "category": "Collections",
    "description": "Delete a CMS collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_collection_field",
    "display_name": "Update Collection Field",
    "category": "Collections",
    "description": "Update a collection field's display name / required / help text (type is immutable).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_collection_field",
    "display_name": "Delete Collection Field",
    "category": "Collections",
    "description": "Delete a field from a collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_live_items",
    "display_name": "List Live Items",
    "category": "CMS Items",
    "description": "List published (live) items in a collection.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_live_item",
    "display_name": "Get Live Item",
    "category": "CMS Items",
    "description": "Get a single published (live) CMS item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_live_item",
    "display_name": "Update Live Item",
    "category": "CMS Items",
    "description": "Update a published (live) CMS item.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_live_item",
    "display_name": "Unpublish Live Item",
    "category": "CMS Items",
    "description": "Unpublish (delete-live) a CMS item from the live site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_bulk_items",
    "display_name": "Create Items (Bulk)",
    "category": "CMS Items",
    "description": "Create multiple CMS items at once (up to 100, with per-item locales).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_product",
    "display_name": "Get Product",
    "category": "Ecommerce",
    "description": "Get a product and its SKUs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_product",
    "display_name": "Update Product",
    "category": "Ecommerce",
    "description": "Update a product's field data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_skus",
    "display_name": "Create SKUs",
    "category": "Ecommerce",
    "description": "Create additional SKUs for a product.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_sku",
    "display_name": "Update SKU",
    "category": "Ecommerce",
    "description": "Update a single SKU.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_inventory",
    "display_name": "Update Inventory",
    "category": "Ecommerce",
    "description": "Update inventory for a SKU.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ecommerce_settings",
    "display_name": "Get Ecommerce Settings",
    "category": "Ecommerce",
    "description": "Get a site's ecommerce settings (default currency, etc.).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_order",
    "display_name": "Update Order",
    "category": "Ecommerce",
    "description": "Update an order (comment, shipping provider/tracking).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unfulfill_order",
    "display_name": "Unfulfill Order",
    "category": "Ecommerce",
    "description": "Mark an order as unfulfilled.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refund_order",
    "display_name": "Refund Order",
    "category": "Ecommerce",
    "description": "Refund an order.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_site_form_submissions",
    "display_name": "List Site Form Submissions",
    "category": "Forms",
    "description": "List all form submissions across a site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "modify_submission",
    "display_name": "Modify Submission",
    "category": "Forms",
    "description": "Modify a form submission (hidden fields only).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_submission",
    "display_name": "Delete Submission",
    "category": "Forms",
    "description": "Delete a form submission.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_asset",
    "display_name": "Get Asset",
    "category": "Assets",
    "description": "Get a single asset's metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_asset",
    "display_name": "Create Asset (Get Upload URL)",
    "category": "Assets",
    "description": "Create an asset (step 1: returns a presigned S3 upload URL to POST bytes to).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_asset",
    "display_name": "Update Asset",
    "category": "Assets",
    "description": "Update an asset's display name / alt text.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_asset",
    "display_name": "Delete Asset",
    "category": "Assets",
    "description": "Delete an asset.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_asset_folders",
    "display_name": "List Asset Folders",
    "category": "Assets",
    "description": "List a site's asset folders.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_asset_folder",
    "display_name": "Get Asset Folder",
    "category": "Assets",
    "description": "Get a single asset folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_asset_folder",
    "display_name": "Create Asset Folder",
    "category": "Assets",
    "description": "Create an asset folder.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_comment_thread",
    "display_name": "Get Comment Thread",
    "category": "Comments",
    "description": "Get a single comment thread.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_comment_replies",
    "display_name": "List Comment Replies",
    "category": "Comments",
    "description": "List replies in a comment thread.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_webhook",
    "display_name": "Get Webhook",
    "category": "Webhooks",
    "description": "Get a single registered webhook.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "introspect_token",
    "display_name": "Introspect Token",
    "category": "Token",
    "description": "Introspect the token — scopes, rate limit, authorized sites/workspaces.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "register_hosted_script",
    "display_name": "Register Hosted Script",
    "category": "Custom Code",
    "description": "Register a hosted custom-code script to the site's library.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "register_inline_script",
    "display_name": "Register Inline Script",
    "category": "Custom Code",
    "description": "Register an inline custom-code script (<=2000 chars) to the site's library.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_registered_scripts",
    "display_name": "List Registered Scripts",
    "category": "Custom Code",
    "description": "List custom-code scripts registered to a site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_site_custom_code",
    "display_name": "Get Site Custom Code",
    "category": "Custom Code",
    "description": "Get the scripts applied to a site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "apply_site_custom_code",
    "display_name": "Apply Site Custom Code",
    "category": "Custom Code",
    "description": "Apply scripts to a site (full-array upsert).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_site_custom_code",
    "display_name": "Remove Site Custom Code",
    "category": "Custom Code",
    "description": "Remove all scripts applied to a site.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_page_custom_code",
    "display_name": "Get Page Custom Code",
    "category": "Custom Code",
    "description": "Get the scripts applied to a page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "apply_page_custom_code",
    "display_name": "Apply Page Custom Code",
    "category": "Custom Code",
    "description": "Apply scripts to a page (full-array upsert).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_page_custom_code",
    "display_name": "Remove Page Custom Code",
    "category": "Custom Code",
    "description": "Remove all scripts applied to a page.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "form_submission",
    "display_name": "On Form Submission",
    "category": "Triggers",
    "description": "Fires when a form is submitted on the site.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "webflow_oauth",
+    "webflow_api_token",
+    "webflow_mcp"
+   ]
   },
   {
    "name": "site_publish",
    "display_name": "On Site Publish",
    "category": "Triggers",
    "description": "Fires when the site is published.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "webflow_oauth",
+    "webflow_api_token",
+    "webflow_mcp"
+   ]
   },
   {
    "name": "page_created",
    "display_name": "On Page Created",
    "category": "Triggers",
    "description": "Fires when a page is created.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "webflow_oauth",
+    "webflow_api_token",
+    "webflow_mcp"
+   ]
   },
   {
    "name": "page_metadata_updated",
    "display_name": "On Page Metadata Updated",
    "category": "Triggers",
    "description": "Fires when a page's metadata (SEO/slug/OG) changes.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "webflow_oauth",
+    "webflow_api_token",
+    "webflow_mcp"
+   ]
   },
   {
    "name": "page_deleted",
    "display_name": "On Page Deleted",
    "category": "Triggers",
    "description": "Fires when a page is deleted.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "webflow_oauth",
+    "webflow_api_token",
+    "webflow_mcp"
+   ]
   },
   {
    "name": "collection_item_created",
    "display_name": "On Collection Item Created",
    "category": "Triggers",
    "description": "Fires when a CMS collection item is created.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "webflow_oauth",
+    "webflow_api_token",
+    "webflow_mcp"
+   ]
   },
   {
    "name": "collection_item_changed",
    "display_name": "On Collection Item Changed",
    "category": "Triggers",
    "description": "Fires when a CMS collection item is updated.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "webflow_oauth",
+    "webflow_api_token",
+    "webflow_mcp"
+   ]
   },
   {
    "name": "collection_item_deleted",
    "display_name": "On Collection Item Deleted",
    "category": "Triggers",
    "description": "Fires when a CMS collection item is deleted.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "webflow_oauth",
+    "webflow_api_token",
+    "webflow_mcp"
+   ]
   },
   {
    "name": "collection_item_published",
    "display_name": "On Collection Item Published",
    "category": "Triggers",
    "description": "Fires when a CMS collection item is published live.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "webflow_oauth",
+    "webflow_api_token",
+    "webflow_mcp"
+   ]
   },
   {
    "name": "collection_item_unpublished",
    "display_name": "On Collection Item Unpublished",
    "category": "Triggers",
    "description": "Fires when a CMS collection item is unpublished.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "webflow_oauth",
+    "webflow_api_token",
+    "webflow_mcp"
+   ]
   },
   {
    "name": "ecomm_new_order",
    "display_name": "On New Order",
    "category": "Triggers",
    "description": "Fires when a new ecommerce order is placed.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "webflow_oauth",
+    "webflow_api_token",
+    "webflow_mcp"
+   ]
   },
   {
    "name": "ecomm_order_changed",
    "display_name": "On Order Changed",
    "category": "Triggers",
    "description": "Fires when an ecommerce order changes.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "webflow_oauth",
+    "webflow_api_token",
+    "webflow_mcp"
+   ]
   },
   {
    "name": "ecomm_inventory_changed",
    "display_name": "On Inventory Changed",
    "category": "Triggers",
    "description": "Fires when ecommerce inventory changes.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "webflow_oauth",
+    "webflow_api_token",
+    "webflow_mcp"
+   ]
   },
   {
    "name": "comment_created",
    "display_name": "On Comment Created",
    "category": "Triggers",
    "description": "Fires when a comment is created on the site.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "webflow_oauth",
+    "webflow_api_token",
+    "webflow_mcp"
+   ]
   }
  ],
  "agent_tool_provider": true,

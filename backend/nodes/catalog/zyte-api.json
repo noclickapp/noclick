@@ -22,126 +22,144 @@
    "display_name": null,
    "category": null,
    "description": "Check that Zyte accepts the API key; this may consume extraction credit.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_http_body",
    "display_name": null,
    "category": null,
    "description": "Request httpResponseBody from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_http_headers",
    "display_name": null,
    "category": null,
    "description": "Request httpResponseHeaders from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_browser_html",
    "display_name": null,
    "category": null,
    "description": "Request browserHtml from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_screenshot",
    "display_name": null,
    "category": null,
    "description": "Request screenshot from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_markdown",
    "display_name": null,
    "category": null,
    "description": "Request markdown from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_article",
    "display_name": null,
    "category": null,
    "description": "Request article from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_articleList",
    "display_name": null,
    "category": null,
    "description": "Request articleList from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_articleNavigation",
    "display_name": null,
    "category": null,
    "description": "Request articleNavigation from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_forumThread",
    "display_name": null,
    "category": null,
    "description": "Request forumThread from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_jobPosting",
    "display_name": null,
    "category": null,
    "description": "Request jobPosting from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_jobPostingNavigation",
    "display_name": null,
    "category": null,
    "description": "Request jobPostingNavigation from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_pageContent",
    "display_name": null,
    "category": null,
    "description": "Request pageContent from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_product",
    "display_name": null,
    "category": null,
    "description": "Request product from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_productList",
    "display_name": null,
    "category": null,
    "description": "Request productList from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_productNavigation",
    "display_name": null,
    "category": null,
    "description": "Request productNavigation from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "extract_serp",
    "display_name": null,
    "category": null,
    "description": "Request serp from a page using the published extract endpoint.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_http_post",
    "display_name": null,
    "category": null,
    "description": "Submit text to a target website with POST and return its HTTP body. This can change the target website.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

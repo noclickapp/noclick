@@ -27,140 +27,160 @@
    "display_name": null,
    "category": null,
    "description": "Read account ID, credits and capabilities.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company",
    "display_name": null,
    "category": null,
    "description": "Retrieve a company by its CompanyEnrich UUID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich_company_domain",
    "display_name": null,
    "category": null,
    "description": "Enrich a company domain. May consume credits or schedule enrichment.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich_company_properties",
    "display_name": null,
    "category": null,
    "description": "Enrich a company using its name and optional LinkedIn URL.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "batch_enrich_companies",
    "display_name": null,
    "category": null,
    "description": "Enrich one to fifty domains in one request; may consume credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company_workforce",
    "display_name": null,
    "category": null,
    "description": "Retrieve workforce insights by domain, with explicit history cursor.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_companies",
    "display_name": null,
    "category": null,
    "description": "Search one company page with text, semantic or lookalike filters.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "count_companies",
    "display_name": null,
    "category": null,
    "description": "Count matching companies without retrieving full profiles.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "preview_companies",
    "display_name": null,
    "category": null,
    "description": "Preview companies matching the search criteria.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_people",
    "display_name": null,
    "category": null,
    "description": "Search one page of people using domain, title, country or text.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "count_people",
    "display_name": null,
    "category": null,
    "description": "Count people matching the search criteria.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "preview_people",
    "display_name": null,
    "category": null,
    "description": "Preview people matching the search criteria.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_person",
    "display_name": null,
    "category": null,
    "description": "Retrieve a person by their numeric CompanyEnrich ID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "enrich_person",
    "display_name": null,
    "category": null,
    "description": "Enrich a person by email; may consume credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_person_email",
    "display_name": null,
    "category": null,
    "description": "Find a person's work email (provider beta); may consume credits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_company_lists",
    "display_name": null,
    "category": null,
    "description": "Read the account's saved company lists.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company_list",
    "display_name": null,
    "category": null,
    "description": "Read metadata for a saved company list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_company_list",
    "display_name": null,
    "category": null,
    "description": "Create a saved company list from a v1 text/semantic search.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_company_list",
    "display_name": null,
    "category": null,
    "description": "Rename a saved company list.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_company_list",
    "display_name": null,
    "category": null,
    "description": "Delete a saved company list and return the provider's boolean result.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

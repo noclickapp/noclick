@@ -22,63 +22,72 @@
    "display_name": null,
    "category": null,
    "description": "Health check.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_beaches",
    "display_name": null,
    "category": null,
    "description": "List beaches.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_beach_detail",
    "display_name": null,
    "category": null,
    "description": "Get beach detail.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_beach_conditions",
    "display_name": null,
    "category": null,
    "description": "List beach conditions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_scored_beaches",
    "display_name": null,
    "category": null,
    "description": "Get scored beaches.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_beach_rules",
    "display_name": null,
    "category": null,
    "description": "Get beach rules.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_beach_amenities",
    "display_name": null,
    "category": null,
    "description": "Get beach amenities.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tide_predictions",
    "display_name": null,
    "category": null,
    "description": "Get tide predictions.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_countries",
    "display_name": null,
    "category": null,
    "description": "List available countries.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

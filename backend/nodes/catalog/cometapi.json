@@ -30,91 +30,104 @@
    "display_name": null,
    "category": null,
    "description": "Get the connected API key's name, usage, quota and model limits.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_models",
    "display_name": null,
    "category": null,
    "description": "List the public model catalog; it does not prove account access.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_chat_completion",
    "display_name": null,
    "category": null,
    "description": "Create a non-streaming chat completion from text conversation history.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_message",
    "display_name": null,
    "category": null,
    "description": "Create a non-streaming Anthropic-format text message.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_response",
    "display_name": null,
    "category": null,
    "description": "Create a non-streaming model response from text input.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_embeddings",
    "display_name": null,
    "category": null,
    "description": "Create numeric vectors for one text or a batch of texts.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_moderation",
    "display_name": null,
    "category": null,
    "description": "Classify text or a batch of texts for moderation.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_flux_image",
    "display_name": null,
    "category": null,
    "description": "Submit a FLUX image task; poll its ID with Get FLUX Result.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_flux_result",
    "display_name": null,
    "category": null,
    "description": "Read FLUX task status and the image URL when ready.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_midjourney_image",
    "display_name": null,
    "category": null,
    "description": "Submit a Midjourney or Niji imagine task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_midjourney_task",
    "display_name": null,
    "category": null,
    "description": "Fetch Midjourney task status, progress, result URLs and buttons.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_runway_video",
    "display_name": null,
    "category": null,
    "description": "Submit a Runway Gen-4.5 text-to-video task.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_runway_task",
    "display_name": null,
    "category": null,
    "description": "Read Runway task status and output URLs when available.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

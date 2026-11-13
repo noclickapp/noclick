@@ -28,126 +28,144 @@
    "display_name": "Get Token Info",
    "category": "Account",
    "description": "Get info about the current access token. Required token scopes: public (any valid token).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_company",
    "display_name": "Get Company",
    "category": "Companies",
    "description": "Get a company. Required token scopes: companies:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_company",
    "display_name": "Update Company",
    "category": "Companies",
    "description": "Update a company. Required token scopes: companies:write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_locations",
    "display_name": "List Locations",
    "category": "Companies",
    "description": "Get all company locations. Required token scopes: companies:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_employees",
    "display_name": "List Employees",
    "category": "Employees",
    "description": "Get employees of a company. Required token scopes: employees:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_employee",
    "display_name": "Get Employee",
    "category": "Employees",
    "description": "Get an employee. Required token scopes: employees:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_employee",
    "display_name": "Create Employee",
    "category": "Employees",
    "description": "Create an employee. Required token scopes: employees:manage.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_employee",
    "display_name": "Update Employee",
    "category": "Employees",
    "description": "Update an employee.. Required token scopes: employees:write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_employee",
    "display_name": "Delete Employee",
    "category": "Employees",
    "description": "Delete an onboarding employee. Required token scopes: employees:manage.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payrolls",
    "display_name": "List Payrolls",
    "category": "Payrolls",
    "description": "Get all payrolls for a company. Required token scopes: payrolls:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_payroll",
    "display_name": "Get Payroll",
    "category": "Payrolls",
    "description": "Get a single payroll. Required token scopes: payrolls:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_payroll",
    "display_name": "Update Payroll",
    "category": "Payrolls",
    "description": "Update a payroll by ID. Required token scopes: payrolls:write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "prepare_payroll",
    "display_name": "Prepare Payroll",
    "category": "Payrolls",
    "description": "Prepare a payroll for update. Required token scopes: payrolls:write, employees:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_time_off_policies",
    "display_name": "List Time Off Policies",
    "category": "Time Off",
    "description": "Get all time off policies for a company. Required token scopes: time_off_policies:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_time_off_policy",
    "display_name": "Get Time Off Policy",
    "category": "Time Off",
    "description": "Get a time off policy. Required token scopes: time_off_policies:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_employees_to_time_off_policy",
    "display_name": "Add Employees To Time Off Policy",
    "category": "Time Off",
    "description": "Add employees to a time off policy. Required token scopes: time_off_policies:write.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_time_off_requests",
    "display_name": "List Time Off Requests",
    "category": "Time Off",
    "description": "Get time off requests for a company. Required token scopes: time_off_requests:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_time_off_activities",
    "display_name": "Get Time Off Activities",
    "category": "Time Off",
    "description": "Get employee time off activities. Required token scopes: employee_time_off_activities:read.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

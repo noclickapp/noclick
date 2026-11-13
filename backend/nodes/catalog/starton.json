@@ -28,175 +28,200 @@
    "display_name": null,
    "category": null,
    "description": "Fetch the list of Smart Contract Templates",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_template",
    "display_name": null,
    "category": null,
    "description": "Retrieve a Specific Smart Contract Template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_smart_contracts",
    "display_name": null,
    "category": null,
    "description": "Get all smart contracts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_smart_contract",
    "display_name": null,
    "category": null,
    "description": "Get a single smart contract",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_smart_contract",
    "display_name": null,
    "category": null,
    "description": "Update a smart contract",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deploy_from_template",
    "display_name": null,
    "category": null,
    "description": "Deploy Smart Contract from Template",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "call_smart_contract",
    "display_name": null,
    "category": null,
    "description": "Execute Smart Contract Function",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "read_smart_contract",
    "display_name": null,
    "category": null,
    "description": "Query Smart Contract Function",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transactions",
    "display_name": null,
    "category": null,
    "description": "Retrieve a List of Transactions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_transaction",
    "display_name": null,
    "category": null,
    "description": "Get a Specific Transaction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_transaction",
    "display_name": null,
    "category": null,
    "description": "Create a new transaction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_wallets",
    "display_name": null,
    "category": null,
    "description": "Retrieve the list of Wallets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_wallet",
    "display_name": null,
    "category": null,
    "description": "Fetch Wallet Details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_wallet",
    "display_name": null,
    "category": null,
    "description": "Create a new wallet",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_wallet",
    "display_name": null,
    "category": null,
    "description": "Update Wallet Information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_kms",
    "display_name": null,
    "category": null,
    "description": "Retrieve all Key Management Systems (KMS)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_networks",
    "display_name": null,
    "category": null,
    "description": "Retrieve the list of supported networks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_network",
    "display_name": null,
    "category": null,
    "description": "Fetch a specific network",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_gas_price",
    "display_name": null,
    "category": null,
    "description": "Retrieve the current gas prices",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_pins",
    "display_name": null,
    "category": null,
    "description": "Retrieve all files",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_pin",
    "display_name": null,
    "category": null,
    "description": "Retrieve a Specific File",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pin_file",
    "display_name": null,
    "category": null,
    "description": "Pin Existing IPFS File",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_pin",
    "display_name": null,
    "category": null,
    "description": "Update File Details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_pin",
    "display_name": null,
    "category": null,
    "description": "Deletes pinned file referenced by {id}",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "upload_json",
    "display_name": null,
    "category": null,
    "description": "Upload a JSON file",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

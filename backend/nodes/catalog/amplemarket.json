@@ -22,175 +22,200 @@
    "display_name": "Get account details",
    "category": "Account",
    "description": "Get account details",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": "List users",
    "category": "Users",
    "description": "List users",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_person",
    "display_name": "Single person enrichment",
    "category": "People",
    "description": "Single person enrichment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_company",
    "display_name": "Single company enrichment",
    "category": "Companies Enrichment",
    "description": "Single company enrichment",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_lead_lists",
    "display_name": "List Lead Lists",
    "category": "Lead List",
    "description": "List Lead Lists",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_lead_list",
    "display_name": "Create Lead List",
    "category": "Lead List",
    "description": "Create Lead List",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_lead_list",
    "display_name": "Retrieve Lead List",
    "category": "Lead List",
    "description": "Retrieve Lead List",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_leads_to_list",
    "display_name": "Add Leads to a List",
    "category": "Lead List",
    "description": "Add Leads to a List",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_contacts",
    "display_name": "Retrieve contacts",
    "category": "Contacts",
    "description": "Retrieve contacts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_contact",
    "display_name": "Create contact",
    "category": "Contacts",
    "description": "Create contact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact",
    "display_name": "Retrieve contact",
    "category": "Contacts",
    "description": "Retrieve contact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_contact_by_email",
    "display_name": "Retrieve contact by email",
    "category": "Contacts",
    "description": "Retrieve contact by email",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_accounts",
    "display_name": "List Accounts",
    "category": "Account",
    "description": "List Accounts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": "Retrieve Account",
    "category": "Account",
    "description": "Retrieve Account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_sequences",
    "display_name": "List Sequences",
    "category": "Sequences",
    "description": "List Sequences",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_leads_to_sequence",
    "display_name": "Add leads",
    "category": "Sequences",
    "description": "Add leads",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tasks",
    "display_name": "List tasks",
    "category": "Tasks",
    "description": "List tasks",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "complete_task",
    "display_name": "Complete task",
    "category": "Tasks",
    "description": "Complete task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "skip_task",
    "display_name": "Skip task",
    "category": "Tasks",
    "description": "Skip task",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_excluded_emails",
    "display_name": "List excluded emails",
    "category": "Exclusion lists",
    "description": "List excluded emails",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_email_exclusions",
    "display_name": "Create email exclusions",
    "category": "Exclusion lists",
    "description": "Create email exclusions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_email_exclusions",
    "display_name": "Delete email exclusions",
    "category": "Exclusion lists",
    "description": "Delete email exclusions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_calls",
    "display_name": "List calls",
    "category": "Calls",
    "description": "List calls",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "log_call",
    "display_name": "Log call",
    "category": "Calls",
    "description": "Log call",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_new_call",
    "display_name": "On New Call",
    "category": "Triggers",
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

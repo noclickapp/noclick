@@ -27,84 +27,96 @@
    "display_name": null,
    "category": null,
    "description": "View filer account information. CCC secrets are omitted.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_delegations",
    "display_name": null,
    "category": null,
    "description": "View delegations to and from the filer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "request_delegation_invitations",
    "display_name": null,
    "category": null,
    "description": "Request delegation invitations from the specified CIKs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_delegation_invitations",
    "display_name": null,
    "category": null,
    "description": "Send delegation invitations to the specified CIKs.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_individuals",
    "display_name": null,
    "category": null,
    "description": "View individuals associated with the filer.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_individuals",
    "display_name": null,
    "category": null,
    "description": "Invite individuals and assign their filer roles; SEC sends invitations.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "change_individual_roles",
    "display_name": null,
    "category": null,
    "description": "Change existing individuals' administrator and user roles.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_individuals",
    "display_name": null,
    "category": null,
    "description": "Remove individuals from the filer's account.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_filing_credentials",
    "display_name": null,
    "category": null,
    "description": "Verify whether these credentials can file for the CIK.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_system_status",
    "display_name": null,
    "category": null,
    "description": "Check EDGAR operating status using the filer token.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_submission_status",
    "display_name": null,
    "category": null,
    "description": "Check one submission by its accession number.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_multiple_submission_statuses",
    "display_name": null,
    "category": null,
    "description": "Check up to 25 submission accession numbers in one request.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -29,147 +29,168 @@
    "display_name": "New Audit Log",
    "category": "Triggers",
    "description": "New Temporal Cloud audit log. Requires Account Owner or Global Administrator.\n\n    Baselines existing logs when armed. Monitors control plane activity (namespace,\n    user and access changes), not Workflow or Activity execution events.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true
   },
   {
    "name": "get_account",
    "display_name": null,
    "category": null,
    "description": "Get Account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_identity",
    "display_name": null,
    "category": null,
    "description": "Get Current Identity",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_async_operation",
    "display_name": null,
    "category": null,
    "description": "Get Async Operation",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_namespaces",
    "display_name": null,
    "category": null,
    "description": "List Namespaces",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_namespace",
    "display_name": null,
    "category": null,
    "description": "Get Namespace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_namespace",
    "display_name": null,
    "category": null,
    "description": "Create Namespace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_namespace",
    "display_name": null,
    "category": null,
    "description": "Delete Namespace",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_users",
    "display_name": null,
    "category": null,
    "description": "List Users",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_user",
    "display_name": null,
    "category": null,
    "description": "Get User",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_user",
    "display_name": null,
    "category": null,
    "description": "Create User",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_user",
    "display_name": null,
    "category": null,
    "description": "Update User",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_user",
    "display_name": null,
    "category": null,
    "description": "Delete User",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_service_accounts",
    "display_name": null,
    "category": null,
    "description": "List Service Accounts",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_service_account",
    "display_name": null,
    "category": null,
    "description": "Get Service Account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_service_account",
    "display_name": null,
    "category": null,
    "description": "Create Service Account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_service_account",
    "display_name": null,
    "category": null,
    "description": "Update Service Account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_service_account",
    "display_name": null,
    "category": null,
    "description": "Delete Service Account",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_regions",
    "display_name": null,
    "category": null,
    "description": "List Regions",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_region",
    "display_name": null,
    "category": null,
    "description": "Get Region",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_api_keys",
    "display_name": null,
    "category": null,
    "description": "List Api Keys",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

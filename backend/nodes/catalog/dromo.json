@@ -22,98 +22,112 @@
    "display_name": null,
    "category": null,
    "description": "List your organization's saved import schemas.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_schema",
    "display_name": null,
    "category": null,
    "description": "Get a saved import schema by UUID.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_schema",
    "display_name": null,
    "category": null,
    "description": "Create a reusable saved import schema.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_schema",
    "display_name": null,
    "category": null,
    "description": "Replace an existing saved schema with the supplied definition.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_schema",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a saved import schema.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_uploads",
    "display_name": null,
    "category": null,
    "description": "List one bounded range of embedded uploads; use end as the next start.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_upload_metadata",
    "display_name": null,
    "category": null,
    "description": "Read metadata and raw-file download URL for an embedded upload.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_upload",
    "display_name": null,
    "category": null,
    "description": "Permanently delete an embedded upload.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_upload_url",
    "display_name": null,
    "category": null,
    "description": "Get an expiring signed URL for embedded upload result data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_headless_imports",
    "display_name": null,
    "category": null,
    "description": "List one page of headless imports, preserving pagination metadata.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_headless_import",
    "display_name": null,
    "category": null,
    "description": "Read headless import status, review URL and errors without polling.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_headless_import",
    "display_name": null,
    "category": null,
    "description": "Start a JSON headless import; this returns a job, not completed results.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_headless_import",
    "display_name": null,
    "category": null,
    "description": "Permanently delete a headless import.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_headless_import_url",
    "display_name": null,
    "category": null,
    "description": "Get an expiring signed URL for completed headless import result data.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

@@ -22,154 +22,176 @@
    "display_name": null,
    "category": null,
    "description": "Usage",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain",
    "display_name": null,
    "category": null,
    "description": "Get Domain",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "explore_ips",
    "display_name": null,
    "category": null,
    "description": "Explore IPs",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain_whois",
    "display_name": null,
    "category": null,
    "description": "Get WHOIS",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ip_useragents",
    "display_name": null,
    "category": null,
    "description": "Get Useragents",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_domains",
    "display_name": null,
    "category": null,
    "description": "Search Domain (filter)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_subdomains",
    "display_name": null,
    "category": null,
    "description": "List Subdomains",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain_statistics",
    "display_name": null,
    "category": null,
    "description": "Search statistics",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_domain_tags",
    "display_name": null,
    "category": null,
    "description": "List Tags",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dns_history",
    "display_name": null,
    "category": null,
    "description": "DNS history by record type",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_associated_domains",
    "display_name": null,
    "category": null,
    "description": "Find associated domains",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_ips",
    "display_name": null,
    "category": null,
    "description": "Search IPs (DSL)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ip_statistics",
    "display_name": null,
    "category": null,
    "description": "IP Search statistics",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_ip_whois",
    "display_name": null,
    "category": null,
    "description": "Get IP Whois",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_projects",
    "display_name": null,
    "category": null,
    "description": "List Projects",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_assets",
    "display_name": null,
    "category": null,
    "description": "Search Assets",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_asset_exposures",
    "display_name": null,
    "category": null,
    "description": "List Asset Exposures",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_project_tags",
    "display_name": null,
    "category": null,
    "description": "Get Tags",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tag_task",
    "display_name": null,
    "category": null,
    "description": "Get Custom Tag Task Status",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "apply_asset_tag",
    "display_name": null,
    "category": null,
    "description": "Apply Tag To Asset",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_asset_tag",
    "display_name": null,
    "category": null,
    "description": "Remove Tag From Asset",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_project_tag",
    "display_name": null,
    "category": null,
    "description": "Add Tag",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

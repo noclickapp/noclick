@@ -22,343 +22,395 @@
    "display_name": "Send Message to Chat",
    "category": "Message",
    "description": "Send message directly to a chat ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "receive_webhook_messages",
    "display_name": "Receive Webhook Messages",
    "category": null,
    "description": "Each update the bot gets: messages in its private chats, in groups it's in (what its privacy mode, set with @BotFather, lets it see) and in channels it administers, their edits, button presses and inline queries.",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "telegram_bot_token"
+   ]
   },
   {
    "name": "send_message_to_channel",
    "display_name": "Send Message to Channel",
    "category": "Channel",
    "description": "Send message to a public channel or group",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_document_file",
    "display_name": "Send Document File",
    "category": "Media",
    "description": "Send a document/file to a chat ID",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_webhook_delivery",
    "display_name": "Send Webhook Delivery",
    "category": "Webhook",
    "description": "Deliver via webhook (no message required)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_photo_image",
    "display_name": "Send Photo Image",
    "category": "Media",
    "description": "Send a photo to a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_video_file",
    "display_name": "Send Video File",
    "category": "Media",
    "description": "Send a video to a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_audio_file",
    "display_name": "Send Audio File",
    "category": "Media",
    "description": "Send an audio file to a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_voice_note",
    "display_name": "Send Voice Note",
    "category": "Media",
    "description": "Send a voice note (.ogg) to a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_animated_video",
    "display_name": "Send Animated Video",
    "category": "Media",
    "description": "Send a GIF or silent H.264/MPEG-4 AVC video",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_circular_video",
    "display_name": "Send Circular Video",
    "category": "Media",
    "description": "Send a circular video message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_sticker",
    "display_name": "Send Sticker",
    "category": "Media",
    "description": "Send a sticker",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_photo_video_album",
    "display_name": "Send Photo Video Album",
    "category": "Media",
    "description": "Send a group of photos, videos, or documents as an album",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_contact_information",
    "display_name": "Send Contact Information",
    "category": "Location and Contact",
    "description": "Send a phone contact",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_location_pin",
    "display_name": "Send Location Pin",
    "category": "Location and Contact",
    "description": "Send a geographic location",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_venue_location",
    "display_name": "Send Venue Location",
    "category": "Location and Contact",
    "description": "Send a venue (location with title and address)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_dice_emoji",
    "display_name": "Send Dice Emoji",
    "category": "Dice",
    "description": "Send an animated emoji that displays a random value",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_message_text",
    "display_name": "Edit Message Text",
    "category": "Message",
    "description": "Edit the text of a sent message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "edit_message_caption",
    "display_name": "Edit Message Caption",
    "category": "Message",
    "description": "Edit the caption of a media message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_message",
    "display_name": "Delete Message",
    "category": "Message",
    "description": "Delete a message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_multiple_messages",
    "display_name": "Delete Multiple Messages",
    "category": "Message",
    "description": "Delete multiple messages at once",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pin_message_in_chat",
    "display_name": "Pin Message in Chat",
    "category": "Message",
    "description": "Pin a message in a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unpin_chat_message",
    "display_name": "Unpin Chat Message",
    "category": "Message",
    "description": "Unpin a message (or all messages) in a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "forward_message_to_chat",
    "display_name": "Forward Message to Chat",
    "category": "Message",
    "description": "Forward a message to another chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "copy_message_to_chat",
    "display_name": "Copy Message to Chat",
    "category": "Message",
    "description": "Copy a message to another chat (without forward tag)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_chat_typing_indicator",
    "display_name": "Send Chat Typing Indicator",
    "category": "Chat Action",
    "description": "Show a 'typing…' or 'uploading…' indicator in a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_poll_or_quiz",
    "display_name": "Send Poll or Quiz",
    "category": "Poll",
    "description": "Create and send a poll or quiz",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "stop_active_poll",
    "display_name": "Stop Active Poll",
    "category": "Message",
    "description": "Stop a running poll",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat_details",
    "display_name": "Get Chat Details",
    "category": "Chat",
    "description": "Get full information about a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat_member_info",
    "display_name": "Get Chat Member Info",
    "category": "Chat Member",
    "description": "Get information about a member of a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat_member_count",
    "display_name": "Get Chat Member Count",
    "category": "Chat Member",
    "description": "Get the number of members in a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_chat_admin_list",
    "display_name": "Get Chat Admin List",
    "category": "Chat Member",
    "description": "Get a list of administrators in a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "ban_user_from_chat",
    "display_name": "Ban User from Chat",
    "category": "Chat Member",
    "description": "Ban a user from a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unban_user_from_chat",
    "display_name": "Unban User from Chat",
    "category": "Chat Member",
    "description": "Unban a previously banned user",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "restrict_user_permissions",
    "display_name": "Restrict User Permissions",
    "category": "Chat Member",
    "description": "Restrict a user's permissions in a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "promote_user_to_admin",
    "display_name": "Promote User to Admin",
    "category": "Chat Member",
    "description": "Promote a user to admin or update their admin rights",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_chat_title",
    "display_name": "Set Chat Title",
    "category": "Chat",
    "description": "Change the title of a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_chat_description",
    "display_name": "Set Chat Description",
    "category": "Chat",
    "description": "Change the description of a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_chat_invite_link",
    "display_name": "Create Chat Invite Link",
    "category": "Invite Link",
    "description": "Create an additional invite link for a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "revoke_chat_invite_link",
    "display_name": "Revoke Chat Invite Link",
    "category": "Invite Link",
    "description": "Revoke an invite link to a chat",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "answer_inline_button_callback",
    "display_name": "Answer Inline Button Callback",
    "category": "Callback and Inline Query",
    "description": "Answer a callback query from an inline keyboard button",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "answer_inline_search_results",
    "display_name": "Answer Inline Search Results",
    "category": "Callback and Inline Query",
    "description": "Answer an inline query with a list of results",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_message_emoji_reaction",
    "display_name": "Set Message Emoji Reaction",
    "category": "Message",
    "description": "Set a reaction on a message",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_bot_information",
    "display_name": "Get Bot Information",
    "category": "Bot",
    "description": "Get basic information about the bot",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_file_download_info",
    "display_name": "Get File Download Info",
    "category": "Media",
    "description": "Get info about a file by its file_id (includes download URL)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_payment_invoice",
    "display_name": "Send Payment Invoice",
    "category": "Invoice",
    "description": "Send a payment invoice",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "answer_payment_pre_checkout",
    "display_name": "Answer Payment Pre Checkout",
    "category": "Callback and Inline Query",
    "description": "Confirm or reject a payment pre-checkout query",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "setup_telegram_channel_guided",
    "display_name": "Setup Telegram Channel Guided",
    "category": "Channel",
    "description": "Guided channel setup flow.\n\n    Registers a webhook with the bot, then generates a deep-link for the user.\n    When the user adds the bot to their channel as admin, the channel ID is\n    automatically detected and stored — no manual copy-pasting needed.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "connect_telegram_channel",
    "display_name": "Connect Telegram Channel",
    "category": "Channel",
    "description": "Connect a Telegram channel by entering its @username or numeric ID.\n\n    The bot must already be added as an admin to the channel before running.\n    This node validates the connection and returns the channel details.\n    Works correctly in setup flows — runs once and returns channel_id immediately.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

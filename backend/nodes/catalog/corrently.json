@@ -22,84 +22,96 @@
    "display_name": null,
    "category": null,
    "description": "Balances",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_meter_reading",
    "display_name": null,
    "category": null,
    "description": "Meter Reading",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "post_meter_reading",
    "display_name": null,
    "category": null,
    "description": "Meter Reading",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_prediction",
    "display_name": null,
    "category": null,
    "description": "Prediction",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_dispatch",
    "display_name": null,
    "category": null,
    "description": "Dispatch (Green Energy Distribution Schedule)",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_market_data",
    "display_name": null,
    "category": null,
    "description": "Marketdata",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_best_hour",
    "display_name": null,
    "category": null,
    "description": "Get best hour (with most regional green energy) in a given timeframe.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tariff",
    "display_name": null,
    "category": null,
    "description": "Energy Tariff information",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_tariff_components",
    "display_name": null,
    "category": null,
    "description": "Energy Tariff price components",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_open_meters",
    "display_name": null,
    "category": null,
    "description": "Public shared smart meters installed in Germany and available for subservices and exploration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_open_meter_readings",
    "display_name": null,
    "category": null,
    "description": "Public shared smart meters installed in Germany and available for subservices and exploration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_open_meter_activities",
    "display_name": null,
    "category": null,
    "description": "Public shared smart meters installed in Germany and available for subservices and exploration.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,

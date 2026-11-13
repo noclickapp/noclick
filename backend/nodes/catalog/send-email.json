@@ -12,7 +12,8 @@
    "display_name": "Email Myself",
    "category": null,
    "description": "Send an email to YOUR OWN account email address. The recipient is\n    always the account email of the user running the workflow — no other\n    recipients can be specified.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": false
   }
  ],
  "agent_tool_provider": true,

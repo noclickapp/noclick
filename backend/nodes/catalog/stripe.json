@@ -31,3437 +31,4152 @@
    "display_name": "Create Customer",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_customer",
    "display_name": "Retrieve Customer",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer",
    "display_name": "Update Customer",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_customer",
    "display_name": "Delete Customer",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customers",
    "display_name": "List Customers",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_customers",
    "display_name": "Search Customers",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_payment_intent",
    "display_name": "Create Payment Intent",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_payment_intent",
    "display_name": "Retrieve Payment Intent",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_payment_intent",
    "display_name": "Update Payment Intent",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payment_intents",
    "display_name": "List Payment Intents",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "capture_payment_intent",
    "display_name": "Capture Payment Intent",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "confirm_payment_intent",
    "display_name": "Confirm Payment Intent",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_payment_intent",
    "display_name": "Cancel Payment Intent",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_payment_intents",
    "display_name": "Search Payment Intents",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_charge",
    "display_name": "Create Charge",
    "category": "Charges",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_charge",
    "display_name": "Retrieve Charge",
    "category": "Charges",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_charge",
    "display_name": "Update Charge",
    "category": "Charges",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_charges",
    "display_name": "List Charges",
    "category": "Charges",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "capture_charge",
    "display_name": "Capture Charge",
    "category": "Charges",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_charges",
    "display_name": "Search Charges",
    "category": "Charges",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_payment_method",
    "display_name": "Create Payment Method",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_payment_method",
    "display_name": "Retrieve Payment Method",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_payment_method",
    "display_name": "Update Payment Method",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payment_methods",
    "display_name": "List Payment Methods",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "attach_payment_method",
    "display_name": "Attach Payment Method",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "detach_payment_method",
    "display_name": "Detach Payment Method",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_setup_intent",
    "display_name": "Create Setup Intent",
    "category": "Setup Intents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_setup_intent",
    "display_name": "Retrieve Setup Intent",
    "category": "Setup Intents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_setup_intent",
    "display_name": "Update Setup Intent",
    "category": "Setup Intents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_setup_intents",
    "display_name": "List Setup Intents",
    "category": "Setup Intents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "confirm_setup_intent",
    "display_name": "Confirm Setup Intent",
    "category": "Setup Intents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_setup_intent",
    "display_name": "Cancel Setup Intent",
    "category": "Setup Intents",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_refund",
    "display_name": "Create Refund",
    "category": "Refunds",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_refund",
    "display_name": "Retrieve Refund",
    "category": "Refunds",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_refund",
    "display_name": "Update Refund",
    "category": "Refunds",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_refunds",
    "display_name": "List Refunds",
    "category": "Refunds",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_refund",
    "display_name": "Cancel Refund",
    "category": "Refunds",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_dispute",
    "display_name": "Retrieve Dispute",
    "category": "Disputes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_dispute",
    "display_name": "Update Dispute",
    "category": "Disputes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_disputes",
    "display_name": "List Disputes",
    "category": "Disputes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "close_dispute",
    "display_name": "Close Dispute",
    "category": "Disputes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_balance",
    "display_name": "Retrieve Balance",
    "category": "Balance",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_balance_transaction",
    "display_name": "Retrieve Balance Transaction",
    "category": "Balance",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_balance_transactions",
    "display_name": "List Balance Transactions",
    "category": "Balance",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_checkout_session",
    "display_name": "Create Checkout Session",
    "category": "Checkout",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_checkout_session",
    "display_name": "Retrieve Checkout Session",
    "category": "Checkout",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_checkout_sessions",
    "display_name": "List Checkout Sessions",
    "category": "Checkout",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "expire_checkout_session",
    "display_name": "Expire Checkout Session",
    "category": "Checkout",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_checkout_line_items",
    "display_name": "List Checkout Line Items",
    "category": "Checkout",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_payment_link",
    "display_name": "Create Payment Link",
    "category": "Payment Links",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_payment_link",
    "display_name": "Retrieve Payment Link",
    "category": "Payment Links",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_payment_link",
    "display_name": "Update Payment Link",
    "category": "Payment Links",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payment_links",
    "display_name": "List Payment Links",
    "category": "Payment Links",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payment_link_line_items",
    "display_name": "List Payment Link Line Items",
    "category": "Payment Links",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_product",
    "display_name": "Create Product",
    "category": "Products",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_product",
    "display_name": "Retrieve Product",
    "category": "Products",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_product",
    "display_name": "Update Product",
    "category": "Products",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_product",
    "display_name": "Delete Product",
    "category": "Products",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_products",
    "display_name": "List Products",
    "category": "Products",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_products",
    "display_name": "Search Products",
    "category": "Products",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_price",
    "display_name": "Create Price",
    "category": "Prices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_price",
    "display_name": "Retrieve Price",
    "category": "Prices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_price",
    "display_name": "Update Price",
    "category": "Prices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_prices",
    "display_name": "List Prices",
    "category": "Prices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_prices",
    "display_name": "Search Prices",
    "category": "Prices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_subscription",
    "display_name": "Create Subscription",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_subscription",
    "display_name": "Retrieve Subscription",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_subscription",
    "display_name": "Update Subscription",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_subscription",
    "display_name": "Cancel Subscription",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_subscriptions",
    "display_name": "List Subscriptions",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "resume_subscription",
    "display_name": "Resume Subscription",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_subscriptions",
    "display_name": "Search Subscriptions",
    "category": "Subscriptions",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_subscription_item",
    "display_name": "Create Subscription Item",
    "category": "Subscription Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_subscription_item",
    "display_name": "Retrieve Subscription Item",
    "category": "Subscription Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_subscription_item",
    "display_name": "Update Subscription Item",
    "category": "Subscription Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_subscription_item",
    "display_name": "Delete Subscription Item",
    "category": "Subscription Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_subscription_items",
    "display_name": "List Subscription Items",
    "category": "Subscription Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_invoice",
    "display_name": "Create Invoice",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_invoice",
    "display_name": "Retrieve Invoice",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_invoice",
    "display_name": "Update Invoice",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_invoice",
    "display_name": "Delete Invoice",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invoices",
    "display_name": "List Invoices",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "finalize_invoice",
    "display_name": "Finalize Invoice",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "pay_invoice",
    "display_name": "Pay Invoice",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "send_invoice",
    "display_name": "Send Invoice",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "void_invoice",
    "display_name": "Void Invoice",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "mark_uncollectible_invoice",
    "display_name": "Mark Invoice Uncollectible",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "search_invoices",
    "display_name": "Search Invoices",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_invoice_item",
    "display_name": "Create Invoice Item",
    "category": "Invoice Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_invoice_item",
    "display_name": "Retrieve Invoice Item",
    "category": "Invoice Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_invoice_item",
    "display_name": "Update Invoice Item",
    "category": "Invoice Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_invoice_item",
    "display_name": "Delete Invoice Item",
    "category": "Invoice Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invoice_items",
    "display_name": "List Invoice Items",
    "category": "Invoice Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_credit_note",
    "display_name": "Create Credit Note",
    "category": "Credit Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_credit_note",
    "display_name": "Retrieve Credit Note",
    "category": "Credit Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_credit_note",
    "display_name": "Update Credit Note",
    "category": "Credit Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credit_notes",
    "display_name": "List Credit Notes",
    "category": "Credit Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "void_credit_note",
    "display_name": "Void Credit Note",
    "category": "Credit Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_coupon",
    "display_name": "Create Coupon",
    "category": "Coupons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_coupon",
    "display_name": "Retrieve Coupon",
    "category": "Coupons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_coupon",
    "display_name": "Update Coupon",
    "category": "Coupons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_coupon",
    "display_name": "Delete Coupon",
    "category": "Coupons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_coupons",
    "display_name": "List Coupons",
    "category": "Coupons",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_promotion_code",
    "display_name": "Create Promotion Code",
    "category": "Promotion Codes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_promotion_code",
    "display_name": "Retrieve Promotion Code",
    "category": "Promotion Codes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_promotion_code",
    "display_name": "Update Promotion Code",
    "category": "Promotion Codes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_promotion_codes",
    "display_name": "List Promotion Codes",
    "category": "Promotion Codes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_quote",
    "display_name": "Create Quote",
    "category": "Quotes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_quote",
    "display_name": "Retrieve Quote",
    "category": "Quotes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_quote",
    "display_name": "Update Quote",
    "category": "Quotes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_quotes",
    "display_name": "List Quotes",
    "category": "Quotes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "finalize_quote",
    "display_name": "Finalize Quote",
    "category": "Quotes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "accept_quote",
    "display_name": "Accept Quote",
    "category": "Quotes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_quote",
    "display_name": "Cancel Quote",
    "category": "Quotes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tax_rate",
    "display_name": "Create Tax Rate",
    "category": "Tax Rates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_tax_rate",
    "display_name": "Retrieve Tax Rate",
    "category": "Tax Rates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tax_rate",
    "display_name": "Update Tax Rate",
    "category": "Tax Rates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tax_rates",
    "display_name": "List Tax Rates",
    "category": "Tax Rates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_billing_portal_session",
    "display_name": "Create Billing Portal Session",
    "category": "Billing Portal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_account",
    "display_name": "Create Account",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_account",
    "display_name": "Retrieve Account",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_account",
    "display_name": "Update Account",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_account",
    "display_name": "Delete Account",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_accounts",
    "display_name": "List Accounts",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reject_account",
    "display_name": "Reject Account",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_account_link",
    "display_name": "Create Account Link",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_login_link",
    "display_name": "Create Login Link",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_transfer",
    "display_name": "Create Transfer",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_transfer",
    "display_name": "Retrieve Transfer",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_transfer",
    "display_name": "Update Transfer",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transfers",
    "display_name": "List Transfers",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_payout",
    "display_name": "Create Payout",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_payout",
    "display_name": "Retrieve Payout",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_payout",
    "display_name": "Update Payout",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payouts",
    "display_name": "List Payouts",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_payout",
    "display_name": "Cancel Payout",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reverse_payout",
    "display_name": "Reverse Payout",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_topup",
    "display_name": "Create Top-up",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_topup",
    "display_name": "Retrieve Top-up",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_topups",
    "display_name": "List Top-ups",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_topup",
    "display_name": "Cancel Top-up",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_application_fee",
    "display_name": "Retrieve Application Fee",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_application_fees",
    "display_name": "List Application Fees",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_event",
    "display_name": "Retrieve Event",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_events",
    "display_name": "List Events",
    "category": "Events",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_webhook_endpoint",
    "display_name": "Create Webhook Endpoint",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_webhook_endpoint",
    "display_name": "Retrieve Webhook Endpoint",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_webhook_endpoint",
    "display_name": "Update Webhook Endpoint",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_webhook_endpoint",
    "display_name": "Delete Webhook Endpoint",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_webhook_endpoints",
    "display_name": "List Webhook Endpoints",
    "category": "Webhooks",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_file",
    "display_name": "Retrieve File",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_files",
    "display_name": "List Files",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_file_link",
    "display_name": "Create File Link",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_file_link",
    "display_name": "Retrieve File Link",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_file_link",
    "display_name": "Update File Link",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_file_links",
    "display_name": "List File Links",
    "category": "Files",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "custom_request",
    "display_name": "Custom API Request",
    "category": "Advanced",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_event",
    "display_name": "On Custom Event",
    "category": null,
    "description": "Trigger: fires on any Stripe event matching a custom allowlist (escape hatch\n    for the long tail of event types not in the decomposed list).",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "create_subscription_schedule",
    "display_name": "Create Subscription Schedule",
    "category": "Subscription Schedules",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_subscription_schedules",
    "display_name": "List Subscription Schedules",
    "category": "Subscription Schedules",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_subscription_schedule",
    "display_name": "Retrieve Subscription Schedule",
    "category": "Subscription Schedules",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_subscription_schedule",
    "display_name": "Update Subscription Schedule",
    "category": "Subscription Schedules",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_subscription_schedule",
    "display_name": "Cancel Subscription Schedule",
    "category": "Subscription Schedules",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "release_subscription_schedule",
    "display_name": "Release Subscription Schedule",
    "category": "Subscription Schedules",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_shipping_rate",
    "display_name": "Create Shipping Rate",
    "category": "Shipping Rates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_shipping_rate",
    "display_name": "Retrieve Shipping Rate",
    "category": "Shipping Rates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_shipping_rate",
    "display_name": "Update Shipping Rate",
    "category": "Shipping Rates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_shipping_rates",
    "display_name": "List Shipping Rates",
    "category": "Shipping Rates",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_tax_code",
    "display_name": "Retrieve Tax Code",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tax_codes",
    "display_name": "List Tax Codes",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tax_id",
    "display_name": "Create Tax ID",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_tax_id",
    "display_name": "Retrieve Tax ID",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tax_ids",
    "display_name": "List Tax IDs",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_tax_id",
    "display_name": "Delete Tax ID",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer_tax_id",
    "display_name": "Create Customer Tax ID",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_customer_tax_id",
    "display_name": "Retrieve Customer Tax ID",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_tax_ids",
    "display_name": "List Customer Tax IDs",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_customer_tax_id",
    "display_name": "Delete Customer Tax ID",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer_balance_transaction",
    "display_name": "Create Customer Balance Transaction",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_customer_balance_transaction",
    "display_name": "Retrieve Customer Balance Transaction",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer_balance_transaction",
    "display_name": "Update Customer Balance Transaction",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_balance_transactions",
    "display_name": "List Customer Balance Transactions",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_customer_cash_balance",
    "display_name": "Retrieve Customer Cash Balance",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_customer_cash_balance",
    "display_name": "Update Customer Cash Balance",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_customer_cash_balance_transaction",
    "display_name": "Retrieve Cash Balance Transaction",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_customer_cash_balance_transactions",
    "display_name": "List Cash Balance Transactions",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_customer_session",
    "display_name": "Create Customer Session",
    "category": "Customers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_payment_method_domain",
    "display_name": "Create Payment Method Domain",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_payment_method_domain",
    "display_name": "Retrieve Payment Method Domain",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_payment_method_domain",
    "display_name": "Update Payment Method Domain",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payment_method_domains",
    "display_name": "List Payment Method Domains",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "validate_payment_method_domain",
    "display_name": "Validate Payment Method Domain",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_payment_method_configuration",
    "display_name": "Create Payment Method Configuration",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_payment_method_configuration",
    "display_name": "Retrieve Payment Method Configuration",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_payment_method_configuration",
    "display_name": "Update Payment Method Configuration",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_payment_method_configurations",
    "display_name": "List Payment Method Configurations",
    "category": "Payment Methods",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_confirmation_token",
    "display_name": "Retrieve Confirmation Token",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_setup_attempts",
    "display_name": "List Setup Attempts",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_mandate",
    "display_name": "Retrieve Mandate",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_token",
    "display_name": "Create Token",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_token",
    "display_name": "Retrieve Token",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_source",
    "display_name": "Create Source",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_source",
    "display_name": "Retrieve Source",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_source",
    "display_name": "Update Source",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "attach_source",
    "display_name": "Attach Source to Customer",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "detach_source",
    "display_name": "Detach Source from Customer",
    "category": "Payments",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_meter",
    "display_name": "Create Meter",
    "category": "Billing Meters",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_meter",
    "display_name": "Retrieve Meter",
    "category": "Billing Meters",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_meter",
    "display_name": "Update Meter",
    "category": "Billing Meters",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_meters",
    "display_name": "List Meters",
    "category": "Billing Meters",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deactivate_meter",
    "display_name": "Deactivate Meter",
    "category": "Billing Meters",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "reactivate_meter",
    "display_name": "Reactivate Meter",
    "category": "Billing Meters",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_meter_event_summaries",
    "display_name": "List Meter Event Summaries",
    "category": "Billing Meters",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_meter_event",
    "display_name": "Create Meter Event",
    "category": "Billing Meters",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_meter_event_adjustment",
    "display_name": "Create Meter Event Adjustment",
    "category": "Billing Meters",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_credit_grant",
    "display_name": "Create Credit Grant",
    "category": "Billing Credit",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_credit_grant",
    "display_name": "Retrieve Credit Grant",
    "category": "Billing Credit",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_credit_grant",
    "display_name": "Update Credit Grant",
    "category": "Billing Credit",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credit_grants",
    "display_name": "List Credit Grants",
    "category": "Billing Credit",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "void_credit_grant",
    "display_name": "Void Credit Grant",
    "category": "Billing Credit",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "expire_credit_grant",
    "display_name": "Expire Credit Grant",
    "category": "Billing Credit",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_credit_balance_summary",
    "display_name": "Retrieve Credit Balance Summary",
    "category": "Billing Credit",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_credit_balance_transaction",
    "display_name": "Retrieve Credit Balance Transaction",
    "category": "Billing Credit",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credit_balance_transactions",
    "display_name": "List Credit Balance Transactions",
    "category": "Billing Credit",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_alert",
    "display_name": "Create Billing Alert",
    "category": "Billing Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_alert",
    "display_name": "Retrieve Billing Alert",
    "category": "Billing Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_alerts",
    "display_name": "List Billing Alerts",
    "category": "Billing Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "activate_alert",
    "display_name": "Activate Billing Alert",
    "category": "Billing Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "deactivate_alert",
    "display_name": "Deactivate Billing Alert",
    "category": "Billing Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "archive_alert",
    "display_name": "Archive Billing Alert",
    "category": "Billing Alerts",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_usage_record_summaries",
    "display_name": "List Usage Record Summaries",
    "category": "Subscription Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_usage_record",
    "display_name": "Create Usage Record",
    "category": "Subscription Items",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_preview_invoice",
    "display_name": "Create Preview Invoice",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_invoice_lines",
    "display_name": "List Invoice Lines",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_invoice_line",
    "display_name": "Update Invoice Line",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_invoice_lines",
    "display_name": "Bulk Update Invoice Lines",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "add_invoice_lines",
    "display_name": "Add Invoice Lines",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "remove_invoice_lines",
    "display_name": "Remove Invoice Lines",
    "category": "Invoices",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_quote_line_items",
    "display_name": "List Quote Line Items",
    "category": "Quotes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_quote_computed_upfront_line_items",
    "display_name": "List Quote Computed Upfront Line Items",
    "category": "Quotes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_credit_note_lines",
    "display_name": "List Credit Note Lines",
    "category": "Credit Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "preview_credit_note",
    "display_name": "Preview Credit Note",
    "category": "Credit Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "preview_credit_note_lines",
    "display_name": "Preview Credit Note Lines",
    "category": "Credit Notes",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_portal_configuration",
    "display_name": "Create Portal Configuration",
    "category": "Billing Portal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_portal_configuration",
    "display_name": "Retrieve Portal Configuration",
    "category": "Billing Portal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_portal_configuration",
    "display_name": "Update Portal Configuration",
    "category": "Billing Portal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_portal_configurations",
    "display_name": "List Portal Configurations",
    "category": "Billing Portal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_person",
    "display_name": "Create Person",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_person",
    "display_name": "Retrieve Person",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_person",
    "display_name": "Update Person",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_person",
    "display_name": "Delete Person",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_persons",
    "display_name": "List Persons",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_capability",
    "display_name": "Retrieve Capability",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_capability",
    "display_name": "Update Capability",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_capabilities",
    "display_name": "List Capabilities",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_external_account",
    "display_name": "Create External Account",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_external_account",
    "display_name": "Retrieve External Account",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_external_account",
    "display_name": "Update External Account",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_external_account",
    "display_name": "Delete External Account",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_external_accounts",
    "display_name": "List External Accounts",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_account_session",
    "display_name": "Create Account Session",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_country_spec",
    "display_name": "Retrieve Country Spec",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_country_specs",
    "display_name": "List Country Specs",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_application_fee_refund",
    "display_name": "Create Application Fee Refund",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_application_fee_refund",
    "display_name": "Retrieve Application Fee Refund",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_application_fee_refund",
    "display_name": "Update Application Fee Refund",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_application_fee_refunds",
    "display_name": "List Application Fee Refunds",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_transfer_reversal",
    "display_name": "Create Transfer Reversal",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_transfer_reversal",
    "display_name": "Retrieve Transfer Reversal",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_transfer_reversal",
    "display_name": "Update Transfer Reversal",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_transfer_reversals",
    "display_name": "List Transfer Reversals",
    "category": "Connect",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "set_secret",
    "display_name": "Set Secret",
    "category": "Apps",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "find_secret",
    "display_name": "Find Secret",
    "category": "Apps",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_secret",
    "display_name": "Delete Secret",
    "category": "Apps",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_secrets",
    "display_name": "List Secrets",
    "category": "Apps",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_value_list",
    "display_name": "Create Value List",
    "category": "Radar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_value_list",
    "display_name": "Retrieve Value List",
    "category": "Radar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_value_list",
    "display_name": "Update Value List",
    "category": "Radar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_value_list",
    "display_name": "Delete Value List",
    "category": "Radar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_value_lists",
    "display_name": "List Value Lists",
    "category": "Radar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_value_list_item",
    "display_name": "Create Value List Item",
    "category": "Radar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_value_list_item",
    "display_name": "Retrieve Value List Item",
    "category": "Radar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_value_list_item",
    "display_name": "Delete Value List Item",
    "category": "Radar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_value_list_items",
    "display_name": "List Value List Items",
    "category": "Radar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_early_fraud_warning",
    "display_name": "Retrieve Early Fraud Warning",
    "category": "Radar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_early_fraud_warnings",
    "display_name": "List Early Fraud Warnings",
    "category": "Radar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_review",
    "display_name": "Retrieve Review",
    "category": "Radar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_reviews",
    "display_name": "List Reviews",
    "category": "Radar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_review",
    "display_name": "Approve Review",
    "category": "Radar",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_report_run",
    "display_name": "Create Report Run",
    "category": "Reporting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_report_run",
    "display_name": "Retrieve Report Run",
    "category": "Reporting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_report_runs",
    "display_name": "List Report Runs",
    "category": "Reporting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_report_type",
    "display_name": "Retrieve Report Type",
    "category": "Reporting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_report_types",
    "display_name": "List Report Types",
    "category": "Reporting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_scheduled_query_run",
    "display_name": "Retrieve Scheduled Query Run",
    "category": "Reporting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_scheduled_query_runs",
    "display_name": "List Scheduled Query Runs",
    "category": "Reporting",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_issuing_authorization",
    "display_name": "Retrieve Issuing Authorization",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issuing_authorization",
    "display_name": "Update Issuing Authorization",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issuing_authorizations",
    "display_name": "List Issuing Authorizations",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "approve_issuing_authorization",
    "display_name": "Approve Issuing Authorization",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "decline_issuing_authorization",
    "display_name": "Decline Issuing Authorization",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_issuing_cardholder",
    "display_name": "Create Issuing Cardholder",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_issuing_cardholder",
    "display_name": "Retrieve Issuing Cardholder",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issuing_cardholder",
    "display_name": "Update Issuing Cardholder",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issuing_cardholders",
    "display_name": "List Issuing Cardholders",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_issuing_card",
    "display_name": "Create Issuing Card",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_issuing_card",
    "display_name": "Retrieve Issuing Card",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issuing_card",
    "display_name": "Update Issuing Card",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issuing_cards",
    "display_name": "List Issuing Cards",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_issuing_dispute",
    "display_name": "Create Issuing Dispute",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_issuing_dispute",
    "display_name": "Retrieve Issuing Dispute",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issuing_dispute",
    "display_name": "Update Issuing Dispute",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issuing_disputes",
    "display_name": "List Issuing Disputes",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "submit_issuing_dispute",
    "display_name": "Submit Issuing Dispute",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_issuing_transaction",
    "display_name": "Retrieve Issuing Transaction",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issuing_transaction",
    "display_name": "Update Issuing Transaction",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issuing_transactions",
    "display_name": "List Issuing Transactions",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_issuing_personalization_design",
    "display_name": "Create Personalization Design",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_issuing_personalization_design",
    "display_name": "Retrieve Personalization Design",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issuing_personalization_design",
    "display_name": "Update Personalization Design",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issuing_personalization_designs",
    "display_name": "List Personalization Designs",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_issuing_physical_bundle",
    "display_name": "Retrieve Physical Bundle",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issuing_physical_bundles",
    "display_name": "List Physical Bundles",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_issuing_token",
    "display_name": "Retrieve Issuing Token",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_issuing_token",
    "display_name": "Update Issuing Token",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issuing_tokens",
    "display_name": "List Issuing Tokens",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_issuing_funding_instructions",
    "display_name": "Create Issuing Funding Instructions",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_issuing_funding_instructions",
    "display_name": "List Issuing Funding Instructions",
    "category": "Issuing",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_treasury_financial_account",
    "display_name": "Create Financial Account",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_treasury_financial_account",
    "display_name": "Retrieve Financial Account",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_treasury_financial_account",
    "display_name": "Update Financial Account",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_treasury_financial_accounts",
    "display_name": "List Financial Accounts",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_treasury_financial_account_features",
    "display_name": "Retrieve Financial Account Features",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_treasury_financial_account_features",
    "display_name": "Update Financial Account Features",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_treasury_transaction",
    "display_name": "Retrieve Treasury Transaction",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_treasury_transactions",
    "display_name": "List Treasury Transactions",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_treasury_transaction_entry",
    "display_name": "Retrieve Transaction Entry",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_treasury_transaction_entries",
    "display_name": "List Transaction Entries",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_treasury_outbound_transfer",
    "display_name": "Create Outbound Transfer",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_treasury_outbound_transfer",
    "display_name": "Retrieve Outbound Transfer",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_treasury_outbound_transfers",
    "display_name": "List Outbound Transfers",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_treasury_outbound_transfer",
    "display_name": "Cancel Outbound Transfer",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_treasury_outbound_payment",
    "display_name": "Create Outbound Payment",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_treasury_outbound_payment",
    "display_name": "Retrieve Outbound Payment",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_treasury_outbound_payments",
    "display_name": "List Outbound Payments",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_treasury_outbound_payment",
    "display_name": "Cancel Outbound Payment",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_treasury_inbound_transfer",
    "display_name": "Create Inbound Transfer",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_treasury_inbound_transfer",
    "display_name": "Retrieve Inbound Transfer",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_treasury_inbound_transfers",
    "display_name": "List Inbound Transfers",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_treasury_inbound_transfer",
    "display_name": "Cancel Inbound Transfer",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_treasury_received_credit",
    "display_name": "Retrieve Received Credit",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_treasury_received_credits",
    "display_name": "List Received Credits",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_treasury_received_debit",
    "display_name": "Retrieve Received Debit",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_treasury_received_debits",
    "display_name": "List Received Debits",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_treasury_credit_reversal",
    "display_name": "Create Credit Reversal",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_treasury_credit_reversal",
    "display_name": "Retrieve Credit Reversal",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_treasury_credit_reversals",
    "display_name": "List Credit Reversals",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_treasury_debit_reversal",
    "display_name": "Create Debit Reversal",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_treasury_debit_reversal",
    "display_name": "Retrieve Debit Reversal",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_treasury_debit_reversals",
    "display_name": "List Debit Reversals",
    "category": "Treasury",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_terminal_connection_token",
    "display_name": "Create Connection Token",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_terminal_location",
    "display_name": "Create Terminal Location",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_terminal_location",
    "display_name": "Retrieve Terminal Location",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_terminal_location",
    "display_name": "Update Terminal Location",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_terminal_location",
    "display_name": "Delete Terminal Location",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_terminal_locations",
    "display_name": "List Terminal Locations",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_terminal_reader",
    "display_name": "Create Terminal Reader",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_terminal_reader",
    "display_name": "Retrieve Terminal Reader",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_terminal_reader",
    "display_name": "Update Terminal Reader",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_terminal_reader",
    "display_name": "Delete Terminal Reader",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_terminal_readers",
    "display_name": "List Terminal Readers",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "process_payment_intent_terminal_reader",
    "display_name": "Reader: Process Payment Intent",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "process_setup_intent_terminal_reader",
    "display_name": "Reader: Process Setup Intent",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_action_terminal_reader",
    "display_name": "Reader: Cancel Action",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refund_payment_terminal_reader",
    "display_name": "Reader: Refund Payment",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "collect_inputs_terminal_reader",
    "display_name": "Reader: Collect Inputs",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_terminal_configuration",
    "display_name": "Create Terminal Configuration",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_terminal_configuration",
    "display_name": "Retrieve Terminal Configuration",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_terminal_configuration",
    "display_name": "Update Terminal Configuration",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_terminal_configuration",
    "display_name": "Delete Terminal Configuration",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_terminal_configurations",
    "display_name": "List Terminal Configurations",
    "category": "Terminal",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tax_calculation",
    "display_name": "Create Tax Calculation",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_tax_calculation",
    "display_name": "Retrieve Tax Calculation",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tax_calculation_line_items",
    "display_name": "List Tax Calculation Line Items",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tax_transaction_from_calculation",
    "display_name": "Create Tax Transaction from Calculation",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tax_transaction_reversal",
    "display_name": "Create Tax Transaction Reversal",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_tax_transaction",
    "display_name": "Retrieve Tax Transaction",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tax_transaction_line_items",
    "display_name": "List Tax Transaction Line Items",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_tax_registration",
    "display_name": "Create Tax Registration",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_tax_registration",
    "display_name": "Retrieve Tax Registration",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tax_registration",
    "display_name": "Update Tax Registration",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_tax_registrations",
    "display_name": "List Tax Registrations",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_tax_settings",
    "display_name": "Retrieve Tax Settings",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_tax_settings",
    "display_name": "Update Tax Settings",
    "category": "Tax",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_verification_session",
    "display_name": "Create Verification Session",
    "category": "Identity",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_verification_session",
    "display_name": "Retrieve Verification Session",
    "category": "Identity",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_verification_session",
    "display_name": "Update Verification Session",
    "category": "Identity",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_verification_sessions",
    "display_name": "List Verification Sessions",
    "category": "Identity",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_verification_session",
    "display_name": "Cancel Verification Session",
    "category": "Identity",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "redact_verification_session",
    "display_name": "Redact Verification Session",
    "category": "Identity",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_verification_report",
    "display_name": "Retrieve Verification Report",
    "category": "Identity",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_verification_reports",
    "display_name": "List Verification Reports",
    "category": "Identity",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_financial_connections_session",
    "display_name": "Create Financial Connections Session",
    "category": "Financial Connections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_financial_connections_session",
    "display_name": "Retrieve Financial Connections Session",
    "category": "Financial Connections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_financial_connections_account",
    "display_name": "Retrieve Financial Connections Account",
    "category": "Financial Connections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_financial_connections_accounts",
    "display_name": "List Financial Connections Accounts",
    "category": "Financial Connections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "disconnect_financial_connections_account",
    "display_name": "Disconnect Account",
    "category": "Financial Connections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "refresh_financial_connections_account",
    "display_name": "Refresh Account",
    "category": "Financial Connections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "subscribe_financial_connections_account",
    "display_name": "Subscribe Account",
    "category": "Financial Connections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "unsubscribe_financial_connections_account",
    "display_name": "Unsubscribe Account",
    "category": "Financial Connections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_financial_connections_account_owners",
    "display_name": "List Account Owners",
    "category": "Financial Connections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_financial_connections_transaction",
    "display_name": "Retrieve Financial Connections Transaction",
    "category": "Financial Connections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_financial_connections_transactions",
    "display_name": "List Financial Connections Transactions",
    "category": "Financial Connections",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_entitlements_feature",
    "display_name": "Create Feature",
    "category": "Entitlements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_entitlements_feature",
    "display_name": "Retrieve Feature",
    "category": "Entitlements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_entitlements_feature",
    "display_name": "Update Feature",
    "category": "Entitlements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_entitlements_features",
    "display_name": "List Features",
    "category": "Entitlements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_active_entitlement",
    "display_name": "Retrieve Active Entitlement",
    "category": "Entitlements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_active_entitlements",
    "display_name": "List Active Entitlements",
    "category": "Entitlements",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_climate_order",
    "display_name": "Create Climate Order",
    "category": "Climate",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_climate_order",
    "display_name": "Retrieve Climate Order",
    "category": "Climate",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "update_climate_order",
    "display_name": "Update Climate Order",
    "category": "Climate",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_climate_orders",
    "display_name": "List Climate Orders",
    "category": "Climate",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "cancel_climate_order",
    "display_name": "Cancel Climate Order",
    "category": "Climate",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_climate_product",
    "display_name": "Retrieve Climate Product",
    "category": "Climate",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_climate_products",
    "display_name": "List Climate Products",
    "category": "Climate",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_climate_supplier",
    "display_name": "Retrieve Climate Supplier",
    "category": "Climate",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_climate_suppliers",
    "display_name": "List Climate Suppliers",
    "category": "Climate",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_forwarding_request",
    "display_name": "Create Forwarding Request",
    "category": "Forwarding",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_forwarding_request",
    "display_name": "Retrieve Forwarding Request",
    "category": "Forwarding",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_forwarding_requests",
    "display_name": "List Forwarding Requests",
    "category": "Forwarding",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_test_clock",
    "display_name": "Create Test Clock",
    "category": "Test Helpers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "retrieve_test_clock",
    "display_name": "Retrieve Test Clock",
    "category": "Test Helpers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "delete_test_clock",
    "display_name": "Delete Test Clock",
    "category": "Test Helpers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_test_clocks",
    "display_name": "List Test Clocks",
    "category": "Test Helpers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "advance_test_clock",
    "display_name": "Advance Test Clock",
    "category": "Test Helpers",
    "description": "",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "on_payment_intent_succeeded",
    "display_name": "On Payment Succeeded",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_payment_intent_payment_failed",
    "display_name": "On Payment Failed",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_payment_intent_created",
    "display_name": "On Payment Intent Created",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_payment_intent_canceled",
    "display_name": "On Payment Intent Canceled",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_payment_intent_processing",
    "display_name": "On Payment Processing",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_payment_intent_requires_action",
    "display_name": "On Payment Requires Action",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_charge_succeeded",
    "display_name": "On Charge Succeeded",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_charge_failed",
    "display_name": "On Charge Failed",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_charge_refunded",
    "display_name": "On Charge Refunded",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_charge_captured",
    "display_name": "On Charge Captured",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_charge_updated",
    "display_name": "On Charge Updated",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_charge_dispute_created",
    "display_name": "On Dispute Created",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_charge_dispute_updated",
    "display_name": "On Dispute Updated",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_charge_dispute_closed",
    "display_name": "On Dispute Closed",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_charge_dispute_funds_withdrawn",
    "display_name": "On Dispute Funds Withdrawn",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_charge_refund_updated",
    "display_name": "On Refund Updated",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_checkout_session_completed",
    "display_name": "On Checkout Completed",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_checkout_session_expired",
    "display_name": "On Checkout Expired",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_checkout_session_async_payment_succeeded",
    "display_name": "On Checkout Async Payment Succeeded",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_checkout_session_async_payment_failed",
    "display_name": "On Checkout Async Payment Failed",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_customer_created",
    "display_name": "On Customer Created",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_customer_updated",
    "display_name": "On Customer Updated",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_customer_deleted",
    "display_name": "On Customer Deleted",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_customer_subscription_created",
    "display_name": "On Subscription Created",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_customer_subscription_updated",
    "display_name": "On Subscription Updated",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_customer_subscription_deleted",
    "display_name": "On Subscription Canceled",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_customer_subscription_trial_will_end",
    "display_name": "On Trial Will End",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_customer_subscription_paused",
    "display_name": "On Subscription Paused",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_customer_subscription_resumed",
    "display_name": "On Subscription Resumed",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_invoice_created",
    "display_name": "On Invoice Created",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_invoice_finalized",
    "display_name": "On Invoice Finalized",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_invoice_paid",
    "display_name": "On Invoice Paid",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_invoice_payment_succeeded",
    "display_name": "On Invoice Payment Succeeded",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_invoice_payment_failed",
    "display_name": "On Invoice Payment Failed",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_invoice_payment_action_required",
    "display_name": "On Invoice Payment Action Required",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_invoice_upcoming",
    "display_name": "On Upcoming Invoice",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_invoice_marked_uncollectible",
    "display_name": "On Invoice Uncollectible",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_invoice_voided",
    "display_name": "On Invoice Voided",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_product_created",
    "display_name": "On Product Created",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_product_updated",
    "display_name": "On Product Updated",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_product_deleted",
    "display_name": "On Product Deleted",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_price_created",
    "display_name": "On Price Created",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_price_updated",
    "display_name": "On Price Updated",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_payout_created",
    "display_name": "On Payout Created",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_payout_paid",
    "display_name": "On Payout Paid",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_payout_failed",
    "display_name": "On Payout Failed",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_payment_method_attached",
    "display_name": "On Payment Method Attached",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_payment_method_detached",
    "display_name": "On Payment Method Detached",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_setup_intent_succeeded",
    "display_name": "On Setup Intent Succeeded",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_setup_intent_setup_failed",
    "display_name": "On Setup Intent Failed",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_account_updated",
    "display_name": "On Connected Account Updated",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_account_application_deauthorized",
    "display_name": "On Account Deauthorized",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_review_opened",
    "display_name": "On Radar Review Opened",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_review_closed",
    "display_name": "On Radar Review Closed",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   },
   {
    "name": "on_quote_accepted",
    "display_name": "On Quote Accepted",
    "category": null,
    "description": "",
-   "is_trigger": true
+   "is_trigger": true,
+   "needs_account": true,
+   "registered_with": [
+    "stripe_oauth",
+    "stripe_api_key"
+   ]
   }
  ],
  "agent_tool_provider": true,

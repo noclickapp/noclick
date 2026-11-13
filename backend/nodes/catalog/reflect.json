@@ -22,49 +22,56 @@
    "display_name": null,
    "category": null,
    "description": "List all graphs available to the connected account (read:graph).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "get_current_user",
    "display_name": null,
    "category": null,
    "description": "Get the connected user's identity (read:graph and write:graph).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_books",
    "display_name": null,
    "category": null,
    "description": "List books and their notes/highlights (read:graph and write:graph).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "list_links",
    "display_name": null,
    "category": null,
    "description": "List bookmarked links and highlights (read:graph).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_link",
    "display_name": null,
    "category": null,
    "description": "Create a bookmarked link (read:graph and write:graph).",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "append_daily_note",
    "display_name": null,
    "category": null,
    "description": "Append text to a daily note's list (write:graph); this never replaces content.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   },
   {
    "name": "create_note",
    "display_name": null,
    "category": null,
    "description": "Create a note from Markdown (write:graph); encrypted contents cannot be read back.",
-   "is_trigger": false
+   "is_trigger": false,
+   "needs_account": true
   }
  ],
  "agent_tool_provider": true,
