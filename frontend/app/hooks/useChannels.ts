@@ -72,7 +72,7 @@ const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 const time = (m: ChannelMessage) => Date.parse(m.at) || 0;
 
 /** A channel with its agents each in a colour and letters of their own there (`seatMembers`). */
-const seated = (channel: Channel): Channel => ({ ...channel, members: seatMembers(channel.members) });
+export const seated = (channel: Channel): Channel => ({ ...channel, members: seatMembers(channel.members) });
 
 /** `incoming` folded into `current`: one copy of each message, in the order they were posted. */
 export function mergeMessages(current: ChannelMessage[], incoming: ChannelMessage[]): ChannelMessage[] {
@@ -82,7 +82,7 @@ export function mergeMessages(current: ChannelMessage[], incoming: ChannelMessag
 }
 
 /** The newest message the server has (what `after` reads from). */
-function newestKept(messages: ChannelMessage[]): string | null {
+export function newestKept(messages: ChannelMessage[]): string | null {
     for (let i = messages.length - 1; i >= 0; i--) if (!messages[i].pending && !messages[i].ephemeral) return messages[i].id;
     return null;
 }

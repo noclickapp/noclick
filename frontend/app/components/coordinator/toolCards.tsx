@@ -62,14 +62,14 @@ function cardFor(call: CoordinatorToolCall, turn: readonly CoordinatorToolCall[]
     if (approval) return <CredentialApprovalCard approvalId={approval} />;
     // A search's pages join the turn's one Sources list (TurnCards), never a list of their own.
     if (call.tool === 'web_search') return null;
-    const Card = CARDS[call.tool] ?? MATCHED_CARDS.find((m) => m.match(call))?.Card;
+    const Card = CARDS[call.tool] ?? MATCHED_CARDS.find((m) => m.match(call, turn))?.Card;
     return Card ? <Card call={call} turn={turn} /> : null;
 }
 
 /** The jobs a turn's calls started, for reading their progress back. */
 export function jobIdsOf(calls: readonly CoordinatorToolCall[]): string[] {
     return calls.flatMap((call) => {
-        const carded = !!CARDS[call.tool] || MATCHED_CARDS.some((m) => m.match(call));
+        const carded = !!CARDS[call.tool] || MATCHED_CARDS.some((m) => m.match(call, calls));
         const id = call.tool === 'message_agent' ? str(obj(call.result, 'job'), 'job_id') : carded ? str(call.result, 'job_id') : undefined;
         return id ? [id] : [];
     });

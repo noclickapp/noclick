@@ -20,10 +20,11 @@ export function useTurnAsked(): string | null {
 }
 
 // Cards a platform adds for what only its tools do, recognised by the call itself rather than a tool name (hosted: a
-// call NoClick placed, from cloud/bootstrap).
-export const MATCHED_CARDS: { match: (call: CoordinatorToolCall) => boolean; Card: ToolCard }[] = [];
+// call NoClick placed, from cloud/bootstrap). `turn` is the call's turn, for a card another of its cards carries.
+export type CardMatch = (call: CoordinatorToolCall, turn?: readonly CoordinatorToolCall[]) => boolean;
+export const MATCHED_CARDS: { match: CardMatch; Card: ToolCard }[] = [];
 
-export function registerToolCard(match: (call: CoordinatorToolCall) => boolean, Card: ToolCard): void {
+export function registerToolCard(match: CardMatch, Card: ToolCard): void {
     MATCHED_CARDS.push({ match, Card });
 }
 

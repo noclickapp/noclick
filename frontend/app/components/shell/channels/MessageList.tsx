@@ -261,7 +261,7 @@ function Reactions({ reactions, onReact }: { reactions: ChannelReaction[]; onRea
 
 /** An agent passing the work on, as a row of its own under its message: its face to the next one's, and that agent's
  *  name in the colour its @-mention reads in, working while it is. */
-function Handoffs({ from, to, user }: { from: ChannelMember; to: ChannelMember[]; user: AccountMenuUser }) {
+function Handoffs({ from, to, user }: { from: ChannelMember; to: ChannelMember[]; user?: AccountMenuUser }) {
     return (
         <div className="mt-2.5 flex flex-wrap gap-1.5">
             {to.map((h) => (
@@ -297,11 +297,15 @@ export interface MessageActions {
     onOpenMessage?: (messageId: string) => void;
     /** The message a jump just landed on, lit for a moment. */
     lit?: string | null;
+    /** Its author's name opens them (the chat's channel card: the agent, to edit). */
+    onAuthor?: (author: ChannelMember) => void;
 }
 
 /** The emoji a person reaches for most, first in the hover bar as in Slack. */
 const QUICK_EMOJI = ['✅', '👀', '🙌'];
 const TOOL = 'grid h-8 w-8 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70';
+/** A name that opens what it names: underlined only under the pointer, as a name reads. */
+const NAME_LINK = 'rounded-sm underline-offset-[3px] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70';
 const LINKISH = 'rounded-full underline decoration-muted-foreground/40 underline-offset-2 transition-colors hover:text-foreground hover:decoration-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70';
 
 /** A person's first name, as Slack's quiet lines say it. */
@@ -405,7 +409,7 @@ function HoverBar({ msg, actions, onReact }: { msg: ChannelMessage; actions: Mes
 
 /** Under a message with a thread, Slack's replies bar: who replied, "N replies", when the last came; hovering it says
  *  "View thread". */
-function RepliesBar({ msg, members, user, onOpen }: { msg: ChannelMessage; members: ChannelMember[]; user: AccountMenuUser; onOpen: () => void }) {
+function RepliesBar({ msg, members, user, onOpen }: { msg: ChannelMessage; members: ChannelMember[]; user?: AccountMenuUser; onOpen: () => void }) {
     const thread = msg.thread;
     if (!thread?.count) return null;
     return (
@@ -582,7 +586,8 @@ export function MessageRow({
     msg: ChannelMessage;
     prev?: ChannelMessage;
     members: ChannelMember[];
-    user: AccountMenuUser;
+    /** You, on your own posts; a card in the chat that draws agents' posts alone has no one signed in to show. */
+    user?: AccountMenuUser;
     channels: ReadonlyMap<string, string>;
     onChannel: (id: string) => void;
     onReact: (messageId: string, emoji: string) => void;
@@ -654,7 +659,13 @@ export function MessageRow({
             <div className="min-w-0 flex-1">
                 {!continued && (
                     <div className="mb-0.5 flex flex-wrap items-baseline gap-x-2">
-                        <span className="text-[14.5px] font-semibold text-foreground">{noclick ? NOCLICK_NAME : (author?.name ?? msg.author.name)}</span>
+                        {actions.onAuthor && author && !noclick ? (
+                            <button type="button" onClick={() => actions.onAuthor?.(author)} className={cn('text-[14.5px] font-semibold text-foreground', NAME_LINK)}>
+                                {author.name}
+                            </button>
+                        ) : (
+                            <span className="text-[14.5px] font-semibold text-foreground">{noclick ? NOCLICK_NAME : (author?.name ?? msg.author.name)}</span>
+                        )}
                         {app && <span className="text-[12.5px] text-muted-foreground">app</span>}
                         {msg.author.type === 'a2a' && <span className="text-[12.5px] text-muted-foreground">outside agent</span>}
                         {postedForYou(msg.author) && <span className="text-[12.5px] text-muted-foreground">for you</span>}
