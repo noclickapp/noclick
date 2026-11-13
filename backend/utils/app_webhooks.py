@@ -1,4 +1,4 @@
-"""Provider adapters for app-level event webhooks (Slack, HubSpot, Discord).
+"""Provider adapters for app-level event webhooks (Slack, HubSpot, Discord, Crisp).
 
 Slack and HubSpot deliver every event for the whole NoClick app to one shared
 URL. Each adapter knows how to verify a request against the app secret, answer
@@ -29,6 +29,7 @@ from utils.discord_gateway_bridge import (
     GATEWAY_SECRET_ENV,
     GATEWAY_SIGNATURE_HEADER,
 )
+from utils.crisp_webhooks import CRISP_WEBHOOK_ADAPTER
 from utils.instagram_webhooks import INSTAGRAM_WEBHOOK_ADAPTER
 from utils.instagram_facebook import INSTAGRAM_FACEBOOK_WEBHOOK_ADAPTER
 from utils.facebook_webhooks import FACEBOOK_WEBHOOK_ADAPTER
@@ -469,6 +470,7 @@ def _slack_event_id(payload: Dict[str, Any]) -> Optional[str]:
 
 
 APP_PROVIDERS = {
+    "crisp": CRISP_WEBHOOK_ADAPTER,
     "facebook": FACEBOOK_WEBHOOK_ADAPTER,
     "instagram": INSTAGRAM_WEBHOOK_ADAPTER,
     "instagram_facebook": INSTAGRAM_FACEBOOK_WEBHOOK_ADAPTER,
