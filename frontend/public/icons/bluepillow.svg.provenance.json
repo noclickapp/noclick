@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/bluepillow.svg",
-  "source": "https://b2a.bluepillow.com/favicon.svg (official docs /docs link rel=icon)",
-  "license": "Bluepillow brand mark used nominatively to identify the service; trademark rights remain with Bluepillow.",
-  "sha256": "b0108c779e98e3a8f7f035bdc83fee7d0bd7015acd8644e1cf78d096455ba788"
+  "source": "https://www.bluepillow.com/images/bluepillow-logo-f.svg",
+  "source_page": "https://www.bluepillow.com/ (redirects to www.bluepillow.in here; the footer logo <img src=\"/images/bluepillow-logo-f.svg\" alt=\"BluePillow\">)",
+  "source_kind": "company site (footer logo)",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "70d182d3aa121baa74a3e9d63913c8fb4f62a8ef37fa50bb9dd6790b0b271529",
+  "edits": [
+    "clean (editor metadata; leading Illustrator comment removed)",
+    "cropped the viewBox to the mark (pad 0.02)"
+  ],
+  "checked_against": "https://b2a.bluepillow.com/icon-512.png (the B2A API site's own apple-touch-icon / 512 icon: the same pillow-and-hand silhouette in the same #57A6BC, on a white rounded tile); also https://www.bluepillow.in/images/favicon.png (same pillow, darker #00789A). api_hosts api.b2a.bluepillow.com / b2a.bluepillow.com are Bluepillow's B2A (agents) API.",
+  "source_sha256": "5c85343f2943a4b6dd11ec57a23994d3001fe13fd780dc905fa3829427beb265"
 }
