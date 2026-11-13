@@ -4,9 +4,10 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const FigshareIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/figshare.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <ThemedBrandImg light="/icons/figshare.svg" className={className} style={style} {...props} ref={ref} />
     ),
 );
 FigshareIcon.displayName = 'FigshareIcon';
