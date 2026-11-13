@@ -2,13 +2,11 @@ import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const PidgeonIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
   ({ className, style, ...props }, ref) => (
-    <>
-      <img {...props} ref={ref} src="/icons/pidgeon.svg" alt="" className={`dark:hidden ${className ?? ''}`} style={style} />
-      <img {...props} src="/icons/pidgeon-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={style} />
-    </>
+    <ThemedBrandImg {...props} ref={ref} light="/icons/pidgeon.svg" dark="/icons/pidgeon-dark.svg" className={className} style={style} />
   ),
 );
 PidgeonIcon.displayName = 'PidgeonIcon';
