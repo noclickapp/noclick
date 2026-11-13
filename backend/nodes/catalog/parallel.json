@@ -260,5 +260,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Parallel web-research automation node.",
+ "retired": null
 }

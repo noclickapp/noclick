@@ -246,5 +246,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Run one documented Ably REST action with a server-side application key.",
+ "retired": null
 }

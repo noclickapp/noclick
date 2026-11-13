@@ -329,5 +329,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": "instagram"
+ "app_event_provider": "instagram",
+ "summary": "Instagram Graph API automation node.",
+ "retired": null
 }

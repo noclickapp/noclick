@@ -330,5 +330,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Read/write NocoDB records and administer workspaces, bases, tables and views.",
+ "retired": null
 }

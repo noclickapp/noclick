@@ -118,5 +118,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Query, edit, and manage Sanity Content Lake data.",
+ "retired": null
 }

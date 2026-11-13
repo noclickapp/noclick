@@ -1296,5 +1296,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Use Hunter to discover and verify contacts, manage leads, and run outreach.",
+ "retired": null
 }

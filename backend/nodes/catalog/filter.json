@@ -61,5 +61,7 @@
  "credentialed": false,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Filter workflow node for data filtering and transformation.",
+ "retired": null
 }

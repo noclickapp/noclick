@@ -337,5 +337,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Google Drive workflow node for file operations.",
+ "retired": null
 }

@@ -799,5 +799,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Run any of the 111 CircleCI API v2 operations.",
+ "retired": null
 }

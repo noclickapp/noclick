@@ -1686,5 +1686,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": "hubspot"
+ "app_event_provider": "hubspot",
+ "summary": "HubSpot CRM automation node.",
+ "retired": null
 }

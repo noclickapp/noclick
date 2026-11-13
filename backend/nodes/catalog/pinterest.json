@@ -1879,5 +1879,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Pinterest pins, boards, account, ads, catalog, and business API actions.",
+ "retired": null
 }

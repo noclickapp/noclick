@@ -3580,5 +3580,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Run stable DigitalOcean API v2 actions with OAuth or a personal token.",
+ "retired": null
 }

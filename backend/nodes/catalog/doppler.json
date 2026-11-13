@@ -117,5 +117,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Operate on Doppler projects, configs, environments and secrets.",
+ "retired": null
 }

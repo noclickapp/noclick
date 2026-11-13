@@ -109,5 +109,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Tavily REST API operations for web-grounded workflows.",
+ "retired": null
 }

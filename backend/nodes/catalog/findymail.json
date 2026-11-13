@@ -293,5 +293,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Findymail B2B email/phone enrichment automation node.",
+ "retired": null
 }

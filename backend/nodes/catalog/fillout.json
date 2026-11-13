@@ -211,5 +211,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Read and write Fillout forms, submissions, and Zite database data.",
+ "retired": null
 }

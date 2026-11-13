@@ -83,5 +83,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Search GTM data, run enrichments, and read Clay table data.",
+ "retired": null
 }

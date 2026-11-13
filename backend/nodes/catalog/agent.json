@@ -85,5 +85,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "AI Agent node backed by the OpenAI Agents SDK wrapper.",
+ "retired": null
 }

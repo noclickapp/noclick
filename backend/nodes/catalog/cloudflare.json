@@ -4189,5 +4189,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Cloudflare automation node supporting DNS, Workers, KV, D1, R2, Pages, and more.",
+ "retired": null
 }

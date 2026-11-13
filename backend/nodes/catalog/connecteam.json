@@ -1109,5 +1109,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Connecteam users, schedules, tasks, time clocks, forms, and more.",
+ "retired": null
 }

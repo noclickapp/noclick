@@ -111,5 +111,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Read and write Baserow tables with a scoped database token.",
+ "retired": null
 }

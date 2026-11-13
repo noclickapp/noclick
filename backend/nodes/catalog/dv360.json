@@ -290,5 +290,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Google Display & Video 360 automation node.",
+ "retired": null
 }

@@ -1812,5 +1812,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Provision and inspect ngrok endpoints, domains, tunnels and account resources.",
+ "retired": null
 }

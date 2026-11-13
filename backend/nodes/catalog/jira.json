@@ -1410,5 +1410,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Jira workflow node for issue and project management.",
+ "retired": null
 }

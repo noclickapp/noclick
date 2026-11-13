@@ -292,5 +292,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Milvus / Zilliz Cloud vector database automation node.",
+ "retired": null
 }

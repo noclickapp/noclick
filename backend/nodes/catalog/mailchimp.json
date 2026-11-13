@@ -2728,5 +2728,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Mailchimp automation node for Marketing and Transactional APIs.",
+ "retired": null
 }

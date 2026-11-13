@@ -260,5 +260,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Research projects, data, docs, contacts, tags, highlights and search.",
+ "retired": null
 }

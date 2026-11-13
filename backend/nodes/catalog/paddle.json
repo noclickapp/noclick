@@ -727,5 +727,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Run 99 documented Paddle Billing actions with a sandbox or live key.",
+ "retired": null
 }

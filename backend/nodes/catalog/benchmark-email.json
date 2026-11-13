@@ -204,5 +204,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Manage Benchmark Email contacts, lists, campaign drafts, and reports.",
+ "retired": null
 }

@@ -26,5 +26,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "MCP Server node for connecting to external MCP servers.",
+ "retired": null
 }

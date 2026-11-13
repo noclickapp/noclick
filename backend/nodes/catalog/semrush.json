@@ -729,5 +729,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Semrush SEO & Marketing Analytics node with comprehensive API coverage",
+ "retired": null
 }

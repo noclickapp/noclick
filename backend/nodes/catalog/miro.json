@@ -685,5 +685,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Run Miro board and item operations with the connected user's OAuth token.",
+ "retired": null
 }

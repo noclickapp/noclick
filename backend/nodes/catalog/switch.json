@@ -19,5 +19,7 @@
  "credentialed": false,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Switch workflow node for multi-way branching.",
+ "retired": null
 }

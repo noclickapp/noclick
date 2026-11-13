@@ -239,5 +239,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Cursor automation node (Cloud Agents, Admin, Analytics).",
+ "retired": null
 }

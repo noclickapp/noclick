@@ -178,5 +178,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Execute Smartsheet REST API operations with OAuth or an API token.",
+ "retired": null
 }

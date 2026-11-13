@@ -181,5 +181,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Fellow (fellow.ai) AI meeting assistant automation node.",
+ "retired": null
 }

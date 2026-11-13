@@ -1543,5 +1543,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Execute Render's JSON REST operations with an account API key.",
+ "retired": null
 }

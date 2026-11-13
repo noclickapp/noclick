@@ -543,5 +543,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Basedash BI/admin automation node (API key auth).",
+ "retired": null
 }

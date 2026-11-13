@@ -209,5 +209,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Exa AI search & web-retrieval automation node.",
+ "retired": null
 }

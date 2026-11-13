@@ -745,5 +745,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Shopify Admin API automation node with GraphQL-first support.",
+ "retired": null
 }

@@ -19,5 +19,7 @@
  "credentialed": false,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Set Variable node — stores values as named global variables.",
+ "retired": null
 }

@@ -892,5 +892,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Twitter/X REST API v2 automation node.",
+ "retired": null
 }

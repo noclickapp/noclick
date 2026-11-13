@@ -99,5 +99,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Run a Docusign eSignature API operation on the user's default account.",
+ "retired": null
 }

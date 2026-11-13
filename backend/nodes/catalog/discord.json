@@ -1049,5 +1049,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": "discord"
+ "app_event_provider": "discord",
+ "summary": "Discord automation node.",
+ "retired": null
 }

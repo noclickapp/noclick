@@ -19,5 +19,7 @@
  "credentialed": false,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "File upload interface node — accepts file uploads from users.",
+ "retired": null
 }

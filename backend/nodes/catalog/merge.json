@@ -47,5 +47,7 @@
  "credentialed": false,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Merge workflow node for combining multiple data streams.",
+ "retired": null
 }

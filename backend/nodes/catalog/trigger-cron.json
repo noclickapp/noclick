@@ -36,5 +36,7 @@
  "credentialed": false,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Cron trigger node.",
+ "retired": null
 }

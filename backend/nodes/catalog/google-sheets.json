@@ -624,5 +624,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Google Sheets workflow node for reading and writing spreadsheet data.",
+ "retired": null
 }

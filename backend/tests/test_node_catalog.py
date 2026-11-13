@@ -2,8 +2,8 @@
 
 Every lookup that needs a fact about every node type (credential types, the
 connections catalog, OAuth providers, provide-link methods, linked fields, the
-rehearsal fence) reads ``nodes/catalog/<type>.json`` instead of importing every
-integration. These tests:
+rehearsal fence, which types a listing offers, the node search's index) reads
+``nodes/catalog/<type>.json`` instead of importing every integration. These tests:
 - hold each generated file to what its class and canvas definition give;
 - hold each lookup to the answer the whole-registry class walk it replaced gave (each
   credential type's owner before the nodes borrowing it), for every credential type and
@@ -191,8 +191,12 @@ from utils import credential_request_routes as routes
 from utils.webhook_manager import WebhookManager
 from coder.workflow.agentic.node_types import _get_multi_output_nodes_info
 
+from nodes.core.registry import NODE_REGISTRY, is_listed
+from utils import node_search
+
 known_credential_types(); connection_catalog(); rehearsal_excluded_node_types(); linked_field_names()
 WebhookManager._registerable_types(); _get_multi_output_nodes_info()
+[is_listed(t) for t in NODE_REGISTRY]; node_search.search("send sms")
 routes._oauth_providers_by_type()
 resolved = resolve_credential_class("2chat_api_key")[0]
 routes._get_credential_method("2chat_api_key"); routes._get_sibling_methods("2chat_api_key")
@@ -241,3 +245,41 @@ def test_the_builders_multi_output_list_is_the_class_walks(classes):
             lines.append(f"- {node_type}: handles are " + ", ".join(f'"{h["id"]}" ({h["description"]})' for h in handles))
     assert lines
     assert _get_multi_output_nodes_info() == "\n".join(lines)
+
+
+def test_listings_and_the_node_search_read_what_the_classes_say(classes, monkeypatch):
+    """Which types a listing offers (``registry.is_listed``) and what the node search indexes of each (its class's
+    docstring line, its operations) are what the classes said, for every type."""
+    from coder.workflow.operation_catalog import get_operations_for_node_type
+    from nodes.core.registry import is_listed, retirement_of
+    from utils import node_search
+
+    assert {t: retirement_of(t) for t in classes} == {t: cls.retired for t, cls in classes.items()}
+    assert [t for t in classes if not is_listed(t)] == [t for t, cls in classes.items() if cls.retired]
+    read = {t: (node_search._facts(t), node_search._operations(t)) for t in classes}
+
+    def from_class(node_type):
+        doc = (classes[node_type].__doc__ or "").strip().splitlines()
+        return {"summary": doc[0].strip() if doc else "", "operations": [
+            {"name": op.name, "display_name": op.display_name, "category": op.category, "description": op.description}
+            for op in get_operations_for_node_type(node_type)]}
+
+    monkeypatch.setattr(catalog, "node_facts", from_class)
+    assert read == {t: (node_search._facts(t), node_search._operations(t)) for t in classes}
+
+
+def test_a_type_whose_file_predates_a_fact_is_read_from_its_class(classes, tmp_path, monkeypatch):
+    """An integration generated before a fact was added and merged after has a file without it: its class answers,
+    never a missing key."""
+    from nodes.core.registry import is_listed, retirement_of
+
+    assert set(catalog.class_facts("automation-humanloop", classes["automation-humanloop"])) == catalog.CLASS_FACTS
+    written = json.loads(catalog.catalog_path("automation-humanloop").read_text())
+    (tmp_path / "humanloop.json").write_text(json.dumps({k: v for k, v in written.items() if k != "retired"}))
+    monkeypatch.setattr(catalog, "catalog_path", lambda node_type, real=catalog.catalog_path: real(node_type, tmp_path))
+    catalog._read.cache_clear()
+    try:
+        assert retirement_of("automation-humanloop") == classes["automation-humanloop"].retired
+        assert not is_listed("automation-humanloop")
+    finally:
+        catalog._read.cache_clear()

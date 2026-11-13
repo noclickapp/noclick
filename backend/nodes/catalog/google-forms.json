@@ -71,5 +71,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Google Forms workflow node for managing forms and responses.",
+ "retired": null
 }

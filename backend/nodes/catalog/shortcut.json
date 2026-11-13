@@ -1023,5 +1023,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Execute a documented Shortcut REST v3 operation.",
+ "retired": null
 }

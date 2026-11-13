@@ -307,5 +307,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "WhatsApp Business Cloud API automation node.",
+ "retired": null
 }

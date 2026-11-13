@@ -30,5 +30,7 @@
   }
  ],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Iteration workflow node for looping over arrays.",
+ "retired": null
 }

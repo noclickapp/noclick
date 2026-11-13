@@ -145,5 +145,10 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "",
+ "retired": {
+  "reason": "DataTrails (formerly RKVST) was acquired by OnID in August 2025; datatrails.ai now redirects to onid.co and its API host app.datatrails.ai no longer resolves.",
+  "since": "2026-11-10"
+ }
 }

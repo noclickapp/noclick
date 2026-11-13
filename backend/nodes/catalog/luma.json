@@ -251,5 +251,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Luma (lu.ma) event-management automation node.",
+ "retired": null
 }

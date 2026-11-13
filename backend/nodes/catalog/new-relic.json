@@ -155,5 +155,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Query New Relic data and manage dashboards and alert policies.",
+ "retired": null
 }

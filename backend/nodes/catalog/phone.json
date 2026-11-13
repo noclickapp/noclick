@@ -52,5 +52,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "A phone number the workflow owns: calls in to the wired agent, calls out for it.",
+ "retired": null
 }

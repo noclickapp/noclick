@@ -1130,5 +1130,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Meta (Marketing / Ads / Business / CAPI / Lead Ads) automation node.",
+ "retired": null
 }

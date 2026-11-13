@@ -244,5 +244,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Arcads AI UGC video / AI-actor ad generation automation node.",
+ "retired": null
 }

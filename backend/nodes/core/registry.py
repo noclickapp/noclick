@@ -277,9 +277,14 @@ def is_connectionless(node_type: str) -> bool:
 
 
 def retirement_of(node_type: Optional[str]) -> Optional[Retirement]:
-    """Why the type's service is gone, or None while it's live (or unknown)."""
-    node_class = NODE_REGISTRY.get(node_type) if node_type else None
-    return node_class.retired if node_class else None
+    """Why the type's service is gone, or None while it's live (or unknown). Read from the
+    node catalog (``nodes/core/catalog.py``), so it imports no integration."""
+    if not node_type or node_type not in NODE_REGISTRY:
+        return None
+    from nodes.core.catalog import node_facts
+
+    retired = node_facts(resolve_node_type(node_type))["retired"]
+    return Retirement(**retired) if retired else None
 
 
 def is_listed(node_type: Optional[str]) -> bool:

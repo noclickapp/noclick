@@ -1266,5 +1266,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "All documented Lemlist API operations using the account API key.",
+ "retired": null
 }

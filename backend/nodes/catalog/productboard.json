@@ -456,5 +456,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Execute a documented Productboard REST API v2 operation.",
+ "retired": null
 }

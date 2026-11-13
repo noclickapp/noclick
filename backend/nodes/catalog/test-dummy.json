@@ -33,5 +33,7 @@
  "credentialed": false,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Dummy workflow node for testing config parsing.",
+ "retired": null
 }

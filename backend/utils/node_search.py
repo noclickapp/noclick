@@ -13,7 +13,8 @@ Arbox before Box, ``sms`` found Mailchimp) and a phrase found nothing. A node ty
 - then, where the deployment says how much people look for each app (``NODE_DEMAND``), the most used among those the
   words fit about as well: Twilio before an SMS app few have heard of for ``send sms``. Without it, fit alone.
 
-What it reads of a node type is its own: its type, its class's description and its operations (``_facts``).
+What it reads of a node type is its own: its type, its class's description and its operations (``_facts``), from the
+node catalog (``nodes/core/catalog.py``), so building the index imports no integration.
 """
 
 from __future__ import annotations
@@ -106,12 +107,12 @@ def slug_of(node_type: str) -> str:
 
 def _facts(node_type: str) -> Dict[str, object]:
     """What a node type says about itself: its label, a line about it, its keywords and category. Today its class's
-    docstring is the only one of these the engine holds, so the label is its type's; per-type facts generated from the
-    canvas's definitions (labels like "X", keywords like "CRM") take this function's place."""
-    from nodes.core.registry import NODE_REGISTRY
+    docstring (the catalog's ``summary``) is the only one of these the engine holds, so the label is its type's;
+    per-type facts generated from the canvas's definitions (labels like "X", keywords like "CRM") take this function's
+    place."""
+    from nodes.core.catalog import node_facts
 
-    doc = (NODE_REGISTRY[node_type].__doc__ or "").strip().splitlines()
-    return {"label": slug_of(node_type).replace("-", " ").title(), "description": doc[0].strip() if doc else ""}
+    return {"label": slug_of(node_type).replace("-", " ").title(), "description": node_facts(node_type)["summary"]}
 
 
 def knows_demand() -> bool:
@@ -132,14 +133,16 @@ def _demand(node_type: str) -> Optional[int]:
 
 
 def _operations(node_type: str) -> Tuple[Operation, ...]:
-    from coder.workflow.operation_catalog import get_operations_for_node_type
+    """Its operations, as ``operation_catalog.get_operations_for_node_type`` lists them (the catalog's)."""
+    from nodes.core.catalog import node_facts
 
     out = []
-    for op in get_operations_for_node_type(node_type):
-        display = op.display_name or op.name.replace("_", " ")
-        text = " ".join(filter(None, (op.name.replace("_", " "), display, op.category, op.description)))
-        out.append(Operation(op.name, display, op.description or "", frozenset(words(text)),
-                             frozenset(words(f"{op.name.replace('_', ' ')} {display}"))))
+    for op in node_facts(node_type)["operations"]:
+        name = op["name"]
+        display = op["display_name"] or name.replace("_", " ")
+        text = " ".join(filter(None, (name.replace("_", " "), display, op["category"], op["description"])))
+        out.append(Operation(name, display, op["description"] or "", frozenset(words(text)),
+                             frozenset(words(f"{name.replace('_', ' ')} {display}"))))
     return tuple(out)
 
 

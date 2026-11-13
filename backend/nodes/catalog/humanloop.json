@@ -197,5 +197,10 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "",
+ "retired": {
+  "reason": "Humanloop shut its platform down on 8 September 2025 when its team joined Anthropic; api.humanloop.com no longer resolves.",
+  "since": "2025-09-08"
+ }
 }

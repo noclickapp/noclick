@@ -203,5 +203,10 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "",
+ "retired": {
+  "reason": "Starton's API, app and docs no longer answer (api.starton.com returns Cloudflare error 1016); it announced no shutdown.",
+  "since": "2026-11-10"
+ }
 }

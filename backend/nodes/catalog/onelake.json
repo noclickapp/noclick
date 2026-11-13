@@ -260,5 +260,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Microsoft Fabric OneLake automation node (filesystem, tables, shortcuts).",
+ "retired": null
 }

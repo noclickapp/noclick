@@ -19,5 +19,7 @@
  "credentialed": false,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Activity log node — writes a message to the activity feed.",
+ "retired": null
 }

@@ -64,5 +64,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Google Docs workflow node for managing Google Documents.",
+ "retired": null
 }

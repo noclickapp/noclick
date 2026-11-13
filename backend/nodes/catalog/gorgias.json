@@ -820,5 +820,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Run Gorgias REST actions with OAuth or a private app API key.",
+ "retired": null
 }

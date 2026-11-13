@@ -316,5 +316,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Common Google Classroom teacher workflows and read-only roster access.",
+ "retired": null
 }

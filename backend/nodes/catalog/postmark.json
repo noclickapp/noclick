@@ -626,5 +626,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Execute a documented Postmark API operation with its matching token.",
+ "retired": null
 }

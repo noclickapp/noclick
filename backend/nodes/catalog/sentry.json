@@ -491,5 +491,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Sentry error-tracking node — REST across issues/projects/releases/alerts/monitors + service-hook triggers.",
+ "retired": null
 }

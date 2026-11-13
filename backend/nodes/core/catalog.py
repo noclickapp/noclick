@@ -12,14 +12,17 @@ Each registered type has a generated file, ``nodes/catalog/<type without "automa
   lists them: ``name``, ``display_name``, ``category``, ``description``, ``is_trigger``;
 - ``agent_tool_provider`` (``node_op_tools.node_supports_op_tools``), ``credentialed`` (its config
   takes a credential), ``output_handles``, ``registers`` (a step can hold a webhook, subscription or
-  schedule registration) and its ``app_event_provider``.
+  schedule registration) and its ``app_event_provider``;
+- ``summary``, its class docstring's first line (what the node search reads of it), and ``retired``,
+  its ``Retirement`` while its service is gone (``registry.is_listed``).
 
 A lookup that needs a fact about every type reads these instead of walking
 NODE_REGISTRY's classes, which imports every integration: ~25 s of CPU and ~1 GB in
 the process that does it. A type without a file (an integration merged before its
-file was generated) is read from its class and logged, so it costs that type's
-import, never a wrong answer. ``tests/test_node_catalog.py`` holds every file equal
-to what its class and definition give. Callers share the dicts: never mutate them.
+file was generated), or with one written before a fact was added, is read from its
+class and logged once, so it costs that type's import, never a wrong answer.
+``tests/test_node_catalog.py`` holds every file equal to what its class and
+definition give. Callers share the dicts: never mutate them.
 """
 from __future__ import annotations
 
@@ -36,6 +39,11 @@ CATALOG_DIR = Path(__file__).resolve().parents[1] / "catalog"
 
 def catalog_path(node_type: str, directory: Path = CATALOG_DIR) -> Path:
     return directory / f"{node_type.removeprefix('automation-')}.json"
+
+
+# The keys ``class_facts`` gives: a file without one of them predates it.
+CLASS_FACTS = frozenset({"credentials", "operations", "agent_tool_provider", "credentialed", "output_handles",
+                         "registers", "app_event_provider", "summary", "retired"})
 
 
 def class_facts(node_type: str, node_class: Any) -> Dict[str, Any]:
@@ -95,27 +103,41 @@ def class_facts(node_type: str, node_class: Any) -> Dict[str, Any]:
             or getattr(node_class, "self_registering_triggers", None)
         ),
         "app_event_provider": node_class._app_provider if issubclass(node_class, AppEventTriggerMixin) else None,
+        "summary": _summary(node_class),
+        "retired": node_class.retired.as_json() if node_class.retired else None,
     }
 
 
+def _summary(node_class: Any) -> str:
+    """The first line of ``node_class``'s own docstring, or ""."""
+    doc = (node_class.__doc__ or "").strip().splitlines()
+    return doc[0].strip() if doc else ""
+
+
 @lru_cache(maxsize=None)
-def _read(path: Path) -> Optional[Dict[str, Any]]:
+def _read(node_type: str) -> Optional[Dict[str, Any]]:
+    """Its file's facts; None without a file, or with one from before a fact was added. Keyed by the type, not its
+    path: ``registry.is_listed`` asks once per type a search scores."""
     try:
-        return json.loads(path.read_text())
+        facts = json.loads(catalog_path(node_type).read_text())
     except FileNotFoundError:
         return None
+    return facts if CLASS_FACTS <= facts.keys() else None
+
+
+@lru_cache(maxsize=None)
+def _from_class(node_type: str, node_class: Any) -> Dict[str, Any]:
+    logger.error("[catalog] %s has no up-to-date catalog file; reading its class "
+                 "(run scripts/generate_socket_types.py)", node_type)
+    return {"type": node_type, **class_facts(node_type, node_class)}
 
 
 def node_facts(node_type: str) -> Dict[str, Any]:
-    """``node_type``'s facts (its canonical type), from its file."""
+    """``node_type``'s facts (its canonical type), from its file, else from its class."""
     from nodes.core.registry import NODE_REGISTRY
 
-    facts = _read(catalog_path(node_type))
-    if facts is not None:
-        return facts
-    logger.error("[catalog] %s has no catalog file; reading its class (run scripts/generate_socket_types.py)",
-                 node_type)
-    return {"type": node_type, **class_facts(node_type, NODE_REGISTRY[node_type])}
+    facts = _read(node_type)
+    return facts if facts is not None else _from_class(node_type, NODE_REGISTRY[node_type])
 
 
 def every_node_facts() -> Dict[str, Dict[str, Any]]:

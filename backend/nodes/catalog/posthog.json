@@ -766,5 +766,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "PostHog product-analytics node — ingestion + REST + HogQL + webhook trigger.",
+ "retired": null
 }

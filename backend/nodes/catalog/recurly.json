@@ -183,5 +183,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Run explicit Recurly v3 billing API operations.",
+ "retired": null
 }

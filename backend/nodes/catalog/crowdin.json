@@ -2390,5 +2390,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Run Crowdin's file-based API v2 operations.",
+ "retired": null
 }

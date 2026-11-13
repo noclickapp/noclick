@@ -92,5 +92,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "LinkedIn API automation node.",
+ "retired": null
 }

@@ -1525,5 +1525,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": "slack"
+ "app_event_provider": "slack",
+ "summary": "Slack Web API automation node.",
+ "retired": null
 }

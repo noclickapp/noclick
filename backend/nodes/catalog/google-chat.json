@@ -218,5 +218,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Manage spaces, messages, members, reactions, pins, and events in Chat.",
+ "retired": null
 }

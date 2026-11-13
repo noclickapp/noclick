@@ -225,5 +225,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Gmail workflow node for full Gmail API access.",
+ "retired": null
 }

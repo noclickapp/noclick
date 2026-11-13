@@ -30,5 +30,7 @@
   }
  ],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Approval workflow node for human-in-the-loop branching.",
+ "retired": null
 }

@@ -465,5 +465,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": "facebook"
+ "app_event_provider": "facebook",
+ "summary": "Facebook (Pages + Messenger) automation node.",
+ "retired": null
 }

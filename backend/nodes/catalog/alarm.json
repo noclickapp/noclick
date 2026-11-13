@@ -30,5 +30,7 @@
  "credentialed": false,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Alarm node for scheduling and managing agent wake-ups.",
+ "retired": null
 }

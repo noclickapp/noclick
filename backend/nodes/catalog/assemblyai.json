@@ -111,5 +111,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Pre-recorded transcription, upload, retrieval, search and deletion.",
+ "retired": null
 }

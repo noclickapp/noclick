@@ -612,5 +612,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Run an Omnisend API action.",
+ "retired": null
 }

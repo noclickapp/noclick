@@ -211,5 +211,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": false,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Read and mutate content, schema, and files in a Directus project.",
+ "retired": null
 }
