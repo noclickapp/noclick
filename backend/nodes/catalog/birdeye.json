@@ -128,12 +128,26 @@
    "category": null,
    "description": "Records a check-in and may send review requests according to your Birdeye settings.",
    "is_trigger": false
+  },
+  {
+   "name": "on_new_or_updated_review",
+   "display_name": "On New or Updated Review",
+   "category": "Triggers",
+   "description": "Poll reviews for new IDs or changed records after activation. Existing reviews are baselined; changes between polls are represented by the latest snapshot.",
+   "is_trigger": true
+  },
+  {
+   "name": "on_new_or_updated_contact",
+   "display_name": "On New or Updated Contact",
+   "category": "Triggers",
+   "description": "Poll contacts ordered by last activity for new IDs or changed records after activation. Existing contacts are baselined; changes between polls are represented by the latest snapshot.",
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null,
  "summary": "",
  "retired": null
