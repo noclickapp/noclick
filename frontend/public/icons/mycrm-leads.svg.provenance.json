@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/mycrm-leads.svg",
   "source": "https://api-docs.mycrm.io/img/mycrm-logo.svg",
-  "license": "MyCRM brand mark used nominatively to identify the service; trademark rights remain with Loan Market Group.",
-  "sha256": "d43f68dd12ab335c05e55b30845e907e5027b07daa1c7d33fcda2cdd23ce607d"
+  "source_page": "https://api-docs.mycrm.io/ (navbar logo)",
+  "source_kind": "company docs",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "5467127ba3a3c6ba32e7b9b06b95d15e4d641e6abcbea694c98552697a7cae89",
+  "edits": [
+    "kept only the four rounded squares (elements 5-8); removed the 'mycrm' wordmark paths (elements 0-4)",
+    "cropped the viewBox (--pad 0.02)",
+    "svgtool clean"
+  ],
+  "checked_against": "https://api-docs.mycrm.io/img/favicon.ico: the same four rounded squares in the same colours (#FEC91D, #001166, #86C8FA, #4CB184) and staggered layout",
+  "source_sha256": "d43f68dd12ab335c05e55b30845e907e5027b07daa1c7d33fcda2cdd23ce607d"
 }
