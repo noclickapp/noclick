@@ -36,14 +36,15 @@ def classes():
 
 def _judged_classes():
     """Every class, or, judging some types (tests/judged_nodes.py), those and every node holding a credential type
-    they hold: each lookup below then answers for those types as the walk of all of them would."""
+    they hold, in registry order: each lookup below then answers for those types as the walk of all of them would.
+    The order matters where no owner answers (google_oauth's doesn't pin it): the first borrower in it does."""
     judged = dict(judged_classes())
     if narrowed():
         for cls in list(judged.values()):
             for credential_cls in credential_classes_for_node(cls):
                 for node_type, _ in catalog.credential_holders(credential_type_of(credential_cls)):
                     judged.setdefault(node_type, NODE_REGISTRY[node_type])
-    return judged
+    return {node_type: judged[node_type] for node_type in NODE_REGISTRY if node_type in judged}
 
 
 def _seen(actual: dict, expected: dict, keys) -> dict:
@@ -214,6 +215,22 @@ def test_provide_link_lookups_are_the_schema_sweeps(classes, schemas):
         assert routes._get_credential_fields(credential_type) == fields.get(credential_type, []), credential_type
         assert routes._get_credential_method(credential_type) == methods.get(credential_type), credential_type
         assert routes._get_sibling_methods(credential_type) == siblings.get(credential_type, []), credential_type
+
+
+def test_a_run_judging_one_borrower_of_a_shared_credential_type_judges_its_provide_link(monkeypatch):
+    """google_oauth's owner (Google Classroom) doesn't pin it, so its provide link reads as the first node in
+    registry order borrowing it (Bkper), its siblings as the first offering it with others (Google Books): a run
+    judging a later borrower (Google Chat) walks them in that order too, never its own first (its integration's
+    pull request failed this way, 11-13)."""
+    from tests import judged_nodes
+
+    holders = [node_type for node_type, held in catalog.credential_holders("google_oauth") if held["pinned"]]
+    assert holders.index("automation-google-chat") > 0  # the provide link isn't Google Chat's
+    monkeypatch.setenv(judged_nodes.ENV, "automation-google-chat")
+    classes = _judged_classes()
+    assert set(holders) <= set(classes)
+    test_provide_link_lookups_are_the_schema_sweeps(
+        classes, {node_type: cls.get_config_schema() or {} for node_type, cls in classes.items()})
 
 
 def test_the_rehearsal_fence_is_every_credentialed_node(schemas):
