@@ -501,12 +501,47 @@
    "category": "Search",
    "description": "Search items in the installation",
    "is_trigger": false
+  },
+  {
+   "name": "on_project_created",
+   "display_name": "New Project",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_tasklist_created",
+   "display_name": "New Task List",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_tasklist_updated",
+   "display_name": "Updated Task List",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_time_created",
+   "display_name": "New Time Entry",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_time_updated",
+   "display_name": "Updated Time Entry",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null,
  "summary": "",
  "retired": null
