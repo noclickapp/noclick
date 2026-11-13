@@ -6,9 +6,9 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const CodesearchIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/codesearch.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+    <ThemedBrandImg light="/icons/codesearch.svg" className={className} style={style} />
 );
 
 export const CodesearchNode: NodeDefinition = {

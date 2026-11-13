@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/codesearch.svg",
   "source": "https://codesearch.debian.net/Pics/openlogo-50.svg",
-  "license": "Debian Open Use Logo, Copyright (c) 1999 Software in the Public Interest; CC-BY-SA-3.0 (https://www.debian.org/logos/).",
-  "sha256": "7907d222202b951d7f83ca3f5ce49b78b004eef52ae6fe634206fc0603ab75f6"
+  "source_page": "https://codesearch.debian.net/ (the header <img src=\"/Pics/openlogo-50.svg\" alt=\"Debian\">; the PR's recorded source)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "d8b473f2038e34c59394249ea5149d9df4d539b14cec9e07b6554bc9477d02ae",
+  "edits": [
+    "dropped the black 'debian' wordmark (element 3) and its red i-dot (element 4), keeping the swirl (elements 0-2)",
+    "cropped the viewBox to the swirl (pad 0.02)",
+    "clean"
+  ],
+  "checked_against": "https://www.debian.org/logos/openlogo-nd-100.png and https://www.debian.org/logos/openlogo-nd.svg: Debian's own 'no text' Open Use Logo, the same swirl alone. Same shape; the codesearch file's red #D70751 is kept as that site serves it (debian.org's openlogo-nd.svg uses its older #A80030). Source sha256 equals the PR's current file.",
+  "source_sha256": "7907d222202b951d7f83ca3f5ce49b78b004eef52ae6fe634206fc0603ab75f6"
 }
