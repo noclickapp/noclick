@@ -176,12 +176,26 @@
    "category": null,
    "description": "List one page of account events, including asynchronous job status.",
    "is_trigger": false
+  },
+  {
+   "name": "on_new_event",
+   "display_name": "On New Account Event",
+   "category": "Triggers",
+   "description": "Poll account actions from the last 90 days; the first poll records a baseline.",
+   "is_trigger": true
+  },
+  {
+   "name": "on_event_finished",
+   "display_name": "On Event Finished or Failed",
+   "category": "Triggers",
+   "description": "Poll account events reaching completed, finished or failed; existing terminal events are baselined.",
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null,
  "summary": "",
  "retired": null
