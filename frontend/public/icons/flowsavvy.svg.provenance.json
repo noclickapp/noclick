@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/flowsavvy.svg",
-  "source": "https://flowsavvy.app/wp-content/uploads/fbrfg/favicon.svg",
-  "license": "FlowSavvy brand mark, used nominatively to identify the connected service; trademark rights remain with FlowSavvy.",
-  "sha256": "822c754f0ed53cf98bd27d75ff2cd4000bc3a99c845da2aee4d4bf5d6f43e09e"
+  "source": "https://my.flowsavvy.app/images/logos/wordmark_vertical.svg",
+  "source_page": "https://my.flowsavvy.app/ (the web app; its bundle build/js/app.0280199f.bundle.js references /images/logos/wordmark_vertical.svg and /images/logos/wordmark.svg)",
+  "date": "2026-11-13",
+  "license": "FlowSavvy trademark; used solely to identify the FlowSavvy integration",
+  "sha256": "a455d123a8f8c6212ffc4fff566f5e60b98f86da19a2cb7168087f3cb857ac87",
+  "source_sha256": "fff9f0be61fcfb9a9cc0f255f40c6d641140f8eaa934adb57ec87e58c08be054",
+  "edits": [
+    "removed the 'FlowSavvy' wordmark path (element 0)",
+    "kept the mark: the #5293FF\u2192#246EE9 gradient circle and the white calendar-arrows glyph (a white rect under an alpha mask, all the file's own elements)",
+    "cropped the viewBox to the circle (no pad: the circle is the brand's own app-icon shape)",
+    "svgtool clean"
+  ]
 }
