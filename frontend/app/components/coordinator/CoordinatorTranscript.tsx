@@ -4,7 +4,7 @@
 // out on, the tools a turn used draw their cards under it (a build on its canvas, a number to pick, an account
 // to connect), kept live by reading their jobs and reminders back, and a workflow picked on a public page draws its
 // setup card.
-import { memo, useCallback, useMemo, useState, type ComponentProps } from 'react';
+import { memo, useCallback, useMemo, useState, type ComponentProps, type ReactNode } from 'react';
 import { ChatFileCard } from '~/components/chat/ChatReferenceChip';
 import { AgentChatTranscript } from '~/components/chat/AgentChatTranscript';
 import { CallCard, EmailMessage, EmailReceipt, IMessageMessage, IMessagePhotos, RepliedOn, WhatsAppMessage, WhatsAppVoiceNote, type CallLine } from '~/components/coordinator/inline/channels';
@@ -18,7 +18,7 @@ import { inboxLink } from '~/components/shell/mailApp';
 import type { CoordinatorEmailReply } from '~/types/socket-events.generated';
 import { coordinatorToolCalls, type CoordinatorToolCall } from '~/lib/coordinatorToolCalls';
 import { cn } from '~/lib/utils';
-import { CanvasesProvider, newestCanvases, setupCardId } from './canvases';
+import { CanvasesProvider, newestCanvases, setupCardId, type SetupCardRef } from './canvases';
 import { callsOf, readChannelText, readEmailText, type CallGroup, type ChannelMedia } from './channelTurns';
 import { clockTime, duration, shortWhen, whenAt } from './format';
 import { alarmIdsOf, jobIdsOf, SetupNoteCard, TurnCards, turnWorkDrawing } from './toolCards';
@@ -163,6 +163,24 @@ export function useTranscriptJobs(messages: readonly AgentChatMessage[], useJobs
     return useJobs(toolCalls, messages.length);
 }
 
+/** What the cards under a thread's turns read, for any transcript that draws them (the Chat page's, an agent's
+ *  conversation in Work): the work the turns started (`jobs`), the reminders they set (read again on `nudge`), and
+ *  which card about each automation is the newest, drawn in full. `cards`: every card, a note's setup and the turns'
+ *  calls, in thread order. */
+export function CardsProvider({ cards, jobs, nudge, children }: { cards: readonly (CoordinatorToolCall | SetupCardRef)[]; jobs: CoordinatorJobs; nudge: unknown; children: ReactNode }) {
+    const calls = useMemo(() => cards.filter((c): c is CoordinatorToolCall => !('setup' in c)), [cards]);
+    const alarmIds = useMemo(() => alarmIdsOf(calls), [calls]);
+    const alarms = useCoordinatorAlarms(alarmIds, nudge);
+    const canvases = useMemo(() => newestCanvases(cards, jobs), [cards, jobs]);
+    return (
+        <CoordinatorJobsContext.Provider value={jobs}>
+            <CoordinatorAlarmsContext.Provider value={alarms}>
+                <CanvasesProvider value={canvases}>{children}</CanvasesProvider>
+            </CoordinatorAlarmsContext.Provider>
+        </CoordinatorJobsContext.Provider>
+    );
+}
+
 type TranscriptProps = Omit<ComponentProps<typeof AgentChatTranscript>, 'renderMessage' | 'renderAfter' | 'renderWork'> & {
     /** How the cards follow the work the thread started, where it isn't the coordinator's jobs. */
     useJobs?: ThreadJobs;
@@ -182,15 +200,8 @@ function Transcript({ jobs, ...props }: Omit<TranscriptProps, 'jobs' | 'useJobs'
     const { messages } = props;
     const calls = useMemo(() => callsOf(messages), [messages]);
     const updates = useMemo(() => updatesOf(messages), [messages]);
-    const toolCalls = useMemo(() => messages.flatMap(toolCallsOf), [messages]);
-    const alarmIds = useMemo(() => alarmIdsOf(toolCalls), [toolCalls]);
-    const alarms = useCoordinatorAlarms(alarmIds, messages.length);
-    // Every card about an automation in thread order (a note's setup card, a turn's tool calls): the newest is drawn
-    // in full.
-    const canvases = useMemo(
-        () => newestCanvases(messages.flatMap((msg, i) => [...(msg.setup ? [{ id: setupCardId(i), setup: msg.setup }] : []), ...toolCallsOf(msg)]), jobs),
-        [messages, jobs]
-    );
+    // Every card in thread order (a note's setup card, a turn's tool calls).
+    const cards = useMemo(() => messages.flatMap((msg, i) => [...(msg.setup ? [{ id: setupCardId(i), setup: msg.setup }] : []), ...toolCallsOf(msg)]), [messages]);
     const receipts = useEmailReceipts();
 
     const renderMessage = useCallback(
@@ -251,12 +262,8 @@ function Transcript({ jobs, ...props }: Omit<TranscriptProps, 'jobs' | 'useJobs'
     }, [receipts, messages]);
 
     return (
-        <CoordinatorJobsContext.Provider value={jobs}>
-            <CoordinatorAlarmsContext.Provider value={alarms}>
-                <CanvasesProvider value={canvases}>
-                    <AgentChatTranscript {...props} renderMessage={renderMessage} renderAfter={renderAfter} renderWork={turnWorkDrawing()} />
-                </CanvasesProvider>
-            </CoordinatorAlarmsContext.Provider>
-        </CoordinatorJobsContext.Provider>
+        <CardsProvider cards={cards} jobs={jobs} nudge={messages.length}>
+            <AgentChatTranscript {...props} renderMessage={renderMessage} renderAfter={renderAfter} renderWork={turnWorkDrawing()} />
+        </CardsProvider>
     );
 }
