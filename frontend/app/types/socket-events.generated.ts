@@ -6712,6 +6712,10 @@ export interface WhatsAppQRStatusRequest {
    * Name for the credential if connected
    */
   credential_name?: string | null;
+  /**
+   * Linked for the account itself (its connections, not a workflow or an agent): the platform readies the number's own agent
+   */
+  ready_agent?: boolean;
   [k: string]: unknown;
 }
 /**

@@ -12,6 +12,7 @@ import logging
 import os
 from typing import Callable, Dict
 
+from utils.capabilities import WHATSAPP_LINKED, capability
 from utils.database_pool import DatabasePoolMixin
 from utils.encryption import get_encryption
 from utils.whatsapp_qr import finalize_qr_connection, start_qr_connection
@@ -139,6 +140,9 @@ class WhatsAppQRHandler(DatabasePoolMixin, SocketIOHandler):
                     message=result.get("message", ""),
                 ).model_dump(),
             ))
+            ready = capability(WHATSAPP_LINKED)
+            if request.ready_agent and ready is not None and result.get("status") == "connected":
+                await self._ready_agent(ready, pool, user_id, result)
         except Exception as e:
             logger.error(f"[WhatsAppQRHandler] check_status error: {e}", exc_info=True)
             await send_event(self.sio, sid, ResponseEvent(
@@ -147,3 +151,13 @@ class WhatsAppQRHandler(DatabasePoolMixin, SocketIOHandler):
                     success=False, status="error", message=str(e)
                 ).model_dump(),
             ))
+
+    @staticmethod
+    async def _ready_agent(ready, pool, user_id: str, result: Dict) -> None:
+        """The number's own agent (``WHATSAPP_LINKED``). The link already stands and its answer was sent, so a
+        failure here is logged, never reported as the scan's."""
+        try:
+            await ready(pool, user_id, result["credential_id"], result.get("phone_number"))
+        except Exception:
+            logger.error("[WhatsAppQRHandler] readying the agent of credential %s failed", result["credential_id"],
+                         exc_info=True)

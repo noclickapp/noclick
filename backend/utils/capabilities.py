@@ -422,6 +422,12 @@ ACCOUNT_AGENT_HANDOVER = "account.agent_handover"
 # whose coordinator keeps its own address. Without one, every account's does.
 ACCOUNT_AGENT_EMAIL = "account.agent_email"
 
+# A WhatsApp linked by QR for the account itself (its connections, not a
+# workflow's or an agent's): async (pool, user_id, credential_id, phone) ->
+# what the platform readied for the number (its agent), or None. Without one,
+# linking makes the credential alone.
+WHATSAPP_LINKED = "whatsapp.linked"
+
 # A platform's own rule for a text to the assistant's number: async (transport, message) -> None, with the
 # coder/coordinator/texting/channel.py PhoneTransport and PhoneText. Without one, a text reaches the account its number
 # is bound to, and the coordinator answers.

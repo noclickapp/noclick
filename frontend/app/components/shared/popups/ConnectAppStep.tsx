@@ -71,6 +71,8 @@ export default function ConnectAppStep({
                 // Connect here adds an account, so its QR shows at once whatever is connected already (listed under it).
                 // Reconnecting one waits for a click: a dead number's restart logs its phone out.
                 qrAutoStart={!target}
+                // A number linked here is the account's own, for no workflow or agent: it gets its agent at once.
+                qrReadyAgent={!target}
                 onConnected={() => {
                     invalidateCredentialsCache();
                     onConnected();

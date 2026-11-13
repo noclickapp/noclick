@@ -89,6 +89,7 @@ function AppConnectForm({
     initialMethod,
     qrReconnectId,
     qrAutoStart = true,
+    qrReadyAgent = false,
 }: {
     /** The node whose credential classes are the ways in ("automation-notion"). */
     nodeType: string;
@@ -111,6 +112,8 @@ function AppConnectForm({
     /** Show a QR code unasked: where connecting adds an account, or there's no number to pick. A reconnect always
      *  waits for a click. */
     qrAutoStart?: boolean;
+    /** The number is linked for the account itself, for no workflow or agent: the platform readies its own agent. */
+    qrReadyAgent?: boolean;
 }) {
     const isVisible = useCredentialSchemaVisible();
     const requirements = useMemo(() => credentialRequirements(nodeType, isVisible), [nodeType, isVisible]);
@@ -251,6 +254,7 @@ function AppConnectForm({
                     credentialType={method.credential_type}
                     reconnectCredentialId={qrReconnectId}
                     autoStart={qrAutoStart}
+                    readyAgent={qrReadyAgent}
                     onCredentialCreated={(credentialId) => {
                         void engine.loadCredentials();
                         void landedAfterProbe(method.credential_type, { id: credentialId, name: app, credential_type: method.credential_type });

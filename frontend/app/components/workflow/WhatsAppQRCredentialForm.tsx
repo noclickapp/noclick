@@ -31,6 +31,9 @@ interface WhatsAppQRCredentialFormProps {
     // Ignored for a reconnect, which only ever starts on a click.
     autoStart?: boolean;
     startLabel?: string;
+    // Linked for the account itself, for no workflow or agent: the server readies the number's own agent once the scan
+    // lands (hosted).
+    readyAgent?: boolean;
 }
 
 type QRFlowState = 'idle' | 'loading' | 'scanning' | 'connected' | 'error' | 'needs_key';
@@ -42,7 +45,7 @@ const sendOverSocket: OAuthExchange = (event) => sendEventAsync(event, undefined
 
 export const WhatsAppQRCredentialForm = ({
     onCredentialCreated, sendEvent, reconnectCredentialId, autoStart = true,
-    startLabel = 'Connect a different WhatsApp number',
+    startLabel = 'Connect a different WhatsApp number', readyAgent = false,
 }: WhatsAppQRCredentialFormProps) => {
     // A reconnect restarts the dead session, which logs the phone out, so only a click starts one: a short blip
     // would have come back from the saved login on its own.
@@ -136,6 +139,7 @@ export const WhatsAppQRCredentialForm = ({
             const response = await sendRef.current({
                 event_name: 'whatsapp:qr:status',
                 connection_id: connId,
+                ...(readyAgent ? { ready_agent: true } : {}),
             });
 
             if (!response?.success) {

@@ -3264,6 +3264,8 @@ class WhatsAppQRStatusRequest(ClientEventBase):
 
     connection_id: str = Field(..., description="WAHooks connection ID from start response")
     credential_name: Optional[str] = Field(None, description="Name for the credential if connected")
+    ready_agent: bool = Field(False, description="Linked for the account itself (its connections, not a workflow "
+                                                 "or an agent): the platform readies the number's own agent")
 
 
 # Approval Feed Events
