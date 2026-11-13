@@ -12,12 +12,17 @@ import jwt
 import pytest
 from fastapi import HTTPException
 
+# Assembled at collection, as the other tests of server.py's handlers do: assembling it inside a test made that test's
+# seconds turn on what its worker had run before it.
+import server
 from utils import account_status
 from utils.auth import AccountClosed, authenticate_http_request, verify_socket_token, verify_token
 
 pytestmark = pytest.mark.asyncio
 
 SECRET = "account-status-test-secret-of-forty-bytes"
+# A refusal is one bounded status read (account_status.READ_S for a connection, again for the query).
+CONNECT_S = 10
 
 
 @pytest.fixture
@@ -135,13 +140,14 @@ async def test_forget_drops_the_verdict_at_once(pool):
 async def test_the_socket_refuses_a_closed_accounts_token_at_connect(pool):
     from socketio.exceptions import ConnectionRefusedError
 
-    import server
-
     user = await _user(pool)
     await pool.execute("UPDATE auth.users SET banned_until = now() + interval '1 day' WHERE id = $1::uuid", user)
     account_status.forget(user)
     with pytest.raises(ConnectionRefusedError) as refused:
-        await server.connect("sid-closed", {}, {"token": _token(user)})
+        try:
+            await asyncio.wait_for(server.connect("sid-closed", {}, {"token": _token(user)}), CONNECT_S)
+        except asyncio.TimeoutError:
+            pytest.fail(f"connect neither refused nor accepted a closed account's token within {CONNECT_S}s")
     assert refused.value.args[0] == {"message": "Token verification failed", "code": "token_invalid",
                                      "reason": account_status.CLOSED}
 
