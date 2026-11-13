@@ -1398,14 +1398,34 @@ class NullableStyleDeserializersFactory(StyleDeserializersFactory):
                     location = {**location, key: location[name]}
                 return original_decoder(explode, name, schema_type, location)
 
+        try:
+            schema_type = wire_type(schema) or ""
+        except FixtureError as ambiguous:
+            # openapi-core builds a deserializer for every declared parameter, sent or not. A parameter with no
+            # unambiguous serialization blocks only a request that actually sends it.
+            return UnsentOnly(name, ambiguous)
         return StyleDeserializer(
             style,
             explode,
             name,
-            wire_type(schema) or "",
+            schema_type,
             self.schema_casters_factory.create(spec, schema),
             decoder,
         )
+
+
+class UnsentOnly:
+    """Stands in for the deserializer of a parameter whose serialization is ambiguous: absent (KeyError, as openapi-core
+    treats a missing parameter), or the ambiguity as the fixture error it is. A sent value counts by its name or any
+    bracketed or dotted key under it (`order[0][0]`, `filter.status`)."""
+
+    def __init__(self, name, ambiguous):
+        self.name, self.ambiguous = name, ambiguous
+
+    def deserialize(self, location):
+        if any(key == self.name or key.startswith((self.name + "[", self.name + ".")) for key in location):
+            raise self.ambiguous
+        raise KeyError(self.name)
 
 
 @dataclass(frozen=True)
