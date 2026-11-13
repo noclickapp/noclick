@@ -3,6 +3,8 @@ its sign-in was banned or deleted still verifies until it expires, so ``utils.au
 account too, and every way the app takes such a token (its REST routes, the socket's connect) refuses it. Over the
 real ``auth.users`` columns GoTrue sets."""
 
+import asyncio
+import logging
 import time
 import uuid
 
@@ -34,6 +36,33 @@ async def _user(pool) -> str:
 def _token(user_id: str) -> str:
     return jwt.encode({"sub": user_id, "aud": "authenticated", "role": "authenticated",
                        "exp": int(time.time()) + 3600}, SECRET, algorithm="HS256")
+
+
+class Reset:
+    """A connection the read can't get through: reset under it."""
+
+    async def fetchval(self, *args, timeout):
+        raise ConnectionResetError("Connection reset by peer")
+
+
+class ExhaustedPool:
+    """A pool with no connection to give within the wait."""
+
+    def acquire(self, *, timeout):
+        assert timeout == account_status.READ_S
+        return self
+
+    async def __aenter__(self):
+        raise asyncio.TimeoutError()
+
+    async def __aexit__(self, *exc):
+        return False
+
+
+def _lapsed(user_id: str) -> None:
+    """This process's verdict for the account, long past its keep."""
+    verdict, _ = account_status._verdicts[user_id]
+    account_status._verdicts[user_id] = (verdict, time.monotonic() - 3600)
 
 
 class _Req:
@@ -77,9 +106,10 @@ async def test_a_verdict_is_kept_briefly_then_read_again(pool):
     class Counted:
         reads = 0
 
-        async def fetchval(self, *args):
+        async def fetchval(self, *args, timeout):
+            assert timeout == account_status.READ_S
             Counted.reads += 1
-            return await pool.fetchval(*args)
+            return await pool.fetchval(*args, timeout=timeout)
 
     db = Counted()
     assert await account_status.is_open(user, db) and await account_status.is_open(user, db)
@@ -114,3 +144,47 @@ async def test_the_socket_refuses_a_closed_accounts_token_at_connect(pool):
         await server.connect("sid-closed", {}, {"token": _token(user)})
     assert refused.value.args[0] == {"message": "Token verification failed", "code": "token_invalid",
                                      "reason": account_status.CLOSED}
+
+
+async def test_an_unreadable_status_takes_this_processs_last_verdict_however_old(pool):
+    opened, closed = await _user(pool), await _user(pool)
+    await pool.execute("UPDATE auth.users SET banned_until = now() + interval '1 day' WHERE id = $1::uuid", closed)
+    for user in (opened, closed):
+        await account_status.is_open(user)
+        _lapsed(user)
+    assert await account_status.is_open(opened, Reset()) is True
+    assert await account_status.is_open(closed, Reset()) is False
+    # Still lapsed: the next request reads again.
+    assert account_status._verdicts[opened][1] < time.monotonic()
+    assert await account_status.is_open(opened) is True and account_status._verdicts[opened][1] > time.monotonic()
+
+
+async def test_an_unreadable_status_never_locks_a_valid_token_out(pool, monkeypatch, caplog):
+    user = await _user(pool)
+    token = _token(user)
+    await pool.execute("UPDATE auth.users SET deleted_at = now() WHERE id = $1::uuid", user)
+    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: ExhaustedPool())
+    with caplog.at_level(logging.WARNING, logger="utils.account_status"):
+        # Nothing this process read says it's closed: open, while the database can't say.
+        assert (await verify_token(token))["sub"] == user
+        assert (await authenticate_http_request(_Req(token)))[0] == user
+    [warned] = [r for r in caplog.records if r.name == "utils.account_status"]  # once per account per KEEP_S
+    assert warned.levelno == logging.WARNING and user in warned.getMessage()
+    assert "TimeoutError" in warned.getMessage() and token not in warned.getMessage()
+    assert user not in account_status._verdicts
+
+    # Once it can read again, the row refuses it at once.
+    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: pool)
+    with pytest.raises(AccountClosed):
+        await verify_token(token)
+
+
+async def test_a_slow_read_is_cut_off_and_taken_as_unknown(pool, monkeypatch):
+    user = await _user(pool)
+    monkeypatch.setattr(account_status, "READ_S", 0.2)
+    async with pool.acquire() as holder, holder.transaction():
+        await holder.execute("LOCK TABLE auth.users IN ACCESS EXCLUSIVE MODE")
+        started = time.monotonic()
+        assert await account_status.is_open(user) is True
+        assert time.monotonic() - started < 1.5
+    assert await account_status.is_open(user) is True and user in account_status._verdicts
