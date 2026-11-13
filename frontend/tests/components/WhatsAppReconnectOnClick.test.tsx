@@ -70,6 +70,16 @@ describe('WhatsApp reconnect starts only on a click', () => {
         expect(qrStarts()).toEqual([]);
     });
 
+    // A node needs a number, and one that works can be picked: a QR shown beside it invites a re-scan that rebinds it.
+    it('a node with a working number attached mints nothing, even with its connect panel open', async () => {
+        state.credentials = [{ ...dead, id: 'wa-ok', connection_healthy: true, connection_hint: undefined }];
+        render(<NodeCredentials nodeType="automation-whatsapp" credentialIds={{ whatsapp_qr: 'wa-ok' }} onChange={vi.fn()} />);
+        fireEvent.click(await screen.findByRole('button', { name: 'Connect another account' }));
+        expect(await screen.findByRole('button', { name: 'Connect a different WhatsApp number' })).toBeTruthy();
+        expect(qrStarts()).toEqual([]);
+        expect(screen.queryByAltText('WhatsApp QR Code')).toBeNull();
+    });
+
     it('with no WhatsApp number at all, the QR shows straight away (a fresh connection, no reconnect)', async () => {
         render(<NodeCredentials nodeType="automation-whatsapp" onChange={vi.fn()} />);
         expect(await screen.findByAltText('WhatsApp QR Code')).toBeTruthy();
