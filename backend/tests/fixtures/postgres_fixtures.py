@@ -166,6 +166,30 @@ async def setup_supabase_basics(conn: asyncpg.Connection) -> None:
         CREATE SEQUENCE IF NOT EXISTS auth.refresh_tokens_id_seq
     """)
 
+    # A sign-in's sessions and their refresh tokens, which go with the session (GoTrue's sign-out deletes the session)
+    await conn.execute("""
+        CREATE TABLE IF NOT EXISTS auth.sessions (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            updated_at TIMESTAMPTZ DEFAULT NOW(),
+            not_after TIMESTAMPTZ
+        )
+    """)
+    await conn.execute("""
+        CREATE TABLE IF NOT EXISTS auth.refresh_tokens (
+            instance_id UUID,
+            id BIGINT PRIMARY KEY DEFAULT nextval('auth.refresh_tokens_id_seq'),
+            token VARCHAR(255),
+            user_id VARCHAR(255),
+            revoked BOOLEAN,
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            updated_at TIMESTAMPTZ DEFAULT NOW(),
+            parent VARCHAR(255),
+            session_id UUID REFERENCES auth.sessions(id) ON DELETE CASCADE
+        )
+    """)
+
     # Create a mock auth.uid() function for RLS policies
     # This will return NULL in tests since we're not using real auth
     await conn.execute("""

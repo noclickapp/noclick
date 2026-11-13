@@ -11,6 +11,8 @@ import jwt
 from jwt import PyJWKClient
 from fastapi.security import HTTPBearer
 
+from utils import account_status
+
 security = HTTPBearer()
 logger = logging.getLogger(__name__)
 
@@ -38,7 +40,21 @@ def _format_relative_age(seconds: int) -> str:
     return f"{sign} {', '.join(parts)}"
 
 
+class AccountClosed(jwt.InvalidTokenError):
+    """A token whose signature holds, of an account that is closed (``utils.account_status``)."""
+
+
 async def verify_token(token: str) -> Dict[str, Any]:
+    """Verify a Supabase access token: its signature, and that the account its ``sub`` names is still open. A token
+    issued before the account closed verifies until it expires, so it raises ``AccountClosed``."""
+    payload = await _verify_signature(token)
+    sub = payload.get("sub")
+    if sub and not await account_status.is_open(sub):
+        raise AccountClosed(account_status.CLOSED)
+    return payload
+
+
+async def _verify_signature(token: str) -> Dict[str, Any]:
     """Verify JWT token using configured verification method
     
     Security: Uses ONLY the configured method (asymmetric OR symmetric), 
@@ -538,6 +554,8 @@ async def authenticate_http_request(request: Any) -> tuple[str, Dict[str, Any]]:
         raise HTTPException(status_code=401, detail="Authentication required")
     try:
         user_id, claims = await verify_socket_token(token)
+    except AccountClosed:
+        raise HTTPException(status_code=401, detail=account_status.CLOSED)
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid session")
     return await acting_user_id(request, user_id, claims), claims
