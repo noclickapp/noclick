@@ -654,5 +654,7 @@
  "credentialed": true,
  "output_handles": [],
  "registers": true,
- "app_event_provider": null
+ "app_event_provider": null,
+ "summary": "Google Cloud Storage automation node (JSON API v1).",
+ "retired": null
 }
