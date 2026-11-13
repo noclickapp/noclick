@@ -18,17 +18,17 @@
           "default": "get_blueprint",
           "title": "Operation",
           "type": "string",
-          "ui:hidden": true
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "Get blueprint",
+          "x-is-trigger": false
         }
       },
       "required": [
         "blueprint_id"
       ],
       "title": "GetBlueprint",
-      "type": "object",
-      "x-category": "Catalog",
-      "x-display-name": "Get blueprint",
-      "x-is-trigger": false
+      "type": "object"
     },
     "GetPrintProvider": {
       "additionalProperties": false,
@@ -38,7 +38,10 @@
           "default": "get_print_provider",
           "title": "Operation",
           "type": "string",
-          "ui:hidden": true
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "Get print provider",
+          "x-is-trigger": false
         },
         "print_provider_id": {
           "title": "Print provider",
@@ -55,10 +58,7 @@
         "print_provider_id"
       ],
       "title": "GetPrintProvider",
-      "type": "object",
-      "x-category": "Catalog",
-      "x-display-name": "Get print provider",
-      "x-is-trigger": false
+      "type": "object"
     },
     "GetProduct": {
       "additionalProperties": false,
@@ -88,7 +88,10 @@
           "default": "get_product",
           "title": "Operation",
           "type": "string",
-          "ui:hidden": true
+          "ui:hidden": true,
+          "x-category": "Products",
+          "x-display-name": "Get product metadata",
+          "x-is-trigger": false
         }
       },
       "required": [
@@ -96,10 +99,7 @@
         "product_id"
       ],
       "title": "GetProduct",
-      "type": "object",
-      "x-category": "Products",
-      "x-display-name": "Get product metadata",
-      "x-is-trigger": false
+      "type": "object"
     },
     "GetSizeGuide": {
       "additionalProperties": false,
@@ -119,17 +119,17 @@
           "default": "get_size_guide",
           "title": "Operation",
           "type": "string",
-          "ui:hidden": true
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "Get blueprint size guide",
+          "x-is-trigger": false
         }
       },
       "required": [
         "blueprint_id"
       ],
       "title": "GetSizeGuide",
-      "type": "object",
-      "x-category": "Catalog",
-      "x-display-name": "Get blueprint size guide",
-      "x-is-trigger": false
+      "type": "object"
     },
     "ListBlueprintPrintProviders": {
       "additionalProperties": false,
@@ -149,17 +149,17 @@
           "default": "list_blueprint_print_providers",
           "title": "Operation",
           "type": "string",
-          "ui:hidden": true
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "List blueprint print providers",
+          "x-is-trigger": false
         }
       },
       "required": [
         "blueprint_id"
       ],
       "title": "ListBlueprintPrintProviders",
-      "type": "object",
-      "x-category": "Catalog",
-      "x-display-name": "List blueprint print providers",
-      "x-is-trigger": false
+      "type": "object"
     },
     "ListBlueprints": {
       "additionalProperties": false,
@@ -169,14 +169,14 @@
           "default": "list_blueprints",
           "title": "Operation",
           "type": "string",
-          "ui:hidden": true
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "List catalog blueprints",
+          "x-is-trigger": false
         }
       },
       "title": "ListBlueprints",
-      "type": "object",
-      "x-category": "Catalog",
-      "x-display-name": "List catalog blueprints",
-      "x-is-trigger": false
+      "type": "object"
     },
     "ListPrintProviders": {
       "additionalProperties": false,
@@ -186,14 +186,14 @@
           "default": "list_print_providers",
           "title": "Operation",
           "type": "string",
-          "ui:hidden": true
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "List print providers",
+          "x-is-trigger": false
         }
       },
       "title": "ListPrintProviders",
-      "type": "object",
-      "x-category": "Catalog",
-      "x-display-name": "List print providers",
-      "x-is-trigger": false
+      "type": "object"
     },
     "ListProducts": {
       "additionalProperties": false,
@@ -213,7 +213,10 @@
           "default": "list_products",
           "title": "Operation",
           "type": "string",
-          "ui:hidden": true
+          "ui:hidden": true,
+          "x-category": "Products",
+          "x-display-name": "List shop products",
+          "x-is-trigger": false
         },
         "page": {
           "default": 1,
@@ -234,10 +237,7 @@
         "shop_id"
       ],
       "title": "ListProducts",
-      "type": "object",
-      "x-category": "Products",
-      "x-display-name": "List shop products",
-      "x-is-trigger": false
+      "type": "object"
     },
     "ListShops": {
       "additionalProperties": false,
@@ -247,14 +247,14 @@
           "default": "list_shops",
           "title": "Operation",
           "type": "string",
-          "ui:hidden": true
+          "ui:hidden": true,
+          "x-category": "Shops",
+          "x-display-name": "List shops",
+          "x-is-trigger": false
         }
       },
       "title": "ListShops",
-      "type": "object",
-      "x-category": "Shops",
-      "x-display-name": "List shops",
-      "x-is-trigger": false
+      "type": "object"
     },
     "ListVariants": {
       "additionalProperties": false,
@@ -274,7 +274,10 @@
           "default": "list_variants",
           "title": "Operation",
           "type": "string",
-          "ui:hidden": true
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "List blueprint variants",
+          "x-is-trigger": false
         },
         "blueprint_print_provider_id": {
           "title": "Blueprint print provider",
@@ -297,10 +300,7 @@
         "blueprint_print_provider_id"
       ],
       "title": "ListVariants",
-      "type": "object",
-      "x-category": "Catalog",
-      "x-display-name": "List blueprint variants",
-      "x-is-trigger": false
+      "type": "object"
     },
     "PrintifyOAuthAccessTokenCredential": {
       "properties": {
@@ -406,7 +406,11 @@
           "default": "update_product_metadata",
           "title": "Operation",
           "type": "string",
-          "ui:hidden": true
+          "ui:hidden": true,
+          "x-category": "Products",
+          "x-display-name": "Update product title / description",
+          "x-is-trigger": false,
+          "x-operation-effect": "Changes shop product metadata. Does not call publish or alter prices, variants or artwork."
         },
         "title": {
           "anyOf": [
@@ -447,11 +451,7 @@
         "product_id"
       ],
       "title": "UpdateProductMetadata",
-      "type": "object",
-      "x-category": "Products",
-      "x-display-name": "Update product title / description",
-      "x-is-trigger": false,
-      "x-operation-effect": "Changes shop product metadata. Does not call publish or alter prices, variants or artwork."
+      "type": "object"
     }
   },
   "properties": {

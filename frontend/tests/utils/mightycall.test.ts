@@ -1,5 +1,5 @@
 import { beforeAll, expect, it } from 'vitest';
-import { loadNodeSchemas, NODE_SCHEMAS, getNodeCredentialInfo } from '~/utils/nodeSchemas';
+import { loadNodeSchemas, NODE_SCHEMAS, getNodeCredentialInfo, getTriggerOperations } from '~/utils/nodeSchemas';
 import { methodFromRequirement, requirementsFromSchema } from '~/components/credential/credentialMethods';
 import { MightyCallNode } from '~/components/workflow/nodes/integrations/mightycall';
 
@@ -15,7 +15,6 @@ it('discovers manually entered API credentials and both call triggers in communi
     expect(Object.keys(schema.properties.config.discriminator.mapping)).toHaveLength(22);
     expect(schema.$defs.MightyCallTokenCredential.required).toEqual(['api_key', 'access_token']);
     expect(schema.$defs.MightyCallTokenCredential.properties.credential_type.default).toBe('mightycall_api_token');
-    expect(schema.$defs.MightyCallOnNewCallConfig['x-is-trigger']).toBe(true);
-    expect(schema.$defs.MightyCallOnNewVoicemailConfig['x-is-trigger']).toBe(true);
+    expect(getTriggerOperations('automation-mightycall').map((op) => op.operation)).toEqual(['on_new_call', 'on_new_voicemail']);
     expect(MightyCallNode.category).toBe('communication');
 });

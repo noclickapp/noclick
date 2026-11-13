@@ -190,16 +190,14 @@ class MightyCallGetTeamConfig(_Config):
 
 
 class MightyCallOnNewCallConfig(PollTriggerConfigBase):
-    model_config = ConfigDict(json_schema_extra={"x-is-trigger": True, "x-requires-webhook": True})
-    operation: Literal["on_new_call"] = "on_new_call"
+    operation: Literal["on_new_call"] = Field("on_new_call", json_schema_extra={"x-is-trigger": True})
     lookback_hours: int = Field(24, ge=1, le=168, description="Poll this rolling UTC window. First poll records a baseline; subsequent polls emit unseen call IDs. Increase for workflow downtime.")
     call_filter: Literal["Incoming", "Outgoing", "InOutgoing", "Connected", "Missed", "Canceled", "Dropped", "Voicemail", "InternalOnly", "CallbackWidget"] | None = None
     extension: str | None = None
 
 
 class MightyCallOnNewVoicemailConfig(PollTriggerConfigBase):
-    model_config = ConfigDict(json_schema_extra={"x-is-trigger": True, "x-requires-webhook": True})
-    operation: Literal["on_new_voicemail"] = "on_new_voicemail"
+    operation: Literal["on_new_voicemail"] = Field("on_new_voicemail", json_schema_extra={"x-is-trigger": True})
     lookback_hours: int = Field(24, ge=1, le=168, description="Poll this rolling UTC window. First poll records a baseline; subsequent polls emit unseen voicemail IDs. Increase for workflow downtime.")
 
 

@@ -162,14 +162,14 @@
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": true
   },
   {
    "name": "on_new_voicemail",
    "display_name": null,
    "category": null,
    "description": "",
-   "is_trigger": false
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,

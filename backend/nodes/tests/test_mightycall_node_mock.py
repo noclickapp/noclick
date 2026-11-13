@@ -178,7 +178,9 @@ def test_schema_credential_and_validation():
     assert len(schema["properties"]["config"]["discriminator"]["mapping"]) == 22
     for operation in ("on_new_call", "on_new_voicemail"):
         cls = native.MightyCallOnNewCallConfig if operation == "on_new_call" else native.MightyCallOnNewVoicemailConfig
-        assert cls.model_json_schema()["x-is-trigger"] is True
+        cls_schema = cls.model_json_schema()
+        assert cls_schema["properties"]["operation"]["x-is-trigger"] is True
+        assert cls_schema["x-requires-webhook"] is True
     for operation, extra in [("get_call", {"call_id": "../profile"}), ("get_contact", {"contact_id": "bad"}), ("get_phone_number", {"phone_number": "+17775550078"}), ("set_status", {"status": "offline"})]:
         with pytest.raises(ConfigValidationError):
             node(operation, **extra).config

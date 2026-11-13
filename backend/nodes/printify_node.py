@@ -154,13 +154,11 @@ class Operation(BaseModel):
 
 
 class ListShops(Operation):
-    operation: Literal["list_shops"] = Field("list_shops", json_schema_extra={"const": "list_shops", "ui:hidden": True})
-    model_config = ConfigDict(json_schema_extra={"x-display-name": "List shops", "x-category": "Shops", "x-is-trigger": False})
+    operation: Literal["list_shops"] = Field("list_shops", json_schema_extra={"const": "list_shops", "ui:hidden": True, "x-display-name": "List shops", "x-category": "Shops", "x-is-trigger": False})
 
 
 class ListBlueprints(Operation):
-    operation: Literal["list_blueprints"] = Field("list_blueprints", json_schema_extra={"const": "list_blueprints", "ui:hidden": True})
-    model_config = ConfigDict(json_schema_extra={"x-display-name": "List catalog blueprints", "x-category": "Catalog", "x-is-trigger": False})
+    operation: Literal["list_blueprints"] = Field("list_blueprints", json_schema_extra={"const": "list_blueprints", "ui:hidden": True, "x-display-name": "List catalog blueprints", "x-category": "Catalog", "x-is-trigger": False})
 
 
 class BlueprintOperation(Operation):
@@ -168,36 +166,30 @@ class BlueprintOperation(Operation):
 
 
 class GetBlueprint(BlueprintOperation):
-    operation: Literal["get_blueprint"] = Field("get_blueprint", json_schema_extra={"const": "get_blueprint", "ui:hidden": True})
-    model_config = ConfigDict(json_schema_extra={"x-display-name": "Get blueprint", "x-category": "Catalog", "x-is-trigger": False})
+    operation: Literal["get_blueprint"] = Field("get_blueprint", json_schema_extra={"const": "get_blueprint", "ui:hidden": True, "x-display-name": "Get blueprint", "x-category": "Catalog", "x-is-trigger": False})
 
 
 class GetSizeGuide(BlueprintOperation):
-    operation: Literal["get_size_guide"] = Field("get_size_guide", json_schema_extra={"const": "get_size_guide", "ui:hidden": True})
-    model_config = ConfigDict(json_schema_extra={"x-display-name": "Get blueprint size guide", "x-category": "Catalog", "x-is-trigger": False})
+    operation: Literal["get_size_guide"] = Field("get_size_guide", json_schema_extra={"const": "get_size_guide", "ui:hidden": True, "x-display-name": "Get blueprint size guide", "x-category": "Catalog", "x-is-trigger": False})
 
 
 class ListBlueprintPrintProviders(BlueprintOperation):
-    operation: Literal["list_blueprint_print_providers"] = Field("list_blueprint_print_providers", json_schema_extra={"const": "list_blueprint_print_providers", "ui:hidden": True})
-    model_config = ConfigDict(json_schema_extra={"x-display-name": "List blueprint print providers", "x-category": "Catalog", "x-is-trigger": False})
+    operation: Literal["list_blueprint_print_providers"] = Field("list_blueprint_print_providers", json_schema_extra={"const": "list_blueprint_print_providers", "ui:hidden": True, "x-display-name": "List blueprint print providers", "x-category": "Catalog", "x-is-trigger": False})
 
 
 class ListPrintProviders(Operation):
-    operation: Literal["list_print_providers"] = Field("list_print_providers", json_schema_extra={"const": "list_print_providers", "ui:hidden": True})
-    model_config = ConfigDict(json_schema_extra={"x-display-name": "List print providers", "x-category": "Catalog", "x-is-trigger": False})
+    operation: Literal["list_print_providers"] = Field("list_print_providers", json_schema_extra={"const": "list_print_providers", "ui:hidden": True, "x-display-name": "List print providers", "x-category": "Catalog", "x-is-trigger": False})
 
 
 class GetPrintProvider(Operation):
-    operation: Literal["get_print_provider"] = Field("get_print_provider", json_schema_extra={"const": "get_print_provider", "ui:hidden": True})
+    operation: Literal["get_print_provider"] = Field("get_print_provider", json_schema_extra={"const": "get_print_provider", "ui:hidden": True, "x-display-name": "Get print provider", "x-category": "Catalog", "x-is-trigger": False})
     print_provider_id: NumericID = Field(..., title="Print provider", json_schema_extra=picker("print_provider_id"))
-    model_config = ConfigDict(json_schema_extra={"x-display-name": "Get print provider", "x-category": "Catalog", "x-is-trigger": False})
 
 
 class ListVariants(BlueprintOperation):
-    operation: Literal["list_variants"] = Field("list_variants", json_schema_extra={"const": "list_variants", "ui:hidden": True})
+    operation: Literal["list_variants"] = Field("list_variants", json_schema_extra={"const": "list_variants", "ui:hidden": True, "x-display-name": "List blueprint variants", "x-category": "Catalog", "x-is-trigger": False})
     blueprint_print_provider_id: NumericID = Field(..., title="Blueprint print provider", json_schema_extra=picker("blueprint_print_provider_id", "blueprint_id"))
     show_out_of_stock: bool = Field(False, title="Include out of stock variants")
-    model_config = ConfigDict(json_schema_extra={"x-display-name": "List blueprint variants", "x-category": "Catalog", "x-is-trigger": False})
 
 
 class ShopOperation(Operation):
@@ -205,10 +197,9 @@ class ShopOperation(Operation):
 
 
 class ListProducts(ShopOperation):
-    operation: Literal["list_products"] = Field("list_products", json_schema_extra={"const": "list_products", "ui:hidden": True})
+    operation: Literal["list_products"] = Field("list_products", json_schema_extra={"const": "list_products", "ui:hidden": True, "x-display-name": "List shop products", "x-category": "Products", "x-is-trigger": False})
     page: int = Field(1, ge=1, le=2147483647, title="Page")
     limit: int = Field(10, ge=1, le=50, title="Products per page")
-    model_config = ConfigDict(json_schema_extra={"x-display-name": "List shop products", "x-category": "Products", "x-is-trigger": False})
 
 
 class ProductOperation(ShopOperation):
@@ -216,16 +207,14 @@ class ProductOperation(ShopOperation):
 
 
 class GetProduct(ProductOperation):
-    operation: Literal["get_product"] = Field("get_product", json_schema_extra={"const": "get_product", "ui:hidden": True})
-    model_config = ConfigDict(json_schema_extra={"x-display-name": "Get product metadata", "x-category": "Products", "x-is-trigger": False})
+    operation: Literal["get_product"] = Field("get_product", json_schema_extra={"const": "get_product", "ui:hidden": True, "x-display-name": "Get product metadata", "x-category": "Products", "x-is-trigger": False})
 
 
 class UpdateProductMetadata(ProductOperation):
-    operation: Literal["update_product_metadata"] = Field("update_product_metadata", json_schema_extra={"const": "update_product_metadata", "ui:hidden": True})
+    operation: Literal["update_product_metadata"] = Field("update_product_metadata", json_schema_extra={"const": "update_product_metadata", "ui:hidden": True, "x-display-name": "Update product title / description", "x-category": "Products", "x-is-trigger": False, "x-operation-effect": "Changes shop product metadata. Does not call publish or alter prices, variants or artwork."})
     title: str | None = Field(None, min_length=1, max_length=1024, title="New title")
     description: str | None = Field(None, max_length=65535, title="New description", json_schema_extra={"ui:widget": "textarea"})
     clear_description: bool = Field(False, title="Clear description")
-    model_config = ConfigDict(json_schema_extra={"x-display-name": "Update product title / description", "x-category": "Products", "x-is-trigger": False, "x-operation-effect": "Changes shop product metadata. Does not call publish or alter prices, variants or artwork."})
 
     @field_validator("title", "description")
     @classmethod

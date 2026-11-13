@@ -842,7 +842,8 @@
           "const": "on_new_call",
           "default": "on_new_call",
           "title": "Operation",
-          "type": "string"
+          "type": "string",
+          "x-is-trigger": true
         },
         "lookback_hours": {
           "default": 24,
@@ -904,7 +905,6 @@
       },
       "title": "MightyCallOnNewCallConfig",
       "type": "object",
-      "x-is-trigger": true,
       "x-requires-webhook": true
     },
     "MightyCallOnNewVoicemailConfig": {
@@ -1059,7 +1059,8 @@
           "const": "on_new_voicemail",
           "default": "on_new_voicemail",
           "title": "Operation",
-          "type": "string"
+          "type": "string",
+          "x-is-trigger": true
         },
         "lookback_hours": {
           "default": 24,
@@ -1072,7 +1073,6 @@
       },
       "title": "MightyCallOnNewVoicemailConfig",
       "type": "object",
-      "x-is-trigger": true,
       "x-requires-webhook": true
     },
     "MightyCallReplaceContactConfig": {
