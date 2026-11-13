@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/smily.svg",
+  "source": "https://cdn.prod.website-files.com/5c8ca7584e2db8cfcdaee1de/5c8ca7e22f2b6792fdb8af92_smily-logo.svg",
+  "source_page": "https://www.smily.com/ (Smily's own Webflow site; the homepage references smily-logo.svg)",
+  "source_kind": "company site (header logo)",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "6e30b1f47e4905d22d882ad700476026b7a446f7b6a4cdf950549e6723b1b190",
+  "edits": [
+    "kept only the smile mark (element 1, #1DC8CA, 3 subpaths: two eyes and the smile); dropped the #272B45 'smily' wordmark (element 0)",
+    "cropped the viewBox to the mark with svgtool crop --pad 0.02; svgtool clean"
+  ],
+  "checked_against": "https://channel-api.developers.bookingsync.com/img/smily-icon.png (the PR's current file, Smily's own developer-docs icon) and https://cdn.prod.website-files.com/5c8ca7584e2db8cfcdaee1de/5c9ceaa7e3044d99dd58e2ec_webclip%402x.png (smily.com apple-touch-icon); the current smily.com header ('Smily - a Guesty company' PNG) shows the same teal smile beside the wordmark. Same shape and colour.",
+  "source_sha256": "b6319e896cce5e40354818a2d6266006c1af4204483d5bba3bfa926bf1271c4d"
+}
