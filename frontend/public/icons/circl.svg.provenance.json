@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/circl.svg",
+  "source": "https://raw.githubusercontent.com/CIRCL/PyCIRCLean/main/slides/PyCIRCLean/logo-circl.pdf",
+  "source_page": "https://github.com/CIRCL/PyCIRCLean/tree/main/slides/PyCIRCLean (CIRCL's own GitHub org; byte-identical copy in CIRCL-run https://github.com/MISP/misp-training/ */logo-circl.pdf)",
+  "source_kind": "company GitHub/npm",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "c9f3ca985e8bec3f5ff57c0a11ba973e8a5629f658f1e11eb8d11fd7590ae9e9",
+  "edits": [
+    "converted the vector PDF (cairo output, no embedded images: pdfimages lists none) to SVG with pdftocairo -svg",
+    "kept the shutter mark (elements 0-3: blue-grey triangles + three red blades), dropped the 'CIRCL Computer Incident Response Center Luxembourg' wordmark (elements 4-48)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "clean"
+  ],
+  "checked_against": "https://www.circl.lu/assets/images/circl-logo.png (the site's mark, and the PR's current file): same shutter geometry. hashlookup.circl.lu is CIRCL's service; the current PR already uses CIRCL's mark.",
+  "source_sha256": "acdec1faf29a100d1346ba53c3b9e8522b0a06720ac6a79991fe8d54d182f368"
+}
