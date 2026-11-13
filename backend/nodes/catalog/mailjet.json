@@ -863,12 +863,61 @@
    "category": "Labels",
    "description": "",
    "is_trigger": false
+  },
+  {
+   "name": "on_email_sent",
+   "display_name": "Email Delivered",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_email_opened",
+   "display_name": "Email Opened",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_email_clicked",
+   "display_name": "Email Link Clicked",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_email_bounced",
+   "display_name": "Email Bounced",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_email_blocked",
+   "display_name": "Email Blocked",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_spam_complaint",
+   "display_name": "Spam Complaint",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_unsubscribed",
+   "display_name": "Contact Unsubscribed",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null,
  "summary": "",
  "retired": null
