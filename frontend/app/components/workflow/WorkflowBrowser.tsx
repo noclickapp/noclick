@@ -97,18 +97,11 @@ import {
     WorkflowCreateRequest,
     ResourceForkRequest,
     ShareInviteAcceptRequest,
-    OnboardingSkipRequest,
     type FolderCreateResponse,
 } from '~/types/socket-events.generated';
 import { PENDING_INVITE_KEY } from '~/lib/inviteLink';
 import { SCAFFOLD_DATA_KEY, PENDING_SCAFFOLD_KEY } from '~/lib/agentScaffold';
-import {
-    hasPendingDeferredOpen,
-    clearPostOnboardingFlow,
-    FORK_DATA_KEY,
-    HERO_PROMPT_KEY,
-    POST_ONBOARDING_FLOW_KEY,
-} from '~/lib/deferredOpen';
+import { FORK_DATA_KEY, HERO_PROMPT_KEY } from '~/lib/deferredOpen';
 import { useAnalytics } from '~/lib/analytics';
 import { EVENTS } from '~/lib/analytics-events';
 
@@ -433,16 +426,7 @@ export function WorkflowBrowser({
         () => (workflows || []).filter((w) => matchesOwnership(w.is_owner)),
         [workflows, matchesOwnership]
     );
-    // Captured at mount: OnboardingQuestionnaire sets this flag to open a fresh workflow
-    // automatically after finishing the questionnaire. Read synchronously so we can block
-    // the browser grid from flashing before the workflow is created.
-    const postOnboardingPendingRef = useRef<boolean>(
-        typeof window !== 'undefined' &&
-            sessionStorage.getItem(POST_ONBOARDING_FLOW_KEY) === 'true'
-    );
-    const [isCreatingWorkflow, setIsCreatingWorkflow] = useState(
-        postOnboardingPendingRef.current
-    );
+    const [isCreatingWorkflow, setIsCreatingWorkflow] = useState(false);
     const [planLimitError, setPlanLimitError] = useState<string | null>(null);
     const [dialog, setDialog] = useState<Dialog>({ kind: 'none' });
     const closeDialog = useCallback(() => setDialog({ kind: 'none' }), []);
@@ -916,10 +900,8 @@ export function WorkflowBrowser({
         [store, selectedFolderId, buildWorkflowParams, navigate]
     );
 
-    // Reentrancy guard for createBlankWorkflow. Separate from `isCreatingWorkflow`
-    // because that state is pre-set to true at mount in the post-onboarding flow
-    // (so the spinner shows without flicker) — using it as the guard would cause
-    // the post-onboarding effect to bail before firing the API request.
+    // Reentrancy guard for createBlankWorkflow: a second call can land before the
+    // `isCreatingWorkflow` update renders.
     const creatingWorkflowRef = useRef(false);
 
     // Create a blank workflow directly and hand off to FlowCanvas, where the
@@ -980,31 +962,15 @@ export function WorkflowBrowser({
 
     const { isConnected } = useSocketConnection('API');
 
-    // Post-onboarding auto-create: wait for socket, consume the latch, fire once.
-    // Yields to ANY staged deferred-open intent (invite / scaffold / fork / hero
-    // prompt) — a user who arrived through one of those should land on THAT flow,
-    // not a fresh blank one. Each intent's consumer below clears the latch.
-    useEffect(() => {
-        if (!postOnboardingPendingRef.current || !isConnected) return;
-        if (hasPendingDeferredOpen()) return;
-        postOnboardingPendingRef.current = false;
-        clearPostOnboardingFlow();
-        createBlankWorkflow();
-    }, [isConnected, createBlankWorkflow]);
-
     // Invite-link landing: /i/<token> stashed the token and routed here. Once the
     // socket is up, redeem it (writes a share row granting this user access) and
-    // open the SAME shared workflow — no fork. Takes precedence over the
-    // post-onboarding blank-create above.
+    // open the SAME shared workflow — no fork.
     const inviteAcceptedRef = useRef(false);
     useEffect(() => {
         if (!isConnected || inviteAcceptedRef.current) return;
         const token = sessionStorage.getItem(PENDING_INVITE_KEY);
         if (!token) return;
         inviteAcceptedRef.current = true;
-        // Cancel any post-onboarding blank-create so we don't race it.
-        postOnboardingPendingRef.current = false;
-        clearPostOnboardingFlow();
         sessionStorage.removeItem(PENDING_INVITE_KEY);
 
         sendEventAsync(ShareInviteAcceptRequest.create({ token }))
@@ -1019,13 +985,6 @@ export function WorkflowBrowser({
                     workflow_id: response?.workflow_id,
                     new_user: !!response?.refresh_jwt,
                 });
-                // The redeem onboards a first-time joiner server-side; tell the
-                // dashboard to refresh the JWT so the onboarding gate clears.
-                if (response?.refresh_jwt) {
-                    document.dispatchEvent(
-                        new CustomEvent('noclick:invite:onboarded')
-                    );
-                }
                 if (response?.workflow_id) {
                     // Open the shared flow via the URL → state path (placeholder +
                     // FlowCanvas fetch); collaboration connects once access is granted.
@@ -1038,13 +997,6 @@ export function WorkflowBrowser({
                 logActivity(EVENTS.INVITE_ACCEPT_FAILED, {
                     error: String(err),
                 });
-                // Redeem failed — the server didn't create the joiner's onboarding
-                // row, so tell the dashboard to un-suppress onboarding (it optimistically
-                // skips the questionnaire for invite joiners). Without this the user is
-                // locked out of onboarding for the whole session.
-                document.dispatchEvent(
-                    new CustomEvent('noclick:invite:onboard-failed')
-                );
             });
     }, [isConnected, buildWorkflowParams, navigate, logActivity, store]);
 
@@ -1159,9 +1111,6 @@ export function WorkflowBrowser({
             return;
         }
         heroPromptFiredRef.current = true;
-        // This IS the blank-create; cancel the post-onboarding one so they don't race.
-        postOnboardingPendingRef.current = false;
-        clearPostOnboardingFlow();
         sessionStorage.removeItem(HERO_PROMPT_KEY);
         sessionStorage.setItem(
             'noclick:hero-prompt:pending',
@@ -1179,9 +1128,6 @@ export function WorkflowBrowser({
         const forkDataStr = sessionStorage.getItem(FORK_DATA_KEY);
         if (!forkDataStr) return;
         forkExecutedRef.current = true;
-        // Opening the fork supersedes the post-onboarding blank-create.
-        postOnboardingPendingRef.current = false;
-        clearPostOnboardingFlow();
         sessionStorage.removeItem(FORK_DATA_KEY);
         let forkData: { sourceId: string; name?: string };
         try {
@@ -1258,10 +1204,6 @@ export function WorkflowBrowser({
         const raw = sessionStorage.getItem(SCAFFOLD_DATA_KEY);
         if (!raw) return;
         scaffoldExecutedRef.current = true;
-        // Opening the scaffold supersedes the post-onboarding blank-create — this is
-        // the fix for scaffolds being dropped when a new user passes through onboarding.
-        postOnboardingPendingRef.current = false;
-        clearPostOnboardingFlow();
         sessionStorage.removeItem(SCAFFOLD_DATA_KEY);
         sessionStorage.removeItem(PENDING_SCAFFOLD_KEY);
         let intent: {
@@ -1276,29 +1218,6 @@ export function WorkflowBrowser({
             return;
         }
         if (!intent.workflowData?.nodes?.length) return;
-
-        // Persist the onboarding skip server-side. Arriving via a scaffold defers
-        // onboarding, but the suppression above is session-only (a sessionStorage
-        // flag consumed on this very mount) — without a durable `user_onboarding_responses`
-        // row the `onboarding_completed` JWT claim stays false and the questionnaire
-        // re-appears on the next dashboard remount (e.g. after creating a workflow).
-        // Mirrors the invite-join path; the dashboard refreshes the JWT on success.
-        sendEventAsync<{ refresh_jwt?: boolean }>(
-            OnboardingSkipRequest.create({ source: 'scaffold' })
-        )
-            .then((res) => {
-                if (res?.refresh_jwt) {
-                    document.dispatchEvent(
-                        new CustomEvent('noclick:onboarding:persisted')
-                    );
-                }
-            })
-            .catch((err: unknown) =>
-                console.error(
-                    'Failed to persist scaffold onboarding skip:',
-                    err
-                )
-            );
 
         if (ownershipFilter === 'not_owned') setOwnershipFilter('all');
         setIsCreatingWorkflow(true);

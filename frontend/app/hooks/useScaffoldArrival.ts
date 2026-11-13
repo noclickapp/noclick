@@ -5,9 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useOrgContext } from '~/hooks/useOrgContext';
 import { PENDING_SCAFFOLD_KEY, clearScaffoldIntent, readScaffoldIntent, type ScaffoldBlob } from '~/lib/agentScaffold';
-import { clearPostOnboardingFlow } from '~/lib/deferredOpen';
 import { isPlanLimitError } from '~/lib/planLimitErrors';
-import { createScaffoldWorkflow, persistScaffoldOnboardingSkip } from '~/lib/scaffoldWorkflow';
+import { createScaffoldWorkflow } from '~/lib/scaffoldWorkflow';
 import type { SetupArrival } from '~/components/shell/coordinatorChat';
 import { authorizeCredentialsForWorkflow } from '~/utils/credentialAutoSelect';
 
@@ -45,8 +44,6 @@ export function useScaffoldArrival(conversationId: string | null, arrive: (arriv
         taken.current = true;
         clearScaffoldIntent();
         sessionStorage.removeItem(PENDING_SCAFFOLD_KEY);
-        clearPostOnboardingFlow();
-        persistScaffoldOnboardingSkip();
         setArriving({ name: intent.name });
         void (async () => {
             try {

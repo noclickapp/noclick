@@ -12,7 +12,7 @@ point at the route that was never mounted.
 
 The frontend half is read at BUILD time (`app/lib/edition.ts`), so an image
 built without it ships hosted-only UI: a Google sign-in button with no provider
-behind it, the onboarding questionnaire, a credit balance.
+behind it, a credit balance.
 
 The images are derived rather than listed. A list is what went stale here.
 """

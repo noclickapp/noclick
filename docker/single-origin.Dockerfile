@@ -28,7 +28,7 @@ WORKDIR /src
 ENV NODE_OPTIONS=--max-old-space-size=6144
 # This image IS the self-hosted edition, and the flag is read at BUILD time by
 # the bundle. Without it the app ships hosted-only UI: a Google sign-in button
-# with no provider behind it, the onboarding questionnaire, a credit balance.
+# with no provider behind it, a credit balance.
 ENV VITE_NOCLICK_LOCAL=1
 ENV NOCLICK_BUNDLE_SERVER=1
 

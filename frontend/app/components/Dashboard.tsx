@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState, useCallback, useRef, lazy, Suspense } from 'react';
+import { useEffect, useState, useCallback, useRef, lazy, Suspense } from 'react';
 import { useSearchParams } from 'react-router';
 import { NavBar } from '~/components/nav/NavBar';
 import { NoClick } from '~/components/chat/NoClick';
@@ -8,7 +8,6 @@ import { useCachedValtioState } from '~/hooks/useCachedValtioState';
 import { useOrgContext } from '~/hooks/useOrgContext';
 import { setPendingNodeSelection } from '~/components/workflow/WorkflowContext';
 import { updateBuilderContext } from '~/lib/builder-context';
-import { POST_ONBOARDING_FLOW_KEY, clearPostOnboardingFlow } from '~/lib/deferredOpen';
 import { useGlobalKeys } from '~/hooks/useGlobalKeys';
 import { useLeaderShortcuts } from '~/hooks/useLeaderShortcuts';
 import { isTextEntryTarget } from '~/lib/keyboard';
@@ -45,11 +44,6 @@ interface DashboardProps {
 }
 
   function DashboardContent({ user, valtio_path }: DashboardProps) {
-      // Check for post-onboarding flag to determine initial sidebar state
-      // This prevents flicker by starting with sidebar closed if coming from onboarding
-      const isPostOnboarding = typeof window !== 'undefined' &&
-          sessionStorage.getItem(POST_ONBOARDING_FLOW_KEY) === 'true';
-
       const [isChatExpanded, setIsChatExpanded] = useCachedValtioState<boolean>(
           'dashboard',
         'isChatExpanded',
@@ -181,29 +175,6 @@ interface DashboardProps {
     useEffect(() => {
         updateBuilderContext({ dashboardTab: selectedTab });
     }, [selectedTab]);
-
-    // Handle post-onboarding flow: close sidebar and navigate to workflows tab
-    // Using useLayoutEffect to run synchronously before browser paint, preventing visual flicker
-    // Note: WorkflowBrowser reads the sessionStorage flag during its initial render to kick off
-    // an automatic blank-workflow creation; this effect is just here to force the sidebar closed.
-    useLayoutEffect(() => {
-        if (isPostOnboarding) {
-            // Clear the flag after WorkflowBrowser has captured it (WorkflowBrowser reads it
-            // via useRef in its initial render, before this effect runs).
-            clearPostOnboardingFlow();
-
-            // Force sidebar closed (in case there was persisted state)
-            setIsChatExpanded(false);
-
-            // Navigate to workflows tab
-            setSelectedTab('flow');
-            setSearchParams((prev) => {
-                const newParams = new URLSearchParams(prev);
-                newParams.set('tab', 'workflows');
-                return newParams;
-            }, { replace: true });
-        }
-    }, []); // Only run once on mount
 
     // Handle tab changes - update URL while preserving existing params
     const handleTabChange = useCallback((tab: string) => {

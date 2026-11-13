@@ -1,5 +1,5 @@
 // Pins the edition flag's default. isLocalEdition() gates surfaces the hosted
-// service must keep (Google sign-in, the onboarding questionnaire), so a flipped
+// service must keep (Google sign-in), so a flipped
 // default would silently strip them from production — where the var is unset.
 
 import { describe, it, expect, afterEach } from 'vitest';

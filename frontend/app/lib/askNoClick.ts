@@ -11,7 +11,7 @@ import { navigateToTab } from '~/lib/navigation';
 const ASK_EVENT = 'noclick:coordinator:ask';
 // In localStorage: the tab an emailed sign-up link opens is another tab.
 export const STAGED_KEY = 'noclick:chat-draft';
-// Long enough to sign up, confirm an email and answer onboarding; a draft older than that isn't this visit's.
+// Long enough to sign up and confirm an email; a draft older than that isn't this visit's.
 const STAGED_FRESH_MS = 30 * 60 * 1000;
 
 export interface PendingAsk {
@@ -38,22 +38,16 @@ function freshDraft(raw: string): string | null {
     }
 }
 
-/** The draft a page of the site staged, while fresh; `take` removes it (a stale or unreadable one goes anyway). */
-function staged(take: boolean): string | null {
+/** Take the draft a page of the site staged, while fresh (a stale or unreadable one goes anyway). */
+function takeStaged(): string | null {
     try {
         const raw = window.localStorage.getItem(STAGED_KEY);
         if (raw === null) return null;
-        const draft = freshDraft(raw);
-        if (take || !draft) window.localStorage.removeItem(STAGED_KEY);
-        return draft;
+        window.localStorage.removeItem(STAGED_KEY);
+        return freshDraft(raw);
     } catch {
         return null; // storage is off (a private window): nothing was staged
     }
-}
-
-/** Whether a page of the site left the chat a draft, so the app opens on the chat. */
-export function hasStagedDraft(): boolean {
-    return typeof window !== 'undefined' && staged(false) !== null;
 }
 
 /** Read and clear the drafted message. */
@@ -61,7 +55,7 @@ export function consumePendingAsk(): PendingAsk | null {
     const ask = pendingAsk;
     pendingAsk = null;
     if (ask) return ask;
-    const text = staged(true);
+    const text = takeStaged();
     return text ? { text } : null;
 }
 

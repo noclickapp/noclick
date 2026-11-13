@@ -39,7 +39,7 @@ ARG VITE_API_HOST
 ARG VITE_APP_HOST
 # This image only ever builds the self-hosted edition, and the flag is read at
 # BUILD time. Unset, the bundle ships hosted-only UI: a Google sign-in button
-# with no provider behind it, the onboarding questionnaire, a credit balance.
+# with no provider behind it, a credit balance.
 ENV VITE_NOCLICK_LOCAL=1
 ENV NOCLICK_BUNDLE_SERVER=1
 ENV VITE_RELAY_URL=$VITE_RELAY_URL \

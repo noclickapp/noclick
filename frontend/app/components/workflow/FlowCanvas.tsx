@@ -7214,21 +7214,6 @@ const FlowCanvasInner = ({
     // automatic bounce on count change: it used to fire the moment the user
     // typed a character that passed validation, yanking them out mid-edit.
 
-    // Post-onboarding: OnboardingQuestionnaire stores the user's build_type answer
-    // ('canvas' or 'interface') under 'noclick_post_onboarding_tab' before auto-creating
-    // this blank workflow. Consume once on mount so the empty-state overlay opens on the
-    // chosen tab instead of the default 'canvas'.
-    const postOnboardingTabConsumedRef = useRef(false);
-    useEffect(() => {
-        if (postOnboardingTabConsumedRef.current) return;
-        postOnboardingTabConsumedRef.current = true;
-        const tab = sessionStorage.getItem('noclick_post_onboarding_tab');
-        if (tab === 'interface' || tab === 'canvas') {
-            sessionStorage.removeItem('noclick_post_onboarding_tab');
-            setActiveTab(tab);
-        }
-    }, [setActiveTab]);
-
     // On clone/fork and the /agents scaffold handoff, the upstream flow sets
     // 'noclick_open_setup_tab' in sessionStorage before navigating. Consume it
     // once nodes hydrate — the Setup tab is permanent and state-derived, so

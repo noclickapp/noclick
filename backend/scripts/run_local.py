@@ -224,7 +224,7 @@ def compose_frontend_env(sb: dict, sec: dict) -> dict:
         "SESSION_SECRET": sec["SESSION_SECRET"],
         # Mirrors NOCLICK_LOCAL for the UI (app/lib/edition.ts): drops Google
         # sign-in, which needs a provider configured in a hosted Supabase
-        # project, and the onboarding questionnaire.
+        # project.
         "VITE_NOCLICK_LOCAL": "1",
         # No bot risk on a local install, and a captcha keyed to another
         # domain would never emit a token — leaving Sign up disabled forever.
