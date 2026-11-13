@@ -208,27 +208,6 @@
    "category": "Accounting",
    "description": "",
    "is_trigger": false
-  },
-  {
-   "name": "on_new_deal",
-   "display_name": "New Deal",
-   "category": "Triggers",
-   "description": "",
-   "is_trigger": true
-  },
-  {
-   "name": "on_new_partner",
-   "display_name": "New Partner",
-   "category": "Triggers",
-   "description": "",
-   "is_trigger": true
-  },
-  {
-   "name": "on_new_wallet_txn",
-   "display_name": "New Bank Transaction",
-   "category": "Triggers",
-   "description": "",
-   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
