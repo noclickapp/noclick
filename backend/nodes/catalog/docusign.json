@@ -93,12 +93,19 @@
    "category": "Envelopes",
    "description": "Void an in-progress envelope and notify its recipients of the reason.",
    "is_trigger": false
+  },
+  {
+   "name": "on_event",
+   "display_name": "On Envelope or Recipient Event",
+   "category": "Triggers",
+   "description": "Start a workflow for envelope or recipient activity across the connected account.",
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null,
  "summary": "Run a Docusign eSignature API operation on the user's default account.",
  "retired": null
