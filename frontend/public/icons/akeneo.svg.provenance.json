@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/akeneo.svg",
-  "source": "https://api.akeneo.com/img/Akeneo_APIs.svg",
-  "license": "Akeneo brand mark used nominatively to identify the integration; trademark rights remain with Akeneo.",
-  "sha256": "0a7e1fec319f07b41c1d1648a18c8864ab64a31bd3d56a30c65e8a4185618308"
+  "source": "https://www.akeneo.com/wp-content/uploads/2024/09/logo-akeneo-lock-up.svg",
+  "source_page": "https://www.akeneo.com/ (header logo) and https://www.akeneo.com/press/",
+  "date": "2026-11-13",
+  "license": "Akeneo trademark; used solely to identify the Akeneo integration",
+  "sha256": "da80979a169dbc210c20b0c7cb916babf6979cf96b0e5950a8533a996819f5eb",
+  "source_sha256": "88ddf332cf6ccce98b9325b3786ef5e430a786d8af1ce92d20b71180b90441ce",
+  "edits": [
+    "kept only the purple symbol (element 6, #994AFF); dropped the 'akeneo' wordmark paths (elements 0-5)",
+    "cropped the viewBox to the symbol with no pad (the symbol is Akeneo's own rounded-square tile)",
+    "clean"
+  ]
 }
