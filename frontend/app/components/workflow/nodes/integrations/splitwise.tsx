@@ -3,14 +3,10 @@ import type { CSSProperties } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const SplitwiseIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <>
-    <img src="/icons/splitwise.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-        style={{ ...style, objectFit: 'contain' }} />
-    <img src="/icons/splitwise-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-        style={{ ...style, objectFit: 'contain' }} />
-    </>
+    <ThemedBrandImg light="/icons/splitwise.svg" dark="/icons/splitwise-dark.svg" className={className} style={style} />
 );
 
 export const SplitwiseNode: NodeDefinition = {
