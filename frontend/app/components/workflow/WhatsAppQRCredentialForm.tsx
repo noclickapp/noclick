@@ -21,8 +21,9 @@ interface WhatsAppQRCredentialFormProps {
     // place (same id, same webhooks, same billing) — duplicate credentials
     // stack device links until WhatsApp logs all of them out.
     reconnectCredentialId?: string;
-    // Mint + show a QR the moment the form mounts (default). Pass false when a
-    // usable credential already exists: a QR sitting in the panel reads as
+    // Mint + show a QR the moment the form mounts (default). Pass false where a
+    // usable credential can be picked instead (a node's picker), never where
+    // connecting means adding one: a QR sitting in the panel reads as
     // "scan me", and every scan of a phone that is already linked rebinds its
     // credential to a fresh connection (2026-08-29 — two needless re-scans).
     // The form then idles behind a button until the user asks for a new link.
@@ -48,6 +49,7 @@ export const WhatsAppQRCredentialForm = ({
     const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const pollCountRef = useRef(0);
     const startedRef = useRef(false);
+    const mountedRef = useRef(false);
     const sendRef = useRef(sendEvent ?? sendOverSocket);
     useEffect(() => { sendRef.current = sendEvent ?? sendOverSocket; }, [sendEvent]);
 
@@ -61,7 +63,9 @@ export const WhatsAppQRCredentialForm = ({
 
     // Clean up polling on unmount
     useEffect(() => {
+        mountedRef.current = true;
         return () => {
+            mountedRef.current = false;
             if (pollIntervalRef.current) {
                 clearInterval(pollIntervalRef.current);
             }
@@ -92,6 +96,8 @@ export const WhatsAppQRCredentialForm = ({
                 ...(reconnectCredentialId ? { reconnect_credential_id: reconnectCredentialId } : {}),
             });
 
+            // Closed while the QR loaded: nothing is left to show it, so nothing polls for its scan.
+            if (!mountedRef.current) return;
             if (!response?.success) {
                 if (response?.code === 'wahooks_key_missing') {
                     // Self-hosted with no WAHooks key: ask for it here, not in an error.

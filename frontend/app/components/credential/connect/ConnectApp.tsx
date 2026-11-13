@@ -128,6 +128,9 @@ export function ConnectApp({
         copy: methodCopy(copyMethodOf(method), app, providerName?.(method) ?? app),
     }));
     const [chosen, setChosen] = useState(initial?.method ?? ways[0]?.method.credential_type);
+    // A QR code left for another tab stays mounted, hidden: it holds a connection NoClick reserved and waits for its
+    // scan, so coming back shows the same code rather than starting another.
+    const [keptQr, setKeptQr] = useState<string[]>([]);
     const [stage, setStageState] = useState<ConnectStage>(initial?.stage ?? 'connect');
     const [result, setResult] = useState<ConnectResult | undefined>(initial?.result);
     const way = ways.find((w) => w.method.credential_type === chosen) ?? ways[0];
@@ -182,24 +185,28 @@ export function ConnectApp({
         );
     }
 
-    const body = (
-        <Fragment key={way.method.credential_type}>
-            {way.kind === 'api_key' ? (
-                <KeySteps method={way.method} app={app}>
-                    {renderMethod(way.method, ctx(way, false))}
-                </KeySteps>
-            ) : (
-                <div>{renderMethod(way.method, ctx(way))}</div>
-            )}
-        </Fragment>
-    );
+    const bodyOf = (w: Way) =>
+        w.kind === 'api_key' ? (
+            <KeySteps method={w.method} app={app}>
+                {renderMethod(w.method, ctx(w, false))}
+            </KeySteps>
+        ) : (
+            <div>{renderMethod(w.method, ctx(w))}</div>
+        );
+    const choose = (next: string) => {
+        if (way.kind === 'qr_scan' && next !== way.method.credential_type) {
+            setKeptQr((kept) => (kept.includes(way.method.credential_type) ? kept : [...kept, way.method.credential_type]));
+        }
+        setChosen(next);
+    };
+    const panels = ways.filter((w) => w === way || keptQr.includes(w.method.credential_type));
 
     return (
         <div ref={stageRef} className="space-y-6 pb-5 pt-1" data-testid="connect-app">
             {ways.length > 1 ? (
                 // Real tabs (arrow keys, one stop in the tab order, a panel per way in). Four or more sit two to a row,
                 // and a name too long for a phone wraps rather than being cut off.
-                <TabsPrimitive.Root value={way.method.credential_type} onValueChange={setChosen} className="space-y-6">
+                <TabsPrimitive.Root value={way.method.credential_type} onValueChange={choose} className="space-y-6">
                     <TabsPrimitive.List
                         aria-label={`How to connect ${app}`}
                         className={cn('bg-secondary p-1 dark:bg-foreground/[0.06]', ways.length > 3 ? 'grid grid-cols-2 gap-1' : 'flex', 'rounded-[20px]')}
@@ -217,12 +224,20 @@ export function ConnectApp({
                             </TabsPrimitive.Trigger>
                         ))}
                     </TabsPrimitive.List>
-                    <TabsPrimitive.Content value={way.method.credential_type} className="focus-visible:outline-none">
-                        {body}
-                    </TabsPrimitive.Content>
+                    {panels.map((w) => (
+                        <TabsPrimitive.Content
+                            key={w.method.credential_type}
+                            value={w.method.credential_type}
+                            forceMount={w.kind === 'qr_scan' || undefined}
+                            hidden={w !== way}
+                            className="focus-visible:outline-none"
+                        >
+                            {bodyOf(w)}
+                        </TabsPrimitive.Content>
+                    ))}
                 </TabsPrimitive.Root>
             ) : (
-                body
+                <Fragment key={way.method.credential_type}>{bodyOf(way)}</Fragment>
             )}
             {accounts.length > 0 && <AccountList accounts={accounts} onOpen={onOpenAccount} onReconnect={onReconnectAccount} app={app} />}
             {ask && (

@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { AppConnect } from '~/components/credential/connect/AppConnect';
 import type { ConnectAccountRow, ConnectResult, ConnectStage } from '~/components/credential/connect/ConnectApp';
-import { accountProblem, useConnectedAccounts, type ConnectedAccount } from '~/components/shell/connections/accounts';
+import { useConnectedAccounts, type ConnectedAccount } from '~/components/shell/connections/accounts';
 import { INLINE_ACTION } from '~/components/workflow/CredentialRequestActions';
 import { useCredentialList } from '~/hooks/useCachedCredentialList';
 import { navigateToAccount } from '~/lib/navigation';
@@ -50,9 +50,6 @@ export default function ConnectAppStep({
     const [stage, setStage] = useState<ConnectStage>('connect');
     const reconnecting = target ? credentials.find((c) => c.id === target.credentialId) : undefined;
     const qrReconnectId = reconnecting && reconnecting.connection_healthy === false && !reconnecting.revoked_at ? reconnecting.id : undefined;
-    // A spare QR invites a re-scan that rebinds a working number to a new connection, so one shows unasked only when
-    // no usable number exists, or to repair a dead one.
-    const usableNumber = credentials.some((c) => c.credential_type === 'whatsapp_qr' && !accountProblem(c));
 
     return (
         <>
@@ -71,7 +68,9 @@ export default function ConnectAppStep({
                 }}
                 initialMethod={target?.credentialType}
                 qrReconnectId={qrReconnectId}
-                qrAutoStart={!usableNumber || !!qrReconnectId}
+                // Connect here adds an account, so its QR shows at once whatever is connected already (listed under it),
+                // as does a dead number's repair. A working one opened to reconnect keeps its button.
+                qrAutoStart={!target || !!qrReconnectId}
                 onConnected={() => {
                     invalidateCredentialsCache();
                     onConnected();

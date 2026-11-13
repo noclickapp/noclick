@@ -108,7 +108,8 @@ function AppConnectForm({
     initialMethod?: string;
     /** An attached WhatsApp credential whose session died: the scan repairs it in place. */
     qrReconnectId?: string;
-    /** A QR code shows unasked only when there is nothing to pick or the attached link is dead. */
+    /** Show a QR code unasked: where connecting adds an account, there's no number to pick, or the attached link is
+     *  dead. */
     qrAutoStart?: boolean;
 }) {
     const isVisible = useCredentialSchemaVisible();
