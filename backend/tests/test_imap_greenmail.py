@@ -26,6 +26,7 @@ import time
 from email.message import EmailMessage
 from typing import Any, Dict, List
 
+import httpx
 import pytest
 
 from nodes import imap_mailbox as mailbox
@@ -37,14 +38,15 @@ BOB, BOB_PASSWORD = "bob@acme.test", "bob-pass"
 
 
 def _certificate(host: str):
-    """A self-signed certificate naming ``host``, as GreenMail's keystore and the PEM the client trusts."""
+    """A self-signed certificate naming ``host``, as GreenMail's keystore and the PEM the client trusts. Its key is
+    P-256, whose handshakes a JVM still warming up signs far sooner than an RSA key's: every operation dials anew."""
     from cryptography import x509
     from cryptography.hazmat.primitives import hashes, serialization
-    from cryptography.hazmat.primitives.asymmetric import rsa
+    from cryptography.hazmat.primitives.asymmetric import ec
     from cryptography.hazmat.primitives.serialization import pkcs12
     from cryptography.x509.oid import NameOID
 
-    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    key = ec.generate_private_key(ec.SECP256R1())
     name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "greenmail.test")])
     try:
         san = x509.IPAddress(ipaddress.ip_address(host))
@@ -71,6 +73,13 @@ def _docker_host() -> str:
     return "127.0.0.1"
 
 
+def _answers(url: str) -> bool:
+    try:
+        return httpx.get(url, timeout=2).status_code == 200
+    except httpx.HTTPError:
+        return False
+
+
 @pytest.fixture(scope="module")
 def greenmail():
     docker = pytest.importorskip("docker")
@@ -82,7 +91,8 @@ def greenmail():
     host = _docker_host()
     keystore, pem = _certificate(host)
     opts = " ".join([
-        "-Dgreenmail.setup.test.all", "-Dgreenmail.hostname=0.0.0.0", "-Dgreenmail.users.login=email",
+        "-Dgreenmail.setup.test.all", "-Dgreenmail.hostname=0.0.0.0", "-Dgreenmail.api.hostname=0.0.0.0",
+        "-Dgreenmail.users.login=email",
         f"-Dgreenmail.users=ana:{ANA_PASSWORD}@acme.test,bob:{BOB_PASSWORD}@acme.test",
         "-Dgreenmail.tls.keystore.file=/certs/test.p12", "-Dgreenmail.tls.keystore.password=changeit",
     ])
@@ -90,9 +100,12 @@ def greenmail():
         client.images.get(IMAGE)
     except docker.errors.ImageNotFound:  # containers.create, unlike run, doesn't pull
         client.images.pull(IMAGE)
+    # A JVM that serves a few minutes of tests: its first tier of compiled code only and a serial collector, so on a
+    # two-core runner no compiler or collector threads take the CPU from the tests (the image's own option kept).
+    java = "-Djava.net.preferIPv4Stack=true -XX:TieredStopAtLevel=1 -XX:+UseSerialGC"
     container = client.containers.create(
-        IMAGE, environment={"GREENMAIL_OPTS": opts},
-        ports={"3993/tcp": None, "3465/tcp": None, "3143/tcp": None, "3025/tcp": None},
+        IMAGE, environment={"GREENMAIL_OPTS": opts, "JAVA_OPTS": java},
+        ports={"3993/tcp": None, "3465/tcp": None, "3143/tcp": None, "3025/tcp": None, "8080/tcp": None},
     )
     archive = io.BytesIO()
     with tarfile.open(fileobj=archive, mode="w") as tar:
@@ -110,8 +123,13 @@ def greenmail():
         container.reload()
         ports = {k.split("/")[0]: int(v[0]["HostPort"]) for k, v in container.attrs["NetworkSettings"]["Ports"].items()
                  if v}
+        # The API (which empties the mailboxes between tests) answers last, a moment after it says it's starting.
+        while not _answers(f"http://{host}:{ports['8080']}/api/service/readiness"):
+            if time.time() > deadline:
+                pytest.fail(f"GreenMail's API never answered:\n{container.logs().decode(errors='replace')[-2000:]}")
+            time.sleep(0.1)
         yield {"host": host, "pem": pem, "imaps": ports["3993"], "smtps": ports["3465"], "imap": ports["3143"],
-               "smtp": ports["3025"]}
+               "smtp": ports["3025"], "api": ports["8080"]}
     finally:
         container.remove(force=True)
 
@@ -133,22 +151,10 @@ def server(greenmail, monkeypatch):
         return False
 
     monkeypatch.setattr("nodes.core.email_branding.sender_is_free_tier", paid)
-    for user, password in ((ANA, ANA_PASSWORD), (BOB, BOB_PASSWORD)):
-        _empty(greenmail, user, password)
+    # Every folder of every mailbox emptied, as a new mailbox is (GreenMail's own API, no sign-in over TLS).
+    purged = httpx.post(f"http://{greenmail['host']}:{greenmail['api']}/api/mail/purge", timeout=30)
+    assert purged.status_code == 200, purged.text
     return greenmail
-
-
-def _empty(server, user, password) -> None:
-    """Every folder empty, as a new mailbox is."""
-    client = raw_imap(server, user, password)
-    _, listed = client.list('""', '"*"')
-    for line in listed:
-        name = line.decode().rsplit(" ", 1)[-1].strip('"')
-        typ, data = client.select(mailbox.quote(name))
-        if typ == "OK" and int(data[0] or 0):
-            client.store("1:*", "+FLAGS.SILENT", r"(\Deleted)")
-            client.expunge()
-    client.logout()
 
 
 def credential(server, *, email=ANA, password=ANA_PASSWORD, **overrides) -> Dict[str, Any]:
