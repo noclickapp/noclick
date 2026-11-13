@@ -8,8 +8,6 @@ import pytest
 
 from utils import capabilities, node_search
 
-pytestmark = pytest.mark.every_integration
-
 
 @pytest.fixture(scope="module", params=["with demand", "fit alone"])
 def demand(request):
