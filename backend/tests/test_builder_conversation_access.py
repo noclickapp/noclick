@@ -25,6 +25,9 @@ from wss.handlers.workflow_builder_handler import (
 from wss.receiver.client_events import WorkflowBuilderEditRequest
 from wss.sender import send_event
 
+# It looks up every integration (the time budget's rule, backend/test_shards.py).
+pytestmark = pytest.mark.every_integration
+
 CALLER = "00000000-0000-4000-8000-0000000000e1"
 OTHER = "00000000-0000-4000-8000-0000000000f2"
 GRAPH = {"nodes": [{"id": "hook", "type": "trigger-webhook", "config": {"label": "Hook"},
