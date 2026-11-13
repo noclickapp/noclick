@@ -44,6 +44,15 @@ _GRAPH_WRITE = re.compile(
 )
 
 
+# A file that writes a graph says so in its text, which is read before it's parsed: an INSERT or UPDATE within a few
+# concatenated literals of the table it names, or a SET piece ``workflow = $n`` (``CASE``, ``jsonb_set``, ...).
+_MAY_WRITE = re.compile(
+    r"\b(?:insert|update)\b[\s\S]{0,1000}?\b(?:workflows|workflow_checkpoints|workflow_versions)\b"
+    r"|workflow\s*=\s*(?:\$|case\b|jsonb_set\b|coalesce\b)",
+    re.IGNORECASE,
+)
+
+
 def _sources():
     for path in BACKEND.rglob("*.py"):
         rel = path.relative_to(BACKEND)
@@ -102,7 +111,9 @@ def test_every_graph_write_strips_runtime_keys():
     writers, violations = set(), []
     for rel, path in _sources():
         text = path.read_text(encoding="utf-8", errors="ignore")
-        if not re.search(r"\b(?:workflows|workflow_checkpoints|workflow_versions|workflow\s*=)", text):
+        if "workflow" not in text \
+                or not re.search(r"\b(?:workflows|workflow_checkpoints|workflow_versions|workflow\s*=)", text) \
+                or not _MAY_WRITE.search(text):
             continue
         for name, strips in _graph_writers(ast.parse(text)):
             key = f"{rel.as_posix()}::{name}"

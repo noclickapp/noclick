@@ -9,13 +9,19 @@ import pytest
 from utils import capabilities, node_search
 
 
-@pytest.fixture(autouse=True, params=["with demand", "fit alone"])
-def demand(request, monkeypatch):
-    if request.param == "fit alone":
-        monkeypatch.delitem(capabilities._providers, capabilities.NODE_DEMAND, raising=False)
+@pytest.fixture(scope="module", params=["with demand", "fit alone"])
+def demand(request):
+    """One index per way of ranking, which every test in the module reads."""
     node_search._index.cache_clear()
     yield request.param
     node_search._index.cache_clear()
+
+
+@pytest.fixture(autouse=True)
+def ranking(demand, monkeypatch):
+    # The deployment's demand is registered again before every test (tests/conftest.py).
+    if demand == "fit alone":
+        monkeypatch.delitem(capabilities._providers, capabilities.NODE_DEMAND, raising=False)
 
 
 def first(query: str) -> str:
@@ -91,3 +97,17 @@ def test_a_retired_type_is_found_only_by_a_search_scoped_to_it():
 
 def test_stop_words_alone_find_nothing():
     assert node_search.search("the and of") == []
+
+
+def test_scoring_only_the_candidates_ranks_as_scoring_every_type_does():
+    """A search scores only the types the query's words, or its whole, are in (``_candidates``): every other type
+    scores nothing, so the ranking is the one scoring every listed type gives."""
+    from nodes.core.registry import is_listed
+
+    for query in ("send sms", "box", "x", "googlesheets", "mail", "close", "create payment link", "sharepoint upload",
+                  "zorblax", "the and of"):
+        query_words, whole = list(dict.fromkeys(node_search.words(query))), node_search.compact(query)
+        every = [hit for e in node_search._index()[0].values()
+                 if is_listed(e.node_type) and (hit := node_search._score(e, query_words, whole)) is not None]
+        every.sort(key=lambda h: (-h.score, h.entry.slug))
+        assert node_search.search(query) == every, query

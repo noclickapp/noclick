@@ -349,15 +349,11 @@ _LINKED_BY = {"qr_scan": "scan the QR code", "purchase": "buy the number", "oaut
 
 
 def _linked_index() -> Dict[str, str]:
-    """Each field only NoClick's own linking flow sets -> the credential type declaring it (the node catalog)."""
-    from nodes.core.catalog import credential_types, credential_holders
+    """Each field only NoClick's own linking flow sets -> the credential type declaring it (the node catalog, read
+    once: ``typed_fields`` and ``linked_metadata`` ask per field)."""
+    from nodes.core.catalog import linked_fields
 
-    index: Dict[str, str] = {}
-    for credential_type in credential_types():
-        for _, credential in credential_holders(credential_type):
-            for name in credential.get("linked_fields", ()):
-                index.setdefault(name, credential_type)
-    return index
+    return linked_fields()
 
 
 def linked_field_names() -> set:

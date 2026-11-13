@@ -149,6 +149,23 @@ def reconcile_credential_type(config_data: Dict[str, Any], config_model: Any) ->
     return out
 
 
+def _unset_marker_verdicts(annotation: Any) -> Tuple[bool, bool]:
+    """Whether a field typed ``annotation`` rejects None, and whether it rejects ""."""
+    adapter = TypeAdapter(annotation)
+
+    def rejects(marker: Any) -> bool:
+        try:
+            adapter.validate_python(marker)
+        except Exception:
+            return True
+        return False
+
+    return rejects(None), rejects('')
+
+
+_shared_unset_marker_verdicts = lru_cache(maxsize=None)(_unset_marker_verdicts)
+
+
 @lru_cache(maxsize=None)
 def _rejected_unset_fields(model: Any):
     """Among a config model's DEFAULTED fields: (names rejecting None, names
@@ -159,13 +176,18 @@ def _rejected_unset_fields(model: Any):
         if finfo.is_required():
             continue
         try:
-            adapter = TypeAdapter(finfo.annotation)
+            hash(finfo.annotation)
+        except TypeError:
+            verdicts = _unset_marker_verdicts
+        else:
+            # Equal annotations validate alike: the node configs' ~119k defaulted fields hold ~30k of them.
+            verdicts = _shared_unset_marker_verdicts
+        try:
+            rejects = verdicts(finfo.annotation)
         except Exception:
             continue
-        for marker, bucket in ((None, rejects_none), ('', rejects_empty)):
-            try:
-                adapter.validate_python(marker)
-            except Exception:
+        for rejected, bucket in zip(rejects, (rejects_none, rejects_empty)):
+            if rejected:
                 bucket.add(name)
     return frozenset(rejects_none), frozenset(rejects_empty)
 

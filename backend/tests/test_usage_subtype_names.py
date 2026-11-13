@@ -139,8 +139,10 @@ class Code:
         or ``self``, or by an imported name. The bool says the call passes ``self`` implicitly."""
         name = function.name
         method = bool(function.args.args) and function.args.args[0].arg in ("self", "cls")
+        # Another module reaches it only by importing it or ``rel``'s module, which names that module's last part.
+        module = rel[:-3].replace("/", ".").removesuffix(".__init__").rsplit(".", 1)[-1]
         for caller, text in self.sources.items():
-            if f"{name}(" not in text or self.tree(caller) is None:
+            if f"{name}(" not in text or (caller != rel and module not in text) or self.tree(caller) is None:
                 continue
             for call in self.by_name[caller].get(name, ()):
                 f = call.func

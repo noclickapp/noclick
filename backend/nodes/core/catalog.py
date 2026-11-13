@@ -154,3 +154,20 @@ def borrows(node_type: str, credential_type: str) -> bool:
     """Whether ``node_type`` uses ``credential_type`` as another node's (its ``borrowed_credential_types``)."""
     return any(credential["type"] == credential_type and credential["borrowed"]
                for credential in node_facts(node_type)["credentials"])
+
+
+@lru_cache(maxsize=4)
+def _linked_index(node_types: Tuple[str, ...]) -> Dict[str, str]:
+    index: Dict[str, str] = {}
+    for credential_type, holders in _credential_index(node_types).items():
+        for _, credential in holders:
+            for name in credential.get("linked_fields", ()):
+                index.setdefault(name, credential_type)
+    return index
+
+
+def linked_fields() -> Dict[str, str]:
+    """Each field only NoClick's own linking flow sets -> the first credential type, in registry order, declaring it."""
+    from nodes.core.registry import NODE_REGISTRY
+
+    return _linked_index(tuple(NODE_REGISTRY))

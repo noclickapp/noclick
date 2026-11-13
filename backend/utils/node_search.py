@@ -163,29 +163,42 @@ def _entry(node_type: str) -> Entry:
 
 
 @lru_cache(maxsize=1)
-def _index() -> Tuple[Dict[str, Entry], Dict[str, float], FrozenSet[str]]:
-    """Every searchable node type's entry; each word's rarity across them (its inverse document frequency); and the
-    words several apps' names share, which name a kind of app rather than one (``sms``, ``crm``, ``google``)."""
+def _index() -> Tuple[Dict[str, Entry], Dict[str, float], FrozenSet[str], Dict[str, FrozenSet[str]],
+                      Tuple[Tuple[str, str], ...]]:
+    """Every searchable node type's entry; each word's rarity across them (its inverse document frequency); the
+    words several apps' names share, which name a kind of app rather than one (``sms``, ``crm``, ``google``); and,
+    for ``_candidates``, the node types each word is in and each type's whole names."""
     from nodes.core.registry import NODE_REGISTRY
 
     entries = {t: _entry(t) for t in NODE_REGISTRY if not t.startswith("test-")}
-    seen: Dict[str, int] = {}
+    seen: Dict[str, List[str]] = {}
     in_names: Dict[str, int] = {}
     for e in entries.values():
         every = e.name_words | e.keyword_words | e.description_words
         every = every.union(*(op.words for op in e.operations)) if e.operations else every
         for w in every:
-            seen[w] = seen.get(w, 0) + 1
+            seen.setdefault(w, []).append(e.node_type)
         for w in e.name_words:
             in_names[w] = in_names.get(w, 0) + 1
     total = len(entries)
     kinds = frozenset(w for w, n in in_names.items() if n >= _KIND_NAMES)
-    return entries, {w: math.log(1 + total / n) for w, n in seen.items()}, kinds
+    return (entries, {w: math.log(1 + total / len(found)) for w, found in seen.items()}, kinds,
+            {w: frozenset(found) for w, found in seen.items()},
+            tuple((name, t) for t, e in entries.items() for name in e.names))
 
 
 def _rarity(word: str) -> float:
-    entries, idf, _ = _index()
+    entries, idf = _index()[:2]
     return idf.get(word, math.log(1 + len(entries)))
+
+
+def _candidates(query_words: Sequence[str], whole: str) -> FrozenSet[str]:
+    """The node types ``_score`` can find the query in: one of its words among theirs, or the whole query as or in one
+    of their names (``_name_holds``). It finds nothing in any other, so a search scores only these."""
+    _, _, _, by_word, names = _index()
+    found = set().union(*(by_word.get(w, ()) for w in query_words))
+    found.update(t for name, t in names if whole == name or (len(whole) >= 3 and whole in name))
+    return frozenset(found)
 
 
 def _name_holds(e: Entry, query: str) -> float:
@@ -252,8 +265,9 @@ def search(query: str, *, node_types: Optional[Iterable[str]] = None, limit: Opt
     whole = compact(query)
     if not query_words and not whole:
         return []
-    pool = ((e for e in entries.values() if is_listed(e.node_type)) if node_types is None
-            else (entries[t] for t in node_types if t in entries))
+    found = _candidates(query_words, whole)
+    pool = ((e for e in entries.values() if e.node_type in found and is_listed(e.node_type)) if node_types is None
+            else (entries[t] for t in node_types if t in found))
     hits = [h for h in (_score(e, query_words, whole) for e in pool) if h is not None]
     hits.sort(key=lambda h: (-h.score, h.entry.slug))
     return hits[:limit] if limit else hits

@@ -169,7 +169,10 @@ def test_gmail_reads_emptiness_from_output():
 
 
 @pytest.fixture
-def handler():
+def handler(monkeypatch):
+    # A test worker holding every integration is past the executor's 3 GB mark, where it runs a full gc.collect()
+    # after each node (seconds on CI's VMs); what a node's run did to memory has nothing to do with halting.
+    monkeypatch.setattr("wss.handlers.workflow_execution_handler.get_rss_mb", lambda: 0.0)
     sio = AsyncMock()
     sio.emit = AsyncMock()
     return WorkflowExecutionHandler(sio=sio)
