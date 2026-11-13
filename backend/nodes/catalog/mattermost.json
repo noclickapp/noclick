@@ -18,6 +18,13 @@
  ],
  "operations": [
   {
+   "name": "on_message",
+   "display_name": "New Public Channel Message",
+   "category": "Triggers",
+   "description": "Start a workflow when someone posts in a public channel.\n\n    Outgoing webhooks must be enabled and the token owner needs manage_webhooks.\n    Private channels and direct messages do not support outgoing webhooks.",
+   "is_trigger": true
+  },
+  {
    "name": "get_current_user",
    "display_name": null,
    "category": null,
@@ -196,7 +203,7 @@
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null,
  "summary": "",
  "retired": null
