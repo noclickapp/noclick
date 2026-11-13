@@ -6,7 +6,7 @@ import { Suspense, type ReactNode } from 'react';
 import { ArrowUpRight, ShieldCheck } from 'lucide-react';
 import { SourcesList } from '~/components/coordinator/inline/media';
 import { PILL_QUIET, Receipt, Status } from '~/components/coordinator/inline/primitives';
-import { obj, str, type CoordinatorToolCall } from '~/lib/coordinatorToolCalls';
+import { cardRefsOf, obj, str, type CoordinatorToolCall } from '~/lib/coordinatorToolCalls';
 import { cn } from '~/lib/utils';
 import type { CoordinatorSetupRef } from '~/types/socket-events.generated';
 import { useNewerCard } from './canvases';
@@ -104,7 +104,8 @@ export function TurnCards({ calls, text }: { calls: readonly CoordinatorToolCall
     const sources = turnSources(calls, text);
     const cards = calls.flatMap((call) => {
         const card = cardFor(call, calls);
-        return card ? [<div key={call.id}>{card}</div>] : [];
+        // What the card is about (an approval, an operation, an agent), for a link elsewhere on the page to find it.
+        return card ? [<div key={call.id} data-card-refs={cardRefsOf(call).join(' ') || undefined} className="rounded-2xl">{card}</div>] : [];
     });
     if (!sources.length && !cards.length) return null;
     return (

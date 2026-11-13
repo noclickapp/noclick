@@ -37,23 +37,26 @@ export interface CoordinatorChat {
     listFiles: (query: string) => Promise<ChatFile[]>;
     /** Puts NoClick's note that `arrival` is being set up in the thread, which draws its setup card under it. */
     arrive: (arrival: SetupArrival) => Promise<void>;
-    /** What sits on the composer's top edge: the work the account's agents are doing, drawn by the platform that
-     *  runs them (hosted: the tab of what's at work). It draws nothing when nothing is going. */
-    ComposerTab?: ComponentType<ComposerTabProps>;
+    /** What works beside the conversation and what needs the person, drawn by the platform that runs the agents
+     *  (hosted: Work's Beside card and rail, with the account's asks on top). It draws nothing when nothing is going. */
+    Beside?: ComponentType<ChatBesideProps>;
     /** The coordinator's own switchers, drawn by the platform that runs it: its model beside Send, the row under the
      *  box (the account its model runs on, where it runs, its budget), and, while it can't run what's picked, the
      *  Send that asks for an account instead (`ask`, which Enter opens too). */
     composerControls?: { model: ReactNode; footer: ReactNode; ask?: { button: ReactNode; open: () => void } | null };
 }
 
-/** What the composer's tab reads: the thread, the work its turns started as the thread follows it, and how to start
- *  a reply in the composer; and where beside the chat it may open a column of its own (a laptop's: an agent's
- *  terminal), null until the page has laid it out. */
-export interface ComposerTabProps {
+/** What the Beside reads: the thread, the work its turns started as the thread follows it, how to start a reply in
+ *  the composer, the chat column's width, and where beside the chat it may open a column of its own (a laptop's: a
+ *  helper's conversation), null until the page has laid it out. It floats over the column's top right and says how much
+ *  of the column's right the thread and the composer give it (`onReserve`). */
+export interface ChatBesideProps {
     messages: AgentChatMessage[];
     jobs: CoordinatorJobs;
     draft: (text: string) => void;
     aside: HTMLElement | null;
+    width: number;
+    onReserve: (px: number) => void;
 }
 
 /** A workflow picked on a public page (an /agents page, /mcp), made and now set up from the chat. */

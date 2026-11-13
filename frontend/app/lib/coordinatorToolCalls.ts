@@ -62,6 +62,15 @@ export function obj(value: JsonObject | undefined, key: string): JsonObject | un
     return asObject(value?.[key]);
 }
 
+/** The ids a call's answer names what it's about by: the approval it held, the operation it started, the agent it
+ *  handed work to (and that agent's task), each once. */
+export function cardRefsOf(call: CoordinatorToolCall): string[] {
+    const response = obj(call.result, 'response');
+    const ids = [str(call.result, 'approval_id'), str(call.result, 'operation_id'), str(call.result, 'job_id'), str(response, 'operation_id'), str(response, 'agent_id'), str(response, 'job_id')];
+    if (str(response, 'object') === 'agent') ids.push(str(response, 'id'));
+    return [...new Set(ids.filter((id): id is string => !!id))];
+}
+
 export function list(value: JsonObject | undefined, key: string): unknown[] {
     const v = value?.[key];
     return Array.isArray(v) ? v : [];

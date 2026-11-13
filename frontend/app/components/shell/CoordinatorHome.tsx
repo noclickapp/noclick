@@ -150,17 +150,35 @@ export function CoordinatorHome() {
     );
 }
 
+/** An element's width as it changes; 0 until it's laid out. */
+function useWidthOf(el: HTMLElement | null): number {
+    const [width, setWidth] = useState(0);
+    useEffect(() => {
+        if (!el) return;
+        setWidth(el.getBoundingClientRect().width);
+        if (typeof ResizeObserver === 'undefined') return;
+        const watch = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
+        watch.observe(el);
+        return () => watch.disconnect();
+    }, [el]);
+    return width;
+}
+
 function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
     const coordinator = useChat();
-    const { messages, isStreaming, errorReason, conversationId, send, loaded, ComposerTab } = coordinator;
+    const { messages, isStreaming, errorReason, conversationId, send, loaded, Beside } = coordinator;
     const inPhone = useInPhoneShell();
     const [draft, setDraft] = useState('');
     const files = useAttachmentTray(coordinator.upload);
     const [references, setReferences] = useState<ChatReference[]>([]);
     const { credentials } = useCredentialList();
     const [memoriesOpen, setMemoriesOpen] = useState(false);
-    // Beside the thread, where the composer's tab opens a column of its own on a laptop.
+    // Beside the thread, where the Beside opens a helper's conversation on a laptop.
     const [aside, setAside] = useState<HTMLDivElement | null>(null);
+    // The chat column, which the Beside floats over, and the room on its right the thread and composer give it.
+    const [column, setColumn] = useState<HTMLDivElement | null>(null);
+    const width = useWidthOf(column);
+    const [reserve, setReserve] = useState(0);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const composerCard = useRef<HTMLDivElement>(null);
     const arrival = useScaffoldArrival(conversationId, coordinator.arrive);
@@ -173,7 +191,7 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
     // Pinned to the newest message unless the reader scrolled up, including while a card that loads after its message
     // (a canvas, a list of numbers) grows the thread.
     const scroller = useStickToBottom([messages.length, lastText?.length ?? 0, isStreaming]);
-    // The work the thread's turns started, followed once: its cards and the composer's tab read it.
+    // The work the thread's turns started, followed once: its cards and the Beside read it.
     const jobs = useTranscriptJobs(messages, coordinator.followJobs);
 
     const { readyAttachments, uploading, clearAttachments } = files;
@@ -311,6 +329,8 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
             className={empty && !inPhone ? 'px-0 pb-0 pt-0 sm:px-0' : undefined}
         />
     );
+    const beside = Beside && <Beside messages={messages} jobs={jobs} draft={draftAndFocus} aside={aside} width={width} onReserve={setReserve} />;
+    const reserved = reserve ? { paddingRight: reserve } : undefined;
 
     const memories = (
         <>
@@ -358,6 +378,7 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
             return (
                 <div className="flex h-full flex-col" data-testid="coordinator-home">
                     {corners}
+                    {beside}
                     <div className="flex min-h-0 flex-1 flex-col justify-center px-6 text-[36px]">{headline}</div>
                     <div className="flex snap-x gap-2.5 overflow-x-auto scroll-px-4 px-4 pb-3 scrollbar-hide">{starters('w-[228px] shrink-0 snap-start')}</div>
                     {composer}
@@ -367,9 +388,10 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
         }
 
         return (
-            <div className="relative flex h-full flex-col" data-testid="coordinator-home">
+            <div ref={setColumn} className="relative flex h-full flex-col" data-testid="coordinator-home">
                 {corners}
-                <div className="relative min-h-0 flex-1 overflow-y-auto scrollbar-subtle">
+                {beside}
+                <div className="relative min-h-0 flex-1 overflow-y-auto scrollbar-subtle" style={reserved}>
                     <div className="mx-auto flex min-h-full w-full max-w-[760px] flex-col justify-center px-8 pb-[12vh] pt-16">
                         <div className="text-[54px] xl:text-[60px]">{headline}</div>
                         <div className="mt-9">{composer}</div>
@@ -383,9 +405,10 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
 
     return (
         <div className="flex h-full min-h-0">
-            <div className="relative flex h-full min-w-0 flex-1 flex-col" data-testid="coordinator-home">
+            <div ref={setColumn} className="relative flex h-full min-w-0 flex-1 flex-col" data-testid="coordinator-home">
                 {corners}
-                <div ref={scroller.ref} onScroll={scroller.onScroll} className="min-h-0 flex-1 overflow-y-auto scrollbar-subtle">
+                {beside}
+                <div ref={scroller.ref} onScroll={scroller.onScroll} className="min-h-0 flex-1 overflow-y-auto scrollbar-subtle" style={reserved}>
                     <div className={cn('mx-auto w-full max-w-3xl px-5 pb-10 sm:px-6', inPhone ? 'pt-4' : 'pt-14')}>
                         <CoordinatorTranscript messages={messages} isStreaming={isStreaming} errorReason={errorReason} referenceDisplay={referenceDisplay} jobs={jobs} />
                         {settingUp && (
@@ -395,9 +418,7 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
                         )}
                     </div>
                 </div>
-                {/* The tab and the composer as one group, so the tab's edge brightens with the composer's while you type. */}
-                <div className="group/composer shrink-0">
-                    {ComposerTab && <ComposerTab messages={messages} jobs={jobs} draft={draftAndFocus} aside={aside} />}
+                <div className="shrink-0" style={reserved}>
                     {composer}
                 </div>
                 {memories}
