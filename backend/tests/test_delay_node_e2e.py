@@ -3,16 +3,19 @@
 Drives real workflows through WorkflowExecutionHandler against a real Postgres
 (the postgres fixture applies all migrations). Short delays run in-process;
 long delays suspend the run ('awaiting_delay') and resume via the generic
-suspend/resume core. Only the external Cloudflare scheduler HTTP call and the
-resume-webhook plumbing are stubbed — the engine, DB, DelayExecutionStrategy,
-output persistence, and the resume path are all exercised for real.
+suspend/resume core. Only the external Cloudflare scheduler HTTP call, the
+resume-webhook plumbing and the downstream Telegram node's Bot API are stubbed —
+the engine, DB, DelayExecutionStrategy, output persistence, and the resume path
+are all exercised for real.
 """
 import asyncio
+import json
 import uuid
 from typing import Any, Dict, List
 from unittest.mock import AsyncMock, patch
 
 import pytest
+import respx
 
 from wss.handlers.workflow_execution_handler import WorkflowExecutionHandler
 from tests.utils.base_handler_test import BaseHandlerTest
@@ -22,6 +25,8 @@ from wss.sender import send_event
 
 USER_ID = "00000000-0000-4000-8000-000000000003"
 TELEGRAM_TOKEN = "test-telegram-token-12345678:ABCdefGHIjklMNOpqrsTUVwxyz"
+SENT = {"ok": True, "result": {"message_id": 1, "date": 0, "chat": {"id": 123456, "type": "private"},
+                               "text": "downstream ran"}}
 
 
 class TestDelayNodeE2E(BaseHandlerTest):
@@ -32,6 +37,15 @@ class TestDelayNodeE2E(BaseHandlerTest):
     testcontainer — so the persist path lands on the test DB structurally,
     with no per-test patching.
     """
+
+    @pytest.fixture(autouse=True)
+    def telegram(self):
+        """The downstream node's Bot API, answered here: a run reaches no network, and any other request fails."""
+        with respx.mock(assert_all_called=False) as router:
+            yield router.route(host="api.telegram.org").respond(200, json=SENT)
+
+    def _sent(self, telegram) -> List[str]:
+        return [json.loads(call.request.content)["text"] for call in telegram.calls]
 
     def get_session_data(self, sid: str):
         return {"sid": sid, "user_id": USER_ID, "email": "delay-e2e@example.com"}
@@ -83,7 +97,7 @@ class TestDelayNodeE2E(BaseHandlerTest):
     # -- tests ---------------------------------------------------------------
 
     @pytest.mark.asyncio
-    async def test_short_delay_runs_in_process(self, real_database, frontend_sio, sid):
+    async def test_short_delay_runs_in_process(self, real_database, frontend_sio, sid, telegram):
         """A short delay (<= 15 min) sleeps in-process; downstream then runs."""
         workflow_id = str(uuid.uuid4())
         await self._create_user(real_database)
@@ -101,9 +115,10 @@ class TestDelayNodeE2E(BaseHandlerTest):
         assert "delay-1" in self._node_states("completed")
         # Downstream executed — the short delay did NOT suspend the run.
         assert "tg-1" in self._node_states("running")
+        assert self._sent(telegram) == ["downstream ran"]
 
     @pytest.mark.asyncio
-    async def test_long_delay_suspends_then_resumes(self, real_database, frontend_sio, sid):
+    async def test_long_delay_suspends_then_resumes(self, real_database, frontend_sio, sid, telegram):
         """A long delay suspends the run; a wake-up resumes the downstream subgraph."""
         workflow_id = str(uuid.uuid4())
         await self._create_user(real_database)
@@ -127,6 +142,7 @@ class TestDelayNodeE2E(BaseHandlerTest):
         # --- the run suspended on the delay node ---
         assert "delay-1" in self._node_states("completed")
         assert "tg-1" in self._node_states("skipped"), "downstream must be skipped while suspended"
+        assert self._sent(telegram) == []
         create_alarm.assert_awaited_once()
 
         rows = await real_database.fetch(
@@ -166,12 +182,13 @@ class TestDelayNodeE2E(BaseHandlerTest):
 
         # Downstream ran on resume.
         assert "tg-1" in self._node_states("running")
+        assert self._sent(telegram) == ["downstream ran"]
 
         # The original execution is no longer suspended.
         final = await real_database.fetch(
             "SELECT status FROM workflow_executions WHERE id = $1", execution_id
         )
-        assert final[0]["status"] in ("completed", "error")
+        assert final[0]["status"] == "completed"
 
         # The resume reused the original execution row — one logical run is one
         # execution record, not a fresh row per resume.
