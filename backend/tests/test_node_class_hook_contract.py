@@ -21,6 +21,7 @@ exact call the runtime makes, so a future override can't drift in signature
 without failing here.
 """
 
+import functools
 import inspect
 
 import pytest
@@ -29,6 +30,8 @@ from nodes.core.base import WorkflowNode
 from nodes.core.registry import NODE_REGISTRY
 from tests.utils.sweep import check_each
 
+pytestmark = pytest.mark.every_integration
+
 # Hooks the base declares as classmethods — the contract every override inherits.
 CLASS_LEVEL_HOOKS = sorted(
     name
@@ -36,7 +39,12 @@ CLASS_LEVEL_HOOKS = sorted(
     if isinstance(attr, classmethod) and not name.startswith("__")
 )
 
-REGISTERED = sorted(set(NODE_REGISTRY.values()), key=lambda c: c.__name__)
+
+# Read at the first test that needs it, not at import: collecting this file imported every integration on each
+# of a shard's workers.
+@functools.cache
+def _registered():
+    return sorted(set(NODE_REGISTRY.values()), key=lambda c: c.__name__)
 
 
 def test_base_declares_the_hooks_this_suite_guards():
@@ -71,7 +79,7 @@ def _class_level_hooks_are_bound_to_the_class(node_cls):
 
 @pytest.mark.asyncio
 async def test_class_level_hooks_are_bound_to_the_class():
-    await check_each(REGISTERED, _class_level_hooks_are_bound_to_the_class, name=lambda c: c.__name__)
+    await check_each(_registered(), _class_level_hooks_are_bound_to_the_class, name=lambda c: c.__name__)
 
 
 TRIGGER_OUTPUT = {
@@ -97,7 +105,7 @@ def _resolve_agent_event_survives_the_call_the_agent_makes(node_cls):
 
 @pytest.mark.asyncio
 async def test_resolve_agent_event_survives_the_call_the_agent_makes():
-    await check_each(REGISTERED, _resolve_agent_event_survives_the_call_the_agent_makes, name=lambda c: c.__name__)
+    await check_each(_registered(), _resolve_agent_event_survives_the_call_the_agent_makes, name=lambda c: c.__name__)
 
 
 def _verify_webhook_signature_survives_the_call_the_receiver_makes(node_cls):
@@ -111,4 +119,4 @@ def _verify_webhook_signature_survives_the_call_the_receiver_makes(node_cls):
 
 @pytest.mark.asyncio
 async def test_verify_webhook_signature_survives_the_call_the_receiver_makes():
-    await check_each(REGISTERED, _verify_webhook_signature_survives_the_call_the_receiver_makes, name=lambda c: c.__name__)
+    await check_each(_registered(), _verify_webhook_signature_survives_the_call_the_receiver_makes, name=lambda c: c.__name__)

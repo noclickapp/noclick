@@ -15,7 +15,7 @@ from coder.coordinator.tools import CoordinatorTools
 from utils.credential_actions import CredentialActions
 from tests.test_credential_approvals import USER, OTHER, OP, approval_db  # noqa: F401
 
-pytestmark = pytest.mark.asyncio
+pytestmark = [pytest.mark.asyncio, pytest.mark.every_integration]
 
 
 @pytest.fixture(autouse=True)

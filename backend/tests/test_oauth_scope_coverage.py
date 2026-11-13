@@ -30,6 +30,8 @@ from nodes.core.oauth_scopes import Enforcement, ScopeRegistry
 from nodes.core.registry import NODE_REGISTRY
 from tests.utils.sweep import check_each
 
+pytestmark = pytest.mark.every_integration
+
 BACKEND = Path(__file__).resolve().parents[1]
 NODES_DIR = BACKEND / "nodes"
 

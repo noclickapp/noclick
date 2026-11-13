@@ -25,6 +25,8 @@ from wss.receiver.client_events import (
 from wss.receiver.event_routing import EVENT_ROUTING, Handler
 from wss.handlers.oauth.generic_oauth_handler import GenericOAuthHandler
 
+pytestmark = pytest.mark.every_integration
+
 CALLBACK = "https://app.example/api/auth/oauth/example/callback"
 
 

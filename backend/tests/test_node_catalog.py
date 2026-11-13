@@ -23,6 +23,8 @@ from nodes.core.registry import NODE_REGISTRY
 from scripts.generate_socket_types import catalog_entry
 from scripts.node_definitions import every_definition_facts
 
+pytestmark = pytest.mark.every_integration
+
 BACKEND = Path(__file__).resolve().parents[1]
 
 

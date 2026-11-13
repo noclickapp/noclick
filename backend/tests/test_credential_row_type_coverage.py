@@ -9,11 +9,15 @@ This walks the whole registry so the next such gap fails here first.
 """
 from typing import Literal
 
+import pytest
+
 from coder.workflow.operation_catalog import node_accepted_credential_types
 from nodes.agent.config.providers import agent_credential_types
 from nodes.core.registry import NODE_REGISTRY
 
 from nodes.core.base import credential_type_literals
+
+pytestmark = pytest.mark.every_integration
 
 
 def _row_types_for(node_type: str) -> set:

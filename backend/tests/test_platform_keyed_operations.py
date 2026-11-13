@@ -17,6 +17,8 @@ from nodes.agent.node_op_tools import _iter_operation_defs, allowlist_requires_c
 from nodes.core.platform_billing import PLATFORM_KEY_MARKER, require_platform_key
 from nodes.core.registry import NODE_REGISTRY
 
+pytestmark = pytest.mark.every_integration
+
 PLATFORM_KEYED = [
     ("automation-reddit", "get_subreddit_posts", "APIFY_API_TOKEN"),
     ("automation-exa", "search", "EXA_API_KEY"),

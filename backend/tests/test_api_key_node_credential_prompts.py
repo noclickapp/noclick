@@ -22,6 +22,8 @@ from coder.workflow.operation_catalog import (
 )
 from nodes.core.registry import NODE_REGISTRY
 
+pytestmark = pytest.mark.every_integration
+
 
 def test_api_key_node_gets_credentials_needed_line():
     """The exa case itself: an API-key node must name its DB credential type."""

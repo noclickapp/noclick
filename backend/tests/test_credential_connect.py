@@ -21,6 +21,8 @@ from nodes.core.connection_evidence import ConnectionEvidence, EvidenceResult, E
 from nodes.core.credential_fields import clean_secret, https_origin, segment_after
 from nodes.core.vendor_mcp import McpCredential
 
+pytestmark = pytest.mark.every_integration
+
 
 # ------------------------------------------------------------------ fields
 

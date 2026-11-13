@@ -35,6 +35,8 @@ from nodes.core.connection_evidence import ConnectionEvidence, EvidenceSample
 from nodes.core.registry import NODE_REGISTRY
 from tests.utils.sweep import check_each
 
+pytestmark = pytest.mark.every_integration
+
 BACKEND = Path(__file__).resolve().parents[1]
 
 

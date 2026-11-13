@@ -1,6 +1,7 @@
 """A retired integration (its service shut down) is offered by no listing, while a
 workflow that already has one keeps loading, validating, running and finding its
 credential until the vendor's API refuses it."""
+import functools
 import json
 import re
 from pathlib import Path
@@ -18,7 +19,16 @@ from nodes.core.discovery import declare_nodes
 from nodes.core.registry import NODE_REGISTRY, NodeFactory, is_listed, retirement_of
 from utils import credential_operations
 
-RETIRED = sorted(t for t, cls in NODE_REGISTRY.items() if cls.retired)
+pytestmark = pytest.mark.every_integration
+
+
+# Read at the first test that needs it, not at import: collecting this file imported every integration on each
+# of a shard's workers.
+@functools.cache
+def _retired():
+    return sorted(t for t, cls in NODE_REGISTRY.items() if cls.retired)
+
+
 SCHEMAS = Path(__file__).resolve().parents[2] / "frontend" / "app" / "schemas"
 
 
@@ -28,7 +38,7 @@ def ensure_native_db_pool():
 
 
 def test_the_dead_services_are_retired_and_the_live_ones_listed():
-    assert {"automation-humanloop", "automation-starton", "automation-rkvst"} <= set(RETIRED)
+    assert {"automation-humanloop", "automation-starton", "automation-rkvst"} <= set(_retired())
     # Freshteam is sunsetting (renewals stopped 2026-06-07) and ToneDen still answers.
     assert is_listed("automation-freshteam") and is_listed("automation-toneden")
     assert retirement_of("automation-humanloop").since == "2025-09-08"
@@ -62,11 +72,11 @@ def test_the_generated_schema_publishes_each_retirement():
 def test_no_backend_listing_offers_a_retired_type():
     builder_types = set(re.findall(r"[a-z0-9]+(?:-[a-z0-9]+)+", _get_available_node_types()))
     assert "automation-serverless-function" in builder_types  # integrations are named only where demand is known
-    assert not builder_types & set(RETIRED)
+    assert not builder_types & set(_retired())
 
     connectable = {op["node_type"] for op in credential_operations._connectable_operations()}
     assert "automation-slack" in connectable
-    assert not connectable & set(RETIRED)
+    assert not connectable & set(_retired())
 
 
 def test_a_new_node_of_a_retired_type_is_refused_with_its_reason():
@@ -100,7 +110,7 @@ async def test_a_saved_retired_node_still_validates_and_runs(monkeypatch):
 
 
 def test_an_existing_credential_still_finds_its_retired_service():
-    for node_type in RETIRED:
+    for node_type in _retired():
         for credential_type in credential_operations.connection_catalog()[1].get(node_type, ()):
             assert credential_type in known_credential_types()
             assert node_type in credential_operations.compatible_providers(credential_type)

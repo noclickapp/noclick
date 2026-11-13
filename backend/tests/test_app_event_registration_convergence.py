@@ -21,7 +21,7 @@ from nodes.slack_node import SlackNode
 from repositories import trigger_resync
 from utils.webhook_manager import WebhookManager
 
-pytestmark = pytest.mark.asyncio
+pytestmark = [pytest.mark.asyncio, pytest.mark.every_integration]
 
 OWNER = str(uuid.uuid4())
 NEW_OWNER = str(uuid.uuid4())

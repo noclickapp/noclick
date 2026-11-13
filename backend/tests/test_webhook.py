@@ -26,6 +26,8 @@ from tests.utils.base_handler_test import BaseHandlerTest
 from tests.mocks.mock_asyncpg import configure_mock_query_responses, clear_executed_queries, get_executed_queries
 from utils import webhook_delivery
 
+pytestmark = pytest.mark.every_integration
+
 
 # ============================================================================
 # Test Fixtures

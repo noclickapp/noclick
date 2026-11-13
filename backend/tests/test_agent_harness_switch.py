@@ -26,6 +26,8 @@ from coder.workflow.workflow_xml import parse_xml
 from nodes.agent.config._cli_models_loader import harness_default_model
 from nodes.agent.config.providers import HARNESS_MODEL_FIELDS, WRAPPER_ID_BY_MODEL_TYPE
 
+pytestmark = pytest.mark.every_integration
+
 NODE = "agent-1"
 WORKFLOW_NAME = "OpenCode + Confluence and Monday.com"
 

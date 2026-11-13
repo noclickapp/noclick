@@ -2,10 +2,14 @@
 scheduled workflow's rows in NoClick rather than a Google Sheet, the builder found only the interface SDK's tables,
 decided a scheduled run couldn't keep anything, and the coordinator told the owner NoClick couldn't do it."""
 
+import pytest
+
 from coder.coordinator import prompts as coordinator_defaults
 from coder.workflow.agentic import prompts_default
 from coder.workflow.structural_tools import STRUCTURAL_AGENT_TOOL_TYPES, get_structural_agent_tool_provider
 from nodes.core.registry import NODE_REGISTRY
+
+pytestmark = pytest.mark.every_integration
 
 
 def test_the_builder_is_told_how_a_workflow_keeps_data_between_runs():

@@ -25,6 +25,8 @@ from wss.receiver.client_events import WorkflowExecuteRequest
 from wss.sender import send_event
 from wss.receiver.event_routing import Handler
 
+pytestmark = pytest.mark.every_integration
+
 
 def _wired(tool_params):
     """User-wired tools only — upload_file is ambient on every SDK agent."""

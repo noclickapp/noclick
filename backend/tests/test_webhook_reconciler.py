@@ -17,7 +17,7 @@ import pytest
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from utils.webhook_manager import WebhookManager, registration_fingerprint
 
-pytestmark = pytest.mark.asyncio
+pytestmark = [pytest.mark.asyncio, pytest.mark.every_integration]
 
 OWNER = str(uuid.uuid4())
 WF = str(uuid.uuid4())

@@ -15,6 +15,8 @@ import pytest
 from nodes.agent import rehearsal as rh
 from nodes.agent.rehearsal import RehearsalScenario, RehearsalUnavailable
 
+pytestmark = pytest.mark.every_integration
+
 
 class FakeRedis:
     """Enough of redis.asyncio for this module, with byte values like the real one."""

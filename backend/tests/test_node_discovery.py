@@ -11,6 +11,8 @@ from nodes.core import discovery
 from nodes.core.discovery import Declaration, declare_nodes, merge_node_entries
 from nodes.core.registry import DISCOVERED_NODE_ENTRIES, NODE_REGISTRY, _NODE_REGISTRY_ENTRIES, _NodeRegistry
 
+pytestmark = pytest.mark.every_integration
+
 
 def discover_nodes(root, name):
     """Declare, then load every declaration, as a lookup of each type would."""

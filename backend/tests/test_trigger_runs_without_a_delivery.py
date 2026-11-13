@@ -5,6 +5,7 @@ the output as if they were the event. The output's shape was then learned, and r
 reaches a trigger through ``WorkflowNode.run``, and a run with no event teaches ``node_schema_tracker`` nothing.
 """
 
+import functools
 import pytest
 from unittest.mock import AsyncMock, MagicMock
 
@@ -15,6 +16,8 @@ from nodes.posthog_node import PostHogNode
 from nodes.webhook_trigger_node import WebhookTriggerNode
 from wss.handlers.workflow_execution_handler import WorkflowExecutionHandler
 from tests.utils.sweep import check_each
+
+pytestmark = pytest.mark.every_integration
 
 OTHER_STEPS = {"another_step": {"its_field": "its value"}, "vars": {"a_variable": 1}}
 
@@ -34,7 +37,11 @@ def _bare(node_cls, node_type, operation):
     return node
 
 
-TRIGGERS = sorted(t for t, c in NODE_REGISTRY.items() if t.startswith("trigger-") or _iter_operation_defs(c, triggers=True))
+# Read at the first test that needs it, not at import: collecting this file imported every integration on each
+# of a shard's workers.
+@functools.cache
+def _triggers():
+    return sorted(t for t, c in NODE_REGISTRY.items() if t.startswith("trigger-") or _iter_operation_defs(c, triggers=True))
 
 
 async def _no_trigger_of_any_node_type_is_handed_the_runs_other_outputs(node_type, monkeypatch):
@@ -59,7 +66,7 @@ async def test_no_trigger_of_any_node_type_is_handed_the_runs_other_outputs():
         with pytest.MonkeyPatch.context() as monkeypatch:
             await _no_trigger_of_any_node_type_is_handed_the_runs_other_outputs(node_type, monkeypatch)
 
-    await check_each(TRIGGERS, one)
+    await check_each(_triggers(), one)
 
 
 async def test_a_step_that_isnt_a_trigger_still_reads_what_came_before(monkeypatch):

@@ -15,6 +15,8 @@ from nodes.core.credential_connect import (
 )
 from nodes.core.registry import NODE_REGISTRY
 
+pytestmark = pytest.mark.every_integration
+
 
 def test_every_credential_type_has_one_owner():
     owners = credential_type_owners.__wrapped__()

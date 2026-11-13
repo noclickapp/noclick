@@ -29,14 +29,9 @@ from tests.utils.sweep import check_each
 SCHEMA_DIR = Path(__file__).resolve().parents[2] / "frontend/app/schemas/nodes"
 
 
-def _dynamic_fields(node_cls):
+def _dynamic_fields(node_type):
     """Every (config class, field, x-dynamic-options, required) in a node."""
-    for node_type, cls in NODE_REGISTRY.items():
-        if cls is node_cls:
-            path = SCHEMA_DIR / f"{node_type.replace('automation-', '')}.json"
-            break
-    else:
-        return
+    path = SCHEMA_DIR / f"{node_type.replace('automation-', '')}.json"
     if not path.exists():
         return
     schema = json.loads(path.read_text())
@@ -50,10 +45,11 @@ def _dynamic_fields(node_cls):
                 yield defn_name, field, dyn, field in required
 
 
-ALL_NODES = sorted(NODE_REGISTRY.items())
+# Listing the types imports no integration: what's checked is each one's generated schema.
+ALL_NODES = sorted(NODE_REGISTRY)
 
 
-def _sole_option_autofill_never_lands_on_a_dependent_field(node_type, node_cls):
+def _sole_option_autofill_never_lands_on_a_dependent_field(node_type):
     """A dependent field has nothing to resolve until its parent is chosen.
 
     Auto-filling a Sheets tab before a spreadsheet exists would either fill from
@@ -61,7 +57,7 @@ def _sole_option_autofill_never_lands_on_a_dependent_field(node_type, node_cls):
     """
     offenders = [
         f"{defn}.{field}"
-        for defn, field, dyn, _ in _dynamic_fields(node_cls)
+        for defn, field, dyn, _ in _dynamic_fields(node_type)
         if dyn.get("auto_select_sole_option") and dyn.get("depends_on")
     ]
     assert not offenders, (
@@ -73,10 +69,10 @@ def _sole_option_autofill_never_lands_on_a_dependent_field(node_type, node_cls):
 
 @pytest.mark.asyncio
 async def test_sole_option_autofill_never_lands_on_a_dependent_field():
-    await check_each(ALL_NODES, lambda case: _sole_option_autofill_never_lands_on_a_dependent_field(case[0], case[1]), name=lambda case: case[0])
+    await check_each(ALL_NODES, _sole_option_autofill_never_lands_on_a_dependent_field)
 
 
-def _sole_option_autofill_never_lands_on_an_optional_field(node_type, node_cls):
+def _sole_option_autofill_never_lands_on_an_optional_field(node_type):
     """An empty optional field MEANS something; a required one does not.
 
     Leaving an optional filter blank says "no filter". Auto-filling it with the
@@ -86,7 +82,7 @@ def _sole_option_autofill_never_lands_on_an_optional_field(node_type, node_cls):
     """
     offenders = [
         f"{defn}.{field}"
-        for defn, field, dyn, required in _dynamic_fields(node_cls)
+        for defn, field, dyn, required in _dynamic_fields(node_type)
         if dyn.get("auto_select_sole_option") and not required
     ]
     assert not offenders, (
@@ -98,10 +94,10 @@ def _sole_option_autofill_never_lands_on_an_optional_field(node_type, node_cls):
 
 @pytest.mark.asyncio
 async def test_sole_option_autofill_never_lands_on_an_optional_field():
-    await check_each(ALL_NODES, lambda case: _sole_option_autofill_never_lands_on_an_optional_field(case[0], case[1]), name=lambda case: case[0])
+    await check_each(ALL_NODES, _sole_option_autofill_never_lands_on_an_optional_field)
 
 
-def _every_required_independent_picker_auto_answers(node_type, node_cls):
+def _every_required_independent_picker_auto_answers(node_type):
     """The whole catalogue gets this, including nodes nobody has written yet.
 
     Stamped centrally in `_mark_sole_option_autofill` rather than declared per
@@ -109,7 +105,7 @@ def _every_required_independent_picker_auto_answers(node_type, node_cls):
     """
     missing = [
         f"{defn}.{field}"
-        for defn, field, dyn, required in _dynamic_fields(node_cls)
+        for defn, field, dyn, required in _dynamic_fields(node_type)
         if required and not dyn.get("depends_on") and not dyn.get("auto_select_sole_option")
         # TikTok requires an explicit privacy choice even when only SELF_ONLY is allowed.
         and (node_type, field) != ("automation-tiktok", "privacy_level")
@@ -123,15 +119,15 @@ def _every_required_independent_picker_auto_answers(node_type, node_cls):
 
 @pytest.mark.asyncio
 async def test_every_required_independent_picker_auto_answers():
-    await check_each(ALL_NODES, lambda case: _every_required_independent_picker_auto_answers(case[0], case[1]), name=lambda case: case[0])
+    await check_each(ALL_NODES, _every_required_independent_picker_auto_answers)
 
 
 def test_the_catalogue_actually_benefits():
     """A guard that silently stops applying is the failure mode to fear here."""
     stamped = sum(
         1
-        for _, node_cls in ALL_NODES
-        for _, _, dyn, _ in _dynamic_fields(node_cls)
+        for node_type in ALL_NODES
+        for _, _, dyn, _ in _dynamic_fields(node_type)
         if dyn.get("auto_select_sole_option")
     )
     assert stamped > 1000, (
