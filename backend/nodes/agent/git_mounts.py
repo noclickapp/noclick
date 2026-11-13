@@ -250,7 +250,10 @@ def mount_failure_line(what: str, code: int, output: str) -> str:
     script was handed, and the line reaches a chat a shared link's visitor
     reads."""
     lowered = output.lower()
-    return f"{what} failed: {next((why for needle, why in _GIT_REASONS if needle in lowered), f'exit {code}')}"
+    why = next((why for needle, why in _GIT_REASONS if needle in lowered), None)
+    if why is None and code == 127:  # the shell's own word for it, whatever the command was
+        why = "a command it runs isn't installed in the sandbox (exit 127)"
+    return f"{what} failed: {why or f'exit {code}'}"
 
 
 def mount_secrets(setups: List[Dict[str, Any]]) -> List[str]:
