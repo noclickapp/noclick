@@ -2,7 +2,7 @@
 // Connect on Connections means "add an account": the WhatsApp QR shows at once, with the numbers already connected
 // listed under it, rather than behind a second button. Each open starts one QR, which a re-render, StrictMode or a
 // trip to the Token tab and back never starts again; a dead number's reconnect repairs that number, and a node that
-// can pick a working number shows no QR unasked.
+// can pick a working number shows no QR until "Connect another account" asks for one.
 import { StrictMode } from 'react';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -137,11 +137,25 @@ describe('Connect WhatsApp from Connections', () => {
 });
 
 // A node needs a number, and one that works can be picked: a QR shown beside it invites a re-scan that rebinds it.
+// Asking to connect another is asking for one.
 describe('a node with a working number', () => {
-    it('mints nothing, even with its connect panel open', async () => {
+    it('mints nothing until Connect another account', async () => {
         state.credentials = [working];
         render(<NodeCredentials nodeType="automation-whatsapp" credentialIds={{ whatsapp_qr: 'wa-1' }} onChange={vi.fn()} />);
-        fireEvent.click(await screen.findByRole('button', { name: 'Connect another account' }));
+        const connect = await screen.findByRole('button', { name: 'Connect another account' });
+        expect(sent('whatsapp:qr:start')).toEqual([]);
+        expect(screen.queryByAltText('WhatsApp QR Code')).toBeNull();
+
+        fireEvent.click(connect);
+        expect(await screen.findByAltText('WhatsApp QR Code')).toBeTruthy();
+        expect(sent('whatsapp:qr:start')).toEqual([{ event_name: 'whatsapp:qr:start' }]);
+    });
+
+    // Picking among numbers already connected is no ask to add one: a revoked attached number beside a working one
+    // opens the connect panel, but the QR waits behind its button.
+    it('keeps its QR behind a button while it can pick one', async () => {
+        state.credentials = [{ ...working, id: 'wa-revoked', name: 'Gone line', revoked_at: '2026-11-01T00:00:00Z' }, working];
+        render(<NodeCredentials nodeType="automation-whatsapp" credentialIds={{ whatsapp_qr: 'wa-revoked' }} onChange={vi.fn()} />);
         expect(await screen.findByRole('button', { name: 'Connect a different WhatsApp number' })).toBeTruthy();
         expect(sent('whatsapp:qr:start')).toEqual([]);
         expect(screen.queryByAltText('WhatsApp QR Code')).toBeNull();
