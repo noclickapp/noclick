@@ -163,20 +163,6 @@
    "category": "Contacts",
    "description": "",
    "is_trigger": false
-  },
-  {
-   "name": "on_new_message",
-   "display_name": "On New Email",
-   "category": "Triggers",
-   "description": "",
-   "is_trigger": true
-  },
-  {
-   "name": "on_outlook_change",
-   "display_name": "On Outlook Change",
-   "category": "Triggers",
-   "description": "",
-   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
