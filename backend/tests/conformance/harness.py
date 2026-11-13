@@ -1862,7 +1862,16 @@ class Contract:
         content = definition.get("content", {})
         if not content:
             # A documented empty response (no content, or `content: {}`) has no body to validate; headers still do.
-            response = httpx.Response(status, headers=headers, request=request)
+            # A spec that leaves out a body the provider documents (Katana's POST /webhooks returns the webhook's id
+            # and token) gets the documented witness, unchanged: its own fields are then the response's schema. A
+            # status that never carries a body (204, 205, 304) stays empty.
+            documented = witness is not None and "body" in witness and status not in (204, 205, 304)
+            response = httpx.Response(
+                status,
+                **(response_body(witness["body"], "application/json", {}, "docs", headers) if documented
+                   else {"headers": headers}),
+                request=request,
+            )
             try:
                 self.api.validate_response(
                     self.adapter(request), response_adapter(response)
@@ -1872,6 +1881,12 @@ class Contract:
                     exc
                 ):
                     raise
+            if documented:
+                response.extensions["conformance_schema"] = ({}, triggers.example_schema(witness["body"]))
+                if record is not None:
+                    record["response_source"] = "docs"
+                    record["response_witness"] = witness_key
+                    record["response_source_url"] = witness.get("source")
             return response
         media_types = sorted(
             content, key=lambda m: not (m == "application/json" or m.endswith("+json"))
