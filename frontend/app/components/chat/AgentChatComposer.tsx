@@ -173,6 +173,7 @@ export function AgentChatComposer({
     tray,
     cardRef,
     size = 'default',
+    sendButton,
     className,
 }: {
     value: string;
@@ -213,6 +214,8 @@ export function AgentChatComposer({
     cardRef?: React.Ref<HTMLDivElement>;
     /** `tall` opens with room for a few lines, for a page whose point is the box. */
     size?: 'default' | 'tall';
+    /** Stands in for Send (e.g. what to connect before anything can go out); Enter still calls `onSubmit`. */
+    sendButton?: React.ReactNode;
     /** The outer frame's spacing, for a host that lays the box out itself. */
     className?: string;
 }) {
@@ -292,7 +295,7 @@ export function AgentChatComposer({
     useAutoGrowTextarea(ref, value, maxTextareaHeight);
     const focusText = useSurfaceFocus(ref);
 
-    const sendButton = <ComposerSendButton onClick={onSubmit} disabled={sendDisabled} />;
+    const send = sendButton ?? <ComposerSendButton onClick={onSubmit} disabled={sendDisabled} />;
 
     return (
         <div className={cn('shrink-0 px-3 sm:px-6 pb-5 pt-2', className)}>
@@ -432,7 +435,7 @@ export function AgentChatComposer({
                             )}
                             disabled={inputDisabled}
                         />
-                        {!toolbar && <div className="shrink-0 pb-2.5">{sendButton}</div>}
+                        {!toolbar && <div className="shrink-0 pb-2.5">{send}</div>}
                     </div>
                     {toolbar && (
                     <div className="flex items-center justify-between gap-3 px-3 pb-3 pt-1.5">
@@ -476,7 +479,7 @@ export function AgentChatComposer({
                         </div>
                         <div className="ml-auto flex shrink-0 items-center gap-2.5 whitespace-nowrap">
                             {footerEnd}
-                            {sendButton}
+                            {send}
                         </div>
                     </div>
                     )}
