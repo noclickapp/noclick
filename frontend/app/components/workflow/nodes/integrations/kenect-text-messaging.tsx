@@ -5,10 +5,10 @@ import type { CSSProperties } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const KenectIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/kenect-text-messaging.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <ThemedBrandImg light="/icons/kenect-text-messaging.svg" dark="/icons/kenect-text-messaging-dark.svg" className={className} style={style} />
 );
 
 export const KenectTextMessagingNode: NodeDefinition = {

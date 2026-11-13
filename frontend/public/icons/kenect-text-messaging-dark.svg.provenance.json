@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/kenect-text-messaging-dark.svg",
+  "source": "https://www.kenect.com/ (inline <svg> in the footer logo link, class footer_logo-link)",
+  "source_page": "https://www.kenect.com/ (footer logo; the header lockup is https://cdn.prod.website-files.com/69727da0bb0d6209780690d6/69727da0bb0d6209780694b9_kenect_logo_main_new.svg, the same K before 'Kenect')",
+  "date": "2026-11-13",
+  "license": "Kenect trademark; used solely to identify the Kenect integration",
+  "sha256": "6df0faf635418936613ab42e7be83b687dc15cfeab40f186a0679ebfc3dca53f",
+  "source_sha256": "e368825950a82d98979e8cf14f9932698dbf4fc517c09e85135430b52c243d9b",
+  "edits": [
+    "cropped the viewBox to the K mark (pad 0.02)",
+    "clean",
+    "#231F20 -> #FFFFFF on all three parts of the K (near-black mark touching the tile)"
+  ]
+}
