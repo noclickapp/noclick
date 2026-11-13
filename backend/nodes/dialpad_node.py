@@ -364,8 +364,8 @@ class DialpadNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     @classmethod
     def registration_fingerprint_fields(cls, config):
-        fields = ("target_id", "target_type", "call_state") if config.get("operation") == "on_call" else (
-            "target_id", "target_type", "direction", "status", "include_internal")
+        # Every field registration reads, whichever trigger: a field the other trigger reads stays unset.
+        fields = ("target_id", "target_type", "call_state", "direction", "status", "include_internal")
         return {key: config.get(key) for key in fields}
 
     @staticmethod
