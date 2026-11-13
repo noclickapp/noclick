@@ -17,6 +17,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
@@ -178,6 +179,83 @@ class GetInquiryTemplate(_Input):
     inquiry_template_id: str = Field(..., pattern=r"^itmpl_[A-Za-z0-9]+$", max_length=256, title="Inquiry Template ID")
 
 
+class _PersonaTrigger(WebhookTriggerConfigBase):
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with Persona automatically; the API key needs webhook management permission.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+class PersonaOnInquiryCreated(_PersonaTrigger):
+    operation: Literal["on_inquiry_created"] = Field("on_inquiry_created", title="On Inquiry Created", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Inquiry Created",
+    })
+
+
+class PersonaOnInquiryCompleted(_PersonaTrigger):
+    operation: Literal["on_inquiry_completed"] = Field("on_inquiry_completed", title="On Inquiry Completed", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Inquiry Completed",
+    })
+
+
+class PersonaOnInquiryFailed(_PersonaTrigger):
+    operation: Literal["on_inquiry_failed"] = Field("on_inquiry_failed", title="On Inquiry Failed", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Inquiry Failed",
+    })
+
+
+class PersonaOnInquiryApproved(_PersonaTrigger):
+    operation: Literal["on_inquiry_approved"] = Field("on_inquiry_approved", title="On Inquiry Approved", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Inquiry Approved",
+    })
+
+
+class PersonaOnInquiryDeclined(_PersonaTrigger):
+    operation: Literal["on_inquiry_declined"] = Field("on_inquiry_declined", title="On Inquiry Declined", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Inquiry Declined",
+    })
+
+
+class PersonaOnInquiryMarkedForReview(_PersonaTrigger):
+    operation: Literal["on_inquiry_marked_for_review"] = Field("on_inquiry_marked_for_review", title="On Inquiry Marked For Review", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Inquiry Marked For Review",
+    })
+
+
+class PersonaOnInquiryExpired(_PersonaTrigger):
+    operation: Literal["on_inquiry_expired"] = Field("on_inquiry_expired", title="On Inquiry Expired", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Inquiry Expired",
+    })
+
+
+class PersonaOnAccountCreated(_PersonaTrigger):
+    operation: Literal["on_account_created"] = Field("on_account_created", title="On Account Created", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Account Created",
+    })
+
+
+class PersonaOnCaseCreated(_PersonaTrigger):
+    operation: Literal["on_case_created"] = Field("on_case_created", title="On Case Created", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Case Created",
+    })
+
+
+class PersonaOnCaseStatusUpdated(_PersonaTrigger):
+    operation: Literal["on_case_status_updated"] = Field("on_case_status_updated", title="On Case Status Updated", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Case Status Updated",
+    })
+
+
+TRIGGER_EVENTS = {
+    "on_inquiry_created": "inquiry.created",
+    "on_inquiry_completed": "inquiry.completed",
+    "on_inquiry_failed": "inquiry.failed",
+    "on_inquiry_approved": "inquiry.approved",
+    "on_inquiry_declined": "inquiry.declined",
+    "on_inquiry_marked_for_review": "inquiry.marked-for-review",
+    "on_inquiry_expired": "inquiry.expired",
+    "on_account_created": "account.created",
+    "on_case_created": "case.created",
+    "on_case_status_updated": "case.status-updated",
+}
 # Persona's own MCP server: agents get its tools through a person's Persona sign-in.
 PersonaMcpCredential = mcp_credential("persona", "https://withpersona.com/mcp", app="Persona")
 PersonaCredential = Union[PersonaAPIKeyCredential, PersonaMcpCredential]
