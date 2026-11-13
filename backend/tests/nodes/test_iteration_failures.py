@@ -18,6 +18,10 @@ def edge(source, target, handle=None):
     return {'source': source, 'target': target, 'sourceHandle': handle}
 
 
+# Only a hang guard: a loaded CI runner has stalled this mocked run past 5 s.
+HANG_S = 60
+
+
 def runner(execute):
     handler = WorkflowExecutionHandler(sio=AsyncMock())
     handler._emit_node_state = AsyncMock()
@@ -33,7 +37,7 @@ def runner(execute):
 async def run(handler, nodes, edges):
     return await asyncio.wait_for(handler._execute_nodes_concurrent(
         nodes, edges, 'sid', 'user', 'workflow',
-    ), timeout=5)
+    ), timeout=HANG_S)
 
 
 def states(handler, nid):
@@ -208,7 +212,7 @@ async def test_preloaded_output_does_not_turn_a_strategy_skip_into_completed():
     _, error, _ = await asyncio.wait_for(handler._execute_nodes_concurrent(
         [node('agent', 'agent'), node('write')], [edge('agent', 'write')],
         'sid', 'user', 'workflow', initial_outputs={'write': {'result': 'old run'}},
-    ), timeout=5)
+    ), timeout=HANG_S)
     assert error is None
     assert states(handler, 'write') == ['skipped']
 
