@@ -18,8 +18,9 @@ def edge(source, target, handle=None):
     return {'source': source, 'target': target, 'sourceHandle': handle}
 
 
-# Only a hang guard: a loaded CI runner has stalled this mocked run past 5 s.
-HANG_S = 60
+# A hang guard: the mocked run takes milliseconds. Past 5 s on CI it was a full garbage collection over a worker
+# heap left unfrozen (tests/fixtures/frozen_heap.py), not the run.
+HANG_S = 5
 
 
 def runner(execute):

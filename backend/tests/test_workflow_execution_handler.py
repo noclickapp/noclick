@@ -670,11 +670,12 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
         with patch("utils.node_outputs.commit_graph_snapshot", slow_commit):
             run = asyncio.create_task(send_event(frontend_sio, sid, self.create_workflow_request(nodes, [], workflow_id=workflow_id)))
             try:
-                # Hang guards only (the ordering below is what's tested): 5 s timed out on loaded CI runners.
-                await asyncio.wait_for(snapshot_started.wait(), 60)
+                # Hang guards only (the ordering below is what's tested). Past 5 s on CI it was a full garbage
+                # collection over a worker heap left unfrozen (tests/fixtures/frozen_heap.py), not the run.
+                await asyncio.wait_for(snapshot_started.wait(), 5)
                 # Keep the upload blocked while waiting for actual node completion,
                 # rather than assuming database/socket work finishes within 300 ms.
-                async with asyncio.timeout(60):
+                async with asyncio.timeout(5):
                     while not self.get_main_api_emitted_events("workflow:complete"):
                         await asyncio.sleep(0.01)
                 states = [e[1]['state'] for e in self.get_main_api_emitted_events("workflow:node:state")]
@@ -686,7 +687,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
                 assert status == 'running', "the row is finalized only once the snapshot has landed"
             finally:
                 gate.set()
-                await asyncio.wait_for(run, 60)
+                await asyncio.wait_for(run, 5)
             status = await real_database.fetchval("SELECT status FROM workflow_executions WHERE id = $1", uuid.UUID(execution_id))
             assert status == 'completed' and committed["execution_id"] == execution_id and committed["digest"]
 
