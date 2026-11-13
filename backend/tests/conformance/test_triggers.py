@@ -324,3 +324,51 @@ async def test_only_events_that_give_the_agent_a_turn_count_as_delivered(monkeyp
     assert {e["event"]: e["outcome"] for e in op["trigger"]["events"]} == {
         "order.created": "delivered", "refund.created": "no agent event"}
     assert op["passed"]
+
+
+def guarded_webhook_node():
+    """Registers only where no other callback holds the event, as Yodlee allows one per event."""
+    shop = webhook_node()
+
+    class Guarded(shop):
+        @classmethod
+        async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+            async with httpx.AsyncClient() as client:
+                existing = (await client.get("https://example.test/hooks")).json()
+            if any(hook.get("url") != webhook_url for hook in existing.get("hooks") or []):
+                raise ValueError("another callback already holds this event")
+            return await super()._register_external_webhook(
+                webhook_url=webhook_url, credential=credential, config=config, node_id=node_id)
+
+    return Guarded
+
+
+def guarded_doc(documented_hooks=None):
+    doc = webhook_doc()
+    listing = {"type": "object", "properties": {"hooks": {"type": "array", "items": {
+        "type": "object", "required": ["url"], "properties": {"url": {"type": "string"}}}}}}
+    content = {"schema": listing}
+    if documented_hooks is not None:
+        content["example"] = {"hooks": documented_hooks}
+    doc["paths"]["/hooks"]["get"] = {"responses": {"200": {"description": "ok", "content": {"application/json": content}}}}
+    return doc
+
+
+async def test_a_registration_refusing_generated_existing_state_registers_on_a_fresh_account(monkeypatch):
+    install(monkeypatch, "shop", guarded_webhook_node(), guarded_doc(), {"webhook_signature": SIGNING})
+    [op] = (await harness.run_provider("shop"))["operations"]
+    trigger = op["trigger"]
+    assert trigger["registration"] == "registered on a fresh account"
+    assert any("another callback already holds this event" in a for a in trigger["advisory"])
+    assert op["passed"], (trigger["failures"], op["failures"])
+    gets = [r for r in op["requests"] if r["spec_operation"] == "GET /hooks"]
+    assert len(gets) == 2 and all(r["response_source"] == "generated" for r in gets)
+
+
+async def test_a_documented_existing_state_is_never_replaced_by_a_fresh_account(monkeypatch):
+    doc = guarded_doc(documented_hooks=[{"url": "https://other.example.test/hook"}])
+    install(monkeypatch, "shop", guarded_webhook_node(), doc, {"webhook_signature": SIGNING})
+    [op] = (await harness.run_provider("shop"))["operations"]
+    assert op["trigger"]["registration"] == "failed"
+    assert any("another callback already holds this event" in f for f in op["trigger"]["failures"])
+    assert not op["passed"]

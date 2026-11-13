@@ -19,6 +19,7 @@ import struct
 import time
 import zlib
 from contextlib import ExitStack, contextmanager
+from contextvars import ContextVar
 from functools import lru_cache
 from dataclasses import asdict, dataclass, field
 from email.parser import BytesParser
@@ -151,6 +152,11 @@ def resolve(doc, value):
 # "full" fills optional properties and one array item too (to FULL_DEPTH), as real responses do: a spec that under-declares
 # `required` otherwise feeds parsers responses no provider sends. Default stays minimal.
 FULL = os.environ.get("CONFORMANCE_WITNESS") == "full"
+# A webhook trigger's registration that read the provider's existing state (its current subscriptions) runs again
+# as on a fresh account: every read answered with the minimal schema-valid response (triggers.check_webhook).
+FRESH_READS = ContextVar("conformance_fresh_reads", default=False)
+# The (method, response source) of each request a registration makes, while it is being recorded.
+REGISTRATION_REQUESTS = ContextVar("conformance_registration_requests", default=None)
 # Realistic inputs per operation (operation -> {"config": a whole config, "source": the docs page its values come from}).
 INPUTS = (
     json.loads((CATALOG / "inputs.json").read_text())
@@ -2012,6 +2018,9 @@ class Contract:
             for ex in (True, False)
             for media in media_types
         ]
+        if FRESH_READS.get() and request.method.upper() == "GET" and not strict_witnesses:
+            # A fresh account's read: the minimal schema-valid response, never a documented or populated one.
+            bodies = [(s, b, m) for s, b, m in bodies if s == "generated" and b[0] is False]
         errors, docs_errors = [], []
         strict = strict_witnesses or bool(witness_key and "?" in witness_key)
         for source, body, media in bodies:
@@ -2340,6 +2349,9 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
                 )
                 record["response_status"] = response.status_code
                 record["response_sha256"] = hashlib.sha256(response.content).hexdigest()
+                registration = REGISTRATION_REQUESTS.get()
+                if registration is not None:
+                    registration.append((request.method.upper(), record.get("response_source")))
                 if poll_reads is not None:
                     triggers.track_response(
                         response, poll_reads, f"{method.upper()} {path} response",

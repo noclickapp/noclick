@@ -422,18 +422,44 @@ async def check_webhook(node_cls, node_type, model, raw, credential, events, sig
     trigger = {"kind": "webhook", "registration": None, "events": [], "failures": [], "advisory": [],
                "signature": signing["scheme"] if signing else "none declared"}
     config = {**raw, "webhook_url": WEBHOOK_URL}
-    try:
-        extra = await node_cls._register_external_webhook(
+
+    async def register():
+        return await node_cls._register_external_webhook(
             webhook_url=WEBHOOK_URL, credential=dict(credential), config=dict(config), node_id="conformance")
+
+    extra, refused = None, None
+    requests = []
+    recording = harness.REGISTRATION_REQUESTS.set(requests)
+    try:
+        extra = await register()
         trigger["registration"] = "registered"
-        for key in ("signing_secret", "external_webhook_id"):
-            if (extra or {}).get(key) is not None:
-                config[key] = extra[key]
     except NotImplementedError:
         trigger["registration"] = "registered by hand (no API registration)"
     except Exception as exc:
+        refused = exc
+    finally:
+        harness.REGISTRATION_REQUESTS.reset(recording)
+    if refused is not None and any(method == "GET" and source == "generated" for method, source in requests):
+        # The registration read the provider's existing state (its subscriptions) from a generated, populated
+        # response and refused. A fresh account is just as real: register again with every read answered by the
+        # minimal schema-valid response. A documented response is never replaced: refusing one still fails.
+        fresh = harness.FRESH_READS.set(True)
+        try:
+            extra = await register()
+            trigger["registration"] = "registered on a fresh account"
+            trigger["advisory"].append("registration refused the generated existing state, then registered on a fresh "
+                                       "account (minimal reads): " + harness.reason(refused))
+            refused = None
+        except Exception:
+            pass
+        finally:
+            harness.FRESH_READS.reset(fresh)
+    if refused is not None:
         trigger["registration"] = "failed"
-        trigger["failures"].append("registration: " + harness.reason(exc))
+        trigger["failures"].append("registration: " + harness.reason(refused))
+    for key in ("signing_secret", "external_webhook_id"):
+        if (extra or {}).get(key) is not None:
+            config[key] = extra[key]
     secret_field = (signing or {}).get("secret_field", "signing_secret")
     if not config.get(secret_field):
         config[secret_field] = secret_value(signing)
