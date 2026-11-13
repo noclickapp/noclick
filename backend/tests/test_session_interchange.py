@@ -1214,6 +1214,15 @@ class TestOpenCodeStore:
 
 
 class TestHermesStore:
+    def test_reads_an_older_schema_a_laptop_still_runs(self, tmp_path):
+        """Hermes 0.20 (schema 25, 2026.8) has no _compressed_summary on messages: a laptop running it is read all the
+        same (a move from it failed on the missing column, 11-13)."""
+        home = _hermes_home(tmp_path)
+        with sqlite3.connect(home / "state.db") as conn:
+            conn.execute("ALTER TABLE messages DROP COLUMN _compressed_summary")
+        thread = ic.read_thread(ic.StoreRef("hermes_agent", home, Path(CWD), session_id="noclick"))
+        assert ic.skeleton_of(thread).roles == EXPECTED_ROLES and ic.skeleton_of(thread).unpaired_tool_calls == 0
+
     def test_reads_the_active_rows_of_the_fixed_session(self, tmp_path):
         home = _hermes_home(tmp_path)
         thread = ic.read_thread(ic.StoreRef("hermes_agent", home, Path(CWD), session_id="noclick"))

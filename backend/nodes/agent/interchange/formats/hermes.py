@@ -156,7 +156,7 @@ class HermesFormat(ThreadFormat):
         with sqlite.connect(db, readonly=True) as conn:
             if conn.execute("SELECT 1 FROM sessions WHERE id = ?", (sid,)).fetchone() is None:
                 raise InterchangeError("source_empty", f"hermes session {sid} not in {db}")
-            if conn.execute("SELECT 1 FROM messages WHERE session_id = ? AND active = 1 AND role IN ('user','assistant') LIMIT 1", (sid,)).fetchone() is None:
+            if conn.execute(f"SELECT 1 FROM messages WHERE session_id = ? {_active(conn)} AND role IN ('user','assistant') LIMIT 1", (sid,)).fetchone() is None:
                 raise InterchangeError("source_empty", f"hermes session {sid} holds no active messages")
         return db_ref(db, sid)
 
@@ -168,9 +168,12 @@ class HermesFormat(ThreadFormat):
             session = conn.execute("SELECT model, started_at, cwd FROM sessions WHERE id = ?", (sid,)).fetchone()
             if session is None:
                 raise InterchangeError("source_unreadable", f"hermes session {sid} vanished from {db}")
+            # Columns a laptop's older Hermes may not have yet (its schema 25 has no _compressed_summary) read as unset.
+            have = {r[1] for r in conn.execute("PRAGMA table_info(messages)")}
+            optional = ", ".join(c if c in have else "NULL" for c in ("reasoning", "reasoning_content", "_compressed_summary"))
             rows = conn.execute(
-                "SELECT id, role, content, tool_call_id, tool_calls, tool_name, timestamp, reasoning, reasoning_content, _compressed_summary "
-                "FROM messages WHERE session_id = ? AND active = 1 ORDER BY id", (sid,)).fetchall()
+                f"SELECT id, role, content, tool_call_id, tool_calls, tool_name, timestamp, {optional} "
+                f"FROM messages WHERE session_id = ? {_active(conn)} ORDER BY id", (sid,)).fetchall()
         events: List[Event] = []
         for index, (rid, role, content, tool_call_id, tool_calls, tool_name, ts_f, reasoning, reasoning_content, summary) in enumerate(rows):
             prov = Provenance(index, f"message:{role}")
@@ -348,3 +351,8 @@ def _epoch(iso: Optional[str]) -> Optional[float]:
         return datetime.fromisoformat(iso.replace("Z", "+00:00")).astimezone(timezone.utc).timestamp()
     except ValueError:
         return None
+
+
+def _active(conn: Any) -> str:
+    """The rows a session shows: the rewound ones a gateway soft-deleted are ``active = 0`` (older schemas have none)."""
+    return "AND active = 1" if any(r[1] == "active" for r in conn.execute("PRAGMA table_info(messages)")) else ""
