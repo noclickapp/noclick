@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/glean.svg",
-  "source": "https://www.glean.com (official logo asset: https://cdn.prod.website-files.com/6127a84dfe068e153ef20572/66ded1bc82df72f2e1d56eb7_Glean%20Logomark%20Blue.svg)",
-  "license": "Glean brand mark used nominatively to identify the service; trademark rights remain with Glean.",
-  "sha256": "170615f509d5bf867739b8ffcd6c6340f90eb4e806a12ed729f4c4114183a331"
+  "source": "https://cdn.prod.website-files.com/6127a84dfe068e153ef20572/66ded1bc82df72f2e1d56eb7_Glean%20Logomark%20Blue.svg",
+  "source_page": "https://www.glean.com/ (site logo asset; the PR's own recorded source, same sha256 as the PR's glean.svg)",
+  "date": "2026-11-13",
+  "license": "Glean (Glean Technologies, Inc.) trademark; used solely to identify the Glean (Glean Technologies, Inc.) integration",
+  "sha256": "6d653a878eb57cd70c084b1e96580f7f99540e6df376edbc7c8b8b63b92934c2",
+  "source_sha256": "170615f509d5bf867739b8ffcd6c6340f90eb4e806a12ed729f4c4114183a331",
+  "edits": [
+    "kept only the 'g' (element 5: ring with its tick and the arc beneath, #343CED); removed the 'lean' letters (elements 0-4)",
+    "cropped the viewBox (--pad 0.02)",
+    "svgtool clean"
+  ]
 }
