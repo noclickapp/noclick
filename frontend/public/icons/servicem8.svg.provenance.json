@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/servicem8.svg",
+  "source": "https://raw.githubusercontent.com/servicem8/n8n-nodes-servicem8/master/nodes/ServiceM8/ServiceM8Icon.svg",
+  "source_page": "https://github.com/servicem8/n8n-nodes-servicem8 (ServiceM8's own GitHub organization; file added in commit 0e0a23edf579c7a214415f99675846d8a7a8d6af, identical at that commit)",
+  "source_kind": "company GitHub/npm",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "519cf2ae9399b56d32f06b98cf06b2d3b37796342662d350330abf3e2fd1ee54",
+  "edits": [
+    "cropped the viewBox to the app-icon tile, no pad (the green gradient rounded square is ServiceM8's own app icon)",
+    "clean (Illustrator comment and attributes)"
+  ],
+  "checked_against": "https://cdn.prod.website-files.com/57d7ef8b3d16a9a554f037bf/57d7ef8c3d16a9a554f03886_webclip.png (servicem8.com's apple-touch icon; sha256 equals the PR's current PNG): aligned on the tile, the white shape matches at IoU 0.993 (512 px), and the gradient ends (#82C24A top, #53B448 bottom) and the off-white #F5F9FF match pixel for pixel.",
+  "source_sha256": "82957c844e7169149bd34326e48b9c67d18574c73b8b49efa56926feeaf63fb9"
+}
