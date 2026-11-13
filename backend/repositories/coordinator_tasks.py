@@ -13,6 +13,7 @@ from typing import Any, Dict, Optional
 from repositories.conversation import ConversationRepo
 from repositories.coordinator_jobs import ACTIVE, CoordinatorJobRepo, outside_sources, started_by_coordinator
 from repositories.workflow import WorkflowRepo
+from utils.claims import claimable
 
 COORDINATOR_SOURCE = "coordinator"
 # The coordinator's own threads with an agent.
@@ -20,6 +21,14 @@ COORDINATOR_KEY_PREFIX = "coordinator-"
 _INSERT = """INSERT INTO coordinator_jobs
     (id, user_id, kind, workflow_id, node_id, conversation_key, parent_job_id, spec, origin, continuation, send_to_phone)
     VALUES ($1, $2::uuid, 'agent', $3::uuid, $4, $5, $6::uuid, $7::jsonb, $8::jsonb, $9::jsonb, $10) RETURNING *"""
+
+
+# When a queued job became ready to claim: its own queueing, or the end of the job ahead of it in its conversation.
+_READY = """GREATEST(t.created_at, (SELECT max(earlier.updated_at) FROM coordinator_jobs earlier
+    WHERE earlier.user_id = t.user_id AND earlier.created_at <= t.created_at
+    AND earlier.kind = 'agent' AND earlier.conversation_key = t.conversation_key
+    AND earlier.workflow_id = t.workflow_id AND earlier.node_id = t.node_id
+    AND (earlier.created_at, earlier.id) < (t.created_at, t.id)))"""
 
 
 class CoordinatorTaskRepo:
@@ -87,7 +96,8 @@ class CoordinatorTaskRepo:
                            AND earlier.workflow_id = t.workflow_id AND earlier.node_id = t.node_id
                            AND earlier.status IN {ACTIVE}
                            AND (earlier.created_at, earlier.id) < (t.created_at, t.id)
-                       ) ORDER BY t.created_at, t.id FOR UPDATE OF t SKIP LOCKED LIMIT 1""",
+                       ){claimable("t.user_id", _READY)}
+                       ORDER BY t.created_at, t.id FOR UPDATE OF t SKIP LOCKED LIMIT 1""",
                     job_id,
                 )
                 if not row:
@@ -160,13 +170,14 @@ class CoordinatorTaskRepo:
 
     async def reap_stalled(self) -> None:
         await self.pool.execute(
-            """WITH expired AS (UPDATE coordinator_jobs t SET status = 'failed', updated_at = now(),
+            f"""WITH expired AS (UPDATE coordinator_jobs t SET status = 'failed', updated_at = now(),
                error = COALESCE((SELECT NULLIF(e.error, '') FROM workflow_executions e
                                  WHERE e.id = t.execution_id AND e.status = 'error'),
                    'The agent request was interrupted or its reply did not arrive. Check the agent before retrying.'),
                lease_until = NULL
                WHERE t.kind = 'agent' AND t.status IN ('running', 'waiting') AND (t.lease_until < now() OR
                    EXISTS (SELECT 1 FROM workflow_executions e WHERE e.id = t.execution_id AND e.status = 'error'))
+                   {claimable("t.user_id", "t.lease_until")}
                RETURNING t.execution_id, t.error)
                UPDATE workflow_executions e SET status = 'error', finished_at = now(), error = expired.error
                FROM expired WHERE e.id = expired.execution_id AND e.status IN ('running', 'delivered')""",
@@ -174,9 +185,10 @@ class CoordinatorTaskRepo:
 
     async def pending_notifications(self):
         return [dict(r) for r in await self.pool.fetch(
-            """SELECT * FROM coordinator_jobs WHERE kind = 'agent' AND status IN ('completed', 'failed')
+            f"""SELECT * FROM coordinator_jobs WHERE kind = 'agent' AND status IN ('completed', 'failed')
                AND notified_at IS NULL AND NOT EXISTS (SELECT 1 FROM coordinator_wakeups w
                  WHERE w.source='job' AND w.source_id=coordinator_jobs.id)
+               {claimable("user_id", "updated_at")}
                ORDER BY updated_at LIMIT 20""",
         )]
 

@@ -7,6 +7,7 @@ from repositories.conversation import ConversationRepo
 from repositories.coordinator_jobs import ACTIVE, CoordinatorJobRepo
 from utils.access_control import Permission, check_resource_access
 from utils.builder_request import BUILDER_REQUEST_PREFIX
+from utils.claims import claimable
 
 
 class BuilderRequestRepo:
@@ -82,7 +83,8 @@ class BuilderRequestRepo:
 
     async def claim(self):
         row = await self.pool.fetchrow(
-            """WITH next AS (SELECT id FROM coordinator_jobs WHERE kind='build' AND status='queued'
+            f"""WITH next AS (SELECT id FROM coordinator_jobs WHERE kind='build' AND status='queued'
+                 {claimable("user_id", "updated_at")}
                  ORDER BY created_at FOR UPDATE SKIP LOCKED LIMIT 1)
                UPDATE coordinator_jobs r SET status='running', attempt_id=$1,
                  lease_until=now()+interval '2 minutes', updated_at=now()
@@ -164,22 +166,24 @@ class BuilderRequestRepo:
 
     async def reap_stalled(self):
         await self.pool.execute(
-            """UPDATE coordinator_jobs SET status='failed', pending_ask=NULL, lease_until=NULL, updated_at=now(),
+            f"""UPDATE coordinator_jobs SET status='failed', pending_ask=NULL, lease_until=NULL, updated_at=now(),
                error=CASE WHEN phase='publishing' THEN
                  'The publication operation was interrupted and may have taken effect. Check the app before retrying; an unfinished rename can be resumed with the same target or unpublished.'
                  ELSE 'The build was interrupted or waited seven days for input. Check it before starting another request.' END
-               WHERE kind='build' AND status IN ('running','waiting') AND lease_until < now()""",
+               WHERE kind='build' AND status IN ('running','waiting') AND lease_until < now()
+                 {claimable("user_id", "lease_until")}""",
         )
 
     async def claim_notification(self):
         """A finished build with no continuation is posted to its reply conversation."""
         row = await self.pool.fetchrow(
-            """WITH next AS (SELECT id FROM coordinator_jobs
+            f"""WITH next AS (SELECT id FROM coordinator_jobs
                  WHERE kind='build' AND status IN ('completed','failed','cancelled') AND notified_at IS NULL
                  AND reply_conversation_id IS NOT NULL
                  AND NOT EXISTS (SELECT 1 FROM coordinator_wakeups w
                    WHERE w.source='job' AND w.source_id=coordinator_jobs.id)
                  AND (notification_lease_until IS NULL OR notification_lease_until < now())
+                 {claimable("user_id", "GREATEST(updated_at, notification_lease_until)")}
                  ORDER BY updated_at FOR UPDATE SKIP LOCKED LIMIT 1)
                UPDATE coordinator_jobs r SET notification_token=$1,
                  notification_lease_until=now()+interval '2 minutes',

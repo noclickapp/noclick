@@ -467,6 +467,13 @@ VIEW_AS = "auth.view_as"
 # benchmark can stand in for a QR scan no phone makes; without one, never.
 LINKED_TEST_VALUE = "credentials.linked_test_value"
 
+# Which rows of a shared queue this process's claims take, for a deployment
+# running more than one copy against one database: (owner_sql, since_sql) ->
+# a SQL predicate over the row, ``owner_sql`` naming whose row it is and
+# ``since_sql`` when it became ready to take (utils/claims.py). Without one,
+# every claim takes any row.
+CLAIM_FILTER = "claims.filter"
+
 _providers: Dict[str, Any] = {}
 
 
