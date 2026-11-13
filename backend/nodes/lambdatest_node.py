@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -138,13 +139,17 @@ class StartScreenshotTest(BaseModel):
         return value
 
 
+# LambdaTest's own MCP server: agents get its tools through a person's LambdaTest sign-in.
+LambdatestMcpCredential = mcp_credential("lambdatest", "https://mcp.lambdatest.com/mcp", app="LambdaTest")
+
+
 LambdaTestConfig = Annotated[Union[
     StartScreenshotTest, GetScreenshots, GetScreenshotZip, StopScreenshotTest,
     ListBrowsers, ListDevices, ListResolutions, ListProfiles, ListLocations,
 ], Field(discriminator="operation")]
 
 
-class LambdaTestNodeConfig(NodeConfig[LambdaTestConfig, LambdaTestCredential]):
+class LambdaTestNodeConfig(NodeConfig[LambdaTestConfig, Union[LambdaTestCredential, LambdatestMcpCredential]]):
     pass
 
 
@@ -175,6 +180,7 @@ def _redact(value, secrets):
 
 class LambdaTestNode(WorkflowNode):
     integration_type = "automation-lambdatest"
+    credential_provider_labels = {"lambdatest": "LambdaTest Account"}
     connection_evidence = ConnectionEvidence(noun="saved login profiles", operation="list_profiles")
 
     @classmethod

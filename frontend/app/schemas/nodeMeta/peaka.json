@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Peaka API Key": "peaka_api_key",
-    "PeakaAPIKeyCredential": "peaka_api_key"
+    "Peaka MCP": "peaka_mcp",
+    "PeakaAPIKeyCredential": "peaka_api_key",
+    "PeakaMcpCredential": "peaka_mcp"
   },
   "providerLabels": {
-    "peaka": "Peaka API Key"
+    "peaka": "Peaka Account"
   },
   "autoSelectCredential": true
 }

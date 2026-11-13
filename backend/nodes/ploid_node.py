@@ -13,6 +13,7 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -339,6 +340,11 @@ class GetAccountProfile(_Input):
     operation: Literal["get_account_profile"] = "get_account_profile"
 
 
+# Ploid's own MCP server: agents get its tools through a person's Ploid sign-in.
+PloidMcpCredential = mcp_credential("ploid", "https://api.ploid.com/mcp", app="Ploid")
+PloidCredential = Union[PloidAPIKeyCredential, PloidMcpCredential]
+
+
 PloidOperation = Annotated[Union[
     SearchPeople, ResolvePerson, ReverseEmail, GetPerson, GetPersonRun, CancelPersonRun,
     CompileMonitor, CreateMonitor, ListMonitors, GetMonitor, UpdateMonitor, DeleteMonitor,
@@ -348,7 +354,7 @@ PloidOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class PloidConfig(NodeConfig[PloidOperation, PloidAPIKeyCredential]):
+class PloidConfig(NodeConfig[PloidOperation, PloidCredential]):
     pass
 
 
@@ -384,6 +390,7 @@ ROUTES = {
 
 class PloidNode(WorkflowNode):
     integration_type = "automation-ploid"
+    credential_provider_labels = {"ploid": "Ploid Account"}
     connection_evidence = ConnectionEvidence(noun="Ploid account", identity_operation="get_account_profile")
 
     @classmethod

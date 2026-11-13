@@ -9,6 +9,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -129,11 +130,16 @@ class GetResult(_Config):
     id: int = Field(..., ge=1, description="Stored result ID returned by verification or List Email Results.")
 
 
+# Truelist's own MCP server: agents get its tools through a person's Truelist sign-in.
+TrueListMcpCredential = mcp_credential("true_list", "https://api.truelist.io/mcp", app="Truelist")
+TrueListCredential = Union[TrueListAPITokenCredential, TrueListMcpCredential]
+
+
 TrueListConfig = Annotated[Union[GetAccount, VerifyEmail, VerifyEmails, CheckEmail, CreateBatch,
     ListBatches, GetBatch, DeleteBatch, ListResults, GetResult], Field(discriminator="operation")]
 
 
-class TrueListFullConfig(NodeConfig[TrueListConfig, TrueListAPITokenCredential]):
+class TrueListFullConfig(NodeConfig[TrueListConfig, TrueListCredential]):
     pass
 
 
@@ -159,6 +165,7 @@ def _check_credential_family(config_data):
 
 class TrueListNode(WorkflowNode):
     integration_type = "automation-true-list"
+    credential_provider_labels = {"true_list": "Truelist Account"}
     connection_evidence = ConnectionEvidence(identity_operation="get_account", noun="True List account")
 
     @classmethod

@@ -12,6 +12,7 @@ from typing import Annotated, Literal, Union
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -41,6 +42,11 @@ class NusiiProposalsAPIKey(BaseModel):
 
 class _Input(BaseModel):
     model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
+
+
+# Nusii's own MCP server: agents get its tools through a person's Nusii sign-in.
+NusiiProposalsMcpCredential = mcp_credential("nusii_proposals", "https://app.nusii.com/mcp", app="Nusii")
+NusiiProposalsCredential = Union[NusiiProposalsAPIKey, NusiiProposalsMcpCredential]
 
 
 ResourceID = Annotated[int, Field(gt=0, le=9223372036854775807, description="Numeric Nusii resource ID.")]
@@ -264,7 +270,7 @@ NusiiConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class NusiiProposalsConfig(NodeConfig[NusiiConfig, NusiiProposalsAPIKey]):
+class NusiiProposalsConfig(NodeConfig[NusiiConfig, NusiiProposalsCredential]):
     pass
 
 
@@ -316,6 +322,7 @@ def _redact(value, secret):
 
 class NusiiProposalsNode(WorkflowNode):
     integration_type = "automation-nusii-proposals"
+    credential_provider_labels = {"nusii_proposals": "Nusii Account"}
     connection_evidence = ConnectionEvidence(noun="clients", operation="list_clients", identity_operation="get_account")
 
     @classmethod

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Past Dev Project API Key": "past_dev_api_key",
-    "PastDevAPIKeyCredential": "past_dev_api_key"
+    "PastDevAPIKeyCredential": "past_dev_api_key",
+    "PastDevMcpCredential": "past_dev_mcp",
+    "past.dev MCP": "past_dev_mcp"
   },
   "providerLabels": {
-    "past_dev": "Past Dev Project API Key"
+    "past_dev": "past.dev Account"
   },
   "autoSelectCredential": true
 }

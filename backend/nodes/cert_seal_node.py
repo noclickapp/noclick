@@ -13,6 +13,7 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -151,6 +152,11 @@ class ListDesigns(_Page):
     operation: Literal["list_designs"] = Field("list_designs", title="List Designs", description="Designs are authored in the Cert Seal web app.", json_schema_extra={"ui:hidden": True})
 
 
+# CertSeal's own MCP server: agents get its tools through a person's CertSeal sign-in.
+CertSealMcpCredential = mcp_credential("cert_seal", "https://mcp.certseal.com/mcp", app="CertSeal")
+CertSealCredential = Union[CertSealAPIKey, CertSealMcpCredential]
+
+
 Operation = Annotated[Union[ListBatches, CreateBatch, GetBatch, ArchiveBatch,
     UnarchiveBatch, ListRecipients, CreateRecipient, CreateRecipientsBulk,
     GetRecipient, UpdateRecipient, DeleteRecipient, SendRecipient, RevokeRecipient,
@@ -158,7 +164,7 @@ Operation = Annotated[Union[ListBatches, CreateBatch, GetBatch, ArchiveBatch,
     Field(discriminator="operation")]
 
 
-class CertSealConfig(NodeConfig[Operation, CertSealAPIKey]):
+class CertSealConfig(NodeConfig[Operation, CertSealCredential]):
     pass
 
 
@@ -192,6 +198,7 @@ def _segment(value):
 
 class CertSealNode(WorkflowNode):
     integration_type = "automation-cert-seal"
+    credential_provider_labels = {"cert_seal": "CertSeal Account"}
     connection_evidence = ConnectionEvidence(noun="certificate batches", operation="list_batches")
 
     @classmethod

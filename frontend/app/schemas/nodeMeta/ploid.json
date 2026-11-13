@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Ploid API Key": "ploid_api_key",
-    "PloidAPIKeyCredential": "ploid_api_key"
+    "Ploid MCP": "ploid_mcp",
+    "PloidAPIKeyCredential": "ploid_api_key",
+    "PloidMcpCredential": "ploid_mcp"
   },
   "providerLabels": {
-    "ploid": "Ploid API Key"
+    "ploid": "Ploid Account"
   },
   "autoSelectCredential": true
 }

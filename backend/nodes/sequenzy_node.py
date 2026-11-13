@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -203,6 +204,11 @@ class ListCampaigns(_Input):
     label: Optional[Text] = None
 
 
+# Sequenzy's own MCP server: agents get its tools through a person's Sequenzy sign-in.
+SequenzyMcpCredential = mcp_credential("sequenzy", "https://api.sequenzy.com/v1/mcp", app="Sequenzy")
+SequenzyCredential = Union[SequenzyAPIKeyCredential, SequenzyMcpCredential]
+
+
 SequenzyOperation = Annotated[Union[GetAccountInfo, ListSubscribers, GetSubscriber,
     CreateSubscriber, UpdateSubscriber, DeleteSubscriber, AddTag, RemoveTag,
     TriggerEvent, ListTags, CreateTag, ListLists, CreateList, AddSubscribersToList,
@@ -210,7 +216,7 @@ SequenzyOperation = Annotated[Union[GetAccountInfo, ListSubscribers, GetSubscrib
     ListCampaigns], Field(discriminator="operation")]
 
 
-class SequenzyConfig(NodeConfig[SequenzyOperation, SequenzyAPIKeyCredential]):
+class SequenzyConfig(NodeConfig[SequenzyOperation, SequenzyCredential]):
     pass
 
 
@@ -248,6 +254,7 @@ WIRE_NAMES = {
 
 class SequenzyNode(WorkflowNode):
     integration_type = "automation-sequenzy"
+    credential_provider_labels = {"sequenzy": "Sequenzy Account"}
     connection_evidence = ConnectionEvidence(noun="Sequenzy workspace",
         identity_operation="get_account_info", identity_keys=("companyName", "companyId"))
 

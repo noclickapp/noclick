@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "DocsBot AI API Key": "docsbot_ai_api_key",
-    "DocsbotAiApiKey": "docsbot_ai_api_key"
+    "DocsBot AI MCP": "docsbot_ai_mcp",
+    "DocsbotAiApiKey": "docsbot_ai_api_key",
+    "DocsbotAiMcpCredential": "docsbot_ai_mcp"
   },
   "providerLabels": {
-    "docsbot_ai": "DocsBot AI API Key"
+    "docsbot_ai": "DocsBot AI Account"
   },
   "autoSelectCredential": true
 }

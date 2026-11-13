@@ -15,6 +15,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 import httpx
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -238,6 +239,11 @@ class NotraPublishPostToSiteConfig(PublishPost):
     operation: Literal["publish_post_to_site"] = Field("publish_post_to_site", json_schema_extra={"ui:hidden": True})
 
 
+# Notra's own MCP server: agents get its tools through a person's Notra sign-in.
+NotraMcpCredential = mcp_credential("notra", "https://mcp.usenotra.com/mcp", app="Notra")
+NotraCredential = Union[NotraAPIKeyCredential, NotraMcpCredential]
+
+
 NotraConfig = Annotated[Union[
     NotraListWorkspacesConfig,
     NotraListPostsConfig,
@@ -262,7 +268,7 @@ NotraConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class NotraFullConfig(NodeConfig[NotraConfig, NotraAPIKeyCredential]):
+class NotraFullConfig(NodeConfig[NotraConfig, NotraCredential]):
     pass
 
 
@@ -271,6 +277,7 @@ ROUTES = {'list_workspaces': ('GET', '/v1/me/workspaces'), 'list_posts': ('GET',
 
 class NotraNode(WorkflowNode):
     integration_type = "automation-notra"
+    credential_provider_labels = {"notra": "Notra Account"}
     connection_evidence = ConnectionEvidence(operation="list_workspaces", noun="workspaces", label_keys=("name", "slug", "id"))
 
     @classmethod

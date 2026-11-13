@@ -13,6 +13,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import AnyHttpUrl, AwareDatetime, BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -272,10 +273,15 @@ class GetPostMetrics(_Input):
     id: str = Field(..., title='Resource ID', min_length=1)
 
 
+# Planable's own MCP server: agents get its tools through a person's Planable sign-in.
+PlanableMcpCredential = mcp_credential("planable", "https://mcp.planable.io/mcp", app="Planable")
+PlanableCredential = Union[PlanableTokenCredential, PlanableMcpCredential]
+
+
 PlanableOperation = Annotated[Union[ListWorkspaces, ListPages, ListMembers, ListPosts, CreatePost, GetPost, UpdatePost, DeletePost, CountPosts, RequestApproval, CreateShareLink, RevokeShareLink, ListComments, AddComment, ListCampaigns, CreateCampaign, GetCampaign, UpdateCampaign, DeleteCampaign, ListLabels, CreateLabel, ListMedia, UploadMedia, GetMedia, GetPostMetrics], Field(discriminator="operation")]
 
 
-class PlanableFullConfig(NodeConfig[PlanableOperation, PlanableTokenCredential]):
+class PlanableFullConfig(NodeConfig[PlanableOperation, PlanableCredential]):
     pass
 
 
@@ -359,6 +365,7 @@ ROUTES = {'list_workspaces': ('GET', '/workspaces', [], [], [200]),
 
 class PlanableNode(WorkflowNode):
     integration_type = "automation-planable"
+    credential_provider_labels = {"planable": "Planable Account"}
     connection_evidence = ConnectionEvidence(noun="workspaces", operation="list_workspaces")
 
     @classmethod

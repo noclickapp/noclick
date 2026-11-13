@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Sequenzy API Key": "sequenzy_api_key",
-    "SequenzyAPIKeyCredential": "sequenzy_api_key"
+    "Sequenzy MCP": "sequenzy_mcp",
+    "SequenzyAPIKeyCredential": "sequenzy_api_key",
+    "SequenzyMcpCredential": "sequenzy_mcp"
   },
   "providerLabels": {
-    "sequenzy": "Sequenzy API Key"
+    "sequenzy": "Sequenzy Account"
   },
   "autoSelectCredential": true
 }

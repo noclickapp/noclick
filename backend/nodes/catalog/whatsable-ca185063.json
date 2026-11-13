@@ -17,6 +17,18 @@
    "hidden": false,
    "pinned": true,
    "borrowed": false
+  },
+  {
+   "type": "whatsable_ca185063_mcp",
+   "title": "WhatsAble MCP",
+   "oauth_provider": null,
+   "method": "mcp",
+   "hidden": false,
+   "pinned": true,
+   "borrowed": false,
+   "linked_fields": [
+    "mcp_server_url"
+   ]
   }
  ],
  "operations": [

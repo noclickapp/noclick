@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "ScrapeGraphAI MCP": "scrapegraph_ai_mcp",
     "Scrapegraph AI API Key": "scrapegraph_ai_api_key",
-    "ScrapegraphAIAPIKeyCredential": "scrapegraph_ai_api_key"
+    "ScrapegraphAIAPIKeyCredential": "scrapegraph_ai_api_key",
+    "ScrapegraphAiMcpCredential": "scrapegraph_ai_mcp"
   },
   "providerLabels": {
-    "scrapegraph_ai": "Scrapegraph AI API Key"
+    "scrapegraph_ai": "ScrapeGraphAI Account"
   },
   "autoSelectCredential": true
 }

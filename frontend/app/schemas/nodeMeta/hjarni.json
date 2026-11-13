@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Hjarni API Token": "hjarni_api_token",
-    "HjarniAPITokenCredential": "hjarni_api_token"
+    "Hjarni MCP": "hjarni_mcp",
+    "HjarniAPITokenCredential": "hjarni_api_token",
+    "HjarniMcpCredential": "hjarni_mcp"
   },
   "providerLabels": {
-    "hjarni": "Hjarni API Token"
+    "hjarni": "Hjarni Account"
   },
   "autoSelectCredential": true
 }

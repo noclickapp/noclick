@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Nimbata API Token": "nimbata_api_token",
-    "NimbataAPITokenCredential": "nimbata_api_token"
+    "Nimbata MCP": "nimbata_mcp",
+    "NimbataAPITokenCredential": "nimbata_api_token",
+    "NimbataMcpCredential": "nimbata_mcp"
   },
   "providerLabels": {
-    "nimbata": "Nimbata API Token"
+    "nimbata": "Nimbata Account"
   },
   "autoSelectCredential": true
 }

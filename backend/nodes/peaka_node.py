@@ -1,9 +1,10 @@
 """Peaka project catalogs, tables and SQL through the published Gateway API."""
-from typing import Literal
+from typing import Literal, Union
 from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.peaka_operations import PeakaConfig, ROUTES, PATH_FIELDS
@@ -36,7 +37,12 @@ class PeakaAPIKeyCredential(BaseModel):
         return value
 
 
-class PeakaFullConfig(NodeConfig[PeakaConfig, PeakaAPIKeyCredential]):
+# Peaka's own MCP server: agents get its tools through a person's Peaka sign-in.
+PeakaMcpCredential = mcp_credential("peaka", "https://mcp.peaka.studio/mcp", app="Peaka")
+PeakaCredential = Union[PeakaAPIKeyCredential, PeakaMcpCredential]
+
+
+class PeakaFullConfig(NodeConfig[PeakaConfig, PeakaCredential]):
     pass
 
 
@@ -52,6 +58,7 @@ def _redact(value, token):
 
 class PeakaNode(WorkflowNode):
     integration_type = "automation-peaka"
+    credential_provider_labels = {"peaka": "Peaka Account"}
     connection_evidence = ConnectionEvidence(noun="catalogs", operation="list_catalogs", label_keys=("displayName", "name", "id"))
 
     @classmethod

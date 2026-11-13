@@ -12,6 +12,7 @@ from urllib.parse import quote, urlsplit
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -231,6 +232,11 @@ class ListMonitorChanges(_Monitor, _Page):
     tag: str | None = None
 
 
+# Context.dev's own MCP server: agents get its tools through a person's Context.dev sign-in.
+ContextDevMcpCredential = mcp_credential("context_dev", "https://mcp.context.dev/mcp", app="Context.dev")
+ContextDevCredential = Union[ContextDevAPIKeyCredential, ContextDevMcpCredential]
+
+
 ContextDevConfig = Annotated[Union[
     ScrapeWeb, SearchWeb, MapURLs, CrawlWebsite, AnswerResearch, SearchNews,
     RetrieveBrand, SearchBrands, EnrichPerson, GetUsage, GetUsageHistory,
@@ -239,7 +245,7 @@ ContextDevConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ContextDevFullConfig(NodeConfig[ContextDevConfig, ContextDevAPIKeyCredential]):
+class ContextDevFullConfig(NodeConfig[ContextDevConfig, ContextDevCredential]):
     pass
 
 
@@ -304,6 +310,7 @@ def _redact(value, secret):
 
 class ContextDevNode(WorkflowNode):
     integration_type = "automation-context-dev"
+    credential_provider_labels = {"context_dev": "Context.dev Account"}
     connection_evidence = ConnectionEvidence(noun="organization credit usage", operation="get_usage")
 
     @classmethod

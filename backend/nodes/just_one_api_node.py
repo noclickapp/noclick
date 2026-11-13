@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import SSRFError, guarded_async_client
@@ -450,6 +451,11 @@ class SearchRedditConfig(_Operation):
     )
 
 
+# Just One API's own MCP server: agents get its tools through a person's Just One API sign-in.
+JustOneApiMcpCredential = mcp_credential("just_one_api", "https://mcp.justoneapi.com/mcp", app="Just One API")
+JustOneApiCredential = Union[JustOneApiTokenCredential, JustOneApiMcpCredential]
+
+
 JustOneApiOperation = Annotated[
     Union[
         GetWeiboHotSearchConfig,
@@ -477,7 +483,7 @@ JustOneApiOperation = Annotated[
 ]
 
 
-class JustOneApiFullConfig(NodeConfig[JustOneApiOperation, JustOneApiTokenCredential]):
+class JustOneApiFullConfig(NodeConfig[JustOneApiOperation, JustOneApiCredential]):
     pass
 
 
@@ -654,6 +660,7 @@ def _redact(value, token):
 
 class JustOneApiNode(WorkflowNode):
     integration_type = "automation-just-one-api"
+    credential_provider_labels = {"just_one_api": "Just One API Account"}
     connection_evidence = ConnectionEvidence(
         operation="get_weibo_hot_search", noun="Weibo hot search", proves="reachability"
     )

@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "ITM Platform MCP": "itm_platform_mcp",
     "ITM Platform Session Token": "itm_platform_token",
-    "ITMPlatformTokenCredential": "itm_platform_token"
+    "ITMPlatformTokenCredential": "itm_platform_token",
+    "ItmPlatformMcpCredential": "itm_platform_mcp"
   },
   "providerLabels": {
-    "itm_platform": "ITM Platform Session Token"
+    "itm_platform": "ITM Platform Account"
   },
   "autoSelectCredential": true
 }

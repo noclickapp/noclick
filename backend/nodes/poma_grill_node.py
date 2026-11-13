@@ -13,6 +13,7 @@ from uuid import UUID
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -199,10 +200,15 @@ class DeleteJob(_Job):
     operation: Literal["delete_job"] = Field("delete_job", json_schema_extra={"ui:hidden": True})
 
 
+# POMA Grill's own MCP server: agents get its tools through a person's POMA Grill sign-in.
+PomaGrillMcpCredential = mcp_credential("poma_grill", "https://mcp.index4.ai", app="POMA Grill")
+PomaGrillCredential = Union[PomaGrillAPIKeyCredential, PomaGrillMcpCredential]
+
+
 PomaGrillConfig = Annotated[Union[GetAccount, GetUsage, IngestDocument, Search, SearchDocument, ListAttributes, ListDocuments, GetDocument, UpdateDocumentAttributes, DeleteDocument, ListDocumentAssets, ListProjects, GetProject, RenameProject, GetProjectUsage, ListActiveJobs, GetJob, GetJobStatus, GetJobResults, DeleteJob], Field(discriminator="operation")]
 
 
-class PomaGrillFullConfig(NodeConfig[PomaGrillConfig, PomaGrillAPIKeyCredential]):
+class PomaGrillFullConfig(NodeConfig[PomaGrillConfig, PomaGrillCredential]):
     pass
 
 
@@ -242,6 +248,7 @@ def _redact(value, key):
 
 class PomaGrillNode(WorkflowNode):
     integration_type = "automation-poma-grill"
+    credential_provider_labels = {"poma_grill": "POMA Grill Account"}
     connection_evidence = ConnectionEvidence(noun="account", operation="get_account",
         label_keys=("username", "email", "account_id"))
 

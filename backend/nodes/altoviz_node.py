@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -345,6 +346,11 @@ class AltovizGetSettingsConfig(_Input):
     operation: Literal['get_settings'] = Field('get_settings', json_schema_extra={"ui:hidden": True})
 
 
+# Altoviz's own MCP server: agents get its tools through a person's Altoviz sign-in.
+AltovizMcpCredential = mcp_credential("altoviz", "https://mcp.altoviz.com", app="Altoviz")
+AltovizCredential = Union[AltovizAPIKeyCredential, AltovizMcpCredential]
+
+
 AltovizConfig = Annotated[Union[
     AltovizListCustomersConfig,
     AltovizGetCustomerConfig,
@@ -374,7 +380,7 @@ AltovizConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class AltovizFullConfig(NodeConfig[AltovizConfig, AltovizAPIKeyCredential]):
+class AltovizFullConfig(NodeConfig[AltovizConfig, AltovizCredential]):
     pass
 
 
@@ -431,6 +437,7 @@ def _next_page(response, path, current, params):
 
 class AltovizNode(WorkflowNode):
     integration_type = "automation-altoviz"
+    credential_provider_labels = {"altoviz": "Altoviz Account"}
     connection_evidence = ConnectionEvidence(noun="customers", operation="list_customers")
 
     @classmethod

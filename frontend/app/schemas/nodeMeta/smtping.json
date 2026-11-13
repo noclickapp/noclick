@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "SMTPing MCP": "smtping_mcp",
     "Smtping API Key": "smtping_api_key",
-    "SmtpingApiKeyCredential": "smtping_api_key"
+    "SmtpingApiKeyCredential": "smtping_api_key",
+    "SmtpingMcpCredential": "smtping_mcp"
   },
   "providerLabels": {
-    "smtping": "Smtping API Key"
+    "smtping": "SMTPing Account"
   },
   "autoSelectCredential": true
 }

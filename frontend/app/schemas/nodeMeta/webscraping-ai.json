@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "WebScraping.AI API Key": "webscraping_ai_api_key",
-    "WebscrapingAiAPIKeyCredential": "webscraping_ai_api_key"
+    "WebScraping.AI MCP": "webscraping_ai_mcp",
+    "WebscrapingAiAPIKeyCredential": "webscraping_ai_api_key",
+    "WebscrapingAiMcpCredential": "webscraping_ai_mcp"
   },
   "providerLabels": {
-    "webscraping_ai": "WebScraping.AI API Key"
+    "webscraping_ai": "WebScraping.AI Account"
   },
   "autoSelectCredential": true
 }

@@ -73,6 +73,8 @@
   },
   "credentialTypes": {
     "Outreach Account": "outreach_oauth",
+    "Outreach MCP": "outreach_mcp",
+    "OutreachMcpCredential": "outreach_mcp",
     "OutreachOAuthCredential": "outreach_oauth"
   },
   "providerLabels": {

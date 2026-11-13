@@ -12,6 +12,7 @@ from urllib.parse import quote, quote_plus, urlsplit
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import SSRFError, guarded_async_client
@@ -82,6 +83,11 @@ class _Scrape(_Page):
         if value is not None:
             _string_map(value, "Target headers")
         return value
+
+
+# WebScraping.AI's own MCP server: agents get its tools through a person's WebScraping.AI sign-in.
+WebscrapingAiMcpCredential = mcp_credential("webscraping_ai", "https://mcp.webscraping.ai/mcp", app="WebScraping.AI")
+WebscrapingAiCredential = Union[WebscrapingAiAPIKeyCredential, WebscrapingAiMcpCredential]
 
 
 def _string_map(value, label):
@@ -188,12 +194,13 @@ WebscrapingAiConfig = Annotated[Union[AskQuestion, ExtractFields, GetHTML, GetTe
     GetStructuredData, GetAccount], Field(discriminator="operation")]
 
 
-class WebscrapingAiFullConfig(NodeConfig[WebscrapingAiConfig, WebscrapingAiAPIKeyCredential]):
+class WebscrapingAiFullConfig(NodeConfig[WebscrapingAiConfig, WebscrapingAiCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
 class WebscrapingAiNode(WorkflowNode):
     integration_type = "automation-webscraping-ai"
+    credential_provider_labels = {"webscraping_ai": "WebScraping.AI Account"}
     connection_evidence = ConnectionEvidence(noun="account", identity_operation="get_account", identity_keys=("email",))
 
     @classmethod

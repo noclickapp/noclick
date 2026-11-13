@@ -30,8 +30,10 @@
     ]
   },
   "credentialTypes": {
+    "AWeber MCP": "aweber_mcp",
     "AWeberOAuthCredential": "aweber_oauth",
-    "Aweber OAuth": "aweber_oauth"
+    "Aweber OAuth": "aweber_oauth",
+    "AweberMcpCredential": "aweber_mcp"
   },
   "providerLabels": {
     "aweber": "AWeber Account"

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Conversion Tools API Token": "conversion_tools_api_token",
-    "ConversionToolsAPITokenCredential": "conversion_tools_api_token"
+    "Conversion Tools MCP": "conversion_tools_mcp",
+    "ConversionToolsAPITokenCredential": "conversion_tools_api_token",
+    "ConversionToolsMcpCredential": "conversion_tools_mcp"
   },
   "providerLabels": {
-    "conversion_tools": "Conversion Tools API Token"
+    "conversion_tools": "Conversion Tools Account"
   },
   "autoSelectCredential": true
 }

@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
@@ -104,11 +105,16 @@ class GetCredits(_Input):
     operation: Literal["get_credits"] = "get_credits"
 
 
+# Easy Email Verification's own MCP server: agents get its tools through a person's Easy Email Verification sign-in.
+EasyEmailVerificationMcpCredential = mcp_credential("easy_email_verification", "https://mcp.easyemailverification.com/mcp", app="Easy Email Verification")
+EasyEmailVerificationCredential = Union[EasyEmailVerificationAPIKeyCredential, EasyEmailVerificationMcpCredential]
+
+
 Operation = Annotated[Union[VerifyEmail, VerifyBatch, UploadBulkFile, ListBulkJobs,
     GetBulkJob, DownloadBulkResults, DeleteBulkJob, GetCredits], Field(discriminator="operation")]
 
 
-class EasyEmailVerificationConfig(NodeConfig[Operation, EasyEmailVerificationAPIKeyCredential]):
+class EasyEmailVerificationConfig(NodeConfig[Operation, EasyEmailVerificationCredential]):
     pass
 
 
@@ -123,6 +129,7 @@ def _verification(body):
 
 class EasyEmailVerificationNode(WorkflowNode):
     integration_type = "automation-easy-email-verification"
+    credential_provider_labels = {"easy_email_verification": "Easy Email Verification Account"}
     connection_evidence = ConnectionEvidence(operation="get_credits", noun="account credit balance")
 
     @classmethod

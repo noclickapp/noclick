@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "APIVerve MCP": "apiverve_mcp",
     "Apiverve API Key": "apiverve_api_key",
-    "ApiverveAPIKeyCredential": "apiverve_api_key"
+    "ApiverveAPIKeyCredential": "apiverve_api_key",
+    "ApiverveMcpCredential": "apiverve_mcp"
   },
   "providerLabels": {
-    "apiverve": "Apiverve API Key"
+    "apiverve": "APIVerve Account"
   },
   "autoSelectCredential": true
 }

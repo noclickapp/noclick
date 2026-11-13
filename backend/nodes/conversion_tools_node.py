@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
@@ -49,6 +50,11 @@ class ConversionToolsAPITokenCredential(BaseModel):
 
 class Input(BaseModel):
     model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
+
+
+# Conversion Tools's own MCP server: agents get its tools through a person's Conversion Tools sign-in.
+ConversionToolsMcpCredential = mcp_credential("conversion_tools", "https://mcp.conversiontools.io/mcp", app="Conversion Tools")
+ConversionToolsCredential = Union[ConversionToolsAPITokenCredential, ConversionToolsMcpCredential]
 
 
 Identifier = Annotated[str, Field(min_length=1, max_length=256, pattern=r"^[A-Za-z0-9_][A-Za-z0-9_.-]*$")]
@@ -173,12 +179,13 @@ ConversionToolsConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ConversionToolsNodeConfig(NodeConfig[ConversionToolsConfig, ConversionToolsAPITokenCredential]):
+class ConversionToolsNodeConfig(NodeConfig[ConversionToolsConfig, ConversionToolsCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
 class ConversionToolsNode(WorkflowNode):
     integration_type = "automation-conversion-tools"
+    credential_provider_labels = {"conversion_tools": "Conversion Tools Account"}
     connection_evidence = ConnectionEvidence(noun="Conversion Tools account", identity_operation="get_auth_info")
 
     @classmethod

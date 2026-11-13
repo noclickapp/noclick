@@ -11,6 +11,7 @@ from uuid import UUID
 from pydantic import AwareDatetime, BaseModel, ConfigDict, EmailStr, Field, StrictBool, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -287,6 +288,11 @@ class CreateEmailMessage(_Input):
     emailProviderId: UUID | None = None
 
 
+# Sure Send's own MCP server: agents get its tools through a person's Sure Send sign-in.
+SureSendMcpCredential = mcp_credential("sure_send", "https://suresend.ai/mcp", app="Sure Send")
+SureSendCredential = Union[SureSendAPITokenCredential, SureSendMcpCredential]
+
+
 SureSendOperation = Annotated[Union[
     GetIdentity,
     ListPeople,
@@ -316,7 +322,7 @@ SureSendOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class SureSendFullConfig(NodeConfig[SureSendOperation, SureSendAPITokenCredential]):
+class SureSendFullConfig(NodeConfig[SureSendOperation, SureSendCredential]):
     pass
 
 
@@ -352,6 +358,7 @@ REQUESTS = {
 
 class SureSendNode(WorkflowNode):
     integration_type = "automation-sure-send"
+    credential_provider_labels = {"sure_send": "Sure Send Account"}
     connection_evidence = ConnectionEvidence(noun="Sure Send account", identity_operation="get_identity")
 
     @classmethod

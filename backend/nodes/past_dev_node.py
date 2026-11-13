@@ -5,13 +5,14 @@ receipt; asynchronous acceptance does not imply completed indexing/deletion.
 """
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Union
 from urllib.parse import quote
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.past_dev_operations import Operation, OPERATIONS
@@ -41,7 +42,12 @@ class PastDevAPIKeyCredential(BaseModel):
         return value
 
 
-class PastDevNodeConfig(NodeConfig[Operation, PastDevAPIKeyCredential]):
+# past.dev's own MCP server: agents get its tools through a person's past.dev sign-in.
+PastDevMcpCredential = mcp_credential("past_dev", "https://app.past.dev/mcp", app="past.dev")
+PastDevCredential = Union[PastDevAPIKeyCredential, PastDevMcpCredential]
+
+
+class PastDevNodeConfig(NodeConfig[Operation, PastDevCredential]):
     pass
 
 
@@ -57,6 +63,7 @@ def _redact(value, secret):
 
 class PastDevNode(WorkflowNode):
     integration_type = "automation-past-dev"
+    credential_provider_labels = {"past_dev": "past.dev Account"}
     connection_evidence = ConnectionEvidence(
         noun="project identities", operation="list_identities", label_keys=("identity",),
     )

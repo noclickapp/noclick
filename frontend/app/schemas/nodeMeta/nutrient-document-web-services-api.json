@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Nutrient API Key": "nutrient_document_web_services_api_key",
-    "NutrientCredential": "nutrient_document_web_services_api_key"
+    "Nutrient MCP": "nutrient_document_web_services_api_mcp",
+    "NutrientCredential": "nutrient_document_web_services_api_key",
+    "NutrientDocumentWebServicesApiMcpCredential": "nutrient_document_web_services_api_mcp"
   },
   "providerLabels": {
-    "nutrient_document_web_services_api": "Nutrient API Key"
+    "nutrient_document_web_services_api": "Nutrient Account"
   },
   "autoSelectCredential": true
 }

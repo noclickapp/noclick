@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "AltText.ai MCP": "alttext_ai_mcp",
     "Alttext.ai API Key": "alttext_ai_api_key",
-    "AlttextAiCredential": "alttext_ai_api_key"
+    "AlttextAiCredential": "alttext_ai_api_key",
+    "AlttextAiMcpCredential": "alttext_ai_mcp"
   },
   "providerLabels": {
-    "alttext_ai": "Alttext.ai API Key"
+    "alttext_ai": "AltText.ai Account"
   },
   "autoSelectCredential": true
 }

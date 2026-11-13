@@ -5,7 +5,9 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
-    "UpstashVectorCredential": "upstash_vector"
+    "Upstash MCP": "upstash_vector_mcp",
+    "UpstashVectorCredential": "upstash_vector",
+    "UpstashVectorMcpCredential": "upstash_vector_mcp"
   },
   "providerLabels": {
     "upstash_vector": "Upstash Vector Account"

@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Fundable MCP": "tryfundable_mcp",
     "Tryfundable API Key": "tryfundable_api_key",
-    "TryfundableAPIKeyCredential": "tryfundable_api_key"
+    "TryfundableAPIKeyCredential": "tryfundable_api_key",
+    "TryfundableMcpCredential": "tryfundable_mcp"
   },
   "providerLabels": {
-    "tryfundable": "Tryfundable API Key"
+    "tryfundable": "Fundable Account"
   },
   "autoSelectCredential": true
 }

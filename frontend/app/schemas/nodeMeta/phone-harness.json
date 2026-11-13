@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Phone Harness API Key": "phone_harness_api_key",
-    "PhoneHarnessAPIKeyCredential": "phone_harness_api_key"
+    "Phone Harness MCP": "phone_harness_mcp",
+    "PhoneHarnessAPIKeyCredential": "phone_harness_api_key",
+    "PhoneHarnessMcpCredential": "phone_harness_mcp"
   },
   "providerLabels": {
-    "phone_harness": "Phone Harness API Key"
+    "phone_harness": "Phone Harness Account"
   },
   "autoSelectCredential": true
 }

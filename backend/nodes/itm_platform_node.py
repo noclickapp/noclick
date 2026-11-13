@@ -13,6 +13,7 @@ from typing import Annotated, Any, Literal, Union
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -262,6 +263,11 @@ class ListProgramsConfig(_Input):
     operation: Literal["list_programs"] = Field("list_programs", json_schema_extra={"ui:hidden": True})
 
 
+# ITM Platform's own MCP server: agents get its tools through a person's ITM Platform sign-in.
+ItmPlatformMcpCredential = mcp_credential("itm_platform", "https://api.itmplatform.com/v2/_/mcp/", app="ITM Platform")
+ITMPlatformCredential = Union[ITMPlatformTokenCredential, ItmPlatformMcpCredential]
+
+
 ROUTES = {'get_me': {'method': 'GET',
             'path': '/mydetail',
             'v2': False,
@@ -468,7 +474,7 @@ ROUTES = {'get_me': {'method': 'GET',
 
 Operation = Annotated[Union[GetMeConfig, SearchProjectsConfig, CreateProjectConfig, GetProjectConfig, UpdateProjectConfig, SearchTasksConfig, CreateTaskConfig, GetTaskConfig, UpdateTaskConfig, DeleteTaskConfig, ListUsersConfig, GetUserConfig, ListClientsConfig, SearchServicesConfig, CreateServiceConfig, GetServiceConfig, UpdateServiceConfig, GetTimesheetConfig, SetTimeEntriesConfig, ListProgramsConfig], Field(discriminator="operation")]
 
-class ITMPlatformFullConfig(NodeConfig[Operation, ITMPlatformTokenCredential]):
+class ITMPlatformFullConfig(NodeConfig[Operation, ITMPlatformCredential]):
     pass
 
 
@@ -490,6 +496,7 @@ def _redact(value, token):
 
 class ITMPlatformNode(WorkflowNode):
     integration_type = "automation-itm-platform"
+    credential_provider_labels = {"itm_platform": "ITM Platform Account"}
     connection_evidence = ConnectionEvidence(noun="account users", operation="list_users",
         identity_operation="get_me", label_keys=("DisplayName", "UserName", "UserId"),
         identity_keys=("LoginName", "FirstName", "LastName"))

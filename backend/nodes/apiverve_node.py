@@ -7,6 +7,7 @@ from typing import Annotated, Literal, Union
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -116,15 +117,21 @@ class ApiverveListCurrencySymbolsConfig(BaseModel):
     currency: str = Field("USD")
 
 
+# APIVerve's own MCP server: agents get its tools through a person's APIVerve sign-in.
+ApiverveMcpCredential = mcp_credential("apiverve", "https://api.apiverve.com/v1/mcp", app="APIVerve")
+ApiverveCredential = Union[ApiverveAPIKeyCredential, ApiverveMcpCredential]
+
+
 ApiverveConfig = Annotated[Union[ApiverveValidateEmailConfig, ApiverveCheckDisposableEmailConfig, ApiverveValidatePhoneConfig, ApiverveLookupIpConfig, ApiverveCheckDomainAvailabilityConfig, ApiverveGetDomainExpirationConfig, ApiverveConvertCurrencyConfig, ApiverveGetWeatherConfig, ApiverveGenerateQrCodeConfig, ApiverveGeneratePdfConfig, ApiverveGenerateImageConfig, ApiverveCaptureScreenshotConfig, ApiverveUnshortenUrlConfig, ApiverveConvertMarkdownConfig, ApiverveListCurrencySymbolsConfig], Field(discriminator="operation")]
 
-class ApiverveFullConfig(NodeConfig[ApiverveConfig, ApiverveAPIKeyCredential]):
+class ApiverveFullConfig(NodeConfig[ApiverveConfig, ApiverveCredential]):
     pass
 
 ROUTES = {'validate_email': ('GET', 'emailvalidator'), 'check_disposable_email': ('GET', 'emaildisposablechecker'), 'validate_phone': ('GET', 'phonenumbervalidator'), 'lookup_ip': ('GET', 'iplookup'), 'check_domain_availability': ('GET', 'domainavailability'), 'get_domain_expiration': ('GET', 'domainexpiration'), 'convert_currency': ('GET', 'currencyconverter'), 'get_weather': ('GET', 'weatherforecast'), 'generate_qr_code': ('POST', 'qrcodegenerator'), 'generate_pdf': ('POST', 'htmltopdf'), 'generate_image': ('POST', 'htmltoimage'), 'capture_screenshot': ('POST', 'webscreenshots'), 'unshorten_url': ('POST', 'urlunshortener'), 'convert_markdown': ('POST', 'markdowntohtml'), 'list_currency_symbols': ('GET', 'currencysymbols')}
 
 class ApiverveNode(WorkflowNode):
     integration_type = "automation-apiverve"
+    credential_provider_labels = {"apiverve": "APIVerve Account"}
     connection_evidence = ConnectionEvidence(operation="list_currency_symbols", noun="Apiverve key acceptance", proves="reachability")
 
     @classmethod

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Wayfront API Token": "wayfront_api_token",
+    "Wayfront MCP": "wayfront_mcp",
+    "WayfrontMcpCredential": "wayfront_mcp",
     "WayfrontTokenCredential": "wayfront_api_token"
   },
   "providerLabels": {
-    "wayfront": "Wayfront API Token"
+    "wayfront": "Wayfront Account"
   },
   "autoSelectCredential": true
 }

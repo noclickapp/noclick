@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Qovery API Token": "qovery_api_token",
-    "QoveryAPITokenCredential": "qovery_api_token"
+    "Qovery MCP": "qovery_mcp",
+    "QoveryAPITokenCredential": "qovery_api_token",
+    "QoveryMcpCredential": "qovery_mcp"
   },
   "providerLabels": {
-    "qovery": "Qovery API Token"
+    "qovery": "Qovery Account"
   },
   "autoSelectCredential": true
 }

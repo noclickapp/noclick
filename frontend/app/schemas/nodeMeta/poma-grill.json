@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "POMA Grill MCP": "poma_grill_mcp",
     "Poma Grill API Key": "poma_grill_api_key",
-    "PomaGrillAPIKeyCredential": "poma_grill_api_key"
+    "PomaGrillAPIKeyCredential": "poma_grill_api_key",
+    "PomaGrillMcpCredential": "poma_grill_mcp"
   },
   "providerLabels": {
-    "poma_grill": "Poma Grill API Key"
+    "poma_grill": "POMA Grill Account"
   },
   "autoSelectCredential": true
 }

@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "AI/ML API Key": "ai_ml_api_key",
-    "AiMlApiCredential": "ai_ml_api_key"
+    "AI/ML API MCP": "ai_ml_api_mcp",
+    "AiMlApiCredential": "ai_ml_api_key",
+    "AiMlApiMcpCredential": "ai_ml_api_mcp"
   },
   "providerLabels": {
-    "ai_ml_api": "AI/ML API Key"
+    "ai_ml_api": "AI/ML API Account"
   },
   "autoSelectCredential": true
 }

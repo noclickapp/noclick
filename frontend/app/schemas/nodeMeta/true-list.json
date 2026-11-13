@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "True List API Token": "true_list_api_token",
-    "TrueListAPITokenCredential": "true_list_api_token"
+    "TrueListAPITokenCredential": "true_list_api_token",
+    "TrueListMcpCredential": "true_list_mcp",
+    "Truelist MCP": "true_list_mcp"
   },
   "providerLabels": {
-    "true_list": "True List API Token"
+    "true_list": "Truelist Account"
   },
   "autoSelectCredential": true
 }

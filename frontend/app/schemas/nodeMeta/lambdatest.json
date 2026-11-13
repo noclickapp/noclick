@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "LambdaTest Access Key": "lambdatest_access_key",
-    "LambdaTestCredential": "lambdatest_access_key"
+    "LambdaTest MCP": "lambdatest_mcp",
+    "LambdaTestCredential": "lambdatest_access_key",
+    "LambdatestMcpCredential": "lambdatest_mcp"
   },
   "providerLabels": {
-    "lambdatest": "LambdaTest Access Key"
+    "lambdatest": "LambdaTest Account"
   },
   "autoSelectCredential": true
 }

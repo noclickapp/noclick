@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Zigpoll API Key": "zigpoll_api_key",
-    "ZigpollAPIKeyCredential": "zigpoll_api_key"
+    "Zigpoll MCP": "zigpoll_mcp",
+    "ZigpollAPIKeyCredential": "zigpoll_api_key",
+    "ZigpollMcpCredential": "zigpoll_mcp"
   },
   "providerLabels": {
-    "zigpoll": "Zigpoll API Key"
+    "zigpoll": "Zigpoll Account"
   },
   "autoSelectCredential": true
 }

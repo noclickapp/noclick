@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Nusii MCP": "nusii_proposals_mcp",
     "Nusii Proposals API Key": "nusii_proposals_api_key",
-    "NusiiProposalsAPIKey": "nusii_proposals_api_key"
+    "NusiiProposalsAPIKey": "nusii_proposals_api_key",
+    "NusiiProposalsMcpCredential": "nusii_proposals_mcp"
   },
   "providerLabels": {
-    "nusii_proposals": "Nusii Proposals API Key"
+    "nusii_proposals": "Nusii Account"
   },
   "autoSelectCredential": true
 }

@@ -5,6 +5,7 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -163,12 +164,17 @@ class CancelResearch(_ResearchJob):
     operation: Literal["cancel_research"] = Field("cancel_research", title="Cancel Research", json_schema_extra={"ui:hidden": True})
 
 
+# DocsBot AI's own MCP server: agents get its tools through a person's DocsBot AI sign-in.
+DocsbotAiMcpCredential = mcp_credential("docsbot_ai", "https://mcp.docsbot.ai", app="DocsBot AI")
+DocsbotAiCredential = Union[DocsbotAiApiKey, DocsbotAiMcpCredential]
+
+
 DocsbotAiConfig = Annotated[Union[ListLibraries, Chat, ChatAgent, Search, FetchDocument, RateAnswer,
     LogSupport, EscalateConversation, UpdateConversation, CaptureLead, SummarizeConversation,
     CreateTicket, StartResearch, ContinueResearch, GetResearch, CancelResearch], Field(discriminator="operation")]
 
 
-class DocsbotAiNodeConfig(NodeConfig[DocsbotAiConfig, DocsbotAiApiKey]):
+class DocsbotAiNodeConfig(NodeConfig[DocsbotAiConfig, DocsbotAiCredential]):
     pass
 
 
@@ -195,6 +201,7 @@ PATH_FIELDS = {"team_id", "bot_id", "answer_id", "conv_id", "job_id"}
 
 class DocsbotAiNode(WorkflowNode):
     integration_type = "automation-docsbot-ai"
+    credential_provider_labels = {"docsbot_ai": "DocsBot AI Account"}
     connection_evidence = ConnectionEvidence(noun="searchable bot libraries", operation="list_libraries")
 
     @classmethod

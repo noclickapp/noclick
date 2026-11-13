@@ -43,6 +43,9 @@ const COMPOUND_BRANDS = [
   'PocketSmith', 'PropertyRadar', 'RingCentral', 'ThoughtSpot', 'TimeCamp', 'UptimeRobot', 'WorkOS', 'ZenRows',
   '2Chat', 'CarsXE', 'DeployHQ', 'DocSpace', 'FacturaDirecta', 'GTmetrix', 'HypeAuditor', 'iClosed', 'ImageKit',
   'LeadMagic', 'MailSlurp', 'PlanetScale', 'SearchApi', 'TinyFish', 'UniOne', 'VideoDB',
+  'AltText', 'APIVerve', 'AWeber', 'BulkPublish', 'CertSeal', 'DevCycle', 'DocsAutomator', 'DocsBot',
+  'JSON2Video', 'LambdaTest', 'LeadBoxer', 'ScrapeGraphAI', 'Search1API', 'SimpleLocalize', 'SMTPing',
+  'WebScraping', 'WhatsAble',
 ];
 
 // Split forms whose CANONICAL brand differs from the class name entirely —

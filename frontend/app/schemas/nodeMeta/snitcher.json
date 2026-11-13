@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Snitcher MCP": "snitcher_mcp",
     "Snitcher Personal Access Token": "snitcher_token",
+    "SnitcherMcpCredential": "snitcher_mcp",
     "SnitcherTokenCredential": "snitcher_token"
   },
   "providerLabels": {
-    "snitcher": "Snitcher Personal Access Token"
+    "snitcher": "Snitcher Account"
   },
   "autoSelectCredential": true
 }

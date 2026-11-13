@@ -10,6 +10,7 @@ import httpx
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, JsonValue, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -279,6 +280,11 @@ class GetAudience(_Audience):
     operation: Literal["get_audience"] = "get_audience"
 
 
+# DevCycle's own MCP server: agents get its tools through a person's DevCycle sign-in.
+DevCycleMcpCredential = mcp_credential("dev_cycle", "https://mcp.devcycle.com/mcp", app="DevCycle")
+DevCycleCredential = Union[DevCycleAccessToken, DevCycleMcpCredential]
+
+
 DevCycleOperation = Annotated[Union[
     ListProjects, GetProject, CreateProject, UpdateProject, DeleteProject,
     ListEnvironments, GetEnvironment, CreateEnvironment, UpdateEnvironment, DeleteEnvironment,
@@ -288,7 +294,7 @@ DevCycleOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class DevCycleConfig(NodeConfig[DevCycleOperation, DevCycleAccessToken]):
+class DevCycleConfig(NodeConfig[DevCycleOperation, DevCycleCredential]):
     pass
 
 
@@ -341,6 +347,7 @@ class _ProviderError(ValueError):
 
 class DevCycleNode(WorkflowNode):
     integration_type = "automation-dev-cycle"
+    credential_provider_labels = {"dev_cycle": "DevCycle Account"}
     connection_evidence = ConnectionEvidence(noun="projects", operation="list_projects", label_keys=("name", "key", "_id"))
 
     @classmethod

@@ -13,6 +13,7 @@ from uuid import UUID
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -300,6 +301,11 @@ class SnitcherCreateWorkspaceTagConfig(_Input):
     tag_name: str = Field(..., min_length=1, description='The name of the tag')
 
 
+# Snitcher's own MCP server: agents get its tools through a person's Snitcher sign-in.
+SnitcherMcpCredential = mcp_credential("snitcher", "https://app.snitcher.com/mcp/snitcher", app="Snitcher")
+SnitcherCredential = Union[SnitcherTokenCredential, SnitcherMcpCredential]
+
+
 SnitcherConfig = Annotated[Union[
     SnitcherGetContactCreditsConfig,
     SnitcherListCustomFieldsConfig,
@@ -329,7 +335,7 @@ SnitcherConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class SnitcherFullConfig(NodeConfig[SnitcherConfig, SnitcherTokenCredential]):
+class SnitcherFullConfig(NodeConfig[SnitcherConfig, SnitcherCredential]):
     pass
 
 
@@ -423,6 +429,7 @@ ROUTES = {'get_contact_credits': ('GET', '/v1/workspaces/{workspaceUuid}/contact
 
 class SnitcherNode(WorkflowNode):
     integration_type = "automation-snitcher"
+    credential_provider_labels = {"snitcher": "Snitcher Account"}
     connection_evidence = ConnectionEvidence(noun="Snitcher profile", identity_operation="get_profile")
 
     @classmethod

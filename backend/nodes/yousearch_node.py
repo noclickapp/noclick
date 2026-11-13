@@ -7,12 +7,13 @@ from __future__ import annotations
 
 from datetime import date
 import re
-from typing import Literal, Optional
+from typing import Literal, Optional, Union
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -122,12 +123,18 @@ class YousearchSearchConfig(BaseModel):
         return body
 
 
-class YousearchNodeConfig(NodeConfig[YousearchSearchConfig, YousearchAPIKeyCredential]):
+# You.com's own MCP server: agents get its tools through a person's You.com sign-in.
+YousearchMcpCredential = mcp_credential("yousearch", "https://api.you.com/mcp", app="You.com")
+YousearchCredential = Union[YousearchAPIKeyCredential, YousearchMcpCredential]
+
+
+class YousearchNodeConfig(NodeConfig[YousearchSearchConfig, YousearchCredential]):
     pass
 
 
 class YousearchNode(WorkflowNode):
     integration_type = "automation-yousearch"
+    credential_provider_labels = {"yousearch": "You.com Account"}
     connection_evidence = ConnectionEvidence(operation="search_web", noun="search results",
         operation_arguments={"query": "You.com", "count": 1}, proves="reachability")
     edit_examples = ["Find recent news about a topic", "Extract highlights from search results",

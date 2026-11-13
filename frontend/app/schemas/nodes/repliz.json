@@ -1266,6 +1266,187 @@
       "title": "ReplizListSchedulesConfig",
       "type": "object"
     },
+    "ReplizMcpCredential": {
+      "description": "Repliz connected through Repliz's MCP server: agents get its tools.",
+      "properties": {
+        "mcp_server_url": {
+          "title": "MCP server",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Token",
+          "ui:hidden": true
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:hidden": true
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At",
+          "ui:hidden": true
+        },
+        "token_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Type",
+          "ui:hidden": true
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope",
+          "ui:hidden": true
+        },
+        "token_endpoint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id",
+          "ui:hidden": true
+        },
+        "client_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Secret",
+          "ui:hidden": true
+        },
+        "token_endpoint_auth_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint Auth Method",
+          "ui:hidden": true
+        },
+        "resource_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resource Url",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Api Key",
+          "ui:hidden": true
+        },
+        "account": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account",
+          "ui:hidden": true
+        },
+        "credential_type": {
+          "const": "repliz_mcp",
+          "default": "repliz_mcp",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "mcp_server_url"
+      ],
+      "title": "Repliz MCP",
+      "type": "object",
+      "x-credential-type": "mcp",
+      "x-mcp-server": "https://mcp.repliz.com/mcp",
+      "x-mcp-transport": "shttp"
+    },
     "ReplizNewCommentConfig": {
       "description": "Poll the newest 100 comments per tick. Use a short interval for busy accounts.",
       "properties": {
@@ -1707,10 +1888,10 @@
         "interval": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -1723,10 +1904,10 @@
         "hour": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -1739,10 +1920,10 @@
         "minute": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -1755,10 +1936,10 @@
         "dayOfWeek": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -1771,10 +1952,10 @@
         "dayOfMonth": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -1836,10 +2017,10 @@
         "monthDayStart": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -1852,10 +2033,10 @@
         "monthDayEnd": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -1868,10 +2049,10 @@
         "monthStart": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -1884,10 +2065,10 @@
         "monthEnd": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -2172,11 +2353,15 @@
           "$ref": "#/$defs/ReplizCredential"
         },
         {
+          "$ref": "#/$defs/ReplizMcpCredential"
+        },
+        {
           "type": "null"
         }
       ],
       "default": null,
-      "description": "Credentials for this node (optional if using environment variables)"
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
     }
   },
   "required": [

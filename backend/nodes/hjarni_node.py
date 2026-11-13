@@ -11,6 +11,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import SSRFError, guarded_async_client
@@ -226,13 +227,18 @@ class ListTagNotes(_Tag, _Page):
     operation: Literal["list_tag_notes"] = "list_tag_notes"
 
 
+# Hjarni's own MCP server: agents get its tools through a person's Hjarni sign-in.
+HjarniMcpCredential = mcp_credential("hjarni", "https://hjarni.com/mcp", app="Hjarni")
+HjarniCredential = Union[HjarniAPITokenCredential, HjarniMcpCredential]
+
+
 Operation = Annotated[Union[GetMe, SearchNotes, ListNotes, GetNote, CreateNote, UpdateNote,
     DeleteNote, ArchiveNote, UnarchiveNote, MoveNote, FavoriteNote, UnfavoriteNote, RestoreNote,
     ListContainers, GetContainer, CreateContainer, UpdateContainer, DeleteContainer, ListContainerNotes,
     ListTags, GetTag, CreateTag, UpdateTag, DeleteTag, ListTagNotes], Field(discriminator="operation")]
 
 
-class HjarniConfig(NodeConfig[Operation, HjarniAPITokenCredential]):
+class HjarniConfig(NodeConfig[Operation, HjarniCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -268,6 +274,7 @@ ROUTES = {
 
 class HjarniNode(WorkflowNode):
     integration_type = "automation-hjarni"
+    credential_provider_labels = {"hjarni": "Hjarni Account"}
     connection_evidence = ConnectionEvidence(noun="Hjarni account", identity_operation="get_me", identity_keys=("email_address", "email", "first_name"))
 
     @classmethod

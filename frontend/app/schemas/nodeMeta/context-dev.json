@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Context Dev API Key": "context_dev_api_key",
-    "ContextDevAPIKeyCredential": "context_dev_api_key"
+    "Context.dev MCP": "context_dev_mcp",
+    "ContextDevAPIKeyCredential": "context_dev_api_key",
+    "ContextDevMcpCredential": "context_dev_mcp"
   },
   "providerLabels": {
-    "context_dev": "Context Dev API Key"
+    "context_dev": "Context.dev Account"
   },
   "autoSelectCredential": true
 }

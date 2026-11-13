@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Markup AI API Key": "markup_ai_api_key",
-    "MarkupAiAPIKeyCredential": "markup_ai_api_key"
+    "Markup AI MCP": "markup_ai_mcp",
+    "MarkupAiAPIKeyCredential": "markup_ai_api_key",
+    "MarkupAiMcpCredential": "markup_ai_mcp"
   },
   "providerLabels": {
-    "markup_ai": "Markup AI API Key"
+    "markup_ai": "Markup AI Account"
   },
   "autoSelectCredential": true
 }

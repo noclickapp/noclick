@@ -11,6 +11,7 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, Json, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -262,6 +263,11 @@ class GetSearchAgent(_Operation):
         return value
 
 
+# Octen's own MCP server: agents get its tools through a person's Octen sign-in.
+OctenMcpCredential = mcp_credential("octen", "https://mcp.octen.ai/mcp", app="Octen")
+OctenCredential = Union[OctenAPIKeyCredential, OctenMcpCredential]
+
+
 OctenOperation = Annotated[Union[
     PulseSearch, WebSearch, NewsSearch, BusinessSearch, PlaceSearch, ImageSearch,
     VideoSearch, Extract, CreateEmbeddings, CreateVLEmbeddings, ChatCompletion,
@@ -269,7 +275,7 @@ OctenOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class OctenNodeConfig(NodeConfig[OctenOperation, OctenAPIKeyCredential]):
+class OctenNodeConfig(NodeConfig[OctenOperation, OctenCredential]):
     pass
 
 
@@ -286,6 +292,7 @@ ROUTES = {
 
 class OctenNode(WorkflowNode):
     integration_type = "automation-octen"
+    credential_provider_labels = {"octen": "Octen Account"}
     connection_evidence = ConnectionEvidence(
         noun="web search results", operation="search_web",
         operation_arguments={"query": "Octen", "count": 1}, proves="reachability",

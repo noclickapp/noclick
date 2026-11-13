@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
@@ -152,12 +153,16 @@ class ExtractDocument(_Input):
     mimeType: Literal["application/pdf", "image/gif", "image/tiff", "image/jpeg", "image/png", "image/bmp", "image/webp", "text/html"] | None = None
 
 
+# AI/ML API's own MCP server: agents get its tools through a person's AI/ML API sign-in.
+AiMlApiMcpCredential = mcp_credential("ai_ml_api", "https://mcp.aimlapi.com/mcp", app="AI/ML API")
+
+
 AiMlApiConfig = Annotated[Union[CreateResponse, CreateChatCompletion, CreateEmbeddings,
     GenerateImage, CreateTranscription, GetTranscription, CreateMessage, GenerateVideo, GetVideo,
     GenerateAudio, GetAudio, ExtractDocument], Field(discriminator="operation")]
 
 
-class AiMlApiFullConfig(NodeConfig[AiMlApiConfig, AiMlApiCredential]):
+class AiMlApiFullConfig(NodeConfig[AiMlApiConfig, Union[AiMlApiCredential, AiMlApiMcpCredential]]):
     pass
 
 
@@ -196,6 +201,7 @@ async def _request(credential, method, path, data=None):
 
 class AiMlApiNode(WorkflowNode):
     integration_type = "automation-ai-ml-api"
+    credential_provider_labels = {"ai_ml_api": "AI/ML API Account"}
     connection_evidence = ConnectionEvidence(field="account", noun="AI/ML API account")
 
     @classmethod

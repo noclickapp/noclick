@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "DevCycle Access Token": "dev_cycle_access_token",
-    "DevCycleAccessToken": "dev_cycle_access_token"
+    "DevCycle MCP": "dev_cycle_mcp",
+    "DevCycleAccessToken": "dev_cycle_access_token",
+    "DevCycleMcpCredential": "dev_cycle_mcp"
   },
   "providerLabels": {
-    "dev_cycle": "DevCycle Access Token"
+    "dev_cycle": "DevCycle Account"
   },
   "autoSelectCredential": true
 }

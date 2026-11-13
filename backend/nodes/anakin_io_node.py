@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client, SSRFError
 
@@ -712,6 +713,10 @@ class AnakinRunMonitorConfig(_Operation):
     id: str = Field(..., title="Id", description="The monitor ID.", min_length=1)
 
 
+# Anakin's own MCP server: agents get its tools through a person's Anakin sign-in.
+AnakinIoMcpCredential = mcp_credential("anakin_io", "https://mcp.anakin.io/mcp", app="Anakin")
+
+
 Operation = Annotated[
     Union[
         AnakinScrapeUrlConfig,
@@ -744,7 +749,7 @@ Operation = Annotated[
 ]
 
 
-class AnakinIoNodeConfig(NodeConfig[Operation, AnakinIoCredential]):
+class AnakinIoNodeConfig(NodeConfig[Operation, Union[AnakinIoCredential, AnakinIoMcpCredential]]):
     pass
 
 
@@ -1061,6 +1066,7 @@ def _redact(value, token):
 
 class AnakinIoNode(WorkflowNode):
     integration_type = "automation-anakin-io"
+    credential_provider_labels = {"anakin_io": "Anakin Account"}
     connection_evidence = ConnectionEvidence(noun="monitors", operation="list_monitors")
 
     @classmethod

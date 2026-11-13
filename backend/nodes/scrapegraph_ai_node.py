@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -262,6 +263,11 @@ class GetAccount(_Input):
     operation: Literal["get_account"] = "get_account"
 
 
+# ScrapeGraphAI's own MCP server: agents get its tools through a person's ScrapeGraphAI sign-in.
+ScrapegraphAiMcpCredential = mcp_credential("scrapegraph_ai", "https://mcp.scrapegraphai.com/mcp", app="ScrapeGraphAI")
+ScrapegraphAICredential = Union[ScrapegraphAIAPIKeyCredential, ScrapegraphAiMcpCredential]
+
+
 ScrapegraphAIConfig = Annotated[Union[
     ScrapeURL, Extract, Search, ListHistory, GetHistory, CreateMonitor, ListMonitors,
     GetMonitor, UpdateMonitor, DeleteMonitor, GetMonitorActivity, PauseMonitor,
@@ -270,7 +276,7 @@ ScrapegraphAIConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ScrapegraphAIFullConfig(NodeConfig[ScrapegraphAIConfig, ScrapegraphAIAPIKeyCredential]):
+class ScrapegraphAIFullConfig(NodeConfig[ScrapegraphAIConfig, ScrapegraphAICredential]):
     pass
 
 
@@ -306,6 +312,7 @@ WIRE_NAMES = {"num_results": "numResults", "location_geo_code": "locationGeoCode
 
 class ScrapegraphAINode(WorkflowNode):
     integration_type = "automation-scrapegraph-ai"
+    credential_provider_labels = {"scrapegraph_ai": "ScrapeGraphAI Account"}
     connection_evidence = ConnectionEvidence(noun="ScrapeGraphAI account", identity_operation="get_account")
 
     @classmethod

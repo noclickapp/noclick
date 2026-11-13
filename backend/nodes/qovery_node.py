@@ -15,6 +15,7 @@ from uuid import UUID
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_serializer, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
@@ -60,6 +61,11 @@ class QoveryAPITokenCredential(BaseModel):
     @model_serializer(mode="wrap")
     def canonical(self, handler):
         return {**handler(self), "credential_type": TYPE}
+
+
+# Qovery's own MCP server: agents get its tools through a person's Qovery sign-in.
+QoveryMcpCredential = mcp_credential("qovery", "https://mcp.qovery.com/mcp", app="Qovery")
+QoveryCredential = Union[QoveryAPITokenCredential, QoveryMcpCredential]
 
 
 def guard(data):
@@ -242,7 +248,7 @@ class ServiceDeployments(Service):
 Config = Annotated[Union[GetOrganization, ListProjects, GetProject, CreateProject, UpdateProject, ListEnvironments, GetEnvironment, CreateEnvironment, RenameEnvironment, EnvironmentStatus, ListClusters, GetCluster, ClusterStatus, ListServices, ServiceStatus, EnvironmentDeployments, ServiceDeployments], Field(discriminator="operation")]
 
 
-class QoveryNodeConfig(NodeConfig[Config, QoveryAPITokenCredential]):
+class QoveryNodeConfig(NodeConfig[Config, QoveryCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -475,6 +481,7 @@ def history_page(payload, kind, start_id):
 
 class QoveryNode(WorkflowNode):
     integration_type = "automation-qovery"
+    credential_provider_labels = {"qovery": "Qovery Account"}
     connection_evidence = ConnectionEvidence(operation="get_organization", noun="authorized organizations", proves="reachability", label_keys=("name", "id"))
 
     @classmethod

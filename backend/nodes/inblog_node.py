@@ -12,6 +12,7 @@ from uuid import UUID
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode, runtime_config_view
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -247,6 +248,11 @@ class GetFormResponse(_Input):
     response_id: int = Field(..., ge=1)
 
 
+# inblog's own MCP server: agents get its tools through a person's inblog sign-in.
+InblogMcpCredential = mcp_credential("inblog", "https://inblog.ai/api/mcp", app="inblog")
+InblogCredential = Union[InblogAPIKeyCredential, InblogMcpCredential]
+
+
 InblogOperation = Annotated[Union[
     GetMe,
     ListPosts,
@@ -275,7 +281,7 @@ InblogOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class InblogConfig(NodeConfig[InblogOperation, InblogAPIKeyCredential]):
+class InblogConfig(NodeConfig[InblogOperation, InblogCredential]):
     pass
 
 
@@ -307,6 +313,7 @@ ROUTES = {'get_me': ('GET', '/me'),
 
 class InblogNode(WorkflowNode):
     integration_type = "automation-inblog"
+    credential_provider_labels = {"inblog": "inblog Account"}
     connection_evidence = ConnectionEvidence(noun="connected blog", identity_operation="get_me",
         identity_keys=("subdomain", "blog_id"))
     edit_examples = ["Create a draft blog post", "Publish this post", "List form responses", "Create a URL redirect"]

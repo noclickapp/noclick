@@ -7,6 +7,7 @@ from typing import Annotated, Any, Literal, Union
 from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
@@ -171,10 +172,14 @@ class ExtractionProcessorPublishVersionConfig(_Input):
     version: int = Field(..., title='Version', ge=1)
 
 
+# Nutrient's own MCP server: agents get its tools through a person's Nutrient sign-in.
+NutrientDocumentWebServicesApiMcpCredential = mcp_credential("nutrient_document_web_services_api", "https://mcp.nutrient.io/mcp", app="Nutrient")
+
+
 NutrientOperation = Annotated[Union[GetAccountInfoConfig, GetAccountProductUsageConfig, ExtractionParseConfig, ExtractionParseAsyncConfig, ExtractionExtractConfig, ExtractionExtractAsyncConfig, ExtractionRunsGetConfig, ExtractionRunsDeleteConfig, ExtractionRunsCancelConfig, ExtractionSplitConfig, ExtractionSplitAsyncConfig, ExtractionClassifyConfig, ExtractionClassifyAsyncConfig, ExtractionBatchesListConfig, ExtractionBatchesGetConfig, ExtractionBatchesCancelConfig, ExtractionProcessorsListConfig, ExtractionProcessorsCreateConfig, ExtractionProcessorGetConfig, ExtractionProcessorRenameConfig, ExtractionProcessorDeleteConfig, ExtractionProcessorCreateVersionConfig, ExtractionProcessorGetVersionConfig, ExtractionProcessorPublishVersionConfig], Field(discriminator="operation")]
 
 
-class NutrientFullConfig(NodeConfig[NutrientOperation, NutrientCredential]):
+class NutrientFullConfig(NodeConfig[NutrientOperation, Union[NutrientCredential, NutrientDocumentWebServicesApiMcpCredential]]):
     pass
 
 
@@ -183,6 +188,7 @@ ROUTES = {'get_account_info': ('GET', '/account/info', [], False), 'get_account_
 
 class NutrientDocumentWebServicesApiNode(WorkflowNode):
     integration_type = "automation-nutrient-document-web-services-api"
+    credential_provider_labels = {"nutrient_document_web_services_api": "Nutrient Account"}
     connection_evidence = ConnectionEvidence(noun="Nutrient account", identity_operation="get_account_info")
 
     @classmethod

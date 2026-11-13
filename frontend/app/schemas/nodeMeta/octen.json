@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Octen API Key": "octen_api_key",
-    "OctenAPIKeyCredential": "octen_api_key"
+    "Octen MCP": "octen_mcp",
+    "OctenAPIKeyCredential": "octen_api_key",
+    "OctenMcpCredential": "octen_mcp"
   },
   "providerLabels": {
-    "octen": "Octen API Key"
+    "octen": "Octen Account"
   },
   "autoSelectCredential": true
 }

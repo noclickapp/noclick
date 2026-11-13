@@ -11,6 +11,7 @@ from urllib.parse import urlsplit
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
@@ -106,16 +107,22 @@ class GetAccountStatus(_Input):
     operation: Literal["get_account_status"] = Field("get_account_status", json_schema_extra={"ui:hidden": True})
 
 
+# emailvalidation.io's own MCP server: agents get its tools through a person's emailvalidation.io sign-in.
+EmailvalidationMcpCredential = mcp_credential("emailvalidation", "https://api.emailvalidation.io/mcp", app="emailvalidation.io")
+EmailvalidationCredential = Union[EmailvalidationAPIKeyCredential, EmailvalidationMcpCredential]
+
+
 EmailvalidationConfig = Annotated[Union[ValidateEmail, CreateBulkJob, ListBulkJobs, GetBulkJob,
     DeleteBulkJob, GetBulkJobResults, GetAccountStatus], Field(discriminator="operation")]
 
 
-class EmailvalidationFullConfig(NodeConfig[EmailvalidationConfig, EmailvalidationAPIKeyCredential]):
+class EmailvalidationFullConfig(NodeConfig[EmailvalidationConfig, EmailvalidationCredential]):
     pass
 
 
 class EmailvalidationNode(WorkflowNode):
     integration_type = "automation-emailvalidation"
+    credential_provider_labels = {"emailvalidation": "emailvalidation.io Account"}
     connection_evidence = ConnectionEvidence(noun="Emailvalidation account", identity_operation="get_account_status",
         identity_keys=("account_id_str", "account_id"))
 

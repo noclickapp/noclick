@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from pydantic import BaseModel, ConfigDict, Field, PositiveInt, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -68,6 +69,11 @@ class _Label(_Input):
 
 class _Schedule(_Input):
     schedule_id: PositiveInt = Field(..., title="Schedule ID")
+
+
+# BulkPublish's own MCP server: agents get its tools through a person's BulkPublish sign-in.
+BulkpublishMcpCredential = mcp_credential("bulkpublish", "https://mcp.bulkpublish.com/", app="BulkPublish")
+BulkpublishCredential = Union[BulkpublishAPIKeyCredential, BulkpublishMcpCredential]
 
 
 def _timezone(value):
@@ -282,7 +288,7 @@ Operation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class BulkpublishNodeConfig(NodeConfig[Operation, BulkpublishAPIKeyCredential]):
+class BulkpublishNodeConfig(NodeConfig[Operation, BulkpublishCredential]):
     pass
 
 
@@ -328,6 +334,7 @@ def _redact(value, key):
 
 class BulkpublishNode(WorkflowNode):
     integration_type = "automation-bulkpublish"
+    credential_provider_labels = {"bulkpublish": "BulkPublish Account"}
     connection_evidence = ConnectionEvidence(noun="channels", operation="list_channels", label_keys=("accountName", "name", "id"))
 
     @classmethod

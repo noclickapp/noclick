@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Inblog API Key": "inblog_api_key",
-    "InblogAPIKeyCredential": "inblog_api_key"
+    "InblogAPIKeyCredential": "inblog_api_key",
+    "InblogMcpCredential": "inblog_mcp",
+    "inblog MCP": "inblog_mcp"
   },
   "providerLabels": {
-    "inblog": "Inblog API Key"
+    "inblog": "inblog Account"
   },
   "autoSelectCredential": true
 }

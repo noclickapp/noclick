@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "LeadBoxer MCP": "leadboxer_mcp",
     "Leadboxer API Key": "leadboxer_api_key",
-    "LeadboxerAPIKeyCredential": "leadboxer_api_key"
+    "LeadboxerAPIKeyCredential": "leadboxer_api_key",
+    "LeadboxerMcpCredential": "leadboxer_mcp"
   },
   "providerLabels": {
-    "leadboxer": "Leadboxer API Key"
+    "leadboxer": "LeadBoxer Account"
   },
   "autoSelectCredential": true
 }

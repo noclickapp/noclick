@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -355,6 +356,11 @@ class CreateLabel(_Create):
     number_ids: list[Id] | None = Field(None, max_length=50)
 
 
+# WhatsAble's own MCP server: agents get its tools through a person's WhatsAble sign-in.
+WhatsableCa185063McpCredential = mcp_credential("whatsable_ca185063", "https://api.whatsable.app/mcp", app="WhatsAble")
+WhatsAbleCredential = Union[WhatsAbleAPIKeyCredential, WhatsableCa185063McpCredential]
+
+
 Operation = Annotated[Union[GetMe, ListNumbers, GetNumber, ListTemplates, GetTemplate,
     SendMessage, ListMessages, GetMessage, ListConversations, GetConversation,
     GetConversationTimeline, UpdateConversationUnread, CreateConversationNote,
@@ -363,7 +369,7 @@ Operation = Annotated[Union[GetMe, ListNumbers, GetNumber, ListTemplates, GetTem
     RemoveContactLabel, ListLabels, CreateLabel], Field(discriminator="operation")]
 
 
-class WhatsAbleConfig(NodeConfig[Operation, WhatsAbleAPIKeyCredential]):
+class WhatsAbleConfig(NodeConfig[Operation, WhatsAbleCredential]):
     pass
 
 
@@ -413,6 +419,7 @@ def _redact(value, secret):
 
 class WhatsAbleNode(WorkflowNode):
     integration_type = "automation-whatsable-ca185063"
+    credential_provider_labels = {"whatsable_ca185063": "WhatsAble Account"}
     connection_evidence = ConnectionEvidence(noun="organization", identity_operation="get_me", identity_keys=("name", "id"))
 
     @classmethod

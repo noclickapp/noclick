@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Sure Send API Token": "sure_send_api_token",
-    "SureSendAPITokenCredential": "sure_send_api_token"
+    "Sure Send MCP": "sure_send_mcp",
+    "SureSendAPITokenCredential": "sure_send_api_token",
+    "SureSendMcpCredential": "sure_send_mcp"
   },
   "providerLabels": {
-    "sure_send": "Sure Send API Token"
+    "sure_send": "Sure Send Account"
   },
   "autoSelectCredential": true
 }

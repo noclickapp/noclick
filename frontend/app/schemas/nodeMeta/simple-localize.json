@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "SimpleLocalize API Key": "simple_localize_api_key",
-    "SimpleLocalizeAPIKeyCredential": "simple_localize_api_key"
+    "SimpleLocalize MCP": "simple_localize_mcp",
+    "SimpleLocalizeAPIKeyCredential": "simple_localize_api_key",
+    "SimpleLocalizeMcpCredential": "simple_localize_mcp"
   },
   "providerLabels": {
-    "simple_localize": "SimpleLocalize API Key"
+    "simple_localize": "SimpleLocalize Account"
   },
   "autoSelectCredential": true
 }

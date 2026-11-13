@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Ignav Flights API Key": "ignav_flights_api_key",
-    "IgnavFlightsAPIKeyCredential": "ignav_flights_api_key"
+    "Ignav MCP": "ignav_flights_mcp",
+    "IgnavFlightsAPIKeyCredential": "ignav_flights_api_key",
+    "IgnavFlightsMcpCredential": "ignav_flights_mcp"
   },
   "providerLabels": {
-    "ignav_flights": "Ignav Flights API Key"
+    "ignav_flights": "Ignav Account"
   },
   "autoSelectCredential": true
 }

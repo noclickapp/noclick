@@ -4,7 +4,12 @@
   "nodeMeta": {
     "agentToolProvider": true
   },
-  "credentialTypes": {},
-  "providerLabels": {},
-  "autoSelectCredential": false
+  "credentialTypes": {
+    "Basedash MCP": "basedash_mcp",
+    "BasedashMcpCredential": "basedash_mcp"
+  },
+  "providerLabels": {
+    "basedash": "Basedash Account"
+  },
+  "autoSelectCredential": true
 }

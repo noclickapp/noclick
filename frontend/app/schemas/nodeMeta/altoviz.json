@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Altoviz API Key": "altoviz_api_key",
-    "AltovizAPIKeyCredential": "altoviz_api_key"
+    "Altoviz MCP": "altoviz_mcp",
+    "AltovizAPIKeyCredential": "altoviz_api_key",
+    "AltovizMcpCredential": "altoviz_mcp"
   },
   "providerLabels": {
-    "altoviz": "Altoviz API Key"
+    "altoviz": "Altoviz Account"
   },
   "autoSelectCredential": true
 }

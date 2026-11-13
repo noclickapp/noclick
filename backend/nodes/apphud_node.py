@@ -12,6 +12,7 @@ from opentelemetry.instrumentation.utils import suppress_instrumentation
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator, model_serializer, model_validator
 
 from nodes.core.base import NodeConfig, ValidationResult, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 import httpx
@@ -191,8 +192,13 @@ class ApphudQueryColumnChartConfig(_QueryConfig):
 ApphudConfig = Annotated[Union[ApphudListChartsConfig, ApphudGetChartOptionsConfig, ApphudGetFilterValuesConfig, ApphudQueryLineChartConfig, ApphudQueryColumnChartConfig], Field(discriminator='operation')]
 
 
+# Apphud's own MCP server: agents get its tools through a person's Apphud sign-in.
+ApphudMcpCredential = mcp_credential("apphud", "https://mcp.apphud.com/mcp", app="Apphud")
+ApphudCredential = Union[ApphudAPIKeyCredential, ApphudMcpCredential]
+
+
 class ApphudFullConfig(NodeConfig):
-    credentials: ApphudAPIKeyCredential | None = None
+    credentials: ApphudCredential | None = None
     config: ApphudConfig
 
 
@@ -323,6 +329,7 @@ class _ProviderFailure(ValueError):
 
 class ApphudNode(WorkflowNode):
     integration_type = NODE_TYPE
+    credential_provider_labels = {"apphud": "Apphud Account"}
     credential_type = 'apphud_s2s_api_key'
     connection_evidence = ConnectionEvidence(noun='application analytics', operation='list_charts', proves='reachability')
 

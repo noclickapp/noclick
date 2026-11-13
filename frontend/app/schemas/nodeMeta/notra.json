@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Notra API Key": "notra_api_key",
-    "NotraAPIKeyCredential": "notra_api_key"
+    "Notra MCP": "notra_mcp",
+    "NotraAPIKeyCredential": "notra_api_key",
+    "NotraMcpCredential": "notra_mcp"
   },
   "providerLabels": {
-    "notra": "Notra API Key"
+    "notra": "Notra Account"
   },
   "autoSelectCredential": true
 }

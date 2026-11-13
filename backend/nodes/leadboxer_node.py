@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -257,6 +258,11 @@ class UnhideLeadConfig(_Operation):
     datasetId: str = Field(..., title='Dataset ID', min_length=1, max_length=8192)
 
 
+# LeadBoxer's own MCP server: agents get its tools through a person's LeadBoxer sign-in.
+LeadboxerMcpCredential = mcp_credential("leadboxer", "https://mcp.leadboxer.com/mcp", app="LeadBoxer")
+LeadboxerCredential = Union[LeadboxerAPIKeyCredential, LeadboxerMcpCredential]
+
+
 LeadboxerOperation = Annotated[Union[
     ListDatasetsConfig,
     ListLeadsConfig,
@@ -278,7 +284,7 @@ LeadboxerOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class LeadboxerNodeConfig(NodeConfig[LeadboxerOperation, LeadboxerAPIKeyCredential]):
+class LeadboxerNodeConfig(NodeConfig[LeadboxerOperation, LeadboxerCredential]):
     pass
 
 
@@ -418,6 +424,7 @@ def _public(value, secret):
 
 class LeadboxerNode(WorkflowNode):
     integration_type = "automation-leadboxer"
+    credential_provider_labels = {"leadboxer": "LeadBoxer Account"}
     connection_evidence = ConnectionEvidence(
         noun="datasets", operation="list_datasets", label_keys=("humanName", "datasetId"))
 

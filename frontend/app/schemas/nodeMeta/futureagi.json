@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Future AGI MCP": "futureagi_mcp",
     "Futureagi API Key": "futureagi_api_key",
-    "FutureagiAPIKeyCredential": "futureagi_api_key"
+    "FutureagiAPIKeyCredential": "futureagi_api_key",
+    "FutureagiMcpCredential": "futureagi_mcp"
   },
   "providerLabels": {
-    "futureagi": "Futureagi API Key"
+    "futureagi": "Future AGI Account"
   },
   "autoSelectCredential": true
 }

@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "WhatsAble MCP": "whatsable_ca185063_mcp",
     "WhatsAbleAPIKeyCredential": "whatsable_ca185063_api_key",
-    "Whatsable API Key": "whatsable_ca185063_api_key"
+    "Whatsable API Key": "whatsable_ca185063_api_key",
+    "WhatsableCa185063McpCredential": "whatsable_ca185063_mcp"
   },
   "providerLabels": {
-    "whatsable_ca185063": "Whatsable API Key"
+    "whatsable_ca185063": "WhatsAble Account"
   },
   "autoSelectCredential": true
 }

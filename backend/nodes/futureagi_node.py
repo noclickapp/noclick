@@ -12,6 +12,7 @@ from typing import Annotated, Literal, Union
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -176,12 +177,17 @@ class DeleteQueue(Resource):
     operation: Literal["delete_queue"] = Field("delete_queue", description="Soft-delete an annotation queue.", json_schema_extra={"ui:hidden": True})
 
 
+# Future AGI's own MCP server: agents get its tools through a person's Future AGI sign-in.
+FutureagiMcpCredential = mcp_credential("futureagi", "https://api.futureagi.com/mcp", app="Future AGI")
+FutureagiCredential = Union[FutureagiAPIKeyCredential, FutureagiMcpCredential]
+
+
 FutureagiConfig = Annotated[Union[ListLabels, GetLabel, CreateLabel, UpdateLabel, DeleteLabel,
     RestoreLabel, ListScores, GetScoresForSource, CreateScore, BulkCreateScores, DeleteScore,
     ListQueues, GetQueue, CreateQueue, UpdateQueue, DeleteQueue], Field(discriminator="operation")]
 
 
-class FutureagiFullConfig(NodeConfig[FutureagiConfig, FutureagiAPIKeyCredential]):
+class FutureagiFullConfig(NodeConfig[FutureagiConfig, FutureagiCredential]):
     pass
 
 
@@ -208,6 +214,7 @@ ROUTES = {
 
 class FutureagiNode(WorkflowNode):
     integration_type = "automation-futureagi"
+    credential_provider_labels = {"futureagi": "Future AGI Account"}
     connection_evidence = ConnectionEvidence(noun="annotation queues", operation="list_queues")
 
     @classmethod

@@ -4,6 +4,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -107,14 +108,19 @@ class GetApiKeyHistory(Input):
     after: str | None = None
     limit: int = Field(20, ge=1, le=100)
 
+# AltText.ai's own MCP server: agents get its tools through a person's AltText.ai sign-in.
+AlttextAiMcpCredential = mcp_credential("alttext_ai", "https://mcp.alttext.ai/mcp", app="AltText.ai")
+
+
 AlttextAiConfig = Annotated[Union[GetAccount, UpdateAccount, ListImages, SearchImages,
     CreateImage, GetImage, UpdateImage, DeleteImage, ScrapePage, ListApiKeys, GetApiKey, GetApiKeyHistory], Field(discriminator="operation")]
 
-class AlttextAiFullConfig(NodeConfig[AlttextAiConfig, AlttextAiCredential]):
+class AlttextAiFullConfig(NodeConfig[AlttextAiConfig, Union[AlttextAiCredential, AlttextAiMcpCredential]]):
     pass
 
 class AlttextAiNode(WorkflowNode):
     integration_type = "automation-alttext-ai"
+    credential_provider_labels = {"alttext_ai": "AltText.ai Account"}
     connection_evidence = ConnectionEvidence(identity_operation="get_account", noun="account", label_keys=("name",))
 
     @classmethod

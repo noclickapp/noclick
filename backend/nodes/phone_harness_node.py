@@ -12,6 +12,7 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -161,6 +162,11 @@ class ResetAdbConfig(_SessionOperation):
     operation: Literal["reset_adb"] = Field("reset_adb", json_schema_extra={"ui:hidden": True})
 
 
+# Phone Harness's own MCP server: agents get its tools through a person's Phone Harness sign-in.
+PhoneHarnessMcpCredential = mcp_credential("phone_harness", "https://mcp.phone-harness.com/mcp", app="Phone Harness")
+PhoneHarnessCredential = Union[PhoneHarnessAPIKeyCredential, PhoneHarnessMcpCredential]
+
+
 PhoneHarnessOperation = Annotated[Union[
     CreateSessionConfig,
     ListSessionsConfig,
@@ -184,7 +190,7 @@ PhoneHarnessOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class PhoneHarnessConfig(NodeConfig[PhoneHarnessOperation, PhoneHarnessAPIKeyCredential]):
+class PhoneHarnessConfig(NodeConfig[PhoneHarnessOperation, PhoneHarnessCredential]):
     pass
 
 
@@ -214,6 +220,7 @@ ROUTES = {
 
 class PhoneHarnessNode(WorkflowNode):
     integration_type = "automation-phone-harness"
+    credential_provider_labels = {"phone_harness": "Phone Harness Account"}
     connection_evidence = ConnectionEvidence(noun="Phone Harness account", identity_operation="get_account",
         identity_keys=("name", "email", "uid"))
 

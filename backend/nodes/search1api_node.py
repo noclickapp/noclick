@@ -15,6 +15,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client, SSRFError
 
@@ -183,10 +184,15 @@ class Search1ApiSubmitFeedbackConfig(_Input):
     agent: Search1ApiSubmitFeedbackConfigAgent | None = Field(None)
 
 
+# Search1API's own MCP server: agents get its tools through a person's Search1API sign-in.
+Search1apiMcpCredential = mcp_credential("search1api", "https://mcp.search1api.com/mcp", app="Search1API")
+Search1Credential = Union[Search1ApiKeyCredential, Search1apiMcpCredential]
+
+
 Search1ApiConfig = Annotated[Union[Search1ApiSearchWebConfig, Search1ApiSearchMapsConfig, Search1ApiSearchNewsConfig, Search1ApiAskConfig, Search1ApiCrawlPageConfig, Search1ApiGetSitemapConfig, Search1ApiGetTrendingConfig, Search1ApiExtractContentConfig, Search1ApiStartDeepcrawlConfig, Search1ApiGetDeepcrawlStatusConfig, Search1ApiGetUsageConfig, Search1ApiSubmitFeedbackConfig], Field(discriminator="operation")]
 
 
-class Search1ApiFullConfig(NodeConfig[Search1ApiConfig, Search1ApiKeyCredential]):
+class Search1ApiFullConfig(NodeConfig[Search1ApiConfig, Search1Credential]):
     pass
 
 
@@ -196,6 +202,7 @@ REQUIRED_RESPONSE_KEYS = {'search_web': ['searchParameters', 'results'], 'search
 
 class Search1ApiNode(WorkflowNode):
     integration_type = "automation-search1api"
+    credential_provider_labels = {"search1api": "Search1API Account"}
     connection_evidence = ConnectionEvidence(noun="Search1API account usage", operation="get_usage")
 
     @classmethod

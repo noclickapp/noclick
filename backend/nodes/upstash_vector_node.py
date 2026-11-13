@@ -24,6 +24,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.document_ingest import DOCUMENT_ACCEPT, ingest_document_text
 from utils.ssrf import guarded_async_client
 
@@ -61,6 +62,10 @@ class UpstashVectorCredential(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={"x-credential-url": "https://console.upstash.com/vector"}
     )
+
+
+# Upstash's own MCP server: agents get its tools through a person's Upstash sign-in.
+UpstashVectorMcpCredential = mcp_credential("upstash_vector", "https://mcp.upstash.com/mcp", app="Upstash")
 
 
 # ============================================================================
@@ -365,7 +370,7 @@ UpstashVectorConfig = Annotated[
 ]
 
 
-class UpstashVectorNodeConfig(NodeConfig[UpstashVectorConfig, UpstashVectorCredential]):
+class UpstashVectorNodeConfig(NodeConfig[UpstashVectorConfig, Union[UpstashVectorCredential, UpstashVectorMcpCredential]]):
     """Full configuration for the Upstash Vector node including credentials."""
 
     pass

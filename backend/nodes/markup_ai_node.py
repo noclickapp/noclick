@@ -14,6 +14,7 @@ from uuid import UUID
 import httpx
 from pydantic import AnyUrl, BaseModel, ConfigDict, Field, Json, StrictBool, model_validator, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -267,6 +268,11 @@ class MarkupAiListVoiceProfilesConfig(_Input):
     operation: Literal['list_voice_profiles'] = Field('list_voice_profiles', json_schema_extra={"ui:hidden": True})
 
 
+# Markup AI's own MCP server: agents get its tools through a person's Markup AI sign-in.
+MarkupAiMcpCredential = mcp_credential("markup_ai", "https://api.markup.ai/mcp/", app="Markup AI")
+MarkupAiCredential = Union[MarkupAiAPIKeyCredential, MarkupAiMcpCredential]
+
+
 MarkupAiConfig = Annotated[Union[
     MarkupAiGetStyleConfigConfig,
     MarkupAiListStyleGuidesConfig,
@@ -439,12 +445,13 @@ ROUTES = {'get_style_config': {'method': 'GET',
                          'query_fields': [],
                          'body_fields': []}}
 
-class MarkupAiFullConfig(NodeConfig[MarkupAiConfig, MarkupAiAPIKeyCredential]):
+class MarkupAiFullConfig(NodeConfig[MarkupAiConfig, MarkupAiCredential]):
     pass
 
 
 class MarkupAiNode(WorkflowNode):
     integration_type = "automation-markup-ai"
+    credential_provider_labels = {"markup_ai": "Markup AI Account"}
     connection_evidence = ConnectionEvidence(noun="terminology domains", operation="list_domains", label_keys=("name",))
 
     @classmethod

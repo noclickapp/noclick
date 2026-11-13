@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Cert Seal API Key": "cert_seal_api_key",
-    "CertSealAPIKey": "cert_seal_api_key"
+    "CertSeal MCP": "cert_seal_mcp",
+    "CertSealAPIKey": "cert_seal_api_key",
+    "CertSealMcpCredential": "cert_seal_mcp"
   },
   "providerLabels": {
-    "cert_seal": "Cert Seal API Key"
+    "cert_seal": "CertSeal Account"
   },
   "autoSelectCredential": true
 }

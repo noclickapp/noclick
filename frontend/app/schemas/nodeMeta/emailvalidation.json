@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Emailvalidation API Key": "emailvalidation_api_key",
-    "EmailvalidationAPIKeyCredential": "emailvalidation_api_key"
+    "EmailvalidationAPIKeyCredential": "emailvalidation_api_key",
+    "EmailvalidationMcpCredential": "emailvalidation_mcp",
+    "emailvalidation.io MCP": "emailvalidation_mcp"
   },
   "providerLabels": {
-    "emailvalidation": "Emailvalidation API Key"
+    "emailvalidation": "emailvalidation.io Account"
   },
   "autoSelectCredential": true
 }

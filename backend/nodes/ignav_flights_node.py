@@ -11,6 +11,7 @@ from typing import Annotated, Literal, Union
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -222,10 +223,15 @@ class SearchRoundTripDates(CheapestDatesRequest):
     operation: Literal['search_round_trip_dates'] = Field('search_round_trip_dates', title='Search Round-Trip Calendar', json_schema_extra={"ui:hidden": True})
     stay_days: int = Field(..., ge=0, le=365, strict=True)
 
+# Ignav's own MCP server: agents get its tools through a person's Ignav sign-in.
+IgnavFlightsMcpCredential = mcp_credential("ignav_flights", "https://ignav.com/mcp", app="Ignav")
+IgnavFlightsCredential = Union[IgnavFlightsAPIKeyCredential, IgnavFlightsMcpCredential]
+
+
 Operation = Annotated[Union[GetHealth, SearchAirports, CheckConnection, SearchFares, SearchOneWay, SearchRoundTrip, GetBookingLinks, GetManualBookingLinks, SearchCheapestDates, SearchRoundTripDates], Field(discriminator="operation")]
 
 
-class IgnavFlightsConfig(NodeConfig[Operation, IgnavFlightsAPIKeyCredential]):
+class IgnavFlightsConfig(NodeConfig[Operation, IgnavFlightsCredential]):
     pass
 
 
@@ -234,6 +240,7 @@ ROUTES = {'get_health': ('GET', '/api/health'), 'search_airports': ('GET', '/api
 
 class IgnavFlightsNode(WorkflowNode):
     integration_type = "automation-ignav-flights"
+    credential_provider_labels = {"ignav_flights": "Ignav Account"}
     connection_evidence = ConnectionEvidence(
         noun="Ignav airport catalogue", operation="check_connection", proves="reachability")
 

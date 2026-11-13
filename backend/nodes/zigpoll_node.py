@@ -11,6 +11,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -209,6 +210,11 @@ class ZigpollGenerateSurveyLinkConfig(_Poll):
     expiresAt: str | None = Field(None, title="Expires at", json_schema_extra={"format": "date-time"}, description="ISO 8601 datetime.")
 
 
+# Zigpoll's own MCP server: agents get its tools through a person's Zigpoll sign-in.
+ZigpollMcpCredential = mcp_credential("zigpoll", "https://mcp.zigpoll.com/mcp", app="Zigpoll")
+ZigpollCredential = Union[ZigpollAPIKeyCredential, ZigpollMcpCredential]
+
+
 ZigpollOperation = Annotated[Union[
     ZigpollGetMeConfig,
     ZigpollListAccountsConfig,
@@ -235,7 +241,7 @@ ZigpollOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ZigpollNodeConfig(NodeConfig[ZigpollOperation, ZigpollAPIKeyCredential]):
+class ZigpollNodeConfig(NodeConfig[ZigpollOperation, ZigpollCredential]):
     pass
 
 
@@ -277,6 +283,7 @@ def _redact(value, token):
 
 class ZigpollNode(WorkflowNode):
     integration_type = "automation-zigpoll"
+    credential_provider_labels = {"zigpoll": "Zigpoll Account"}
     connection_evidence = ConnectionEvidence(
         operation="list_accounts", identity_operation="get_me", noun="accounts",
         label_keys=("title", "name", "email", "_id"),

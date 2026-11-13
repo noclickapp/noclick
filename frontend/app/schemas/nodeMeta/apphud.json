@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Apphud App-level S2S API Key": "apphud_s2s_api_key",
-    "ApphudAPIKeyCredential": "apphud_s2s_api_key"
+    "Apphud MCP": "apphud_mcp",
+    "ApphudAPIKeyCredential": "apphud_s2s_api_key",
+    "ApphudMcpCredential": "apphud_mcp"
   },
   "providerLabels": {
-    "apphud": "Apphud App-level S2S API Key"
+    "apphud": "Apphud Account"
   },
   "autoSelectCredential": true
 }

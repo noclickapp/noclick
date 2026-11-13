@@ -6,13 +6,14 @@ unlocks have account-persistent effects and are never retried automatically.
 """
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Union
 from urllib.parse import quote
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.tryfundable_operations import ROUTES, TryfundableConfig
@@ -43,7 +44,12 @@ class TryfundableAPIKeyCredential(BaseModel):
         return value
 
 
-class TryfundableFullConfig(NodeConfig[TryfundableConfig, TryfundableAPIKeyCredential]):
+# Fundable's own MCP server: agents get its tools through a person's Fundable sign-in.
+TryfundableMcpCredential = mcp_credential("tryfundable", "https://mcp.tryfundable.ai/", app="Fundable")
+TryfundableCredential = Union[TryfundableAPIKeyCredential, TryfundableMcpCredential]
+
+
+class TryfundableFullConfig(NodeConfig[TryfundableConfig, TryfundableCredential]):
     pass
 
 
@@ -59,6 +65,7 @@ def _redact(value, secret):
 
 class TryfundableNode(WorkflowNode):
     integration_type = "automation-tryfundable"
+    credential_provider_labels = {"tryfundable": "Fundable Account"}
     connection_evidence = ConnectionEvidence(
         noun="saved funding alert configurations", operation="list_alert_configurations",
         label_keys=("name", "description", "id"),

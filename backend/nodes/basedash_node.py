@@ -26,6 +26,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.binary_output import BinaryOutput
 
@@ -59,6 +60,11 @@ class BasedashApiKeyCredential(BaseModel):
             "x-credential-instructions": "Basedash → avatar → API keys → Create. Copy the bd_key_… value (shown once).",
         }
     )
+
+
+# Basedash's own MCP server: agents get its tools through a person's Basedash sign-in.
+BasedashMcpCredential = mcp_credential("basedash", "https://charts.basedash.com/api/public/mcp", app="Basedash")
+BasedashCredential = Union[BasedashApiKeyCredential, BasedashMcpCredential]
 
 
 # ============================================================================
@@ -598,7 +604,7 @@ BasedashConfig = Annotated[
 ]
 
 
-class BasedashNodeConfig(NodeConfig[BasedashConfig, BasedashApiKeyCredential]):
+class BasedashNodeConfig(NodeConfig[BasedashConfig, BasedashCredential]):
     """Full Basedash node configuration including credentials."""
 
     pass
@@ -708,6 +714,7 @@ def _page_params(c) -> Dict[str, Any]:
 class BasedashNode(WorkflowNode):
     """Basedash BI/admin automation node (API key auth)."""
     integration_type = "automation-basedash"
+    credential_provider_labels = {"basedash": "Basedash Account"}
 
     # Dashboards/data sources only list once an organization is picked.
     connection_evidence = ConnectionEvidence(field="organization_id", noun="organizations")

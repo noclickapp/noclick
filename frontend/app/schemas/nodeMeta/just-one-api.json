@@ -5,11 +5,13 @@
     "agentToolProvider": true
   },
   "credentialTypes": {
+    "Just One API MCP": "just_one_api_mcp",
     "Just One API Token": "just_one_api_token",
+    "JustOneApiMcpCredential": "just_one_api_mcp",
     "JustOneApiTokenCredential": "just_one_api_token"
   },
   "providerLabels": {
-    "just_one_api": "Just One API Token"
+    "just_one_api": "Just One API Account"
   },
   "autoSelectCredential": true
 }

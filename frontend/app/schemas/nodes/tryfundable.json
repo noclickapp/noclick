@@ -1328,6 +1328,187 @@
       "title": "TryfundableListInvestorsConfigInvestor",
       "type": "object"
     },
+    "TryfundableMcpCredential": {
+      "description": "Fundable connected through Fundable's MCP server: agents get its tools.",
+      "properties": {
+        "mcp_server_url": {
+          "title": "MCP server",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Token",
+          "ui:hidden": true
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:hidden": true
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At",
+          "ui:hidden": true
+        },
+        "token_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Type",
+          "ui:hidden": true
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope",
+          "ui:hidden": true
+        },
+        "token_endpoint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id",
+          "ui:hidden": true
+        },
+        "client_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Secret",
+          "ui:hidden": true
+        },
+        "token_endpoint_auth_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Endpoint Auth Method",
+          "ui:hidden": true
+        },
+        "resource_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resource Url",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Api Key",
+          "ui:hidden": true
+        },
+        "account": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account",
+          "ui:hidden": true
+        },
+        "credential_type": {
+          "const": "tryfundable_mcp",
+          "default": "tryfundable_mcp",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "mcp_server_url"
+      ],
+      "title": "Fundable MCP",
+      "type": "object",
+      "x-credential-type": "mcp",
+      "x-mcp-server": "https://mcp.tryfundable.ai/",
+      "x-mcp-transport": "shttp"
+    },
     "TryfundableSearchCompaniesConfig": {
       "additionalProperties": false,
       "description": "Use this endpoint by default for company sourcing and discovery. It returns company\nmetadata such as name and domain together with the full details of each company's\nlatest funding round.\n\nFilters inside `latest_deal` apply only to the company's most recent round. Use\n`POST /deals` instead when deal criteria must match any round in a company's history.\nFor example, `/companies` is appropriate for \"find AI companies in San Francisco\nwhose latest round was Seed\"; `/deals` is appropriate for \"analyze all Seed rounds\nannounced last year,\" regardless of whether Seed is now the company's latest round.\n\nFilters inside `investors` can match investor participation across all rounds.\n\n## Request Body Structure\nSend a JSON body with up to 4 filter sections plus pagination/sort at the top level:\n- `identifiers` - Look up specific companies by UUID, domain, LinkedIn, or Crunchbase\n- `company` - Filter by company attributes (search, location, industry, size, etc.)\n- `latest_deal` - Filter by latest funding round attributes (type, size, date, investors)\n- `investors` - Filter by investors (firms or people) across all rounds",
@@ -4549,11 +4730,15 @@
           "$ref": "#/$defs/TryfundableAPIKeyCredential"
         },
         {
+          "$ref": "#/$defs/TryfundableMcpCredential"
+        },
+        {
           "type": "null"
         }
       ],
       "default": null,
-      "description": "Credentials for this node (optional if using environment variables)"
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
     }
   },
   "required": [

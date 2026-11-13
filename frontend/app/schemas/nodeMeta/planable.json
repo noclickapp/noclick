@@ -6,10 +6,12 @@
   },
   "credentialTypes": {
     "Planable API Token": "planable_api_token",
+    "Planable MCP": "planable_mcp",
+    "PlanableMcpCredential": "planable_mcp",
     "PlanableTokenCredential": "planable_api_token"
   },
   "providerLabels": {
-    "planable": "Planable API Token"
+    "planable": "Planable Account"
   },
   "autoSelectCredential": true
 }

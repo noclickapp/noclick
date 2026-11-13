@@ -10,10 +10,12 @@
   },
   "credentialTypes": {
     "JSON2Video API Key": "json2video_api_key",
-    "JSON2VideoAPIKeyCredential": "json2video_api_key"
+    "JSON2Video MCP": "json2video_mcp",
+    "JSON2VideoAPIKeyCredential": "json2video_api_key",
+    "Json2videoMcpCredential": "json2video_mcp"
   },
   "providerLabels": {
-    "json2video": "JSON2Video API Key"
+    "json2video": "JSON2Video Account"
   },
   "autoSelectCredential": true
 }

@@ -21,6 +21,7 @@ from jsonschema.exceptions import FormatError
 
 from nodes.aweber_operations import OPERATIONS
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.scopes.aweber import AWEBER_SCOPES as AWEBER_SCOPE_REGISTRY
@@ -48,6 +49,11 @@ class AWeberOAuthCredential(BaseModel):
         "x-oauth-scopes": AWEBER_SCOPES,
         "x-credential-url": "https://labs.aweber.com/apps",
     })
+
+
+# AWeber's own MCP server: agents get its tools through a person's AWeber sign-in.
+AweberMcpCredential = mcp_credential("aweber", "https://mcp.aweber.com/mcp", app="AWeber")
+AWeberCredential = Union[AWeberOAuthCredential, AweberMcpCredential]
 
 
 _TYPE = {
@@ -183,7 +189,7 @@ AWeberConfig = Annotated[Union[tuple(_OPERATION_MODELS) + (AWeberOnNewSubscriber
 
 
 
-class AWeberNodeConfig(NodeConfig[AWeberConfig, AWeberOAuthCredential]):
+class AWeberNodeConfig(NodeConfig[AWeberConfig, AWeberCredential]):
     """AWeber action and OAuth credential."""
 
 

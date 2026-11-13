@@ -12,6 +12,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
@@ -33,6 +34,11 @@ class OutreachOAuthCredential(BaseModel):
         "x-oauth-scopes": OUTREACH_SCOPES.declared_scopes(),
         "x-credential-url": "https://developers.outreach.io/api/oauth",
     })
+
+
+# Outreach's own MCP server: agents get its tools through a person's Outreach sign-in.
+OutreachMcpCredential = mcp_credential("outreach", "https://api.outreach.io/mcp", app="Outreach")
+OutreachCredential = Union[OutreachOAuthCredential, OutreachMcpCredential]
 
 
 def _make_config(name: str, op: Operation) -> type[BaseModel]:
@@ -86,12 +92,13 @@ class OutreachOnEventConfig(WebhookTriggerConfigBase):
 OutreachConfig = Annotated[Union[tuple(CONFIG_MODELS.values()) + (OutreachOnEventConfig,)], Discriminator("operation")]
 
 
-class OutreachNodeConfig(NodeConfig[OutreachConfig, OutreachOAuthCredential]):
+class OutreachNodeConfig(NodeConfig[OutreachConfig, OutreachCredential]):
     model_config = ConfigDict(json_schema_extra={"x-agent-tool-provider": True})
 
 
 class OutreachNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-outreach"
+    credential_provider_labels = {"outreach": "Outreach Account"}
     webhook_replace_stale_endpoint = True
     scope_registry = OUTREACH_SCOPES
     connection_evidence = ConnectionEvidence(operation="get_prospects", noun="account")

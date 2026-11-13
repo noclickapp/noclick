@@ -93,7 +93,7 @@ async def transport(monkeypatch):
 def test_actual_factory_native_config_and_default_tag():
     instance = node('query_line_chart')
     assert isinstance(instance.config, provider.ApphudFullConfig) and instance.config.config.time_range.from_time == TIME['from']
-    assert instance.node_data['credentials'] == credential() and cc.credential_classes_for_node(Node) == [provider.ApphudAPIKeyCredential]
+    assert instance.node_data['credentials'] == credential() and cc.credential_classes_for_node(Node) == [provider.ApphudAPIKeyCredential, provider.ApphudMcpCredential]  # and its vendor's MCP server, last (nodes/core/vendor_mcp.py)
     assert Node.connection_evidence.operation == 'list_charts' and Node.connection_evidence.proves == 'reachability'
     assert Node.connection_evidence.identity_operation is None
 

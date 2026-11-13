@@ -14,6 +14,7 @@ from urllib.parse import parse_qs, urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
@@ -396,6 +397,11 @@ class SearchLineItemsConfig(_Input):
     limit: int = Field(1, ge=1)
 
 
+# Financial Datasets AI's own MCP server: agents get its tools through a person's Financial Datasets AI sign-in.
+FinancialDatasetsAiMcpCredential = mcp_credential("financial_datasets_ai", "https://mcp.financialdatasets.ai/", app="Financial Datasets AI")
+FinancialDatasetsAICredential = Union[FinancialDatasetsAIAPIKey, FinancialDatasetsAiMcpCredential]
+
+
 FinancialDatasetsAIConfig = Annotated[Union[
     GetCompanyFactsConfig,
     GetIncomeStatementsConfig,
@@ -425,7 +431,7 @@ FinancialDatasetsAIConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class FinancialDatasetsAIFullConfig(NodeConfig[FinancialDatasetsAIConfig, FinancialDatasetsAIAPIKey]):
+class FinancialDatasetsAIFullConfig(NodeConfig[FinancialDatasetsAIConfig, FinancialDatasetsAICredential]):
     pass
 
 
@@ -460,6 +466,7 @@ ROUTES = {
 
 class FinancialDatasetsAINode(WorkflowNode):
     integration_type = "automation-financial-datasets-ai"
+    credential_provider_labels = {"financial_datasets_ai": "Financial Datasets AI Account"}
     connection_evidence = ConnectionEvidence(
         operation="list_news", noun="market news", proves="reachability",
     )

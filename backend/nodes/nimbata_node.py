@@ -14,6 +14,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
@@ -222,6 +223,11 @@ class ClearCallCallerName(_EditableCall):
     operation: Literal["clear_call_caller_name"] = Field("clear_call_caller_name", json_schema_extra={"ui:hidden": True})
 
 
+# Nimbata's own MCP server: agents get its tools through a person's Nimbata sign-in.
+NimbataMcpCredential = mcp_credential("nimbata", "https://mcp.nimbata.com/mcp", app="Nimbata")
+NimbataCredential = Union[NimbataAPITokenCredential, NimbataMcpCredential]
+
+
 NimbataConfig = Annotated[Union[
     GetCurrentUser,
     ListProjects,
@@ -250,7 +256,7 @@ NimbataConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class NimbataNodeConfig(NodeConfig[NimbataConfig, NimbataAPITokenCredential]):
+class NimbataNodeConfig(NodeConfig[NimbataConfig, NimbataCredential]):
     pass
 
 
@@ -285,6 +291,7 @@ ROUTES = {'get_current_user': ('GET', '/users/me'),
 
 class NimbataNode(WorkflowNode):
     integration_type = "automation-nimbata"
+    credential_provider_labels = {"nimbata": "Nimbata Account"}
     connection_evidence = ConnectionEvidence(
         noun="Nimbata account", identity_operation="get_current_user",
         identity_keys=("full_name", "email", "id"))

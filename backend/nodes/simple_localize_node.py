@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -205,13 +206,18 @@ class DeleteCustomer(_Customer):
     operation: Literal["delete_customer"] = Field("delete_customer", title="Delete Customer", json_schema_extra={"ui:hidden": True})
 
 
+# SimpleLocalize's own MCP server: agents get its tools through a person's SimpleLocalize sign-in.
+SimpleLocalizeMcpCredential = mcp_credential("simple_localize", "https://api.simplelocalize.io/mcp", app="SimpleLocalize")
+SimpleLocalizeCredential = Union[SimpleLocalizeAPIKeyCredential, SimpleLocalizeMcpCredential]
+
+
 Operation = Annotated[Union[GetProject, ListTranslations, UpdateTranslation, ListTranslationKeys,
     CreateTranslationKey, UpdateTranslationKey, DeleteTranslationKey, ListLanguages, GetLanguage,
     CreateLanguage, UpdateLanguage, DeleteLanguage, ListTags, CreateTag, UpdateTag, DeleteTag,
     ListCustomers, GetCustomer, CreateCustomer, UpdateCustomer, DeleteCustomer], Field(discriminator="operation")]
 
 
-class SimpleLocalizeConfig(NodeConfig[Operation, SimpleLocalizeAPIKeyCredential]):
+class SimpleLocalizeConfig(NodeConfig[Operation, SimpleLocalizeCredential]):
     pass
 
 
@@ -267,6 +273,7 @@ def _redact(value, token):
 
 class SimpleLocalizeNode(WorkflowNode):
     integration_type = "automation-simple-localize"
+    credential_provider_labels = {"simple_localize": "SimpleLocalize Account"}
     connection_evidence = ConnectionEvidence(identity_operation="get_project", noun="project", identity_keys=("name", "projectToken"))
 
     @classmethod

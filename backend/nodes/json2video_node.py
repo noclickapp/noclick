@@ -15,6 +15,7 @@ from typing import Annotated, Any, Literal, Union
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
@@ -39,6 +40,11 @@ class JSON2VideoAPIKeyCredential(BaseModel):
         if not value.isascii() or any(c.isspace() or ord(c) < 33 or ord(c) == 127 for c in value):
             raise ValueError("Paste the API key without a header or whitespace")
         return value
+
+
+# JSON2Video's own MCP server: agents get its tools through a person's JSON2Video sign-in.
+Json2videoMcpCredential = mcp_credential("json2video", "https://mcp.json2video.com/mcp", app="JSON2Video")
+JSON2VideoCredential = Union[JSON2VideoAPIKeyCredential, Json2videoMcpCredential]
 
 
 def op(name, title, **extra):
@@ -217,7 +223,7 @@ Operation = Annotated[Union[CreateMovie, GetMovie, ListMovies, DeleteMovie, List
     DeleteMediaFolder, RenderSubtitles, OnNewMovie, OnMovieFinished], Field(discriminator="operation")]
 
 
-class JSON2VideoNodeConfig(NodeConfig[Operation, JSON2VideoAPIKeyCredential]):
+class JSON2VideoNodeConfig(NodeConfig[Operation, JSON2VideoCredential]):
     pass
 
 
@@ -238,6 +244,7 @@ ROUTES = {
 
 class JSON2VideoNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-json2video"
+    credential_provider_labels = {"json2video": "JSON2Video Account"}
     connection_evidence = ConnectionEvidence(noun="templates", operation="list_templates")
     edit_examples = ["Render a video from my template", "Get the finished video URL", "Run when a new movie is created", "Upload media to my library"]
 

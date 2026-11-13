@@ -13,6 +13,7 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -191,13 +192,18 @@ class ResendSigningInvite(_Session):
     signer_index: int = Field(..., ge=1, description="One-based signer number.")
 
 
+# DocsAutomator's own MCP server: agents get its tools through a person's DocsAutomator sign-in.
+DocsautomatorMcpCredential = mcp_credential("docsautomator", "https://mcp.docsautomator.co/mcp", app="DocsAutomator")
+DocsautomatorCredential = Union[DocsautomatorAPIKeyCredential, DocsautomatorMcpCredential]
+
+
 Operation = Annotated[Union[CreateDocument, GetJobStatus, GetQueueStats, ListAutomations,
     GetAutomation, CreateAutomation, UpdateAutomation, DeleteAutomation, DuplicateAutomation,
     ListPlaceholders, DuplicateTemplate, SendTestEmail, ListSigningSessions, GetSigningSession,
     GetSigningLinks, GetSigningAudit, CancelSigningSession, ResendSigningInvite], Field(discriminator="operation")]
 
 
-class DocsautomatorFullConfig(NodeConfig[Operation, DocsautomatorAPIKeyCredential]):
+class DocsautomatorFullConfig(NodeConfig[Operation, DocsautomatorCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -248,6 +254,7 @@ def _redact(value, token):
 
 class DocsautomatorNode(WorkflowNode):
     integration_type = "automation-docsautomator"
+    credential_provider_labels = {"docsautomator": "DocsAutomator Account"}
     connection_evidence = ConnectionEvidence(noun="DocsAutomator automations", operation="list_automations", label_keys=("title", "_id"))
 
     @classmethod

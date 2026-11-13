@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import SSRFError, guarded_async_client
@@ -45,6 +46,11 @@ class SmtpingApiKeyCredential(BaseModel):
 
 class _Input(BaseModel):
     model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
+
+
+# SMTPing's own MCP server: agents get its tools through a person's SMTPing sign-in.
+SmtpingMcpCredential = mcp_credential("smtping", "https://mcp.smtping.com/mcp", app="SMTPing")
+SmtpingCredential = Union[SmtpingApiKeyCredential, SmtpingMcpCredential]
 
 
 Email = Annotated[str, Field(min_length=3, pattern=r"^[^\s@]+@[^\s@]+\.[^\s@]+$", json_schema_extra={"format": "email"})]
@@ -129,7 +135,7 @@ class GetUsage(_Input):
 SmtpingOperation = Annotated[Union[VerifySingle, CreateBulkJob, GetBulkJob, GetBulkJobResult, CheckOne, CheckBatch, CreateCheckJob, GetCheckJob, GetCheckJobResult, CheckFlags, GetCredits, GetUsage], Field(discriminator="operation")]
 
 
-class SmtpingConfig(NodeConfig[SmtpingOperation, SmtpingApiKeyCredential]):
+class SmtpingConfig(NodeConfig[SmtpingOperation, SmtpingCredential]):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
@@ -162,6 +168,7 @@ def _redact(value, secret):
 
 class SmtpingNode(WorkflowNode):
     integration_type = "automation-smtping"
+    credential_provider_labels = {"smtping": "SMTPing Account"}
     # The API exposes a balance, not an account name. Do not claim identity.
     connection_evidence = ConnectionEvidence(
         noun="credit balance", operation="get_credits", proves="reachability",

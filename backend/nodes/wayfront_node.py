@@ -12,6 +12,7 @@ from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client, normalize_provider_https_origin
@@ -240,6 +241,11 @@ class WayfrontListTeam(_Page):
     operation: Literal["list_team"] = Field("list_team", json_schema_extra={"ui:hidden": True})
 
 
+# Wayfront's own MCP server: agents get its tools through a person's Wayfront sign-in.
+WayfrontMcpCredential = mcp_credential("wayfront", "https://mcp.wayfront.com/mcp", app="Wayfront")
+WayfrontCredential = Union[WayfrontTokenCredential, WayfrontMcpCredential]
+
+
 WayfrontOperation = Annotated[Union[
     WayfrontListClients,
     WayfrontGetClient,
@@ -269,7 +275,7 @@ WayfrontOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class WayfrontConfig(NodeConfig[WayfrontOperation, WayfrontTokenCredential]):
+class WayfrontConfig(NodeConfig[WayfrontOperation, WayfrontCredential]):
     pass
 
 
@@ -304,6 +310,7 @@ ROUTES = {
 
 class WayfrontNode(WorkflowNode):
     integration_type = "automation-wayfront"
+    credential_provider_labels = {"wayfront": "Wayfront Account"}
     connection_evidence = ConnectionEvidence(noun="clients", operation="list_clients", label_keys=("email", "name_f", "id"))
 
     @classmethod
