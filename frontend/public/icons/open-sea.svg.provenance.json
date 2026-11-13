@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/open-sea.svg",
+  "source": "https://raw2.seadn.io/app_logos/brand-2026/opensea-mark-circle-blue.svg",
+  "source_page": "OpenSea's own asset CDN raw2.seadn.io, folder app_logos/brand-2026/, from which https://docs.opensea.io/ embeds opensea-logo-black.svg and opensea-mark-white.svg; the circle-blue file sits beside them (same naming as the docs' opensea-mark-circle-blue-400.png the PR used)",
+  "source_kind": "company docs",
+  "date": "2026-11-13",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "933d29ad427e4eee2c86051d9b65f5a95ef2f9d367f3ea3378ac8fd910cb1c69",
+  "edits": [
+    "cropped the viewBox to the blue circle (no pad: the circle is OpenSea's own app-icon tile)",
+    "clean"
+  ],
+  "checked_against": "https://opensea.io/icons/rebrand/icon-192x192.png and https://docs.opensea.io/apple-touch-icon.png (downloads/open-sea/ref/): the same white ship on a #0086FF circle; the PR's current PNG is the same mark. api_hosts api.opensea.io / docs.opensea.io match.",
+  "source_sha256": "94d66d46c3f1427175c20dc2a50282edee7c2dd7c8996819e541f0a362353cde"
+}
