@@ -4,13 +4,10 @@ import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition } from '~/components/workflow/nodes/types';
 import type { CSSProperties } from 'react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
-
-// Unmodified compact brand asset from https://neon.com
-import type { CSSProperties as BrandCSSProperties } from 'react';
-const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/neon-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+const OfficialBrandIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
+    <ThemedBrandImg light="/icons/neon-brand.svg" className={className} style={style} />
 );
 
 export const NeonNode: NodeDefinition = {

@@ -1267,12 +1267,26 @@
    "category": "Snapshot",
    "description": "",
    "is_trigger": false
+  },
+  {
+   "name": "on_new_branch",
+   "display_name": "New Branch",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
+  },
+  {
+   "name": "on_new_or_updated_branch",
+   "display_name": "New or Updated Branch",
+   "category": "Triggers",
+   "description": "",
+   "is_trigger": true
   }
  ],
  "agent_tool_provider": true,
  "credentialed": true,
  "output_handles": [],
- "registers": false,
+ "registers": true,
  "app_event_provider": null,
  "summary": "Manage Neon projects, branches, databases, computes and related APIs.",
  "retired": null
