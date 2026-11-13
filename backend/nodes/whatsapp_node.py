@@ -339,6 +339,19 @@ def _stanza_id(message: Any) -> Optional[str]:
     return stanza if isinstance(stanza, str) and stanza else None
 
 
+def _sent_message_id(result: Dict[str, Any]) -> Optional[str]:
+    """The id a sent message is edited, reacted to and quoted by (``{fromMe}_{chat}_{stanza}``). WAHooks adds it to
+    a text send's result as ``id``; a media send comes back as WAHA's raw record, so it's built from ``key`` the way
+    WAHooks builds it."""
+    if isinstance(result.get("id"), str) and result["id"]:
+        return result["id"]
+    key = result.get("key") if isinstance(result.get("key"), dict) else {}
+    if not (key.get("id") and key.get("remoteJid")):
+        return None
+    chat = str(key["remoteJid"]).replace("@s.whatsapp.net", "@c.us")
+    return f"{'true' if key.get('fromMe') else 'false'}_{chat}_{key['id']}"
+
+
 def chat_number(chat: Any) -> Optional[str]:
     """The phone digits a chat id or number names (+12025550101,
     12025550101@c.us, 12025550101:3@s.whatsapp.net all name the same one);
@@ -813,8 +826,8 @@ class WhatsAppSendReactionConfig(BaseModel):
     message_id: str = Field(
         ...,
         title="Message ID",
-        description="WhatsApp message ID to react to (wamid)",
-        json_schema_extra={"placeholder": "wamid.xxx..."},
+        description="The id of the message to react to: an incoming message's id, or the message_id a send returned (a wamid on the Cloud API)",
+        json_schema_extra={"placeholder": "wamid.xxx... / message id"},
     )
     emoji: str = Field(
         ...,
@@ -1685,7 +1698,7 @@ class WhatsAppEditMessageConfig(BaseModel):
     message_id: str = Field(
         ...,
         title="Message ID",
-        description="ID of the sent message to edit (from a send operation's output or Get Chat Messages)",
+        description="The message_id a send operation returned for the message (or its id from Get Chat Messages)",
         json_schema_extra={"placeholder": "message id"},
     )
     body: str = Field(
@@ -2027,6 +2040,12 @@ class WhatsAppNode(WorkflowNode):
                 header += f" (sent by {', '.join([participant, *identity])})"
             elif identity:
                 header += f" ({', '.join(identity)})"
+            own = cls._own_ids(output)
+            if cls._mentions_any(p, own):
+                header += ", mentioning you"
+            quoted = cls._quoted_line(p, own)
+            if quoted:
+                body = f"{quoted}\n{body}"
             media_note = ""
             entries = []
             if has_media:
@@ -2067,10 +2086,14 @@ class WhatsAppNode(WorkflowNode):
                 " The phone number in the header identifies the sender; it is not the reply address."
                 if phone_shown else ""
             )
+            message_id = p.get("id") if isinstance(p.get("id"), str) else ""
+            # Reacting to a message or quoting it takes its id; without it the agent had to page the chat first.
+            id_note = (f" This message's id is {message_id}: pass it as message_id to react to it, or as "
+                       f"reply_to_message_id to quote it." if message_id else "")
             text = (
                 f"{header}:\n{body}{media_note}\n\n"
                 f"To reply, call a send tool with to={chat_id} "
-                f"(pass this chat id exactly — do not convert it to a phone number).{identity_note}"
+                f"(pass this chat id exactly — do not convert it to a phone number).{identity_note}{id_note}"
             )
             title = push_name or chat_id.split("@", 1)[0]
             return {"text": text, "conversation_key": chat_id, "title": title, "media": entries}
@@ -2114,6 +2137,53 @@ class WhatsAppNode(WorkflowNode):
             except (KeyError, IndexError, TypeError, AttributeError):
                 return None
         return None
+
+    @staticmethod
+    def _account_part(jid: Any) -> str:
+        """The account a jid names, without its server or device (12025550101:3@s.whatsapp.net → 12025550101)."""
+        return str(jid or "").strip().partition("@")[0].split(":", 1)[0]
+
+    @classmethod
+    def _own_ids(cls, envelope: Dict[str, Any]) -> frozenset:
+        """The linked account's own ids as a delivery names them (its number and its @lid), for telling what is
+        addressed to it."""
+        me = envelope.get("me") if isinstance(envelope.get("me"), dict) else {}
+        return frozenset(filter(None, (cls._account_part(me.get("id")), cls._account_part(me.get("lid")))))
+
+    @classmethod
+    def _mentions_any(cls, p: Dict[str, Any], ids: frozenset) -> bool:
+        """Whether a message @mentions one of ``ids``: WAHA's raw record lists them in its ``contextInfo``, one
+        ``message`` further down in a wrapper (``ephemeralMessage``)."""
+        if not ids:
+            return False
+
+        def mentioned(message: Dict[str, Any]) -> List[str]:
+            found: List[str] = []
+            for value in message.values():
+                if not isinstance(value, dict):
+                    continue
+                context = value.get("contextInfo") if isinstance(value.get("contextInfo"), dict) else {}
+                found += [str(j) for j in context.get("mentionedJid") or []]
+                if isinstance(value.get("message"), dict):
+                    found += mentioned(value["message"])
+            return found
+
+        return any(cls._account_part(jid) in ids for jid in mentioned(cls._raw_message(p)))
+
+    @classmethod
+    def _quoted_line(cls, p: Dict[str, Any], own: frozenset) -> str:
+        """What a swipe-to-reply quotes (WAHA's ``replyTo``), as the line opening the turn's message: in a long
+        thread the quote is often the whole meaning of the message ("yes, that one")."""
+        quoted = p.get("replyTo") if isinstance(p.get("replyTo"), dict) else None
+        if quoted is None:
+            return ""
+        author = cls._account_part(quoted.get("participant"))
+        who = ("your earlier message" if author and author in own
+               else f"a message from {quoted['participant']}" if author else "an earlier message")
+        text = " ".join(str(quoted.get("body") or "").split())
+        if len(text) > 500:
+            text = f"{text[:500]}…"
+        return f'[Replying to {who}: "{text}"]' if text else f"[Replying to {who}]"
 
     @classmethod
     def operation_credential_types(cls, operation: str) -> Optional[frozenset]:
@@ -3092,6 +3162,8 @@ class WhatsAppNode(WorkflowNode):
                 # Self-echo guard: another NoClick WhatsApp trigger that
                 # receives this message must not fire on it (drop_trigger_event).
                 await record_self_post("whatsapp", _stanza_id(result))
+                if isinstance(result, dict) and (sent := _sent_message_id(result)):
+                    result = {**result, "message_id": sent}
 
             api_time = (time.time() - start_time) * 1000
             return {

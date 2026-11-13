@@ -255,7 +255,7 @@
           "x-resource-type": "whatsapp_chat"
         },
         "message_id": {
-          "description": "ID of the sent message to edit (from a send operation's output or Get Chat Messages)",
+          "description": "The message_id a send operation returned for the message (or its id from Get Chat Messages)",
           "placeholder": "message id",
           "title": "Message ID",
           "type": "string"
@@ -1783,8 +1783,8 @@
           "x-resource-type": "whatsapp_chat"
         },
         "message_id": {
-          "description": "WhatsApp message ID to react to (wamid)",
-          "placeholder": "wamid.xxx...",
+          "description": "The id of the message to react to: an incoming message's id, or the message_id a send returned (a wamid on the Cloud API)",
+          "placeholder": "wamid.xxx... / message id",
           "title": "Message ID",
           "type": "string"
         },
