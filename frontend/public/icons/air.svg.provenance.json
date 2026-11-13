@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/air.svg",
   "source": "https://files.readme.io/4639ffffec7072a35f9a4df9055e521a6e57221cf62cca235592f8ceacfc9d94-Air_Small_Logo_Black_RGB_160px.svg",
-  "license": "Air vendor trademark; official mark from https://developer.air.inc/docs/getting-started used to identify the integration.",
-  "sha256": "ce1454218a0e69f306ba2b5ebe4e9d83b59ccb858a7a127c3cf215a71b5db6b5"
+  "source_page": "https://developer.air.inc/docs/getting-started (Air's own readme.io developer docs, which link both its black and white 'Small Logo')",
+  "date": "2026-11-13",
+  "license": "Air (air.inc) trademark; used solely to identify the Air (air.inc) integration",
+  "sha256": "5c6a4494495139401de83e2f2465a70e81e806c92d171bcd53d26264148ae056",
+  "source_sha256": "ce1454218a0e69f306ba2b5ebe4e9d83b59ccb858a7a127c3cf215a71b5db6b5",
+  "edits": [
+    "cropped the viewBox to the mark (pad 0.02)",
+    "clean"
+  ]
 }

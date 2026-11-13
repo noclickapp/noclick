@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/air-dark.svg",
+  "source": "https://files.readme.io/094fb085dee7a50ad171a3f15f5948daa78457f26b4ebe2cef4eab6b2bb920e1-Air_Small_Logo_White_RGB_160px.svg",
+  "source_page": "https://developer.air.inc/docs/getting-started (Air's own readme.io developer docs, which link both its black and white 'Small Logo')",
+  "date": "2026-11-13",
+  "license": "Air (air.inc) trademark; used solely to identify the Air (air.inc) integration",
+  "sha256": "b2cd734259f623d9038865c5ac5191a0c259464389762d7334bcf7a0b8ce85a8",
+  "source_sha256": "ce1454218a0e69f306ba2b5ebe4e9d83b59ccb858a7a127c3cf215a71b5db6b5",
+  "edits": [
+    "cropped the viewBox to the mark (pad 0.02)",
+    "clean",
+    "Air's own white version of the same mark (Air_Small_Logo_White_RGB_160px.svg), cropped (pad 0.02) and cleaned; no recolouring"
+  ]
+}
