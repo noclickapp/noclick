@@ -18,7 +18,9 @@ version 1 hold a whole turn — text, call, reply — in one step).
 
 The database is the CLI's; a thread is written through its public importer
 (``opencode import <bundle.json>``: ``{info, messages: [{info, parts}]}``,
-the same shape ``opencode export`` prints), which owns the schema, so the
+the same shape ``opencode export`` prints; 2.x's is ``opencode session
+import``, taking its own export's shape: ``IMPORTERS``, by the installed
+version), which owns the schema, so the
 binary must be on PATH where a move runs — it is, in the target's sandbox.
 Reading is direct, since the source volume is mounted in a sandbox that has
 no ``opencode``. NoClick's runner resumes by the id in its pointer file
@@ -41,6 +43,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import secrets
 import shutil
 import string as _string
@@ -351,24 +354,88 @@ class OpenCodeFormat(ThreadFormat):
             Path(bundle).unlink(missing_ok=True)
 
     def install(self, written: Written, store: Optional[StoreRef] = None) -> Path:
-        """Import the bundle through the CLI, which owns the database schema."""
+        """Import the bundle through the CLI, which owns the database schema: as the installed version imports
+        (``IMPORTERS``), in the shape it takes."""
         assert store is not None
         cli = shutil.which("opencode", path=(store.environ or os.environ).get("PATH"))
         if not cli:
             raise InterchangeError("install_failed", "opencode is not on PATH where the move runs")
-        bundle_path = store.home / ".nc_interchange" / f"bundle-{written.session_id}.json"
-        write_new_file(bundle_path, json.dumps(written.records[0], ensure_ascii=False).encode())
-        written.undo["bundle"] = str(bundle_path)
         env = {**(store.environ or os.environ), "XDG_DATA_HOME": str(store.home), "OPENCODE_DISABLE_AUTOUPDATE": "true", "OPENCODE_DISABLE_PRUNE": "true"}
         cwd = store.cwd if store.cwd.is_dir() else store.home
+        version = cli_version(cli, env)
+        command, bundle = importer(version, written.records[0])
+        bundle_path = store.home / ".nc_interchange" / f"bundle-{written.session_id}.json"
+        write_new_file(bundle_path, json.dumps(bundle, ensure_ascii=False).encode())
+        written.undo["bundle"] = str(bundle_path)
         try:
-            proc = subprocess.run([cli, "import", str(bundle_path)], cwd=cwd, env=env, capture_output=True, text=True, timeout=180, stdin=subprocess.DEVNULL)
+            proc = subprocess.run([cli, *command, str(bundle_path)], cwd=cwd, env=env, capture_output=True, text=True, timeout=180, stdin=subprocess.DEVNULL)
         except (OSError, subprocess.SubprocessError) as e:
-            raise InterchangeError("install_failed", f"opencode import: {e}") from e
+            raise InterchangeError("install_failed", f"opencode {' '.join(command)}: {e}") from e
         out = (proc.stdout or "") + (proc.stderr or "")
         if proc.returncode != 0 or f"Imported session: {written.session_id}" not in out:
             raise InterchangeError("install_failed", f"opencode import exit {proc.returncode}: {out[-800:]}")
         return self.db_path(store)
+
+
+# How each major version imports a bundle: 1.x ``opencode import`` takes the
+# ``{info, messages: [{info, parts}]}`` shape ``write`` makes; 2.x moved it to
+# ``opencode session import`` and takes its own export's shape (``bundle_v2``),
+# against a private server (``--standalone``): its default is a background
+# service that may be running on another data home.
+IMPORTERS: Dict[int, Tuple[str, ...]] = {1: ("import",), 2: ("session", "import", "--standalone")}
+
+
+def cli_version(cli: str, env: Dict[str, str]) -> str:
+    """The installed CLI's version, as ``opencode --version`` prints it (1.x: ``1.18.35``; 2.x: ``opencode v2.2.5``)."""
+    try:
+        proc = subprocess.run([cli, "--version"], env=env, capture_output=True, text=True, timeout=60, stdin=subprocess.DEVNULL)
+    except (OSError, subprocess.SubprocessError) as e:
+        raise InterchangeError("install_failed", f"opencode --version: {e}") from e
+    found = re.search(r"(\d+)\.(\d+)\.(\d+)", (proc.stdout or "") + (proc.stderr or ""))
+    if proc.returncode != 0 or not found:
+        raise InterchangeError("install_failed", f"opencode --version exit {proc.returncode}: {((proc.stdout or '') + (proc.stderr or ''))[-300:]}")
+    return found.group(0)
+
+
+def importer(version: str, bundle: Dict[str, Any]) -> Tuple[Tuple[str, ...], Dict[str, Any]]:
+    """The import command and the bundle as ``version`` takes them; a major version NoClick doesn't know fails."""
+    major = int(version.split(".")[0])
+    if major not in IMPORTERS:
+        known = "; ".join(f"{m}.x: opencode {' '.join(c)}" for m, c in IMPORTERS.items())
+        raise InterchangeError("install_failed", f"opencode {version} has no import NoClick knows ({known})")
+    return IMPORTERS[major], bundle if major == 1 else bundle_v2(bundle)
+
+
+def bundle_v2(bundle: Dict[str, Any]) -> Dict[str, Any]:
+    """``write``'s 1.x bundle in the shape 2.x's ``session import`` takes (its export's): one row per message, an
+    assistant step's text and calls as ``content``, a call's result as text ``content`` or its ``error``."""
+    info = bundle["info"]
+    messages: List[Dict[str, Any]] = []
+    model: Optional[Dict[str, str]] = None
+    for message in bundle["messages"]:
+        head, parts = message["info"], message["parts"]
+        if head["role"] == USER:
+            messages.append({"id": head["id"], "type": "user", "time": {"created": head["time"]["created"]},
+                             "text": "\n".join(p["text"] for p in parts if p["type"] == "text"), "files": []})
+            continue
+        model = model or {"id": head["modelID"], "providerID": head["providerID"]}
+        content: List[Dict[str, Any]] = []
+        for part in parts:
+            if part["type"] == "text":
+                content.append({"type": "text", "text": part["text"]})
+            elif part["type"] == "tool":
+                state, at = part["state"], part["state"]["time"]
+                result = ({"error": {"type": "tool.execution", "message": state.get("error") or ""}} if state["status"] == "error"
+                          else {"content": [{"type": "text", "text": state.get("output") or ""}]})
+                content.append({"type": "tool", "id": part["callID"], "name": part["tool"], "executed": False,
+                                "state": {"status": state["status"], "input": state["input"], **result},
+                                "time": {"created": at["start"], "ran": at["start"], "completed": at["end"]}})
+        messages.append({"id": head["id"], "type": "assistant", "time": dict(head["time"]), "agent": head.get("agent") or "build",
+                         "model": {"id": head["modelID"], "providerID": head["providerID"]}, "content": content,
+                         "finish": head.get("finish") or "stop"})
+    return {"info": {"id": info["id"], "projectID": info["projectID"], "title": info["title"], **({"model": model} if model else {}),
+                     "cost": 0, "tokens": info["tokens"], "time": dict(info["time"]), "location": {"directory": info["directory"]}},
+            "messages": messages}
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────

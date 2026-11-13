@@ -1213,6 +1213,86 @@ class TestOpenCodeStore:
         assert ic.skeleton_of(ic.read_thread(ic.StoreRef("opencode", home, Path(CWD), pointer=pointer))).digest == ic.skeleton_of(thread).digest
 
 
+def _opencode_major() -> int:
+    """The major version of the opencode CLI on PATH."""
+    return int(opencode_fmt.cli_version(shutil.which("opencode"), dict(os.environ)).split(".")[0])
+
+
+def _fake_opencode(bin_dir: Path, version_line: str) -> Path:
+    """An ``opencode`` that prints ``version_line`` for --version and, for anything else, records its arguments and
+    the bundle it was handed, then says it imported it, as the real CLI does."""
+    bin_dir.mkdir(parents=True, exist_ok=True)
+    script = bin_dir / "opencode"
+    script.write_text(f"""#!{sys.executable}
+import json, sys
+from pathlib import Path
+if sys.argv[1:] == ["--version"]:
+    print({version_line!r}); sys.exit(0)
+bundle = json.loads(Path(sys.argv[-1]).read_text())
+Path({str(bin_dir / "called.json")!r}).write_text(json.dumps({{"args": sys.argv[1:-1], "bundle": bundle}}))
+print("Imported session: " + bundle["info"]["id"])
+""")
+    script.chmod(0o755)
+    return bin_dir
+
+
+class TestOpenCodeImporter:
+    """The CLI's own importer writes the thread, chosen by the installed version: 1.x's ``opencode import``, 2.x's
+    ``opencode session import`` on a private server with its own bundle shape. Picked by version, never by trying."""
+
+    @pytest.mark.parametrize("version_line,command,shape", [
+        ("1.18.35", ["import"], "parts"),
+        ("opencode v2.2.5", ["session", "import", "--standalone"], "content"),
+    ])
+    def test_imports_the_way_the_installed_version_does(self, tmp_path, version_line, command, shape):
+        bin_dir = _fake_opencode(tmp_path / "bin", version_line)
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
+        fmt = ic.format_for("opencode")
+        store = ic.StoreRef("opencode", tmp_path / "xdg", Path(CWD), environ={**os.environ, "PATH": f"{bin_dir}:{os.environ['PATH']}"})
+        written = fmt.write(thread, store, ic.TargetIdentity(model="anthropic/claude-sonnet-4-5"))
+        fmt.install(written, store)
+        called = json.loads((bin_dir / "called.json").read_text())
+        assert called["args"] == command
+        messages = called["bundle"]["messages"]
+        assert all(shape in m for m in messages if m.get("type", (m.get("info") or {}).get("role")) == "assistant")
+
+    def test_a_version_with_no_known_importer_fails_naming_it(self, tmp_path):
+        bin_dir = _fake_opencode(tmp_path / "bin", "opencode v3.0.1")
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
+        fmt = ic.format_for("opencode")
+        store = ic.StoreRef("opencode", tmp_path / "xdg", Path(CWD), environ={**os.environ, "PATH": f"{bin_dir}:{os.environ['PATH']}"})
+        with pytest.raises(ic.InterchangeError) as e:
+            fmt.install(fmt.write(thread, store, ic.TargetIdentity(model="anthropic/claude-sonnet-4-5")), store)
+        assert e.value.reason == "install_failed" and "opencode 3.0.1 has no import NoClick knows" in e.value.detail
+        assert not (bin_dir / "called.json").exists()  # nothing was tried
+
+    def test_the_2x_bundle_reads_back_as_2x_holds_it(self, tmp_path):
+        """2.x's import keeps its export's rows as they are: laid into its tables, the bundle reads back the same."""
+        thread = ic.read_thread(PARALLEL_SOURCES["codex"](tmp_path / "source"))
+        written = ic.format_for("opencode").write(thread, ic.StoreRef("opencode", tmp_path / "x", Path(CWD)), ic.TargetIdentity(model="anthropic/claude-sonnet-4-5"))
+        bundle = opencode_fmt.bundle_v2(written.records[0])
+        home = tmp_path / "xdg"
+        (home / "opencode").mkdir(parents=True)
+        with sqlite3.connect(home / "opencode" / "opencode.db") as conn:
+            conn.executescript(OPENCODE2_TABLES)
+            info = bundle["info"]
+            conn.execute("INSERT INTO session_v2 VALUES (?, ?, NULL, NULL, 'moved', ?, ?, '2.2.5', NULL, ?, ?, ?)",
+                         (info["id"], info["projectID"], CWD, info["title"], json.dumps(info.get("model")), info["time"]["created"], info["time"]["updated"]))
+            for seq, message in enumerate(bundle["messages"]):
+                row = {k: v for k, v in message.items() if k not in ("id", "type")}
+                conn.execute("INSERT INTO session_message VALUES (?, ?, ?, ?, ?, ?, ?)",
+                             (message["id"], info["id"], message["type"], seq, message["time"]["created"], message["time"]["created"], json.dumps(row)))
+        back = ic.read_thread(ic.StoreRef("opencode", home, Path(CWD), session_id=info["id"]))
+        assert ic.skeleton_of(back).digest == ic.skeleton_of(thread).digest
+
+    @pytest.mark.skipif(not shutil.which("opencode") or _opencode_major() != 2, reason="requires the opencode 2.x CLI")
+    def test_moves_into_a_real_2x_store(self, tmp_path):
+        thread = ic.read_thread(PARALLEL_SOURCES["claude_code"](tmp_path / "source"))
+        environ = {**os.environ, "HOME": str(tmp_path / "home"), **{f"XDG_{d.upper()}_HOME": str(tmp_path / d) for d in ("config", "state", "cache")}}
+        out = ic.translate(thread, ic.StoreRef("opencode", tmp_path / "xdg", Path(CWD), environ=environ), ic.TargetIdentity(model="anthropic/claude-sonnet-4-5"))
+        assert out.fidelity.ok and (out.fidelity.target.tool_calls, out.fidelity.target.tool_results) == (2, 2)
+
+
 class TestHermesStore:
     def test_reads_an_older_schema_a_laptop_still_runs(self, tmp_path):
         """Hermes 0.20 (schema 25, 2026.8) has no _compressed_summary on messages: a laptop running it is read all the
@@ -1624,6 +1704,11 @@ class TestParallelToolCalls:
         out = ic.translate(thread, ic.StoreRef("opencode", home, Path(CWD), environ=environ), ic.TargetIdentity(model="anthropic/claude-sonnet-4-5"))
         assert out.fidelity.ok and (out.fidelity.target.tool_calls, out.fidelity.target.tool_results) == (2, 2)
         with sqlite3.connect(home / "opencode" / "opencode.db") as conn:
-            tools = conn.execute("SELECT message_id, json_extract(data, '$.state.output') FROM part WHERE session_id = ? AND json_extract(data, '$.type') = 'tool' ORDER BY id",
-                                 (out.session_id,)).fetchall()
+            if _opencode_major() == 1:
+                tools = conn.execute("SELECT message_id, json_extract(data, '$.state.output') FROM part WHERE session_id = ? AND json_extract(data, '$.type') = 'tool' ORDER BY id",
+                                     (out.session_id,)).fetchall()
+            else:  # 2.x: a step's calls are its row's content, each result its text
+                tools = [(mid, part["state"]["content"][0]["text"]) for mid, data in conn.execute(
+                    "SELECT id, data FROM session_message WHERE session_id = ? AND type = 'assistant' ORDER BY seq", (out.session_id,))
+                    for part in json.loads(data).get("content") or [] if part["type"] == "tool"]
         assert len({message for message, _ in tools}) == 1 and [output for _, output in tools] == [out_ for _, _, out_ in PARALLEL_CALLS]
