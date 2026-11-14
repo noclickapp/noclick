@@ -1488,6 +1488,42 @@ class TestWhatsAppQRProvideLink:
                                       "credential_type": "whatsapp_qr"}
 
     @patch('utils.whatsapp_qr.finalize_qr_connection', new_callable=AsyncMock)
+    async def test_a_scan_the_platform_refuses_binds_nothing(self, mock_finalize, monkeypatch, real_database, db,
+                                                             setup_db):
+        """A platform that keeps the scanned number where it is (``WHATSAPP_AGENT.scanned``) has its word shown on
+        the scan's page: the request stays unfulfilled and a credential the scan just made goes again."""
+        from fastapi import HTTPException
+        from types import SimpleNamespace
+        from utils import capabilities
+        from utils.credential_request_routes import qr_status, QRStatusBody
+
+        cred_id = str(db.fetchrow("""
+            INSERT INTO credentials (owner_id, name, credential_type, credential, metadata)
+            VALUES ($1, 'WhatsApp (QR)', 'whatsapp_qr', 'enc', $2)
+            RETURNING id
+        """, TEST_USER_ID, {'provider': 'wahooks', 'connection_id': 'conn-xyz'})['id'])
+        mock_finalize.return_value = {
+            'success': True, 'status': 'connected', 'credential_id': cred_id, 'credential_name': 'WhatsApp (QR)',
+            'phone_number': '+12025550101', 'created': True, 'message': 'WhatsApp connected successfully!',
+        }
+        asked = []
+
+        async def scanned(pool, request_id, credential_id):
+            asked.append((request_id, credential_id))
+            return "This number is already connected, and your agent WhatsApp answers it."
+
+        monkeypatch.setitem(capabilities._providers, capabilities.WHATSAPP_AGENT, SimpleNamespace(scanned=scanned))
+        with pytest.raises(HTTPException) as refused:
+            await qr_status(setup_db['token'], QRStatusBody(connection_id='conn-xyz'))
+
+        assert refused.value.status_code == 409
+        assert refused.value.detail == "This number is already connected, and your agent WhatsApp answers it."
+        assert asked == [(setup_db['request_id'], cred_id)]
+        assert db.fetchrow("SELECT status FROM credential_requests WHERE id = $1",
+                           setup_db['request_id'])['status'] == 'pending'
+        assert db.fetchrow("SELECT id FROM credentials WHERE id = $1", cred_id) is None
+
+    @patch('utils.whatsapp_qr.finalize_qr_connection', new_callable=AsyncMock)
     async def test_qr_status_for_a_held_request_never_rebinds_owner_rows(self, mock_finalize, real_database, db, setup_db):
         """A request whose credential is held for someone else tells the core so,
         and a scan of a phone the owner already connected mints its own row."""

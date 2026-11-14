@@ -1351,6 +1351,15 @@ async def qr_status(token: str, body: QRStatusBody) -> dict[str, Any]:
         held_for_someone_else=bool(metadata.get("hidden_from_owner")) and not metadata.get("held_by_requester"),
     )
     if result.get("status") == "connected" and result.get("credential_id"):
+        from utils.capabilities import WHATSAPP_AGENT, capability
+
+        agents = capability(WHATSAPP_AGENT)
+        refused = await agents.scanned(pool, str(row["id"]), result["credential_id"]) if agents is not None else None
+        if refused:
+            # The platform kept the number with the agent already answering it; this request binds nothing.
+            if result.get("created"):
+                await _rollback_qr_credential(pool, result["credential_id"])
+            raise HTTPException(status_code=409, detail=refused)
         try:
             claimed = await _claim_fulfillment(pool, row, result["credential_id"], "whatsapp_qr",
                                                owner_id=str(row["requester_id"]))
