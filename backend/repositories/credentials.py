@@ -445,10 +445,10 @@ class CredentialsRepo:
         return row is not None
 
     async def get_owned_header(self, credential_id: str, owner_id: str) -> Optional[Dict[str, Any]]:
-        """Non-secret identity used when reconnecting an existing account."""
+        """Non-secret identity used when reconnecting an existing account (a linked number's own number too)."""
         async with self._pool.acquire() as conn:
             row = await conn.fetchrow(
-                "SELECT id, name, credential_type FROM credentials "
+                "SELECT id, name, credential_type, metadata->>'phone_number' AS phone_number FROM credentials "
                 "WHERE id = $1::uuid AND owner_id = $2::uuid",
                 credential_id, owner_id,
             )

@@ -6,13 +6,19 @@ binding owner, delegates start/finalize to the shared user-agnostic core, and
 maps the core's result dicts onto the socket Response models. The binding-safety
 logic (reservation + unique index + recurring charge + idempotent finalize)
 lives once in the core so the public credential-provide link shares it verbatim.
+
+Linking makes the credential alone. A linked number's agent is the platform's
+(``WHATSAPP_AGENT``): ``whatsapp:agent:status`` says whether the app may offer
+one and which agent already answers it, and ``whatsapp:agent:create`` makes it
+on the owner's yes.
 """
 
 import logging
 import os
 from typing import Callable, Dict
 
-from utils.capabilities import WHATSAPP_LINKED, capability
+from repositories.credentials import CredentialsRepo
+from utils.capabilities import WHATSAPP_AGENT, capability
 from utils.database_pool import DatabasePoolMixin
 from utils.encryption import get_encryption
 from utils.whatsapp_qr import finalize_qr_connection, start_qr_connection
@@ -22,7 +28,10 @@ from wss.sender.responses import (
     WhatsAppQRStartResponse,
     WhatsAppQRStatusResponse,
 )
+from wss.sender.whatsapp_agent_responses import WhatsAppAgentCreateResponse, WhatsAppAgentStatusResponse
 from wss.receiver.client_events import (
+    WhatsAppAgentCreateRequest,
+    WhatsAppAgentStatusRequest,
     WhatsAppQRStartRequest,
     WhatsAppQRStatusRequest,
 )
@@ -41,6 +50,8 @@ class WhatsAppQRHandler(DatabasePoolMixin, SocketIOHandler):
         return {
             "whatsapp:qr:start": self.start_qr_flow,
             "whatsapp:qr:status": self.check_status,
+            "whatsapp:agent:status": self.agent_status,
+            "whatsapp:agent:create": self.create_agent,
         }
 
     async def setup_user(self, sid: str) -> None:
@@ -140,9 +151,6 @@ class WhatsAppQRHandler(DatabasePoolMixin, SocketIOHandler):
                     message=result.get("message", ""),
                 ).model_dump(),
             ))
-            ready = capability(WHATSAPP_LINKED)
-            if request.ready_agent and ready is not None and result.get("status") == "connected":
-                await self._ready_agent(ready, pool, user_id, result)
         except Exception as e:
             logger.error(f"[WhatsAppQRHandler] check_status error: {e}", exc_info=True)
             await send_event(self.sio, sid, ResponseEvent(
@@ -152,12 +160,47 @@ class WhatsAppQRHandler(DatabasePoolMixin, SocketIOHandler):
                 ).model_dump(),
             ))
 
-    @staticmethod
-    async def _ready_agent(ready, pool, user_id: str, result: Dict) -> None:
-        """The number's own agent (``WHATSAPP_LINKED``). The link already stands and its answer was sent, so a
-        failure here is logged, never reported as the scan's."""
+    async def _number(self, sid: str, credential_id: str):
+        """The signed-in user, the pool and their own WhatsApp number's credential, or the reason there are none."""
+        user_id = (await self.sio.get_session(sid)).get('user_id')
+        if not user_id:
+            return None, "User not authenticated"
+        pool = await self.get_pool()
+        if not pool:
+            return None, "Database not available"
+        number = await CredentialsRepo(pool).get_owned_header(credential_id, user_id)
+        if number is None or number["credential_type"] != "whatsapp_qr":
+            return None, "That isn't a WhatsApp number of yours"
+        return (pool, user_id, number), None
+
+    async def agent_status(self, sid: str, request: WhatsAppAgentStatusRequest) -> None:
+        """Whether the app may offer the number an agent, and the agent that answers it already."""
         try:
-            await ready(pool, user_id, result["credential_id"], result.get("phone_number"))
-        except Exception:
-            logger.error("[WhatsAppQRHandler] readying the agent of credential %s failed", result["credential_id"],
-                         exc_info=True)
+            found, refused = await self._number(sid, request.credential_id)
+            agents = capability(WHATSAPP_AGENT)
+            if refused or agents is None:
+                answer = WhatsAppAgentStatusResponse(success=refused is None, message=refused)
+            else:
+                pool, user_id, _ = found
+                answer = WhatsAppAgentStatusResponse(success=True, **await agents.status(
+                    pool, user_id, request.credential_id))
+        except Exception as e:
+            logger.error(f"[WhatsAppQRHandler] agent_status error: {e}", exc_info=True)
+            answer = WhatsAppAgentStatusResponse(success=False, message="Couldn't read the number's agent")
+        await send_event(self.sio, sid, ResponseEvent(request_id=request.request_id, data=answer.model_dump()))
+
+    async def create_agent(self, sid: str, request: WhatsAppAgentCreateRequest) -> None:
+        """The number's agent, made with its channel; one already answering it is answered instead."""
+        try:
+            found, refused = await self._number(sid, request.credential_id)
+            agents = capability(WHATSAPP_AGENT)
+            if refused or agents is None:
+                answer = WhatsAppAgentCreateResponse(success=False, message=refused or "No agents here")
+            else:
+                pool, user_id, number = found
+                answer = WhatsAppAgentCreateResponse(success=True, **await agents.create(
+                    pool, user_id, request.credential_id, number.get("phone_number")))
+        except Exception as e:
+            logger.error(f"[WhatsAppQRHandler] create_agent error: {e}", exc_info=True)
+            answer = WhatsAppAgentCreateResponse(success=False, message="Couldn't create the agent")
+        await send_event(self.sio, sid, ResponseEvent(request_id=request.request_id, data=answer.model_dump()))

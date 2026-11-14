@@ -627,6 +627,8 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         # WhatsApp QR code auth events
         "whatsapp:qr:start": Handler.WHATSAPP_QR,
         "whatsapp:qr:status": Handler.WHATSAPP_QR,
+        "whatsapp:agent:status": Handler.WHATSAPP_QR,
+        "whatsapp:agent:create": Handler.WHATSAPP_QR,
         "phone_number:coverage": Handler.PHONE_NUMBER,
         "phone_number:places": Handler.PHONE_NUMBER,
         "phone_number:search": Handler.PHONE_NUMBER,

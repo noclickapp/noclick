@@ -3264,8 +3264,20 @@ class WhatsAppQRStatusRequest(ClientEventBase):
 
     connection_id: str = Field(..., description="WAHooks connection ID from start response")
     credential_name: Optional[str] = Field(None, description="Name for the credential if connected")
-    ready_agent: bool = Field(False, description="Linked for the account itself (its connections, not a workflow "
-                                                 "or an agent): the platform readies the number's own agent")
+
+
+class WhatsAppAgentStatusRequest(ClientEventBase):
+    """Whether a linked WhatsApp number of the user's may be offered an agent, and the agent answering it"""
+    event_name: ClassVar[str] = "whatsapp:agent:status"
+
+    credential_id: str = Field(..., description="The user's own whatsapp_qr credential")
+
+
+class WhatsAppAgentCreateRequest(ClientEventBase):
+    """Put an agent on a linked WhatsApp number of the user's, in its own channel; one already on it is kept"""
+    event_name: ClassVar[str] = "whatsapp:agent:create"
+
+    credential_id: str = Field(..., description="The user's own whatsapp_qr credential")
 
 
 # Approval Feed Events

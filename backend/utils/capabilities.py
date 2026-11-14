@@ -429,11 +429,13 @@ ACCOUNT_AGENT_HANDOVER = "account.agent_handover"
 # whose coordinator keeps its own address. Without one, every account's does.
 ACCOUNT_AGENT_EMAIL = "account.agent_email"
 
-# A WhatsApp linked by QR for the account itself (its connections, not a
-# workflow's or an agent's): async (pool, user_id, credential_id, phone) ->
-# what the platform readied for the number (its agent), or None. Without one,
-# linking makes the credential alone.
-WHATSAPP_LINKED = "whatsapp.linked"
+# The agent of a WhatsApp number the account linked by QR for itself, made only
+# on the owner's yes: ``status(pool, user_id, credential_id)`` -> {"available":
+# whether it may be offered, "agent": the one answering the number or None}
+# and ``create(pool, user_id, credential_id, phone)`` -> {"agent", "created":
+# False when one already answered it}, each agent {agent_id, name, channel_id,
+# channel_name}. Without one, nothing offers a number an agent.
+WHATSAPP_AGENT = "whatsapp.agent"
 
 # A platform's own rule for a text to the assistant's number: async (transport, message) -> None, with the
 # coder/coordinator/texting/channel.py PhoneTransport and PhoneText. Without one, a text reaches the account its number
