@@ -686,6 +686,11 @@ export function MessageRow({
                     <NoClickAvatar />
                 ) : app ? (
                     <AppAvatar />
+                ) : author && actions.onAuthor ? (
+                    // The face is a pointer shortcut; the name beside it is the control a keyboard or reader uses.
+                    <button type="button" tabIndex={-1} aria-hidden onClick={() => actions.onAuthor?.(author)} className="block rounded-full">
+                        <MemberAvatar member={author} user={user} />
+                    </button>
                 ) : (
                     author && <MemberAvatar member={author} user={user} />
                 )}
