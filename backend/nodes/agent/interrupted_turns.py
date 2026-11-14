@@ -69,7 +69,7 @@ async def resolve_interrupted_chat_turn(
         if (
             isinstance(output, dict)
             and output.get("status") == "awaiting_agent_turn"
-            and _marker_matches_conversation(output, workflow_id, node_id, conversation_key)
+            and output.get("conversation_key") == conversation_key
         ):
             return False  # delivered turn — the runtime's reconciler and sweep own it
 

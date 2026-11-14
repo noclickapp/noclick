@@ -101,13 +101,13 @@ class Spot:
         return posixpath.join(mounts.pop(), self.rel) if len(mounts) == 1 else self.rel
 
 
-def agent_inbox_volume(workflow_id: str, agent_node_id: str, conversation_key: Optional[str], nodes, edges):
-    """The workspace (``WorkspaceSource``) an agent keeps a conversation's files in, as its turns mount it; None when
-    the conversation has no durable one. Every inbox write resolves its volume here: today each conversation has its
-    own workspace, and once an agent is one session with one workspace, this is the one line to change."""
+def agent_inbox_volume(workflow_id: str, agent_node_id: str, place_key: Optional[str], nodes, edges):
+    """The workspace (``WorkspaceSource``) an agent keeps the files it's sent in, as its turns mount it: its place's
+    (``placement.place_key_of``: a platform agent's one, else its conversation's); None when it has no durable one.
+    Every inbox write resolves its volume here."""
     from utils.agent_workspace import resolve_workspace_source
 
-    return resolve_workspace_source(workflow_id, agent_node_id, conversation_key, nodes, edges)
+    return resolve_workspace_source(workflow_id, agent_node_id, place_key, nodes, edges)
 
 
 async def delivery_workspaces(pool, *, workflow_id: str, node_id: str, payload: Any,

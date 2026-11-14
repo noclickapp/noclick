@@ -91,3 +91,13 @@ def place_key_of(node: Any) -> Optional[str]:
     """What the agent's place (its warm sandbox, ``/workspace``, presence, markers) goes by: its scope, else the
     conversation the run is in (``AgentNode._conversation_key``); None for a one-off run."""
     return agent_scope_of(node) or getattr(node, "_conversation_key", None)
+
+
+# An agent run's output names its conversation (``conversation_key``) and, for an agent with a scope, its place.
+PLACE_OUTPUT_KEY = "place"
+
+
+def output_place(output: Dict[str, Any]) -> Optional[str]:
+    """The place an agent run's output names: its ``place``, which only an agent with a scope carries, else its
+    conversation's."""
+    return output.get(PLACE_OUTPUT_KEY) or output.get("conversation_key")
