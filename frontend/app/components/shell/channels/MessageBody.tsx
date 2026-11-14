@@ -11,6 +11,7 @@ import remarkGfm from 'remark-gfm';
 import { SKIP, visit } from 'unist-util-visit';
 import type { PhrasingContent, Root } from 'mdast';
 import { cn } from '~/lib/utils';
+import { ReplyLink } from '~/components/chat/ReplyLink';
 import { MENTION_HUE, MENTION_TINT } from './avatars';
 import { mentionable, mentionsIn, YOU_ID } from './model';
 import type { ChannelMember } from './types';
@@ -104,11 +105,20 @@ export function MessageBody({
             // A table keeps its columns: one too wide for the message scrolls inside its own box, never the thread.
             table: ({ children }) => (
                 <div className="max-w-full overflow-x-auto rounded-xl ring-1 ring-inset ring-foreground/[0.07] scrollbar-subtle">
-                    <table className="min-w-full border-collapse text-[13px] leading-snug [overflow-wrap:normal]">{children}</table>
+                    <table className="w-max min-w-full border-collapse text-[13px] leading-snug [overflow-wrap:normal]">{children}</table>
                 </div>
             ),
-            th: ({ children }) => <th className="border-b border-foreground/[0.08] px-3 py-1.5 text-left font-medium text-foreground">{children}</th>,
-            td: ({ children }) => <td className="border-t border-foreground/[0.06] px-3 py-1.5 align-top">{children}</td>,
+            // A long cell wraps at a readable width; the table is as wide as its lines.
+            th: ({ children }) => (
+                <th className="border-b border-foreground/[0.08] px-3 py-1.5 text-left font-medium text-foreground">
+                    <div className="max-w-[18rem]">{children}</div>
+                </th>
+            ),
+            td: ({ children }) => (
+                <td className="border-t border-foreground/[0.06] px-3 py-1.5 align-top">
+                    <div className="max-w-[18rem]">{children}</div>
+                </td>
+            ),
             hr: () => <hr className="border-border dark:border-foreground/[0.1]" />,
             a: ({ href = '', children }) => {
                 if (href.startsWith(MENTION)) {
@@ -136,9 +146,9 @@ export function MessageBody({
                     );
                 }
                 return (
-                    <a href={href} target="_blank" rel="noopener noreferrer" className="text-foreground underline decoration-foreground/30 underline-offset-[3px] transition-colors hover:decoration-foreground/70">
+                    <ReplyLink href={href} className="text-foreground underline decoration-foreground/30 underline-offset-[3px] transition-colors hover:decoration-foreground/70">
                         {children}
-                    </a>
+                    </ReplyLink>
                 );
             },
         };

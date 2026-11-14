@@ -20,6 +20,7 @@ import { renderMermaidDiagram, initializeMermaid } from './mermaid/renderDiagram
 import { ChatFileCard, ChatPicture } from '~/components/chat/ChatReferenceChip';
 import { RecordingCard, VideoCard } from '~/components/coordinator/inline/media';
 import { embedKindOf, fileNameOf } from '~/lib/embedKind';
+import { ReplyLink } from '~/components/chat/ReplyLink';
 import 'katex/dist/katex.min.css';
 
 export interface MarkdownRendererProps {
@@ -387,7 +388,7 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
     };
 
     return (
-        <div className="relative group">
+        <div className="relative group max-w-full">
             <button
                 onClick={handleCopy}
                 className="absolute top-2 right-2 p-1.5 rounded-md bg-[#1a1a1a] hover:bg-[#333333] text-gray-400 hover:text-white transition-all opacity-0 group-hover:opacity-100 z-10"
@@ -410,6 +411,9 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
                     backgroundColor: '#2E2E2E',
                     padding: '0.75rem 3rem 0.75rem 1rem', // Reduced padding, kept space for copy button
                     lineHeight: '1.4',
+                    // A long line scrolls inside the block, never the reply.
+                    maxWidth: '100%',
+                    overflowX: 'auto',
                 }}
                 codeTagProps={{
                     style: {
@@ -457,7 +461,9 @@ const MarkdownRendererComponent = function({ content, className, variant = 'defa
 
     return (
         <div ref={containerRef} className={cn(
-            "markdown-content [&>*:last-child]:mb-0 [&>*:first-child]:mt-0",
+            // Long unbroken text (a URL, a token) wraps anywhere rather than widening whatever lays the reply out;
+            // tables and code keep their lines and scroll inside their own box.
+            "markdown-content min-w-0 max-w-full [overflow-wrap:anywhere] [&>*:last-child]:mb-0 [&>*:first-child]:mt-0",
             // KaTeX math styling for dark theme
             "[&_.katex]:text-foreground [&_.katex-display]:my-2",
             className
@@ -525,14 +531,9 @@ const MarkdownRendererComponent = function({ content, className, variant = 'defa
                             );
                         }
                         return (
-                            <a
-                                href={href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-foreground hover:text-foreground/80 underline transition-colors"
-                            >
+                            <ReplyLink href={href} className="text-foreground hover:text-foreground/80 underline transition-colors">
                                 {children}
-                            </a>
+                            </ReplyLink>
                         );
                     },
 
@@ -551,8 +552,9 @@ const MarkdownRendererComponent = function({ content, className, variant = 'defa
 
                     // Tables (from GFM)
                     table: ({ children }) => (
-                        <div className="overflow-x-auto mb-2 rounded-lg border border-border">
-                            <table className="min-w-full">
+                        <div className="mb-2 max-w-full overflow-x-auto rounded-lg border border-border">
+                            {/* As wide as its lines, a long cell wrapping at a readable width, not one word a line. */}
+                            <table className="w-max min-w-full [overflow-wrap:normal]">
                                 {children}
                             </table>
                         </div>
@@ -567,10 +569,10 @@ const MarkdownRendererComponent = function({ content, className, variant = 'defa
                         <tr className="hover:bg-muted/50 transition-colors">{children}</tr>
                     ),
                     th: ({ children }) => (
-                        <th className="px-4 py-2 text-left text-foreground font-semibold">{children}</th>
+                        <th className="px-4 py-2 text-left text-foreground font-semibold"><div className="max-w-[18rem]">{children}</div></th>
                     ),
                     td: ({ children }) => (
-                        <td className="px-4 py-2 text-foreground/80">{children}</td>
+                        <td className="px-4 py-2 text-foreground/80"><div className="max-w-[18rem]">{children}</div></td>
                     ),
 
                     // Pre blocks - wrap code blocks
