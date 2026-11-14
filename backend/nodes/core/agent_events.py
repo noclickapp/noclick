@@ -181,6 +181,18 @@ def event_block(source: str, text: str, at: datetime) -> str:
     return f"--- Event from {source} ---\nArrived {at.astimezone(timezone.utc):%a %Y-%m-%d %H:%M} UTC\n{text}"
 
 
+def events_block(events: List[Dict[str, Any]], now: datetime) -> str:
+    """The events a turn delivers as they join its message, oldest first: each its own ``event_block`` at the time
+    it arrived (else ``now``), under a line saying they came together when there are several, so the agent takes
+    them as one: a burst a person sent while it was busy."""
+    blocks = [event_block(e["source"], e["text"], e.get("received_at") or now) for e in events if e.get("text")]
+    if len(blocks) > 1:
+        blocks.insert(0, f"[{len(blocks)} events arrived while you were busy and are below, oldest first. Take them "
+                         "together, as your instructions say: one reply can answer several of them, and a message's "
+                         "id lets you reply to that one or react to it.]")
+    return "\n\n".join(blocks)
+
+
 def first_line(text: str, limit: int = 100) -> str:
     """A conversation title from an event's text: its first non-empty line."""
     for line in (text or "").splitlines():
@@ -281,18 +293,26 @@ DELIVERED_EVENT_KEY = "_deliveredEvent"
 
 
 def delivered_event(agent_node_id: str, nodes: Any) -> Optional[Dict[str, Any]]:
-    """An event the platform delivered straight to an agent — a finished
-    outbound call coming back to the agent that placed it — carried on the
-    agent's own run-scoped config as ``_deliveredEvent`` ({node_id,
-    node_type, label, operation, output, conversation_key?}): the node it
-    speaks for and that node's record, translated by the node class's
-    ``resolve_agent_event`` like a fired trigger, so the same persistence and
-    chat framing apply. None when this run delivered nothing."""
+    """An event the platform delivered straight to an agent — a trigger's, or a finished outbound call coming back
+    to the agent that placed it — carried on the agent's own run-scoped config as ``_deliveredEvent`` ({node_id,
+    node_type, label, operation, output, conversation_key?, received_at?, also?}): the node it speaks for and that
+    node's record, translated by the node class's ``resolve_agent_event`` like a fired trigger, so the same
+    persistence and chat framing apply. ``also`` lists the events queued behind it that the turn takes along, each
+    read the same way (``also`` on the result, oldest first). None when this run delivered nothing."""
     me = next((n for n in nodes or [] if isinstance(n, dict) and n.get("id") == agent_node_id), None)
     config = me.get("config") if me else None
     if not isinstance(config, dict):
         config = (me.get("data") or {}).get("config") if me and isinstance(me.get("data"), dict) else None
     delivered = config.get(DELIVERED_EVENT_KEY) if isinstance(config, dict) else None
+    event = _read_delivered(delivered, agent_node_id)
+    if event is None:
+        return None
+    also = [_read_delivered({**d, "conversation_key": delivered.get("conversation_key")}, agent_node_id)
+            for d in delivered.get("also") or [] if isinstance(d, dict)]
+    return {**event, "also": [e for e in also if e is not None]}
+
+
+def _read_delivered(delivered: Any, agent_node_id: str) -> Optional[Dict[str, Any]]:
     if not isinstance(delivered, dict) or not isinstance(delivered.get("output"), dict):
         return None
     from nodes.core.registry import NODE_REGISTRY
@@ -301,6 +321,7 @@ def delivered_event(agent_node_id: str, nodes: Any) -> Optional[Dict[str, Any]]:
     event = node_cls.resolve_agent_event(delivered["output"]) if node_cls else None
     if not event:
         return None
+    received = delivered.get("received_at")
     return {
         "node_id": str(delivered.get("node_id") or agent_node_id),
         "node_type": str(delivered.get("node_type") or ""),
@@ -312,6 +333,7 @@ def delivered_event(agent_node_id: str, nodes: Any) -> Optional[Dict[str, Any]]:
         "conversation_title": event.get("conversation_title"),
         "media": event.get("media") or [],
         "output": delivered["output"],
+        "received_at": datetime.fromisoformat(received) if isinstance(received, str) else None,
     }
 
 
