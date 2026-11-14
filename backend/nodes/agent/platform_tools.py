@@ -98,12 +98,14 @@ def _wake_me_params() -> Tuple[Dict[str, Any], ...]:
                 "self_paced": _about("wake_me.self_paced", type="boolean"),
                 "wakeup_id": _about("wake_me.wakeup_id", type="string"),
                 "conversation": _about("wake_me.conversation", type="string"),
+                "quiet": _about("wake_me.quiet", type="boolean"),
             },
             "required": ["note"],
         }),
         _described("list_wakeups", {
             "type": "object",
-            "properties": {"conversation": _about("list_wakeups.conversation", type="string")},
+            "properties": {"conversation": _about("list_wakeups.conversation", type="string"),
+                           "quiet": _about("list_wakeups.quiet", type="boolean")},
         }),
         _described("cancel_wakeup", {
             "type": "object",
