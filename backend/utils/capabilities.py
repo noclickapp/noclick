@@ -371,6 +371,12 @@ SANDBOX_ENV = "agent.sandbox_env"
 # it must answer cheaply for nodes it has no say over.
 TRIGGER_DELIVERY = "trigger.delivery"
 
+# Where a file a delivery carries is kept, for a trigger node a product delivers its own way (``TRIGGER_DELIVERY``):
+# async (pool, *, workflow_id, node_id, payload) -> None (not one of its nodes: the engine's wiring decides) or the
+# ``utils.agent_inbox.Workspace``s of the conversation its turn runs in (none for a delivery no turn takes). Asked
+# before the delivery's media is fetched, and for no other delivery.
+DELIVERY_WORKSPACES = "trigger.delivery_workspaces"
+
 # Whether an account is one no person has claimed yet (an AI agent signed it up for itself): async (user_id) -> bool.
 # Until one does, its public surfaces stay closed: deliveries to its webhook URLs (its schedules' own ticks still
 # run), its hosted MCP links, and answer links that would connect someone's account or take secret values into it.

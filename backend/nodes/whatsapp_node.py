@@ -2169,11 +2169,21 @@ class WhatsAppNode(WorkflowNode):
                         f"see its content. Tell the sender and ask them to send a smaller version.]"
                     )
                 elif media.get("rehosted") and media.get("url"):
-                    media_note = (
-                        f"\nAttached media ({desc or 'unknown type'}): {media['url']}\n"
-                        f"Download that URL (e.g. curl -o) to view or process the file — "
-                        f"it is a public, unguessable link."
-                    )
+                    inbox = media.get("inbox") if isinstance(media.get("inbox"), dict) else {}
+                    media_note = f"\nAttached media ({desc or 'unknown type'}): {media['url']}\n"
+                    if inbox.get("path"):
+                        label = "voice note" if inbox.get("kind") == "voice" else inbox.get("kind") or "file"
+                        media_note += (
+                            f"{label}: {inbox['path']} (saved in your workspace: open, edit or convert it there; "
+                            f"the link is public and unguessable, for sending it on unchanged)"
+                        )
+                    else:
+                        media_note += (
+                            "Download that URL (e.g. curl -o) to view or process the file — "
+                            "it is a public, unguessable link."
+                        )
+                        if inbox.get("error"):
+                            media_note += f"\n[It wasn't saved in your workspace: {inbox['error']}.]"
                     entries.append(media_entry(
                         url=media["url"],
                         mime_type=media.get("mimetype"),
@@ -2708,8 +2718,8 @@ class WhatsAppNode(WorkflowNode):
     # to a run, and they expire within minutes: copy at delivery time. The copy
     # runs before the delivery is acked, and WAHooks aborts a delivery unanswered
     # after 15s and sends it again (5 attempts; trigger_event_ids keeps a copy
-    # from rehosting or running twice): the timeout bounds the WHOLE copy,
-    # leaving room for the rest of the delivery.
+    # from rehosting or running twice): the timeout bounds the WHOLE copy and
+    # its save to the chat's workspace, leaving room for the rest of the delivery.
     MEDIA_REHOST_MAX_BYTES = 100 * 1024 * 1024
     MEDIA_REHOST_TIMEOUT_S = 12
 
@@ -2812,10 +2822,13 @@ class WhatsAppNode(WorkflowNode):
     async def _rehost_media(cls, payload, config, *, pool, workflow_id, node_id):
         """Rehost an inbound message's media to workflow resources (R2) and
         swap ``payload.media.url`` for the public capability URL the agent can
-        actually download. Media that can't be copied still runs as a message,
-        without the provider URL (only the platform key opens it, and briefly):
-        its slot says ``too_large`` with ``max_bytes`` and any known ``size``, or
-        ``unavailable`` for a dead link, a transport failure or a missed deadline."""
+        actually download, and keep the same bytes as a file in the workspace of
+        the chat's turn (``utils.agent_inbox``): the slot's ``inbox`` says where
+        (``path``), or why it isn't there (``error``). Media that can't be copied
+        still runs as a message, without the provider URL (only the platform key
+        opens it, and briefly): its slot says ``too_large`` with ``max_bytes`` and
+        any known ``size``, or ``unavailable`` for a dead link, a transport
+        failure or a missed deadline."""
         if payload.get("event") not in _MESSAGE_EVENTS:
             return None
         p = payload.get("payload") or {}
@@ -2833,12 +2846,27 @@ class WhatsAppNode(WorkflowNode):
         # before attaching the bearer (also blocks private-network SSRF).
         assert_exact_url_origin(url, WAHOOKS_API_ORIGIN)
 
+        from utils.agent_inbox import Held, Spot, delivery_workspaces, keep, release, reserve
         from utils.inbound_media import MediaFetchFailed, MediaTooLarge, copy_inbound_media
 
-        no_url = {k: v for k, v in media.items() if k != "url"}
-        try:
-            async with asyncio.timeout(cls.MEDIA_REHOST_TIMEOUT_S):
-                rehosted = await copy_inbound_media(
+        deadline = asyncio.get_running_loop().time() + cls.MEDIA_REHOST_TIMEOUT_S
+        held = Held()
+
+        async def place():
+            # Where the chat's turn keeps the file, found while its bytes download.
+            async with asyncio.timeout_at(deadline):
+                event = cls.resolve_agent_event(payload) or {}
+                chat = event.get("chat") or {}
+                workspaces = await delivery_workspaces(pool, workflow_id=str(workflow_id), node_id=node_id,
+                                                       payload=payload, conversation_key=event.get("conversation_key"))
+                return await reserve(workspaces, cls._inbox_kind(p, media), cls._sent_at(p),
+                                     chat_key=chat.get("key") or event.get("conversation_key"),
+                                     chat_name=chat.get("name") or event.get("conversation_title"),
+                                     original=media.get("filename"), mimetype=media.get("mimetype"))
+
+        async def copy():
+            async with asyncio.timeout_at(deadline):
+                return await copy_inbound_media(
                     pool,
                     workflow_id=str(workflow_id),
                     node_id=node_id,
@@ -2850,21 +2878,54 @@ class WhatsAppNode(WorkflowNode):
                     declared_size=cls._declared_media_size(cls._raw_message(p)),
                     max_bytes=cls.MEDIA_REHOST_MAX_BYTES,
                     timeout_s=cls.MEDIA_REHOST_TIMEOUT_S,
+                    sink=held,
                 )
-        except MediaTooLarge as e:
-            logger.warning(f"[WhatsApp] {e}; telling the agent")
-            p["media"] = {**no_url, "too_large": True, "size": e.size, "max_bytes": e.max_bytes}
-            return payload
-        except Exception as e:
+
+        spot, rehosted = await asyncio.gather(place(), copy(), return_exceptions=True)
+        if isinstance(rehosted, BaseException) or not rehosted:
+            if isinstance(spot, Spot):
+                await release(spot)
+            if not rehosted:
+                return None
+            if not isinstance(rehosted, Exception):
+                raise rehosted
+            no_url = {k: v for k, v in media.items() if k != "url"}
+            if isinstance(rehosted, MediaTooLarge):
+                logger.warning(f"[WhatsApp] {rehosted}; telling the agent")
+                p["media"] = {**no_url, "too_large": True, "size": rehosted.size, "max_bytes": rehosted.max_bytes}
+                return payload
             # By name: an R2 status error's message holds a signed URL. A fetch failure says only its status.
-            why = e if isinstance(e, MediaFetchFailed) else type(e).__name__
+            why = rehosted if isinstance(rehosted, MediaFetchFailed) else type(rehosted).__name__
             logger.warning(f"[WhatsApp] inbound media not copied for node {node_id}: {why}")
             p["media"] = {**no_url, "unavailable": True}
             return payload
-        if not rehosted:
-            return None
         p["media"] = {**media, **rehosted}
+        inbox = await keep(spot, held, deadline=deadline, what=f"WhatsApp media for node {node_id} of {workflow_id}")
+        if inbox is not None:
+            p["media"]["inbox"] = {"kind": cls._inbox_kind(p, media), **inbox}
         return payload
+
+    @classmethod
+    def _inbox_kind(cls, p: Dict[str, Any], media: Dict[str, Any]) -> str:
+        """What a message's file is, as its inbox name says: photo, sticker, voice (a voice note), audio, video or
+        document."""
+        from nodes.core.media_digest import media_kind
+
+        kind = media_kind(media.get("mimetype"), media.get("filename"))
+        if kind == "image":
+            data = p.get("_data") if isinstance(p.get("_data"), dict) else {}
+            return "sticker" if "stickerMessage" in cls._raw_message(p) or data.get("type") == "sticker" else "photo"
+        if kind == "audio":
+            return "voice" if cls._is_voice_note(p, media) else "audio"
+        return kind if kind == "video" else "document"
+
+    @staticmethod
+    def _sent_at(p: Dict[str, Any]) -> datetime:
+        """When a message was sent (its ``timestamp``, in seconds), else now."""
+        ts = p.get("timestamp")
+        if isinstance(ts, (int, float)) and not isinstance(ts, bool) and ts > 0:
+            return datetime.fromtimestamp(ts, timezone.utc)
+        return datetime.now(timezone.utc)
 
     @classmethod
     async def _foreign_account_delivery(cls, payload, config, *, pool, node_id) -> Optional[str]:

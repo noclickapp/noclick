@@ -45,12 +45,14 @@ class MediaFetchFailed(Exception):
     status error, whose message carries the URL and is logged by the delivery seam."""
 
 
-async def _capped(chunks: AsyncIterator[bytes], source: str, max_bytes: int) -> AsyncIterator[bytes]:
+async def _capped(chunks: AsyncIterator[bytes], source: str, max_bytes: int, sink=None) -> AsyncIterator[bytes]:
     total = 0
     async for chunk in chunks:
         total += len(chunk)
         if total > max_bytes:
             raise MediaTooLarge(source, None, max_bytes)
+        if sink is not None:
+            sink.add(chunk)
         yield chunk
 
 
@@ -118,8 +120,11 @@ async def copy_inbound_media(
     max_bytes: int = DEFAULT_MAX_BYTES,
     timeout_s: float = DEFAULT_TIMEOUT_S,
     trusted_exact_urls: Iterable[str] = (),
+    sink=None,
 ) -> Optional[Dict[str, Any]]:
-    """Stream ``url`` into a workflow resource owned by the workflow's owner.
+    """Stream ``url`` into a workflow resource owned by the workflow's owner;
+    ``sink`` (``utils.agent_inbox.Held``) is handed each chunk as it passes, so a
+    caller keeps the bytes without fetching them twice.
 
     Raises :class:`MediaTooLarge` when ``declared_size`` or the response's own
     length is over ``max_bytes`` (nothing downloaded) or the body turns out to be
@@ -155,7 +160,7 @@ async def copy_inbound_media(
                 workflow_id=str(workflow_id),
                 node_id=node_id,
                 organization_id=str(owner["organization_id"]) if owner["organization_id"] else None,
-                chunks=_capped(resp.aiter_bytes(), source, max_bytes),
+                chunks=_capped(resp.aiter_bytes(), source, max_bytes, sink),
                 content_type=mime,
                 filename=name,
                 metadata={"source": source},
