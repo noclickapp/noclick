@@ -66,18 +66,32 @@ def agent_view(row: dict, *, include_result: bool = True) -> dict:
     return result
 
 
+# Where agents run on workflows of their own (``WORKFLOW_AGENT``): how one of those agents is changed. A build changed
+# only its canvas step's label when asked to rename one, and the agent kept its name (2026-11-15).
+OWN_AGENT_CHANGE = "agents_update {agent_id}: its name, instructions or tools; a build changes only its canvas step"
+
+
 async def account_agents(pool, user_id: str, organization_id: Optional[str]) -> List[Dict[str, Any]]:
     """Every agent node in the workflows of the user's workspace (``organization_id``,
-    else its own), the most recently edited workflow first."""
+    else its own), the most recently edited workflow first; the one a workflow is the own flow of
+    (``WORKFLOW_AGENT``) with that agent's id and how it's changed."""
     from repositories.dashboard import DashboardRepo
+    from utils.capabilities import WORKFLOW_AGENT, capability
     from utils.graph_nodes import graph_nodes, node_config, node_model
 
     rows = await DashboardRepo(pool).list_workflows(user_id, uuid.UUID(organization_id) if organization_id else None)
-    return [{"workflow_id": str(row["id"]), "workflow_name": row["name"], "node_id": node["id"],
-             "name": node_label(node) or "Agent",
-             "purpose": str(node_config(node).get("goal") or (node.get("data") or {}).get("goal") or "")[:500],
-             "model": node_model(node), "disabled": node_disabled(node)}
-            for row in rows for node in graph_nodes(row["workflow"]) if node.get("type") == "agent"]
+    agent_of = capability(WORKFLOW_AGENT)
+    found: List[Dict[str, Any]] = []
+    for row in rows:
+        nodes = [node for node in graph_nodes(row["workflow"]) if node.get("type") == "agent"]
+        own = await agent_of(pool, str(row["id"]), user_id) if nodes and agent_of else None
+        found += [{"workflow_id": str(row["id"]), "workflow_name": row["name"], "node_id": node["id"],
+                   "name": node_label(node) or "Agent",
+                   "purpose": str(node_config(node).get("goal") or (node.get("data") or {}).get("goal") or "")[:500],
+                   "model": node_model(node), "disabled": node_disabled(node),
+                   **({"agent_id": own["id"], "change_with": OWN_AGENT_CHANGE} if own else {})}
+                  for node in nodes]
+    return found
 
 
 async def agent_target(pool, sio, *, user_id: str, workflow_id: str, node_id: str) -> dict:
