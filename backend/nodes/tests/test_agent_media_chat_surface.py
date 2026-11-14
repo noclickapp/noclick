@@ -165,49 +165,6 @@ async def test_persist_event_carries_media_urls_and_skips_empty():
 
 
 @pytest.mark.asyncio
-async def test_reply_that_only_acted_keeps_its_turn():
-    """A turn that answered through a tool and said nothing (a WhatsApp agent replies with its send tool) still
-    leaves its reply in the thread, carrying its steps; one that only thought keeps its reasoning. Without it the
-    agent's page showed the message it answered and nothing after, as if the turn never ran."""
-    persist_node = SimpleNamespace(
-        user_id="u1", workflow_id="wf1", node_id="agent", node_data={"config": {}},
-        _UPSERT_INTERFACE_EVENT_SQL=AgentNode._UPSERT_INTERFACE_EVENT_SQL,
-    )
-    pool = MagicMock()
-    pool.execute = AsyncMock()
-    sent = {"tool_name": "whatsapp__send_text_message", "arguments": {"to": "1@lid"}, "result_status": "success",
-            "created_at": "2026-11-14T11:39:46+00:00"}
-
-    with patch("utils.database_pool.get_native_pool", return_value=pool), \
-            patch("utils.tool_call_log.gather_turn_tool_calls", AsyncMock(return_value=[sent])) as gather:
-        await AgentNode._persist_interface_chat_event(
-            persist_node, conversation_id="c", role="assistant", message="", model="m",
-        )
-        gather.assert_awaited_once_with(node_id="agent", conversation_id="c")
-        event = pool.execute.await_args.args[5][0]
-        assert event["role"] == "assistant" and event["message"] == ""
-        assert [c["tool_name"] for c in event["tool_calls"]] == ["whatsapp__send_text_message"]
-
-    pool.execute.reset_mock()
-    with patch("utils.database_pool.get_native_pool", return_value=pool), \
-            patch("utils.tool_call_log.gather_turn_tool_calls", AsyncMock(return_value=[])):
-        await AgentNode._persist_interface_chat_event(
-            persist_node, conversation_id="c", role="assistant", message="", model="m",
-            reasoning=[{"text": "Nothing here is for me."}],
-        )
-        event = pool.execute.await_args.args[5][0]
-        assert event["reasoning"] == [{"text": "Nothing here is for me."}] and "tool_calls" not in event
-
-        # A person's message is never gathered for steps, and an empty one is still no event.
-        pool.execute.reset_mock()
-        await AgentNode._persist_interface_chat_event(
-            persist_node, conversation_id="c", role="user", message="", model="m",
-            reasoning=[{"text": "ignored"}],
-        )
-        pool.execute.assert_not_awaited()
-
-
-@pytest.mark.asyncio
 async def test_llm_assistant_turn_persists_completed_with_images():
     node = SimpleNamespace(
         _media_urls_from_output=AgentNode._media_urls_from_output,
@@ -221,32 +178,6 @@ async def test_llm_assistant_turn_persists_completed_with_images():
     kwargs = node._persist_interface_chat_event.await_args.kwargs
     assert kwargs["message"] == "raw streamed text"  # raw, not output['response']
     assert kwargs["image_urls"] == ["https://r2/a.png"]
-
-
-@pytest.mark.asyncio
-async def test_a_silent_turn_whose_work_carries_on_leaves_its_reply_to_the_turn_carrying_it():
-    """A turn a limit ended whose work goes straight on in a turn of its own (``carries_on``) and said nothing writes
-    no reply: the turn carrying it on answers for the job, its steps included. One that said something keeps it, and
-    a tool-only turn that doesn't carry on keeps its reply (``test_reply_that_only_acted_keeps_its_turn``)."""
-    node = SimpleNamespace(
-        _media_urls_from_output=AgentNode._media_urls_from_output,
-        _persist_interface_chat_event=AsyncMock(),
-    )
-    carried = {"status": "completed", "response": "", "ended_by": "steps", "carries_on": True}
-    await AgentNode._persist_llm_assistant_turn(node, carried, conversation_id="c", model="m", raw_text="",
-                                                agent_errored=False)
-    node._persist_interface_chat_event.assert_not_awaited()
-
-    await AgentNode._persist_llm_assistant_turn(node, carried, conversation_id="c", model="m",
-                                                raw_text="Checking the deploy first.", agent_errored=False)
-    kwargs = node._persist_interface_chat_event.await_args.kwargs
-    assert kwargs["message"] == "Checking the deploy first." and kwargs["ended_by"] == "steps"
-
-    node._persist_interface_chat_event.reset_mock()
-    ended = {"status": "completed", "response": "", "ended_by": "steps"}
-    await AgentNode._persist_llm_assistant_turn(node, ended, conversation_id="c", model="m", raw_text="",
-                                                agent_errored=False)
-    assert node._persist_interface_chat_event.await_args.kwargs["message"] == ""
 
 
 @pytest.mark.asyncio

@@ -267,7 +267,7 @@ async def test_operation_change_triggers_reregistration():
     # The webhooks row (system of record) now carries the NEW registration.
     persists = find_sql_calls(conn, "is_active = true")
     assert len(persists) == 1
-    _, secret, ext_id, reg_op, reg_cred, _fp, _ = persists[0].args
+    _, secret, ext_id, reg_op, reg_cred, _fp, _, _secrets = persists[0].args
     assert (secret, ext_id, reg_op, reg_cred) == ("new_secret", "new_wh_id", "on_issue_updated", cred_id)
 
 
@@ -318,7 +318,7 @@ async def test_credential_change_triggers_reregistration():
     # The row records the NEW credential as the registration owner.
     persists = find_sql_calls(conn, "is_active = true")
     assert len(persists) == 1
-    _, secret, ext_id, reg_op, reg_cred, _fp, _ = persists[0].args
+    _, secret, ext_id, reg_op, reg_cred, _fp, _, _secrets = persists[0].args
     assert (secret, ext_id, reg_cred) == ("new_secret_cred", "new_wh_cred", new_cred_id)
     assert reg_op == "on_issue_created"
 
@@ -551,6 +551,6 @@ async def test_operation_change_trigger_to_trigger_reconverges_end_to_end():
     register_mock.assert_awaited_once()
     persists = find_sql_calls(conn, "is_active = true")
     assert len(persists) == 1
-    _, secret, ext_id, reg_op, _reg_cred, fp, _wid = persists[0].args
+    _, secret, ext_id, reg_op, _reg_cred, fp, _wid, _secrets = persists[0].args
     assert (secret, ext_id, reg_op) == ("new_secret", "lin_wh_new", "on_issue_updated")
     assert isinstance(fp, str) and len(fp) == 16

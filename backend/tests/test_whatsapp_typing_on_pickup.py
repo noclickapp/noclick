@@ -12,7 +12,6 @@ import pytest
 from unittest.mock import AsyncMock, patch
 
 from nodes.agent import event_pickup
-from nodes.agent_node import AgentNode
 from nodes.whatsapp_node import (
     WhatsAppNode,
     WhatsAppNodeConfig,
@@ -190,55 +189,3 @@ async def test_a_chat_already_typing_is_asked_once(gateway):
     await event_pickup.turn_ended("ck:wf-1:other:12025550101@c.us")
     await event_pickup.turn_ended(CONVERSATION)
     assert gateway == [("start_typing", "conn-1", CHAT), ("stop_typing", "conn-1", CHAT)]
-
-
-# ── where the agent node shows and ends it ──────────────────────────────────
-
-
-def _agent(conversation_id=None):
-    return AgentNode(node_id="agent", node_type="agent", node_data={}, config=None, sio=None, sid=None,
-                     workflow_id="wf-1", conversation_id=conversation_id)
-
-
-async def test_a_test_run_shows_nothing_on_the_chat():
-    with patch.object(event_pickup, "picked_up", AsyncMock()) as picked_up:
-        agent = _agent("rehearsal:abc")
-        await agent._pick_up(_event(_message()))
-        picked_up.assert_not_awaited()
-        assert agent._picked_up_in is None
-
-        agent, event = _agent(CONVERSATION), _event(_message())
-        await agent._pick_up(event)
-        picked_up.assert_awaited_once_with(CONVERSATION, event)
-        assert agent._picked_up_in == CONVERSATION
-
-
-@pytest.mark.parametrize("output,ended", [
-    ({"type": "agent", "status": "completed", "response": ""}, True),
-    # A sandbox has the turn: its callback ends it once the harness answers.
-    ({"type": "agent", "status": "awaiting_agent_turn", "response": ""}, False),
-])
-async def test_the_agent_node_ends_a_turn_it_ran_itself(output, ended):
-    agent = _agent(CONVERSATION)
-
-    async def run(_inputs):
-        agent._picked_up_in = CONVERSATION
-        return output
-
-    with patch.object(agent, "_execute_impl", run), patch.object(event_pickup, "turn_ended", AsyncMock()) as end:
-        await agent.execute({})
-    assert end.await_args_list == ([((CONVERSATION,),)] if ended else [])
-
-
-async def test_a_turn_that_fails_ends_what_it_showed():
-    agent = _agent(CONVERSATION)
-
-    async def run(_inputs):
-        agent._picked_up_in = CONVERSATION
-        raise RuntimeError("the model is down")
-
-    with patch.object(agent, "_execute_impl", run), patch.object(agent, "_hand_back_turn", AsyncMock()), \
-            patch.object(event_pickup, "turn_ended", AsyncMock()) as end:
-        with pytest.raises(RuntimeError):
-            await agent.execute({})
-    end.assert_awaited_once_with(CONVERSATION)

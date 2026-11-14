@@ -1133,7 +1133,8 @@ class _WebhookRowPool:
     connection its registration recorded."""
 
     def __init__(self, recorded_connection=None):
-        self.row = {"id": NOCLICK_WEBHOOK_ID, "external_webhook_id": recorded_connection, "metadata": None}
+        self.row = {"id": NOCLICK_WEBHOOK_ID, "external_webhook_id": recorded_connection,
+                    "signing_secrets": None, "metadata": None}
 
     async def fetchrow(self, *args):
         return self.row

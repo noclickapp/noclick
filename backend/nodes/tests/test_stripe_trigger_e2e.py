@@ -317,7 +317,7 @@ async def test_operation_change_triggers_reregistration():
     # The webhooks row (system of record) now carries the NEW registration.
     persists = find_sql_calls(conn, "is_active = true")
     assert len(persists) == 1
-    _, secret, ext_id, reg_op, reg_cred, _fp, _ = persists[0].args
+    _, secret, ext_id, reg_op, reg_cred, _fp, _, _secrets = persists[0].args
     assert (secret, ext_id, reg_op, reg_cred) == ("whsec_new", "we_new", "on_invoice_paid", cred_id)
 
 
@@ -367,7 +367,7 @@ async def test_credential_change_triggers_reregistration():
     # The row records the NEW credential as the registration owner.
     persists = find_sql_calls(conn, "is_active = true")
     assert len(persists) == 1
-    _, secret, ext_id, reg_op, reg_cred, _fp, _ = persists[0].args
+    _, secret, ext_id, reg_op, reg_cred, _fp, _, _secrets = persists[0].args
     assert (secret, ext_id, reg_cred) == ("whsec_new_cred", "we_new_cred", new_cred_id)
     assert reg_op == "on_payment_intent_succeeded"
 
