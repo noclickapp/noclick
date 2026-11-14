@@ -1,13 +1,20 @@
 // @vitest-environment jsdom
 // A message's @mentions: each that names one member of the channel is drawn as one, resolved as the platform resolves
-// them (by name, ignoring case); anything else stays plain.
-import { cleanup, render } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+// them (by name, ignoring case; a renamed agent by the names it went by too, drawn as its name now); anything else stays
+// plain. The box's @ finds a renamed agent by its old name and puts in its new one.
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { useRef, useState } from 'react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { ChannelComposer } from '~/components/shell/channels/ChannelComposer';
 import { MessageBody } from '~/components/shell/channels/MessageBody';
 import { YOU } from '~/components/shell/channels/model';
 import type { ChannelMember } from '~/components/shell/channels/types';
+import { TooltipProvider } from '~/components/ui/tooltip';
 
-afterEach(cleanup);
+afterEach(() => {
+    cleanup();
+    vi.unstubAllGlobals();
+});
 
 const GROWTH: ChannelMember = { id: 'm_growth', kind: 'agent', name: 'Growth', hue: 'emerald' };
 const PRIYA: ChannelMember = { id: 'm_priya', kind: 'human', name: 'Priya Shah' };
@@ -46,5 +53,58 @@ describe('a message’s mentions', () => {
 
     it('keeps a mention inside code as code', () => {
         expect(mentionsOf('run `@Growth deploy` later')).toEqual([]);
+    });
+});
+
+const BAKERY: ChannelMember = { id: 'm_bakery', kind: 'agent', name: 'Bakery helper', hue: 'sky', formerNames: ['WhatsApp'] };
+
+describe('a renamed agent', () => {
+    it('is named by its old name in a message, drawn as its name now', () => {
+        expect(mentionsOf('@WhatsApp, is the oven on? and @whatsapp again', [YOU, BAKERY]).map(({ text, kind }) => [text, kind])).toEqual([
+            ['@Bakery helper', 'agent'],
+            ['@Bakery helper', 'agent'],
+        ]);
+        expect(mentionsOf('@Bakery helper, thanks', [YOU, BAKERY]).map((m) => m.text)).toEqual(['@Bakery helper']);
+        // A member that goes by the name now is the one it names.
+        expect(mentionsOf('@WhatsApp hi', [YOU, BAKERY, { id: 'm_wa', kind: 'human', name: 'WhatsApp' }]).map(({ text, kind }) => [text, kind])).toEqual([['@WhatsApp', 'human']]);
+    });
+
+    it('is offered by its old name in the box’s @, and goes in by its new one', () => {
+        function Box() {
+            const [value, setValue] = useState('');
+            const ref = useRef<HTMLTextAreaElement>(null);
+            return (
+                <ChannelComposer
+                    channelName="orders"
+                    value={value}
+                    onChange={setValue}
+                    attachments={[]}
+                    onAddFiles={() => undefined}
+                    onAddClip={() => undefined}
+                    onRemoveAttachment={() => undefined}
+                    onSubmit={() => undefined}
+                    members={[BAKERY, PRIYA]}
+                    user={{ email: 'dhruv@example.com' }}
+                    textareaRef={ref}
+                />
+            );
+        }
+        // A laptop's box (jsdom has no media queries of its own).
+        vi.stubGlobal('matchMedia', (query: string) => ({ matches: false, media: query, addEventListener: () => undefined, removeEventListener: () => undefined, addListener: () => undefined, removeListener: () => undefined }));
+        render(
+            <TooltipProvider>
+                <Box />
+            </TooltipProvider>
+        );
+        const box = screen.getByRole('textbox') as HTMLTextAreaElement;
+        box.focus();
+        fireEvent.change(box, { target: { value: '@What', selectionStart: 5, selectionEnd: 5 } });
+        box.setSelectionRange(5, 5);
+        fireEvent.select(box);
+        const offered = screen.getByTestId('composer-suggestions');
+        expect(offered.textContent).toContain('Bakery helper');
+        expect(offered.textContent).toContain('formerly WhatsApp');
+        fireEvent.keyDown(box, { key: 'Enter' });
+        expect(box.value).toBe('@Bakery helper ');
     });
 });

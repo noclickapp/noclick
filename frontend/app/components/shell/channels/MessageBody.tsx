@@ -2,8 +2,9 @@
 // links, with each @mention of a member drawn as one (an agent's in its colour, a
 // person's in the accent, yours the strongest) and #channels opening the channel.
 // Mentions resolve as the platform resolves them (by name, ignoring case; a name
-// two members share resolves to neither) and are found in the text nodes only, so
-// a `@name` inside code stays code.
+// two members share resolves to neither; a renamed agent's old name names it, drawn
+// as its name now) and are found in the text nodes only, so a `@name` inside code
+// stays code.
 import { useMemo } from 'react';
 import ReactMarkdown, { defaultUrlTransform, type Components, type Options } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -31,8 +32,9 @@ function remarkChannelRefs({ members, channels }: RefOptions) {
             if (!parent || index === undefined || parent.type === 'link' || parent.type === 'linkReference') return;
             const text = node.value;
             const refs = [
-                ...mentionsIn(text, members).map((m) => ({ ...m, url: `${MENTION}${encodeURIComponent(m.member.id)}` })),
-                ...[...text.matchAll(/#[a-z0-9][a-z0-9-]*/g)].flatMap((hit) => (channels.has(hit[0].slice(1)) ? [{ start: hit.index, end: hit.index + hit[0].length, url: `${CHANNEL}${hit[0].slice(1)}` }] : [])),
+                // A mention written with a name its agent went by before a rename reads as its name now.
+                ...mentionsIn(text, members).map((m) => ({ ...m, url: `${MENTION}${encodeURIComponent(m.member.id)}`, said: text.slice(m.start + 1, m.end).toLowerCase() === m.member.name.toLowerCase() ? undefined : `@${m.member.name}` })),
+                ...[...text.matchAll(/#[a-z0-9][a-z0-9-]*/g)].flatMap((hit) => (channels.has(hit[0].slice(1)) ? [{ start: hit.index, end: hit.index + hit[0].length, url: `${CHANNEL}${hit[0].slice(1)}`, said: undefined }] : [])),
             ].sort((a, b) => a.start - b.start);
             if (!refs.length) return;
             const nodes: PhrasingContent[] = [];
@@ -40,7 +42,7 @@ function remarkChannelRefs({ members, channels }: RefOptions) {
             for (const ref of refs) {
                 if (ref.start < at) continue;
                 if (ref.start > at) nodes.push({ type: 'text', value: text.slice(at, ref.start) });
-                nodes.push({ type: 'link', url: ref.url, children: [{ type: 'text', value: text.slice(ref.start, ref.end) }] });
+                nodes.push({ type: 'link', url: ref.url, children: [{ type: 'text', value: ref.said ?? text.slice(ref.start, ref.end) }] });
                 at = ref.end;
             }
             if (at < text.length) nodes.push({ type: 'text', value: text.slice(at) });

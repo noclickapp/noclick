@@ -26,6 +26,8 @@ export interface ChannelMember {
     initials?: string;
     /** A platform agent's job in a line, as its agent says it. */
     role?: string;
+    /** The names a platform agent went by before it was renamed, the latest first: an @mention of one names it. */
+    formerNames?: string[];
     /** Taking a turn right now: since when (ISO), and the thread it answers in (none: the channel itself). */
     busy?: boolean;
     busySince?: string;

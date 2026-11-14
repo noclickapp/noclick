@@ -88,6 +88,8 @@ export interface PlatformResources {
     RowFigure?: ComponentType<{ item: ResourceItem }>;
     /** A kind whose rows lead with the platform's own mark in place of the kind's icon (an agent's face and ring). */
     Lead?: Partial<Record<KindId, ComponentType<{ item: ResourceItem }>>>;
+    /** A kind whose rows end in a ⋯ menu of the platform's own (an agent's Rename), beside the row it acts on. */
+    RowMenu?: Partial<Record<KindId, ComponentType<{ item: ResourceItem }>>>;
     /** How `item`'s page removes it, or null where it offers nothing. */
     removal(item: ResourceItem): Removal | null;
     /** What's in the trash, by kind (only kinds whose deletion goes there). */

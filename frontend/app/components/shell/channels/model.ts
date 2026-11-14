@@ -76,14 +76,16 @@ export function seatMembers(members: readonly ChannelMember[]): ChannelMember[] 
 }
 
 /** The members an `@name` names, by name ignoring case, as the platform resolves a mention; a name several members
- *  share names none of them. */
+ *  share names none of them. A renamed agent is named by the names it went by too, unless a member goes by one now. */
 export function mentionable(members: readonly ChannelMember[]): Map<string, ChannelMember> {
     const seen = new Map<string, ChannelMember | null>();
     for (const m of members) {
         const key = m.name.toLowerCase();
         seen.set(key, seen.has(key) ? null : m);
     }
-    return new Map([...seen].filter((entry): entry is [string, ChannelMember] => entry[1] !== null));
+    const named = new Map([...seen].filter((entry): entry is [string, ChannelMember] => entry[1] !== null));
+    for (const m of members) for (const old of m.formerNames ?? []) if (!seen.has(old.toLowerCase())) named.set(old.toLowerCase(), m);
+    return named;
 }
 
 /** Each `@name` in `text` that names one member, where it starts and ends: never inside a word or an email address,

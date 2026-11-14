@@ -52,6 +52,22 @@ function Lead({ item }: { item: ResourceItem }) {
 }
 
 function Row({ item, now, price, onOpen }: { item: ResourceItem; now: string; price?: number; onOpen: () => void }) {
+    const Menu = usePlatformResources()?.RowMenu?.[item.kind];
+    if (!Menu) return <RowButton item={item} now={now} price={price} onOpen={onOpen} />;
+    // A button can't hold another: the menu sits beside the row, which lights up as one under the pointer.
+    return (
+        <div className="flex items-center transition-colors hover:bg-foreground/[0.03]">
+            <div className="min-w-0 flex-1">
+                <RowButton item={item} now={now} price={price} onOpen={onOpen} flush />
+            </div>
+            <div className="shrink-0 pr-2">
+                <Menu item={item} />
+            </div>
+        </div>
+    );
+}
+
+function RowButton({ item, now, price, onOpen, flush }: { item: ResourceItem; now: string; price?: number; onOpen: () => void; flush?: boolean }) {
     const Figure = usePlatformResources()?.RowFigure;
     const used = item.usedBy[0];
     // A platform resource's apps and agents, where no automation uses it.
@@ -59,7 +75,7 @@ function Row({ item, now, price, onOpen }: { item: ResourceItem; now: string; pr
     // Where it came from, as a small detail: unless its name already says so (an automation's tables).
     const origin = !used && !user && item.origin && item.origin.name !== item.title ? item.origin : undefined;
     return (
-        <button type="button" onClick={onOpen} className="group flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-foreground/[0.03] focus-visible:bg-foreground/[0.03] focus-visible:outline-none">
+        <button type="button" onClick={onOpen} className={cn('group flex w-full items-center gap-3 px-4 py-3 text-left transition-colors focus-visible:bg-foreground/[0.03] focus-visible:outline-none', !flush && 'hover:bg-foreground/[0.03]')}>
             <Lead item={item} />
             <span className="min-w-0 flex-1">
                 <span className="block truncate text-[14px] font-medium text-foreground">{item.title}</span>

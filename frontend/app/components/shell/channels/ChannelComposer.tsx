@@ -61,7 +61,8 @@ export interface DraftAttachment extends PendingChatAttachment {
     attachment?: ChannelAttachment;
 }
 
-type Suggestion = { kind: 'member'; member: ChannelMember } | { kind: 'command'; command: ChannelCommand } | { kind: 'emoji'; emoji: Emoji };
+// `formerly`: the old name a renamed agent was found by, when its name now wasn't what was typed.
+type Suggestion = { kind: 'member'; member: ChannelMember; formerly?: string } | { kind: 'command'; command: ChannelCommand } | { kind: 'emoji'; emoji: Emoji };
 
 const FORMATS: { format: TextFormat; label: string; icon: LucideIcon }[][] = [
     [
@@ -142,6 +143,7 @@ function SuggestionRow({ item, user, active }: { item: Suggestion; user: Account
                 <span className="min-w-0 flex-1 truncate">
                     <span className="text-[14px] font-medium text-foreground">{member.name}</span>
                     {member.kind === 'outside' && <span className="ml-2 text-[12.5px] text-muted-foreground">outside agent</span>}
+                    {item.formerly && <span className="ml-2 text-[12.5px] text-muted-foreground">formerly {item.formerly}</span>}
                 </span>
                 {member.markType && <NodeMark type={member.markType} size="xs" />}
             </>
@@ -317,9 +319,14 @@ export function ChannelComposer({
     const sources: AutocompleteSource<Suggestion>[] = [
         {
             trigger: '@',
+            // A renamed agent is found by its old names too, and goes in by its name now.
             search: (query) => {
                 const q = query.toLowerCase();
-                return members.filter((m) => m.name.toLowerCase().startsWith(q)).map((member): Suggestion => ({ kind: 'member', member }));
+                return members.flatMap((member): Suggestion[] => {
+                    if (member.name.toLowerCase().startsWith(q)) return [{ kind: 'member', member }];
+                    const formerly = member.formerNames?.find((n) => n.toLowerCase().startsWith(q));
+                    return formerly ? [{ kind: 'member', member, formerly }] : [];
+                });
             },
             insert: (item) => (item.kind === 'member' ? `@${item.member.name}` : ''),
         },
