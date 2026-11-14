@@ -150,17 +150,25 @@ async def registration_holder(
 _WEBHOOK_ID_RE = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", re.IGNORECASE)
 
 
-async def address_holder(url: str, *, except_webhook_id: str) -> Optional[Holder]:
-    """The workflow whose live webhook ``url`` is, when it is one of this
-    instance's webhook addresses, or None. Where a provider says a one-address
-    resource points now: that outlasts any record of ours (a registration made
-    before the record was kept)."""
+def webhook_id_for_url(url: str) -> Optional[str]:
+    """The webhooks row id ``url`` addresses when it is one of this instance's webhook addresses, else None."""
     from utils.webhook_delivery import get_webhook_url
 
     match = _WEBHOOK_ID_RE.search(url or "")
     if match is None or get_webhook_url(match.group(0)) != url:
         return None
-    return await _live_holder("w.id::text = $1 AND w.id::text <> $2", match.group(0).lower(), except_webhook_id)
+    return match.group(0).lower()
+
+
+async def address_holder(url: str, *, except_webhook_id: str) -> Optional[Holder]:
+    """The workflow whose live webhook ``url`` is, when it is one of this
+    instance's webhook addresses, or None. Where a provider says a one-address
+    resource points now: that outlasts any record of ours (a registration made
+    before the record was kept)."""
+    webhook_id = webhook_id_for_url(url)
+    if webhook_id is None:
+        return None
+    return await _live_holder("w.id::text = $1 AND w.id::text <> $2", webhook_id, except_webhook_id)
 
 
 def registration_fingerprint(
@@ -391,7 +399,8 @@ async def _activation_refusal(pool, wf_uuid, node_id: str):
 
 _ROW_COLUMNS = (
     "id, is_active, external_webhook_id, registered_operation, registered_credential_id, registered_fingerprint, "
-    "refused_fingerprint, refused_kind, refused_holder_id, refused_resource, refused_credential_version"
+    "refused_fingerprint, refused_kind, refused_holder_id, refused_resource, refused_credential_version, "
+    "(secret IS NOT NULL) AS secret_set"
 )
 
 
@@ -405,6 +414,12 @@ async def _webhook_row(pool, wf_uuid, node_id: str) -> Optional[Dict[str, Any]]:
 def _recorded(row: Optional[Dict[str, Any]]) -> bool:
     """Whether the row records a registration a teardown can find: its operation, while live or with its endpoint."""
     return bool(row and row.get("registered_operation") and (row.get("is_active") or row.get("external_webhook_id")))
+
+
+def _secret_unrecorded(node_class, row: Optional[Dict[str, Any]]) -> bool:
+    """Whether the row lacks the signing secret its class keeps there alone (``webhook_secret_on_row``): a
+    registration made before NoClick kept it, whose deliveries can't be verified until it's read."""
+    return bool(row and getattr(node_class, "webhook_secret_on_row", False) and not row.get("secret_set"))
 
 
 def _app_event_class_for_provider(provider: str):
@@ -446,6 +461,7 @@ REASONS = {
     "recorded_in_config": "it's live, and only its settings' copy records it, from before the record was kept",
     "seen_live": "the scheduler or provider holds it as its settings ask, and the record lacks it",
     "seen_other": "the scheduler or provider holds something its settings don't ask for",
+    "unsigned": "it's live, and the record lacks the secret its deliveries are signed with",
     "no_credential": "no usable account is attached",
     "setup_unfinished": "the workflow's setup is unfinished",
     "credential_rejected": "the provider rejected its account, which hasn't been saved again since",
@@ -883,6 +899,27 @@ class WebhookManager:
         if not result.endswith("1"):
             raise RuntimeError(
                 f"webhooks row {webhook_id} vanished while persisting registration state"
+            )
+
+    @staticmethod
+    async def record_signing_secret(
+        pool, webhook_url: str, secret: Optional[str], *,
+        workflow_id: Optional[str] = None, node_id: Optional[str] = None,
+    ) -> None:
+        """Record the secret a provider signs ``webhook_url``'s deliveries with
+        on the row that URL addresses, for a webhook made outside a registration
+        step (WAHooks mints one per webhook it creates, so a webhook carried to
+        another connection is signed anew). With ``workflow_id``/``node_id``,
+        only when the row is that step's."""
+        webhook_id = webhook_id_for_url(webhook_url)
+        if not (webhook_id and secret):
+            return
+        async with pool.acquire() as conn:
+            await conn.execute(
+                "UPDATE webhooks SET secret = $1, updated_at = now() WHERE id = $2 "
+                "AND ($3::uuid IS NULL OR (workflow_id = $3 AND node_id = $4))",
+                secret, UUID(webhook_id),
+                UUID(str(workflow_id)) if workflow_id else None, node_id,
             )
 
     @staticmethod
@@ -1800,7 +1837,9 @@ class WebhookManager:
 
         credential_id = _extract_node_credential_id(node, node_config)
         fingerprint = registration_fingerprint(node_class, current_op, credential_id, node_config)
-        if row and row["is_active"] and row["registered_fingerprint"] == fingerprint:
+        converged = bool(row and row["is_active"] and row["registered_fingerprint"] == fingerprint)
+        # A sweep reads the signing secret a live registration's record lacks; anything else takes it as it is.
+        if converged and not (observe and _secret_unrecorded(node_class, row)):
             return Decision("live", "converged", fingerprint=fingerprint, held=True)
 
         # Pre-migration adoption: a NULL-fingerprint row whose operation +
@@ -1828,7 +1867,7 @@ class WebhookManager:
                 "registered_operation": current_op, "registered_credential_id": credential_id, **legacy,
             })
 
-        refused = await _refused_before(pool, row, fingerprint, credential_id)
+        refused = None if converged else await _refused_before(pool, row, fingerprint, credential_id)
         if refused:
             return Decision("provider_refused", refused, fingerprint=fingerprint, held=recorded)
 
@@ -1841,9 +1880,11 @@ class WebhookManager:
                 pool, webhook_url=get_webhook_url(str(row["id"])), credential_id=credential_id, config=node_config,
             )
         if observed and row["is_active"]:
-            return Decision("adopt", "seen_live", fingerprint=fingerprint, held=True, stamp={
-                "registered_operation": current_op, "registered_credential_id": credential_id, **observed,
-            })
+            return Decision("adopt", "unsigned" if converged else "seen_live", fingerprint=fingerprint, held=True,
+                            stamp={"registered_operation": current_op, "registered_credential_id": credential_id,
+                                   **observed})
+        if converged and observed is None:
+            return Decision("live", "converged", fingerprint=fingerprint, held=True)
         held = recorded
 
         # A sweep holding back an inactive workflow does nothing here, whatever registering would find.
@@ -1853,7 +1894,7 @@ class WebhookManager:
             refusal = await _activation_refusal(pool, wf_uuid, node_id)
             if refusal is not None:
                 return Decision("refused", "setup_unfinished", fingerprint=fingerprint, held=held, refusal=refusal)
-        if held:
+        if held and not converged:
             reason = "settings_changed"
         elif observed is False and row and row["is_active"]:
             reason = "taken_down"

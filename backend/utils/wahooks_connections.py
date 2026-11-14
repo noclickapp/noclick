@@ -18,7 +18,7 @@ import asyncio
 import json
 import logging
 import os
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -44,32 +44,49 @@ async def delete_wahooks_connection(connection_id: str) -> None:
     logger.info(f"[WAHooks] Deleted connection {connection_id}")
 
 
-async def migrate_wahooks_webhooks(old_connection_id: str, new_connection_id: str) -> int:
+def signing_secret(webhooks: List[Dict[str, Any]], url: str) -> Optional[str]:
+    """The secret WAHooks signs ``url``'s deliveries from a connection with,
+    out of that connection's ``webhooks`` (each has its own): a live one's first."""
+    ours = sorted((w for w in webhooks if w.get("url") == url), key=lambda w: w.get("active") is False)
+    return next((w["signingSecret"] for w in ours if w.get("signingSecret")), None)
+
+
+async def migrate_wahooks_webhooks(pool, old_connection_id: str, new_connection_id: str) -> int:
     """Re-create every webhook registered on ``old_connection_id`` on
     ``new_connection_id`` (same url + events; urls the new connection already
     serves are skipped). WAHooks webhooks are per-connection, so a credential
     rebind that deletes the replaced connection unregisters every trigger on
-    it unless they are carried over first. Returns the count carried over;
+    it unless they are carried over first. Each one's row then records the
+    secret the new connection signs with. Returns the count carried over;
     raises on failure — the caller decides whether teardown may proceed."""
     api_key = get_wahooks_api_key()
     if not api_key:
         raise RuntimeError("WAHooks API key not configured")
     from wahooks import WAHooks
 
-    def _migrate() -> int:
+    def _migrate() -> Tuple[int, Dict[str, Optional[str]]]:
         with WAHooks(api_key=api_key) as client:
-            served = {w.get("url") for w in client.list_webhooks(new_connection_id)}
+            served = list(client.list_webhooks(new_connection_id))
             moved = 0
+            urls = []
             for hook in client.list_webhooks(old_connection_id):
-                if not hook.get("url") or hook["url"] in served:
+                url = hook.get("url")
+                if not url:
                     continue
-                client.create_webhook(
-                    new_connection_id, url=hook["url"], events=list(hook.get("events") or [])
-                )
+                urls.append(url)
+                if any(w.get("url") == url for w in served):
+                    continue
+                served.append(client.create_webhook(
+                    new_connection_id, url=url, events=list(hook.get("events") or [])
+                ))
                 moved += 1
-            return moved
+            return moved, {url: signing_secret(served, url) for url in urls}
 
-    moved = await asyncio.to_thread(_migrate)
+    moved, secrets = await asyncio.to_thread(_migrate)
+    from utils.webhook_manager import WebhookManager
+
+    for url, secret in secrets.items():
+        await WebhookManager.record_signing_secret(pool, url, secret)
     logger.info(
         f"[WAHooks] Migrated {moved} webhook(s) from {old_connection_id} to {new_connection_id}"
     )

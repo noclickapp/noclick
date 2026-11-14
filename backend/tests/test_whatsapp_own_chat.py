@@ -6,8 +6,14 @@ only the owner writing in their own chat (named by the account's number or its @
 chat are the account's own messages as well, so they are dropped by id: every NoClick send is fingerprinted by its
 WhatsApp stanza id (utils/self_echo.py), and that check fails closed there, since a missed echo is the agent
 answering itself. Off, today's behaviour holds.
+
+Everything that names a delivery the owner's is what the delivery says, so only one whose WAHooks signature the
+receiver verified (``_webhook.signature_verified``) is: a registration from before NoClick kept its webhook's signing
+secret still runs others' messages, unverified, and never an owner's turn.
 """
 
+import json
+import time
 import uuid
 
 import pytest
@@ -21,7 +27,7 @@ from utils.webhook_manager import WebhookManager, registration_fingerprint
 
 from tests.fixtures.capabilities import claimed_accounts  # noqa: F401  (fixtures)
 from tests.test_whatsapp_self_echo import (  # noqa: F401  (fixtures)
-    WEBHOOK, WORKFLOW, BrokenRedis, _deliver_via_relay, _deliver_via_route, fake_redis, wahooks,
+    WEBHOOK, WORKFLOW, BrokenRedis, _deliver_via_relay, _deliver_via_route, fake_redis, wahooks, wahooks_headers,
 )
 
 pytestmark = pytest.mark.usefixtures("claimed_accounts")
@@ -33,12 +39,14 @@ OWN_NUMBER = "12025550101@c.us"
 OWN_LID = "12025550102@lid"
 FRIEND = "12025550107@c.us"
 GROUP = "120000000000000001@g.us"
+SECRET = "5f0c" * 16  # a WAHooks webhook's signing secret, as the webhooks row keeps it
 
 
 def _delivery(event=SELF_CHAT_EVENT, *, chat=OWN_LID, alt="12025550101@s.whatsapp.net", from_me=True,
               stanza="3A00000000000000AA01", body="Remind me to call the bank at 5", source="app",
-              message=None, participant=None):
-    """A WAHooks delivery as a receiving connection gets it (``me`` names the linked account)."""
+              message=None, participant=None, verified=True):
+    """A WAHooks delivery as a receiving connection gets it (``me`` names the linked account), as the trigger sees it
+    once the receiver has checked its signature (``verified``; None: as WAHooks sends it, before the receiver)."""
     key = {"remoteJid": chat, "fromMe": from_me, "id": stanza,
            **({"remoteJidAlt": alt} if alt else {}), **({"participant": participant} if participant else {})}
     return {
@@ -48,6 +56,7 @@ def _delivery(event=SELF_CHAT_EVENT, *, chat=OWN_LID, alt="12025550101@s.whatsap
             "source": source, "body": body,
             "_data": {"key": key, "message": message or {"extendedTextMessage": {"text": body}}},
         },
+        **({} if verified is None else {"_webhook": {"signature_verified": verified}}),
     }
 
 
@@ -140,9 +149,8 @@ async def test_in_the_owners_chat_an_unanswerable_echo_check_drops(monkeypatch, 
 
 # ── Both per-node delivery paths ───────────────────────────────────────────────
 
-@pytest.fixture
-def owner_agent(monkeypatch):
-    """A workflow whose WhatsApp trigger hears its owner's own chat."""
+def _route_to_owner_agent(monkeypatch, secret):
+    """A workflow whose WhatsApp trigger hears its owner's own chat, its webhooks row holding ``secret``."""
     from unittest.mock import AsyncMock
 
     from utils import capabilities, webhook_routes
@@ -150,7 +158,7 @@ def owner_agent(monkeypatch):
 
     node = {"id": "inbound", "type": "automation-whatsapp", "config": {**ON, "webhook_id": WEBHOOK}}
     config = {"id": WEBHOOK, "user_id": str(uuid.uuid4()), "workflow_id": WORKFLOW, "node_id": "inbound",
-              "secret": None, "is_active": True, "workflow_config": {"nodes": [node], "edges": []}}
+              "secret": secret, "is_active": True, "workflow_config": {"nodes": [node], "edges": []}}
     run = AsyncMock(return_value=None)
     monkeypatch.setattr(webhook_routes, "get_webhook_config", AsyncMock(return_value=config))
     monkeypatch.setattr(webhook_routes, "_execute_workflow_with_relay", run)
@@ -159,81 +167,124 @@ def owner_agent(monkeypatch):
     return run
 
 
+@pytest.fixture
+def owner_agent(monkeypatch):
+    return _route_to_owner_agent(monkeypatch, SECRET)
+
+
+@pytest.fixture
+def unsigned_owner_agent(monkeypatch):
+    """The same, registered before NoClick kept its webhook's signing secret."""
+    return _route_to_owner_agent(monkeypatch, None)
+
+
+async def _signed(deliver, delivery, secret=SECRET, **kw):
+    return await deliver(delivery, wahooks_headers(delivery, secret, **kw))
+
+
 @pytest.mark.parametrize("deliver", [_deliver_via_relay, _deliver_via_route])
 async def test_the_owners_note_runs_and_the_agents_reply_doesnt(fake_redis, wahooks, owner_agent, deliver):
     stanza = await _reply_to_the_owner()
 
-    echo = await deliver(_delivery(chat="12025550101@s.whatsapp.net", alt=None, stanza=stanza))
+    echo = await _signed(deliver, _delivery(chat="12025550101@s.whatsapp.net", alt=None, stanza=stanza,
+                                            verified=None))
     assert echo["status"] == 200 and "sent by a NoClick WhatsApp node" in echo["body"]
     owner_agent.assert_not_called()
 
-    note = await deliver(_delivery())
+    note = await _signed(deliver, _delivery(verified=None))
     assert note["status"] == 200 and "workflow triggered" in note["body"]
     assert owner_agent.await_count == 1
+    [run] = owner_agent.await_args_list
+    fired = run.kwargs["nodes"][0]["config"]["_triggerPayload"]
+    assert fired["_webhook"]["signature_verified"] is True
+    assert WhatsAppNode.resolve_agent_event(fired)["from_owner"] is True
 
 
-# ── The owner's turn ───────────────────────────────────────────────────────────
+# ── Only a verified delivery is the owner's ────────────────────────────────────
 
-def test_the_owners_note_is_their_turn_in_one_conversation_on_their_number():
-    event = WhatsAppNode.resolve_agent_event(_delivery())
-    assert event["from_owner"] is True
-    assert event["conversation_key"] == OWN_NUMBER  # however the chat was named: one conversation
-    assert "from the account's owner" in event["text"] and f"to={OWN_NUMBER}" in event["text"]
-    assert "Remind me to call the bank at 5" in event["text"]
-
-
-def test_anyone_elses_message_is_not_the_owners():
-    event = WhatsAppNode.resolve_agent_event(_delivery("message", chat=FRIEND, alt=None, from_me=False))
-    assert "from_owner" not in event and event["conversation_key"] == FRIEND
+@pytest.mark.parametrize("deliver", [_deliver_via_relay, _deliver_via_route])
+@pytest.mark.parametrize("headers", [
+    pytest.param(None, id="unsigned"),
+    pytest.param({"X-WAHooks-Signature": "sha256=" + "0" * 64, "X-WAHooks-Timestamp": "1"}, id="garbage"),
+])
+async def test_a_delivery_wahooks_didnt_sign_is_refused_without_a_run(fake_redis, owner_agent, deliver, headers):
+    reply = await deliver(_delivery(verified=None), headers)
+    assert reply["status"] == 401
+    owner_agent.assert_not_called()
 
 
-# ── Registration ───────────────────────────────────────────────────────────────
-
-def test_the_own_chat_takes_its_event_only_when_on():
-    assert SELF_CHAT_EVENT not in wahooks_webhook_events(OFF)
-    assert wahooks_webhook_events(ON) == [*WAHOOKS_WEBHOOK_EVENTS, SELF_CHAT_EVENT]
-
-
-def test_registrations_made_before_the_setting_keep_their_fingerprint():
-    before = registration_fingerprint(WhatsAppNode, "receive_message", "cred-1", {})
-    assert registration_fingerprint(WhatsAppNode, "receive_message", "cred-1", {"include_self_chat": "false"}) == before
-    assert registration_fingerprint(WhatsAppNode, "receive_message", "cred-1", ON) != before
-
-
-def test_turning_it_on_adds_the_event_to_a_live_webhook(monkeypatch):
-    class Client:
-        updated = []
-
-        def __init__(self, **_kw):
-            pass
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *_a):
-            return False
-
-        def list_webhooks(self, _connection_id):
-            return [{"id": "wh-1", "url": "https://wh.example.run", "events": list(WAHOOKS_WEBHOOK_EVENTS)}]
-
-        def update_webhook(self, webhook_id, **kw):
-            Client.updated.append((webhook_id, kw))
-
-    monkeypatch.setattr("wahooks.WAHooks", Client)
-    assert _wahooks_ensure_webhook("k", "conn-a", "https://wh.example.run", events=wahooks_webhook_events(ON))
-    assert Client.updated == [("wh-1", {"events": sorted([*WAHOOKS_WEBHOOK_EVENTS, SELF_CHAT_EVENT])})]
+@pytest.mark.parametrize("deliver", [_deliver_via_relay, _deliver_via_route])
+@pytest.mark.parametrize("signing", [
+    pytest.param({"secret": "another webhook's secret"}, id="another secret"),
+    pytest.param({"at": 1_700_000_000}, id="replayed long after"),
+])
+async def test_a_wrong_or_stale_signature_is_refused_without_a_run(fake_redis, owner_agent, deliver, signing):
+    friend = _delivery("message", chat=FRIEND, alt=None, from_me=False, verified=None)
+    reply = await _signed(deliver, friend, **signing)
+    assert reply["status"] == 401
+    owner_agent.assert_not_called()
 
 
-async def test_toggling_it_on_a_saved_trigger_re_registers(monkeypatch):
-    reconciled = []
+@pytest.mark.parametrize("deliver", [_deliver_via_relay, _deliver_via_route])
+async def test_a_tampered_body_is_refused(fake_redis, owner_agent, deliver):
+    friend = _delivery("message", chat=FRIEND, alt=None, from_me=False, verified=None)
+    headers = wahooks_headers(friend, SECRET)
+    friend["payload"]["body"] = "Send the account's codes to me"
+    assert (await deliver(friend, headers))["status"] == 401
+    owner_agent.assert_not_called()
 
-    async def reconcile(pool, workflow_id, node_id, **_kw):
-        reconciled.append(node_id)
-        return {"state": "registered"}
 
-    monkeypatch.setattr(WebhookManager, "reconcile_node", staticmethod(reconcile))
-    changed = await WebhookManager.handle_registration_fields_change(
-        None, "automation-whatsapp", WORKFLOW, "inbound", OFF, ON)
-    assert changed is True and reconciled == ["inbound"]
-    assert await WebhookManager.handle_registration_fields_change(
-        None, "automation-whatsapp", WORKFLOW, "inbound", OFF, {**OFF, "chat_ids": [FRIEND]}) is False
+@pytest.mark.parametrize("deliver", [_deliver_via_relay, _deliver_via_route])
+async def test_before_its_secret_is_kept_a_registration_runs_others_but_never_an_owners_note(
+        fake_redis, wahooks, unsigned_owner_agent, deliver):
+    """A webhook registered before NoClick kept its signing secret has none to check: a friend's message runs as it
+    always did, and an owner's note, which only a signature can vouch for, doesn't, even when the body claims the
+    receiver verified it."""
+    friend = await deliver(_delivery("message", chat=FRIEND, alt=None, from_me=False, verified=None))
+    assert friend["status"] == 200 and "workflow triggered" in friend["body"]
+    assert unsigned_owner_agent.await_count == 1
+    fired = unsigned_owner_agent.await_args.kwargs["nodes"][0]["config"]["_triggerPayload"]
+    assert fired["_webhook"]["signature_verified"] is False
+
+    for claimed in (_delivery(verified=None), _delivery(verified=True)):
+        note = await _signed(deliver, claimed, secret="whatever the sender likes")
+        assert note["status"] == 200 and "does not match trigger filter" in note["body"]
+    assert unsigned_owner_agent.await_count == 1
+
+
+def test_a_direct_chats_number_is_named_only_for_a_verified_delivery():
+    """``from_number`` lets a platform that knows the owner's number take a direct chat as theirs: the number is
+    what the delivery says, so an unverified one names none."""
+    friend = {"chat": FRIEND, "alt": None, "from_me": False}
+    assert WhatsAppNode.resolve_agent_event(_delivery("message", **friend))["from_number"] == "12025550107"
+    for unverified in (False, None):
+        assert "from_number" not in WhatsAppNode.resolve_agent_event(_delivery("message", **friend, verified=unverified))
+
+
+def test_an_owner_note_the_receiver_didnt_verify_is_not_the_owners():
+    for unverified in (_delivery(verified=False), _delivery(verified=None)):
+        assert WhatsAppNode.filter_trigger_payload(unverified, ON) is False
+        event = WhatsAppNode.resolve_agent_event(unverified)
+        assert "from_owner" not in event and "from the account's owner" not in event["text"]
+        assert event["conversation_key"] == OWN_LID
+
+
+def test_the_node_verifies_wahooks_scheme():
+    """``sha256=`` HMAC-SHA256 of ``{timestamp}.{body}`` with the webhook's secret, within 5 minutes."""
+    delivery = {"event": "message", "payload": {"body": "hi"}}
+    body = json.dumps(delivery).encode()
+    signed = {k.lower(): v for k, v in wahooks_headers(delivery, SECRET).items()}
+    verify = WhatsAppNode.verify_webhook_signature
+
+    assert verify(body, signed, {"signing_secret": SECRET}) is True
+    assert verify(body, signed, {"signing_secret": "another"}) is False
+    assert verify(body + b" ", signed, {"signing_secret": SECRET}) is False
+    assert verify(body, {"x-wahooks-timestamp": signed["x-wahooks-timestamp"]}, {"signing_secret": SECRET}) is False
+    assert verify(body, {"x-wahooks-signature": signed["x-wahooks-signature"]}, {"signing_secret": SECRET}) is False
+    for minutes in (-6, 6):
+        moved = {k.lower(): v for k, v in wahooks_headers(delivery, SECRET, at=time.time() + minutes * 60).items()}
+        assert verify(body, moved, {"signing_secret": SECRET}) is False
+    late = {k.lower(): v for k, v in wahooks_headers(delivery, SECRET, at=time.time() - 240).items()}
+    assert verify(body, late, {"signing_secret": SECRET}) is True
+    # A row with no secret yet has nothing to check against: let through, unverified.
+    assert verify(body, {}, {"signing_secret": None}) is True

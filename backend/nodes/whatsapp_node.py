@@ -35,6 +35,7 @@ from nodes.whatsapp_trigger_config import CHAT_PICKER_OPTIONS, WhatsAppReceiveMe
 from utils.phone_numbers import is_noclick_number, noclick_line_refusal
 from utils.self_echo import is_self_post, record_self_post, self_post_verdict
 from utils.ssrf import assert_exact_url_origin, guarded_async_client
+from utils.webhook_signatures import verify_wahooks
 from nodes.core.connection_evidence import ConnectionEvidence
 
 logger = logging.getLogger(__name__)
@@ -1878,12 +1879,14 @@ def wahooks_webhook_events(config: Optional[Dict[str, Any]]) -> List[str]:
 
 
 def _wahooks_ensure_webhook(api_key: str, connection_id: str, webhook_url: str, *,
-                            events: List[str] = WAHOOKS_WEBHOOK_EVENTS) -> bool:
+                            events: List[str] = WAHOOKS_WEBHOOK_EVENTS) -> Optional[str]:
     """Sync (thread-pool) create-or-upgrade of our WAHooks webhook on a
     connection: registers the URL if absent and upgrades a pre-existing
-    config to include every one of ``events``. Returns True when
-    anything was created/updated."""
+    config to include every one of ``events``. Returns the secret WAHooks
+    signs its deliveries with, for the webhooks row to verify them by."""
     from wahooks import WAHooks
+
+    from utils.wahooks_connections import signing_secret
 
     with WAHooks(api_key=api_key) as client:
         ours = [
@@ -1891,19 +1894,18 @@ def _wahooks_ensure_webhook(api_key: str, connection_id: str, webhook_url: str, 
             if w.get("url") == webhook_url
         ]
         if not ours:
-            client.create_webhook(
+            created = client.create_webhook(
                 connection_id, url=webhook_url, events=list(events)
             )
-            return True
-        changed = False
+            logger.info(f"[WhatsAppNode] Created WAHooks webhook on connection {connection_id}")
+            return signing_secret([created], webhook_url)
         for w in ours:
             have = set(w.get("events") or [])
             if not set(events) <= have:
                 client.update_webhook(
                     w["id"], events=sorted(have | set(events))
                 )
-                changed = True
-        return changed
+        return signing_secret(ours, webhook_url)
 
 
 def _wahooks_webhooks(api_key: str, connection_id: str) -> List[Dict[str, Any]]:
@@ -1959,6 +1961,24 @@ class WhatsAppNode(WorkflowNode):
     # load_field_value; the Cloud API's go to a URL set in Meta's console.
     self_registering_triggers = {"receive_message": ("whatsapp_qr",)}
 
+    # WAHooks signs each delivery with its webhook's own secret, which the
+    # webhooks row keeps (never the graph: a fork or template would carry it).
+    webhook_secret_on_row = True
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        """WAHooks' ``X-WAHooks-Signature``: ``sha256=`` HMAC-SHA256 of
+        ``{X-WAHooks-Timestamp}.{body}`` with the webhook's signing secret, the
+        timestamp within 5 minutes. A registration from before NoClick kept
+        that secret has none to check: its deliveries run unverified, which
+        is never an owner's own note (``_owner_note``)."""
+        secret = (config or {}).get("signing_secret")
+        if not secret:
+            return True
+        return verify_wahooks(
+            body, headers.get("x-wahooks-timestamp", ""), headers.get("x-wahooks-signature", ""), secret
+        )
+
     @classmethod
     def registration_fingerprint_fields(cls, config):
         # Hearing the owner's own chat takes another WAHooks event. Nothing when off, so every registration made
@@ -1986,8 +2006,9 @@ class WhatsAppNode(WorkflowNode):
     ) -> Optional[Dict[str, Any]]:
         """What WAHooks holds for the trigger, read with NoClick's own key and
         the connection the credential's metadata names (nothing decrypted): the
-        row's fields when the connection delivers to ``webhook_url`` with every
-        event the loader asks for, False when it doesn't, None when it can't say."""
+        row's fields (its signing ``secret`` among them) when the connection
+        delivers to ``webhook_url`` with every event the loader asks for, False
+        when it doesn't, None when it can't say."""
         from utils.wahooks_connections import get_wahooks_api_key
 
         api_key = get_wahooks_api_key()
@@ -2006,7 +2027,10 @@ class WhatsAppNode(WorkflowNode):
         ours = [w for w in hooks if w.get("url") == webhook_url]
         wanted = set(wahooks_webhook_events(config))
         if ours and all(wanted <= set(w.get("events") or []) for w in ours):
-            return {"external_webhook_id": connection_id}
+            from utils.wahooks_connections import signing_secret
+
+            secret = signing_secret(ours, webhook_url)
+            return {"external_webhook_id": connection_id, **({"secret": secret} if secret else {})}
         return False
 
     @classmethod
@@ -2022,7 +2046,8 @@ class WhatsAppNode(WorkflowNode):
         Non-message envelopes fall back to the base raw-JSON default. The
         owner writing in their own "Message yourself" chat is ``from_owner``;
         a direct chat's writer is named by number (``from_number``), which a
-        platform knowing its owner's number takes as theirs.
+        platform knowing its owner's number takes as theirs. Both are what the
+        delivery says, so only a verified one carries either (``_verified``).
         """
         # WAHooks 'message' envelope (QR-linked accounts) — the channel case.
         if output.get("event") in _MESSAGE_EVENTS and isinstance(output.get("payload"), dict):
@@ -2127,7 +2152,8 @@ class WhatsAppNode(WorkflowNode):
             )
             title = push_name or chat_id.split("@", 1)[0]
             # Never a group's: there the reply reaches everyone in it.
-            number = None if owner or participant or chat_id.endswith("@g.us") else cls._sender_number(output)
+            number = (None if owner or participant or chat_id.endswith("@g.us") or not cls._verified(output)
+                      else cls._sender_number(output))
             return {"text": text, "conversation_key": chat_id, "title": title, "media": entries,
                     **({"from_owner": True} if owner else {}), **({"from_number": number} if number else {})}
 
@@ -2188,12 +2214,22 @@ class WhatsAppNode(WorkflowNode):
         key = (p.get("_data") or {}).get("key") or {}
         return bool(p.get("fromMe") or key.get("fromMe"))
 
+    @staticmethod
+    def _verified(envelope: Dict[str, Any]) -> bool:
+        """Whether the receiver verified the delivery's WAHooks signature (``_webhook``, its own record of the request,
+        which no body can set): only then is what it says about who wrote it the account's to vouch for."""
+        webhook = envelope.get("_webhook")
+        return isinstance(webhook, dict) and webhook.get("signature_verified") is True
+
     @classmethod
     def _owner_note(cls, envelope: Dict[str, Any]) -> bool:
         """Whether a delivery is the account's owner writing in their own "Message yourself" chat: their own message,
         in the chat that is the account itself by either spelling WhatsApp gives it (its number, or its @lid with the
         number as ``remoteJidAlt``), addressed to no one else (``to`` names only a group), and not one of the
-        device-sync records WhatsApp keeps in that chat (``protocolMessage``)."""
+        device-sync records WhatsApp keeps in that chat (``protocolMessage``). All of that is what the delivery says,
+        so only a verified one can be it (``_verified``)."""
+        if not cls._verified(envelope):
+            return False
         p = envelope.get("payload")
         if not isinstance(p, dict) or not cls._from_me(p) or cls._raw_message(p).get("protocolMessage"):
             return False
@@ -2908,14 +2944,16 @@ class WhatsAppNode(WorkflowNode):
                                                 f"[WhatsAppNode] Couldn't remove {node_id}'s webhook from "
                                                 f"previous connection {stale}: {e}"
                                             )
-                                    await asyncio.to_thread(
+                                    secret = await asyncio.to_thread(
                                         _wahooks_ensure_webhook, api_key, connection_id, webhook_url,
                                         events=wahooks_webhook_events(context),
                                     )
                                     # The row records the connection, so teardown never
-                                    # needs the credential (another member's, or deleted).
+                                    # needs the credential (another member's, or deleted),
+                                    # and the secret deliveries are verified by.
                                     await WebhookManager.persist_registration_state(
                                         pool, webhook_data['webhook_id'],
+                                        signing_secret=secret,
                                         external_webhook_id=connection_id,
                                         registered_operation='receive_message',
                                         registered_credential_id=credential_id,
@@ -2988,15 +3026,20 @@ class WhatsAppNode(WorkflowNode):
                     )
 
                 webhook_url = getattr(op_config, "webhook_url", None)
-                if webhook_url:
+                api_key = os.environ.get("WAHOOKS_API_KEY")
+                if webhook_url and api_key:
                     try:
-                        api_key = os.environ.get("WAHOOKS_API_KEY")
-                        if api_key and await asyncio.to_thread(
+                        secret = await asyncio.to_thread(
                             _wahooks_ensure_webhook, api_key, conn_id, webhook_url,
                             events=wahooks_webhook_events(op_config.model_dump()),
-                        ):
-                            logger.info(
-                                f"[WhatsAppNode] Re-registered WAHooks webhook for connection {conn_id}"
+                        )
+                        if self.workflow_id:
+                            from utils.database_pool import get_native_pool
+                            from utils.webhook_manager import WebhookManager
+
+                            await WebhookManager.record_signing_secret(
+                                get_native_pool(), webhook_url, secret,
+                                workflow_id=self.workflow_id, node_id=self.node_id,
                             )
                     except Exception as e:
                         logger.warning(

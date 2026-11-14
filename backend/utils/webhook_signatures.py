@@ -17,6 +17,7 @@ __all__ = [
     "verify_hmac_sha256_base64",
     "verify_twilio_signature",
     "verify_slack_v0",
+    "verify_wahooks",
     "verify_hubspot_v3",
     "verify_ed25519",
     "verify_svix",
@@ -101,6 +102,31 @@ def verify_slack_v0(
         _to_bytes(signing_secret), basestring, hashlib.sha256
     ).hexdigest()
     return hmac.compare_digest(expected, signature)
+
+
+def verify_wahooks(
+    body: bytes,
+    timestamp: str,
+    signature: str,
+    secret: str,
+    max_age_seconds: int = 300,
+) -> bool:
+    """Verify WAHooks' ``X-WAHooks-Signature`` with replay protection.
+
+    The header is ``sha256=<hex>``: HMAC-SHA256 over ``{timestamp}.{body}`` with
+    the webhook's own signing secret, ``X-WAHooks-Timestamp`` in seconds. WAHooks
+    signs each attempt afresh, so a retry is never older than its own send.
+    """
+    if not timestamp:
+        return False
+    try:
+        if abs(time.time() - int(timestamp)) > max_age_seconds:
+            return False
+    except (ValueError, TypeError):
+        return False
+    return verify_hmac_sha256_hex(
+        str(timestamp).encode() + b"." + body, secret, signature, prefix="sha256="
+    )
 
 
 def verify_hubspot_v3(

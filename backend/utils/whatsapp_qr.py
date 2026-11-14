@@ -786,7 +786,7 @@ async def finalize_qr_connection(
                         # reaps it, and the node loader re-registers on the
                         # next panel open.
                         try:
-                            await migrate_wahooks_webhooks(old_connection_id, connection_id)
+                            await migrate_wahooks_webhooks(pool, old_connection_id, connection_id)
                         except Exception as e:
                             logger.error(
                                 f"[WhatsAppQR] Webhooks NOT migrated from {old_connection_id} "

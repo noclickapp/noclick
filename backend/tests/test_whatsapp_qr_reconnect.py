@@ -107,9 +107,9 @@ def stub_wahooks_reconnect(monkeypatch):
 
         def create_webhook(self, connection_id, url, events):
             calls["seq"].append(("create_webhook", connection_id))
-            calls["webhooks"].setdefault(connection_id, []).append(
-                {"id": f"wh-{len(calls['seq'])}", "url": url, "events": events}
-            )
+            hook = {"id": f"wh-{len(calls['seq'])}", "url": url, "events": events}
+            calls["webhooks"].setdefault(connection_id, []).append(hook)
+            return hook  # WAHooks answers with the new config
 
     from wahooks import WAHooksError
 

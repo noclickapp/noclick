@@ -327,6 +327,8 @@ class _WebhookClient:
 
     def create_webhook(self, connection_id, url, events):
         self.created.append((connection_id, url, events))
+        # WAHooks answers with the new config, its own signing secret included.
+        return {"id": "wh-new", "url": url, "events": events, "active": True, "signingSecret": "secret-new"}
 
     def update_webhook(self, webhook_id, **kw):
         self.updated.append((webhook_id, kw))
@@ -335,17 +337,18 @@ class _WebhookClient:
 def test_ensure_webhook_creates_with_status_subscription():
     client = _WebhookClient(existing=[])
     with patch("wahooks.WAHooks", lambda api_key: client):
-        assert _wahooks_ensure_webhook("k", "conn-1", "https://wh.hooks.example.test") is True
+        assert _wahooks_ensure_webhook("k", "conn-1", "https://wh.hooks.example.test") == "secret-new"
     assert client.created == [("conn-1", "https://wh.hooks.example.test", WAHOOKS_WEBHOOK_EVENTS)]
     assert "session.status" in WAHOOKS_WEBHOOK_EVENTS
 
 
 def test_ensure_webhook_upgrades_legacy_message_only_config():
     client = _WebhookClient(
-        existing=[{"id": "wh-9", "url": "https://wh.hooks.example.test", "events": ["message"]}]
+        existing=[{"id": "wh-9", "url": "https://wh.hooks.example.test", "events": ["message"],
+                   "signingSecret": "secret-9"}]
     )
     with patch("wahooks.WAHooks", lambda api_key: client):
-        assert _wahooks_ensure_webhook("k", "conn-1", "https://wh.hooks.example.test") is True
+        assert _wahooks_ensure_webhook("k", "conn-1", "https://wh.hooks.example.test") == "secret-9"
     assert client.created == []
     assert client.updated == [("wh-9", {"events": ["message", "session.status"]})]
 
@@ -353,11 +356,24 @@ def test_ensure_webhook_upgrades_legacy_message_only_config():
 def test_ensure_webhook_noop_when_current():
     client = _WebhookClient(
         existing=[{"id": "wh-9", "url": "https://wh.hooks.example.test",
-                   "events": ["message", "session.status"]}]
+                   "events": ["message", "session.status"], "signingSecret": "secret-9"}]
     )
     with patch("wahooks.WAHooks", lambda api_key: client):
-        assert _wahooks_ensure_webhook("k", "conn-1", "https://wh.hooks.example.test") is False
+        assert _wahooks_ensure_webhook("k", "conn-1", "https://wh.hooks.example.test") == "secret-9"
     assert client.created == [] and client.updated == []
+
+
+def test_ensure_webhook_answers_with_a_live_configs_secret():
+    """A paused duplicate of ours delivers nothing: the secret deliveries are signed with is the live one's."""
+    client = _WebhookClient(existing=[
+        {"id": "wh-8", "url": "https://wh.hooks.example.test", "events": ["message", "session.status"],
+         "active": False, "signingSecret": "secret-paused"},
+        {"id": "wh-9", "url": "https://wh.hooks.example.test", "events": ["message", "session.status"],
+         "active": True, "signingSecret": "secret-live"},
+        {"id": "wh-7", "url": "https://elsewhere.example", "events": ["message"], "signingSecret": "not-ours"},
+    ])
+    with patch("wahooks.WAHooks", lambda api_key: client):
+        assert _wahooks_ensure_webhook("k", "conn-1", "https://wh.hooks.example.test") == "secret-live"
 
 
 # ── status cache: an id the cache has never seen is a MISS, not "gone" ──────

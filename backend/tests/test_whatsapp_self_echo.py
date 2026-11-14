@@ -232,17 +232,31 @@ def agent_b(monkeypatch):
     return run
 
 
-async def _deliver_via_relay(delivery: dict):
-    reply = await webhook_routes.handle_webhook_payload(WEBHOOK, json.dumps(delivery), {}, {}, return_response=True)
+def wahooks_headers(delivery: dict, secret: str, *, at: float = None) -> dict:
+    """The headers WAHooks signs ``delivery`` with (its body as the delivery helpers send it)."""
+    import hashlib
+    import hmac
+    import time
+
+    timestamp = str(int(time.time() if at is None else at))
+    digest = hmac.new(secret.encode(), f"{timestamp}.{json.dumps(delivery)}".encode(), hashlib.sha256).hexdigest()
+    return {"X-WAHooks-Signature": f"sha256={digest}", "X-WAHooks-Timestamp": timestamp,
+            "X-WAHooks-Event": delivery.get("event", "")}
+
+
+async def _deliver_via_relay(delivery: dict, headers: dict = None):
+    reply = await webhook_routes.handle_webhook_payload(
+        WEBHOOK, json.dumps(delivery), headers or {}, {}, return_response=True)
     await asyncio.sleep(0)  # the relay acks first and runs the workflow in a spawned task
     return reply
 
 
-async def _deliver_via_route(delivery: dict):
+async def _deliver_via_route(delivery: dict, headers: dict = None):
     app = FastAPI()
     app.include_router(webhook_routes.router)
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as client:
-        response = await client.post(f"/webhook/{WEBHOOK}", json=delivery)
+        response = await client.post(f"/webhook/{WEBHOOK}", content=json.dumps(delivery),
+                                     headers={"Content-Type": "application/json", **(headers or {})})
     return {"status": response.status_code, "body": response.text}
 
 

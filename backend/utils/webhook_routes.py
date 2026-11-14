@@ -1513,6 +1513,7 @@ async def handle_webhook_payload(
             webhook_secret=config.get("secret"),
             method=method,
             query_params=query,
+            payload=payload,
         )
     except HTTPException as exc:
         logger.error(f"[WEBHOOK] Signature verification failed for {webhook_id}")
@@ -1716,6 +1717,7 @@ async def _apply_trigger_node_hooks(
     webhook_secret: Optional[str] = None,
     method: Optional[str] = None,
     query_params: Optional[dict] = None,
+    payload: Optional[dict] = None,
 ) -> Optional[Any]:
     """Run a matched trigger node's webhook handshake + signature hooks.
 
@@ -1746,6 +1748,10 @@ async def _apply_trigger_node_hooks(
     ``signing_secret`` first, then retries with this — covering both a config
     the autosave hasn't reached (first event after registering) and a config
     holding the pre-re-registration secret (stale after a guard-break).
+    A ``webhook_secret_on_row`` node keeps its secret on the row alone, so it
+    is verified against that one, and ``payload``'s ``_webhook`` (the
+    receiver's own record of the request) says whether there was a secret to
+    check: ``signature_verified``.
     """
     from nodes.core.registry import NODE_REGISTRY
 
@@ -1781,26 +1787,33 @@ async def _apply_trigger_node_hooks(
             )
         return handshake
 
-    if not node_cls.verify_webhook_signature(raw_body, lower_headers, node_config):
+    if node_cls.webhook_secret_on_row:
+        accepted = node_cls.verify_webhook_signature(
+            raw_body, lower_headers, {**node_config, "signing_secret": webhook_secret}
+        )
+    elif node_cls.verify_webhook_signature(raw_body, lower_headers, node_config):
+        accepted = True
+    else:
         # The config blob's signing_secret lags the row: the debounced autosave
         # takes ~2s, and never lands at all if the tab closed right after a
         # (re-)registration. The row secret is written synchronously at
         # registration, so retry with it — config stays primary because
         # async-handshake providers (Asana) and pre-row-era registrations can
         # hold a config secret the row lacks.
-        row_config = (
-            {**node_config, "signing_secret": webhook_secret}
-            if webhook_secret and webhook_secret != node_config.get("signing_secret")
-            else None
-        )
-        if row_config is None or not node_cls.verify_webhook_signature(
-            raw_body, lower_headers, row_config
-        ):
-            logger.warning(
-                f"[WEBHOOK] Signature verification failed for node "
-                f"{trigger_node.get('id')} ({trigger_node.get('type')})"
+        accepted = bool(
+            webhook_secret and webhook_secret != node_config.get("signing_secret")
+            and node_cls.verify_webhook_signature(
+                raw_body, lower_headers, {**node_config, "signing_secret": webhook_secret}
             )
-            raise HTTPException(status_code=401, detail="Invalid webhook signature")
+        )
+    if not accepted:
+        logger.warning(
+            f"[WEBHOOK] Signature verification failed for node "
+            f"{trigger_node.get('id')} ({trigger_node.get('type')})"
+        )
+        raise HTTPException(status_code=401, detail="Invalid webhook signature")
+    if node_cls.webhook_secret_on_row and payload is not None:
+        payload["_webhook"]["signature_verified"] = bool(webhook_secret)
 
     return None
 
@@ -2953,6 +2966,7 @@ async def receive_webhook(
         webhook_secret=config.get("secret"),
         method=request.method,
         query_params=dict(request.query_params),
+        payload=payload,
     )
     if hook_response is not None:
         update_webhook_stats(webhook_id)

@@ -669,6 +669,13 @@ class WorkflowNode(ABC):
     # into the provider's own settings (``WebhookManager.registers_itself``).
     self_registering_triggers: ClassVar[Dict[str, Tuple[str, ...]]] = {}
 
+    # The provider signs each delivery with a secret NoClick keeps on the
+    # registration's webhooks row alone, never in the graph (WhatsApp's WAHooks
+    # webhooks). The receiver hands ``verify_webhook_signature`` that secret and
+    # records on the delivery whether there was one to check
+    # (``_webhook.signature_verified``); the reconciler's sweep reads a missing one.
+    webhook_secret_on_row: ClassVar[bool] = False
+
     # A node whose service has shut down: no listing offers it for new work
     # (``registry.is_listed``), while a saved one still loads, renders and runs
     # until the vendor's API refuses it. Published on its schema as `x-retired`.
@@ -1041,7 +1048,9 @@ class WorkflowNode(ABC):
         "Message yourself" chat), which a platform may treat as their own turn
         rather than an outsider's; ``"from_number"`` names a direct chat's
         writer by phone number, which a platform that knows its owner's number
-        may take as theirs too.
+        may take as theirs too. Both say who wrote, so claim them only for a
+        delivery whose signature was verified (``_webhook.signature_verified``),
+        never on what the payload itself says.
         """
         from nodes.core.agent_events import default_agent_event
 
@@ -1136,8 +1145,10 @@ class WorkflowNode(ABC):
 
         Called by the webhook receiver before a trigger node fires its workflow.
         Webhook-trigger nodes override this to check the provider's signature
-        header against a shared secret stored in *config*. *headers* keys are
-        lowercased. The default returns ``True`` (no verification).
+        header against a shared secret stored in *config* (for a
+        ``webhook_secret_on_row`` node, the row's, or None while it has none).
+        *headers* keys are lowercased. The default returns ``True`` (no
+        verification).
         """
         return True
 
