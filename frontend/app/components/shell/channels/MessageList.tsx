@@ -20,7 +20,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 import { cn } from '~/lib/utils';
 import { MessageAttachments } from './attachments';
-import { MemberAvatar, MENTION_HUE } from './avatars';
+import { MemberAvatar, MENTION_HUE, presenceFace } from './avatars';
 import { EmojiPicker } from './EmojiPicker';
 import { MessageBody } from './MessageBody';
 import { AGENT_HUES, authorMember, byNoClick, handoffsOf, modeLine, NOCLICK_NAME, postedForYou } from './model';
@@ -273,7 +273,7 @@ function Handoffs({ from, to, user }: { from: ChannelMember; to: ChannelMember[]
                     <span className="flex shrink-0 items-center">
                         <MemberAvatar member={from} user={user} size={24} />
                         <ArrowRight className="mx-1 h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
-                        <MemberAvatar member={h} user={user} size={24} />
+                        <MemberAvatar member={h} user={user} size={24} state={presenceFace(h)} />
                     </span>
                     <span className="shrink-0 text-foreground/75">Handed off to</span>
                     <span className={cn('min-w-0 truncate font-semibold', h.kind === 'agent' ? MENTION_HUE[h.hue ?? AGENT_HUES[0]] : 'text-foreground')}>{h.name}</span>

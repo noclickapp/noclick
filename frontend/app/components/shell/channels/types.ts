@@ -4,7 +4,7 @@
 // reactions), as the page draws them.
 
 /** An agent's colour: its avatar, and how its name reads when @-mentioned. */
-export type AgentHue = 'sky' | 'violet' | 'pink' | 'fuchsia' | 'emerald';
+export type AgentHue = 'sky' | 'violet' | 'pink' | 'fuchsia' | 'emerald' | 'blue' | 'purple' | 'teal';
 
 /** Who is in a channel: you (the account, never a member row), an agent, a person or an agent from elsewhere (A2A). */
 export interface ChannelMember {
@@ -28,6 +28,8 @@ export interface ChannelMember {
     role?: string;
     /** Taking a turn right now. */
     busy?: boolean;
+    /** Its triggers are paused: it wakes only when someone messages it. */
+    paused?: boolean;
     /** NoClick itself (the account's coordinator): drawn with NoClick's mark, as a channel draws NoClick. */
     noclick?: boolean;
 }

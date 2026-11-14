@@ -1,4 +1,4 @@
-// How a channel's agents are told apart: the letters on their avatars come from what sets their names apart (two
+// How a channel's agents are told apart: the letters they're known by come from what sets their names apart (two
 // agents named "Paws & Pace …" both drew "P"), and each wears a colour no other agent in the room does, from a
 // palette whose every pair stays apart in both themes and for colour-blind readers.
 import { describe, expect, it } from 'vitest';
@@ -25,13 +25,20 @@ describe('an agent’s letters', () => {
 });
 
 describe('a room’s colours', () => {
-    it('are five, none of them yellow, amber, orange or lime', () => {
-        expect(AGENT_HUES).toHaveLength(5);
+    it('are eight, none of them yellow, amber, orange or lime', () => {
+        expect(AGENT_HUES).toHaveLength(8);
         expect(AGENT_HUES.filter((h) => ['yellow', 'amber', 'orange', 'lime'].includes(h))).toEqual([]);
     });
 
+    it('keep the colour each agent has always worn as its own: one of the first five', () => {
+        // As five colours read them: an id's own colour never moved when the three came.
+        expect(['agt_whatsapp', 'a1', 'a2', 'a3', 'a4', 'a5', 'wf_1:node_2'].map(hueFor)).toEqual(['sky', 'violet', 'pink', 'fuchsia', 'emerald', 'sky', 'violet']);
+        const own = new Set(Array.from({ length: 500 }, (_, i) => hueFor(`agent-${i}`)));
+        expect([...own].sort()).toEqual(['emerald', 'fuchsia', 'pink', 'sky', 'violet']);
+    });
+
     it('give every agent in a room a colour of its own, its own one while it’s free', () => {
-        const ids = ['a1', 'a2', 'a3', 'a4', 'a5'];
+        const ids = ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8'];
         const seated = seatMembers([{ id: 'you', kind: 'you', name: 'You' }, ...ids.map((id) => agent(id, `Agent ${id}`))]);
         const hues = seated.filter((m) => m.kind === 'agent').map((m) => m.hue);
         expect(new Set(hues).size).toBe(AGENT_HUES.length);

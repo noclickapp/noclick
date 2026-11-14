@@ -10,15 +10,18 @@ export const NOCLICK_ID = 'noclick';
 
 export const YOU: ChannelMember = { id: YOU_ID, kind: 'you', name: 'You' };
 
-/** The agents' colours, every pair of which stays apart in both themes and for colour-blind readers (avatars.tsx has
- *  the steps and the validator's verdict). No yellow, amber or orange: NoClick wears none. */
-export const AGENT_HUES: AgentHue[] = ['sky', 'violet', 'pink', 'fuchsia', 'emerald'];
+/** The agents' colours, every pair of which stays apart in both themes and for colour-blind readers (mascot/AgentMascot
+ *  has the discs and the validator's verdict). No yellow, amber or orange: NoClick wears none. An agent's own colour is
+ *  one of the first five, which every agent has worn since before there were eight; the rest seat the agents whose own
+ *  colour another beside them already wears. */
+export const AGENT_HUES: AgentHue[] = ['sky', 'violet', 'pink', 'fuchsia', 'emerald', 'blue', 'purple', 'teal'];
+const OWN_HUES = AGENT_HUES.slice(0, 5);
 
 /** An agent's own colour, read from its id: the one it wears wherever no other agent beside it already does. */
 export function hueFor(id: string): AgentHue {
     let hash = 0;
     for (const ch of id) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
-    return AGENT_HUES[hash % AGENT_HUES.length];
+    return OWN_HUES[hash % OWN_HUES.length];
 }
 
 /** A name's words as a person reads them ("Paws & Pace" is two). */
