@@ -115,7 +115,7 @@ function subscribeFormatBar(listener: () => void) {
 }
 
 const ICON_BUTTON =
-    'grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.07] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40';
+    'grid h-8 w-8 shrink-0 place-items-center rounded-full max-md:h-10 max-md:w-10 text-muted-foreground transition-colors hover:bg-foreground/[0.07] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40';
 
 /** A small button's name, on the app's tooltip surface, pill-round as Work's are. */
 function Tip({ label, children }: { label: string; children: ReactNode }) {
@@ -525,7 +525,7 @@ export function ChannelComposer({
                                             type="button"
                                             onClick={() => fileInput.current?.click()}
                                             aria-label="Attach files"
-                                            className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-foreground/[0.06] text-foreground/75 transition-colors hover:bg-foreground/[0.1] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                            className="grid h-8 w-8 shrink-0 place-items-center rounded-full max-md:h-10 max-md:w-10 bg-foreground/[0.06] text-foreground/75 transition-colors hover:bg-foreground/[0.1] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                         >
                                             <Plus className="h-[18px] w-[18px]" strokeWidth={1.9} />
                                         </button>

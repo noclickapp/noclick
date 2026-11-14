@@ -216,7 +216,7 @@ function reactedBy(r: ChannelReaction): string[] {
 
 function Reactions({ reactions, onReact }: { reactions: ChannelReaction[]; onReact: (emoji: string) => void }) {
     return (
-        <div className="mt-1.5 flex flex-wrap items-center gap-1" data-testid="message-reactions">
+        <div className="mt-1.5 flex flex-wrap items-center gap-1 max-md:gap-1.5" data-testid="message-reactions">
             {reactions.map((r) => (
                 <Tooltip key={r.emoji}>
                     <TooltipTrigger asChild>
@@ -226,7 +226,8 @@ function Reactions({ reactions, onReact }: { reactions: ChannelReaction[]; onRea
                             aria-pressed={r.mine}
                             aria-label={`${r.emoji} ${r.count}${r.mine ? ', yours' : ''}`}
                             className={cn(
-                                'inline-flex h-7 items-center gap-1 rounded-full px-2 text-[13px] tabular-nums ring-1 ring-inset transition-colors',
+                                // On a phone a size up, with the taps around it its own.
+                                "inline-flex h-7 items-center gap-1 rounded-full px-2 text-[13px] tabular-nums ring-1 ring-inset transition-colors max-md:px-2.5 max-md:relative max-md:h-8 max-md:after:absolute max-md:after:-inset-1 max-md:after:content-['']",
                                 r.mine ? 'bg-foreground/[0.08] text-foreground ring-foreground/30' : 'bg-foreground/[0.03] text-foreground/75 ring-foreground/[0.08] hover:bg-foreground/[0.06]'
                             )}
                         >
@@ -253,7 +254,7 @@ function Reactions({ reactions, onReact }: { reactions: ChannelReaction[]; onRea
             <ReactionPicker
                 onPick={onReact}
                 label="Add a reaction"
-                className="grid h-7 w-7 place-items-center rounded-full text-muted-foreground ring-1 ring-inset ring-foreground/[0.08] transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
+                className="grid h-7 w-7 place-items-center rounded-full text-muted-foreground ring-1 ring-inset ring-foreground/[0.08] transition-colors hover:bg-foreground/[0.06] hover:text-foreground max-md:w-8 max-md:relative max-md:h-8 max-md:after:absolute max-md:after:-inset-1 max-md:after:content-['']"
             />
         </div>
     );

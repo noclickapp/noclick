@@ -1,12 +1,14 @@
 // Work on a phone, in a real browser: at an iPhone's width and a small Android's, in both themes, nothing scrolls
 // sideways; each list's top (the space's mark, its action card, its search) starts on the 16px edge its rows' faces
-// start on; and every Resources kind page gives its title and the line under it the page's width, its buttons on a row
-// of their own inside the page. Each screen is a screenshot under __screenshots__ (git-ignored), for a person to see.
+// start on, and everything in it takes a finger (40px); every Resources kind page gives its title and the line under it
+// the page's width, its buttons on a row of their own inside the page; with an iPhone's home indicator, a channel's or
+// a DM's composer stays clear of it; and the Resources list's Overview opens. Each screen is a screenshot under
+// __screenshots__ (git-ignored), for a person to see.
 import { createRoot } from 'react-dom/client';
 import { flushSync } from 'react-dom';
 import { useState, type ReactNode } from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
-import { page } from 'vitest/browser';
+import { cdp, page } from 'vitest/browser';
 import { afterEach, expect, it } from 'vitest';
 import { PhoneBarSlotProvider } from '~/components/shell/AppShell';
 import { WorkClientContext } from '~/cloud/components/work/client';
@@ -23,6 +25,10 @@ const PHONES = [
 ] as const;
 /** The screen's side gutter, where every list's content starts. */
 const EDGE = 16;
+/** A finger's tap. */
+const TAP = 40;
+/** An iPhone's home indicator: the strip at the screen's foot a thumb can't use. */
+const HOME_INDICATOR = 34;
 
 let unmount: (() => void) | null = null;
 afterEach(() => {
@@ -125,6 +131,12 @@ for (const size of PHONES) {
                 expect(left(face), 'The rows’ faces start where the space’s mark does').toBe(EDGE);
                 const action = document.querySelector('.sticky > button');
                 if (action) expect(left(action), 'The action card starts where the space’s mark does').toBe(EDGE);
+                for (const control of host.querySelectorAll('[data-testid="work-page"] button')) {
+                    const box = control.getBoundingClientRect();
+                    if (!box.width || getComputedStyle(control).visibility === 'hidden') continue;
+                    const name = control.getAttribute('aria-label') ?? control.textContent;
+                    expect(Math.min(box.width, box.height), `${view}’s “${name}” is smaller than a finger`).toBeGreaterThanOrEqual(TAP);
+                }
                 expectNoSidewaysScroll(host, view);
                 await shot(`__screenshots__/work-phone/${view.toLowerCase()}-${size[0]}-${theme}.png`);
             }, 30_000);
@@ -153,3 +165,42 @@ for (const size of PHONES) {
         }
     }, 90_000);
 }
+
+/** An iPhone's insets on the screen, as the app's viewport (viewport-fit=cover) lets them through. */
+async function withHomeIndicator(run: () => Promise<void>) {
+    const meta = document.createElement('meta');
+    meta.name = 'viewport';
+    meta.content = 'width=device-width, initial-scale=1, viewport-fit=cover';
+    document.head.appendChild(meta);
+    const insets = (top: number, bottom: number) => cdp().send('Emulation.setSafeAreaInsetsOverride', { insets: { top, topMax: top, bottom, bottomMax: bottom, left: 0, right: 0 } });
+    await insets(47, HOME_INDICATOR);
+    try {
+        await run();
+    } finally {
+        await insets(0, 0);
+        meta.remove();
+    }
+}
+
+for (const [where, query] of [
+    ['a channel', '&channel=ch_launch'],
+    ['a DM', '&show=dms&channel=dm_priya'],
+    ['a thread', '&channel=ch_launch&thread=l4'],
+] as const) {
+    it(`keeps ${where}’s composer clear of the home indicator`, async () => {
+        await withHomeIndicator(async () => {
+            await openWork(query, PHONES[0], 'dark');
+            const attach = await until(() => document.querySelector('button[aria-label="Attach files"]'), `${where} has its composer`);
+            await wait(200);
+            expect(attach.getBoundingClientRect().bottom, `${where}’s composer reaches the home indicator`).toBeLessThanOrEqual(window.innerHeight - HOME_INDICATOR);
+        });
+    }, 30_000);
+}
+
+it('opens the Resources overview from the phone’s list', async () => {
+    await openWork('&show=resources', PHONES[0], 'dark');
+    const overview = await until(() => [...document.querySelectorAll('[data-testid="space-resources-nav"] button')].find((b) => b.textContent === 'Overview'), 'The list has its Overview');
+    expect(overview.getAttribute('aria-current'), 'Nothing in the phone’s list is open').toBeNull();
+    (overview as HTMLButtonElement).click();
+    await until(() => [...document.querySelectorAll('[data-testid="space-resources"] h1')].find((h) => h.textContent === 'Resources'), 'Overview opens the overview');
+}, 30_000);
