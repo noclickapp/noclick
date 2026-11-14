@@ -100,7 +100,7 @@ class CredentialActions:
         operations, candidates, catalogs = {}, {}, {}
         for row in rows:
             if row.credential_type not in catalogs:
-                catalogs[row.credential_type] = operation_catalog(row.credential_type)
+                catalogs[row.credential_type] = await operation_catalog(row.credential_type)
             for op in catalogs[row.credential_type]:
                 operations.setdefault(op["key"], op)
                 candidates.setdefault(op["key"], []).append(row)
@@ -109,7 +109,7 @@ class CredentialActions:
         results = []
         for op in matches[offset:offset + 3]:
             compatible = candidates[op["key"]]
-            definitions, configs = operation_tool(compatible[0].credential_type, op["node_type"], op["operation"])
+            definitions, configs = await operation_tool(compatible[0].credential_type, op["node_type"], op["operation"])
             names = self.registry.load(op["node_type"], op["operation"], definitions, configs)
             results.append({**op, "tool_names": names,
                             "credentials": [credential_summary(row) for row in compatible[:30]],
@@ -179,12 +179,12 @@ class CredentialActions:
         row = await self._credential(payload["credential_id"])
         node_type, operation = payload["node_type"], payload["operation"]
         if operation != "__lookup__":
-            tools, configs = operation_tool(row.credential_type, node_type, operation)
+            tools, configs = await operation_tool(row.credential_type, node_type, operation)
             self.registry.load(node_type, operation, tools, configs)
             return
         field = payload["arguments"]["field_name"]
-        for op in operation_catalog(row.credential_type, node_type):
-            tools, configs = operation_tool(row.credential_type, node_type, op["operation"])
+        for op in await operation_catalog(row.credential_type, node_type):
+            tools, configs = await operation_tool(row.credential_type, node_type, op["operation"])
             if any(field in c.get("fields", {}).values() for c in configs.values() if c["tool_type"] == "node_op_lookup"):
                 self.registry.load(node_type, op["operation"], tools, configs)
                 return
@@ -196,7 +196,7 @@ class CredentialActions:
         if operation:
             if not node_type:
                 raise ValueError("node_type is required for an operation schema.")
-            tools, configs = operation_tool(row.credential_type, node_type, operation)
+            tools, configs = await operation_tool(row.credential_type, node_type, operation)
             names = self.registry.load(node_type, operation, tools, configs) if self.native_tools else []
             return {"tools": tools, "call_tool": "call_credential_operation",
                     **({"loaded_tools": names} if names else {}),
@@ -205,7 +205,7 @@ class CredentialActions:
                     "approval_required": "*" in policy["approval_operations"]
                     or f"{node_type}.{operation}" in policy["approval_operations"],
                     "lookup_tool": "lookup_credential_options"}
-        operations = search_operations(operation_catalog(row.credential_type, node_type), query)
+        operations = search_operations(await operation_catalog(row.credential_type, node_type), query)
         offset = max(0, offset)
         return {"operations": operations[offset:offset + 30], "total": len(operations),
                 "approval_operations": policy["approval_operations"],
@@ -215,7 +215,7 @@ class CredentialActions:
         from nodes.core.run_op import run_node_operation
 
         row = await self._credential(credential_id)
-        operation_tool(row.credential_type, node_type, operation)
+        await operation_tool(row.credential_type, node_type, operation)
         return await run_node_operation(
             node_type=node_type, operation=operation, arguments=arguments,
             credential_id=row.id, user_id=self.user_id, pool=self.pool,
@@ -227,7 +227,7 @@ class CredentialActions:
     async def require_credential_approval(self, credential_id, operations):
         from repositories.credential_approvals import CredentialApprovalRepo
         row = await self._credential(credential_id)
-        allowed = {op["key"] for op in operation_catalog(row.credential_type)} | {"*"}
+        allowed = {op["key"] for op in await operation_catalog(row.credential_type)} | {"*"}
         if not operations or set(operations) - allowed:
             raise ValueError("Select operation keys from credential_operations, or '*' for all operations.")
         restrictions = await CredentialApprovalRepo(self.pool).tighten(
@@ -251,7 +251,7 @@ class CredentialActions:
         from nodes.core.run_op import run_node_lookup
 
         row = await self._credential(credential_id)
-        _, configs = operation_tool(row.credential_type, node_type, operation)
+        _, configs = await operation_tool(row.credential_type, node_type, operation)
         lookup = next((config for config in configs.values() if config["tool_type"] == "node_op_lookup"), {})
         fields = lookup.get("fields", {})
         if field not in fields:

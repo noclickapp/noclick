@@ -112,11 +112,11 @@ async def test_a_saved_retired_node_still_validates_and_runs(monkeypatch):
     assert [r.url.path for r in requests] == ["/v5/prompts"]
 
 
-def test_an_existing_credential_still_finds_its_retired_service():
+async def test_an_existing_credential_still_finds_its_retired_service():
     for node_type in _retired():
         for credential_type in credential_operations.connection_catalog()[1].get(node_type, ()):
             assert credential_type in known_credential_types()
             assert node_type in credential_operations.compatible_providers(credential_type)
-            assert credential_operations.operation_catalog(credential_type, node_type)
+            assert await credential_operations.operation_catalog(credential_type, node_type)
             assert resolve_credential_class(credential_type) is not None
     assert credential_operations.compatible_providers("humanloop_api_key") == ["automation-humanloop"]

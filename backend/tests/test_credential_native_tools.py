@@ -76,8 +76,8 @@ async def test_native_lookup_requires_credential_and_cannot_bypass_locked_reads(
     pool, repo, (cid, _) = approval_db
     await mail_accounts(monkeypatch, [cid])
     tools = coordinator(pool)
-    for op in operation_catalog("google_gmail_oauth"):
-        definitions, configs = operation_tool("google_gmail_oauth", op["node_type"], op["operation"])
+    for op in await operation_catalog("google_gmail_oauth"):
+        definitions, configs = await operation_tool("google_gmail_oauth", op["node_type"], op["operation"])
         if any(c["tool_type"] == "node_op_lookup" for c in configs.values()):
             tools.credential_tools.registry.load(op["node_type"], op["operation"], definitions, configs)
             break

@@ -4,6 +4,7 @@ The coordinator and credential permissions UI share this catalog with agent
 node tools: there is no second set of provider operations or argument schemas.
 """
 
+import asyncio
 from functools import lru_cache
 import re
 
@@ -65,16 +66,32 @@ def search_operations(operations, query):
     return sorted((op for op in operations if score(op)), key=score, reverse=True)
 
 
-def operation_catalog(credential_type, node_type=None):
+# Each credential type's operations (``_built_catalog``), once per process.
+_CATALOGS = {}
+
+
+def _built_catalog(credential_type):
+    """Every operation of each provider ``credential_type`` powers, which builds each provider's schema: seconds for a
+    type tens of them share (a Google sign-in powers 24). Built once per process, in a thread."""
     from nodes.agent.node_op_tools import list_node_operations
 
+    if credential_type not in _CATALOGS:
+        _CATALOGS[credential_type] = tuple(
+            {"node_type": provider, **operation, "key": f"{provider}.{operation['operation']}"}
+            for provider in compatible_providers(credential_type) for operation in list_node_operations(provider))
+    return _CATALOGS[credential_type]
+
+
+async def operation_catalog(credential_type, node_type=None):
+    """The operations a credential of ``credential_type`` can run, each provider's, or ``node_type``'s alone. Its
+    first read in a process is built off the event loop; every later one reads that."""
     providers = compatible_providers(credential_type)
     if node_type is not None and node_type not in providers:
         raise ValueError("This credential does not support that integration.")
-    return [{"node_type": provider, **operation,
-             "key": f"{provider}.{operation['operation']}"}
-            for provider in ([node_type] if node_type else providers)
-            for operation in list_node_operations(provider)]
+    built = _CATALOGS.get(credential_type)
+    if built is None:
+        built = await asyncio.to_thread(_built_catalog, credential_type)
+    return [dict(op) for op in built if not node_type or op["node_type"] == node_type]
 
 
 @lru_cache(maxsize=1)
@@ -117,10 +134,10 @@ def connection_suggestions(query):
     return results
 
 
-def operation_tool(credential_type, node_type, operation):
+async def operation_tool(credential_type, node_type, operation):
     from nodes.agent.node_op_tools import build_node_op_tools
 
-    operations = operation_catalog(credential_type, node_type)
+    operations = await operation_catalog(credential_type, node_type)
     if operation not in {op["operation"] for op in operations}:
         raise ValueError("Unknown operation. Discover this credential's operations first.")
     tools, configs = build_node_op_tools(node_type, [operation], node_id="credential", slug="credential")

@@ -52,7 +52,7 @@ async def policy(credential_id: UUID, user_id=Depends(human)):
         row = await CredentialApprovalRepo(pool).policy(str(credential_id), user_id, org_id)
         from repositories.coordinator_links import CoordinatorLinkRepo
         return {"id": str(row["id"]), "name": row["name"], "credential_type": row["credential_type"],
-                "operations": operation_catalog(row["credential_type"]),
+                "operations": await operation_catalog(row["credential_type"]),
                 "approval_operations": row["approval_operations"], "revision": row["approval_revision"],
                 "can_edit": str(row["owner_id"]) == user_id,
                 "review_pending": await CoordinatorLinkRepo(pool).pending("credential_policy", credential_id, user_id)}
@@ -67,7 +67,7 @@ async def save_policy(credential_id: UUID, body: PolicyChange, user_id=Depends(h
         row = await repo.policy(str(credential_id), user_id)
         if str(row["owner_id"]) != user_id:
             raise PermissionError("Only the owner can change approval rules.")
-        valid = {op["key"] for op in operation_catalog(row["credential_type"])} | {"*"}
+        valid = {op["key"] for op in await operation_catalog(row["credential_type"])} | {"*"}
         # Preserve unknown historical rules on save; a human may remove them.
         if set(body.operations) - valid - set(row["approval_operations"]):
             raise ValueError("Unknown operation in approval policy.")
