@@ -11,6 +11,11 @@ import type { ChatReference } from '~/lib/agentChat';
 import { extensionOf, fileKindOf, fileNameOf, previewType } from '~/lib/embedKind';
 import { cn } from '~/lib/utils';
 
+/** The kind's own mark for what a message points at: an automation's, or an account's. */
+export function ReferenceMark({ reference }: { reference: ChatReference }) {
+    return reference.kind === 'automation' ? <AutomationMark className="h-4 w-4" /> : <ACTION_GLYPHS.account className="h-3.5 w-3.5" strokeWidth={2} />;
+}
+
 export function ChatReferenceChip({ reference, mark, onRemove, className }: { reference: ChatReference; mark?: ReactNode; onRemove?: () => void; className?: string }) {
     return (
         <span
@@ -18,7 +23,7 @@ export function ChatReferenceChip({ reference, mark, onRemove, className }: { re
             className={cn('inline-flex h-8 max-w-[260px] items-center gap-1.5 rounded-full bg-foreground/[0.06] pl-2 text-[13px] text-foreground', onRemove ? 'pr-1' : 'pr-3', className)}
         >
             <span className="grid h-5 w-5 shrink-0 place-items-center text-foreground/70">
-                {mark ?? (reference.kind === 'automation' ? <AutomationMark className="h-4 w-4" /> : <ACTION_GLYPHS.account className="h-3.5 w-3.5" strokeWidth={2} />)}
+                {mark ?? <ReferenceMark reference={reference} />}
             </span>
             <span className="truncate">{reference.label}</span>
             {onRemove && (

@@ -172,6 +172,8 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
     const [draft, setDraft] = useState('');
     const files = useAttachmentTray(coordinator.upload);
     const [references, setReferences] = useState<ChatReference[]>([]);
+    // Words put in a platform's own box from elsewhere (it keeps what's typed itself).
+    const [putBack, setPutBack] = useState<{ text: string; references?: ChatReference[]; n: number } | null>(null);
     const { credentials } = useCredentialList();
     const [memoriesOpen, setMemoriesOpen] = useState(false);
     // Beside the thread, where the Beside opens a helper's conversation on a laptop.
@@ -235,8 +237,10 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
         [accountById]
     );
 
-    const draftAndFocus = useCallback((text: string) => {
+    const draftAndFocus = useCallback((text: string, pointsAt?: ChatReference[]) => {
         setDraft(text);
+        if (pointsAt) setReferences(pointsAt);
+        setPutBack((p) => ({ text, references: pointsAt, n: (p?.n ?? 0) + 1 }));
         requestAnimationFrame(() => textareaRef.current?.focus());
     }, []);
 
@@ -250,8 +254,7 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
         const take = () => {
             const ask = consumePendingAsk();
             if (!ask) return;
-            if (ask.references) setReferences(ask.references);
-            draftAndFocus(ask.text);
+            draftAndFocus(ask.text, ask.references);
         };
         take();
         return onAskNoClick(take);
@@ -297,16 +300,33 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
     // While it can't run the model picked, Send (and Enter) asks for the account that runs it.
     const accountAsk = coordinator.composerControls?.ask;
     // A self-hosted install without the model's key asks for it where the composer goes, then opens the chat again.
+    const placeholder = empty ? 'Describe a task, or ask anything' : 'Message NoClick';
+    const frame = empty && !inPhone ? 'px-0 pb-0 pt-0 sm:px-0' : undefined;
+    const PlatformComposer = coordinator.Composer;
     const composer = coordinator.needsKey ? (
         <div className={cn('mx-auto w-full max-w-3xl', empty ? undefined : 'px-5 pb-5 sm:px-6')}>
             <InstanceKeyPrompt envVar={coordinator.needsKey} title="Add this instance's key to chat with NoClick" submitLabel="Save and start" onSaved={coordinator.retry} />
         </div>
+    ) : PlatformComposer ? (
+        <PlatformComposer
+            placeholder={placeholder}
+            size={empty ? 'tall' : 'default'}
+            putBack={putBack}
+            transition={(update) => {
+                // Sent, the words put in it are gone: the box drawn at the thread's foot opens empty.
+                setPutBack(null);
+                if (empty) withViewTransition(update);
+                else update();
+            }}
+            transitionName={COMPOSER_TRANSITION}
+            className={frame}
+        />
     ) : (
         <AgentChatComposer
             value={draft}
             onChange={setDraft}
             onSubmit={() => (accountAsk ? accountAsk.open() : primary.kind !== 'stop' && !primary.disabled && submit())}
-            placeholder={empty ? 'Describe a task, or ask anything' : 'Message NoClick'}
+            placeholder={placeholder}
             inputDisabled={!conversationId}
             primary={{ kind: primary.kind === 'submit' ? 'send' : primary.kind, disabled: primary.disabled, onStop: coordinator.stop }}
             textareaRef={textareaRef}
@@ -342,7 +362,7 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
             footerEnd={coordinator.composerControls?.model}
             below={coordinator.composerControls?.footer}
             sendButton={accountAsk?.button}
-            className={empty && !inPhone ? 'px-0 pb-0 pt-0 sm:px-0' : undefined}
+            className={frame}
         />
     );
     const beside = Beside && <Beside draft={draftAndFocus} aside={aside} width={width} onReserve={setReserve} />;

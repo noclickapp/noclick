@@ -54,6 +54,22 @@ export interface CoordinatorChat {
      *  box (the account its model runs on, where it runs, its budget), and, while it can't run what's picked, the
      *  Send that asks for an account instead (`ask`, which Enter opens too). */
     composerControls?: { model: ReactNode; footer: ReactNode; ask?: { button: ReactNode; open: () => void } | null };
+    /** The platform's own box, in place of the shared composer (hosted: Work's, the one box of every agent
+     *  conversation, over the conversation it keeps live itself: its "+" menu, its / commands such as /loop, Stop and
+     *  Steer), drawn with the coordinator's switchers. */
+    Composer?: ComponentType<ChatComposerProps>;
+}
+
+/** What the page gives the platform's box: what it says while empty, its size (`tall` while it's the middle of an
+ *  empty page), words put in it from elsewhere (an Ask NoClick, the Beside's reply), changing each time, how a send
+ *  that moves the page runs (the first message carries the box to the thread's foot), and its frame. */
+export interface ChatComposerProps {
+    placeholder: string;
+    size: 'default' | 'tall';
+    putBack: { text: string; references?: readonly ChatReference[]; n: number } | null;
+    transition: (update: () => void) => void;
+    transitionName: string;
+    className?: string;
 }
 
 /** What the Beside reads from the page (the thread it reads from its platform's own chat): how to start a reply in
