@@ -17,7 +17,7 @@ from coder.openai_agent.config import AgentConfiguration
 from coder.openai_agent.guards import TurnLimits, TurnSoFar
 from nodes.agent.agent_memory import conversation_compactor
 from nodes.agent.config.harness_model_lists import zen_gateway_refusal
-from nodes.agent.placement import sandbox_network_of, sandbox_region_of, sandbox_volumes_of, shell_of
+from nodes.agent.placement import agent_scope_of, sandbox_network_of, sandbox_region_of, sandbox_volumes_of, shell_of
 from nodes.agent.git_mounts import sandbox_setups_of
 from nodes.agent.provider_errors import classify_and_rewrite_provider_error
 from utils.turn_events import (
@@ -133,6 +133,7 @@ async def execute_llm_model(
             node_id=node.node_id,
             filesystem_configs=filesystem_configs,
             conversation_key=config.conversation_key,
+            agent_scope=agent_scope_of(node),
             sandbox_setups=sandbox_setups or None,
             user_env=user_env or None,
             execution_id=node.execution_id,

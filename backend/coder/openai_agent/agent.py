@@ -236,6 +236,7 @@ class Agent:
         node_id: Optional[str] = None,
         filesystem_configs: Optional[List[Dict[str, Any]]] = None,
         conversation_key: Optional[str] = None,
+        agent_scope: Optional[str] = None,
         sandbox_setups: Optional[List[Dict[str, Any]]] = None,
         user_env: Optional[Dict[str, str]] = None,
         execution_id: Optional[str] = None,
@@ -287,6 +288,9 @@ class Agent:
                 sandbox_setups=sandbox_setups or [],
                 user_env=user_env or {},
                 region=sandbox_region,
+                # A platform agent's place, whose workspace it mounts whichever conversation it's in; only a runtime
+                # that keeps a place's workspace is ever handed one.
+                **({"scope": agent_scope} if agent_scope else {}),
                 # Its time bills like any NoClick compute, BYOK or not.
                 user_id=user_id,
                 organization_id=organization_id,
@@ -378,6 +382,7 @@ class Agent:
         node_id: Optional[str] = None,
         filesystem_configs: Optional[List[Dict[str, Any]]] = None,
         conversation_key: Optional[str] = None,
+        agent_scope: Optional[str] = None,
         sandbox_setups: Optional[List[Dict[str, Any]]] = None,
         user_env: Optional[Dict[str, str]] = None,
         execution_id: Optional[str] = None,
@@ -424,6 +429,7 @@ class Agent:
             node_id=node_id,
             filesystem_configs=filesystem_configs,
             conversation_key=conversation_key,
+            agent_scope=agent_scope,
             sandbox_setups=sandbox_setups,
             user_env=user_env,
             execution_id=execution_id,

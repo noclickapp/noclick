@@ -15,6 +15,11 @@ account_user_id, version, name, digest, files}]``, ``files`` each version's
 ``[{path, size, sha256}]``), written at its sandbox's cold start.
 ``_sessionGeneration`` is which of its conversation's harness session stores a
 coding harness resumes (a revert starts the next one); unset, the first.
+``_agentScope`` is the agent's own place, whichever conversation a turn runs in
+(a platform agent's: one per agent and scope): its warm sandbox, its
+``/workspace``, its presence and its lost-turn markers key on it, while its
+conversation key keeps only its history. Unset (a canvas agent, a test run),
+they key on the conversation.
 """
 
 from __future__ import annotations
@@ -27,6 +32,7 @@ NO_SHELL_KEY = "_noShell"
 SANDBOX_NETWORK_KEY = "_sandboxNetwork"
 SANDBOX_SKILLS_KEY = "_sandboxSkills"
 SESSION_GENERATION_KEY = "_sessionGeneration"
+AGENT_SCOPE_KEY = "_agentScope"
 
 
 def _runtime_value(node: Any, key: str) -> Any:
@@ -74,3 +80,14 @@ def session_generation_of(node: Any) -> int:
 def session_key(conversation_key: str, generation: int) -> str:
     """The key a conversation's harness session store is named by: its own, then one per generation after it."""
     return f"{conversation_key}~s{generation}" if generation else conversation_key
+
+
+def agent_scope_of(node: Any) -> Optional[str]:
+    scope = _runtime_value(node, AGENT_SCOPE_KEY)
+    return scope if isinstance(scope, str) and scope else None
+
+
+def place_key_of(node: Any) -> Optional[str]:
+    """What the agent's place (its warm sandbox, ``/workspace``, presence, markers) goes by: its scope, else the
+    conversation the run is in (``AgentNode._conversation_key``); None for a one-off run."""
+    return agent_scope_of(node) or getattr(node, "_conversation_key", None)
