@@ -13,9 +13,10 @@ __all__ = [
 DESCRIPTIONS = {
     "tell_parent": "Tell the agent that gave you your task something now, without stopping.",
     "wake_me": ("Take a turn in this conversation later: at a time, after some minutes, when an operation finishes, "
-                "or on a cron schedule. Your note is what you'll be told."),
-    "list_wakeups": "List the wake-ups set in this conversation that haven't come due.",
-    "cancel_wakeup": "Cancel a wake-up set in this conversation.",
+                "on a cron schedule or a fixed interval, or in a loop you pace yourself. Your note is what you'll be "
+                "told."),
+    "list_wakeups": "List the wake-ups and loops set in this conversation that haven't come due.",
+    "cancel_wakeup": "Cancel a wake-up or loop set in this conversation.",
     "request_connection": "Ask the user to connect an account you need; returns a link to share with them.",
     "message_coordinator": "Send a message to the account's coordinator; it acts on it later.",
     "submit_feedback": "Report a platform bug: a platform tool that failed or returned a wrong result.",
@@ -33,6 +34,8 @@ PARAMETERS = {
     "wake_me.operation_id": "Wake when this operation finishes.",
     "wake_me.operation_ids": "Wake once, when the last of these operations finishes.",
     "wake_me.every": "A five-field cron schedule.",
+    "wake_me.every_minutes": "A fixed interval in minutes, until it's canceled.",
+    "wake_me.self_paced": "With at or after_minutes: a loop each run of which sets its next.",
     "wake_me.wakeup_id": "A wake-up of yours to change instead of setting a new one.",
     "wake_me.conversation": "Another of your own conversations to set it in (or change it in) instead of this one.",
     "list_wakeups.conversation": "Another of your own conversations to list instead of this one.",
