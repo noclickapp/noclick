@@ -671,9 +671,11 @@ class WorkflowNode(ABC):
 
     # The provider signs each delivery with a secret NoClick keeps on the
     # registration's webhooks row alone, never in the graph (WhatsApp's WAHooks
-    # webhooks). The receiver hands ``verify_webhook_signature`` that secret and
-    # records on the delivery whether there was one to check
-    # (``_webhook.signature_verified``); the reconciler's sweep reads a missing one.
+    # webhooks), one per sender that delivers to the URL (``webhook_signer``;
+    # ``webhooks.signing_secrets``). The receiver hands ``verify_webhook_signature``
+    # the delivery's own sender's secret and records on the delivery whether there
+    # was one to check (``_webhook.signature_verified``); the reconciler's sweep
+    # reads what the row lacks.
     webhook_secret_on_row: ClassVar[bool] = False
 
     # A node whose service has shut down: no listing offers it for new work
@@ -1195,11 +1197,18 @@ class WorkflowNode(ABC):
         Called by the webhook receiver before a trigger node fires its workflow.
         Webhook-trigger nodes override this to check the provider's signature
         header against a shared secret stored in *config* (for a
-        ``webhook_secret_on_row`` node, the row's, or None while it has none).
-        *headers* keys are lowercased. The default returns ``True`` (no
-        verification).
+        ``webhook_secret_on_row`` node, the row's for the delivery's sender, or
+        None while it has none). *headers* keys are lowercased. The default
+        returns ``True`` (no verification).
         """
         return True
+
+    @classmethod
+    def webhook_signer(cls, payload: Dict[str, Any]) -> Optional[str]:
+        """Which of the provider's senders a ``webhook_secret_on_row`` node's
+        delivery comes from (WhatsApp: its WAHooks connection), naming the secret
+        it is verified against. None: no recorded secret applies."""
+        return None
 
     @classmethod
     def handle_webhook_handshake(

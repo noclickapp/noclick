@@ -1995,16 +1995,23 @@ class WhatsAppNode(WorkflowNode):
     self_registering_triggers = {"receive_message": ("whatsapp_qr",)}
 
     # WAHooks signs each delivery with its webhook's own secret, which the
-    # webhooks row keeps (never the graph: a fork or template would carry it).
+    # webhooks row keeps (never the graph: a fork or template would carry it),
+    # one per connection: a URL can be registered on several, each its own.
     webhook_secret_on_row = True
+
+    @classmethod
+    def webhook_signer(cls, payload):
+        """The WAHooks connection a delivery comes from, whose webhook's secret signs it."""
+        return str(payload.get("connectionId") or "").strip() or None
 
     @classmethod
     def verify_webhook_signature(cls, body, headers, config):
         """WAHooks' ``X-WAHooks-Signature``: ``sha256=`` HMAC-SHA256 of
         ``{X-WAHooks-Timestamp}.{body}`` with the webhook's signing secret, the
-        timestamp within 5 minutes. A registration from before NoClick kept
-        that secret has none to check: its deliveries run unverified, which
-        is never an owner's own note (``_owner_note``)."""
+        timestamp within 5 minutes. A connection NoClick holds no secret for
+        (a registration from before it kept them, a link it never recorded) has
+        none to check: its deliveries run unverified, which is never an owner's
+        own note (``_owner_note``)."""
         secret = (config or {}).get("signing_secret")
         if not secret:
             return True
@@ -2039,9 +2046,9 @@ class WhatsAppNode(WorkflowNode):
     ) -> Optional[Dict[str, Any]]:
         """What WAHooks holds for the trigger, read with NoClick's own key and
         the connection the credential's metadata names (nothing decrypted): the
-        row's fields (its signing ``secret`` among them) when the connection
-        delivers to ``webhook_url`` with every event the loader asks for, False
-        when it doesn't, None when it can't say."""
+        row's fields (``signing_secrets``: that connection's secret, by its id)
+        when the connection delivers to ``webhook_url`` with every event the
+        loader asks for, False when it doesn't, None when it can't say."""
         from utils.wahooks_connections import get_wahooks_api_key
 
         api_key = get_wahooks_api_key()
@@ -2063,7 +2070,8 @@ class WhatsAppNode(WorkflowNode):
             from utils.wahooks_connections import signing_secret
 
             secret = signing_secret(ours, webhook_url)
-            return {"external_webhook_id": connection_id, **({"secret": secret} if secret else {})}
+            return {"external_webhook_id": connection_id,
+                    **({"signing_secrets": {connection_id: secret}} if secret else {})}
         return False
 
     @classmethod
@@ -2401,6 +2409,14 @@ class WhatsAppNode(WorkflowNode):
     def _from_me(p: Dict[str, Any]) -> bool:
         key = (p.get("_data") or {}).get("key") or {}
         return bool(p.get("fromMe") or key.get("fromMe"))
+
+    @staticmethod
+    def _unverified(envelope: Dict[str, Any], why: str) -> None:
+        """Run a delivery as an unverified one (``_verified``), whatever its signature said."""
+        webhook = envelope.get("_webhook")
+        if isinstance(webhook, dict) and webhook.get("signature_verified"):
+            webhook["signature_verified"] = False
+            logger.warning(f"[WhatsAppNode] Delivery from a stale link runs without owner privileges: {why}")
 
     @staticmethod
     def _verified(envelope: Dict[str, Any]) -> bool:
@@ -2802,9 +2818,11 @@ class WhatsAppNode(WorkflowNode):
         number, not the one the sender wrote to. Judged on the envelope's
         ``connectionId`` against the credential's connection; the same phone
         through another of its links is still this account (a re-scan whose
-        webhook carry-over failed keeps delivering from the old link).
-        Whatever can't be judged lets the delivery through: no connectionId,
-        no credential id, a lookup error. A lost message is worse."""
+        webhook carry-over failed keeps delivering from the old link), but
+        runs as it would unsigned: owner privileges come from the credential's
+        own connection alone. Whatever can't be judged lets the delivery
+        through: no connectionId, no credential id, a lookup error. A lost
+        message is worse."""
         from utils.credentials import _is_credential_uuid, credential_metadata
 
         delivered = str(payload.get("connectionId") or "")
@@ -2835,6 +2853,7 @@ class WhatsAppNode(WorkflowNode):
 
         receiving = digits(str((payload.get("me") or {}).get("id") or "").split("@")[0].split(":")[0])
         if row and receiving and receiving == digits(credential_metadata(row).get("phone_number")):
+            cls._unverified(payload, f"connection {delivered} is not credential {credential_id}'s ({bound})")
             return None
         logger.warning(
             f"[WhatsAppNode] Dropped a delivery to {node_id} from WhatsApp connection {delivered}: "
@@ -2952,14 +2971,16 @@ class WhatsAppNode(WorkflowNode):
     async def _registered_connections(pool, workflow_id, node_id) -> tuple:
         """``(webhooks row id, connection ids)``: the WAHooks connections this
         node's recorded registration lives on — the one the row recorded at
-        registration (``external_webhook_id``) and its registering credential's
-        (metadata; covers rows from before the record). Neither needs access to
-        the credential, so one that belongs to another member or was deleted
-        can't strand a webhook: WAHooks calls take only the platform key."""
+        registration (``external_webhook_id``), its registering credential's
+        (metadata; covers rows from before the record), and every one it holds
+        a signing secret for. None needs access to the credential, so one that
+        belongs to another member or was deleted can't strand a webhook:
+        WAHooks calls take only the platform key."""
         from utils.credentials import credential_metadata
+        from utils.webhook_manager import recorded_signing_secrets
 
         row = await pool.fetchrow(
-            """SELECT w.id, w.external_webhook_id,
+            """SELECT w.id, w.external_webhook_id, w.signing_secrets,
                       (SELECT c.metadata FROM credentials c
                         WHERE c.id::text = w.registered_credential_id) AS metadata
                FROM webhooks w WHERE w.workflow_id = $1 AND w.node_id = $2""",
@@ -2968,7 +2989,8 @@ class WhatsAppNode(WorkflowNode):
         )
         if not row:
             return None, set()
-        recorded = {row["external_webhook_id"], credential_metadata(row).get("connection_id")}
+        recorded = {row["external_webhook_id"], credential_metadata(row).get("connection_id"),
+                    *recorded_signing_secrets(row["signing_secrets"])}
         return str(row["id"]), {str(c) for c in recorded if c}
 
     @classmethod
@@ -3180,10 +3202,10 @@ class WhatsAppNode(WorkflowNode):
                                     )
                                     # The row records the connection, so teardown never
                                     # needs the credential (another member's, or deleted),
-                                    # and the secret deliveries are verified by.
+                                    # and the secret its deliveries are verified by.
                                     await WebhookManager.persist_registration_state(
                                         pool, webhook_data['webhook_id'],
-                                        signing_secret=secret,
+                                        signing_secrets={connection_id: secret},
                                         external_webhook_id=connection_id,
                                         registered_operation='receive_message',
                                         registered_credential_id=credential_id,
@@ -3267,8 +3289,8 @@ class WhatsAppNode(WorkflowNode):
                             from utils.database_pool import get_native_pool
                             from utils.webhook_manager import WebhookManager
 
-                            await WebhookManager.record_signing_secret(
-                                get_native_pool(), webhook_url, secret,
+                            await WebhookManager.record_signing_secrets(
+                                get_native_pool(), webhook_url, {conn_id: secret},
                                 workflow_id=self.workflow_id, node_id=self.node_id,
                             )
                     except Exception as e:

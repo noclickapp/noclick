@@ -1010,7 +1010,7 @@ async def get_webhook_config(webhook_id: str) -> Optional[dict]:
 
     row = await get_native_pool().fetchrow(
         """
-        SELECT w.id, w.user_id, w.workflow_id, w.node_id, w.secret, w.is_active,
+        SELECT w.id, w.user_id, w.workflow_id, w.node_id, w.secret, w.signing_secrets, w.is_active,
                wf.workflow as workflow_config, wf.updated_at as workflow_updated_at
         FROM webhooks w
         JOIN workflows wf ON w.workflow_id = wf.id
@@ -1511,6 +1511,7 @@ async def handle_webhook_payload(
             trigger_node, body.encode(), headers,
             workflow_id=workflow_id,
             webhook_secret=config.get("secret"),
+            webhook_secrets=config.get("signing_secrets"),
             method=method,
             query_params=query,
             payload=payload,
@@ -1718,6 +1719,7 @@ async def _apply_trigger_node_hooks(
     method: Optional[str] = None,
     query_params: Optional[dict] = None,
     payload: Optional[dict] = None,
+    webhook_secrets: Any = None,
 ) -> Optional[Any]:
     """Run a matched trigger node's webhook handshake + signature hooks.
 
@@ -1748,10 +1750,12 @@ async def _apply_trigger_node_hooks(
     ``signing_secret`` first, then retries with this — covering both a config
     the autosave hasn't reached (first event after registering) and a config
     holding the pre-re-registration secret (stale after a guard-break).
-    A ``webhook_secret_on_row`` node keeps its secret on the row alone, so it
-    is verified against that one, and ``payload``'s ``_webhook`` (the
-    receiver's own record of the request) says whether there was a secret to
-    check: ``signature_verified``.
+    A ``webhook_secret_on_row`` node keeps a secret per sender on the row
+    alone (``webhook_secrets``, the row's ``signing_secrets``): a delivery is
+    verified against its own sender's (``webhook_signer``), a wrong signature
+    401s, and a sender the row records no secret for runs unverified.
+    ``payload``'s ``_webhook`` (the receiver's own record of the request) says
+    whether it was checked: ``signature_verified``.
     """
     from nodes.core.registry import NODE_REGISTRY
 
@@ -1787,10 +1791,20 @@ async def _apply_trigger_node_hooks(
             )
         return handshake
 
+    row_secret = None
     if node_cls.webhook_secret_on_row:
+        from utils.webhook_manager import recorded_signing_secrets
+
+        signer = node_cls.webhook_signer(payload) if isinstance(payload, dict) else None
+        row_secret = recorded_signing_secrets(webhook_secrets).get(signer) if signer else None
         accepted = node_cls.verify_webhook_signature(
-            raw_body, lower_headers, {**node_config, "signing_secret": webhook_secret}
+            raw_body, lower_headers, {**node_config, "signing_secret": row_secret}
         )
+        if accepted and not row_secret and payload is not None:
+            logger.warning(
+                f"[WEBHOOK] Unverified delivery to node {trigger_node.get('id')} ({trigger_node.get('type')}): "
+                f"no signing secret recorded for its sender {signer or '(unnamed)'}; it runs without owner privileges"
+            )
     elif node_cls.verify_webhook_signature(raw_body, lower_headers, node_config):
         accepted = True
     else:
@@ -1813,7 +1827,7 @@ async def _apply_trigger_node_hooks(
         )
         raise HTTPException(status_code=401, detail="Invalid webhook signature")
     if node_cls.webhook_secret_on_row and payload is not None:
-        payload["_webhook"]["signature_verified"] = bool(webhook_secret)
+        payload["_webhook"]["signature_verified"] = bool(row_secret)
 
     return None
 
@@ -2964,6 +2978,7 @@ async def receive_webhook(
         trigger_node, body, dict(request.headers),
         workflow_id=workflow_id,
         webhook_secret=config.get("secret"),
+        webhook_secrets=config.get("signing_secrets"),
         method=request.method,
         query_params=dict(request.query_params),
         payload=payload,

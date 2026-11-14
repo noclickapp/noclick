@@ -2,7 +2,8 @@
 Centralized webhook lifecycle manager — THE owner of trigger registration state.
 
 The ``webhooks`` row is the system of record for a trigger node's external
-registration: ``secret``, ``external_webhook_id``, ``registered_operation`` and
+registration: ``secret`` (``signing_secrets``, per sender, where one URL has several),
+``external_webhook_id``, ``registered_operation`` and
 ``registered_credential_id`` are written synchronously at registration time
 (``persist_registration_state``), so signature verification and provider
 deregistration never depend on the debounced frontend autosave landing the same
@@ -33,6 +34,7 @@ Schema markers:
 """
 
 import asyncio
+import json
 import logging
 import re
 from collections import Counter
@@ -148,6 +150,13 @@ async def registration_holder(
 
 
 _WEBHOOK_ID_RE = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", re.IGNORECASE)
+
+
+def recorded_signing_secrets(value: Any) -> Dict[str, str]:
+    """A row's ``signing_secrets`` (sender → secret), read through a pool with or without the jsonb codec."""
+    if isinstance(value, str):
+        value = json.loads(value)
+    return {str(k): v for k, v in (value or {}).items() if isinstance(v, str) and v}
 
 
 def webhook_id_for_url(url: str) -> Optional[str]:
@@ -400,7 +409,7 @@ async def _activation_refusal(pool, wf_uuid, node_id: str):
 _ROW_COLUMNS = (
     "id, is_active, external_webhook_id, registered_operation, registered_credential_id, registered_fingerprint, "
     "refused_fingerprint, refused_kind, refused_holder_id, refused_resource, refused_credential_version, "
-    "(secret IS NOT NULL) AS secret_set"
+    "signing_secrets"
 )
 
 
@@ -416,10 +425,10 @@ def _recorded(row: Optional[Dict[str, Any]]) -> bool:
     return bool(row and row.get("registered_operation") and (row.get("is_active") or row.get("external_webhook_id")))
 
 
-def _secret_unrecorded(node_class, row: Optional[Dict[str, Any]]) -> bool:
-    """Whether the row lacks the signing secret its class keeps there alone (``webhook_secret_on_row``): a
-    registration made before NoClick kept it, whose deliveries can't be verified until it's read."""
-    return bool(row and getattr(node_class, "webhook_secret_on_row", False) and not row.get("secret_set"))
+def _secrets_recorded(row: Dict[str, Any], observed: Dict[str, Any]) -> bool:
+    """Whether the row already records every sender's secret the provider was seen signing with."""
+    recorded = recorded_signing_secrets(row.get("signing_secrets"))
+    return all(recorded.get(sender) == secret for sender, secret in (observed.get("signing_secrets") or {}).items())
 
 
 def _app_event_class_for_provider(provider: str):
@@ -461,7 +470,7 @@ REASONS = {
     "recorded_in_config": "it's live, and only its settings' copy records it, from before the record was kept",
     "seen_live": "the scheduler or provider holds it as its settings ask, and the record lacks it",
     "seen_other": "the scheduler or provider holds something its settings don't ask for",
-    "unsigned": "it's live, and the record lacks the secret its deliveries are signed with",
+    "unsigned": "it's live, and the record lacks a secret its deliveries are signed with",
     "no_credential": "no usable account is attached",
     "setup_unfinished": "the workflow's setup is unfinished",
     "credential_rejected": "the provider rejected its account, which hasn't been saved again since",
@@ -859,6 +868,7 @@ class WebhookManager:
         webhook_id: str,
         *,
         signing_secret: Optional[str] = None,
+        signing_secrets: Optional[Dict[str, Optional[str]]] = None,
         external_webhook_id: Optional[Any] = None,
         registered_operation: Optional[str] = None,
         registered_credential_id: Optional[str] = None,
@@ -871,7 +881,8 @@ class WebhookManager:
         failure here is a real failure — this RAISES instead of silently
         degrading to autosave-dependent state. ``external_webhook_id`` accepts
         whatever type the provider returned (GitHub/Shopify use ints) and is
-        stored as text.
+        stored as text. ``signing_secrets`` (sender → secret, for a
+        ``webhook_secret_on_row`` node) joins those already recorded.
         """
         ext_id = str(external_webhook_id) if external_webhook_id is not None else None
         async with pool.acquire() as conn:
@@ -880,6 +891,7 @@ class WebhookManager:
                 UPDATE webhooks
                 SET is_active = true,
                     secret = COALESCE($1, secret),
+                    signing_secrets = signing_secrets || ($7::text)::jsonb,
                     external_webhook_id = COALESCE($2, external_webhook_id),
                     registered_operation = $3,
                     registered_credential_id = $4,
@@ -895,6 +907,7 @@ class WebhookManager:
                 registered_credential_id,
                 registered_fingerprint,
                 UUID(webhook_id) if isinstance(webhook_id, str) else webhook_id,
+                json.dumps({k: v for k, v in (signing_secrets or {}).items() if k and v}),
             )
         if not result.endswith("1"):
             raise RuntimeError(
@@ -902,23 +915,25 @@ class WebhookManager:
             )
 
     @staticmethod
-    async def record_signing_secret(
-        pool, webhook_url: str, secret: Optional[str], *,
+    async def record_signing_secrets(
+        pool, webhook_url: str, secrets: Dict[str, Optional[str]], *,
         workflow_id: Optional[str] = None, node_id: Optional[str] = None,
     ) -> None:
-        """Record the secret a provider signs ``webhook_url``'s deliveries with
-        on the row that URL addresses, for a webhook made outside a registration
-        step (WAHooks mints one per webhook it creates, so a webhook carried to
-        another connection is signed anew). With ``workflow_id``/``node_id``,
-        only when the row is that step's."""
+        """Record the secret each sender signs ``webhook_url``'s deliveries
+        with (sender → secret: WAHooks connection ids) on the row that URL
+        addresses, beside those it holds, for a webhook made outside a
+        registration step (WAHooks mints one per webhook it creates, so a
+        webhook carried to another connection is signed anew). With
+        ``workflow_id``/``node_id``, only when the row is that step's."""
         webhook_id = webhook_id_for_url(webhook_url)
-        if not (webhook_id and secret):
+        secrets = {k: v for k, v in (secrets or {}).items() if k and v}
+        if not (webhook_id and secrets):
             return
         async with pool.acquire() as conn:
             await conn.execute(
-                "UPDATE webhooks SET secret = $1, updated_at = now() WHERE id = $2 "
-                "AND ($3::uuid IS NULL OR (workflow_id = $3 AND node_id = $4))",
-                secret, UUID(webhook_id),
+                "UPDATE webhooks SET signing_secrets = signing_secrets || ($1::text)::jsonb, updated_at = now() "
+                "WHERE id = $2 AND ($3::uuid IS NULL OR (workflow_id = $3 AND node_id = $4))",
+                json.dumps(secrets), UUID(webhook_id),
                 UUID(str(workflow_id)) if workflow_id else None, node_id,
             )
 
@@ -948,7 +963,8 @@ class WebhookManager:
         """
         wf_uuid = UUID(workflow_id) if isinstance(workflow_id, str) else workflow_id
         set_clause = (
-            "is_active = false, secret = NULL, external_webhook_id = NULL, updated_at = now()"
+            "is_active = false, secret = NULL, signing_secrets = '{}'::jsonb, external_webhook_id = NULL, "
+            "updated_at = now()"
             if clear_registration
             else "is_active = false, updated_at = now()"
         )
@@ -1838,8 +1854,9 @@ class WebhookManager:
         credential_id = _extract_node_credential_id(node, node_config)
         fingerprint = registration_fingerprint(node_class, current_op, credential_id, node_config)
         converged = bool(row and row["is_active"] and row["registered_fingerprint"] == fingerprint)
-        # A sweep reads the signing secret a live registration's record lacks; anything else takes it as it is.
-        if converged and not (observe and _secret_unrecorded(node_class, row)):
+        # A sweep reads the secrets a live registration's deliveries are signed with, for the record to hold each
+        # sender's; anything else takes it as it is.
+        if converged and not (observe and getattr(node_class, "webhook_secret_on_row", False)):
             return Decision("live", "converged", fingerprint=fingerprint, held=True)
 
         # Pre-migration adoption: a NULL-fingerprint row whose operation +
@@ -1880,10 +1897,13 @@ class WebhookManager:
                 pool, webhook_url=get_webhook_url(str(row["id"])), credential_id=credential_id, config=node_config,
             )
         if observed and row["is_active"]:
+            if converged and _secrets_recorded(row, observed):
+                return Decision("live", "converged", fingerprint=fingerprint, held=True)
             return Decision("adopt", "unsigned" if converged else "seen_live", fingerprint=fingerprint, held=True,
                             stamp={"registered_operation": current_op, "registered_credential_id": credential_id,
                                    **observed})
-        if converged and observed is None:
+        # The read only fills in secrets: a converged registration it couldn't read, or one with secrets recorded, stays.
+        if converged and (observed is None or recorded_signing_secrets(row.get("signing_secrets"))):
             return Decision("live", "converged", fingerprint=fingerprint, held=True)
         held = recorded
 
@@ -2012,14 +2032,17 @@ class WebhookManager:
 
     @staticmethod
     async def _stamp_row(pool, webhook_id, decision: Decision) -> None:
-        """Adopt a live registration: the row records it, and nothing else is touched (the workflow isn't edited)."""
+        """Adopt a live registration: the row records it, and nothing else is touched (the workflow isn't edited).
+        Signing secrets seen join those the row holds."""
         stamp = {"registered_fingerprint": decision.fingerprint, **decision.stamp}
+        secrets = stamp.pop("signing_secrets", None) or {}
         columns = ["registered_fingerprint"] + sorted(c for c in stamp if c != "registered_fingerprint")
         assignments = ", ".join(f"{column} = ${index + 1}" for index, column in enumerate(columns))
         async with pool.acquire() as conn:
             await conn.execute(
-                f"UPDATE webhooks SET {assignments}, updated_at = now() WHERE id = ${len(columns) + 1}",
-                *(None if stamp[c] is None else str(stamp[c]) for c in columns), webhook_id,
+                f"UPDATE webhooks SET {assignments}, signing_secrets = signing_secrets || (${len(columns) + 1}::text)"
+                f"::jsonb, updated_at = now() WHERE id = ${len(columns) + 2}",
+                *(None if stamp[c] is None else str(stamp[c]) for c in columns), json.dumps(secrets), webhook_id,
             )
 
     @staticmethod

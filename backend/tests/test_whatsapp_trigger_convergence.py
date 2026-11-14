@@ -11,9 +11,11 @@ with a credential swap, drops it with the operation, and brings back one it
 tore down before.
 
 Each WAHooks webhook signs its deliveries with a secret of its own, which the
-row records wherever a webhook is made (registering, a manual run that
-re-registers, a rebind carrying webhooks to a new connection), and which the
-nightly sweep reads for a registration made before NoClick kept it.
+row records by connection wherever a webhook is made (registering, a manual run
+that re-registers, a rebind carrying webhooks to a new connection), and which
+the nightly sweep reads off WAHooks for one the record lacks or misstates. One
+URL can be registered on several connections: each delivery is checked against
+its own connection's secret.
 
 A trigger hears only the WhatsApp its credential is on. Runs answer through
 the node's current credential, so a webhook left on a previous credential's
@@ -396,8 +398,12 @@ def _message(connection_id, receiving_phone, *, stamped=True):
     return envelope
 
 
-async def _secret(db, workflow_id):
-    return await db.fetchval("SELECT secret FROM webhooks WHERE workflow_id = $1 AND node_id = $2", workflow_id, NODE)
+async def _secrets(db, workflow_id):
+    """The row's signing secrets, by WAHooks connection."""
+    from utils.webhook_manager import recorded_signing_secrets
+
+    return recorded_signing_secrets(await db.fetchval(
+        "SELECT signing_secrets FROM webhooks WHERE workflow_id = $1 AND node_id = $2", workflow_id, NODE))
 
 
 def _hook_secret(wahooks, connection_id):
@@ -407,7 +413,7 @@ def _hook_secret(wahooks, connection_id):
 
 async def _deliver(db, workflow_id, envelope, monkeypatch, *, secret=None):
     """Post ``envelope`` to the trigger's webhook as WAHooks does, signed with ``secret`` (by default the one its row
-    records); the response and the runs it started."""
+    records for the envelope's connection, else one it never recorded); the response and the payloads it ran."""
     import json
 
     from tests.test_whatsapp_self_echo import wahooks_headers
@@ -416,7 +422,7 @@ async def _deliver(db, workflow_id, envelope, monkeypatch, *, secret=None):
     runs = []
 
     def run(**kwargs):
-        runs.append(kwargs)
+        runs.append(kwargs["nodes"][0]["config"]["_triggerPayload"])
 
         async def ran():
             return {}
@@ -425,7 +431,8 @@ async def _deliver(db, workflow_id, envelope, monkeypatch, *, secret=None):
     monkeypatch.setattr(webhook_routes, "_execute_workflow_with_relay", run)
     webhook_id = str(await db.fetchval(
         "SELECT id FROM webhooks WHERE workflow_id = $1 AND node_id = $2", workflow_id, NODE))
-    headers = wahooks_headers(envelope, secret or await _secret(db, workflow_id))
+    recorded = (await _secrets(db, workflow_id)).get(envelope.get("connectionId"))
+    headers = wahooks_headers(envelope, secret or recorded or "a secret no row records")
     response = await webhook_routes.handle_webhook_payload(
         webhook_id, json.dumps(envelope), headers, {}, return_response=True)
     return response, runs
@@ -436,8 +443,8 @@ async def _owner_on_their_own(db, wahooks):
     member's webhook still on the member's connection (left by a registration nothing recorded)."""
     wf = await _shared(db, wahooks)
     stale_url = await _url(db, wf.workflow_id)
-    await db.execute("UPDATE webhooks SET external_webhook_id = NULL, registered_credential_id = NULL "
-                     "WHERE workflow_id = $1", wf.workflow_id)
+    await db.execute("UPDATE webhooks SET external_webhook_id = NULL, registered_credential_id = NULL, "
+                     "signing_secrets = '{}'::jsonb WHERE workflow_id = $1", wf.workflow_id)
     await _open_panel(db, wf.owner, wf.workflow_id, wf.mine)
     await _save(db, wf.workflow_id, "receive_message", wf.mine)
     assert _urls(wahooks, wf.their_connection) == [stale_url]
@@ -447,10 +454,14 @@ async def _owner_on_their_own(db, wahooks):
 async def test_a_delivery_from_another_whatsapp_is_acknowledged_without_a_run(real_database, wahooks, monkeypatch):  # noqa: F811
     db = real_database
     wf = await _owner_on_their_own(db, wahooks)
-    response, runs = await _deliver(db, wf.workflow_id, _message(wf.their_connection, MEMBER_PHONE), monkeypatch)
-    assert response["status"] == 200 and "ignored" in response["body"] and runs == []
-    # As the left-behind webhook actually signs it (its own secret, not the one the row records): refused.
-    response, runs = await _deliver(db, wf.workflow_id, _message(wf.their_connection, MEMBER_PHONE), monkeypatch,
+    # The row records no secret for the left-behind webhook's connection: nothing to check it by, and it isn't the
+    # credential's WhatsApp, however it's signed.
+    for secret in (None, _hook_secret(wahooks, wf.their_connection)):
+        response, runs = await _deliver(db, wf.workflow_id, _message(wf.their_connection, MEMBER_PHONE), monkeypatch,
+                                        secret=secret)
+        assert response["status"] == 200 and "ignored" in response["body"] and runs == []
+    # Naming the credential's connection takes that connection's secret: the left-behind webhook's is refused.
+    response, runs = await _deliver(db, wf.workflow_id, _message(wf.my_connection, MEMBER_PHONE), monkeypatch,
                                     secret=_hook_secret(wahooks, wf.their_connection))
     assert response["status"] == 401 and runs == []
 
@@ -460,9 +471,10 @@ async def test_a_delivery_from_the_credentials_whatsapp_runs(real_database, waho
     wf = await _owner_on_their_own(db, wahooks)
     response, runs = await _deliver(db, wf.workflow_id, _message(wf.my_connection, OWNER_PHONE), monkeypatch)
     assert response["status"] == 200 and len(runs) == 1
-    # The same phone through another of its links (a re-scan's old link) is still this account.
+    assert runs[0]["_webhook"]["signature_verified"] is True
+    # The same phone through another of its links (a re-scan's old link) is still this account: it runs unverified.
     _, runs = await _deliver(db, wf.workflow_id, _message("conn-replaced", OWNER_PHONE), monkeypatch)
-    assert len(runs) == 1
+    assert len(runs) == 1 and runs[0]["_webhook"]["signature_verified"] is False
 
 
 @pytest.mark.parametrize("unjudgeable", ["unreadable credential", "unstamped envelope"])
@@ -561,7 +573,7 @@ async def test_registering_records_the_secret_its_deliveries_are_signed_with(rea
     db = real_database
     owner, workflow_id, credentials, connections = await _seed(db, wahooks)
     assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE))["state"] == "registered"
-    assert await _secret(db, workflow_id) == _hook_secret(wahooks, connections["a"])
+    assert await _secrets(db, workflow_id) == {connections["a"]: _hook_secret(wahooks, connections["a"])}
     graph = await db.fetchval("SELECT workflow FROM workflows WHERE id = $1", workflow_id)
     assert "signing_secret" not in graph["nodes"][0]["config"], "the row keeps it, never the graph"
 
@@ -571,17 +583,17 @@ async def test_registering_records_the_secret_its_deliveries_are_signed_with(rea
                                     secret="not this webhook's")
     assert response["status"] == 401 and runs == []
 
-    # Another WhatsApp: its webhook is a new one, with a secret of its own.
+    # Another WhatsApp: the first's webhook is torn down with its secret, and the new one has a secret of its own.
     await _save(db, workflow_id, "receive_message", credentials["b"])
     assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE))["state"] == "registered"
-    assert await _secret(db, workflow_id) == _hook_secret(wahooks, connections["b"])
+    assert await _secrets(db, workflow_id) == {connections["b"]: _hook_secret(wahooks, connections["b"])}
 
 
 async def _unsigned_registration(db, wahooks):
     """A live registration from before NoClick kept its webhook's signing secret."""
     owner, workflow_id, credentials, connections = await _seed(db, wahooks)
     assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE))["state"] == "registered"
-    await db.execute("UPDATE webhooks SET secret = NULL WHERE workflow_id = $1", workflow_id)
+    await db.execute("UPDATE webhooks SET signing_secrets = '{}'::jsonb WHERE workflow_id = $1", workflow_id)
     [hook] = wahooks.hooks[connections["a"]]
     return workflow_id, connections["a"], dict(hook)
 
@@ -592,21 +604,43 @@ async def test_the_nightly_sweep_reads_the_secret_a_registration_from_before_lac
 
     # A lifecycle surface takes it as it is: live, nothing asked of WAHooks.
     assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE))["state"] == "live"
-    assert await _secret(db, workflow_id) is None
+    assert await _secrets(db, workflow_id) == {}
 
     # The sweep reads it off the webhook WAHooks holds: recorded, the webhook itself untouched.
     planned = await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, plan_only=True, observe=True)
     assert planned["state"] == "would_adopt" and "secret" in planned["reason"]
     assert "signingSecret" not in str(planned) and hook["signingSecret"] not in str(planned)
-    assert await _secret(db, workflow_id) is None
+    assert await _secrets(db, workflow_id) == {}
     done = await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, observe=True)
     assert done["state"] == "live" and done.get("adopted") is True
-    assert await _secret(db, workflow_id) == hook["signingSecret"]
+    assert await _secrets(db, workflow_id) == {connection: hook["signingSecret"]}
     assert wahooks.hooks[connection] == [hook], "the same webhook, never re-made"
 
-    # Recorded: the next sweep has nothing to read.
+    # Recorded: the next sweep finds nothing to change, and one that can't read WAHooks leaves it be.
+    again = await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, observe=True)
+    assert again["state"] == "live" and not again.get("adopted")
     wahooks.down = True
     assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, observe=True))["state"] == "live"
+
+
+async def test_the_nightly_sweep_corrects_a_secret_recorded_from_another_webhook(
+        real_database, wahooks, monkeypatch):  # noqa: F811
+    """A record holding another webhook's secret for the connection refuses every delivery from it; the sweep reads
+    the one WAHooks signs with and records it, and the connection's deliveries run again."""
+    db = real_database
+    workflow_id, connection, hook = await _unsigned_registration(db, wahooks)
+    await db.execute("UPDATE webhooks SET signing_secrets = $2::jsonb WHERE workflow_id = $1", workflow_id,
+                     {connection: "a stale webhook's secret"})
+    response, runs = await _deliver(db, workflow_id, _message(connection, OWNER_PHONE), monkeypatch,
+                                    secret=hook["signingSecret"])
+    assert response["status"] == 401 and runs == []
+
+    planned = await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, plan_only=True, observe=True)
+    assert planned["state"] == "would_adopt"
+    assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, observe=True)).get("adopted") is True
+    assert await _secrets(db, workflow_id) == {connection: hook["signingSecret"]}
+    response, runs = await _deliver(db, workflow_id, _message(connection, OWNER_PHONE), monkeypatch)
+    assert response["status"] == 200 and runs[0]["_webhook"]["signature_verified"] is True
 
 
 async def test_a_sweep_that_cant_read_wahooks_leaves_an_unsigned_registration_be(real_database, wahooks):  # noqa: F811
@@ -615,7 +649,7 @@ async def test_a_sweep_that_cant_read_wahooks_leaves_an_unsigned_registration_be
     workflow_id, connection, hook = await _unsigned_registration(db, wahooks)
     wahooks.down = True
     assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, observe=True))["state"] == "live"
-    assert await _secret(db, workflow_id) is None and (await _row(db, workflow_id))["is_active"]
+    assert await _secrets(db, workflow_id) == {} and (await _row(db, workflow_id))["is_active"]
     wahooks.down = False
     assert wahooks.hooks[connection] == [hook]
 
@@ -630,29 +664,52 @@ async def test_a_sweep_re_registers_an_unsigned_registration_wahooks_no_longer_h
     done = await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, observe=True)
     assert done["state"] == "registered"
     assert _urls(wahooks, connection) == [hook["url"]]
-    assert await _secret(db, workflow_id) == _hook_secret(wahooks, connection) != hook["signingSecret"]
+    assert await _secrets(db, workflow_id) == {connection: _hook_secret(wahooks, connection)}
+    assert _hook_secret(wahooks, connection) != hook["signingSecret"]
+
+
+async def test_a_sweep_reading_secrets_leaves_a_recorded_registration_be(real_database, wahooks):  # noqa: F811
+    """The read is for secrets: a registration whose secrets are recorded stays as it is whatever WAHooks lists."""
+    db = real_database
+    owner, workflow_id, credentials, connections = await _seed(db, wahooks)
+    assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE))["state"] == "registered"
+    recorded = await _secrets(db, workflow_id)
+    wahooks.hooks[connections["a"]] = []
+
+    assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, observe=True))["state"] == "live"
+    assert await _secrets(db, workflow_id) == recorded and _urls(wahooks, connections["a"]) == []
 
 
 async def test_a_rebind_records_the_secret_the_new_connection_signs_with(real_database, wahooks, monkeypatch):  # noqa: F811
-    """A re-scan carries each webhook to the phone's new connection, where WAHooks makes it anew with a new secret."""
+    """A re-scan carries each webhook to the phone's new connection, where WAHooks makes it anew with a new secret.
+    The row records it beside the old link's, so each verifies its own; only the credential's connection is the
+    owner's, so the old link's deliveries run unverified."""
     from utils.wahooks_connections import migrate_wahooks_webhooks
 
     db = real_database
     owner, workflow_id, credentials, connections = await _seed(db, wahooks)
     assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE))["state"] == "registered"
-    before = await _secret(db, workflow_id)
+    before = _hook_secret(wahooks, connections["a"])
     rescanned = f"conn-rescan-{uuid.uuid4().hex[:8]}"
     wahooks.live.add(rescanned)
     # The rebind moves the credential first (utils.whatsapp_qr.finalize_qr_connection), then its webhooks.
     await db.execute(
         "UPDATE credentials SET credential = $2, metadata = $3::jsonb WHERE id = $1", credentials["a"],
         get_encryption().encrypt_credential({"credential_type": "whatsapp_qr", "connection_id": rescanned}),
-        {"connection_id": rescanned})
+        {"connection_id": rescanned, "phone_number": OWNER_PHONE})
 
     assert await migrate_wahooks_webhooks(db.pool, connections["a"], rescanned) == 1
-    assert await _secret(db, workflow_id) == _hook_secret(wahooks, rescanned) != before
+    assert await _secrets(db, workflow_id) == {connections["a"]: before, rescanned: _hook_secret(wahooks, rescanned)}
+    assert _hook_secret(wahooks, rescanned) != before
     response, runs = await _deliver(db, workflow_id, _message(rescanned, OWNER_PHONE), monkeypatch)
-    assert response["status"] == 200 and len(runs) == 1
+    assert response["status"] == 200 and runs[0]["_webhook"]["signature_verified"] is True
+
+    # The old link, until it goes: its own secret verifies it, and it isn't the credential's connection.
+    response, runs = await _deliver(db, workflow_id, _message(connections["a"], OWNER_PHONE), monkeypatch)
+    assert response["status"] == 200 and runs[0]["_webhook"]["signature_verified"] is False
+    response, runs = await _deliver(db, workflow_id, _message(connections["a"], OWNER_PHONE), monkeypatch,
+                                    secret=_hook_secret(wahooks, rescanned))
+    assert response["status"] == 401 and runs == []
 
 
 async def test_a_manual_run_that_re_registers_records_the_new_secret(real_database, wahooks):  # noqa: F811
@@ -672,4 +729,4 @@ async def test_a_manual_run_that_re_registers_records_the_new_secret(real_databa
                                   credentials=WhatsAppQRCredential(connection_id=connections["a"])))
     assert (await node.execute({}))["status"] == "no_event"
     assert _urls(wahooks, connections["a"]) == [url]
-    assert await _secret(db, workflow_id) == _hook_secret(wahooks, connections["a"])
+    assert await _secrets(db, workflow_id) == {connections["a"]: _hook_secret(wahooks, connections["a"])}
