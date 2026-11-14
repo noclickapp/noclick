@@ -18,6 +18,7 @@ import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { motion } from 'framer-motion';
 import { AuthLayout } from '~/components/auth/AuthLayout';
+import { EmailLinkSent } from '~/components/auth/EmailLinkSent';
 import { AuthPageHeader } from '~/components/auth/AuthPageHeader';
 import { AUTH_INPUT_CLASS, AUTH_LABEL_CLASS, AUTH_LINK_CLASS, AUTH_PRIMARY_BUTTON_CLASS } from '~/components/auth/authStyle';
 
@@ -70,10 +71,11 @@ export default function ForgotPassword() {
                         </div>
                     )}
 
-                    {actionData && 'success' in actionData && (
-                        <div className="mb-6 p-4 text-green-600 dark:text-green-400 bg-green-500/10 rounded-2xl text-sm">
-                            {actionData.success}
-                        </div>
+                    {actionData && 'success' in actionData && actionData.success && (
+                        <EmailLinkSent
+                            message={actionData.success}
+                            inApp="The link opens in your browser. Set your new password there, then come back here and sign in with it."
+                        />
                     )}
 
                     <Form method="post" className="space-y-5">

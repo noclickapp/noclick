@@ -152,6 +152,12 @@ export default function App() {
                     name="viewport"
                     content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
                 />
+                {/* A home-screen install opens full screen as an app; its status bar overlays the page, which pads
+                    itself with the safe-area inset (the clock's colour follows what is under it). */}
+                <meta name="mobile-web-app-capable" content="yes" />
+                <meta name="apple-mobile-web-app-capable" content="yes" />
+                <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+                <meta name="apple-mobile-web-app-title" content="NoClick" />
                 <script
                     dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
                 />

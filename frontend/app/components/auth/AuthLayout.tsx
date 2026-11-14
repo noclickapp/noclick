@@ -20,7 +20,8 @@ export function AuthLayout({ children, showRightPanel = true, rightPanel }: Auth
     const panel = rightPanel ?? (Aside ? <Aside /> : null);
 
     return (
-        <div className="flex min-h-screen bg-background text-foreground">
+        // The top inset is the status bar of an app added to the home screen, the first page it shows; zero in a browser tab.
+        <div className="flex min-h-screen bg-background pt-[env(safe-area-inset-top)] text-foreground">
             <div data-testid="auth-left-panel" className="flex flex-1 flex-col items-center justify-center px-6 sm:px-12 lg:px-16">
                 <div className="relative z-10 w-full max-w-md">{children}</div>
                 {showRightPanel && !rightPanel && Aside && (
