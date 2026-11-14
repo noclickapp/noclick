@@ -22,7 +22,8 @@ import PipedriveOAuthCallback from '~/routes/api/auth/pipedrive.callback';
 
 describe('Pipedrive callback UI', () => {
     beforeEach(() => {
-        window.opener = null;
+        // Assignments reach happy-dom's window, whose `opener` has only a getter.
+        Object.defineProperty(window, 'opener', { value: null, writable: true, configurable: true });
     });
     afterEach(() => {
         cleanup();

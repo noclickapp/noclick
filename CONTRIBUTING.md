@@ -39,7 +39,7 @@ authorized to sign for them; the agreement says what that means.
 
 Prerequisites: Docker, the [Supabase CLI](https://supabase.com/docs/guides/cli),
 Python 3.12 (3.13 isn't supported — some pinned wheels don't build on it), and
-Node.js 20 or newer with pnpm 10.34.4.
+Node.js 22.12 or newer with pnpm 10.34.4.
 
 ```bash
 pip install -r requirements.txt

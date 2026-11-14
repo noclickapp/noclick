@@ -1,8 +1,6 @@
 import { reactRouter } from '@react-router/dev/vite';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
-import commonjs from 'vite-plugin-commonjs';
-import { ncPlugin } from './app/lib/nc/vite-plugin';
+import { ncPlugin } from './app/lib/nc/vite-plugin.ts';
 import path from 'path';
 
 // Chunk filenames derive from source filenames, and names like
@@ -29,13 +27,11 @@ const bundleServer = process.env.NOCLICK_BUNDLE_SERVER === '1';
 export default defineConfig(() => ({
     plugins: [
         ncPlugin(),
-        commonjs(),
         reactRouter(),
-        tsconfigPaths(),
     ],
     resolve: {
         alias: {
-            '~': path.resolve(__dirname, './app'),
+            '~': path.resolve(import.meta.dirname, './app'),
         },
         // Deduplicate React to prevent multiple instances causing null reference errors
         dedupe: ['react', 'react-dom'],
@@ -44,6 +40,10 @@ export default defineConfig(() => ({
         global: 'globalThis',
     },
     build: {
+        // Vite 6's default targets: Vite 8's own (Safari 16.4) would leave newer syntax and regex
+        // literals unlowered, and the app still serves iOS 15.
+        target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+        // React Router 7 reads the app's output names from `rollupOptions`, not `rolldownOptions`.
         rollupOptions: {
             output: {
                 entryFileNames: neutralizeBaitName,
@@ -98,7 +98,7 @@ export default defineConfig(() => ({
         // by .github/workflows/refresh-cli-models.yml). Build-time inlines the
         // JSON; this only loosens dev-server fs serving.
         fs: {
-            allow: [path.resolve(__dirname, '..')],
+            allow: [path.resolve(import.meta.dirname, '..')],
         },
         watch: {
             ignored: ['**/sdk/**'],

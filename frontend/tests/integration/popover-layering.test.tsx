@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '~/components/ui/dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';

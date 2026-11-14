@@ -13,7 +13,7 @@ import { defineConfig } from 'vitest/config';
 import { availableParallelism } from 'os';
 import { readdirSync, readFileSync } from 'fs';
 import { join, relative, resolve } from 'path';
-import { jsonGlobs } from './tests/support/jsonGlobs';
+import { jsonGlobs } from './tests/support/jsonGlobs.ts';
 
 const EXCLUDE = ['node_modules', 'build', '.react-router', 'tests/nc', 'tests/integration'];
 
@@ -28,7 +28,7 @@ const isolated: string[] = [];
 const collect = (dir: string) => {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const path = join(dir, entry.name);
-    const rel = relative(__dirname, path);
+    const rel = relative(import.meta.dirname, path);
     if (EXCLUDE.includes(rel) || entry.name === 'node_modules') continue;
     if (entry.isDirectory()) collect(path);
     else if (/\.(test|spec)\.tsx?$/.test(entry.name)) {
@@ -36,11 +36,10 @@ const collect = (dir: string) => {
     }
   }
 };
-collect(__dirname);
+collect(import.meta.dirname);
 
 // Vitest leaves a CPU to its main process, so a two-CPU CI runner would get one
-// worker; two finish the suite there about a tenth sooner. The pool keeps both:
-// a worker that keeps its modules is stopped mid-file when the pool shrinks.
+// worker; two finish the suite there about a tenth sooner.
 const workers = availableParallelism() <= 2 ? 2 : undefined;
 
 export default defineConfig({
@@ -51,24 +50,23 @@ export default defineConfig({
     exclude: EXCLUDE,
     testTimeout: 10000,
     maxWorkers: workers,
-    minWorkers: workers,
-    // Vitest isolates per pool, not per project: the shared files get the threads pool.
-    poolOptions: { threads: { isolate: false } },
+    // The shared files run in forks: a threads pool that keeps its modules holds every
+    // worker's in the main process, and the whole suite ran 1.6x slower that way.
     projects: [
-      { extends: true, test: { name: 'shared', exclude: isolated, pool: 'threads', sequence: { groupOrder: 0 } } },
+      { extends: true, test: { name: 'shared', exclude: isolated, pool: 'forks', isolate: false, sequence: { groupOrder: 0 } } },
       { extends: true, test: { name: 'isolated', exclude: shared, sequence: { groupOrder: 1 } } },
     ],
   },
   resolve: {
     alias: [
-      { find: '~', replacement: resolve(__dirname, './app') },
-      { find: /^@lobehub\/icons\/es\/\w+$/, replacement: resolve(__dirname, './tests/support/lobehubIcon.tsx') },
+      { find: '~', replacement: resolve(import.meta.dirname, './app') },
+      { find: /^@lobehub\/icons\/es\/\w+$/, replacement: resolve(import.meta.dirname, './tests/support/lobehubIcon.tsx') },
     ],
   },
   // As in vite.config.ts: modules may read files beside frontend/ (the docs import the SDK READMEs).
   server: {
     fs: {
-      allow: [resolve(__dirname, '..')],
+      allow: [resolve(import.meta.dirname, '..')],
     },
   },
 });

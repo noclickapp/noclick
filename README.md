@@ -137,7 +137,7 @@ The [self-hosting guide](./docs/self-hosting.md) covers your own Postgres, stora
 <details>
 <summary><b>Develop from source</b></summary>
 
-Docker, the [Supabase CLI](https://supabase.com/docs/guides/cli), Python 3.12, Node.js 20+ and pnpm, then:
+Docker, the [Supabase CLI](https://supabase.com/docs/guides/cli), Python 3.12, Node.js 22+ and pnpm, then:
 
 ```bash
 pip install -r requirements.txt

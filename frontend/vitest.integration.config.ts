@@ -14,6 +14,7 @@
  */
 
 import { defineConfig } from 'vitest/config';
+import { playwright } from '@vitest/browser-playwright';
 import { resolve } from 'path';
 
 export default defineConfig({
@@ -26,8 +27,8 @@ export default defineConfig({
     testTimeout: 15000,
     browser: {
       enabled: true,
-      provider: 'playwright',
-      name: 'chromium',
+      provider: playwright(),
+      instances: [{ browser: 'chromium' }],
       headless: false,
       viewport: { width: 1440, height: 900 },
     },
@@ -37,7 +38,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '~': resolve(__dirname, './app'),
+      '~': resolve(import.meta.dirname, './app'),
     },
   },
   server: {
@@ -45,7 +46,7 @@ export default defineConfig({
       // Allow serving files from the repo root so the SDK E2E tests can load
       // the real built bundle (sdk/typescript/dist/sdk.esm.js?raw), which lives
       // outside the frontend project root.
-      allow: [resolve(__dirname, '..')],
+      allow: [resolve(import.meta.dirname, '..')],
     },
   },
 });
