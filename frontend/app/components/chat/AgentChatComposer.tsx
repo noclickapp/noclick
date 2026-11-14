@@ -38,14 +38,16 @@ export function AttachmentTrayItem({
     onRemove?: (localId: string) => void;
 }) {
     const removeButton = onRemove ? (
-        <button
-            type="button"
-            onClick={() => onRemove(attachment.localId)}
-            aria-label={`Remove ${attachment.name}`}
-            className="absolute -right-1.5 -top-1.5 flex h-[18px] w-[18px] items-center justify-center rounded-full border border-border bg-popover text-muted-foreground opacity-0 shadow-sm transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
-        >
-            <X className="h-3 w-3" strokeWidth={2.5} />
-        </button>
+        <ShortcutTooltip label="Remove" side="top">
+            <button
+                type="button"
+                onClick={() => onRemove(attachment.localId)}
+                aria-label={`Remove ${attachment.name}`}
+                className="absolute -right-1.5 -top-1.5 flex h-[18px] w-[18px] items-center justify-center rounded-full border border-border bg-popover text-muted-foreground opacity-0 shadow-sm transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+            >
+                <X className="h-3 w-3" strokeWidth={2.5} />
+            </button>
+        </ShortcutTooltip>
     ) : null;
 
     if (attachment.previewUrl) {
@@ -133,7 +135,7 @@ export function AttachmentTrayItem({
 }
 
 const PRIMARY_LOOK: Record<Exclude<PrimaryKind, 'submit'>, { label: string; tip: string }> = {
-    send: { label: 'Send', tip: 'Send (Enter) · new line (Shift+Enter)' },
+    send: { label: 'Send', tip: 'Send' },
     steer: { label: 'Steer', tip: 'Joins what it’s doing now' },
     queue: { label: 'Queue', tip: 'Goes once this turn ends' },
     stop: { label: 'Stop', tip: 'Stop' },

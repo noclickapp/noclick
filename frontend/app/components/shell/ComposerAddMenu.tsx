@@ -6,6 +6,7 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode, type RefObject } from 'react';
 import { ChevronLeft, FileText, Plus, type LucideIcon } from 'lucide-react';
 import { BrandIcon } from '~/components/shared/BrandIcon';
+import { ShortcutTooltip } from '~/components/shared/ShortcutTooltip';
 import { NodeMark } from '~/components/dashboard/primitives';
 import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { Skeleton } from '~/components/ui/skeleton';
@@ -353,17 +354,19 @@ export function ComposerAddMenu({
                     e.target.value = '';
                 }}
             />
-            <PopoverTrigger asChild>
-                <button
-                    type="button"
-                    disabled={disabled}
-                    aria-label="Add files, automations or accounts"
-                    data-testid="composer-add-button"
-                    className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-foreground/80 transition-colors hover:bg-foreground/[0.07] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40 data-[state=open]:bg-foreground/[0.08] data-[state=open]:text-foreground"
-                >
-                    <Plus className="h-5 w-5" strokeWidth={1.75} />
-                </button>
-            </PopoverTrigger>
+            <ShortcutTooltip label="Add files and more" side="top">
+                <PopoverTrigger asChild>
+                    <button
+                        type="button"
+                        disabled={disabled}
+                        aria-label="Add files, automations or accounts"
+                        data-testid="composer-add-button"
+                        className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-foreground/80 transition-colors hover:bg-foreground/[0.07] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40 data-[state=open]:bg-foreground/[0.08] data-[state=open]:text-foreground"
+                    >
+                        <Plus className="h-5 w-5" strokeWidth={1.75} />
+                    </button>
+                </PopoverTrigger>
+            </ShortcutTooltip>
             {/* After the trigger: Radix keeps the anchor that registered last, and this one is the box. Keyed on open
                 so it registers again each time: Radix's popper registers a virtual anchor only when its element
                 changes, so StrictMode's second mount left the trigger's discarded first node (0×0, top-left) as anchor. */}

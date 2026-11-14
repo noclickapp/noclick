@@ -29,6 +29,7 @@ import { toast } from 'sonner';
 import { AttachmentTrayItem, COMPOSER_SURFACE, ComposerSendButton } from '~/components/chat/AgentChatComposer';
 import type { AccountMenuUser } from '~/components/nav/AccountMenu';
 import { NodeMark } from '~/components/dashboard/primitives';
+import { TOOLTIP_SURFACE } from '~/components/shared/ShortcutTooltip';
 import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 import { useAutoGrowTextarea } from '~/hooks/useAutoGrowTextarea';
@@ -116,11 +117,12 @@ function subscribeFormatBar(listener: () => void) {
 const ICON_BUTTON =
     'grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.07] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40';
 
+/** A small button's name, on the app's tooltip surface, pill-round as Work's are. */
 function Tip({ label, children }: { label: string; children: ReactNode }) {
     return (
         <Tooltip>
             <TooltipTrigger asChild>{children}</TooltipTrigger>
-            <TooltipContent side="top" sideOffset={8} className="rounded-lg px-2 py-1 text-[12.5px]">
+            <TooltipContent side="top" sideOffset={8} className={cn(TOOLTIP_SURFACE, 'rounded-full px-3 py-1.5 text-[13px] leading-tight')}>
                 {label}
             </TooltipContent>
         </Tooltip>
@@ -420,14 +422,16 @@ export function ChannelComposer({
                                                     peaks={a.peaks ?? []}
                                                     className={cn('py-1 pl-1 pr-3', a.status === 'uploading' && 'opacity-60', a.status === 'error' && 'ring-red-500/60')}
                                                 />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => onRemoveAttachment(a.localId)}
-                                                    aria-label="Remove voice clip"
-                                                    className="absolute -right-1.5 -top-1.5 flex h-[18px] w-[18px] items-center justify-center rounded-full border border-border bg-popover text-muted-foreground opacity-0 shadow-sm transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
-                                                >
-                                                    <X className="h-3 w-3" strokeWidth={2.5} />
-                                                </button>
+                                                <Tip label="Remove">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => onRemoveAttachment(a.localId)}
+                                                        aria-label="Remove voice clip"
+                                                        className="absolute -right-1.5 -top-1.5 flex h-[18px] w-[18px] items-center justify-center rounded-full border border-border bg-popover text-muted-foreground opacity-0 shadow-sm transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+                                                    >
+                                                        <X className="h-3 w-3" strokeWidth={2.5} />
+                                                    </button>
+                                                </Tip>
                                             </div>
                                         ) : (
                                             <AttachmentTrayItem key={a.localId} attachment={a} onRemove={onRemoveAttachment} />
@@ -490,15 +494,17 @@ export function ChannelComposer({
                                     >
                                         Cancel
                                     </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => void finishClip()}
-                                        disabled={voice.state !== 'recording'}
-                                        aria-label="Done recording"
-                                        className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40"
-                                    >
-                                        <Check className="h-[18px] w-[18px]" strokeWidth={2.25} />
-                                    </button>
+                                    <Tip label="Done recording">
+                                        <button
+                                            type="button"
+                                            onClick={() => void finishClip()}
+                                            disabled={voice.state !== 'recording'}
+                                            aria-label="Done recording"
+                                            className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40"
+                                        >
+                                            <Check className="h-[18px] w-[18px]" strokeWidth={2.25} />
+                                        </button>
+                                    </Tip>
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-0.5 px-2 pb-2 pt-1">
