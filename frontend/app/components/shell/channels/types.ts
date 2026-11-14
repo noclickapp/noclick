@@ -32,7 +32,8 @@ export interface ChannelMember {
     busyThread?: string;
     /** Its triggers are paused: it wakes only when someone messages it. */
     paused?: boolean;
-    /** NoClick itself (the account's coordinator): drawn with NoClick's mark, as a channel draws NoClick. */
+    /** A NoClick, the account's own or a space's, as the platform flags it: drawn with NoClick's mark and named as
+     *  NoClick, never by the name it was made with. */
     noclick?: boolean;
 }
 
@@ -188,7 +189,8 @@ interface AgentChoiceBase {
     model?: string | null;
     /** Its model and harness as a picker names them ("Sonnet 5.5 on Claude Code"), once read. */
     modelLine?: string;
-    /** NoClick's own agent: the pickers list it first, in its mark. */
+    /** A NoClick, the account's own or a space's, as the platform flags it: never offered as one of your agents; the
+     *  pickers list the one that answers here first, in its mark. */
     noclick?: boolean;
 }
 
