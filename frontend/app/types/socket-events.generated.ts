@@ -6683,6 +6683,34 @@ export interface WebhookRelayReconnectRequest {
   [k: string]: unknown;
 }
 /**
+ * Put an agent on a linked WhatsApp number of the user's, in its own channel; one already on it is kept
+ */
+export interface WhatsAppAgentCreateRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * The user's own whatsapp_qr credential
+   */
+  credential_id: string;
+  [k: string]: unknown;
+}
+/**
+ * Whether a linked WhatsApp number of the user's may be offered an agent, and the agent answering it
+ */
+export interface WhatsAppAgentStatusRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * The user's own whatsapp_qr credential
+   */
+  credential_id: string;
+  [k: string]: unknown;
+}
+/**
  * Initiate the WhatsApp QR code flow — creates a connection and returns QR code
  */
 export interface WhatsAppQRStartRequest {
@@ -6712,10 +6740,6 @@ export interface WhatsAppQRStatusRequest {
    * Name for the credential if connected
    */
   credential_name?: string | null;
-  /**
-   * Linked for the account itself (its connections, not a workflow or an agent): the platform readies the number's own agent
-   */
-  ready_agent?: boolean;
   [k: string]: unknown;
 }
 /**
@@ -13614,6 +13638,69 @@ export interface WebflowOAuthValidateResponse {
   message?: string | null;
 }
 /**
+ * Response for whatsapp:agent:create — the number's agent, made, or the one already answering it
+ */
+export interface WhatsAppAgentCreateResponse {
+  /**
+   * Whether the number has its agent now
+   */
+  success: boolean;
+  /**
+   * False when an agent already answered the number and none was made
+   */
+  created?: boolean;
+  /**
+   * The number's agent and its channel
+   */
+  agent?: WhatsAppNumberAgent | null;
+  /**
+   * Error message
+   */
+  message?: string | null;
+}
+/**
+ * The agent answering a WhatsApp number, and its channel in Work
+ */
+export interface WhatsAppNumberAgent {
+  /**
+   * The agent's id
+   */
+  agent_id: string;
+  /**
+   * The agent's name
+   */
+  name: string;
+  /**
+   * Its own channel's id, where the owner talks to it
+   */
+  channel_id?: string | null;
+  /**
+   * Its own channel's name
+   */
+  channel_name?: string | null;
+}
+/**
+ * Response for whatsapp:agent:status — whether the number may be offered an agent, and the one answering it
+ */
+export interface WhatsAppAgentStatusResponse {
+  /**
+   * Whether the read succeeded
+   */
+  success: boolean;
+  /**
+   * Whether this account can put an agent on the number
+   */
+  available?: boolean;
+  /**
+   * The agent already answering the number
+   */
+  agent?: WhatsAppNumberAgent | null;
+  /**
+   * Error message
+   */
+  message?: string | null;
+}
+/**
  * Response for whatsapp:qr:start — returns QR code for scanning
  */
 export interface WhatsAppQRStartResponse {
@@ -14934,6 +15021,8 @@ export interface ClientToServerEvents {
   'webflow:oauth:refresh': (data: WebflowOAuthRefreshRequest) => void;
   'webflow:oauth:validate': (data: WebflowOAuthValidateRequest) => void;
   'webhook:relay:reconnect': (data: WebhookRelayReconnectRequest) => void;
+  'whatsapp:agent:create': (data: WhatsAppAgentCreateRequest) => void;
+  'whatsapp:agent:status': (data: WhatsAppAgentStatusRequest) => void;
   'whatsapp:qr:start': (data: WhatsAppQRStartRequest) => void;
   'whatsapp:qr:status': (data: WhatsAppQRStatusRequest) => void;
   'wordpress:oauth:exchange': (data: WordPressOAuthExchangeRequest) => void;
@@ -15311,6 +15400,8 @@ export const ClientEventNames = {
   WebflowOAuthRefreshRequest: 'webflow:oauth:refresh',
   WebflowOAuthValidateRequest: 'webflow:oauth:validate',
   WebhookRelayReconnectRequest: 'webhook:relay:reconnect',
+  WhatsAppAgentCreateRequest: 'whatsapp:agent:create',
+  WhatsAppAgentStatusRequest: 'whatsapp:agent:status',
   WhatsAppQRStartRequest: 'whatsapp:qr:start',
   WhatsAppQRStatusRequest: 'whatsapp:qr:status',
   WordPressOAuthExchangeRequest: 'wordpress:oauth:exchange',
@@ -15681,6 +15772,8 @@ interface ClientEventMap {
   WebflowOAuthRefreshRequest: WebflowOAuthRefreshRequest
   WebflowOAuthValidateRequest: WebflowOAuthValidateRequest
   WebhookRelayReconnectRequest: WebhookRelayReconnectRequest
+  WhatsAppAgentCreateRequest: WhatsAppAgentCreateRequest
+  WhatsAppAgentStatusRequest: WhatsAppAgentStatusRequest
   WhatsAppQRStartRequest: WhatsAppQRStartRequest
   WhatsAppQRStatusRequest: WhatsAppQRStatusRequest
   WordPressOAuthExchangeRequest: WordPressOAuthExchangeRequest
@@ -15955,6 +16048,8 @@ export interface RequestResponseMap {
   WebflowOAuthExchangeRequest: WebflowOAuthExchangeResponse;
   WebflowOAuthRefreshRequest: WebflowOAuthRefreshResponse;
   WebflowOAuthValidateRequest: WebflowOAuthValidateResponse;
+  WhatsAppAgentCreateRequest: WhatsAppAgentCreateResponse;
+  WhatsAppAgentStatusRequest: WhatsAppAgentStatusResponse;
   WhatsAppQRStartRequest: WhatsAppQRStartResponse;
   WhatsAppQRStatusRequest: WhatsAppQRStatusResponse;
   WordPressOAuthExchangeRequest: WordPressOAuthExchangeResponse;
@@ -17164,6 +17259,14 @@ export const WebhookRelayReconnectRequest = {
   event_name: 'webhook:relay:reconnect' as const,
   create: (data: WebhookRelayReconnectRequest) => ({ event_name: 'webhook:relay:reconnect' as const, ...data })
 };
+export const WhatsAppAgentCreateRequest = {
+  event_name: 'whatsapp:agent:create' as const,
+  create: (data: WhatsAppAgentCreateRequest) => ({ event_name: 'whatsapp:agent:create' as const, ...data })
+};
+export const WhatsAppAgentStatusRequest = {
+  event_name: 'whatsapp:agent:status' as const,
+  create: (data: WhatsAppAgentStatusRequest) => ({ event_name: 'whatsapp:agent:status' as const, ...data })
+};
 export const WhatsAppQRStartRequest = {
   event_name: 'whatsapp:qr:start' as const,
   create: (data: WhatsAppQRStartRequest) => ({ event_name: 'whatsapp:qr:start' as const, ...data })
@@ -17741,6 +17844,8 @@ export const EventRouting = {
   'webflow:oauth:refresh': 'API',
   'webflow:oauth:validate': 'API',
   'webhook:relay:reconnect': 'API',
+  'whatsapp:agent:create': 'API',
+  'whatsapp:agent:status': 'API',
   'whatsapp:qr:start': 'API',
   'whatsapp:qr:status': 'API',
   'wordpress:oauth:exchange': 'API',

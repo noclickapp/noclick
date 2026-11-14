@@ -62,6 +62,9 @@ export interface ConnectAppProps {
     /** The dialog's header follows the stage (`connectDialogHeader`). */
     onStage?: (stage: ConnectStage, result?: ConnectResult) => void;
     onDone?: () => void;
+    /** What follows the verdict in place of Done, when the host offers something more for what landed (a WhatsApp
+     *  number's agent); null leaves Done. */
+    afterConnect?: (result: ConnectResult) => ReactNode;
     /** Where to open: a way in (reconnecting one kind of account), or a stage for the lab's states. */
     initial?: { method?: string; stage?: ConnectStage; result?: ConnectResult };
 }
@@ -120,6 +123,7 @@ export function ConnectApp({
     showResult = true,
     onStage,
     onDone,
+    afterConnect,
     initial,
 }: ConnectAppProps) {
     const ways: Way[] = methods.map((method) => ({
@@ -167,9 +171,11 @@ export function ConnectApp({
             <div ref={stageRef} className="space-y-6 pb-5 pt-1">
                 {/* A sign-in proves as little as a pasted key until the connect-time check has asked the provider. */}
                 <ConnectionVerdict providerLabel={app} verification={result.verification} accountLine={result.account} />
-                <button type="button" onClick={onDone} className={cn(BUTTON_PRIMARY, 'h-10 w-full justify-center')}>
-                    Done
-                </button>
+                {afterConnect?.(result) ?? (
+                    <button type="button" onClick={onDone} className={cn(BUTTON_PRIMARY, 'h-10 w-full justify-center')}>
+                        Done
+                    </button>
+                )}
             </div>
         );
     }

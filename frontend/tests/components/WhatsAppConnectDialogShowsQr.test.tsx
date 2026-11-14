@@ -1,15 +1,20 @@
 // @vitest-environment happy-dom
 // Connect on Connections means "add an account": the WhatsApp QR shows at once, with the numbers already connected
 // listed under it, rather than behind a second button. Each open starts one QR, which a re-render, StrictMode or a
-// trip to the Token tab and back never starts again, and a reconnect still waits for its click.
+// trip to the Token tab and back never starts again, and a reconnect still waits for its click. Linking makes nothing
+// on its own: once the scan lands the dialog offers the number an agent, and Create makes it and opens its channel.
 import { StrictMode } from 'react';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CredentialInfo } from '~/types/socket-events.generated';
 import { loadNodeSchemas } from '~/utils/nodeSchemas';
 
-const state = vi.hoisted(() => ({ credentials: [] as Partial<CredentialInfo>[], send: vi.fn() }));
+const state = vi.hoisted(() => ({ credentials: [] as Partial<CredentialInfo>[], send: vi.fn(), navigateToTab: vi.fn() }));
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: state.send }));
+vi.mock('~/lib/navigation', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('~/lib/navigation')>()),
+    navigateToTab: state.navigateToTab,
+}));
 vi.mock('~/utils/credentialAutoSelect', async (importOriginal) => ({
     ...(await importOriginal<typeof import('~/utils/credentialAutoSelect')>()),
     getAllCredentialsFromCache: () => state.credentials,
@@ -56,6 +61,7 @@ beforeAll(async () => {
 }, 60_000);
 beforeEach(() => {
     state.credentials = [];
+    state.navigateToTab.mockReset();
     state.send.mockReset();
     state.send.mockImplementation(async (event: { event_name?: string }) =>
         event?.event_name === 'whatsapp:qr:start' ? { success: true, connection_id: 'conn-1', qr_code: 'QR' } : { success: true, status: 'scan_qr' }
@@ -126,5 +132,33 @@ describe('Connect WhatsApp from Connections', () => {
         await act(async () => answer({ success: true, connection_id: 'conn-1', qr_code: 'QR' }));
         await act(async () => vi.advanceTimersByTimeAsync(30_000));
         expect(sent('whatsapp:qr:status')).toEqual([]);
+    });
+
+    it('offers the linked number an agent once the scan lands, and Create makes it and opens its channel', async () => {
+        vi.useFakeTimers({ shouldAdvanceTime: true });
+        const agent = { agent_id: 'a-1', name: 'WhatsApp', channel_id: 'ch-1', channel_name: 'whatsapp' };
+        state.send.mockImplementation(async (event: { event_name?: string }) => {
+            if (event?.event_name === 'whatsapp:qr:start') return { success: true, connection_id: 'conn-1', qr_code: 'QR' };
+            if (event?.event_name === 'whatsapp:qr:status') return { success: true, status: 'connected', credential_id: 'wa-new', phone_number: '+12025550101' };
+            if (event?.event_name === 'whatsapp:agent:status') return { success: true, available: true, agent: null };
+            if (event?.event_name === 'whatsapp:agent:create') return { success: true, created: true, agent };
+            return { success: true, reachable: true, account_label: '+1 202 555 0101' };
+        });
+        render(<GlobalCreateCredentialDialog />);
+        await act(async () => openCreateCredential({ credentialType: 'whatsapp_qr' }));
+        await screen.findByAltText('WhatsApp QR Code', {}, { timeout: 5000 });
+        await act(async () => vi.advanceTimersByTimeAsync(5000));
+
+        expect(await screen.findByText('Put an agent on this number?', {}, { timeout: 5000 })).toBeTruthy();
+        expect(screen.getByText('It answers your WhatsApp messages for you and lives in its own channel, where you tell it what to do.')).toBeTruthy();
+        // The scan's poll names the connection alone, and nothing is made until they say yes.
+        expect(sent('whatsapp:qr:status')[0]).toEqual({ event_name: 'whatsapp:qr:status', connection_id: 'conn-1' });
+        expect(sent('whatsapp:agent:status')).toEqual([{ event_name: 'whatsapp:agent:status', credential_id: 'wa-new' }]);
+        expect(sent('whatsapp:agent:create')).toEqual([]);
+
+        fireEvent.click(screen.getByRole('button', { name: 'Create agent' }));
+        await waitFor(() => expect(state.navigateToTab).toHaveBeenCalledWith('work', { show: 'home', channel: 'ch-1', thread: null }));
+        expect(sent('whatsapp:agent:create')).toEqual([{ event_name: 'whatsapp:agent:create', credential_id: 'wa-new' }]);
+        await waitFor(() => expect(document.querySelector('[data-testid="create-credential-dialog"][data-state="open"]')).toBeNull());
     });
 });

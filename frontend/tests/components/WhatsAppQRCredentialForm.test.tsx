@@ -70,25 +70,16 @@ describe('WhatsAppQRCredentialForm', () => {
         expect(await screen.findByAltText('WhatsApp QR Code')).toBeTruthy();
     });
 
-    // Linked from the account's Connections, the number gets its own agent once the scan lands (hosted).
-    it.each([
-        [true, { event_name: 'whatsapp:qr:status', connection_id: 'conn-1', ready_agent: true }],
-        [false, { event_name: 'whatsapp:qr:status', connection_id: 'conn-1' }],
-    ])('asks for the number\'s agent only when linked for the account (readyAgent=%s)', async (readyAgent, polled) => {
+    // Linking makes the credential alone: the scan's poll names the connection and nothing else, wherever it's linked
+    // (the Connect dialog offers the number an agent after, on its own).
+    it('polls the scan for the connection alone', async () => {
         vi.useFakeTimers({ shouldAdvanceTime: true });
         try {
             const send = transport();
-            render(
-                <WhatsAppQRCredentialForm
-                    credentialType="whatsapp_qr"
-                    onCredentialCreated={() => {}}
-                    sendEvent={send as never}
-                    readyAgent={readyAgent}
-                />,
-            );
+            render(<WhatsAppQRCredentialForm credentialType="whatsapp_qr" onCredentialCreated={() => {}} sendEvent={send as never} />);
             await screen.findByAltText('WhatsApp QR Code');
             await vi.advanceTimersByTimeAsync(5000);
-            expect(send).toHaveBeenLastCalledWith(polled);
+            expect(send).toHaveBeenLastCalledWith({ event_name: 'whatsapp:qr:status', connection_id: 'conn-1' });
         } finally {
             vi.useRealTimers();
         }

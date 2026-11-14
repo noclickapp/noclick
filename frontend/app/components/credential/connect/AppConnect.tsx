@@ -1,12 +1,13 @@
 // Connecting an app's account from inside NoClick: ConnectApp over the in-app engine. A sign-in runs the OAuth popup
 // (useCredentialOAuth) and then asks the provider what the new account holds (credential:test_connection); a key goes
 // through the connect seam (credential:create), whose shape check, provider proof and verdict come back with it; a
-// WhatsApp number is a QR code and a phone number is bought; the app's own MCP server signs in through MCP's auth
-// (McpConnectForm), proven by the tools it lists. The Connections dialog and the node panel both draw it,
-// so an account connects the same way wherever it's added.
+// WhatsApp number is a QR code (one linked for the account itself is offered an agent after) and a phone number is
+// bought; the app's own MCP server signs in through MCP's auth (McpConnectForm), proven by the tools it lists. The
+// Connections dialog and the node panel both draw it, so an account connects the same way wherever it's added.
 import { Loader2 } from 'lucide-react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { ConnectApp, type ConnectAccountRow, type ConnectMethodContext, type ConnectResult, type ConnectStage } from './ConnectApp';
+import { WhatsAppAgentOffer } from './WhatsAppAgentOffer';
 import { credentialRequirements, methodFromRequirement, type CredentialRequirement } from '~/components/credential/credentialMethods';
 import { CredentialCreatePanel, type CredentialSaveResult } from '~/components/credential/CredentialCreatePanel';
 import type { ProvideCredentialMethod } from '~/components/credential/CredentialMethodConnect';
@@ -89,7 +90,7 @@ function AppConnectForm({
     initialMethod,
     qrReconnectId,
     qrAutoStart = true,
-    qrReadyAgent = false,
+    offerNumberAgent = false,
 }: {
     /** The node whose credential classes are the ways in ("automation-notion"). */
     nodeType: string;
@@ -112,8 +113,9 @@ function AppConnectForm({
     /** Show a QR code unasked: where connecting adds an account, or there's no number to pick. A reconnect always
      *  waits for a click. */
     qrAutoStart?: boolean;
-    /** The number is linked for the account itself, for no workflow or agent: the platform readies its own agent. */
-    qrReadyAgent?: boolean;
+    /** A number is linked here for the account itself, for no workflow or agent: once it lands, the dialog offers it an
+     *  agent (WhatsAppAgentOffer), since linking makes none on its own. */
+    offerNumberAgent?: boolean;
 }) {
     const isVisible = useCredentialSchemaVisible();
     const requirements = useMemo(() => credentialRequirements(nodeType, isVisible), [nodeType, isVisible]);
@@ -254,7 +256,6 @@ function AppConnectForm({
                     credentialType={method.credential_type}
                     reconnectCredentialId={qrReconnectId}
                     autoStart={qrAutoStart}
-                    readyAgent={qrReadyAgent}
                     onCredentialCreated={(credentialId) => {
                         void engine.loadCredentials();
                         void landedAfterProbe(method.credential_type, { id: credentialId, name: app, credential_type: method.credential_type });
@@ -311,6 +312,11 @@ function AppConnectForm({
                 showResult={showResult}
                 onStage={onStage}
                 onDone={onDone}
+                afterConnect={
+                    offerNumberAgent
+                        ? (landed) => (landed.kind === 'qr_scan' && landed.credentialId ? <WhatsAppAgentOffer credentialId={landed.credentialId} onDone={() => onDone?.()} /> : null)
+                        : undefined
+                }
                 initial={initialMethod ? { method: initialMethod } : undefined}
             />
             <UpgradePopup

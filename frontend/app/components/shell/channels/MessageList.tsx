@@ -12,7 +12,7 @@
 // bar adds quick reactions, Reply in thread and Pin, a message with replies
 // wears Slack's replies bar, and a pinned one says who pinned it.
 import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { ArrowRight, ChevronDown, ChevronRight, EyeOff, Hash, Link2, MessageSquareText, MoreHorizontal, Pin, PinOff, Plug, SmilePlus, UserMinus, UserPlus } from 'lucide-react';
+import { ArrowRight, Check, ChevronDown, ChevronRight, EyeOff, Hash, Link2, MessageSquareText, MoreHorizontal, Pin, PinOff, Plug, SmilePlus, UserMinus, UserPlus } from 'lucide-react';
 import type { AccountMenuUser } from '~/components/nav/AccountMenu';
 import { LogoMark, MARK_IN_A_SHAPE } from '~/components/shared/LogoMark';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '~/components/ui/dropdown-menu';
@@ -25,7 +25,7 @@ import { EmojiPicker } from './EmojiPicker';
 import { MessageBody } from './MessageBody';
 import { AGENT_HUES, authorMember, byNoClick, handoffsOf, modeLine, NOCLICK_NAME, postedForYou } from './model';
 import { ScheduleLines } from './schedules';
-import type { Channel, ChannelAuthor, ChannelMember, ChannelMembership, ChannelMessage, ChannelReaction, ChannelSchedule } from './types';
+import type { Channel, ChannelAuthor, ChannelMember, ChannelMembership, ChannelMessage, ChannelQuestionOption, ChannelReaction, ChannelSchedule } from './types';
 
 /** Consecutive messages from one author inside this window share a header. */
 const GROUP_WINDOW_MS = 5 * 60 * 1000;
@@ -299,6 +299,8 @@ export interface MessageActions {
     lit?: string | null;
     /** Its author's name opens them (the chat's channel card: the agent, to edit). */
     onAuthor?: (author: ChannelMember) => void;
+    /** Post an answer to an agent's question as yours (a tap on one of its answers). */
+    onAnswer?: (text: string) => void;
 }
 
 /** The emoji a person reaches for most, first in the hover bar as in Slack. */
@@ -570,6 +572,35 @@ function PinLine({ msg, target, members, actions }: { msg: ChannelMessage; targe
     );
 }
 
+/** An agent's question's answers as pills: a tap posts that answer as yours. Once you've said something next, the pick
+ *  reads back (or nothing, when you answered in your own words). */
+function QuestionAnswers({ options, answer, onAnswer }: { options: ChannelQuestionOption[]; answer?: string; onAnswer?: (text: string) => void }) {
+    if (answer !== undefined) {
+        const picked = options.find((o) => o.reply === answer);
+        return picked ? (
+            <p className="mt-1.5 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground" data-testid="question-picked">
+                <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" strokeWidth={2.4} />
+                You picked {picked.label.toLowerCase()}
+            </p>
+        ) : null;
+    }
+    return (
+        <div className="mt-2 flex flex-wrap gap-1.5" role="group" aria-label="Answers">
+            {options.map((o) => (
+                <button
+                    key={o.label}
+                    type="button"
+                    disabled={!onAnswer}
+                    onClick={() => onAnswer?.(o.reply)}
+                    className="inline-flex h-8 items-center rounded-full bg-foreground/[0.06] px-3.5 text-[13px] font-medium text-foreground ring-1 ring-inset ring-foreground/[0.08] transition-colors hover:bg-foreground/[0.1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
+                >
+                    {o.label}
+                </button>
+            ))}
+        </div>
+    );
+}
+
 export function MessageRow({
     msg,
     prev,
@@ -582,6 +613,7 @@ export function MessageRow({
     actions = {},
     compact,
     pinTarget,
+    answer,
 }: {
     msg: ChannelMessage;
     prev?: ChannelMessage;
@@ -597,6 +629,8 @@ export function MessageRow({
     compact?: boolean;
     /** For a pin's line, the message it pinned, where it's loaded. */
     pinTarget?: ChannelMessage;
+    /** For an agent's question, what you said next, once you have. */
+    answer?: string;
 }) {
     if (msg.event?.type === 'pinned') return <PinLine msg={msg} target={pinTarget} members={members} actions={actions} />;
     // Never NoClick speaking: the channel's record of who came and went.
@@ -689,6 +723,7 @@ export function MessageRow({
                 )}
                 {msg.text && <MessageBody text={msg.text} members={members} channels={channels} onChannel={onChannel} muted={msg.author.type === 'system' && !msg.ephemeral} />}
                 {msg.attachments.length ? <MessageAttachments attachments={msg.attachments} /> : null}
+                {msg.question && <QuestionAnswers options={msg.question.options} answer={answer} onAnswer={actions.onAnswer} />}
                 {author && handoffs.length > 0 && <Handoffs from={author} to={handoffs} user={user} />}
                 {canReact && msg.reactions.length > 0 && <Reactions reactions={msg.reactions} onReact={(emoji) => onReact(msg.id, emoji)} />}
                 {actions.onThread && !msg.threadId && <RepliesBar msg={msg} members={members} user={user} onOpen={() => actions.onThread?.(msg.id)} />}
@@ -762,6 +797,16 @@ export function MessageList({
     // "Most recent" covers the newest day; the menu lists the ones before it, newest first.
     const earlier = useMemo(() => days.slice(0, -1).reverse(), [days]);
     const byId = useMemo(() => new Map(messages.map((m) => [m.id, m])), [messages]);
+    // Each agent question's answer: the first thing a person said after it.
+    const answers = useMemo(() => {
+        const out = new Map<string, string>();
+        messages.forEach((m, i) => {
+            if (!m.question) return;
+            const next = messages.slice(i + 1).find((n) => !n.pending && (n.author.type === 'user' || (n.author.type === 'account' && !n.author.id)));
+            if (next) out.set(m.id, next.text);
+        });
+        return out;
+    }, [messages]);
 
     const jump = (target: JumpTarget) => {
         const el = root.current;
@@ -797,6 +842,7 @@ export function MessageList({
                             onDismiss={onDismiss}
                             actions={actions}
                             pinTarget={msg.event?.type === 'pinned' ? byId.get(msg.event.messageId) : undefined}
+                            answer={answers.get(msg.id)}
                         />
                     ))}
                 </section>

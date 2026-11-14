@@ -92,6 +92,14 @@ export interface ChannelMessage {
     event?: { type: 'pinned'; messageId: string };
     /** Who joined or left, as the channel keeps it: a quiet line as Slack draws joins, a run of them one line. */
     membership?: ChannelMembership;
+    /** An agent's question with answers to tap: a tap posts its `reply` as yours. */
+    question?: { options: ChannelQuestionOption[] };
+}
+
+/** One answer to an agent's question: what its button says, and what a tap posts as you. */
+export interface ChannelQuestionOption {
+    label: string;
+    reply: string;
 }
 
 /** `by` added or removed `members`. `by` is null when NoClick did it (a member left the space, its automation's step

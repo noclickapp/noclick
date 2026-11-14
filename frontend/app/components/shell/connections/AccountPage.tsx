@@ -1,14 +1,15 @@
 // One connected account, in full: proof it works in the provider's own words
-// (your channels, your repositories), the automations that depend on it, who
-// else can use it, and which of its actions wait for your approval. Rename,
-// reconnect and delete live here too, so nothing about an account is two
-// clicks away. One an agent's move from a computer brought over says so, with
+// (your channels, your repositories), a WhatsApp number's agent (or the offer
+// of one), the automations that depend on it, who else can use it, and which of
+// its actions wait for your approval. Rename, reconnect and delete live here
+// too, so nothing about an account is two clicks away. One an agent's move from a computer brought over says so, with
 // a Remove that takes its access away everywhere.
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { ChevronRight, Loader2, LogOut, MoreHorizontal, Pencil, RotateCw, ShieldCheck, Trash2, UserPlus } from 'lucide-react';
 import { CredentialDeleteDialog } from '~/components/credential/CredentialDeleteDialog';
+import { NumberAgentLine } from '~/components/credential/connect/WhatsAppAgentOffer';
 import { verdictState } from '~/components/credential/ConnectionVerdict';
 import type { WorkflowRef } from '~/components/dashboard/types';
 import { CREDENTIALS_CHANGED_EVENT } from '~/components/shared/popups/CreateCredentialDialog';
@@ -16,6 +17,7 @@ import { ShareDialog } from '~/components/shared/popups/ShareDialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '~/components/ui/dropdown-menu';
 import { Skeleton } from '~/components/ui/skeleton';
 import { useConnectionProbe, type ConnectionProbe } from '~/hooks/useConnectionProbe';
+import { openAgentChannel, useWhatsAppNumberAgent } from '~/hooks/useWhatsAppNumberAgent';
 import { leaveSharedCredential } from '~/lib/credentialAccess';
 import { movedDate, movedFrom, movedLine, type MovedFrom } from '~/lib/movedFrom';
 import { socketCall } from '~/lib/socketCall';
@@ -291,6 +293,48 @@ function Title({ name, renaming, onRename, onDone }: { name: string; renaming: b
     );
 }
 
+/** A WhatsApp number's agent: the one that answers it, or the offer the Connect dialog made, for a number linked with
+ *  Not now. Nothing where the account has no agents to put on it. */
+function NumberAgent({ credentialId }: { credentialId: string }) {
+    const { state, create } = useWhatsAppNumberAgent(credentialId);
+    if (state.phase === 'loading' || state.phase === 'unavailable') return null;
+    const answered = state.phase === 'answered' ? state.agent : undefined;
+    const busy = state.phase === 'creating';
+    return (
+        <Section title="Agent">
+            <Surface className="space-y-3 px-4 py-4 sm:px-5">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+                    <div className="min-w-0 flex-1">
+                        {answered ? (
+                            <NumberAgentLine agent={answered} title={`${answered.name} answers this number`} line="It lives in its own channel, where you tell it what to do." />
+                        ) : (
+                            <NumberAgentLine title="No agent on this number" line="An agent answers your WhatsApp messages for you and lives in its own channel, where you tell it what to do." />
+                        )}
+                    </div>
+                    {answered?.channel_id ? (
+                        <button type="button" onClick={() => openAgentChannel(answered.channel_id!)} className={BUTTON_SECONDARY}>
+                            Open its channel
+                        </button>
+                    ) : (
+                        !answered && (
+                            <button
+                                type="button"
+                                disabled={busy}
+                                onClick={() => void create().then((made) => made?.made && made.agent.channel_id && openAgentChannel(made.agent.channel_id))}
+                                className={BUTTON_PRIMARY}
+                            >
+                                {busy && <Loader2 className="h-4 w-4 animate-spin" />}
+                                {busy ? 'Creating' : state.phase === 'failed' ? 'Try again' : 'Create agent'}
+                            </button>
+                        )
+                    )}
+                </div>
+                {state.phase === 'failed' && <p role="alert" className="text-[13.5px] text-red-600 dark:text-red-400">Couldn’t create the agent. Your number is still connected.</p>}
+            </Surface>
+        </Section>
+    );
+}
+
 export function AccountPage({
     account,
     usedBy,
@@ -449,6 +493,8 @@ export function AccountPage({
                         <Proof account={account} probe={probe} canCheck={canCheck} onReconnect={owner && rejected && !problem ? () => reconnect(credential) : undefined} />
                     </Section>
                 )}
+
+                {owner && !revoked && credential.credential_type === 'whatsapp_qr' && <NumberAgent credentialId={credential.id} />}
 
                 <Section title="Used by" meta={usedBy?.length || undefined}>
                     {!usedBy ? (
