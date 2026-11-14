@@ -1491,11 +1491,12 @@ class TestWhatsAppQRProvideLink:
     async def test_a_scan_the_platform_refuses_binds_nothing(self, mock_finalize, monkeypatch, real_database, db,
                                                              setup_db):
         """A platform that keeps the scanned number where it is (``WHATSAPP_AGENT.scanned``) has its word shown on
-        the scan's page: the request stays unfulfilled and a credential the scan just made goes again."""
+        the scan's page, then and once the request ended: the request stays unfulfilled and a credential the scan
+        just made goes again."""
         from fastapi import HTTPException
         from types import SimpleNamespace
         from utils import capabilities
-        from utils.credential_request_routes import qr_status, QRStatusBody
+        from utils.credential_request_routes import get_credential_request, qr_status, QRStatusBody
 
         cred_id = str(db.fetchrow("""
             INSERT INTO credentials (owner_id, name, credential_type, credential, metadata)
@@ -1513,15 +1514,21 @@ class TestWhatsAppQRProvideLink:
             return "This number is already connected, and your agent WhatsApp answers it."
 
         monkeypatch.setitem(capabilities._providers, capabilities.WHATSAPP_AGENT, SimpleNamespace(scanned=scanned))
-        with pytest.raises(HTTPException) as refused:
-            await qr_status(setup_db['token'], QRStatusBody(connection_id='conn-xyz'))
+        said = "This number is already connected, and your agent WhatsApp answers it."
+        result = await qr_status(setup_db['token'], QRStatusBody(connection_id='conn-xyz'))
 
-        assert refused.value.status_code == 409
-        assert refused.value.detail == "This number is already connected, and your agent WhatsApp answers it."
+        assert result == {'success': True, 'status': 'already_connected', 'message': said}
         assert asked == [(setup_db['request_id'], cred_id)]
         assert db.fetchrow("SELECT status FROM credential_requests WHERE id = $1",
                            setup_db['request_id'])['status'] == 'pending'
         assert db.fetchrow("SELECT id FROM credentials WHERE id = $1", cred_id) is None
+        # The platform ends the request; its page reads why from then on.
+        db.execute("UPDATE credential_requests SET status = 'cancelled' WHERE id = $1", setup_db['request_id'])
+        with pytest.raises(HTTPException) as ended:
+            await get_credential_request(setup_db['token'])
+        assert ended.value.status_code == 410
+        assert ended.value.detail == {'message': 'This credential request has already been cancelled',
+                                      'status': 'cancelled', 'note': said}
 
     @patch('utils.whatsapp_qr.finalize_qr_connection', new_callable=AsyncMock)
     async def test_qr_status_for_a_held_request_never_rebinds_owner_rows(self, mock_finalize, real_database, db, setup_db):

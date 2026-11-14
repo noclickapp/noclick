@@ -285,6 +285,43 @@ describe('a connect card', () => {
         expect(requests('')).toHaveLength(1);
     });
 
+    // A scan of a number an agent already answers stays that agent's: nothing new is connected, so the card says so
+    // calmly, with nothing to retry, then and after a reload.
+    it('says a scanned number stays with the agent that answers it, with nothing to retry', async () => {
+        // Only the scan's poll runs on fake time; the card's own rendering keeps the real clock.
+        vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+        try {
+            const said = 'Your WhatsApp is connected again. WhatsApp already answers this number.';
+            routes['GET '] = () => json(details('whatsapp_qr', [
+                method('whatsapp_qr', 'WhatsAppQR', 'qr_scan'),
+                method('whatsapp_access_token', 'WhatsAppAccessToken', 'api_key'),
+            ]));
+            routes['POST /qr/start'] = () => json({ success: true, connection_id: 'conn-1', qr_code: 'UVJDT0RF' });
+            routes['POST /qr/status'] = () => json({ success: true, status: 'already_connected', message: said });
+            show(connectCall('whatsapp_qr'));
+            const card = await screen.findByRole('button', { name: 'Show QR code' });
+            await act(async () => fireEvent.click(card));
+            await screen.findByAltText('WhatsApp QR Code');
+            await act(async () => { await vi.advanceTimersByTimeAsync(5000); });
+
+            expect(await screen.findByText(said)).toBeTruthy();
+            expect(screen.queryByAltText('WhatsApp QR Code')).toBeNull();
+            expect(screen.queryByRole('button', { name: /retry/i })).toBeNull();
+            await act(async () => { await vi.advanceTimersByTimeAsync(15000); });
+            expect(requests('/qr/status')).toHaveLength(1);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    it('opens a request that ended on a kept number with what it said', async () => {
+        const said = 'Your WhatsApp is connected again. WhatsApp already answers this number.';
+        routes['GET '] = () => json({ detail: { message: 'This credential request has already been cancelled', status: 'cancelled', note: said } }, 410);
+        show(connectCall('whatsapp_qr'));
+        expect(await screen.findByText(said)).toBeTruthy();
+        expect(screen.queryByText(/ask NoClick again/)).toBeNull();
+    });
+
     it('says a cancelled request was cancelled', async () => {
         routes['GET '] = () => json({ detail: { message: 'This credential request has already been cancelled', status: 'cancelled' } }, 410);
         show(connectCall('whatsapp_qr'));

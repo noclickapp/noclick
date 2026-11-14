@@ -33,7 +33,9 @@ interface WhatsAppQRCredentialFormProps {
     startLabel?: string;
 }
 
-type QRFlowState = 'idle' | 'loading' | 'scanning' | 'connected' | 'error' | 'needs_key';
+// `already_connected`: the scan was of a number already linked and answered by an agent, which keeps it (a provide
+// link's poll says so); nothing new was connected, and there is nothing to retry.
+type QRFlowState = 'idle' | 'loading' | 'scanning' | 'connected' | 'already_connected' | 'error' | 'needs_key';
 
 // A start can wait about a minute for WhatsApp's linking service to show a QR
 // (QR_WAIT_S in backend/utils/whatsapp_qr.py), past the socket's 30s default.
@@ -50,6 +52,7 @@ export const WhatsAppQRCredentialForm = ({
     const [flowState, setFlowState] = useState<QRFlowState>(autoMint ? 'loading' : 'idle');
     const [qrCode, setQrCode] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [notice, setNotice] = useState<string | null>(null);
     const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
     const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const pollCountRef = useRef(0);
@@ -147,7 +150,11 @@ export const WhatsAppQRCredentialForm = ({
                 return;
             }
 
-            if (response.status === 'connected') {
+            if (response.status === 'already_connected') {
+                stopPolling();
+                setNotice(response.message || 'This number is already connected.');
+                setFlowState('already_connected');
+            } else if (response.status === 'connected') {
                 stopPolling();
                 setPhoneNumber(response.phone_number || null);
                 setFlowState('connected');
@@ -193,6 +200,15 @@ export const WhatsAppQRCredentialForm = ({
                 <div className="text-sm text-emerald-700 dark:text-emerald-300">
                     WhatsApp connected{phoneNumber ? ` (${phoneNumber})` : ''}
                 </div>
+            </div>
+        );
+    }
+
+    if (flowState === 'already_connected') {
+        return (
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-foreground/[0.04] border border-border">
+                <Check className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                <div className="text-sm text-foreground/80">{notice}</div>
             </div>
         );
     }

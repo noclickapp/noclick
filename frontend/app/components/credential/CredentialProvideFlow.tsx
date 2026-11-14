@@ -88,8 +88,9 @@ const ENDED: ProvideRequestProblem[] = ['fulfilled', 'cancelled', 'expired'];
 export type ProvideRequestState =
   | { status: 'loading' }
   | { status: 'ready'; details: ProvideRequestDetails; methods: ProvideCredentialMethod[] }
-  /** `credentialId`: what a fulfilled request made. */
-  | { status: 'unavailable'; problem: ProvideRequestProblem; credentialId?: string };
+  /** `credentialId`: what a fulfilled request made; `note`: why one ended unfulfilled, in words for its page (a scan
+   *  of a number another agent keeps). */
+  | { status: 'unavailable'; problem: ProvideRequestProblem; credentialId?: string; note?: string };
 
 /** A credential request by its token, read once: its details and the methods it can be provided with (the
  *  backend's list, or a single method built from the details for a pre-methods request). `held` is a request the
@@ -102,8 +103,8 @@ export function useCredentialRequest(token: string, apiBase: string, held?: Prov
   useEffect(() => {
     if (held) return;
     let mounted = true;
-    const fail = (problem: ProvideRequestProblem, credentialId?: string) =>
-      mounted && setState({ status: 'unavailable', problem, credentialId });
+    const fail = (problem: ProvideRequestProblem, credentialId?: string, note?: string) =>
+      mounted && setState({ status: 'unavailable', problem, credentialId, note });
     setState((prev) => (prev.status === 'loading' ? prev : { status: 'loading' }));
     (async () => {
       try {
@@ -112,7 +113,8 @@ export function useCredentialRequest(token: string, apiBase: string, held?: Prov
         if (res.status === 410) {
           const detail = (await res.json().catch(() => ({})))?.detail;
           const ended = ENDED.find((p) => p === detail?.status) ?? 'expired';
-          return fail(ended, typeof detail?.credential_id === 'string' ? detail.credential_id : undefined);
+          const str = (value: unknown) => (typeof value === 'string' ? value : undefined);
+          return fail(ended, str(detail?.credential_id), str(detail?.note));
         }
         if (res.status === 429) return fail('too_many');
         if (res.status === 404) return fail('not_found');
@@ -280,7 +282,7 @@ export function CredentialProvideFlow({
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-foreground/[0.06] text-muted-foreground">
           <Icon className="h-4 w-4" />
         </span>
-        <p className="pt-2 text-[13.5px] leading-relaxed text-muted-foreground">{PROBLEMS[request.problem]}</p>
+        <p className="pt-2 text-[13.5px] leading-relaxed text-muted-foreground">{request.note ?? PROBLEMS[request.problem]}</p>
       </div>
     );
   }

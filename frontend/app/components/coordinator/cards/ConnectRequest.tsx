@@ -44,7 +44,7 @@ export default function ConnectRequest({ token, requested, name, mark, meta, onP
         if (fulfilled) onFulfilled(credentialId);
     }, [fulfilled, credentialId, onFulfilled]);
     if (fulfilled) return null;
-    if (request.status === 'unavailable') return <ConnectUnavailable name={name} problem={request.problem} onRetry={onRetry} />;
+    if (request.status === 'unavailable') return <ConnectUnavailable name={name} problem={request.problem} note={request.note} onRetry={onRetry} />;
     return (
         <ConnectAccountCard
             mark={mark}

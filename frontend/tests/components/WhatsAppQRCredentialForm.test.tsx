@@ -85,6 +85,29 @@ describe('WhatsAppQRCredentialForm', () => {
         }
     });
 
+    it('ends calmly on a number that stays with the agent already answering it', async () => {
+        vi.useFakeTimers({ shouldAdvanceTime: true });
+        try {
+            const said = 'Your WhatsApp is connected again. WhatsApp already answers this number.';
+            const created = vi.fn();
+            const send = vi.fn(async (payload: Record<string, unknown>) =>
+                payload.event_name === 'whatsapp:qr:start'
+                    ? { success: true, connection_id: 'conn-1', qr_code: 'QR' }
+                    : { success: true, status: 'already_connected', message: said });
+            render(<WhatsAppQRCredentialForm credentialType="whatsapp_qr" onCredentialCreated={created} sendEvent={send as never} />);
+            await screen.findByAltText('WhatsApp QR Code');
+            await vi.advanceTimersByTimeAsync(5000);
+
+            expect(await screen.findByText(said)).toBeTruthy();
+            expect(screen.queryByText(/Retry/)).toBeNull();
+            expect(created).not.toHaveBeenCalled();
+            await vi.advanceTimersByTimeAsync(15000);
+            expect(send.mock.calls.filter(([p]) => p.event_name === 'whatsapp:qr:status')).toHaveLength(1);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
     it('asks for the instance WAHooks key in place when the backend reports it missing', async () => {
         const send = vi.fn().mockResolvedValue({ success: false, code: 'wahooks_key_missing', message: 'no key' });
         render(<WhatsAppQRCredentialForm credentialType="whatsapp_qr" onCredentialCreated={() => {}} sendEvent={send as never} />);

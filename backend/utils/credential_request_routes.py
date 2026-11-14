@@ -616,12 +616,15 @@ except ImportError:  # pragma: no cover - exercised in the open build
     AGENT_OAUTH_AVAILABLE = False
 
 
-def _request_ended(status: str, message: str, credential_id=None) -> HTTPException:
+def _request_ended(status: str, message: str, credential_id=None, note: Optional[str] = None) -> HTTPException:
     """A request that can't be provided any more, typed (``status``: fulfilled, cancelled, expired) so a page that
-    holds it can tell a connected account from a lapsed link; a fulfilled one names the credential it made."""
+    holds it can tell a connected account from a lapsed link; a fulfilled one names the credential it made, and
+    ``note`` is why one ended unfulfilled, in words for its page (a scan the platform kept where it was)."""
     detail = {"message": message, "status": status}
     if credential_id:
         detail["credential_id"] = str(credential_id)
+    if note:
+        detail["note"] = note
     return HTTPException(status_code=410, detail=detail)
 
 
@@ -648,7 +651,8 @@ async def get_credential_request(token: str) -> CredentialRequestDetails:
     phone_result = row['credential_type'] == 'phone_number' and row['status'] in ('fulfilled', 'provisioning')
     if row['status'] != 'pending' and not phone_result:
         raise _request_ended(row['status'], f"This credential request has already been {row['status']}",
-                             row['credential_id'] if row['status'] == 'fulfilled' else None)
+                             row['credential_id'] if row['status'] == 'fulfilled' else None,
+                             (row['metadata'] or {}).get('ended_note'))
 
     if not phone_result and row['expires_at'] and row['expires_at'].replace(tzinfo=timezone.utc) < datetime.now(timezone.utc):
         raise _request_ended("expired", "This credential request has expired")
@@ -1356,10 +1360,16 @@ async def qr_status(token: str, body: QRStatusBody) -> dict[str, Any]:
         agents = capability(WHATSAPP_AGENT)
         refused = await agents.scanned(pool, str(row["id"]), result["credential_id"]) if agents is not None else None
         if refused:
-            # The platform kept the number with the agent already answering it; this request binds nothing.
+            # The platform kept the number with the agent already answering it; this request binds nothing, and its
+            # page says so from now on (``get_credential_request``).
             if result.get("created"):
                 await _rollback_qr_credential(pool, result["credential_id"])
-            raise HTTPException(status_code=409, detail=refused)
+            await pool.execute(
+                "UPDATE credential_requests SET metadata = COALESCE(metadata, '{}'::jsonb) "
+                "|| jsonb_build_object('ended_note', $2::text) WHERE id = $1",
+                row["id"], refused,
+            )
+            return {"success": True, "status": "already_connected", "message": refused}
         try:
             claimed = await _claim_fulfillment(pool, row, result["credential_id"], "whatsapp_qr",
                                                owner_id=str(row["requester_id"]))

@@ -155,7 +155,9 @@ export function ConnectedReceipt({ name, account, verification }: { name: string
 
 /** A request that can no longer be connected here, and the way on: a new request from NoClick, or another try when
  *  it just couldn't be read. */
-export function ConnectUnavailable({ name, problem, onRetry }: { name: string; problem: ProvideRequestProblem; onRetry: () => void }) {
+export function ConnectUnavailable({ name, problem, note, onRetry }: { name: string; problem: ProvideRequestProblem; note?: string; onRetry: () => void }) {
+    // Ended for a reason of its own (a scan of a number an agent already answers): that, and nothing to ask again.
+    if (note) return <Receipt tone="info">{note}</Receipt>;
     if (problem === 'failed' || problem === 'unreachable') {
         return (
             <Receipt

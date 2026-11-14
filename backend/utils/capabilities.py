@@ -436,9 +436,10 @@ ACCOUNT_AGENT_EMAIL = "account.agent_email"
 # False when one already answered it}, each agent {agent_id, name, channel_id,
 # channel_name}; and ``scanned(pool, request_id, credential_id)``, asked when a
 # QR scan through a credential request lands, before the request is fulfilled:
-# None to fulfil it, else what the scan's page says, the request left
-# unfulfilled (a platform keeps a number with the agent already answering it).
-# Without one, nothing offers a number an agent, and every scan fulfils.
+# None to fulfil it, else what the scan's page says (the poll's
+# ``already_connected``, and the ended request's ``note`` after), the request
+# left unfulfilled: a platform keeps a number with the agent already answering
+# it. Without one, nothing offers a number an agent, and every scan fulfils.
 WHATSAPP_AGENT = "whatsapp.agent"
 
 # A platform's own rule for a text to the assistant's number: async (transport, message) -> None, with the
