@@ -10,7 +10,7 @@ import { cn } from '~/lib/utils';
 
 export const TILE_GRID = 'grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3';
 
-/** A tile with one line under its name, plus the grid's gap: the rows of a catalog. */
+/** A tile with one line under its name, plus the grid's gap: the rows of a catalog, until a long name's measured. */
 const TILE_ROW_HEIGHT = 78;
 
 const TILE =
@@ -47,7 +47,9 @@ export function Tile({
             {mark}
             <span className="min-w-0 flex-1">
                 <span className="flex min-w-0 items-center gap-2">
-                    <span className="truncate text-[14px] font-medium text-foreground">{title}</span>
+                    {/* A long name runs to a second line, its row as tall as it needs, rather than cut off with nothing to
+                        say the rest on a phone. */}
+                    <span className="line-clamp-2 min-w-0 break-words text-[14px] font-medium text-foreground">{title}</span>
                     {badge}
                 </span>
                 {detail ? <span className={cn('mt-0.5 block text-[12.5px] text-muted-foreground', wrapDetail ? 'line-clamp-2 text-balance' : 'truncate')}>{detail}</span> : null}
