@@ -23,7 +23,7 @@ export type DashboardTab = 'vite' | 'databases' | 'flow' | 'debug' | 'analytics'
 export const SHELL_PAGE_TABS = ['chat', 'work', 'resources', 'connections'] as const;
 export type ShellPageTab = (typeof SHELL_PAGE_TABS)[number];
 // Work's own params: the space, which of its views, and what's open there.
-export const WORK_PARAMS = ['space', 'show', 'channel', 'thread', 'agent', 'conversation', 'panel', 'ptab', 'trigger', 'machine', 'res', 'item'] as const;
+export const WORK_PARAMS = ['space', 'show', 'channel', 'thread', 'agent', 'panel', 'ptab', 'trigger', 'machine', 'res', 'item'] as const;
 /** Work's `channel` for a space's NoClick channel, whichever channel that is: Work opens it once its channels are read. */
 export const WORK_NOCLICK_CHANNEL = 'noclick';
 // Drill-down sections of the Activity page (?focus=). Kept here, next to the tab
