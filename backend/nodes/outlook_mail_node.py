@@ -3288,6 +3288,12 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
     #: OAuth scope requirements per operation (nodes/scopes/microsoft.py).
     scope_registry = OUTLOOK_SCOPES
 
+    @classmethod
+    def describe_trigger(cls, operation: str, config: Dict[str, Any],
+                         account: Optional[str]) -> Optional[Dict[str, Any]]:
+        if operation != "on_email_received":
+            return None
+        return {"title": f"New email to {account}" if account else "New email"}
 
     @classmethod
     def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:

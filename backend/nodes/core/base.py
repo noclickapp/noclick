@@ -1094,6 +1094,17 @@ class WorkflowNode(ABC):
         """The turn that took the event ended: take down what ``agent_working`` showed, unless its reply already
         did. Never raises."""
 
+    @classmethod
+    def describe_trigger(cls, operation: str, config: Dict[str, Any],
+                         account: Optional[str]) -> Optional[Dict[str, Any]]:
+        """How a push trigger on ``operation``, narrowed by ``config``, reads in a list of what wakes an agent;
+        ``account`` is the connected account as people know it ("+1 202-555-0101", an email). Any of: ``title``
+        (what arrives, and where: "Messages to +1 202-555-0101"), ``hears`` (which of them: "Chats and groups"),
+        ``groups`` (whether group chats reach it, for an app that has them), ``disconnected`` (the account's link
+        being down: "Phone disconnected") and ``reconnect`` (what brings it back: "Scan the code again"). None, or
+        a key left out: the platform's generic words."""
+        return None
+
     # Grid layout constraints for interface nodes (defaultW, defaultH, minW, minH).
     # Only relevant for interface-* nodes; ignored for automation/agent nodes.
     grid_layout: Optional[Dict[str, int]] = None

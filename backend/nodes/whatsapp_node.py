@@ -2333,6 +2333,17 @@ class WhatsAppNode(WorkflowNode):
         except Exception:
             logger.warning("[WhatsApp] stopping the typing a quiet turn left failed", exc_info=True)
 
+    @classmethod
+    def describe_trigger(cls, operation: str, config: Dict[str, Any],
+                         account: Optional[str]) -> Optional[Dict[str, Any]]:
+        """Messages to the linked number, and whether its groups' reach it too (off unless the config says so)."""
+        if operation != "receive_message":
+            return None
+        groups = str(config.get("include_group_messages") or "").lower() == "true"
+        return {"title": f"Messages to {account}" if account else "WhatsApp messages",
+                "hears": "Chats and groups" if groups else "Direct chats only", "groups": groups,
+                "disconnected": "Phone disconnected", "reconnect": "Scan the code again"}
+
     @staticmethod
     def _seen_profiles(output: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """The chat's and its writer's profiles ``transform_trigger_payload`` put on a delivery (``{}`` for none)."""
