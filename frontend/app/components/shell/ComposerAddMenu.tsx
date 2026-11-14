@@ -1,10 +1,11 @@
 // The NoClick chat's "+": add photos and files from your computer or from the
 // files you've already sent it, or point it at one of your automations or
-// connected accounts. The menu opens as wide as the composer and in its
+// connected accounts; where the page has an agent's one session, clear it for
+// everyone or resume an earlier one. The menu opens as wide as the composer and in its
 // surface, so it reads as part of the box; a list opens in its place,
 // searchable and keyboard-driven, and picking something puts it in the box.
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode, type RefObject } from 'react';
-import { ChevronLeft, FileText, Plus, type LucideIcon } from 'lucide-react';
+import { ChevronLeft, FileText, Plus, RotateCcw, SquarePen, type LucideIcon } from 'lucide-react';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { ShortcutTooltip } from '~/components/shared/ShortcutTooltip';
 import { NodeMark } from '~/components/dashboard/primitives';
@@ -297,6 +298,14 @@ function AccountsPicker({ accounts, loaded, onBack, onReference }: { accounts: C
     );
 }
 
+/** What the "+" offers of an agent's one session: each opens its page's confirm. `blocked`: why neither can now ("Stop
+ *  it first" while a turn runs). */
+export interface ComposerSessionActions {
+    onClear: () => void;
+    onResume: () => void;
+    blocked?: string | null;
+}
+
 export function ComposerAddMenu({
     anchorRef,
     side = 'top',
@@ -305,6 +314,7 @@ export function ComposerAddMenu({
     listFiles,
     onAttach,
     onReference,
+    session,
 }: {
     /** The composer card: the menu opens against it, as wide as it. */
     anchorRef: RefObject<HTMLElement | null>;
@@ -317,6 +327,7 @@ export function ComposerAddMenu({
     /** A file sent before, picked again. */
     onAttach?: (attachment: AgentChatAttachment) => void;
     onReference: (reference: ChatReference) => void;
+    session?: ComposerSessionActions;
 }) {
     const [open, setOpen] = useState(false);
     const [view, setView] = useState<View>('menu');
@@ -430,6 +441,13 @@ export function ComposerAddMenu({
                                 onSelect={() => setView('accounts')}
                             />
                         ) : null}
+                        {session && (
+                            <>
+                                <div aria-hidden className="mx-3 my-1.5 h-px bg-border dark:bg-foreground/[0.08]" />
+                                <MenuItem icon={line(SquarePen)} title="Clear for everyone…" detail={session.blocked ?? 'Start fresh in a new session'} disabled={!!session.blocked} onSelect={() => (close(), session.onClear())} />
+                                <MenuItem icon={line(RotateCcw)} title="Resume an earlier session" detail={session.blocked ?? 'Switch back for everyone'} disabled={!!session.blocked} onSelect={() => (close(), session.onResume())} />
+                            </>
+                        )}
                     </div>
                 )}
             </PopoverContent>
