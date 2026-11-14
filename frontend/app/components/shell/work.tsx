@@ -36,7 +36,7 @@ export function WorkNotice({ title, body, action, mark, children, testId = 'work
                     </span>
                 )}
                 <h1 className={cn('mt-4', PAGE_TITLE, 'text-[28px]')}>{title}</h1>
-                <p className="mt-1.5 text-[14.5px] leading-relaxed text-muted-foreground">{body}</p>
+                <p className="mt-1.5 text-balance text-[14.5px] leading-relaxed text-muted-foreground">{body}</p>
                 {action && (
                     <button type="button" onClick={action.onClick} className={cn('mt-5', BUTTON_PRIMARY)}>
                         {action.label}
