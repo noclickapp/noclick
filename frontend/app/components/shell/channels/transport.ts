@@ -4,9 +4,9 @@
 import type { AgentChoice, Channel, ChannelAttachment, ChannelMessage, ChannelMode, ChannelSchedule, ChannelWorkspace } from './types';
 
 /** Something moved in the account's channels: new messages, a thread's replies, one message's reactions or pin, its
- *  bookmarks, a channel itself, or a workspace. */
+ *  bookmarks, a channel itself, a workspace, or your own sections of its channels. */
 export interface ChannelChange {
-    kind: 'message' | 'thread' | 'reaction' | 'pin' | 'bookmark' | 'channel' | 'workspace';
+    kind: 'message' | 'thread' | 'reaction' | 'pin' | 'bookmark' | 'channel' | 'workspace' | 'sections';
     channelId?: string;
     workspaceId?: string;
     messageId?: string;

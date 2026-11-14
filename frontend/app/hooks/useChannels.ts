@@ -288,7 +288,8 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
                 // A reply moves its parent's counts, and what's unread.
                 reread(id, change.threadId);
                 pending.lists = true;
-            } else if (change.kind === 'bookmark') {
+            } else if (change.kind === 'bookmark' || change.kind === 'sections') {
+                // A channel's bookmarks are its tab's; your sections are Home's (useChannelSections).
                 return;
             } else {
                 // New messages move unread counts and who's busy; a channel's own change moves the lists.
