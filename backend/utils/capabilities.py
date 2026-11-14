@@ -402,11 +402,12 @@ TURN_EVENTS = "agent.turn_events"
 # (not its agent: the engine runs the turn) or an object with
 # ``conversation_prefix`` (a visitor's thread is ``{prefix}:{visitor id}:{chat
 # key}``), async ``send(conversation_id, text) -> None`` (accepted) or the
-# refusal's reason (``busy``, ``agent_unavailable``), ``brand`` (the page's
-# name, logo_url, color and support_url, or None) and, optionally, async
-# ``read(conversation_id) -> events``: the visitor's thread as the product keeps
-# it, which the page's resume reads in place of the stored thread. ``link`` is
-# ``SharedAgentLinkRepo.load_for_visit``'s row.
+# refusal's reason (``agent_unavailable``), ``brand`` (the page's name,
+# logo_url, color and support_url, or None), ``one_session`` (every visitor's
+# chat lands in the agent's one session, so the page offers no new chat) and,
+# optionally, async ``read(conversation_id) -> events``: the visitor's thread as
+# the product keeps it, which the page's resume reads in place of the stored
+# thread. ``link`` is ``SharedAgentLinkRepo.load_for_visit``'s row.
 SHARED_AGENT_TURNS = "agent.shared_turns"
 
 # Something happened in an account that the platform running this engine

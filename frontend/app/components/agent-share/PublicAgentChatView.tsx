@@ -45,6 +45,8 @@ export interface PublicAgentMeta {
   conversation_prefix: string;
   /** The page's own brand, when the agent belongs to a product that sets one. */
   brand?: Brand | null;
+  /** A platform agent's link: every visitor's chat lands in its one session, so there's no new chat. */
+  one_session?: boolean;
 }
 
 export function PublicAgentChatView({
@@ -149,7 +151,7 @@ export function PublicAgentChatView({
       ) : null}
 
       <div className="flex-1 min-h-0 w-full max-w-3xl mx-auto flex flex-col">
-        {/* Header: agent identity + tools + new chat. */}
+        {/* Header: agent identity + tools + new chat (none for an agent of one session). */}
         <div className="px-6 pt-6 pb-4 shrink-0 flex items-start justify-between gap-3">
           <div className="min-w-0">
             {brand ? (
@@ -177,15 +179,17 @@ export function PublicAgentChatView({
               </div>
             ) : null}
           </div>
-          <button
-            type="button"
-            onClick={handleNewChat}
-            data-testid="agent-share-new-chat"
-            className="shrink-0 inline-flex items-center gap-1.5 text-xs text-muted-foreground dark:text-zinc-300 hover:text-foreground bg-foreground/[0.04] hover:bg-foreground/[0.08] border border-border hover:border-foreground/20 rounded-lg px-2.5 py-1.5 transition-colors"
-          >
-            <SquarePen className="w-3.5 h-3.5" />
-            New chat
-          </button>
+          {meta.one_session ? null : (
+            <button
+              type="button"
+              onClick={handleNewChat}
+              data-testid="agent-share-new-chat"
+              className="shrink-0 inline-flex items-center gap-1.5 text-xs text-muted-foreground dark:text-foreground/80 hover:text-foreground bg-foreground/[0.04] hover:bg-foreground/[0.08] border border-border hover:border-foreground/20 rounded-full px-3 py-1.5 transition-colors"
+            >
+              <SquarePen className="w-3.5 h-3.5" />
+              New chat
+            </button>
+          )}
         </div>
 
         {/* Transcript. */}
