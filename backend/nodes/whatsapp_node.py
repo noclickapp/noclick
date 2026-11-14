@@ -2649,11 +2649,32 @@ class WhatsAppNode(WorkflowNode):
         key = (event_payload.get("_data") or {}).get("key") or {}
         return str(event_payload.get("from") or key.get("remoteJid") or "unknown")
 
+    @classmethod
+    def trigger_event_ids(
+        cls, payload: Dict[str, Any], config: Dict[str, Any]
+    ) -> Optional[Tuple[str, ...]]:
+        """A WAHooks delivery's event ``id`` (``evt_…``), the same on every
+        retry and re-post, and a message's ``payload.id``: ``message`` and
+        ``message.any`` are two events for one message, and a re-sync after a
+        reconnect sends a message again under a new event id. None for other
+        shapes (Meta's Cloud API)."""
+        if "event" not in payload or "session" not in payload:
+            return None
+        ids = []
+        if isinstance(payload.get("id"), str) and payload["id"]:
+            ids.append(f"event:{payload['id']}")
+        message = payload.get("payload")
+        if payload.get("event") in _MESSAGE_EVENTS and isinstance(message, dict) \
+                and isinstance(message.get("id"), str) and message["id"]:
+            ids.append(f"message:{message['id']}")
+        return tuple(ids) or None
+
     # Provider media URLs require a service credential and are not safe to hand
     # to a run, and they expire within minutes: copy at delivery time. The copy
     # runs before the delivery is acked, and WAHooks aborts a delivery unanswered
-    # after 15s and sends it again (5 attempts, with nothing here to dedupe them):
-    # the timeout bounds the WHOLE copy, leaving room for the rest of the delivery.
+    # after 15s and sends it again (5 attempts; trigger_event_ids keeps a copy
+    # from rehosting or running twice): the timeout bounds the WHOLE copy,
+    # leaving room for the rest of the delivery.
     MEDIA_REHOST_MAX_BYTES = 100 * 1024 * 1024
     MEDIA_REHOST_TIMEOUT_S = 12
 

@@ -18,6 +18,7 @@ import inspect
 import json
 import logging
 import uuid as uuid_module
+from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
@@ -1552,90 +1553,107 @@ async def handle_webhook_payload(
                             execution_id=None).model_dump()
         ) if return_response else True
 
-    if await _over_trigger_fire_budget(node_cls, trigger_node, payload, workflow_id):
-        update_webhook_stats(webhook_id)
-        return _json_relay_response(
-            WebhookResponse(
-                success=True,
-                message="Webhook received but trigger is over its fire budget",
-                execution_id=None,
-            ).model_dump()
-        ) if return_response else True
+    try:
+        async with _trigger_delivery_guard(node_cls, trigger_node, payload, webhook_id) as deliver:
+            if not deliver:
+                update_webhook_stats(webhook_id)
+                return _json_relay_response(
+                    WebhookResponse(success=True, message="Webhook received but already delivered",
+                                    execution_id=None).model_dump()
+                ) if return_response else True
 
-    if not await _claim_google_watch_delivery(workflow_id, actual_node_id, trigger_node, payload):
-        update_webhook_stats(webhook_id)
-        return _json_relay_response(
-            WebhookResponse(
-                success=True,
-                message="Duplicate Google watch delivery ignored",
-                execution_id=None,
-            ).model_dump()
-        ) if return_response else True
+            if await _over_trigger_fire_budget(node_cls, trigger_node, payload, workflow_id):
+                update_webhook_stats(webhook_id)
+                return _json_relay_response(
+                    WebhookResponse(
+                        success=True,
+                        message="Webhook received but trigger is over its fire budget",
+                        execution_id=None,
+                    ).model_dump()
+                ) if return_response else True
 
-    payload = await _transform_trigger_payload(node_cls, trigger_node, payload, workflow_id)
+            if not await _claim_google_watch_delivery(workflow_id, actual_node_id, trigger_node, payload):
+                update_webhook_stats(webhook_id)
+                return _json_relay_response(
+                    WebhookResponse(
+                        success=True,
+                        message="Duplicate Google watch delivery ignored",
+                        execution_id=None,
+                    ).model_dump()
+                ) if return_response else True
 
-    # Check if trigger node is disabled - skip execution if so
-    if trigger_node and node_disabled(trigger_node):
-        logger.info(f"[WEBHOOK] Trigger node {actual_node_id} is disabled, skipping workflow execution")
-        update_webhook_stats(webhook_id)
-        if return_response:
-            return _json_relay_response(
-                WebhookResponse(
-                    success=True,
-                    message="Webhook received but trigger is disabled",
-                    execution_id=None,
-                ).model_dump()
-            )
-        return True  # Return success but don't execute
+            payload = await _transform_trigger_payload(node_cls, trigger_node, payload, workflow_id)
 
-    taken = await _delivered_elsewhere(workflow_id, trigger_node, payload, nodes, edges)
-    if taken is not None:
-        update_webhook_stats(webhook_id)
-        status_code, content = taken
-        return _json_relay_response(content, status_code=status_code) if return_response else status_code < 400
+            # Check if trigger node is disabled - skip execution if so
+            if trigger_node and node_disabled(trigger_node):
+                logger.info(f"[WEBHOOK] Trigger node {actual_node_id} is disabled, skipping workflow execution")
+                update_webhook_stats(webhook_id)
+                if return_response:
+                    return _json_relay_response(
+                        WebhookResponse(
+                            success=True,
+                            message="Webhook received but trigger is disabled",
+                            execution_id=None,
+                        ).model_dump()
+                    )
+                return True  # Return success but don't execute
 
-    # For alarm nodes, execute only the agent's subgraph to avoid side effects
-    if is_alarm:
-        agent_node_id = _find_connected_agent(nodes, edges, actual_node_id)
-        from utils.alarm_watch import claim_watch_delivery
-        if not await claim_watch_delivery(workflow_id, actual_node_id, agent_node_id, payload):
-            return _json_relay_response(WebhookResponse(success=True, message="Superseded or duplicate deadline ignored", execution_id=None).model_dump()) if return_response else True
-        if agent_node_id:
-            subgraph_ids = _get_agent_subgraph(nodes, edges, agent_node_id)
-            # Restore upstream context: mock upstream nodes with stored outputs
-            # and override agent's message with alarm trigger message
-            _restore_upstream_context(nodes, subgraph_ids, agent_node_id, payload)
-            nodes = [n for n in nodes if n.get('id') in subgraph_ids]
-            edges = [e for e in edges if e.get('source') in subgraph_ids and e.get('target') in subgraph_ids]
-            logger.info(f"[WEBHOOK] Alarm trigger: executing agent subgraph ({len(nodes)} nodes) for agent {agent_node_id}")
+            taken = await _delivered_elsewhere(workflow_id, trigger_node, payload, nodes, edges)
+            if taken is not None:
+                update_webhook_stats(webhook_id)
+                status_code, content = taken
+                if status_code >= 400:
+                    raise _RefusedDelivery(status_code, content)
+                return _json_relay_response(content, status_code=status_code) if return_response else True
 
-    # Update stats only after the trigger node has accepted the request. This
-    # avoids counting missing-node lookups or rejected provider signatures.
-    update_webhook_stats(webhook_id)
-    response_mode = _get_webhook_response_mode(trigger_node)
+            # For alarm nodes, execute only the agent's subgraph to avoid side effects
+            if is_alarm:
+                agent_node_id = _find_connected_agent(nodes, edges, actual_node_id)
+                from utils.alarm_watch import claim_watch_delivery
+                if not await claim_watch_delivery(workflow_id, actual_node_id, agent_node_id, payload):
+                    return _json_relay_response(WebhookResponse(success=True, message="Superseded or duplicate deadline ignored", execution_id=None).model_dump()) if return_response else True
+                if agent_node_id:
+                    subgraph_ids = _get_agent_subgraph(nodes, edges, agent_node_id)
+                    # Restore upstream context: mock upstream nodes with stored outputs
+                    # and override agent's message with alarm trigger message
+                    _restore_upstream_context(nodes, subgraph_ids, agent_node_id, payload)
+                    nodes = [n for n in nodes if n.get('id') in subgraph_ids]
+                    edges = [e for e in edges if e.get('source') in subgraph_ids and e.get('target') in subgraph_ids]
+                    logger.info(f"[WEBHOOK] Alarm trigger: executing agent subgraph ({len(nodes)} nodes) for agent {agent_node_id}")
 
-    if return_response and response_mode == "immediately":
-        spawn(
-            _execute_workflow_with_relay(
-                user_id=user_id,
-                workflow_id=workflow_id,
-                nodes=nodes,
-                edges=edges,
-                start_node_id=actual_node_id,
-            ),
-            name=f"relay-webhook-execute:{workflow_id}:{actual_node_id}",
-        )
-        ack = _webhook_ack_for_node(trigger_node)
-        if ack is not None:
-            return _response_to_relay_payload(ack)
-        return _json_relay_response(
-            WebhookResponse(
-                success=True,
-                message="Webhook received and workflow triggered",
-                execution_id=None,
-            ).model_dump()
-        )
+            # Update stats only after the trigger node has accepted the request. This
+            # avoids counting missing-node lookups or rejected provider signatures.
+            update_webhook_stats(webhook_id)
+            response_mode = _get_webhook_response_mode(trigger_node)
 
+            if return_response and response_mode == "immediately":
+                spawn(
+                    _execute_workflow_with_relay(
+                        user_id=user_id,
+                        workflow_id=workflow_id,
+                        nodes=nodes,
+                        edges=edges,
+                        start_node_id=actual_node_id,
+                    ),
+                    name=f"relay-webhook-execute:{workflow_id}:{actual_node_id}",
+                )
+                ack = _webhook_ack_for_node(trigger_node)
+                if ack is not None:
+                    return _response_to_relay_payload(ack)
+                return _json_relay_response(
+                    WebhookResponse(
+                        success=True,
+                        message="Webhook received and workflow triggered",
+                        execution_id=None,
+                    ).model_dump()
+                )
+    except _RefusedDelivery as refused:
+        return _json_relay_response(refused.content, status_code=refused.status_code) if return_response else False
+    except HTTPException as exc:
+        logger.warning(f"[WEBHOOK] Delivery to {webhook_id} not taken: {exc.detail}")
+        return _json_relay_response({"detail": exc.detail}, status_code=exc.status_code) if return_response else False
+
+    # A run the response waits for starts past the guard: it covers dispatch, never the run.
     result = await _execute_workflow_with_relay(
         user_id=user_id,
         workflow_id=workflow_id,
@@ -1856,6 +1874,50 @@ async def _over_trigger_fire_budget(
         )
         return True
     return False
+
+
+# A per-node delivery's lease covers receive to the run's dispatch, never the
+# run: under a minute, so a copy that died holding it is taken over by a later
+# retry inside the sender's window (WAHooks: 5, 10, 20 and 40s apart).
+TRIGGER_DELIVERY_LEASE_SECONDS = 60
+TRIGGER_DELIVERY_PROCESSING_SECONDS = 50
+TRIGGER_DELIVERY_DEDUP_SECONDS = 24 * 60 * 60
+
+
+class _RefusedDelivery(Exception):
+    """A product refused a guarded delivery (``_delivered_elsewhere``, 400 or
+    more): the guard records nothing, so the sender's retry is judged again."""
+
+    def __init__(self, status_code: int, content: Any):
+        super().__init__(status_code)
+        self.status_code, self.content = status_code, content
+
+
+@asynccontextmanager
+async def _trigger_delivery_guard(node_cls, trigger_node: dict, payload: dict, webhook_id: str):
+    """False for a delivery its trigger already dispatched
+    (``WorkflowNode.trigger_event_ids``). Keyed with the webhook, so one event
+    sent to two triggers runs both. Fails open: a Redis outage delivers
+    unguarded, since WAHooks stops retrying within minutes."""
+    from nodes.core.base import WorkflowNode
+    from utils.app_delivery_guard import guard_app_deliveries
+    from utils.redis_client import get_shared_redis
+
+    # Fast path — mirrors _consume_control_event.
+    ids = None
+    if node_cls is not None and node_cls.trigger_event_ids.__func__ is not WorkflowNode.trigger_event_ids.__func__:
+        ids = node_cls.trigger_event_ids(payload, trigger_node.get("config", {}))
+    if not ids:
+        yield True
+        return
+    async with guard_app_deliveries(
+        [json.dumps([webhook_id, event_id]) for event_id in ids],
+        client=get_shared_redis(), provider="trigger", label="Trigger",
+        lease_seconds=TRIGGER_DELIVERY_LEASE_SECONDS,
+        processing_seconds=TRIGGER_DELIVERY_PROCESSING_SECONDS,
+        dedup_seconds=TRIGGER_DELIVERY_DEDUP_SECONDS, fail_open=True,
+    ) as deliver:
+        yield deliver
 
 
 async def _drop_trigger_event(node_cls, trigger_node: dict, payload: dict) -> Optional[str]:
@@ -3019,73 +3081,85 @@ async def receive_webhook(
         return WebhookResponse(success=True, message=f"Webhook received but dropped: {_drop_msg}",
                                execution_id=None)
 
-    if await _over_trigger_fire_budget(_node_cls, trigger_node, payload, workflow_id):
-        update_webhook_stats(webhook_id)
-        return WebhookResponse(
-            success=True,
-            message="Webhook received but trigger is over its fire budget",
-            execution_id=None,
-        )
+    try:
+        async with _trigger_delivery_guard(_node_cls, trigger_node, payload, webhook_id) as deliver:
+            if not deliver:
+                update_webhook_stats(webhook_id)
+                return WebhookResponse(success=True, message="Webhook received but already delivered",
+                                       execution_id=None)
 
-    if not await _claim_google_watch_delivery(workflow_id, actual_node_id, trigger_node, payload):
-        update_webhook_stats(webhook_id)
-        return WebhookResponse(
-            success=True,
-            message="Duplicate Google watch delivery ignored",
-            execution_id=None,
-        )
+            if await _over_trigger_fire_budget(_node_cls, trigger_node, payload, workflow_id):
+                update_webhook_stats(webhook_id)
+                return WebhookResponse(
+                    success=True,
+                    message="Webhook received but trigger is over its fire budget",
+                    execution_id=None,
+                )
 
-    payload = await _transform_trigger_payload(_node_cls, trigger_node, payload, workflow_id)
+            if not await _claim_google_watch_delivery(workflow_id, actual_node_id, trigger_node, payload):
+                update_webhook_stats(webhook_id)
+                return WebhookResponse(
+                    success=True,
+                    message="Duplicate Google watch delivery ignored",
+                    execution_id=None,
+                )
 
-    taken = await _delivered_elsewhere(workflow_id, trigger_node, payload, nodes, edges)
-    if taken is not None:
-        update_webhook_stats(webhook_id)
-        status_code, content = taken
-        return JSONResponse(content=jsonable_encoder(content), status_code=status_code)
+            payload = await _transform_trigger_payload(_node_cls, trigger_node, payload, workflow_id)
 
-    # For alarm nodes, execute only the agent's subgraph to avoid side effects
-    if is_alarm:
-        agent_node_id = _find_connected_agent(nodes, edges, actual_node_id)
-        from utils.alarm_watch import claim_watch_delivery
-        if not await claim_watch_delivery(workflow_id, actual_node_id, agent_node_id, payload):
-            return WebhookResponse(success=True, message="Superseded or duplicate deadline ignored", execution_id=None)
-        if agent_node_id:
-            subgraph_ids = _get_agent_subgraph(nodes, edges, agent_node_id)
-            # Restore upstream context: mock upstream nodes with stored outputs
-            # and override agent's message with alarm trigger message
-            _restore_upstream_context(nodes, subgraph_ids, agent_node_id, payload)
-            nodes = [n for n in nodes if n.get('id') in subgraph_ids]
-            edges = [e for e in edges if e.get('source') in subgraph_ids and e.get('target') in subgraph_ids]
-            logger.info(f"[WEBHOOK] Alarm trigger: executing agent subgraph ({len(nodes)} nodes) for agent {agent_node_id}")
+            taken = await _delivered_elsewhere(workflow_id, trigger_node, payload, nodes, edges)
+            if taken is not None:
+                update_webhook_stats(webhook_id)
+                status_code, content = taken
+                if status_code >= 400:
+                    raise _RefusedDelivery(status_code, content)
+                return JSONResponse(content=jsonable_encoder(content), status_code=status_code)
 
-    # Update stats only after the trigger node has accepted the request. This
-    # avoids counting missing-node lookups or rejected provider signatures.
-    update_webhook_stats(webhook_id)
-    response_mode = _get_webhook_response_mode(trigger_node)
+            # For alarm nodes, execute only the agent's subgraph to avoid side effects
+            if is_alarm:
+                agent_node_id = _find_connected_agent(nodes, edges, actual_node_id)
+                from utils.alarm_watch import claim_watch_delivery
+                if not await claim_watch_delivery(workflow_id, actual_node_id, agent_node_id, payload):
+                    return WebhookResponse(success=True, message="Superseded or duplicate deadline ignored", execution_id=None)
+                if agent_node_id:
+                    subgraph_ids = _get_agent_subgraph(nodes, edges, agent_node_id)
+                    # Restore upstream context: mock upstream nodes with stored outputs
+                    # and override agent's message with alarm trigger message
+                    _restore_upstream_context(nodes, subgraph_ids, agent_node_id, payload)
+                    nodes = [n for n in nodes if n.get('id') in subgraph_ids]
+                    edges = [e for e in edges if e.get('source') in subgraph_ids and e.get('target') in subgraph_ids]
+                    logger.info(f"[WEBHOOK] Alarm trigger: executing agent subgraph ({len(nodes)} nodes) for agent {agent_node_id}")
 
-    if response_mode == "immediately":
-        background_tasks.add_task(
-            _execute_workflow_with_relay,
-            user_id=user_id,
-            workflow_id=workflow_id,
-            nodes=nodes,
-            edges=edges,
-            start_node_id=actual_node_id,
-        )
+            # Update stats only after the trigger node has accepted the request. This
+            # avoids counting missing-node lookups or rejected provider signatures.
+            update_webhook_stats(webhook_id)
+            response_mode = _get_webhook_response_mode(trigger_node)
 
-        logger.info(f"[WEBHOOK] Workflow {workflow_id} triggered for user {user_id[:8]}")
+            if response_mode == "immediately":
+                background_tasks.add_task(
+                    _execute_workflow_with_relay,
+                    user_id=user_id,
+                    workflow_id=workflow_id,
+                    nodes=nodes,
+                    edges=edges,
+                    start_node_id=actual_node_id,
+                )
 
-        # Some providers (e.g. Twilio) require a specific response body/content-type.
-        ack = _webhook_ack_for_node(trigger_node)
-        if ack is not None:
-            return ack
+                logger.info(f"[WEBHOOK] Workflow {workflow_id} triggered for user {user_id[:8]}")
 
-        return WebhookResponse(
-            success=True,
-            message="Webhook received and workflow triggered",
-            execution_id=None,
-        )
+                # Some providers (e.g. Twilio) require a specific response body/content-type.
+                ack = _webhook_ack_for_node(trigger_node)
+                if ack is not None:
+                    return ack
 
+                return WebhookResponse(
+                    success=True,
+                    message="Webhook received and workflow triggered",
+                    execution_id=None,
+                )
+    except _RefusedDelivery as refused:
+        return JSONResponse(content=jsonable_encoder(refused.content), status_code=refused.status_code)
+
+    # A run the response waits for starts past the guard: it covers dispatch, never the run.
     logger.info(f"[WEBHOOK] Waiting for workflow {workflow_id} before responding")
     result = await _execute_workflow_with_relay(
         user_id=user_id,

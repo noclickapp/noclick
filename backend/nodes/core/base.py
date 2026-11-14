@@ -1008,6 +1008,24 @@ class WorkflowNode(ABC):
         return None
 
     @classmethod
+    def trigger_event_ids(
+        cls, payload: Dict[str, Any], config: Dict[str, Any]
+    ) -> Optional[Tuple[str, ...]]:
+        """The ids that make a webhook delivery the same event as another, for
+        a provider that sends a delivery again when it isn't answered fast
+        enough (WAHooks: after 15s).
+
+        Both per-node delivery paths hold each id, keyed with the webhook, in
+        ``utils.app_delivery_guard`` from the fire budget to the run's
+        dispatch: a copy arriving while one is dispatched gets a retryable
+        503, and one arriving after gets a 200 without a run. Several ids are
+        one delivery known several ways (an event's id, the message's it
+        carries); it's a duplicate if any of them was delivered. Pure and
+        cheap: it runs on every delivery. Default None: no guard, no Redis.
+        """
+        return None
+
+    @classmethod
     def should_propagate_output(
         cls, output: Dict[str, Any], config: Dict[str, Any]
     ) -> bool:
