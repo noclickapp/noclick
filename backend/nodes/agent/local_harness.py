@@ -781,7 +781,10 @@ async def run_local_harness_turn(
             # Some CLIs resolve configuration through PWD rather than getcwd().
             env["PWD"] = str(workdir)
             _apply_subscription_login(model_type, workdir, env)
-            if model_type == "hermes_agent":
+            if model_type == "claude_code":
+                # 2.1.310+ otherwise defers every MCP tool behind ToolSearch, so the first request lacks them.
+                env["ENABLE_TOOL_SEARCH"] = "false"
+            elif model_type == "hermes_agent":
                 env["HERMES_HOME"] = str(workdir / ".hermes")
             elif model_type == "openclaw":
                 env["OPENCLAW_HOME"] = str(workdir / ".openclaw")
