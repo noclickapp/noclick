@@ -90,9 +90,9 @@ function StarterCard({ title, detail, mark, disabled, onTry, className }: { titl
 
 const COMPOSER_TRANSITION = 'nc-composer';
 
-// On the page's own background, so the thread scrolling under it never shows through.
+// On the page's own background, so the thread scrolling under it never shows through; it answers taps a fingertip wide.
 const ICON_BUTTON =
-    'inline-flex h-8 w-8 items-center justify-center rounded-full bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40';
+    "relative inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-background after:absolute after:-inset-1 after:rounded-full after:content-[''] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40";
 
 /** The thread's outline, shown only if loading it takes long enough to notice. */
 function ThreadLoading() {
@@ -400,7 +400,7 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
 
     if (empty) {
         const headline = (
-            <div className={cn(DISPLAY, 'leading-[1.02]')}>
+            <div className={cn(DISPLAY, 'text-balance leading-[1.02]')}>
                 <h1 className="text-foreground">What should I take care of?</h1>
             </div>
         );
@@ -417,7 +417,8 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
                     {beside}
                     <div className="flex min-h-0 flex-1 flex-col justify-center px-6 text-[36px]">{headline}</div>
                     <div className="flex snap-x gap-2.5 overflow-x-auto scroll-px-4 px-4 pb-3 scrollbar-hide">{starters('w-[228px] shrink-0 snap-start')}</div>
-                    {composer}
+                    {/* Clear of the home indicator, where a thumb reaches it. */}
+                    <div className="pb-[env(safe-area-inset-bottom)]">{composer}</div>
                     {memories}
                 </div>
             );
@@ -458,7 +459,8 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
                         )}
                     </div>
                 </div>
-                <div className="shrink-0" style={reserved}>
+                {/* On a phone, clear of the home indicator, where a thumb reaches it. */}
+                <div className={cn('shrink-0', inPhone && 'pb-[env(safe-area-inset-bottom)]')} style={reserved}>
                     {composer}
                 </div>
                 {memories}

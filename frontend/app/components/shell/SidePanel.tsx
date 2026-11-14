@@ -28,7 +28,8 @@ export function SidePanel({
                 <Dialog.Overlay className="fixed inset-0 z-[60] bg-black/20 data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 dark:bg-black/50" />
                 <Dialog.Content
                     className={cn(
-                        'fixed inset-y-0 right-0 z-[70] flex w-full max-w-[560px] flex-col border-l border-border bg-background shadow-[0_0_40px_-12px_rgba(0,0,0,0.3)] outline-none duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right dark:border-foreground/[0.08]',
+                        // Full height on a phone, so clear of the notch and the home indicator.
+                        'fixed inset-y-0 right-0 z-[70] flex w-full max-w-[560px] flex-col border-l border-border bg-background pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] shadow-[0_0_40px_-12px_rgba(0,0,0,0.3)] outline-none duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right dark:border-foreground/[0.08]',
                         className
                     )}
                 >

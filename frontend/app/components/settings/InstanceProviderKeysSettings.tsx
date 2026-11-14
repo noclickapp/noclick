@@ -87,8 +87,9 @@ function KeyRow({ envVar, title, purpose, state, onChange }: { envVar: string; t
 
     return (
         <div className={ROW}>
-            <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
+            {/* Where the row is too narrow for both, the link goes under what the key is for instead of squeezing it. */}
+            <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1.5">
+                <div className="min-w-0 flex-1 basis-64">
                     <div className={ROW_TITLE}>{title}</div>
                     <p className={ROW_PURPOSE}>{purpose}</p>
                 </div>

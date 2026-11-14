@@ -136,7 +136,8 @@ export function Settings({ initialSection, hiddenSections }: SettingsProps) {
                         <Icon className="h-5 w-5 shrink-0 text-foreground/75" strokeWidth={1.6} />
                         <span className="min-w-0 flex-1">
                           <span className="block text-[15px] text-foreground">{item.label}</span>
-                          <span className="block truncate text-[13px] text-muted-foreground">{item.description}</span>
+                          {/* Whole, on as many lines as it takes: a phone has no tooltip to say the rest. */}
+                          <span className="mt-0.5 block text-[13px] leading-snug text-muted-foreground">{item.description}</span>
                         </span>
                         <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/60" />
                       </button>

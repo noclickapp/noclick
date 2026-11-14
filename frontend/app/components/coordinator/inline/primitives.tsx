@@ -88,7 +88,8 @@ export function Receipt({ lead, children, action, tone = 'done' }: { lead?: Reac
     return (
         <div className="flex max-w-[560px] items-center gap-2 text-[13.5px] text-muted-foreground">
             {lead ?? (tone === 'done' ? <Check className="h-4 w-4 shrink-0 text-foreground/70" strokeWidth={2.25} /> : null)}
-            <span className="min-w-0 flex-1 truncate">{children}</span>
+            {/* One line where it fits; a phone, with no tooltip to say the rest, wraps it. */}
+            <span className="min-w-0 flex-1 leading-snug sm:truncate">{children}</span>
             {action}
         </div>
     );

@@ -233,8 +233,9 @@ function TextingRow({
     const ready = spec.fields.every((f) => (values[f.envVar] ?? '').trim());
     return (
         <div className={ROW} data-testid={`texting-${spec.app}`}>
-            <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
+            {/* Too narrow for both, the link goes under what it's for instead of squeezing it. */}
+            <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1.5">
+                <div className="min-w-0 flex-1 basis-64">
                     <div className={ROW_TITLE}>{spec.title}</div>
                     <p className={ROW_PURPOSE}>{spec.purpose}</p>
                 </div>

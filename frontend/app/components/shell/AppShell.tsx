@@ -170,7 +170,8 @@ function PhoneShell({ sidebar, title, builder, builderShown, banner, children }:
                 <span className={cn('min-w-0 flex-1 truncate px-1 text-[15px] font-semibold tracking-[-0.01em] text-foreground', taken && 'hidden')}>{title}</span>
                 <div ref={setLead} className={leadTaken && !builderLeads ? 'flex min-w-0 flex-1 items-center gap-1' : 'hidden'} />
                 <div ref={setBuilderLead} className={builderLeads ? 'flex min-w-0 flex-1 items-center gap-1' : 'hidden'} />
-                <div ref={setSlot} className={cn('flex shrink-0 items-center gap-0.5', builderShown && 'hidden')} />
+                {/* Its actions shrink before they run off the bar: a label in them truncates. */}
+                <div ref={setSlot} className={cn('flex min-w-0 items-center gap-0.5', builderShown && 'hidden')} />
                 <div ref={setBuilderSlot} className={cn('flex shrink-0 items-center gap-0.5', !builderShown && 'hidden')} />
                 {sidebar.builder && (
                     <button

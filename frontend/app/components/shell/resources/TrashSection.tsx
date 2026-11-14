@@ -56,7 +56,8 @@ function TrashRow({ entry, now, onRestore, onPurge }: { entry: TrashEntry; now: 
         .join(' · ');
     return (
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3" data-testid={`trash-row-${entry.id}`}>
-            <span className="min-w-0 flex-1">
+            {/* Too narrow for its name, when and buttons on one line, the buttons go under it. */}
+            <span className="min-w-0 flex-1 basis-48">
                 <span className="block truncate text-[14px] font-medium text-foreground">{entry.name}</span>
                 {when && <span className="block truncate text-[12.5px] text-muted-foreground">{when}</span>}
                 {failed && (

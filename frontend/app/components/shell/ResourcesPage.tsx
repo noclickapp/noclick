@@ -16,7 +16,7 @@ import { askNoClick } from '~/lib/askNoClick';
 import { navigateToTab } from '~/lib/navigation';
 import { cn } from '~/lib/utils';
 import { rememberPaletteEntries } from '~/components/command/sources';
-import { BUTTON_PRIMARY, BUTTON_SECONDARY } from './buttons';
+import { BUTTON_OUTLINE_SM, BUTTON_PRIMARY, BUTTON_SECONDARY } from './buttons';
 import { PageFrame } from './PageFrame';
 import { BuyDomainPage } from './resources/BuyDomainPage';
 import { BuyNumberPage } from './resources/BuyNumberPage';
@@ -372,12 +372,12 @@ export function ResourcesView() {
                 back={{ label: 'Resources', onBack: () => go(null) }}
                 actions={
                     manualFor(kind.id) && items[activeKind].length > 0 ? (
-                        <span className="flex flex-col items-end gap-1">
+                        <span className="flex flex-col items-start gap-1 sm:items-end">
                             <button type="button" onClick={manualFor(kind.id)!.run} disabled={!!manualFor(kind.id)!.refusal} title={manualFor(kind.id)!.refusal} className={BUTTON_PRIMARY}>
                                 <Plus className="h-4 w-4" />
                                 {manualFor(kind.id)!.label}
                             </button>
-                            {manualFor(kind.id)!.refusal && <span className="max-w-[280px] text-right text-[12.5px] text-muted-foreground">{manualFor(kind.id)!.refusal}</span>}
+                            {manualFor(kind.id)!.refusal && <span className="max-w-[280px] text-[12.5px] text-muted-foreground sm:text-right">{manualFor(kind.id)!.refusal}</span>}
                         </span>
                     ) : undefined
                 }
@@ -448,7 +448,7 @@ export function ResourcesView() {
                                                 event.stopPropagation();
                                                 manualFor(k.id)!.run();
                                             }}
-                                            className="inline-flex h-8 shrink-0 items-center rounded-full px-3.5 text-[13px] font-medium text-foreground ring-1 ring-inset ring-border transition-colors hover:bg-foreground/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 dark:ring-foreground/[0.14]"
+                                            className={BUTTON_OUTLINE_SM}
                                         >
                                             {manualFor(k.id)!.short}
                                         </button>

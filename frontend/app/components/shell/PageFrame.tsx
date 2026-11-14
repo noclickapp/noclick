@@ -38,11 +38,12 @@ export function PageFrame({
                     ))}
                 {(!inPhone || description || actions) && (
                     <header className="mb-7 flex min-w-0 flex-wrap items-start gap-x-6 gap-y-4">
-                        <div className="min-w-0 flex-1">
+                        {/* Never narrower than a readable line: short of room, the actions go under it instead. */}
+                        <div className="min-w-0 flex-1 basis-64">
                             {!inPhone && <h1 className={PAGE_TITLE}>{title}</h1>}
                             {description ? <p className="mt-1 text-[14px] text-muted-foreground">{description}</p> : null}
                         </div>
-                        {actions && <div className="flex shrink-0 items-center gap-2 sm:pt-1">{actions}</div>}
+                        {actions && <div className="flex min-w-0 max-w-full shrink-0 items-center gap-2 sm:pt-1">{actions}</div>}
                     </header>
                 )}
                 {children}

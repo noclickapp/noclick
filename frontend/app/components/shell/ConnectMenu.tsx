@@ -42,7 +42,7 @@ function WayTile({ way, className }: { way: Way; className?: string }) {
 // The button is its tiles, overlapping like a hand of cards that spreads under the pointer, and its name: no pill
 // around it. The page's own background keeps a thread scrolling under it from showing through.
 const TRIGGER =
-    'group inline-flex h-9 items-center gap-2 rounded-full bg-background pl-1 pr-2.5 text-[14px] font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
+    'group inline-flex h-9 shrink-0 items-center gap-2 rounded-full bg-background pl-1 pr-2.5 text-[14px] font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
 const WAYS: Way[] = ['whatsapp', 'imessage', 'email', 'mcp'];
 const FAN = [
     '-rotate-[8deg] group-hover:-translate-x-[3px] group-hover:-rotate-[12deg] group-data-[state=open]:-translate-x-[3px] group-data-[state=open]:-rotate-[12deg]',
@@ -425,7 +425,8 @@ export function ConnectMenu({ align = 'start', onAsk }: { align?: 'start' | 'end
                                 />
                             ))}
                         </span>
-                        Connect
+                        {/* A phone's bar shares its row with the page's other actions: the apps say it there. */}
+                        <span className={isMobile ? 'sr-only' : undefined}>Connect</span>
                         <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
                     </button>
                 </PopoverTrigger>

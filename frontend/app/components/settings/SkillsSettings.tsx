@@ -296,18 +296,19 @@ function SkillRowCompact({
                     onClick();
                 }
             }}
-            className={cn('group flex min-h-[64px] cursor-pointer items-center gap-4 px-5 py-3.5 transition-colors hover:bg-foreground/[0.03]', !active && 'opacity-60')}
+            className={cn('group flex min-h-[64px] cursor-pointer items-center gap-3 px-4 py-3.5 transition-colors hover:bg-foreground/[0.03] sm:gap-4 sm:px-5', !active && 'opacity-60')}
         >
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                    <span className="truncate text-[14.5px] font-medium text-foreground">{skill.name || 'Untitled skill'}</span>
+                    {/* Whole, wrapping beside the row's controls on a phone rather than cut short. */}
+                    <span className="min-w-0 break-words text-[14.5px] font-medium text-foreground">{skill.name || 'Untitled skill'}</span>
                     {skill.is_system && <Pill icon={ShieldCheck} tone="violet">System</Pill>}
                     {skill.has_workflow && <Pill icon={WorkflowIcon} tone="indigo">Workflow</Pill>}
                     {skill.has_text && <Pill icon={FileText} tone="zinc">Text</Pill>}
                     {!editable && <Pill icon={Lock} tone="zinc">Read-only</Pill>}
                 </div>
                 {skill.description ? (
-                    <div className="mt-0.5 line-clamp-1 text-[13px] text-muted-foreground">{skill.description}</div>
+                    <div className="mt-0.5 line-clamp-2 text-[13px] text-muted-foreground sm:line-clamp-1">{skill.description}</div>
                 ) : (
                     <div className="mt-0.5 text-[13px] text-muted-foreground/60">No description</div>
                 )}
@@ -364,7 +365,7 @@ function IconBtn({
         <button
             onClick={onClick}
             title={title}
-            className={`p-2 rounded-lg transition-colors ${
+            className={`p-2 rounded-full transition-colors ${
                 danger
                     ? 'text-muted-foreground/50 dark:text-white/20 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10'
                     : 'text-muted-foreground/70 dark:text-white/30 hover:text-foreground/80 hover:bg-foreground/[0.05]'

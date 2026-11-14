@@ -1,7 +1,8 @@
 // Sonner toast component for displaying dismissible notifications.
-// Positioned at bottom-right with proper theming support.
+// Bottom-right on a laptop; on a phone, under the top bar, clear of the box at the screen's foot and its Send.
 
 import { Toaster as Sonner } from 'sonner';
+import { useMediaQuery } from '~/hooks/useIsMobile';
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
@@ -9,11 +10,18 @@ type ToasterProps = React.ComponentProps<typeof Sonner>;
 // left empty space above and below them. The text's basis leaves room for the icon but not a button.
 const BUTTON = 'group-[.toast]:!h-7 group-[.toast]:!rounded-full group-[.toast]:!px-3 group-[.toast]:!text-[13px]';
 
+// Sonner's own phone width, where a toast spans the screen.
+const PHONE = '(max-width: 600px)';
+// Under the notch and the phone shell's bar.
+const UNDER_BAR = 'calc(env(safe-area-inset-top) + 52px)';
+
 const Toaster = ({ ...props }: ToasterProps) => {
+    const phone = useMediaQuery(PHONE);
     return (
         <Sonner
             className="toaster group"
-            position="bottom-right"
+            position={phone ? 'top-center' : 'bottom-right'}
+            mobileOffset={{ top: UNDER_BAR }}
             toastOptions={{
                 classNames: {
                     toast: 'group toast group-[.toaster]:bg-card group-[.toaster]:border-border group-[.toaster]:text-foreground group-[.toaster]:shadow-lg has-[[data-button]]:flex-wrap has-[[data-button]]:!gap-y-3 has-[[data-description]]:!items-start',

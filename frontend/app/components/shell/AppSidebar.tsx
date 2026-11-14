@@ -39,10 +39,10 @@ export const SIDEBAR_ITEM =
 export const SIDEBAR_IDLE = 'text-foreground/85 hover:bg-foreground/[0.05] hover:text-foreground dark:text-foreground/80';
 export const SIDEBAR_CURRENT = 'bg-accent text-accent-foreground dark:bg-foreground/[0.09] dark:text-foreground';
 export const SIDEBAR_ICON_BUTTON =
-    'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-foreground/75 transition-colors hover:bg-foreground/[0.05] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
+    "relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl after:absolute after:-inset-0.5 after:content-[''] text-foreground/75 transition-colors hover:bg-foreground/[0.05] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 /** The phone's sidebar sheet and the dim behind it. */
 export const SIDEBAR_SHEET =
-    'fixed inset-y-0 left-0 z-[70] w-[300px] max-w-[85vw] border-r border-border bg-card pt-[env(safe-area-inset-top)] shadow-2xl outline-none duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left dark:border-foreground/[0.08] dark:bg-black';
+    'fixed inset-y-0 left-0 z-[70] w-[300px] max-w-[85vw] border-r border-border bg-card pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] shadow-2xl outline-none duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left dark:border-foreground/[0.08] dark:bg-black';
 export const SIDEBAR_SHEET_OVERLAY =
     'fixed inset-0 z-[60] bg-black/40 data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0';
 

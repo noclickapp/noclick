@@ -26,6 +26,7 @@ import { ConnectedList } from './connections/ConnectedList';
 import { Tile, TileSkeletons, VirtualTileGrid } from './Tile';
 import { useCatalogServices, useConnectedAccounts, type AccountSource, type ConnectedAccount } from './connections/accounts';
 import { CONNECTIONS_VIEWS, connectionsViews, type ConnectionsView } from './connections/views';
+import { BUTTON_OUTLINE_SM } from './buttons';
 import { PageFrame } from './PageFrame';
 
 const FEATURED_CLIENTS = ['claude', 'chatgpt', 'claude-code', 'cursor', 'codex'];
@@ -143,7 +144,7 @@ function CatalogTile({
                         onConnect();
                     }}
                     aria-label={connected ? `Connect another ${title} account` : `Connect ${title}`}
-                    className="inline-flex h-8 shrink-0 items-center rounded-full px-3.5 text-[13px] font-medium text-foreground ring-1 ring-inset ring-border transition-colors hover:bg-foreground/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:ring-foreground/[0.14]"
+                    className={BUTTON_OUTLINE_SM}
                 >
                     Connect
                 </button>
